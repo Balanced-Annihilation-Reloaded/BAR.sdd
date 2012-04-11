@@ -1,0 +1,151 @@
+//            * Header Info *
+// VersionSignature                     4
+// NumberOfScripts                     12
+// NumberOfPieces                      12
+// LengthOfScripts                     4d4
+// NumberOfStaticVars                  2
+// UKZero                              0
+// OffsetToScriptCodeIndexArray        137c
+// OffsetToScriptNameOffsetArray       13ac
+// OffsetToPieceNameOffsetArray        13dc
+// OffsetToScriptCode                  2c
+// OffsetToNameArray                   140c
+
+// OffsetToFirstName                   140c
+
+#define TA			// This is a TA script
+
+#include "sfxtype.h"
+#include "exptype.h"
+
+piece  base;
+
+static-var  statechg_DesiredState, statechg_StateChanging;
+
+
+SmokeUnit(healthpercent, sleeptime, smoketype)
+/*   18f:*/{
+/*   192:*/	while( get BUILD_PERCENT_LEFT )
+/*   194:*/	{
+/*   196:*/		sleep 400;
+/*   199:*/	}
+/*   19b:*/	while( TRUE )
+/*   19d:*/	{
+/*   1a0:*/		healthpercent = get HEALTH;
+/*   1a7:*/		if( healthpercent < 66 )
+/*   1a9:*/		{
+/*   1ae:*/			smoketype = 256 | 2;
+/*   1b8:*/			if( Rand( 1, 66 ) < healthpercent )
+/*   1ba:*/			{
+/*   1bf:*/				smoketype = 256 | 1;
+/*   1c1:*/			}
+/*   1c3:*/			emit-sfx smoketype from base;
+/*   1c5:*/		}
+/*   1ca:*/		sleeptime = healthpercent * 50;
+/*   1d1:*/		if( sleeptime < 200 )
+/*   1d3:*/		{
+/*   1d5:*/			sleeptime = 200;
+/*   1d7:*/		}
+/*   1d9:*/		sleep sleeptime;
+/*   1dc:*/	}
+/*   1de:*/	return (0);
+/*   1df:*/}
+
+Go()
+/*   1df:*/{
+/*   1df:*/
+/*   1e6:*/	move base to y-axis [0.000000] speed [12.506870];
+/*   1eb:*/	return (0);
+/*   1ec:*/}
+
+Stop()
+/*   1ec:*/{
+/*   1ec:*/
+/*   1f3:*/	move base to y-axis [-12.506870] speed [12.506870];
+/*   1f8:*/	return (0);
+/*   1f9:*/}
+
+InitState()
+/*   1f9:*/{
+/*   1fb:*/	statechg_DesiredState = TRUE;
+/*   1ff:*/	statechg_StateChanging = FALSE;
+/*   203:*/	return (0);
+/*   204:*/}
+
+RequestState(requestedstate, currentstate)
+/*   206:*/{
+/*   208:*/	if( statechg_StateChanging )
+/*   20a:*/	{
+/*   20c:*/		statechg_DesiredState = requestedstate;
+/*   210:*/		return (0);
+/*   211:*/	}
+/*   213:*/	statechg_StateChanging = TRUE;
+/*   217:*/	currentstate = statechg_DesiredState;
+/*   21b:*/	statechg_DesiredState = requestedstate;
+/*   222:*/	while( statechg_DesiredState != currentstate )
+/*   224:*/	{
+/*   229:*/		if( statechg_DesiredState == 0 )
+/*   22b:*/		{
+/*   22b:*/			call-script Go();
+/*   230:*/			currentstate = 0;
+/*   232:*/		}
+/*   237:*/		if( statechg_DesiredState == 1 )
+/*   239:*/		{
+/*   239:*/			call-script Stop();
+/*   23e:*/			currentstate = 1;
+/*   240:*/		}
+/*   242:*/	}
+/*   244:*/	statechg_StateChanging = FALSE;
+/*   248:*/	return (0);
+/*   249:*/}
+
+Create()
+/*   249:*/{
+/*   279:*/	call-script InitState();
+/*   27c:*/	start-script SmokeUnit();
+/*   281:*/	return (0);
+/*   282:*/}
+
+Activate()
+/*   282:*/{
+/*   284:*/	start-script RequestState(0);
+/*   289:*/	return (0);
+/*   28a:*/}
+
+Deactivate()
+/*   28a:*/{
+/*   28c:*/	start-script RequestState(1);
+/*   291:*/	return (0);
+/*   292:*/}
+
+SweetSpot(piecenum)
+/*   293:*/{
+/*   295:*/	piecenum = base;
+/*   299:*/	return (0);
+/*   29a:*/}
+
+Killed(severity, corpsetype)
+/*   29c:*/{
+/*   2a1:*/	if( severity <= 25 )
+/*   2a3:*/	{
+/*   2a5:*/		corpsetype = 1;
+/*   2ac:*/		explode base type BITMAPONLY | BITMAP1;
+/*   2fd:*/		return (0);
+/*   2fe:*/	}
+/*   303:*/	if( severity <= 50 )
+/*   305:*/	{
+/*   307:*/		corpsetype = 2;
+/*   30e:*/		explode base type BITMAPONLY | BITMAP1;
+
+/*   35f:*/		return (0);
+/*   360:*/	}
+/*   365:*/	if( severity <= 99 )
+/*   367:*/	{
+/*   369:*/		corpsetype = 3;
+/*   370:*/		explode base type BITMAPONLY | BITMAP1;
+/*   41b:*/		return (0);
+/*   41c:*/	}
+/*   41e:*/	corpsetype = 3;
+/*   425:*/	explode base type BITMAPONLY | BITMAP1;
+/*   4d3:*/	return (0);
+/*   4d4:*/}

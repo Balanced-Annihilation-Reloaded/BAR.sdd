@@ -1,0 +1,204 @@
+#define TA			// This is a TA script
+
+#include "sfxtype.h"
+#include "exptype.h"
+
+piece  base, turretl, sleevel, barrell, flarel, turretr, sleever, barrelr, flarer, 
+       turretf, sleevef, barrelf, flaref, thrustrr, thrustrl, thrustfr, thrustfl, 
+       thrustrra, thrustrla, thrustfra, thrustfla;
+       
+
+static-var  restore_delay, v1;
+
+// Signal definitions
+#define SIG_AIM				4
+#define SIG_AIM_2			8
+#define SIG_AIM_3			16
+#define MIN 131 // get
+#define MAX 132 // get
+#define ABS 133 // get
+#define GAME_FRAME 134 // get
+#define KSIN 135 // get (kiloSine : 1024*sin(x))
+#define KCOS 136 // get (kiloCosine : 1024*cos(x))
+#define KTAN 137 // get (kiloTangent : 1024*tan(x))
+#define SQRT 138 // get (square root)
+
+
+SmokeUnit(healthpercent, sleeptime, smoketype)
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	while( TRUE )
+	{
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
+	}
+}
+
+Create()
+{
+	start-script SmokeUnit();
+	sleep 1500;
+}
+
+SweetSpot(piecenum)
+{
+	piecenum = base;
+}
+
+QueryPrimary(piecenum)
+{
+	piecenum = flaref;
+}
+
+QuerySecondary(piecenum)
+{
+	piecenum = flarel;
+}
+
+QueryTertiary(piecenum)
+{
+	piecenum = flarer;
+}
+
+SetMaxReloadTime(Func_Var_1)
+{
+	restore_delay = Func_Var_1 * 2;
+}
+
+RestoreAfterDelay()
+{
+	sleep restore_delay;
+	turn base to y-axis <0.000000> speed <250.000000>;
+	turn base to x-axis <0.000000> speed <250.000000>;
+	turn turretf to z-axis <0> speed <250>;
+	turn sleevef to x-axis <0> speed <250>;
+	
+	turn turretl to x-axis <0> speed <250>;
+	turn sleevel to z-axis <0> speed <250>;
+	
+	turn turretr to x-axis <0> speed <250>;
+	turn sleever to z-axis <0> speed <250>;
+}
+
+StartMoving()
+{
+	sleep 1000;
+}
+
+StopMoving()
+{
+}
+
+AimPrimary(heading, pitch)
+{
+	signal SIG_AIM;
+	set-signal-mask SIG_AIM;
+	
+	
+	var p;
+	var h;
+	var a;
+	p = get KTAN(pitch);
+	h = get KTAN(heading);
+	a= get ATAN(p*h,1000000);
+	turn turretf to z-axis a speed <2000.000000>;
+	
+	var x;
+	p = get KCOS(pitch);
+	h = get KCOS(heading);
+	x= p*h;
+	a= get SQRT(1000000-x*x);
+	a=a/x;
+	
+	a=get ATAN(a,1000);
+	
+	turn sleevef to x-axis <0>-  a speed <2000.000000>;
+	wait-for-turn turretf around z-axis;
+	wait-for-turn sleevef around x-axis;
+	start-script RestoreAfterDelay();
+	return (1);
+}
+
+AimSecondary(heading, pitch)
+{
+	signal SIG_AIM_2;
+	set-signal-mask SIG_AIM_2;
+	turn turretl to x-axis <0> - pitch speed <200.000000>;
+	turn sleevel to z-axis heading speed <200.000000>;
+	wait-for-turn turretl around x-axis;
+	return (1);
+}
+
+AimTertiary(heading, pitch)
+{
+	signal SIG_AIM_3;
+	set-signal-mask SIG_AIM_3;
+	turn turretr to x-axis heading speed <200.000000>;
+	turn sleever to z-axis <0> - pitch speed <200.000000>;
+	wait-for-turn turretr around x-axis;
+	return (1);
+}
+
+FirePrimary()
+{
+	sleep 100;
+}
+
+FireSecondary()
+{
+	sleep 100;
+}
+
+FireTertiary()
+{
+	sleep 100;
+}
+
+Killed(severity, corpsetype)
+{
+	if( severity <= 99 )
+	{
+		corpsetype = 3;
+		explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode turretl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode sleevel type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode barrell type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode turretr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode sleever type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode barrelr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode thrustrr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode thrustrl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode thrustfr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode thrustfl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		return (0);
+	}
+	corpsetype = 3;
+		explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode turretl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode sleevel type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode barrell type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode turretr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode sleever type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode barrelr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode thrustrr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode thrustrl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode thrustfr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode thrustfl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+}

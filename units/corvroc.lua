@@ -29,7 +29,11 @@ return {
 		movementclass = "TANK3",
 		name = "Diplomat",
 		nochasecategory = "MOBILE VTOL",
-		objectname = "CORVROC",
+		objectname = "CORVROC.s3o",
+		customParams ={
+			normaltex = "unittextures/Core_normal.tga",
+			normalmaps = "yes",
+		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 221,

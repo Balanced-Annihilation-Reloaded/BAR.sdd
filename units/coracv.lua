@@ -33,7 +33,11 @@ return {
 		metalstorage = 100,
 		movementclass = "TANK3",
 		name = "Advanced Construction Vehicle",
-		objectname = "CORACV",
+		objectname = "CORACV.s3o",
+		customParams ={
+			normaltex = "unittextures/Core_normal.tga",
+			normalmaps = "yes",
+		},
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",

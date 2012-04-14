@@ -30,7 +30,11 @@ return {
 		maxwaterdepth = 0,
 		movementclass = "TANK3",
 		name = "Informer",
-		objectname = "CORVRAD",
+		objectname = "CORVRAD.s3o",
+		customParams ={
+			normaltex = "unittextures/Core_normal.tga",
+			normalmaps = "yes",
+		},
 		onoffable = true,
 		radardistance = 2200,
 		selfdestructas = "BIG_UNIT",

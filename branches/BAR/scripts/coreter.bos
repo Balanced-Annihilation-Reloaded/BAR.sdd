@@ -51,7 +51,7 @@ Activate()
 		set ACTIVATION to 0;
 		return (0);
 	}
-	spin turret around z-axis speed <100.021978>;
+	spin turret around y-axis speed <25.021978>;
 	spin jam2 around x-axis speed <90.021978>;
 	spin jam1 around x-axis speed <-90.021978>;
 	
@@ -60,7 +60,7 @@ Activate()
 
 Deactivate()
 {
-	spin turret around z-axis speed <0.000000>;
+	spin turret around y-axis speed <0.000000>;
 	spin jam2 around x-axis speed <0>;
 	spin jam1 around x-axis speed <0>;
 	

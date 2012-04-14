@@ -140,7 +140,7 @@ AimPrimary(heading, pitch)
 	move dbl to z-axis [-3] speed [8];
 	move dbr to x-axis [3] speed [8];
 	move dbr to z-axis [-3] speed [8];
-	move dtl to x-axis [-8] speed [8];
+	move dtl to x-axis [-8] speed [8];  
 	move dtl to z-axis [3] speed [8];
 	move dtr to x-axis [3] speed [8];
 	move dtr to z-axis [3] speed [8];
@@ -177,6 +177,8 @@ Killed(severity, corpsetype)
 /*   286:*/		explode dbr type BITMAPONLY | BITMAP3;
 /*   28d:*/		explode dtr type BITMAPONLY | BITMAP4;
 /*   294:*/		explode dtl type BITMAPONLY | BITMAP5;
+/*   29b:*/		explode turret type BITMAPONLY | BITMAP1;
+
 /*   29b:*/		explode dummy type BITMAPONLY | BITMAP1;
 /*   2b4:*/		return (0);
 /*   2b5:*/	}

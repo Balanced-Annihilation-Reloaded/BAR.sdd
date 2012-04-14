@@ -30,7 +30,11 @@ return {
 		movementclass = "TANK3",
 		name = "Deleter",
 		nochasecategory = "MOBILE",
-		objectname = "CORETER",
+		objectname = "CORETER.s3o",
+		customParams ={
+			normaltex = "unittextures/Core_normal.tga",
+			normalmaps = "yes",
+		},
 		onoffable = true,
 		radardistancejam = 450,
 		seismicsignature = 0,

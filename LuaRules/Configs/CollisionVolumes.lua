@@ -191,11 +191,11 @@ local dynamicPieceCollisionVolume = {}	--dynamic per piece collision volume defi
 	}
 	dynamicPieceCollisionVolume["cortoast"] = {
 		on = {
-			["1"]={44,23,44,0,0,0,2,0},
-			["5"]={10,10,60,0,13,13,1,2},
+			["0"]={55,30,55,0,3,-2,0,0},
+			["4"]={11,11,47,0,0,3,1,2},
 		},
 		off = {
-			["1"]={44,7,44,0,0,0,2,0},
+			["0"]={50,10,50,0,3,0,2,0},
 		}
 	}
 	dynamicPieceCollisionVolume["corvipe"] = {

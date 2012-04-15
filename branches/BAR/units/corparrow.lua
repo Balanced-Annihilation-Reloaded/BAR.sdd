@@ -8,7 +8,7 @@ return {
 		buildtime = 22181,
 		canmove = true,
 		category = "ALL TANK PHIB WEAPON NOTSUB NOTAIR",
-		collisionVolumeScales = [[44.6 24.6 46.6]],
+		collisionVolumeScales = [[44 43 52]],
 		collisionVolumeOffsets = [[0 -4 0]],
 		collisionVolumeTest = 1,
 		collisionvolumetype = "CylZ",

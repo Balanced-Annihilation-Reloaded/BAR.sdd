@@ -30,7 +30,11 @@ return {
 		maxwaterdepth = 255,
 		movementclass = "ATANK3",
 		name = "Intruder",
-		objectname = "INTRUDER",
+		objectname = "INTRUDER.s3o",
+		customParams ={
+			normaltex = "unittextures/Core_normal.tga",
+			normalmaps = "yes",
+		},
 		releaseheld = true,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",

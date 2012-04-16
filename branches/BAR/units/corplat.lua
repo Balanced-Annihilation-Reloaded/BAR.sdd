@@ -23,7 +23,11 @@ return {
 		metalstorage = 200,
 		minwaterdepth = 30,
 		name = "Seaplane Platform",
-		objectname = "CORPLAT",
+		objectname = "CORPLAT.s3o",
+		customParams ={
+			normaltex = "unittextures/Core_normal.tga",
+			normalmaps = "yes",
+		},
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",

@@ -36,7 +36,7 @@ return {
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 276.89999389648,
 		terraformspeed = 500,
-		waterline = 33,
+		waterline = 0,
 		workertime = 100,
 		yardmap = "wCCCCCCwCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCwCCCCCCw",
 		buildoptions = {

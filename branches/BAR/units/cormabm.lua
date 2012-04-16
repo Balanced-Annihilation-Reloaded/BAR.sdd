@@ -24,7 +24,7 @@ return {
 		maxvelocity = 1.8,
 		maxwaterdepth = 0,
 		movementclass = "TANK3",
-		name = "Turtle",
+		name = "Tortoise",
 		nochasecategory = "ALL",
 		objectname = "CORMABM.s3o",
 		customParams ={

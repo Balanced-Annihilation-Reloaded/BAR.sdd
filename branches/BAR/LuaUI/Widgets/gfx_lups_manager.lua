@@ -81,6 +81,10 @@ local UnitEffects = {
     {class='ShieldSphere',options=junoShieldSphere},
     {class='GroundFlash',options=groundFlashJuno},
   },
+   [UnitDefNames["cormakr"].id] = {
+       {class='StaticParticles',options=cormakrEffect},
+  },
+  
   --// FUSIONS //--------------------------
   [UnitDefNames["cafus"].id] = {
     {class='Bursts',options=cafusBursts},

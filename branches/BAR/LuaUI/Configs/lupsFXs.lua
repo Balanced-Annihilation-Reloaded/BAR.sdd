@@ -374,3 +374,13 @@ sparks1 = {
   count        = 6,
   repeatEffect = true,
 }
+cormakrEffect = {
+  life       = math.huge,
+  pos        = {0,24,0},
+  size       = 26,
+  sizeSpread = 7,
+  colormap   = { {0.8, 0.8, 0.5, 0.01} },
+  onActive   = true,
+  texture    = 'bitmaps/flare.TGA',
+
+}

@@ -188,6 +188,14 @@ function MakeInts( r, g, b )
   return math.floor(r*255), math.floor(g*255), math.floor(b*255)
 end
 
+function SendTrimColor()
+    --send color data to luarules
+    local r,g,b = MakeInts( curRgbColor.r, curRgbColor.g, curRgbColor.b )
+    --local dataString = "trimColor" .. "\" .. r .. "\55" .. g .. "\55" .. b
+    local dataString = "trimColor" .. "," .. r .. "," .. g .. "," .. b
+    spSendLuaRulesMsg( dataString )
+    --Spring.Echo("Sent data string: " .. dataString)
+end
 --------------------------------------------------------------------------------
 -- Callins
 --------------------------------------------------------------------------------
@@ -200,6 +208,8 @@ function widget:Initialize()
     myTeamId = Spring.GetMyTeamID()
     
     UpdateRgb()
+    
+    SendTrimColor() --send initial color
 end
 
 function widget:DrawScreen()
@@ -251,9 +261,7 @@ function ProcessMouseAction(mx, my, mButton)
         end
         
         if ( updated ) then
-            --send color data to luarules
-            local r,g,b = MakeInts( curRgbColor.r, curRgbColor.g, curRgbColor.b )
-            spSendLuaRulesMsg( "trimColor" .. "," .. r .. "," .. g .. "," .. b )
+            SendTrimColor()
         end
     end
     

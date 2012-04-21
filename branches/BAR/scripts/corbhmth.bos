@@ -1,24 +1,10 @@
-//            * Header Info *
-// VersionSignature                     4
-// NumberOfScripts                     18
-// NumberOfPieces                      13
-// LengthOfScripts                     372
-// NumberOfStaticVars                  5
-// UKZero                              0
-// OffsetToScriptCodeIndexArray        df4
-// OffsetToScriptNameOffsetArray       e3c
-// OffsetToPieceNameOffsetArray        e84
-// OffsetToScriptCode                  2c
-// OffsetToNameArray                   eb8
-
-// OffsetToFirstName                   eb8
-
 #define TA			// This is a TA script
 
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, vent, turret, sleeve, barrel1, flare1, barrel2, flare2, barrel3, flare3;
+piece  base, vent, turret, sleeve, barrel1, flare1, barrel2, flare2,
+       barrel3, flare3;
 
 static-var  bAiming, Static_Var_2, gun_1, statechg_DesiredState, statechg_StateChanging;
 
@@ -27,276 +13,260 @@ static-var  bAiming, Static_Var_2, gun_1, statechg_DesiredState, statechg_StateC
 
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
-/*     3:*/{
-/*     6:*/	while( get BUILD_PERCENT_LEFT )
-/*     8:*/	{
-/*     a:*/		sleep 400;
-/*     d:*/	}
-/*     f:*/	while( TRUE )
-/*    11:*/	{
-/*    14:*/		healthpercent = get HEALTH;
-/*    1b:*/		if( healthpercent < 66 )
-/*    1d:*/		{
-/*    22:*/			smoketype = 256 | 2;
-/*    2c:*/			if( Rand( 1, 66 ) < healthpercent )
-/*    2e:*/			{
-/*    33:*/				smoketype = 256 | 1;
-/*    35:*/			}
-/*    37:*/			emit-sfx smoketype from base;
-/*    39:*/		}
-/*    3e:*/		sleeptime = healthpercent * 50;
-/*    45:*/		if( sleeptime < 200 )
-/*    47:*/		{
-/*    49:*/			sleeptime = 200;
-/*    4b:*/		}
-/*    4d:*/		sleep sleeptime;
-/*    50:*/	}
-/*    52:*/	return (0);
-/*    53:*/}
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	while( TRUE )
+	{
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
+	}
+}
 
 SmokeVents()
-/*    53:*/{
-/*    55:*/	signal 4;
-/*    58:*/	set-signal-mask 4;
-/*    5b:*/	while( TRUE )
-/*    5d:*/	{
-/*    5f:*/		emit-sfx 257 from vent;
-/*    67:*/		sleep 1000;
-/*    6a:*/	}
-/*    6c:*/	return (0);
-/*    6d:*/}
+{
+	signal 4;
+	set-signal-mask 4;
+	while( TRUE )
+	{
+		emit-sfx 257 from vent;
+		sleep 1000;
+	}
+}
 
 Go()
-/*    6d:*/{
-/*    74:*/	start-script SmokeVents();
-/*    7b:*/	set ACTIVATION to 100;
-/*    7e:*/	return (0);
-/*    7f:*/}
+{
+	start-script SmokeVents();
+	set ACTIVATION to 100;
+}
 
 Stop()
-/*    7f:*/{
-/*    86:*/	signal 4;
-/*    8b:*/	set ACTIVATION to 0;
-/*    8e:*/	return (0);
-/*    8f:*/}
+{
+	signal 4;
+	set ACTIVATION to 0;
+}
 
 InitState()
-/*    8f:*/{
-/*    91:*/	statechg_DesiredState = TRUE;
-/*    95:*/	statechg_StateChanging = FALSE;
-/*    99:*/	return (0);
-/*    9a:*/}
+{
+	statechg_DesiredState = TRUE;
+	statechg_StateChanging = FALSE;
+}
 
 RequestState(requestedstate, currentstate)
-/*    9c:*/{
-/*    9e:*/	if( statechg_StateChanging )
-/*    a0:*/	{
-/*    a2:*/		statechg_DesiredState = requestedstate;
-/*    a6:*/		return (0);
-/*    a7:*/	}
-/*    a9:*/	statechg_StateChanging = TRUE;
-/*    ad:*/	currentstate = statechg_DesiredState;
-/*    b1:*/	statechg_DesiredState = requestedstate;
-/*    b8:*/	while( statechg_DesiredState != currentstate )
-/*    ba:*/	{
-/*    bf:*/		if( statechg_DesiredState == 0 )
-/*    c1:*/		{
-/*    c1:*/			call-script Go();
-/*    c6:*/			currentstate = 0;
-/*    c8:*/		}
-/*    cd:*/		if( statechg_DesiredState == 1 )
-/*    cf:*/		{
-/*    cf:*/			call-script Stop();
-/*    d4:*/			currentstate = 1;
-/*    d6:*/		}
-/*    d8:*/	}
-/*    da:*/	statechg_StateChanging = FALSE;
-/*    de:*/	return (0);
-/*    df:*/}
+{
+	if( statechg_StateChanging )
+	{
+		statechg_DesiredState = requestedstate;
+		return (0);
+	}
+	statechg_StateChanging = TRUE;
+	currentstate = statechg_DesiredState;
+	statechg_DesiredState = requestedstate;
+	while( statechg_DesiredState != currentstate )
+	{
+		if( statechg_DesiredState == 0 )
+		{
+			call-script Go();
+			currentstate = 0;
+		}
+		if( statechg_DesiredState == 1 )
+		{
+			call-script Stop();
+			currentstate = 1;
+		}
+	}
+	statechg_StateChanging = FALSE;
+}
 
 Create()
-/*    df:*/{
-/*    df:*/	hide flare1;
-/*    e1:*/	hide flare2;
-/*    e3:*/	hide flare3;
-/*    fb:*/	bAiming = FALSE;
-/*    ff:*/	gun_1 = base;
-/*   103:*/	Static_Var_2 = 12000;
-/*   108:*/	while( get BUILD_PERCENT_LEFT )
-/*   10a:*/	{
-/*   10c:*/		sleep 250;
-/*   10f:*/	}
-/*   10f:*/	call-script InitState();
-/*   112:*/	start-script SmokeUnit();
-/*   117:*/	return (0);
-/*   118:*/}
+{
+	hide flare1;
+	hide flare2;
+	hide flare3;
+	bAiming = FALSE;
+	gun_1 = FALSE;
+	Static_Var_2 = 12000;
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 250;
+	}
+	call-script InitState();
+	start-script SmokeUnit();
+}
 
 Activate()
-/*   118:*/{
-/*   11a:*/	start-script RequestState(0);
-/*   11f:*/	return (0);
-/*   120:*/}
+{
+	start-script RequestState(0);
+}
 
 Deactivate()
-/*   120:*/{
-/*   122:*/	start-script RequestState(1);
-/*   127:*/	return (0);
-/*   128:*/}
+{
+	start-script RequestState(1);
+}
 
 ActivateAfterDelay()
-/*   128:*/{
-/*   12a:*/	sleep 5000;
-/*   12d:*/	set-signal-mask 0;
-/*   130:*/	start-script RequestState(0);
-/*   135:*/	return (0);
-/*   136:*/}
+{
+	sleep 5000;
+	set-signal-mask 0;
+	start-script RequestState(0);
+}
 
 ResetFiretube()
-/*   136:*/{
-/*   138:*/	set-signal-mask SIG_AIM;
-/*   13b:*/	sleep Static_Var_2;
-/*   13e:*/	bAiming = FALSE;
-/*   142:*/	return (0);
-/*   143:*/}
+{
+	set-signal-mask SIG_AIM;
+	sleep Static_Var_2;
+	bAiming = FALSE;
+}
 
 AimPrimary(heading, pitch)
-/*   145:*/{
-/*   147:*/	signal SIG_AIM;
-/*   14a:*/	set-signal-mask SIG_AIM;
-/*   14d:*/	start-script RequestState(1);
-/*   154:*/	turn turret to y-axis heading speed <25.000000>;
-/*   15e:*/	turn sleeve to x-axis <0.000000> - pitch speed <25.000000>;
-/*   161:*/	wait-for-turn turret around y-axis;
-/*   164:*/	wait-for-turn sleeve around x-axis;
-/*   169:*/	while( gun_1 )
-/*   16b:*/	{
-/*   16b:*/		wait-for-move barrel1 along z-axis;
-/*   16e:*/		wait-for-move barrel2 along z-axis;
-/*   171:*/		wait-for-move barrel3 along z-axis;
-/*   176:*/		bAiming = FALSE;
-/*   17a:*/		gun_1 = base;
-/*   17e:*/	}
-/*   17e:*/	start-script ResetFiretube();
-/*   181:*/	start-script ActivateAfterDelay();
-/*   186:*/	return (1);
-/*   187:*/}
+{
+	signal SIG_AIM;
+	set-signal-mask SIG_AIM;
+	start-script RequestState(1);
+	turn turret to y-axis heading speed <25.000000>;
+	turn sleeve to x-axis <0.000000> - pitch speed <25.000000>;
+	wait-for-turn turret around y-axis;
+	wait-for-turn sleeve around x-axis;
+	while( gun_1 )
+	{
+		wait-for-move barrel1 along z-axis;
+		wait-for-move barrel2 along z-axis;
+		wait-for-move barrel3 along z-axis;
+		bAiming = FALSE;
+		gun_1 = FALSE;
+	}
+
+	start-script ResetFiretube();
+	start-script ActivateAfterDelay();
+	return (1);
+}
 
 FirePrimary()
-/*   187:*/{
-/*   18c:*/	if( bAiming == 0 )
-/*   18e:*/	{
-/*   18e:*/		show flare1;
-/*   192:*/		move barrel1 to z-axis [-7.504122] now;
-/*   197:*/		sleep 150;
-/*   198:*/		hide flare1;
-/*   19e:*/		move barrel1 to z-axis [0.000000] speed [2.501374];
-/*   1a1:*/	}
-/*   1a6:*/	if( bAiming == 1 )
-/*   1a8:*/	{
-/*   1a8:*/		show flare2;
-/*   1ac:*/		move barrel2 to z-axis [-7.504122] now;
-/*   1b1:*/		sleep 150;
-/*   1b2:*/		hide flare2;
-/*   1b8:*/		move barrel2 to z-axis [0.000000] speed [2.501374];
-/*   1bb:*/	}
-/*   1c0:*/	if( bAiming == 2 )
-/*   1c2:*/	{
-/*   1c4:*/		gun_1 = base;
-/*   1c6:*/		show flare3;
-/*   1ca:*/		move barrel3 to z-axis [-7.504122] now;
-/*   1cf:*/		sleep 150;
-/*   1d0:*/		hide flare3;
-/*   1d6:*/		move barrel3 to z-axis [0.000000] speed [2.501374];
-/*   1d9:*/	}
-/*   1de:*/	++bAiming;
-/*   1e9:*/	if( bAiming == 3 )
-/*   1eb:*/	{
-/*   1ed:*/		bAiming = 0;
-/*   1ef:*/	}
-/*   1e2:*/	return (0);
-/*   1e3:*/}
+{
+	if( bAiming == 0 )
+	{
+		show flare1;
+		move barrel1 to z-axis [-3.001648] now;
+		sleep 150;
+		hide flare1;
+		move barrel1 to z-axis [0.000000] speed [1.000549];
+	}
+	if( bAiming == 1 )
+	{
+		show flare2;
+		move barrel2 to z-axis [-3.001648] now;
+		sleep 150;
+		hide flare2;
+		move barrel2 to z-axis [0.000000] speed [1.000549];
+	}
+	if( bAiming == 2 )
+	{
+		gun_1 = TRUE;
+		show flare3;
+		move barrel3 to z-axis [-3.001648] now;
+		sleep 150;
+		hide flare3;
+		move barrel3 to z-axis [0.000000] speed [1.000549];
+	}
+	++bAiming;
+	if( bAiming == 3 )
+	{
+		bAiming = FALSE;
+	}
+}
 
 QueryPrimary(piecenum)
-/*   1e4:*/{
-/*   1e9:*/	if( bAiming == 0 )
-/*   1eb:*/	{
-/*   1ed:*/		piecenum = flare1;
-/*   1ef:*/	}
-/*   1f4:*/	if( bAiming == 1 )
-/*   1f6:*/	{
-/*   1f8:*/		piecenum = flare2;
-/*   1fa:*/	}
-/*   1ff:*/	if( bAiming == 2 )
-/*   201:*/	{
-/*   203:*/		piecenum = flare3;
-/*   205:*/	}
-/*   207:*/	return (0);
-/*   208:*/}
+{
+	if( bAiming == 0 )
+	{
+		piecenum = flare1;
+	}
+	if( bAiming == 1 )
+	{
+		piecenum = flare2;
+	}
+	if( bAiming == 2 )
+	{
+		piecenum = flare3;
+	}
+}
 
 AimFromPrimary(piecenum)
-/*   209:*/{
-/*   20b:*/	piecenum = sleeve;
-/*   20f:*/	return (0);
-/*   210:*/}
+{
+	piecenum = sleeve;
+}
 
 SweetSpot(piecenum)
-/*   211:*/{
-/*   213:*/	piecenum = base;
-/*   217:*/	return (0);
-/*   218:*/}
+{
+	piecenum = base;
+}
 
 TargetCleared(Func_Var_1)
-/*   219:*/{
-/*   21b:*/	stop-spin turret around y-axis;
-/*   220:*/	stop-spin sleeve around x-axis;
-/*   225:*/	return (0);
-/*   226:*/}
+{
+	stop-spin turret around y-axis;
+	stop-spin sleeve around x-axis;
+}
 
 Killed(severity, corpsetype)
-/*   228:*/{
-/*   228:*/	hide flare1;
-/*   22a:*/	hide flare2;
-/*   22c:*/	hide flare3;
-/*   22e:*/	hide sleeve;
-/*   235:*/	if( severity <= 25 )
-/*   237:*/	{
-/*   239:*/		corpsetype = 1;
-/*   240:*/		explode base type SHATTER | BITMAP3;
-/*   24e:*/		explode vent type BITMAPONLY | BITMAP1;
-/*   263:*/		explode turret type BITMAPONLY | BITMAP3;
-/*   26a:*/		explode barrel1 type BITMAPONLY | BITMAP2;
-/*   271:*/		explode barrel2 type BITMAPONLY | BITMAP2;
-/*   278:*/		explode barrel3 type BITMAPONLY | BITMAP2;
-/*   27c:*/		return (0);
-/*   27d:*/	}
-/*   282:*/	if( severity <= 50 )
-/*   284:*/	{
-/*   286:*/		corpsetype = 2;
-/*   28d:*/		explode base type SHATTER | BITMAP3;
-/*   294:*/		explode vent type BITMAPONLY | BITMAP2;
-/*   2b3:*/		explode turret type FALL | SMOKE | BITMAP3;
-/*   2ba:*/		explode barrel1 type BITMAPONLY | BITMAP3;
-/*   2c1:*/		explode barrel2 type BITMAPONLY | BITMAP3;
-/*   2c8:*/		explode barrel3 type BITMAPONLY | BITMAP3;
-/*   2cc:*/		return (0);
-/*   2cd:*/	}
-/*   2d2:*/	if( severity <= 99 )
-/*   2d4:*/	{
-/*   2d6:*/		corpsetype = 3;
-/*   2dd:*/		explode base type SHATTER | BITMAP3;
-/*   2e4:*/		explode vent type BITMAPONLY | BITMAP2;
-/*   309:*/		explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-/*   310:*/		explode barrel1 type BITMAPONLY | BITMAP3;
-/*   317:*/		explode barrel2 type BITMAPONLY | BITMAP3;
-/*   31e:*/		explode barrel3 type BITMAPONLY | BITMAP3;
-/*   322:*/		return (0);
-/*   323:*/	}
-/*   325:*/	corpsetype = 3;
-/*   32c:*/	explode base type SHATTER | BITMAP3;
-/*   333:*/	explode vent type BITMAPONLY | BITMAP2;
-/*   358:*/	explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-/*   35f:*/	explode barrel1 type BITMAPONLY | BITMAP3;
-/*   366:*/	explode barrel2 type BITMAPONLY | BITMAP3;
-/*   36d:*/	explode barrel3 type BITMAPONLY | BITMAP3;
-/*   371:*/	return (0);
-/*   372:*/}
+{
+	hide flare1;
+	hide flare2;
+	hide flare3;
+	hide sleeve;
+	if( severity <= 25 )
+	{
+		corpsetype = 1;
+		explode base type SHATTER | BITMAP3;
+		explode vent type BITMAPONLY | BITMAP1;
+		explode turret type BITMAPONLY | BITMAP3;
+		explode barrel1 type BITMAPONLY | BITMAP2;
+		explode barrel2 type BITMAPONLY | BITMAP2;
+		explode barrel3 type BITMAPONLY | BITMAP2;
+		return (0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2;
+		explode base type SHATTER | BITMAP3;
+		explode vent type BITMAPONLY | BITMAP2;
+		explode turret type FALL | SMOKE | BITMAP3;
+		explode barrel1 type BITMAPONLY | BITMAP3;
+		explode barrel2 type BITMAPONLY | BITMAP3;
+		explode barrel3 type BITMAPONLY | BITMAP3;
+		return (0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3;
+		explode base type SHATTER | BITMAP3;
+		explode vent type BITMAPONLY | BITMAP2;
+		explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode barrel1 type BITMAPONLY | BITMAP3;
+		explode barrel2 type BITMAPONLY | BITMAP3;
+		explode barrel3 type BITMAPONLY | BITMAP3;
+		return (0);
+	}
+	corpsetype = 3;
+	explode base type SHATTER | BITMAP3;
+	explode vent type BITMAPONLY | BITMAP2;
+	explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode barrel1 type BITMAPONLY | BITMAP3;
+	explode barrel2 type BITMAPONLY | BITMAP3;
+	explode barrel3 type BITMAPONLY | BITMAP3;
+}

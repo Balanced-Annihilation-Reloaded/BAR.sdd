@@ -10,6 +10,10 @@ static-var  Static_Var_1, restore_delay, statechg_DesiredState, statechg_StateCh
 // Signal definitions
 #define SIG_AIM				2
 
+lua_FlameShot(weapon) //Distortion and lups flame effect
+{
+  return 0;
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
@@ -40,10 +44,10 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 Go()
 {
-	move top to y-axis [0.000000] speed [50.000000];
+	move top to y-axis [0.000000] speed [19.989014];
 	wait-for-move top along y-axis;
-	move bore to z-axis [0.000000] speed [50.000000];
-	move barrel to z-axis [0.000000] speed [50.000000];
+	move bore to z-axis [0.000000] speed [19.989014];
+	move barrel to z-axis [0.000000] speed [19.989014];
 	Static_Var_1 = 1;
 	set ARMORED to 0;
 }
@@ -52,12 +56,12 @@ Stop()
 {
 	set ARMORED to 1;
 	Static_Var_1 = 0;
-	turn top to y-axis <0> speed <300>;
-	move bore to z-axis [-7.000000] speed [50.000000];
-	move barrel to z-axis [-8.000000] speed [50.000000];
+	turn top to y-axis <0.000000> speed <300.000000>;
+	move bore to z-axis [-2.798462] speed [19.989014];
+	move barrel to z-axis [-3.198242] speed [19.989014];
 	wait-for-move barrel along x-axis;
 	wait-for-move bore along y-axis;
-	move top to y-axis [-12.000000] speed [50.000000];
+	move top to y-axis [-4.797363] speed [19.989014];
 	wait-for-move top along y-axis;
 }
 
@@ -95,7 +99,7 @@ RequestState(requestedstate, currentstate)
 
 Create()
 {
-	hide flare;;
+	hide flare;
 	restore_delay = 2000;
 	Static_Var_1 = 0;
 	call-script InitState();
@@ -143,6 +147,12 @@ AimPrimary(heading, pitch)
 	wait-for-turn top around y-axis;
 	start-script RestoreAfterDelay();
 	return (1);
+}
+
+Shot1()
+{
+	call-script lua_FlameShot(1);
+	return (TRUE);
 }
 
 FirePrimary()
@@ -198,8 +208,8 @@ Killed(severity, corpsetype)
 		return (0);
 	}
 	corpsetype = 3;
-		explode barrel type BITMAPONLY | BITMAP1;
-		explode base type BITMAPONLY | BITMAP3;
-		explode top type BITMAPONLY | BITMAP1;
-		explode bore type BITMAPONLY | BITMAP2;
+	explode barrel type BITMAPONLY | BITMAP1;
+	explode base type BITMAPONLY | BITMAP3;
+	explode top type BITMAPONLY | BITMAP1;
+	explode bore type BITMAPONLY | BITMAP2;
 }

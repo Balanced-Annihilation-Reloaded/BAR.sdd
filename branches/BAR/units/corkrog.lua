@@ -30,7 +30,7 @@ return {
 		movementclass = "VKBOT5",
 		name = "Krogoth",
 		nochasecategory = "VTOL",
-		objectname = "CORKROG",
+		objectname = "corkrog.s3o",
 		seismicsignature = 0,
 		selfdestructas = "CRBLMSSL",
 		selfdestructcountdown = 10,

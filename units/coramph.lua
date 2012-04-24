@@ -9,7 +9,7 @@ return {
 		buildtime = 9650,
 		candgun = true,
 		canmove = true,
-		category = "KBOT MOBILE WEAPON ALL NOTSHIP NOTAIR",
+		category = "KBOT MOBILE WEAPON ALL NOTSHIP NOTAIR NOTHOVER",
 		corpse = "HEAP",
 		description = "Amphibious Kbot",
 		energymake = 0.40000000596046,

@@ -7,7 +7,7 @@ return {
 		buildpic = "CORTHUD.DDS",
 		buildtime = 1971,
 		canmove = true,
-		category = "KBOT MOBILE WEAPON ALL NOTSUB NOTSHIP NOTAIR",
+		category = "KBOT MOBILE WEAPON ALL NOTSUB NOTSHIP NOTAIR NOTHOVER",
 		collisionVolumeScales = [[22 44 22]],
 		collisionVolumeOffsets = [[0 -2 3]],
 		collisionVolumeTest = 1,

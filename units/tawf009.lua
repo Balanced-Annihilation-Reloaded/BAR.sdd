@@ -8,7 +8,7 @@ return {
 		buildpic = "TAWF009.DDS",
 		buildtime = 21087,
 		canmove = true,
-		category = "UNDERWATER ALL WEAPON NOTAIR",
+		category = "UNDERWATER ALL WEAPON NOTAIR NOTHOVER",
 		collisionvolumeoffsets = "0 -2 0",
 		collisionvolumescales = "45 19 57",
 		collisionvolumetest = 1,

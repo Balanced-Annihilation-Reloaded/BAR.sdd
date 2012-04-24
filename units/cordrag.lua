@@ -7,7 +7,7 @@ return {
 		buildcostmetal = 10,
 		buildpic = "CORDRAG.DDS",
 		buildtime = 255,
-		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR",
+		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER",
 		corpse = "DRAGONSTEETH_CORE",
 		description = "Perimeter Defense",
 		footprintx = 2,

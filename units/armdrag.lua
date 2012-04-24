@@ -7,7 +7,7 @@ return {
 		buildpic = "ARMDRAG.DDS",
 		buildtime = 255,
 		canattack = false,
-		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR",
+		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER",
 		corpse = "DRAGONSTEETH",
 		description = "Perimeter Defense",
 		footprintx = 2,

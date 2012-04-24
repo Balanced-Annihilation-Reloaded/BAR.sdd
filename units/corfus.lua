@@ -12,7 +12,7 @@ return {
 		buildinggrounddecaltype = "corfus_aoplane.dds",
 		buildpic = "CORFUS.DDS",
 		buildtime = 75424,
-		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR",
+		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER",
 		collisionVolumeScales = [[84 104 84]],
 		collisionVolumeOffsets = [[0 0 0]],
 		collisionVolumeTest = 1,

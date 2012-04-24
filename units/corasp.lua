@@ -14,7 +14,7 @@ return {
 		buildinggrounddecaltype = "corasp_aoplane.dds",
 		buildpic = "CORASP.DDS",
 		buildtime = 9315,
-		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR",
+		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER",
 		collisionvolumeoffsets = "0 8 0",
 		collisionvolumescales = "165 59 165",
 		collisionvolumetest = 1,

@@ -8,7 +8,7 @@ return {
 		buildpic = "ARMSUBK.DDS",
 		buildtime = 17767,
 		canmove = true,
-		category = "UNDERWATER ALL NOTLAND MOBILE WEAPON NOTAIR",
+		category = "UNDERWATER ALL NOTLAND MOBILE WEAPON NOTAIR NOTHOVER",
 		collisionvolumeoffsets = "0.5 0 0",
 		collisionvolumescales = "20 20 64",
 		collisionvolumetest = 1,

@@ -7,7 +7,7 @@ return {
 		buildcostmetal = 23,
 		buildpic = "CORFORT.DDS",
 		buildtime = 810,
-		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR",
+		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER",
 		corpse = "FORTIFICATION_CORE",
 		description = "Perimeter Defense",
 		footprintx = 2,

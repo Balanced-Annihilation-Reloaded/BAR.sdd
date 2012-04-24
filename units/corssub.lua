@@ -29,7 +29,11 @@ return {
 		movementclass = "UBOAT3",
 		name = "Leviathan",
 		nochasecategory = "VTOL",
-		objectname = "CORSSUB",
+		objectname = "CORSSUB.s3o",
+		customParams ={
+			normaltex = "unittextures/Core_normal.tga",
+			normalmaps = "yes",
+		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 520,

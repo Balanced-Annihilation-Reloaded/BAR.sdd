@@ -30,10 +30,6 @@ return {
 		name = "Pillager",
 		nochasecategory = "NOTLAND VTOL",
 		objectname = "CORMART.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 299,
@@ -44,6 +40,8 @@ return {
 		turnrate = 445,
 		customparams = {
 			canareaattack = 1,
+			normaltex = "unittextures/Core_normal.tga",
+			normalmaps = "yes",
 		},
 		featuredefs = {
 			dead = {

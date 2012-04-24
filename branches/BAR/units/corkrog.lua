@@ -39,6 +39,8 @@ return {
 		turnrate = 380,
 		upright = true,
 		customparams = {
+			normaltex = "unittextures/Core_normal.tga",
+			normalmaps = "yes",
 			paralyzemultiplier = 0,
 		},
 		featuredefs = {

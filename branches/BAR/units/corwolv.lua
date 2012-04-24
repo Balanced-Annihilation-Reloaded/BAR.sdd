@@ -27,10 +27,6 @@ return {
 		name = "Wolverine",
 		nochasecategory = "VTOL",
 		objectname = "CORWOLV.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 299,
@@ -41,6 +37,8 @@ return {
 		turnrate = 466,
 		customparams = {
 			canareaattack = 1,
+			normaltex = "unittextures/Core_normal.tga",
+			normalmaps = "yes",
 		},
 		featuredefs = {
 			dead = {

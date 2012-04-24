@@ -1,18 +1,3 @@
-//            * Header Info *
-// VersionSignature                     4
-// NumberOfScripts                     13
-// NumberOfPieces                      7
-// LengthOfScripts                     3f6
-// NumberOfStaticVars                  3
-// UKZero                              0
-// OffsetToScriptCodeIndexArray        1004
-// OffsetToScriptNameOffsetArray       1038
-// OffsetToPieceNameOffsetArray        106c
-// OffsetToScriptCode                  2c
-// OffsetToNameArray                   1088
-
-// OffsetToFirstName                   1088
-
 #define TA			// This is a TA script
 
 #include "sfxtype.h"
@@ -20,197 +5,180 @@
 
 piece  base, fan, tank1, tank2;
 
-static-var  Static_Var_1, statechg_DesiredState, statechg_StateChanging;
+static-var  Static_Var_1, Static_Var_2;
 
 
 activatescr()
-/*     0:*/{
-/*     2:*/	if( TRUE )
-/*     4:*/	{
-/*     6:*/		move tank1 to y-axis [5.000000] speed [5];
-/*     b:*/		move tank2 to y-axis [-5.000000] speed [5];
-				wait-for-move tank1 along y-axis;
-/*    22:*/	}
-/*    8d:*/	sleep 266;
-/*    90:*/	return (0);
-/*    be:*/}
+{
+	if( TRUE )
+	{
+		move tank1 to y-axis [5.000000] speed [5.000000];
+		move tank2 to y-axis [-5.000000] speed [5.000000];
+		wait-for-move tank1 along y-axis;
+		spin fan around y-axis speed <86.000000> accelerate <2.5000000>;
+	}
+	sleep 266;
+}
 
 deactivatescr()
-/*     0:*/{
-/*     2:*/	if( TRUE )
-/*     4:*/	{
-/*     6:*/		move tank1 to y-axis [0.000000] speed [5];
-/*     b:*/		move tank2 to y-axis [0.000000] speed [5];
-				wait-for-move tank1 along y-axis;
-/*    22:*/	}
-/*    8d:*/	sleep 266;
-/*    90:*/	return (0);
-/*    be:*/}
+{
+	if( TRUE )
+	{
+		move tank1 to y-axis [0.000000] speed [5.000000];
+		move tank2 to y-axis [0.000000] speed [5.000000];
+		wait-for-move tank1 along y-axis;
+		spin fan around y-axis speed <30.000000> accelerate <0.500000>;
+	}
+	sleep 266;
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
-/*   16d:*/{
-/*   170:*/	while( get BUILD_PERCENT_LEFT )
-/*   172:*/	{
-/*   174:*/		sleep 400;
-/*   177:*/	}
-/*   179:*/	while( TRUE )
-/*   17b:*/	{
-/*   17e:*/		healthpercent = get HEALTH;
-/*   185:*/		if( healthpercent < 66 )
-/*   187:*/		{
-/*   18c:*/			smoketype = 256 | 2;
-/*   196:*/			if( Rand( 1, 66 ) < healthpercent )
-/*   198:*/			{
-/*   19d:*/				smoketype = 256 | 1;
-/*   19f:*/			}
-/*   1a1:*/			emit-sfx smoketype from base;
-/*   1a3:*/		}
-/*   1a8:*/		sleeptime = healthpercent * 50;
-/*   1af:*/		if( sleeptime < 200 )
-/*   1b1:*/		{
-/*   1b3:*/			sleeptime = 200;
-/*   1b5:*/		}
-/*   1b7:*/		sleep sleeptime;
-/*   1ba:*/	}
-/*   1bc:*/	return (0);
-/*   1bd:*/}
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	while( TRUE )
+	{
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
+	}
+}
 
 Go()
-/*   1bd:*/{
-/*   1bf:*/	if( Static_Var_1 )
-/*   1c1:*/	{
-/*   1c5:*/		set ACTIVATION to 0;
-/*   1c8:*/		return (0);
-/*   1c9:*/	}
-/*   1d5:*/	call-script activatescr();
-/*   1dc:*/	set ARMORED to 0;
-/*   1df:*/	return (0);
-/*   1e0:*/}
+{
+	if( Static_Var_1 )
+	{
+		set ACTIVATION to 0;
+		return (0);
+	}
+	call-script activatescr();
+	set ARMORED to 0;
+}
 
 Stop()
-/*   1e0:*/{
-/*   1e4:*/	set ARMORED to 1;
-/*   1e5:*/	call-script deactivatescr();
-/*   1f6:*/	return (0);
-/*   1f7:*/}
+{
+	set ARMORED to 1;
+	call-script deactivatescr();
+}
 
-InitState()
-/*   1f7:*/{
-/*   1f9:*/	statechg_DesiredState = TRUE;
-/*   1fd:*/	statechg_StateChanging = FALSE;
-/*   201:*/	return (0);
-/*   202:*/}
-
-RequestState(requestedstate, currentstate)
-/*   204:*/{
-/*   206:*/	if( statechg_StateChanging )
-/*   208:*/	{
-/*   20a:*/		statechg_DesiredState = requestedstate;
-/*   20e:*/		return (0);
-/*   20f:*/	}
-/*   211:*/	statechg_StateChanging = TRUE;
-/*   215:*/	currentstate = statechg_DesiredState;
-/*   219:*/	statechg_DesiredState = requestedstate;
-/*   220:*/	while( statechg_DesiredState != currentstate )
-/*   222:*/	{
-/*   227:*/		if( statechg_DesiredState == 0 )
-/*   229:*/		{
-/*   229:*/			call-script Go();
-/*   22e:*/			currentstate = 0;
-/*   230:*/		}
-/*   235:*/		if( statechg_DesiredState == 1 )
-/*   237:*/		{
-/*   237:*/			call-script Stop();
-/*   23c:*/			currentstate = 1;
-/*   23e:*/		}
-/*   240:*/	}
-/*   242:*/	statechg_StateChanging = FALSE;
-/*   246:*/	return (0);
-/*   247:*/}
+ImAMetalMaker()
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 150;
+	}
+	Static_Var_2 = -1;
+	while( TRUE )
+	{
+		if( get UNKNOWN_UNIT_VALUE(1024) == 1 )
+		{
+			if( Static_Var_2 != 1 )
+			{
+				call-script Go();
+				Static_Var_2 = 1;
+			}
+		}
+		else if( Static_Var_2 != 0 )
+		{
+			call-script Stop();
+			Static_Var_2 = 0;
+		}
+		sleep 1000;
+	}
+}
 
 Create()
-/*   247:*/{
-			spin fan around y-axis speed <30> accelerate <3>;
-/*   257:*/	call-script InitState();
-/*   25a:*/	start-script SmokeUnit();
-/*   25f:*/	Static_Var_1 = 0;
-/*   264:*/	while( get BUILD_PERCENT_LEFT )
-/*   266:*/	{
-/*   268:*/		sleep 1000;
-/*   26b:*/	}
-/*   26f:*/	set ARMORED to 1;
-/*   272:*/	return (0);
-/*   273:*/}
+{
+	spin fan around y-axis speed <30.000000> accelerate <3.000000>;
+	call-script ImAMetalMaker();
+	start-script SmokeUnit();
+	Static_Var_1 = 0;
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 1000;
+	}
+	set ARMORED to 1;
+}
 
 Activate()
-/*   273:*/{
-/*   275:*/	start-script RequestState(0);
-/*   27a:*/	return (0);
-/*   27b:*/}
+{
+	start-script activatescr();
+}
 
 Deactivate()
-/*   27b:*/{
-/*   27d:*/	start-script RequestState(1);
-/*   282:*/	return (0);
-/*   283:*/}
+{
+	start-script deactivatescr();
+}
 
-HitByWeapon(Func_Var_1, Func_Var_2)
-/*   285:*/{
-/*   288:*/	if( get ACTIVATION )
-/*   28a:*/	{
-/*   28c:*/		Static_Var_1 = 1;
-/*   28e:*/	}
-/*   290:*/	if( Static_Var_1 )
-/*   292:*/	{
-/*   294:*/		signal 2;
-/*   297:*/		set-signal-mask 2;
-/*   29c:*/		set ACTIVATION to 0;
-/*   29f:*/		sleep 8000;
-/*   2a2:*/		Static_Var_1 = 0;
-/*   2a8:*/		set ACTIVATION to 100;
-/*   2a9:*/	}
-/*   2ab:*/	return (0);
-/*   2ac:*/}
+HitByWeapon(anglex, anglez)
+{
+	if( get ACTIVATION )
+	{
+		Static_Var_1 = 1;
+	}
+	if( Static_Var_1 )
+	{
+		signal 2;
+		set-signal-mask 2;
+		set ACTIVATION to 0;
+		sleep 8000;
+		Static_Var_1 = 0;
+		set ACTIVATION to 100;
+	}
+}
 
 SweetSpot(piecenum)
-/*   2ad:*/{
-/*   2af:*/	piecenum = base;
-/*   2b3:*/	return (0);
-/*   2b4:*/}
+{
+	piecenum = base;
+}
 
 Killed(severity, corpsetype)
-/*   2b6:*/{
-/*   2bb:*/	if( severity <= 25 )
-/*   2bd:*/	{
-/*   2bf:*/		corpsetype = 1;
-/*   2c6:*/		explode base type BITMAPONLY | BITMAP1;
-/*   2cd:*/		explode fan type BITMAPONLY | BITMAP2;
-/*   2d4:*/		explode tank1 type BITMAPONLY | BITMAP3;
-/*   2db:*/		explode tank2 type BITMAPONLY | BITMAP4;
-/*   2f4:*/		return (0);
-/*   2f5:*/	}
-/*   2fa:*/	if( severity <= 50 )
-/*   2fc:*/	{
-/*   2fe:*/		corpsetype = 2;
-/*   2c6:*/		explode base type BITMAPONLY | BITMAP1;
-/*   2cd:*/		explode fan type BITMAPONLY | BITMAP2;
-/*   2d4:*/		explode tank1 type BITMAPONLY | BITMAP3;
-/*   2db:*/		explode tank2 type BITMAPONLY | BITMAP4;
-/*   333:*/		return (0);
-/*   334:*/	}
-/*   339:*/	if( severity <= 99 )
-/*   33b:*/	{
-/*   33d:*/		corpsetype = 3;
-/*   2c6:*/		explode base type BITMAPONLY | BITMAP1;
-/*   2cd:*/		explode fan type BITMAPONLY | BITMAP2;
-/*   2d4:*/		explode tank1 type BITMAPONLY | BITMAP3;
-/*   2db:*/		explode tank2 type BITMAPONLY | BITMAP4;
-/*   396:*/		return (0);
-/*   397:*/	}
-/*   399:*/	corpsetype = 3;
-/*   2c6:*/		explode base type BITMAPONLY | BITMAP1;
-/*   2cd:*/		explode fan type BITMAPONLY | BITMAP2;
-/*   2d4:*/		explode tank1 type BITMAPONLY | BITMAP3;
-/*   2db:*/		explode tank2 type BITMAPONLY | BITMAP4;
-/*   3f5:*/	return (0);
-/*   3f6:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1;
+		explode base type BITMAPONLY | BITMAP1;
+		explode fan type BITMAPONLY | BITMAP2;
+		explode tank1 type BITMAPONLY | BITMAP3;
+		explode tank2 type BITMAPONLY | BITMAP4;
+		return (0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2;
+		explode base type BITMAPONLY | BITMAP1;
+		explode fan type BITMAPONLY | BITMAP2;
+		explode tank1 type BITMAPONLY | BITMAP3;
+		explode tank2 type BITMAPONLY | BITMAP4;
+		return (0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3;
+		explode base type BITMAPONLY | BITMAP1;
+		explode fan type BITMAPONLY | BITMAP2;
+		explode tank1 type BITMAPONLY | BITMAP3;
+		explode tank2 type BITMAPONLY | BITMAP4;
+		return (0);
+	}
+	corpsetype = 3;
+	explode base type BITMAPONLY | BITMAP1;
+	explode fan type BITMAPONLY | BITMAP2;
+	explode tank1 type BITMAPONLY | BITMAP3;
+	explode tank2 type BITMAPONLY | BITMAP4;
+}

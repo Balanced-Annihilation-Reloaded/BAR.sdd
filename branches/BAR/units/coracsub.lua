@@ -23,8 +23,8 @@ return {
 		footprintx = 3,
 		footprintz = 3,
 		icontype = "sea",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		maxdamage = 370,
 		maxvelocity = 2.0699999332428,
 		metalmake = 0.30000001192093,
@@ -42,6 +42,10 @@ return {
 		waterline = 30,
 		workertime = 300,
 		buildoptions = {
+			[10] = "csubpen",
+			[11] = "corason",
+			[12] = "corenaa",
+			[13] = "coratl",
 			[1] = "coruwadves",
 			[2] = "coruwadvms",
 			[3] = "coruwfus",
@@ -51,10 +55,6 @@ return {
 			[7] = "corplat",
 			[8] = "corsy",
 			[9] = "corasy",
-			[10] = "csubpen",
-			[11] = "corason",
-			[12] = "corenaa",
-			[13] = "coratl",
 		},
 		featuredefs = {
 			dead = {

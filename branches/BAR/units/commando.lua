@@ -14,7 +14,7 @@ return {
 		canreclaim = true,
 		canrepair = true,
 		canrestore = false,
-		category = "ALL MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER",
+		category = "ALL MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0.0 -7.0 0.0",
 		collisionvolumescales = "19.0 35.0 19.0",
 		collisionvolumetype = "box",
@@ -135,11 +135,11 @@ return {
 		weapons = {
 			[1] = {
 				def = "COMMANDO_BLASTER",
-				onlytargetcategory = "NOTAIR",
+				onlytargetcategory = "SURFACE",
 			},
 			[2] = {
 				def = "COMMANDO_MINELAYER",
-				onlytargetcategory = "NOTAIR NOTSHIP NOTSUB",
+				onlytargetcategory = "NOTAIR NOTSHIP NOTSUB NOTSUB",
 			},
 		},
 	},

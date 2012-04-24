@@ -12,7 +12,7 @@ return {
 		buildpic = "ARMAAP.DDS",
 		buildtime = 20851,
 		canmove = true,
-		category = "ALL PLANT NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER",
+		category = "ALL PLANT NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -17 -23",
 		collisionvolumescales = "106 40 48",
 		collisionvolumetest = 1,
@@ -32,10 +32,6 @@ return {
 		metalstorage = 200,
 		name = "Advanced Aircraft Plant",
 		objectname = "ARMAAP.s3o",
-		customParams ={
-			normaltex = "unittextures/Arm_normals.tif",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 312,
@@ -44,6 +40,7 @@ return {
 		workertime = 200,
 		yardmap = "oooooooooooooooooooooooooooooooooooooooooooooooo",
 		buildoptions = {
+			[10] = "armcybr",
 			[1] = "armaca",
 			[2] = "armbrawl",
 			[3] = "armpnix",
@@ -53,7 +50,10 @@ return {
 			[7] = "armdfly",
 			[8] = "blade",
 			[9] = "corgripn",
-			[10] = "armcybr",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.tif",
 		},
 		featuredefs = {
 			dead = {

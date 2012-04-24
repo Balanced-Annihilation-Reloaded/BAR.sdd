@@ -7,7 +7,7 @@ return {
 		buildpic = "ARMLATNK.DDS",
 		buildtime = 6027,
 		canmove = true,
-		category = "ALL TANK MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER",
+		category = "ALL TANK MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -9 -0.5",
 		collisionvolumescales = "30.5 38 28",
 		collisionvolumetest = 1,
@@ -19,8 +19,8 @@ return {
 		explodeas = "BIG_UNITEX",
 		footprintx = 2,
 		footprintz = 2,
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		leavetracks = true,
 		maxdamage = 950,
 		maxslope = 10,
@@ -41,10 +41,10 @@ return {
 		featuredefs = {
 			dead = {
 				blocking = true,
-				collisionvolumetype = "Box",
-				collisionvolumescales = "31.8865509033 22.2328948975 29.3510131836",
-				collisionvolumeoffsets = "-1.01699066162 -0.66435255127 0.0775146484375",
 				category = "corpses",
+				collisionvolumeoffsets = "-1.01699066162 -0.66435255127 0.0775146484375",
+				collisionvolumescales = "31.8865509033 22.2328948975 29.3510131836",
+				collisionvolumetype = "Box",
 				damage = 720,
 				description = "Panther Wreckage",
 				energy = 0,
@@ -166,7 +166,7 @@ return {
 		weapons = {
 			[1] = {
 				def = "ARMLATNK_WEAPON",
-				onlytargetcategory = "NOTAIR",
+				onlytargetcategory = "SURFACE",
 			},
 			[3] = {
 				def = "ARMAMPH_MISSILE",

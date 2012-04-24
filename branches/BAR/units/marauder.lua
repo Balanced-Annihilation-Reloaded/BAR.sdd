@@ -7,7 +7,7 @@ return {
 		buildpic = "MARAUDER.DDS",
 		buildtime = 28957,
 		canmove = true,
-		category = "KBOT WEAPON ALL NOTSUB NOTAIR NOTHOVER",
+		category = "KBOT WEAPON ALL NOTSUB NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -2 0",
 		collisionvolumescales = "27 31 40",
 		collisionvolumetest = 1,
@@ -17,8 +17,8 @@ return {
 		explodeas = "BIG_UNITEX",
 		footprintx = 3,
 		footprintz = 3,
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		mass = 200000,
 		maxdamage = 4200,
 		maxslope = 17,
@@ -37,10 +37,10 @@ return {
 		featuredefs = {
 			dead = {
 				blocking = true,
-				collisionvolumetype = "Box",
-				collisionvolumescales = "32.1447906494 31.2162322998 37.0860900879",
-				collisionvolumeoffsets = "0.882118225098 0.0283161499023 6.0887298584",
 				category = "corpses",
+				collisionvolumeoffsets = "0.882118225098 0.0283161499023 6.0887298584",
+				collisionvolumescales = "32.1447906494 31.2162322998 37.0860900879",
+				collisionvolumetype = "Box",
 				damage = 2400,
 				description = "Marauder Wreckage",
 				energy = 0,
@@ -161,7 +161,7 @@ return {
 		weapons = {
 			[1] = {
 				def = "ARMMECH_CANNON",
-				onlytargetcategory = "NOTAIR",
+				onlytargetcategory = "SURFACE",
 			},
 			[3] = {
 				def = "ARMAMPH_MISSILE",

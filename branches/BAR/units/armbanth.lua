@@ -8,7 +8,7 @@ return {
 		buildpic = "ARMBANTH.DDS",
 		buildtime = 276057,
 		canmove = true,
-		category = "KBOT WEAPON ALL NOTSUB NOTAIR NOTHOVER",
+		category = "KBOT WEAPON ALL NOTSUB NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -8 0",
 		collisionvolumescales = "59 83 51",
 		collisionvolumetest = 0,
@@ -44,10 +44,10 @@ return {
 		featuredefs = {
 			dead = {
 				blocking = true,
-				collisionvolumetype = "Box",
-				collisionvolumescales = "64.8059539795 21.2949981689 66.8361816406",
-				collisionvolumeoffsets = "4.18798065186 -1.60430091553 -4.70808410645",
 				category = "corpses",
+				collisionvolumeoffsets = "4.18798065186 -1.60430091553 -4.70808410645",
+				collisionvolumescales = "64.8059539795 21.2949981689 66.8361816406",
+				collisionvolumetype = "Box",
 				damage = 21000,
 				description = "Bantha Wreckage",
 				energy = 0,
@@ -203,12 +203,15 @@ return {
 		weapons = {
 			[1] = {
 				def = "ARMBANTHA_FIRE",
+				onlytargetcategory = "NOTSUB",
 			},
 			[2] = {
 				def = "TEHLAZEROFDEWM",
+				onlytargetcategory = "NOTSUB",
 			},
 			[3] = {
 				def = "BANTHA_ROCKET",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

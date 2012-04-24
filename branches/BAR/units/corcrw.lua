@@ -27,15 +27,15 @@ return {
 		name = "Krow",
 		nochasecategory = "VTOL",
 		objectname = "CORCRW.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 494,
 		turnrate = 297,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -123,15 +123,15 @@ return {
 		weapons = {
 			[1] = {
 				def = "KROWLASER2",
-				onlytargetcategory = "NOTAIR",
+				onlytargetcategory = "SURFACE",
 			},
 			[2] = {
 				def = "KROWLASER",
-				onlytargetcategory = "NOTAIR",
+				onlytargetcategory = "SURFACE",
 			},
 			[3] = {
 				def = "KROWLASER",
-				onlytargetcategory = "NOTAIR",
+				onlytargetcategory = "SURFACE",
 			},
 		},
 	},

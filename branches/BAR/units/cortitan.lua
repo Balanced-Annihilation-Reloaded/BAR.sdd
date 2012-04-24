@@ -18,8 +18,8 @@ return {
 		footprintx = 3,
 		footprintz = 3,
 		icontype = "air",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		maxdamage = 1760,
 		maxslope = 10,
 		maxvelocity = 10.579999923706,
@@ -27,14 +27,14 @@ return {
 		name = "Titan",
 		nochasecategory = "VTOL",
 		objectname = "CORTITAN.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 455,
 		turnrate = 450,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -93,6 +93,7 @@ return {
 			[1] = {
 				badtargetcategory = "NOTSHIP",
 				def = "ARMAIR_TORPEDO",
+				onlytargetcategory = "NOTHOVER",
 			},
 		},
 	},

@@ -13,7 +13,7 @@ return {
 		buildpic = "CORVP.DDS",
 		buildtime = 7151,
 		canmove = true,
-		category = "ALL PLANT NOTLAND NOWEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER",
+		category = "ALL PLANT NOTLAND NOWEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "3 15 2",
 		collisionvolumescales = "101 40 106",
 		collisionvolumetest = 1,
@@ -25,8 +25,8 @@ return {
 		footprintx = 7,
 		footprintz = 7,
 		icontype = "building",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		levelground = false,
 		maxdamage = 2650,
 		maxslope = 15,
@@ -34,10 +34,6 @@ return {
 		metalstorage = 100,
 		name = "Vehicle Plant",
 		objectname = "CORVP.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
@@ -47,6 +43,7 @@ return {
 		workertime = 100,
 		yardmap = "yyyyyyyyyoooyyooooooooocccoooocccoooocccoooocccoo",
 		buildoptions = {
+			[10] = "cormist",
 			[1] = "corcv",
 			[2] = "cormuskrat",
 			[3] = "cormlv",
@@ -56,7 +53,10 @@ return {
 			[7] = "corraid",
 			[8] = "corlevlr",
 			[9] = "corwolv",
-			[10] = "cormist",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
 		},
 		featuredefs = {
 			dead = {

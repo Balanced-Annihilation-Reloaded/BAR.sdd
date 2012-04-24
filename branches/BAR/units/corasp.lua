@@ -14,7 +14,7 @@ return {
 		buildinggrounddecaltype = "corasp_aoplane.dds",
 		buildpic = "CORASP.DDS",
 		buildtime = 9315,
-		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER",
+		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 8 0",
 		collisionvolumescales = "165 59 165",
 		collisionvolumetest = 1,
@@ -25,8 +25,8 @@ return {
 		footprintx = 9,
 		footprintz = 9,
 		icontype = "building",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		isairbase = true,
 		mass = 200000,
 		maxdamage = 1600,
@@ -34,10 +34,6 @@ return {
 		maxwaterdepth = 1,
 		name = "Air Repair Pad",
 		objectname = "CORASP.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
@@ -46,6 +42,10 @@ return {
 		usebuildinggrounddecal = true,
 		workertime = 1000,
 		yardmap = "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

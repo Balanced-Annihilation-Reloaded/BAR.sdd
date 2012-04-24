@@ -19,8 +19,8 @@ return {
 		footprintx = 3,
 		footprintz = 3,
 		icontype = "air",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		maxdamage = 1660,
 		maxslope = 10,
 		maxvelocity = 8.8699998855591,
@@ -28,14 +28,14 @@ return {
 		name = "Typhoon",
 		nochasecategory = "VTOL",
 		objectname = "CORSEAP.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 455,
 		turnrate = 575,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",
@@ -97,6 +97,7 @@ return {
 			[1] = {
 				badtargetcategory = "NOTSHIP",
 				def = "ARMSEAP_WEAPON1",
+				onlytargetcategory = "NOTHOVER",
 			},
 		},
 	},

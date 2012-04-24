@@ -19,8 +19,8 @@ return {
 		footprintz = 3,
 		hoverattack = true,
 		icontype = "air",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		maxdamage = 1400,
 		maxslope = 10,
 		maxvelocity = 5.1900000572205,
@@ -28,14 +28,14 @@ return {
 		name = "Rapier",
 		nochasecategory = "VTOL",
 		objectname = "CORAPE.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 550,
 		turnrate = 594,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -99,7 +99,7 @@ return {
 			[1] = {
 				badtargetcategory = "VTOL",
 				def = "VTOL_ROCKET",
-				onlytargetcategory = "NOTAIR",
+				onlytargetcategory = "SURFACE",
 			},
 		},
 	},

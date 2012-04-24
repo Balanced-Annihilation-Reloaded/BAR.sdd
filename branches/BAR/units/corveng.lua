@@ -24,14 +24,14 @@ return {
 		name = "Avenger",
 		nochasecategory = "NOTAIR",
 		objectname = "CORVENG.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 200,
 		turnrate = 839,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -95,6 +95,7 @@ return {
 			[1] = {
 				badtargetcategory = "NOTAIR",
 				def = "CORVTOL_MISSILE_A2A",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

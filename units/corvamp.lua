@@ -24,15 +24,15 @@ return {
 		name = "Vamp",
 		nochasecategory = "NOTAIR",
 		objectname = "CORVAMP.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 200,
 		stealth = true,
 		turnrate = 1337,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -57,12 +57,12 @@ return {
 		weapondefs = {
 			corvtol_advmissile = {
 				areaofeffect = 8,
-				impactonly = 1,
 				collidefriendly = false,
 				craterboost = 0,
 				cratermult = 0,
 				explosiongenerator = "custom:FLASH2",
 				firestarter = 0,
+				impactonly = 1,
 				impulseboost = 0,
 				impulsefactor = 0,
 				metalpershot = 0,
@@ -86,9 +86,9 @@ return {
 				damage = {
 					bombers = 300,
 					commanders = 5,
-					subs = 5,
 					default = 12,
 					fighters = 400,
+					subs = 5,
 					vtol = 250,
 				},
 			},
@@ -97,10 +97,12 @@ return {
 			[1] = {
 				badtargetcategory = "NOTAIR",
 				def = "CORVTOL_ADVMISSILE",
+				onlytargetcategory = "NOTSUB",
 			},
 			[2] = {
-        badtargetcategory = "NOTAIR",
+				badtargetcategory = "NOTAIR",
 				def = "CORVTOL_ADVMISSILE",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

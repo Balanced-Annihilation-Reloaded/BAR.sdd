@@ -7,7 +7,7 @@ return {
 		buildpic = "CORVROC.DDS",
 		buildtime = 15002,
 		canmove = true,
-		category = "ALL TANK MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER",
+		category = "ALL TANK MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -14 0",
 		collisionvolumescales = "44 41 52",
 		collisionvolumetest = 1,
@@ -19,8 +19,8 @@ return {
 		explodeas = "BIG_UNITEX",
 		footprintx = 3,
 		footprintz = 3,
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		leavetracks = true,
 		maxdamage = 1250,
 		maxslope = 16,
@@ -30,10 +30,6 @@ return {
 		name = "Diplomat",
 		nochasecategory = "MOBILE VTOL",
 		objectname = "CORVROC.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 221,
@@ -41,13 +37,17 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 38,
 		turnrate = 520.29998779297,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,
-				collisionvolumetype = "Box",
-				collisionvolumescales = "42.9068603516 14.9519805908 46.03515625",
-				collisionvolumeoffsets = "-0.75276184082 -4.69010970459 0.13981628418",
 				category = "corpses",
+				collisionvolumeoffsets = "-0.75276184082 -4.69010970459 0.13981628418",
+				collisionvolumescales = "42.9068603516 14.9519805908 46.03515625",
+				collisionvolumetype = "Box",
 				damage = 1897,
 				description = "Diplomat Wreckage",
 				energy = 0,
@@ -104,7 +104,7 @@ return {
 		},
 		weapondefs = {
 			cortruck_rocket = {
-				areaofeffect = 100,
+				areaofeffect = 150,
 				craterboost = 0,
 				cratermult = 0,
 				edgeeffectiveness = 0.5,
@@ -138,7 +138,7 @@ return {
 		weapons = {
 			[1] = {
 				def = "CORTRUCK_ROCKET",
-				onlytargetcategory = "NOTAIR",
+				onlytargetcategory = "SURFACE",
 			},
 		},
 	},

@@ -11,7 +11,7 @@ return {
 		buildinggrounddecaltype = "armrl_aoplane.dds",
 		buildpic = "ARMRL.DDS",
 		buildtime = 1843,
-		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER",
+		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 1 0",
 		collisionvolumescales = "36 57 36",
 		collisionvolumetest = 1,
@@ -22,8 +22,8 @@ return {
 		footprintx = 3,
 		footprintz = 3,
 		icontype = "building",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		maxdamage = 295,
 		maxslope = 20,
 		maxwaterdepth = 0,
@@ -38,10 +38,10 @@ return {
 		featuredefs = {
 			dead = {
 				blocking = true,
-				collisionvolumetype = "Box",
-				collisionvolumescales = "39.1805114746 61.4574127197 35.6334838867",
-				collisionvolumeoffsets = "-2.76025390625 6.35986328135e-06 0.556625366211",
 				category = "corpses",
+				collisionvolumeoffsets = "-2.76025390625 6.35986328135e-06 0.556625366211",
+				collisionvolumescales = "39.1805114746 61.4574127197 35.6334838867",
+				collisionvolumetype = "Box",
 				damage = 177,
 				description = "Defender Wreckage",
 				energy = 0,
@@ -136,6 +136,7 @@ return {
 		weapons = {
 			[1] = {
 				def = "ARMRL_MISSILE",
+				onlytargetcategory = "VTOL",
 			},
 		},
 	},

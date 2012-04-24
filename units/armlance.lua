@@ -18,8 +18,8 @@ return {
 		footprintx = 3,
 		footprintz = 3,
 		icontype = "air",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		maxdamage = 1727,
 		maxslope = 10,
 		maxvelocity = 10.920000076294,
@@ -89,6 +89,7 @@ return {
 			[1] = {
 				badtargetcategory = "NOTSHIP",
 				def = "ARMAIR_TORPEDO",
+				onlytargetcategory = "NOTHOVER",
 			},
 		},
 	},

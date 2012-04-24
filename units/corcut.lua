@@ -20,8 +20,8 @@ return {
 		footprintz = 3,
 		hoverattack = true,
 		icontype = "air",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		maxdamage = 735,
 		maxslope = 10,
 		maxvelocity = 5.0799999237061,
@@ -29,14 +29,14 @@ return {
 		name = "Cutlass",
 		nochasecategory = "VTOL",
 		objectname = "CORCUT.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 595,
 		turnrate = 828,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",
@@ -94,7 +94,7 @@ return {
 			[1] = {
 				badtargetcategory = "VTOL",
 				def = "VTOL_ROCKET2",
-				onlytargetcategory = "NOTAIR",
+				onlytargetcategory = "SURFACE",
 			},
 		},
 	},

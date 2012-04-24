@@ -18,8 +18,8 @@ return {
 		footprintx = 3,
 		footprintz = 3,
 		icontype = "air",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		maxdamage = 615,
 		maxslope = 10,
 		maxvelocity = 8.0500001907349,
@@ -28,14 +28,14 @@ return {
 		noautofire = true,
 		nochasecategory = "VTOL",
 		objectname = "CORSHAD.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 169,
 		turnrate = 807,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -94,6 +94,7 @@ return {
 			[1] = {
 				badtargetcategory = "MOBILE",
 				def = "COREBOMB",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

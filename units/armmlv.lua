@@ -16,7 +16,7 @@ return {
 		canreclaim = false,
 		canrepair = false,
 		canrestore = false,
-		category = "ALL TANK MOBILE NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER",
+		category = "ALL TANK MOBILE NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
 		description = "Stealthy Minelayer/Minesweeper",
 		energymake = 1,
@@ -24,8 +24,8 @@ return {
 		explodeas = "BIG_UNITEX",
 		footprintx = 2,
 		footprintz = 2,
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		leavetracks = true,
 		mass = 1500,
 		maxdamage = 155,
@@ -148,7 +148,7 @@ return {
 		weapons = {
 			[1] = {
 				def = "MINESWEEP",
-				onlytargetcategory = "MINE",
+				onlytargetcategory = "MINE NOTSUB",
 			},
 		},
 	},

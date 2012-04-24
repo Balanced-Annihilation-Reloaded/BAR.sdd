@@ -11,7 +11,7 @@ return {
 		buildinggrounddecaltype = "csubpen_aoplane.dds",
 		buildpic = "CSUBPEN.DDS",
 		buildtime = 11402,
-		category = "ALL PLANT NOWEAPON NOTSUB NOTAIR NOTHOVER",
+		category = "ALL PLANT NOWEAPON NOTSUB NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 0 -2",
 		collisionvolumescales = "115 36 112",
 		collisionvolumetest = 1,
@@ -23,8 +23,8 @@ return {
 		footprintx = 8,
 		footprintz = 8,
 		icontype = "building",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		maxdamage = 2500,
 		maxslope = 10,
 		metalmake = 1,
@@ -32,10 +32,6 @@ return {
 		minwaterdepth = 25,
 		name = "Amphibious Complex",
 		objectname = "CSUBPEN.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 240,
@@ -53,6 +49,10 @@ return {
 			[7] = "cordecom",
 			[8] = "intruder",
 			[9] = "corsub",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
 		},
 		featuredefs = {
 			dead = {

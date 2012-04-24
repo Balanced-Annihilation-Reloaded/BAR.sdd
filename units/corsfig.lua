@@ -1,6 +1,7 @@
 return {
 	corsfig = {
 		acceleration = 0.45600000023842,
+		airsightdistance = 700,
 		brakerate = 7.5,
 		buildcostenergy = 3558,
 		buildcostmetal = 64,
@@ -24,15 +25,14 @@ return {
 		name = "Voodoo",
 		nochasecategory = "NOTAIR",
 		objectname = "CORSFIG.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 200,
-		airsightdistance = 700,
 		turnrate = 1547,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",
@@ -76,8 +76,8 @@ return {
 				soundhit = "xplosml2",
 				soundstart = "Rocklit3",
 				startvelocity = 420,
-				tolerance = 8000,
 				texture2 = "coresmoketrail",
+				tolerance = 8000,
 				tracks = true,
 				turnrate = 19384,
 				weaponacceleration = 146,
@@ -98,6 +98,7 @@ return {
 			[1] = {
 				badtargetcategory = "NOTAIR",
 				def = "CORSFIG_WEAPON",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

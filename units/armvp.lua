@@ -13,7 +13,7 @@ return {
 		buildpic = "ARMVP.DDS",
 		buildtime = 7192,
 		canmove = true,
-		category = "ALL PLANT NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER",
+		category = "ALL PLANT NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumescales = "120 34 92",
 		collisionvolumetest = 1,
 		collisionvolumetype = "Box",
@@ -24,8 +24,8 @@ return {
 		footprintx = 6,
 		footprintz = 7,
 		icontype = "building",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		levelground = false,
 		maxdamage = 2780,
 		maxslope = 15,
@@ -33,10 +33,6 @@ return {
 		metalstorage = 100,
 		name = "Vehicle Plant",
 		objectname = "ARMVP.s3o",
-		customParams ={
-			normaltex = "unittextures/Arm_normals.tif",
-			normalmaps = "yes",
-		},
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
@@ -46,6 +42,7 @@ return {
 		workertime = 100,
 		yardmap = "oooooooooooooooooooooooooccccooccccoocccco",
 		buildoptions = {
+			[10] = "armsam",
 			[1] = "armcv",
 			[2] = "armbeaver",
 			[3] = "armmlv",
@@ -55,7 +52,10 @@ return {
 			[7] = "armstump",
 			[8] = "tawf013",
 			[9] = "armjanus",
-			[10] = "armsam",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.tif",
 		},
 		featuredefs = {
 			dead = {

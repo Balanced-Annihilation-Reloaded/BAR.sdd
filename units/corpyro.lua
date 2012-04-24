@@ -7,7 +7,7 @@ return {
 		buildpic = "CORPYRO.DDS",
 		buildtime = 5027,
 		canmove = true,
-		category = "KBOT MOBILE WEAPON ALL ANTIFLAME NOTSUB NOTSHIP NOTAIR NOTHOVER",
+		category = "KBOT MOBILE WEAPON ALL ANTIFLAME NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "HEAP",
 		description = "Fast Assault Kbot",
 		energymake = 1.1000000238419,
@@ -15,8 +15,8 @@ return {
 		explodeas = "BIG_UNITEX",
 		footprintx = 2,
 		footprintz = 2,
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		maxdamage = 1000,
 		maxslope = 17,
 		maxvelocity = 2.75,
@@ -115,6 +115,7 @@ return {
 		weapons = {
 			[1] = {
 				def = "FLAMETHROWER",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

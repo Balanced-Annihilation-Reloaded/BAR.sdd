@@ -29,14 +29,14 @@ return {
 		noautofire = true,
 		nochasecategory = "VTOL",
 		objectname = "CORSB.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 455,
 		turnrate = 368,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",
@@ -96,6 +96,7 @@ return {
 			[1] = {
 				badtargetcategory = "VTOL",
 				def = "CORE_SEAADVBOMB",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

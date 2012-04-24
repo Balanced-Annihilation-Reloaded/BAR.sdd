@@ -7,7 +7,7 @@ return {
 		buildpic = "CORGOL.DDS",
 		buildtime = 26125,
 		canmove = true,
-		category = "ALL TANK MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER",
+		category = "ALL TANK MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 6 2",
 		collisionvolumescales = "49 48 62",
 		collisionvolumetest = 1,
@@ -19,8 +19,8 @@ return {
 		explodeas = "BIG_UNITEX",
 		footprintx = 4,
 		footprintz = 4,
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		leavetracks = true,
 		maxdamage = 7000,
 		maxslope = 12,
@@ -30,10 +30,6 @@ return {
 		name = "Goliath",
 		nochasecategory = "VTOL",
 		objectname = "CORGOL.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 395,
@@ -42,6 +38,10 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 49,
 		turnrate = 220,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,
@@ -139,7 +139,7 @@ return {
 		weapons = {
 			[1] = {
 				def = "COR_GOL",
-				onlytargetcategory = "NOTAIR",
+				onlytargetcategory = "SURFACE",
 			},
 		},
 	},

@@ -28,14 +28,14 @@ return {
 		noautofire = true,
 		nochasecategory = "VTOL",
 		objectname = "CORHURC.s3o",
-		customParams ={
-			normaltex = "unittextures/Core_normal.tga",
-			normalmaps = "yes",
-		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 221,
 		turnrate = 220,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -66,7 +66,6 @@ return {
 				commandfire = false,
 				craterboost = 0,
 				cratermult = 0,
-				manualbombsettings = 1,	
 				dropped = true,
 				edgeeffectiveness = 0.7,
 				explosiongenerator = "custom:CORE_BIGBOMB_EXPLOSION",
@@ -95,6 +94,7 @@ return {
 			[1] = {
 				badtargetcategory = "MOBILE",
 				def = "CORADVBOMB",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

@@ -23,8 +23,8 @@ return {
 		footprintx = 3,
 		footprintz = 3,
 		icontype = "sea",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		maxdamage = 360,
 		maxvelocity = 2.2999999523163,
 		metalmake = 0.30000001192093,
@@ -42,6 +42,10 @@ return {
 		waterline = 35,
 		workertime = 300,
 		buildoptions = {
+			[10] = "asubpen",
+			[11] = "armason",
+			[12] = "armfflak",
+			[13] = "armatl",
 			[1] = "armuwadves",
 			[2] = "armuwadvms",
 			[3] = "armuwfus",
@@ -51,10 +55,6 @@ return {
 			[7] = "armplat",
 			[8] = "armsy",
 			[9] = "armasy",
-			[10] = "asubpen",
-			[11] = "armason",
-			[12] = "armfflak",
-			[13] = "armatl",
 		},
 		featuredefs = {
 			dead = {

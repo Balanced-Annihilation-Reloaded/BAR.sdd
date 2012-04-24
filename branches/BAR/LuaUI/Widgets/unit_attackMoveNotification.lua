@@ -64,10 +64,10 @@ function widget:UnitDamaged (unitID, unitDefID, unitTeam, damage, paralyzer, wea
     if (x and y and z) then spSetLastMessagePosition(x,y,z) end
 end
 
--- function widget:UnitMoveFailed(unitID, unitDefID, unitTeam)
-    -- local udef = UnitDefs[unitDefID]
-    -- spEcho( udef.humanName  .. ": Can't reach destination!" )
--- end 
+function widget:UnitMoveFailed(unitID, unitDefID, unitTeam)
+    local udef = UnitDefs[unitDefID]
+    spEcho( udef.humanName  .. ": Can't reach destination!" )
+end 
 
 function setTeamId()
     localTeamID = spGetLocalTeamID()    

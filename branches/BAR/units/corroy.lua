@@ -9,7 +9,7 @@ return {
 		buildpic = "CORROY.DDS",
 		buildtime = 13368,
 		canmove = true,
-		category = "ALL NOTLAND MOBILE WEAPON SHIP NOTSUB NOTAIR",
+		category = "ALL NOTLAND MOBILE WEAPON SHIP NOTSUB NOTAIR NOTHOVER",
 		collisionvolumeoffsets = "0 3 0",
 		collisionvolumescales = "34 42 85",
 		collisionvolumetest = 1,

@@ -7,7 +7,7 @@ return {
 		buildpic = "TREM.DDS",
 		buildtime = 31103,
 		canmove = true,
-		category = "ALL WEAPON NOTSUB NOTAIR",
+		category = "ALL WEAPON NOTSUB NOTAIR NOTHOVER",
 		collisionvolumeoffsets = "0 -5 -1",
 		collisionvolumescales = "55 82 65",
 		collisionvolumetest = 1,

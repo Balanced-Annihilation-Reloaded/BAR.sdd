@@ -11,7 +11,7 @@ return {
 		buildinggrounddecaltype = "armfort_aoplane.dds",
 		buildpic = "ARMFORT.DDS",
 		buildtime = 965,
-		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR",
+		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER",
 		corpse = "FORTIFICATION",
 		description = "Perimeter Defense",
 		footprintx = 2,

@@ -7,7 +7,7 @@ return {
 		buildpic = "TAWF114.DDS",
 		buildtime = 23129,
 		canmove = true,
-		category = "ALL TANK WEAPON NOTSUB NOTAIR",
+		category = "ALL TANK WEAPON NOTSUB NOTAIR NOTHOVER",
 		collisionVolumeScales = [[33 32 48]],
 		collisionVolumeOffsets = [[0 5 -2]],
 		collisionVolumeTest = 1,

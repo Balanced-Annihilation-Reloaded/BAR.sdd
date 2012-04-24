@@ -12,7 +12,7 @@ return {
 		buildinggrounddecaltype = "corestor_aoplane.dds",
 		buildpic = "CORESTOR.DDS",
 		buildtime = 4257,
-		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR",
+		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER",
 		collisionvolumeoffsets = "0 14 0",
 		collisionvolumescales = "60 41 60",
 		collisionvolumetest = 1,

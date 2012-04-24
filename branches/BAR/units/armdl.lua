@@ -12,7 +12,7 @@ return {
 		buildinggrounddecaltype = "armdl_aoplane.dds",
 		buildpic = "ARMDL.DDS",
 		buildtime = 4180,
-		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR",
+		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER",
 		corpse = "DEAD",
 		description = "Depthcharge Launcher",
 		energymake = 0.10000000149012,

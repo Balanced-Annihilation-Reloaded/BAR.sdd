@@ -31,7 +31,11 @@ return {
 		movementclass = "BOAT4",
 		name = "Shredder",
 		nochasecategory = "ALL",
-		objectname = "CORARCH",
+		objectname = "CORARCH.s3o",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 465,

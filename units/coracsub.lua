@@ -32,7 +32,7 @@ return {
 		minwaterdepth = 20,
 		movementclass = "UBOAT3",
 		name = "Advanced Construction Sub",
-		objectname = "CORACSUB",
+		objectname = "CORACSUB.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
@@ -41,6 +41,10 @@ return {
 		turnrate = 364,
 		waterline = 30,
 		workertime = 300,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		buildoptions = {
 			[10] = "csubpen",
 			[11] = "corason",

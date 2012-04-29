@@ -30,7 +30,7 @@ return {
 		minwaterdepth = 15,
 		movementclass = "BOAT4",
 		name = "Pathfinder",
-		objectname = "CORMLS",
+		objectname = "CORMLS.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 260,
@@ -40,6 +40,10 @@ return {
 		waterline = 3,
 		windgenerator = 0.0010000000474975,
 		workertime = 400,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		buildoptions = {
 			[10] = "corfhp",
 			[11] = "corfrad",

@@ -30,13 +30,17 @@ return {
 		movementclass = "DBOAT6",
 		name = "Warlord",
 		nochasecategory = "VTOL",
-		objectname = "CORBATS",
+		objectname = "CORBATS.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 455,
 		turnrate = 306,
 		waterline = 12,
 		windgenerator = 0.0010000000474975,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

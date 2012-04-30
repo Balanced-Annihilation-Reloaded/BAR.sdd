@@ -35,7 +35,7 @@ return {
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 455,
 		turnrate = 306,
-		waterline = 12,
+		waterline = 4,
 		windgenerator = 0.0010000000474975,
 		customparams = {
 			normalmaps = "yes",

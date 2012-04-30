@@ -39,7 +39,7 @@ return {
 		movementclass = "DBOAT6",
 		name = "Hive",
 		nochasecategory = "ALL",
-		objectname = "CORCARRY",
+		objectname = "CORCARRY.s3o",
 		radardistance = 2700,
 		radaremitheight = 50,
 		seismicsignature = 0,
@@ -51,6 +51,10 @@ return {
 		waterline = 6,
 		windgenerator = 0.0010000000474975,
 		workertime = 1000,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

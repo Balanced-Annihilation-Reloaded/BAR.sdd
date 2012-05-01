@@ -30,7 +30,7 @@ return {
 		movementclass = "BOAT4",
 		name = "Phantom",
 		nochasecategory = "MOBILE",
-		objectname = "CORSJAM",
+		objectname = "CORSJAM.s3o",
 		onoffable = true,
 		radardistancejam = 900,
 		seismicsignature = 0,
@@ -40,6 +40,10 @@ return {
 		turnrate = 512,
 		waterline = 2,
 		windgenerator = 0.0010000000474975,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

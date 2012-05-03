@@ -31,7 +31,7 @@ return {
 		movementclass = "BOAT5",
 		name = "Messenger",
 		nochasecategory = "VTOL",
-		objectname = "CORMSHIP",
+		objectname = "CORMSHIP.s3o",
 		radardistance = 1400,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
@@ -40,6 +40,10 @@ return {
 		turnrate = 341,
 		waterline = 5,
 		windgenerator = 0.0010000000474975,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

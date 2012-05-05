@@ -29,7 +29,7 @@ return {
 		movementclass = "UBOAT3",
 		name = "Shark",
 		nochasecategory = "VTOL",
-		objectname = "CORSHARK",
+		objectname = "CORSHARK.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 390,
@@ -37,6 +37,10 @@ return {
 		turnrate = 289,
 		upright = true,
 		waterline = 30,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

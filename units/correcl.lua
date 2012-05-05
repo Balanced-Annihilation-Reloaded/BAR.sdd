@@ -30,7 +30,7 @@ return {
 		minwaterdepth = 20,
 		movementclass = "UBOAT3",
 		name = "Death Cavalry",
-		objectname = "CORRECL",
+		objectname = "CORRECL.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 156,
@@ -38,6 +38,10 @@ return {
 		turnrate = 282,
 		waterline = 30,
 		workertime = 450,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",

@@ -31,7 +31,7 @@ return {
 		movementclass = "BOAT5",
 		name = "Executioner",
 		nochasecategory = "VTOL",
-		objectname = "CORCRUS",
+		objectname = "CORCRUS.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 533,
@@ -40,6 +40,10 @@ return {
 		turnrate = 448,
 		waterline = 5.5,
 		windgenerator = 0.0010000000474975,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

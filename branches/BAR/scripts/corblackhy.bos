@@ -4,26 +4,17 @@
 #include "exptype.h"
 
 piece  base, body, barrel1a, barrel1b, barrel1c, barrel1d, radar, wake1,
-       wake2, wake3, wake4, wake5, wake6, tur1, tur2, tur3,
+       wake2, wake3, wake4, wake5, tur1, tur2, tur3,
        tur4, tur5, tur6, sleeves1, gun2, sleeves3, sleeves4, gun5,
        gun6, flare1a, flare1b, flare1c, flare1d, flare2, flare3a, flare3b,
        flare4a, flare4b, flare5, flare6;
 
-static-var  Static_Var_1, Static_Var_2, Static_Var_3, restore_delay, oldHead,
+static-var  Static_Var_1, Static_Var_2, Static_Var_3, restore_delay, 
 			Static_Var_7, Static_Var_8, aimDir;
 
 // Signal definitions
 #define SIG_MOVE			128
 
-
-SetDirection(heading)
-{
-	var spd;
-	spd = (get ABS(oldHead) - get ABS(heading)) / 2;
-	turn base to y-axis heading speed spd;
-	turn body to y-axis 0-heading speed spd;
-	oldHead = heading;
-}
 
 RockOnWaves()
 {
@@ -203,7 +194,6 @@ StartMoving()
 		emit-sfx 2 from wake3;
 		emit-sfx 2 from wake4;
 		emit-sfx 2 from wake5;
-		emit-sfx 2 from wake6;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 12000 / waketime;

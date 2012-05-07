@@ -33,7 +33,7 @@ return {
 		minwaterdepth = 15,
 		movementclass = "DBOAT6",
 		name = "Black Hydra",
-		objectname = "CORBLACKHY",
+		objectname = "CORBLACKHY.s3o",
 		radardistance = 1510,
 		radaremitheight = 64,
 		seismicsignature = 0,
@@ -44,6 +44,8 @@ return {
 		windgenerator = 0.0010000000474975,
 		customparams = {
 			paralyzemultiplier = 0,
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
 		},
 		featuredefs = {
 			dead = {

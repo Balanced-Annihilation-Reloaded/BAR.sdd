@@ -30,7 +30,7 @@ return {
 		name = "Juggernaut",
 		nochasecategory = "VTOL",
 		objectname = "gorg.s3o",
-		script = "gorg_script7.lua",
+		script = "gorg_script.lua",
 		seismicsignature = 0,
 		selfdestructas = "CRAWL_BLAST",
 		sightdistance = 720,

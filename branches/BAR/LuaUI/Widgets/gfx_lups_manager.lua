@@ -84,6 +84,9 @@ local UnitEffects = {
    [UnitDefNames["cormakr"].id] = {
        {class='StaticParticles',options=cormakrEffect},
   },
+     [UnitDefNames["corfmkr"].id] = {
+       {class='StaticParticles',options=cormakrEffect},
+  },
   
   --// FUSIONS //--------------------------
   [UnitDefNames["cafus"].id] = {

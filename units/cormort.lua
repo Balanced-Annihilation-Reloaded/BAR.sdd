@@ -24,13 +24,17 @@ return {
 		movementclass = "KBOT2",
 		name = "Morty",
 		nochasecategory = "VTOL",
-		objectname = "CORMORT",
+		objectname = "CORMORT.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 300,
 		smoothanim = true,
 		turnrate = 1099,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

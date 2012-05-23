@@ -24,13 +24,17 @@ return {
 		movementclass = "AKBOT2",
 		name = "Crasher",
 		nochasecategory = "ALL",
-		objectname = "CORCRASH",
+		objectname = "CORCRASH.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 379.60000610352,
 		smoothanim = true,
 		turnrate = 1112,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

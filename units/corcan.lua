@@ -28,13 +28,17 @@ return {
 		movementclass = "KBOT2",
 		name = "Can",
 		nochasecategory = "VTOL",
-		objectname = "CORCAN",
+		objectname = "CORCAN.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 350,
 		smoothanim = true,
 		turnrate = 970,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

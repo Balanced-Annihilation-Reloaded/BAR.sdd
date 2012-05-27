@@ -3,10 +3,10 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  lflare, rflare, turret, torso, pelvis, lleg, rleg, lbarrel,
+piece  lflare, rflare, torso, pelvis, lleg, rleg, lbarrel,
        rbarrel;
 
-static-var  barrel_3, restore_delay;
+static-var  gun_3, restore_delay;
 
 // Signal definitions
 #define SIG_MOVE			2
@@ -34,8 +34,8 @@ walk()
 			move pelvis to y-axis [-1.250000] now;
 			move lleg to y-axis [1.250000] now;
 			move rleg to y-axis [1.250000] now;
-			turn pelvis to x-axis <4.917582> now;
-			turn lleg to x-axis <-4.917582> now;
+			turn pelvis to x-axis <4.912088> now;
+			turn lleg to x-axis <-4.912088> now;
 			turn rleg to x-axis <1.049451> now;
 			sleep 30;
 		}
@@ -44,9 +44,9 @@ walk()
 			move pelvis to y-axis [-0.750000] now;
 			move lleg to y-axis [0.750000] now;
 			move rleg to y-axis [0.750000] now;
-			turn pelvis to x-axis <2.098901> now;
-			turn lleg to x-axis <-2.098901> now;
-			turn rleg to x-axis <2.807692> now;
+			turn pelvis to x-axis <2.093407> now;
+			turn lleg to x-axis <-2.093407> now;
+			turn rleg to x-axis <2.802198> now;
 			sleep 20;
 		}
 		if( TRUE )
@@ -106,9 +106,9 @@ walk()
 			move pelvis to y-axis [-1.224991] now;
 			move lleg to y-axis [1.250000] now;
 			move rleg to y-axis [1.250000] now;
-			turn pelvis to x-axis <4.565934> now;
-			turn lleg to x-axis <0.697802> now;
-			turn rleg to x-axis <-4.917582> now;
+			turn pelvis to x-axis <4.560440> now;
+			turn lleg to x-axis <0.692308> now;
+			turn rleg to x-axis <-4.912088> now;
 			sleep 30;
 		}
 		if( TRUE )
@@ -116,9 +116,9 @@ walk()
 			move pelvis to y-axis [-0.699997] now;
 			move lleg to y-axis [0.750000] now;
 			move rleg to y-axis [0.750000] now;
-			turn pelvis to x-axis <2.098901> now;
-			turn lleg to x-axis <2.807692> now;
-			turn rleg to x-axis <-2.098901> now;
+			turn pelvis to x-axis <2.093407> now;
+			turn lleg to x-axis <2.802198> now;
+			turn rleg to x-axis <-2.093407> now;
 			sleep 20;
 		}
 		if( TRUE )
@@ -163,7 +163,6 @@ walk()
 		sleep 100;
 	}
 	return (0);
-	// Build by COBBLER Ver4.0 Copyright @1998 DIGITAL CONCEPT SOFTWARE (MANU@inext.fr) / http://www.annihilationcenter.com/DCS/  
 }
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
@@ -182,7 +181,7 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 			{
 				smoketype = 256 | 1;
 			}
-			emit-sfx smoketype from turret;
+			emit-sfx smoketype from torso;
 		}
 		sleeptime = healthpercent * 50;
 		if( sleeptime < 200 )
@@ -211,7 +210,7 @@ StopMoving()
 
 Create()
 {
-	barrel_3 = lflare;
+	gun_3 = lflare;
 	restore_delay = 3000;
 	start-script StopMoving();
 	start-script SmokeUnit();
@@ -232,17 +231,17 @@ SweetSpot(piecenum)
 
 AimFromTertiary(piecenum)
 {
-	piecenum = turret;
+	piecenum = torso;
 	return (0);
 }
 
 QueryTertiary(piecenum)
 {
-	if( barrel_3 == 0 )
+	if( gun_3 == 0 )
 	{
 		piecenum = lflare;
 	}
-	if( barrel_3 == 0 )
+	if( gun_3 == 0 )
 	{
 		piecenum = rflare;
 	}
@@ -253,7 +252,7 @@ RestoreAfterDelay()
 {
 	sleep restore_delay;
 	set-signal-mask 0;
-	turn turret to y-axis <0.000000> speed <90.000000>;
+	turn torso to y-axis <0.000000> speed <90.000000>;
 	return (0);
 }
 
@@ -261,25 +260,25 @@ AimTertiary(heading, pitch)
 {
 	signal SIG_AIM_3;
 	set-signal-mask SIG_AIM_3;
-	turn turret to y-axis heading speed <225.000000>;
-	wait-for-turn turret around y-axis;
+	turn torso to y-axis heading speed <225.000000>;
+	wait-for-turn torso around y-axis;
 	start-script RestoreAfterDelay();
 	return (1);
 }
 
 FireTertiary()
 {
-	if( barrel_3 == 0 )
+	if( gun_3 == 0 )
 	{
-		barrel_3 = rflare;
+		gun_3 = rflare;
 		move lbarrel to z-axis [-3.750000] speed [62.500000];
 		wait-for-move lbarrel along z-axis;
 		move lbarrel to z-axis [0.000000] speed [7.500000];
 		return (0);
 	}
-	if( barrel_3 == 1 )
+	if( gun_3 == 1 )
 	{
-		barrel_3 = lflare;
+		gun_3 = lflare;
 		move rbarrel to z-axis [-3.750000] speed [62.500000];
 		wait-for-move rbarrel along z-axis;
 		move rbarrel to z-axis [0.000000] speed [7.500000];
@@ -299,7 +298,7 @@ Killed(severity, corpsetype)
 		explode lleg type BITMAPONLY | BITMAP2;
 		explode pelvis type BITMAPONLY | BITMAP3;
 		explode rleg type BITMAPONLY | BITMAP4;
-		explode turret type BITMAPONLY | BITMAP5;
+		explode torso type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -312,7 +311,7 @@ Killed(severity, corpsetype)
 		explode lleg type FALL | BITMAP2;
 		explode pelvis type BITMAPONLY | BITMAP3;
 		explode rleg type FALL | BITMAP4;
-		explode turret type BITMAPONLY | BITMAP5;
+		explode torso type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -325,7 +324,7 @@ Killed(severity, corpsetype)
 		explode lleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		explode pelvis type BITMAPONLY | BITMAP3;
 		explode rleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode turret type BITMAPONLY | BITMAP5;
+		explode torso type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	corpsetype = 3;
@@ -336,6 +335,6 @@ Killed(severity, corpsetype)
 	explode lleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 	explode pelvis type BITMAPONLY | BITMAP3;
 	explode rleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode turret type BITMAPONLY | BITMAP5;
+	explode torso type BITMAPONLY | BITMAP5;
 	return (0);
 }

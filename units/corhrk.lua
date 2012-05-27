@@ -24,13 +24,17 @@ return {
 		movementclass = "KBOT2",
 		name = "Dominator",
 		nochasecategory = "VTOL",
-		objectname = "CORHRK",
+		objectname = "CORHRK.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 370.5,
 		smoothanim = true,
 		turnrate = 1103,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

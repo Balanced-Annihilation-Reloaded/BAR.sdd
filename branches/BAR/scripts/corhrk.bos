@@ -393,10 +393,6 @@ activatescr()
 		move rthigh to y-axis [0.000000] now;
 		move rfoot to x-axis [0.000000] now;
 		move lleg to x-axis [0.000000] now;
-		move flare1 to z-axis [0.000000] now;
-		move flare1 to z-axis [23.125000] speed [46.906693];
-		move flare2 to z-axis [0.000000] now;
-		move flare2 to z-axis [23.000000] speed [46.653152];
 		sleep 493;
 	}
 	sleep 9;
@@ -412,10 +408,7 @@ deactivatescr()
 		move rthigh to y-axis [0.000000] now;
 		move rfoot to x-axis [0.000000] now;
 		move lleg to x-axis [0.000000] now;
-		move flare1 to z-axis [23.125000] now;
-		move flare1 to z-axis [0.000000] speed [2312.500168];
-		move flare2 to z-axis [23.000000] now;
-		move flare2 to z-axis [0.000000] speed [2300.001083];
+;
 		sleep 10;
 	}
 	sleep 10;

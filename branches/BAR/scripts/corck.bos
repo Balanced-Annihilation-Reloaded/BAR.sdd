@@ -5,8 +5,8 @@
 
 #define SIG_BUILD		4	
 
-piece  torso, nanospray2, pelvis, lthigh, rthigh, rleg, lleg, beamhinge,
-       rfoot, lfoot, guncover, beamcase, nano;
+piece  torso, pelvis, lthigh, rthigh, rleg, lleg, beamhinge,
+       rfoot, lfoot, beamcase, nano;
 
 static-var  notBuilding, bMoving, moveSpeed, currentSpeed,
 			statechg_DesiredState, statechg_StateChanging;
@@ -256,12 +256,11 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 Go()
 {
-	turn beamcase to z-axis <90> speed <180>;
+	turn beamcase to z-axis <-90> speed <180>;
 	wait-for-turn beamcase around z-axis;
 	
 	turn beamhinge to x-axis <90> speed <360>;
 	wait-for-turn beamhinge around x-axis;
-	sleep 520;
 }
 
 Stop()

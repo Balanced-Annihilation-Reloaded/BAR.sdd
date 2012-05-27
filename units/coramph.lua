@@ -25,7 +25,7 @@ return {
 		movementclass = "AKBOT2",
 		name = "Gimp",
 		nochasecategory = "VTOL",
-		objectname = "CORAMPH",
+		objectname = "CORAMPH.s3o",
 		radardistance = 300,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
@@ -34,6 +34,10 @@ return {
 		sonardistance = 300,
 		turnrate = 998,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			heap = {
 				blocking = false,

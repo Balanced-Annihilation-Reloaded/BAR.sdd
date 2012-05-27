@@ -26,7 +26,7 @@ return {
 		movementclass = "AKBOT2",
 		name = "Roach",
 		nochasecategory = "VTOL",
-		objectname = "CORROACH",
+		objectname = "CORROACH.s3o",
 		seismicsignature = 0,
 		selfdestructas = "CRAWL_BLAST",
 		selfdestructcountdown = 0,
@@ -34,6 +34,10 @@ return {
 		smoothanim = true,
 		turninplace = 0,
 		turnrate = 1507,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

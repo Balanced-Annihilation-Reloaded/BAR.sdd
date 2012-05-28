@@ -21,13 +21,17 @@ return {
 		movementclass = "AKBOT2",
 		name = "Manticore",
 		nochasecategory = "ALL",
-		objectname = "CORAAK",
+		objectname = "CORAAK.s3o",
 		seismicsignature = 1,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 390,
 		smoothanim = true,
 		turnrate = 912,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

@@ -24,7 +24,7 @@ return {
 		movementclass = "KBOT2",
 		name = "Pyro",
 		nochasecategory = "VTOL",
-		objectname = "CORPYRO",
+		objectname = "CORPYRO.s3o",
 		seismicsignature = 0,
 		selfdestructas = "CORPYRO_BLAST",
 		selfdestructcountdown = 1,
@@ -32,6 +32,10 @@ return {
 		smoothanim = true,
 		turnrate = 1145,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			heap = {
 				blocking = false,

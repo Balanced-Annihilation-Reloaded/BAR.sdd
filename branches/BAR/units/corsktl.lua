@@ -29,7 +29,7 @@ return {
 		movementclass = "AKBOT2",
 		name = "Skuttle",
 		nochasecategory = "VTOL",
-		objectname = "CORSKTL",
+		objectname = "CORSKTL.s3o",
 		seismicsignature = 64,
 		selfdestructas = "CORMINE6",
 		selfdestructcountdown = 0,
@@ -38,6 +38,10 @@ return {
 		turninplace = 0,
 		turnrate = 1122,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

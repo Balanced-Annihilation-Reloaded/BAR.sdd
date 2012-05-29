@@ -2100,12 +2100,13 @@
 		{
 			pos=0, -1.5, 0;
 			speed=0 r1, 1.5 r1, 0 r1;
-			heat=30;
+			heat=25;
 			maxheat=30;
-			heatfalloff=5;
+			heatfalloff=2;
 			size=10;
-			sizegrowth=-0.01;
+			sizegrowth=-0.05;
 			useAirLos=0;
+			//texture=pyroflame;
 		}
 		air=1;
 		ground=1;

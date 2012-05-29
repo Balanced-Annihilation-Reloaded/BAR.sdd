@@ -58,6 +58,7 @@
 			explofade=explofade.tga;
 			heatcloud=explo.tga;
 			flame=flame.tga;
+			pyroflame=GPL/flame.png;
 
 			graysmoke=graysmoke.tga;
 			bombsmoke=bombsmoke.tga;

@@ -26,7 +26,7 @@ return {
 		movementclass = "KBOT2",
 		name = "Spectre",
 		nochasecategory = "MOBILE",
-		objectname = "CORSPEC",
+		objectname = "CORSPEC.s3o",
 		onoffable = true,
 		radardistance = 0,
 		radardistancejam = 450,
@@ -35,6 +35,10 @@ return {
 		smoothanim = true,
 		turnrate = 945,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

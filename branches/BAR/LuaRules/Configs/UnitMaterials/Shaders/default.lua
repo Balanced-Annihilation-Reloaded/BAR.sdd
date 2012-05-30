@@ -152,7 +152,7 @@ return {
 
        gl_FragColor     = texture2D(textureS3o1, gl_TexCoord[0].st);
        gl_FragColor.rgb = mix(gl_FragColor.rgb, teamColor.rgb, gl_FragColor.a-extraColor.b*trimColor.a); // teamcolor
-		gl_FragColor.rgb = mix(gl_FragColor.rgb, float3(0.0,0.0,0.0), extraColor.b*trimColor.a); // trimcolor
+		gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.0,0.0,0.0), extraColor.b*trimColor.a); // trimcolor
 		gl_FragColor.rgb = mix(gl_FragColor.rgb, trimColor.rgb, (extraColor.b/255.0)*trimColor.a); // trimcolor
        gl_FragColor.rgb = gl_FragColor.rgb * reflection + specular;
        gl_FragColor.a   = extraColor.a;

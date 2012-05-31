@@ -111,7 +111,7 @@ return {
 				flighttime = 3,
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
-				model = "missile",
+				model = "cormissile.s3o",
 				name = "AA2Missile",
 				noselfdamage = true,
 				projectiles = 2,

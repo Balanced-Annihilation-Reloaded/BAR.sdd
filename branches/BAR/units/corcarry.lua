@@ -130,7 +130,7 @@ return {
 				impulsefactor = 0.12300000339746,
 				interceptor = 1,
 				metalpershot = 150,
-				model = "fmdmisl",
+				model = "fmdmissile.s3o",
 				name = "Rocket",
 				noselfdamage = true,
 				range = 72000,

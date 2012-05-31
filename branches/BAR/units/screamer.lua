@@ -107,7 +107,7 @@ return {
 				flighttime = 3,
 				impulseboost = 0,
 				impulsefactor = 0,
-				model = "ADVSAM",
+				model = "corscreamermissile.s3o",
 				name = "ADVSAM",
 				noselfdamage = true,
 				proximitypriority = -1.5,

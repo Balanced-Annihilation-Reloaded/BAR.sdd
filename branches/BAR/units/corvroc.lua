@@ -114,7 +114,7 @@ return {
 				impulseboost = 0.2,
 				impulsefactor = 0.2,
 				metalpershot = 0,
-				model = "corvrocket",
+				model = "corvrocket.s3o",
 				name = "Rocket",
 				noselfdamage = true,
 				range = 1240,

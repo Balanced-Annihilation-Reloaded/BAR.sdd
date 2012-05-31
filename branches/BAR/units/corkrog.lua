@@ -178,7 +178,7 @@ return {
 				impulseboost = 1,
 				impulsefactor = 1,
 				metalpershot = 0,
-				model = "fmdmisl",
+				model = "corkbmissl1.s3o",
 				name = "HeavyRockets",
 				noselfdamage = true,
 				proximitypriority = -5,

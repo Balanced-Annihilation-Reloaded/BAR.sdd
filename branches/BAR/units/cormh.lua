@@ -108,7 +108,7 @@ return {
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
 				metalpershot = 0,
-				model = "cormhmsl",
+				model = "corkbmissl1.s3o",
 				name = "Rocket",
 				noselfdamage = true,
 				range = 700,

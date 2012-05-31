@@ -117,7 +117,7 @@ return {
 				impulseboost = 0,
 				impulsefactor = 0,
 				metalpershot = 0,
-				model = "epulse",
+				model = "epulse.s3o",
 				name = "AntiSignal",
 				range = 32000,
 				reloadtime = 2,

@@ -88,7 +88,7 @@ return {
 				explosiongenerator = "custom:FLASH2",
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
-				model = "torpedo",
+				model = "cortorpedo.s3o",
 				name = "Torpedo",
 				noselfdamage = true,
 				predictboost = 0,

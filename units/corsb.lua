@@ -77,7 +77,7 @@ return {
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
 				manualbombsettings = true,
-				model = "bomb",
+				model = "bombyr.s3o",
 				name = "SeaAdvancedBombs",
 				noselfdamage = true,
 				range = 1280,

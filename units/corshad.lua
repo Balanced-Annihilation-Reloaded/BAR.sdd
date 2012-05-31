@@ -75,7 +75,7 @@ return {
 				impulseboost = 0.30000001192093,
 				impulsefactor = 0.30000001192093,
 				manualbombsettings = true,
-				model = "bomb",
+				model = "bombyy.s3o",
 				name = "Bombs",
 				noselfdamage = true,
 				range = 1280,

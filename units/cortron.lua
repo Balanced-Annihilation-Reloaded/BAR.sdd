@@ -113,7 +113,7 @@ return {
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
 				metalpershot = 550,
-				model = "empmisl",
+				model = "cortronmissile.s3o",
 				name = "TacticalNuke",
 				noselfdamage = true,
 				range = 3000,

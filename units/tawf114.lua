@@ -116,7 +116,7 @@ return {
 				flighttime = 3,
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
-				model = "TAWF114a",
+				model = "TAWF114a.s3o",
 				name = "Banisher",
 				noselfdamage = true,
 				range = 800,

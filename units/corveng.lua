@@ -64,7 +64,7 @@ return {
 				impulseboost = 0,
 				impulsefactor = 0,
 				metalpershot = 0,
-				model = "missile",
+				model = "cormissile.s3o",
 				name = "GuidedMissiles",
 				noselfdamage = true,
 				range = 530,

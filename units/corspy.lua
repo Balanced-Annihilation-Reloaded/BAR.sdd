@@ -32,7 +32,7 @@ return {
 		mincloakdistance = 75,
 		movementclass = "KBOT2",
 		name = "Parasite",
-		objectname = "CORSPY",
+		objectname = "CORSPY.s3o",
 		onoffable = true,
 		seismicsignature = 2,
 		selfdestructas = "SPYBOMBX",

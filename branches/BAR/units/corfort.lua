@@ -61,7 +61,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 7,
-				object = "2X2A",
+				object = "cor2X2A.s3o",
 				reclaimable = true,
 				shadtrans = 1,
 				world = "greenworld",

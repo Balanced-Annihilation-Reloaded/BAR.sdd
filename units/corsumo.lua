@@ -29,7 +29,7 @@ return {
 		movementclass = "HKBOT3",
 		name = "Sumo",
 		nochasecategory = "VTOL",
-		objectname = "CORSUMO",
+		objectname = "CORSUMO.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 510,

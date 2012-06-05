@@ -25,7 +25,7 @@ return {
 		maxwaterdepth = 0,
 		movementclass = "KBOT2",
 		name = "Voyeur",
-		objectname = "CORVOYR",
+		objectname = "CORVOYR.s3o",
 		onoffable = true,
 		radardistance = 2200,
 		seismicsignature = 0,
@@ -33,6 +33,10 @@ return {
 		sightdistance = 925,
 		smoothanim = true,
 		turnrate = 583,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.tga",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

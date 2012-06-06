@@ -33,7 +33,7 @@ return {
 		yardmap = "o",
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		featuredefs = {
 			cdragonseyes_dead = {

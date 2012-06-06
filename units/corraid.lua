@@ -36,7 +36,7 @@ return {
 		turnrate = 459.79998779297,
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		featuredefs = {
 			dead = {

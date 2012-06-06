@@ -37,7 +37,7 @@ return {
 		smoothanim = true,
 		turnrate = 109,
 		customparams = {
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 			normalmaps = "yes",
 			paralyzemultiplier = 0,
 		},

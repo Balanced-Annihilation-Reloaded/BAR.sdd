@@ -40,7 +40,7 @@ return {
 		windgenerator = 0.0010000000474975,
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		featuredefs = {
 			dead = {

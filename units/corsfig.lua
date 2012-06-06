@@ -31,7 +31,7 @@ return {
 		turnrate = 1547,
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		sounds = {
 			build = "nanlath1",

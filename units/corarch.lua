@@ -34,7 +34,7 @@ return {
 		objectname = "CORARCH.s3o",
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",

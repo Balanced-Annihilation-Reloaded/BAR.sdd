@@ -43,7 +43,7 @@ return {
 		workertime = 300,
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		buildoptions = {
 			[10] = "csubpen",

@@ -62,7 +62,7 @@ return {
 		},
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.tif",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

@@ -42,7 +42,7 @@ return {
 		yardmap = "w",
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		sounds = {
 			canceldestruct = "cancel2",

@@ -27,7 +27,7 @@ return {
 		yardmap = "wwww",
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		featuredefs = {
 			floatingteeth_core = {

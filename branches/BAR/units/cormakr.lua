@@ -36,7 +36,7 @@ return {
 		yardmap = "oooooooooooo",
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		sounds = {
 			activate = "metlon2",

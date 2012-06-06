@@ -40,7 +40,7 @@ return {
 		upright = true,
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 			paralyzemultiplier = 0,
 		},
 		featuredefs = {

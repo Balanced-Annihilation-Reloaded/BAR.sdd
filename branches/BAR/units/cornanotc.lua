@@ -37,7 +37,7 @@ return {
 		workertime = 200,
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		sounds = {
 			build = "nanlath2",

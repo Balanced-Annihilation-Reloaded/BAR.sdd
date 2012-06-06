@@ -42,7 +42,7 @@ return {
 		workertime = 400,
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		buildoptions = {
 			[10] = "corfhp",

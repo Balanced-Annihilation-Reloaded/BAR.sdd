@@ -31,7 +31,7 @@ return {
 		turnrate = 1337,
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		sounds = {
 			canceldestruct = "cancel2",

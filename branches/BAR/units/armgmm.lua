@@ -38,7 +38,7 @@ return {
 		yardmap = "ooooo ooooo ooGoo ooooo ooooo",
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.tif",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		sounds = {
 			canceldestruct = "cancel2",

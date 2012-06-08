@@ -24,12 +24,16 @@ return {
 		movementclass = "TKBOT3",
 		name = "Termite",
 		nochasecategory = "VTOL",
-		objectname = "CORTERMITE",
+		objectname = "CORTERMITE.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 380,
 		smoothanim = true,
 		turnrate = 1056,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

@@ -3,9 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turret, barrel1, barrel2, barrel3, emit1, emit2, emit3,
-       leg1, leg2, leg3, leg4, leg5, leg6, bodysect1, sect2,
-       sect3, head, turretholder;
+piece  body, head, barrel1, barrel2, flare1, flare2, leg1, leg2, leg3, leg4, leg5, leg6 ;
 
 static-var  bMoving, Static_Var_2, restore_delay, gun_1;
 
@@ -29,7 +27,7 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 			{
 				smoketype = 256 | 1;
 			}
-			emit-sfx smoketype from base;
+			emit-sfx smoketype from body;
 		}
 		sleeptime = healthpercent * 50;
 		if( sleeptime < 200 )
@@ -46,8 +44,6 @@ walk2()
 {
 	if( bMoving )
 	{
-		turn sect2 to y-axis <0.000000> speed <50.000000>;
-		turn sect3 to y-axis <0.000000> speed <50.000000>;
 		turn leg1 to y-axis <43.796703> now;
 		turn leg1 to y-axis <0.000000> speed <218.000000>;
 		turn leg1 to z-axis <0.598901> now;
@@ -73,8 +69,6 @@ walk2()
 	}
 	if( bMoving )
 	{
-		turn sect2 to y-axis <-25.005495> speed <50.000000>;
-		turn sect3 to y-axis <-30.005495> speed <50.000000>;
 		turn leg1 to z-axis <31.005495> speed <158.000000>;
 		turn leg2 to y-axis <34.005495> speed <173.000000>;
 		turn leg2 to z-axis <31.005495> speed <0.000000>;
@@ -87,8 +81,6 @@ walk2()
 	}
 	if( bMoving )
 	{
-		turn sect2 to y-axis <0.000000> speed <50.000000>;
-		turn sect3 to y-axis <0.000000> speed <50.000000>;
 		turn leg1 to y-axis <55.010989> speed <279.000000>;
 		turn leg1 to z-axis <31.005495> speed <3.000000>;
 		turn leg2 to y-axis <34.005495> speed <0.000000>;
@@ -101,8 +93,6 @@ walk2()
 		turn leg6 to y-axis <3.000000> speed <167.000000>;
 		sleep 200;
 	}
-	turn sect2 to y-axis <25.005495> speed <50.000000>;
-	turn sect3 to y-axis <30.005495> speed <50.000000>;
 	turn leg1 to y-axis <43.005495> speed <60.000000>;
 	turn leg1 to z-axis <0.000000> speed <152.000000>;
 	turn leg2 to y-axis <0.000000> speed <173.000000>;
@@ -120,14 +110,6 @@ walk2()
 
 Stop()
 {
-	turn sect2 to y-axis <0.000000> speed <50.000000>;
-	turn sect2 to y-axis <-2.000000> speed <50.000000>;
-	turn sect2 to y-axis <2.000000> speed <50.000000>;
-	turn sect2 to y-axis <0.000000> speed <50.000000>;
-	turn sect3 to y-axis <0.000000> speed <50.000000>;
-	turn sect3 to y-axis <-2.000000> speed <50.000000>;
-	turn sect3 to y-axis <2.000000> speed <50.000000>;
-	turn sect3 to y-axis <0.000000> speed <50.000000>;
 	turn leg1 to y-axis <0.000000> speed <237.000000>;
 	turn leg1 to z-axis <0.000000> speed <237.000000>;
 	turn leg2 to y-axis <0.000000> speed <237.000000>;
@@ -162,7 +144,7 @@ MotionControl(Func_Var_1)
 Create()
 {
 	bMoving = FALSE;
-	gun_1 = base;
+	gun_1 = 0;
 	restore_delay = 3000;
 	start-script MotionControl();
 	start-script SmokeUnit();
@@ -180,7 +162,7 @@ StopMoving()
 
 SweetSpot(piecenum)
 {
-	piecenum = base;
+	piecenum = body;
 }
 
 SetMaxReloadTime(Func_Var_1)
@@ -191,8 +173,8 @@ SetMaxReloadTime(Func_Var_1)
 RestoreAfterDelay()
 {
 	sleep restore_delay;
-	turn turret to y-axis <0.000000> speed <55.000000>;
-	turn turret to x-axis <0.000000> speed <55.000000>;
+	turn head to y-axis <0.000000> speed <55.000000>;
+	turn head to x-axis <0.000000> speed <55.000000>;
 	Static_Var_2 = 0;
 }
 
@@ -200,10 +182,10 @@ AimPrimary(heading, pitch)
 {
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
-	turn turret to y-axis heading speed <180.000000>;
-	turn turret to x-axis <0.000000> - pitch speed <110.000000>;
-	wait-for-turn turret around y-axis;
-	wait-for-turn turret around x-axis;
+	turn head to y-axis heading speed <180.000000>;
+	turn head to x-axis <0.000000> - pitch speed <110.000000>;
+	wait-for-turn head around y-axis;
+	wait-for-turn head around x-axis;
 	start-script RestoreAfterDelay();
 	return (1);
 }
@@ -212,10 +194,10 @@ AimSecondary(heading, pitch)
 {
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
-	turn turret to y-axis heading speed <110.000000>;
-	turn turret to x-axis <0.000000> - pitch speed <80.000000>;
-	wait-for-turn turret around y-axis;
-	wait-for-turn turret around x-axis;
+	turn head to y-axis heading speed <110.000000>;
+	turn head to x-axis <0.000000> - pitch speed <80.000000>;
+	wait-for-turn head around y-axis;
+	wait-for-turn head around x-axis;
 	start-script RestoreAfterDelay();
 	return (1);
 }
@@ -228,7 +210,7 @@ FirePrimary()
 		wait-for-move barrel1 along z-axis;
 		move barrel1 to z-axis [0.000000] speed [3.000000];
 		sleep 150;
-		gun_1 = turret;
+		gun_1 = 1;
 		return (0);
 	}
 	if( gun_1 == 1 )
@@ -237,51 +219,47 @@ FirePrimary()
 		wait-for-move barrel1 along z-axis;
 		move barrel2 to z-axis [0.000000] speed [3.000000];
 		sleep 150;
-		gun_1 = barrel1;
+		gun_1 = 0;
 		return (0);
 	}
 }
 
 FireSecondary()
 {
-	move barrel3 to z-axis [-3.000000] speed [400.000000];
+	move barrel1 to z-axis [-3.000000] speed [400.000000];
 	wait-for-move barrel1 along z-axis;
-	move barrel3 to z-axis [0.000000] speed [3.000000];
+	move barrel1 to z-axis [0.000000] speed [3.000000];
 	sleep 150;
 }
 
 AimFromSecondary(piecenum)
 {
-	piecenum = turret;
+	piecenum = head;
 }
 
 AimFromPrimary(piecenum)
 {
-	piecenum = turret;
+	piecenum = head;
 }
 
 QueryPrimary(piecenum)
 {
 	if( gun_1 == 0 )
 	{
-		piecenum = emit1;
+		piecenum = flare2;
 		return (0);
 	}
 	if( gun_1 == 1 )
 	{
-		piecenum = emit2;
+		piecenum = flare1;
 		return (0);
 	}
-	if( gun_1 == 2 )
-	{
-		piecenum = emit3;
-		return (0);
-	}
+
 }
 
 QuerySecondary(piecenum)
 {
-	piecenum = emit3;
+	piecenum = flare1;
 }
 
 Killed(severity, corpsetype)
@@ -289,81 +267,57 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP3;
+		explode body type BITMAPONLY | BITMAP3;
 		explode head type SHATTER | EXPLODE_ON_HIT | BITMAP3;
-		explode turret type FALL | EXPLODE_ON_HIT | BITMAP3;
 		explode barrel1 type SHATTER | BITMAP4;
 		explode barrel2 type SHATTER | BITMAP5;
-		explode barrel3 type SHATTER | BITMAP5;
-		explode bodysect1 type BITMAPONLY | BITMAP3;
-		explode sect2 type BITMAPONLY | BITMAP3;
-		explode sect3 type BITMAPONLY | BITMAP3;
 		explode leg1 type BITMAPONLY | BITMAP4;
 		explode leg2 type BITMAPONLY | BITMAP3;
 		explode leg3 type BITMAPONLY | BITMAP5;
 		explode leg4 type BITMAPONLY | BITMAP3;
 		explode leg5 type FALL | EXPLODE_ON_HIT | BITMAP3;
 		explode leg6 type BITMAPONLY | BITMAP5;
-		explode turretholder type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP3;
+		explode body type BITMAPONLY | BITMAP3;
 		explode head type SHATTER | SMOKE | EXPLODE_ON_HIT | BITMAP3;
-		explode turret type FALL | EXPLODE_ON_HIT | BITMAP3;
 		explode barrel1 type SHATTER | BITMAP4;
 		explode barrel2 type SHATTER | BITMAP5;
-		explode barrel3 type SHATTER | BITMAP5;
-		explode bodysect1 type BITMAPONLY | BITMAP3;
-		explode sect2 type BITMAPONLY | BITMAP3;
-		explode sect3 type BITMAPONLY | BITMAP3;
 		explode leg1 type SHATTER | BITMAP4;
 		explode leg2 type BITMAPONLY | BITMAP3;
 		explode leg3 type SHATTER | BITMAP5;
 		explode leg4 type BITMAPONLY | BITMAP3;
 		explode leg5 type FALL | EXPLODE_ON_HIT | BITMAP3;
 		explode leg6 type BITMAPONLY | BITMAP5;
-		explode turretholder type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP3;
+		explode body type BITMAPONLY | BITMAP3;
 		explode head type SHATTER | EXPLODE_ON_HIT | BITMAP3;
-		explode turret type FALL | EXPLODE_ON_HIT | BITMAP3;
 		explode barrel1 type SHATTER | BITMAP4;
 		explode barrel2 type SHATTER | BITMAP5;
-		explode barrel3 type SHATTER | BITMAP5;
-		explode bodysect1 type BITMAPONLY | BITMAP3;
-		explode sect2 type BITMAPONLY | BITMAP3;
-		explode sect3 type BITMAPONLY | BITMAP3;
 		explode leg1 type BITMAPONLY | BITMAP4;
 		explode leg2 type BITMAPONLY | BITMAP3;
 		explode leg3 type BITMAPONLY | BITMAP5;
 		explode leg4 type BITMAPONLY | BITMAP3;
 		explode leg5 type FALL | EXPLODE_ON_HIT | BITMAP3;
 		explode leg6 type BITMAPONLY | BITMAP5;
-		explode turretholder type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP3;
+	explode body type BITMAPONLY | BITMAP3;
 	explode head type SHATTER | EXPLODE_ON_HIT | BITMAP3;
-	explode turret type FALL | EXPLODE_ON_HIT | BITMAP3;
 	explode barrel1 type SHATTER | BITMAP4;
 	explode barrel2 type SHATTER | BITMAP5;
-	explode barrel3 type SHATTER | BITMAP5;
-	explode bodysect1 type BITMAPONLY | BITMAP3;
-	explode sect2 type BITMAPONLY | BITMAP3;
-	explode sect3 type BITMAPONLY | BITMAP3;
 	explode leg1 type BITMAPONLY | BITMAP4;
 	explode leg2 type BITMAPONLY | BITMAP3;
 	explode leg3 type BITMAPONLY | BITMAP5;
 	explode leg4 type BITMAPONLY | BITMAP3;
 	explode leg5 type FALL | EXPLODE_ON_HIT | BITMAP3;
 	explode leg6 type BITMAPONLY | BITMAP5;
-	explode turretholder type BITMAPONLY | BITMAP5;
 }

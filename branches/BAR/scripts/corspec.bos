@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  torso, pelvis, lleg, lfoot, rleg, rfoot, rthigh, lthigh,head,dish;
+piece  pelvis, lleg, lfoot, rleg, rfoot, rthigh, lthigh,head,dish;
 
 static-var  bMoving, Static_Var_2, Static_Var_3, Static_Var_4, Static_Var_5;
 
@@ -513,7 +513,7 @@ RestoreAfterDelay()
 
 SweetSpot(piecenum)
 {
-	piecenum = torso;
+	piecenum = head;
 	return (0);
 }
 

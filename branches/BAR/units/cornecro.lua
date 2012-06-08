@@ -27,7 +27,7 @@ return {
 		maxwaterdepth = 22,
 		movementclass = "KBOT2",
 		name = "Necro",
-		objectname = "CORNECRO",
+		objectname = "CORNECRO.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
@@ -38,6 +38,10 @@ return {
 		turnrate = 1118,
 		upright = true,
 		workertime = 200,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

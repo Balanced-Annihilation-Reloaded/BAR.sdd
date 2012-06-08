@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  lathe, torso, flare1, flare2, hip, lleg, rleg, rfoot, lfoot, luparm, ruparm, rarm, larm;
+piece  torso, flare1, flare2, hip, lleg, rleg, rfoot, lfoot, luparm, ruparm, rarm, larm;
 
 static-var  Static_Var_1, bMoving, Static_Var_3, Static_Var_4, Static_Var_5,
 			currentSpeed, moveSpeed, nanoemit;
@@ -255,47 +255,39 @@ RequestState()
 			turn luparm to x-axis <13.675824> now;
 			turn ruparm to x-axis <13.675824> now;
 			turn rarm to x-axis <-28.274725> now;
-			turn lathe to x-axis <7.296703> now;
 			turn larm to x-axis <-22.505495> now;
 			sleep 30;
 			turn luparm to x-axis <27.368132> now;
 			turn ruparm to x-axis <27.368132> now;
 			turn rarm to x-axis <-56.565934> now;
-			turn lathe to x-axis <14.587912> now;
 			turn larm to x-axis <-45.000000> now;
 			sleep 30;
 			turn luparm to x-axis <7.296703> now;
 			turn ruparm to x-axis <16.115385> now;
 			turn rarm to x-axis <-64.769231> now;
-			turn lathe to x-axis <18.846154> now;
 			sleep 30;
 			turn luparm to x-axis <-12.769231> now;
 			turn ruparm to x-axis <4.857143> now;
 			turn rarm to x-axis <-72.989011> now;
-			turn lathe to x-axis <23.109890> now;
 			sleep 30;
 			turn luparm to x-axis <-31.928571> now;
 			turn ruparm to x-axis <-15.197802> now;
 			turn rarm to x-axis <-61.428571> now;
-			turn lathe to x-axis <12.769231> now;
 			turn larm to x-axis <-25.538462> now;
 			sleep 30;
 			turn luparm to x-axis <-51.087912> now;
 			turn ruparm to x-axis <-35.269231> now;
 			turn rarm to x-axis <-49.868132> now;
-			turn lathe to x-axis <2.428571> now;
 			turn larm to x-axis <-6.076923> now;
 			sleep 30;
 			turn luparm to x-axis <-69.027473> now;
 			turn ruparm to x-axis <-52.917582> now;
 			turn rarm to x-axis <-26.456044> now;
-			turn lathe to x-axis <-5.467033> now;
 			turn larm to x-axis <11.549451> now;
 			sleep 30;
 			turn luparm to x-axis <-86.978022> now;
 			turn ruparm to x-axis <-70.549451> now;
 			turn rarm to x-axis <-3.038462> now;
-			turn lathe to x-axis <-13.379121> now;
 			turn larm to x-axis <29.186813> now;
 			sleep 30;
 			set INBUILDSTANCE to 1;
@@ -303,13 +295,11 @@ RequestState()
 			turn luparm to x-axis <-84.236264> now;
 			turn ruparm to x-axis <-72.379121> now;
 			turn rarm to x-axis <2.126374> now;
-			turn lathe to x-axis <-19.159341> now;
 			turn larm to x-axis <32.538462> now;
 			sleep 30;
 			turn luparm to x-axis <-81.505495> now;
 			turn ruparm to x-axis <-74.197802> now;
 			turn rarm to x-axis <7.296703> now;
-			turn lathe to x-axis <-24.928571> now;
 			turn larm to x-axis <35.879121> now;
 		}
 		if( ( !Static_Var_3 ) AND Static_Var_4 )
@@ -320,65 +310,54 @@ RequestState()
 			turn luparm to x-axis <-81.505495> now;
 			turn ruparm to x-axis <-74.197802> now;
 			turn rarm to x-axis <7.296703> now;
-			turn lathe to x-axis <-24.928571> now;
 			turn larm to x-axis <35.879121> now;
 			sleep 60;
 			turn luparm to x-axis <-84.236264> now;
 			turn ruparm to x-axis <-72.379121> now;
 			turn rarm to x-axis <2.126374> now;
-			turn lathe to x-axis <-19.159341> now;
 			turn larm to x-axis <32.538462> now;
 			sleep 60;
 			turn luparm to x-axis <-86.978022> now;
 			turn ruparm to x-axis <-70.549451> now;
 			turn rarm to x-axis <-3.038462> now;
-			turn lathe to x-axis <-13.379121> now;
 			turn larm to x-axis <29.186813> now;
 			sleep 60;
 			turn luparm to x-axis <-69.027473> now;
 			turn ruparm to x-axis <-52.917582> now;
 			turn rarm to x-axis <-26.456044> now;
-			turn lathe to x-axis <-5.467033> now;
 			turn larm to x-axis <11.549451> now;
 			sleep 60;
 			turn luparm to x-axis <-51.087912> now;
 			turn ruparm to x-axis <-35.269231> now;
 			turn rarm to x-axis <-49.868132> now;
-			turn lathe to x-axis <2.428571> now;
 			turn larm to x-axis <-6.076923> now;
 			sleep 100;
 			turn luparm to x-axis <-31.928571> now;
 			turn ruparm to x-axis <-15.197802> now;
 			turn rarm to x-axis <-61.428571> now;
-			turn lathe to x-axis <12.769231> now;
 			turn larm to x-axis <-25.538462> now;
 			sleep 100;
 			turn luparm to x-axis <-12.769231> now;
 			turn ruparm to x-axis <4.857143> now;
 			turn rarm to x-axis <-72.989011> now;
-			turn lathe to x-axis <23.109890> now;
 			turn larm to x-axis <-45.000000> now;
 			sleep 100;
 			turn luparm to x-axis <7.296703> now;
 			turn ruparm to x-axis <16.115385> now;
 			turn rarm to x-axis <-64.769231> now;
-			turn lathe to x-axis <18.846154> now;
 			sleep 100;
 			turn luparm to x-axis <27.368132> now;
 			turn ruparm to x-axis <27.368132> now;
 			turn rarm to x-axis <-56.565934> now;
-			turn lathe to x-axis <14.587912> now;
 			sleep 100;
 			turn luparm to x-axis <13.675824> now;
 			turn ruparm to x-axis <13.675824> now;
 			turn rarm to x-axis <-28.274725> now;
-			turn lathe to x-axis <7.296703> now;
 			turn larm to x-axis <-22.505495> now;
 			sleep 100;
 			turn luparm to x-axis <0.000000> now;
 			turn ruparm to x-axis <0.000000> now;
 			turn rarm to x-axis <0.000000> now;
-			turn lathe to x-axis <0.000000> now;
 			turn larm to x-axis <0.000000> now;
 		}
 		Static_Var_5 = 0;
@@ -455,7 +434,6 @@ Killed(severity, corpsetype)
 		corpsetype = 1;
 		explode hip type BITMAPONLY | BITMAP4;
 		explode larm type BITMAPONLY | BITMAP5;
-		explode lathe type BITMAPONLY | BITMAP1;
 		explode luparm type BITMAPONLY | BITMAP4;
 		explode rarm type BITMAPONLY | BITMAP5;
 		explode ruparm type BITMAPONLY | BITMAP3;
@@ -467,7 +445,6 @@ Killed(severity, corpsetype)
 		corpsetype = 2;
 		explode hip type FALL | BITMAP4;
 		explode larm type FALL | BITMAP5;
-		explode lathe type FALL | BITMAP1;
 		explode luparm type FALL | BITMAP4;
 		explode rarm type FALL | BITMAP5;
 		explode ruparm type FALL | BITMAP3;
@@ -479,7 +456,6 @@ Killed(severity, corpsetype)
 	{
 		explode hip type FALL | FIRE | SMOKE | BITMAP4;
 		explode larm type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP5;
-		explode lathe type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP1;
 		explode lfoot type FALL | FIRE | SMOKE | BITMAP2;
 		explode lleg type FALL | FIRE | SMOKE | BITMAP3;
 		explode luparm type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP4;
@@ -492,7 +468,6 @@ Killed(severity, corpsetype)
 	}
 	explode hip type FALL | FIRE | SMOKE | BITMAP4;
 	explode larm type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP5;
-	explode lathe type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP1;
 	explode lfoot type FALL | FIRE | SMOKE | BITMAP2;
 	explode lleg type FALL | FIRE | SMOKE | BITMAP3;
 	explode luparm type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP4;

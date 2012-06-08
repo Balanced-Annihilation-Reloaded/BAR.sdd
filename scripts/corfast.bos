@@ -6,7 +6,7 @@
 #define SIG_BUILD		4	
 
 piece  torso, flare, Hip, RLLeg, LLLeg, LULeg, RULeg, LUArm,
-       RUArm, RLArm, LLArm, Head, Thrust;
+       RUArm, RLArm, LLArm, Head;
 
 static-var  bMoving, building, statechg_DesiredState, statechg_StateChanging,
 			moveSpeed, currentSpeed;
@@ -869,7 +869,6 @@ Killed(severity, corpsetype)
 		explode RLLeg type BITMAPONLY | BITMAP3;
 		explode RUArm type BITMAPONLY | BITMAP4;
 		explode RULeg type BITMAPONLY | BITMAP5;
-		explode Thrust type BITMAPONLY | BITMAP1;
 		explode torso type BITMAPONLY | BITMAP2;
 		return (0);
 	}
@@ -886,7 +885,6 @@ Killed(severity, corpsetype)
 		explode RLLeg type FALL | BITMAP3;
 		explode RUArm type FALL | BITMAP4;
 		explode RULeg type FALL | BITMAP5;
-		explode Thrust type FALL | BITMAP1;
 		explode torso type SHATTER | BITMAP2;
 		return (0);
 	}
@@ -903,7 +901,6 @@ Killed(severity, corpsetype)
 		explode RLLeg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		explode RUArm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		explode RULeg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode Thrust type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 		explode torso type SHATTER | BITMAP2;
 		return (0);
 	}
@@ -918,6 +915,5 @@ Killed(severity, corpsetype)
 	explode RLLeg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 	explode RUArm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 	explode RULeg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode Thrust type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode torso type SHATTER | EXPLODE_ON_HIT | BITMAP2;
 }

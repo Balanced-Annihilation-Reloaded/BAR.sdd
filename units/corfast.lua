@@ -28,7 +28,7 @@ return {
 		metalstorage = 100,
 		movementclass = "KBOT2",
 		name = "Freaker",
-		objectname = "CORFAST",
+		objectname = "CORFAST.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 520,
@@ -37,6 +37,10 @@ return {
 		turnrate = 1210,
 		upright = true,
 		workertime = 150,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		buildoptions = {
 			[10] = "hllt",
 			[11] = "corvipe",

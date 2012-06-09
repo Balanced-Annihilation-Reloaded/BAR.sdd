@@ -424,50 +424,50 @@ function script.Killed(recentDamage, maxHealth)
 		local severity = recentDamage/maxHealth
 	if severity < 0.5 then
 
-		Explode(torso, sfxNone)
-        Explode(tail, sfxNone)
+		Explode(torso, SFX.NONE)
+        Explode(tail, SFX.NONE)
 
-		Explode(turret, sfxNone)
-        Explode(lbarrel, sfxNone)
-		Explode(rbarrel, sfxNone)
+		Explode(turret, SFX.NONE)
+        Explode(lbarrel, SFX.NONE)
+		Explode(rbarrel, SFX.NONE)
 
-		Explode(llaser, sfxNone)
-        Explode(rlaser, sfxNone)
-        Explode(toplaser, sfxNone)
+		Explode(llaser, SFX.NONE)
+        Explode(rlaser, SFX.NONE)
+        Explode(toplaser, SFX.NONE)
 
-        Explode(lbleg, sfxNone)
-        Explode(lbfoot, sfxNone)
-        Explode(lfleg, sfxNone)
-        Explode(lffoot, sfxNone)
+        Explode(lbleg, SFX.NONE)
+        Explode(lbfoot, SFX.NONE)
+        Explode(lfleg, SFX.NONE)
+        Explode(lffoot, SFX.NONE)
         
-        Explode(rbleg, sfxNone)
-        Explode(rbfoot, sfxNone)
-        Explode(rfleg, sfxNone)
-        Explode(rffoot, sfxNone)
+        Explode(rbleg, SFX.NONE)
+        Explode(rbfoot, SFX.NONE)
+        Explode(rfleg, SFX.NONE)
+        Explode(rffoot, SFX.NONE)
         
 		return 1
 	else
 
-		Explode(torso, sfxShatter)
-		Explode(tail, sfxSmoke + sfxFire + sfxExplode)
+		Explode(torso, SFX.SHATTER)
+		Explode(tail, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
 
-		Explode(turret, sfxSmoke + sfxFire + sfxExplode)
-        Explode(lbarrel, sfxSmoke + sfxFire + sfxExplode)
-        Explode(rbarrel, sfxSmoke + sfxFire + sfxExplode)
+		Explode(turret, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+        Explode(lbarrel, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+        Explode(rbarrel, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
 
-		Explode(llaser, sfxSmoke + sfxFire + sfxExplode)
-        Explode(rlaser, sfxSmoke + sfxFire + sfxExplode)
-        Explode(toplaser, sfxSmoke + sfxFire + sfxExplode)
+		Explode(llaser, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+        Explode(rlaser, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+        Explode(toplaser, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
 
-        Explode(lbleg, sfxShatter)
-        Explode(lbfoot, sfxShatter)
-        Explode(lfleg, sfxShatter)
-        Explode(lffoot, sfxShatter)
+        Explode(lbleg, SFX.SHATTER)
+        Explode(lbfoot, SFX.SHATTER)
+        Explode(lfleg, SFX.SHATTER)
+        Explode(lffoot, SFX.SHATTER)
 
-        Explode(rbleg, sfxShatter)
-        Explode(rbfoot, sfxShatter)
-        Explode(rfleg, sfxShatter)
-        Explode(rffoot, sfxShatter)
+        Explode(rbleg, SFX.SHATTER)
+        Explode(rbfoot, SFX.SHATTER)
+        Explode(rfleg, SFX.SHATTER)
+        Explode(rffoot, SFX.SHATTER)
 
 		return 2
 	end

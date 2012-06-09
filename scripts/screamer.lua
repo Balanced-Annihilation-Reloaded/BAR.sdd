@@ -9,12 +9,6 @@ local SIG_AIM = 2;
 
 include("include/util.lua");
 
-local function fail_if_TargetCheck_missing()
-	if (GG.unit_missile_delay_TargetCheck == nil) then
-		Spring.Echo("WARNING: Screamer.lua breakage - unit_missile_delay.lua should have put a function in GG table, it is not there");
-		local fail = nil; fail[1234] = nil;
-	end
-end
 
 function script.Create()
 	Spring.UnitScript.Hide(flare);
@@ -23,13 +17,9 @@ end
 
 function script.AimWeapon1(heading, pitch)
 	Spring.UnitScript.Signal(SIG_AIM);
-	Spring.UnitScript.SetSignalMask(SIG_AIM);
-	
-	fail_if_TargetCheck_missing();
-	GG.unit_missile_delay_TargetCheck(unitID, unitDefID, nil);
-	
+	Spring.UnitScript.SetSignalMask(SIG_AIM);	
 	Spring.UnitScript.Turn(turret, y_axis, heading, math.rad(125));
-	Spring.UnitScript.Turn(barrel, x_axis, pitch, math.rad(125));
+	Spring.UnitScript.Turn(barrel, x_axis, -pitch, math.rad(125));
 	Spring.UnitScript.WaitForTurn(turret, y_axis);
 	return true;
 end

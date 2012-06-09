@@ -37,7 +37,7 @@ return {
 		yardmap = "ooooooooo",
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		featuredefs = {
 			dead = {
@@ -90,7 +90,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 241,
-				object = "3X3A",
+				object = "cor3X3A.s3o",
 				reclaimable = true,
 				world = "All Worlds",
 			},

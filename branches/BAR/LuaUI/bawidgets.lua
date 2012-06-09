@@ -104,6 +104,7 @@ local flexCallIns = {
   'GameStart',
   'GameOver',
   'GameFrame',
+  'GameProgress',
   'GameSetup',
   'TeamDied',
   'TeamChanged',
@@ -116,6 +117,7 @@ local flexCallIns = {
   'UnitFinished',
   'UnitFromFactory',
   'UnitDestroyed',
+  'UnitExperience',
   'UnitTaken',
   'UnitGiven',
   'UnitIdle',
@@ -1560,6 +1562,12 @@ function widgetHandler:GameFrame(frameNum)
   return
 end
 
+function widgetHandler:GameProgress(serverFrameNum)
+  for _,w in ipairs(self.GameProgressList) do
+    w:GameProgress(serverFrameNum)
+  end
+  return
+end
 
 function widgetHandler:ShockFront(power, dx, dy, dz)
   for _,w in ipairs(self.ShockFrontList) do
@@ -1648,6 +1656,16 @@ end
 function widgetHandler:UnitDestroyed(unitID, unitDefID, unitTeam)
   for _,w in ipairs(self.UnitDestroyedList) do
     w:UnitDestroyed(unitID, unitDefID, unitTeam)
+  end
+  return
+end
+
+
+function widgetHandler:UnitExperience(unitID,     unitDefID,     unitTeam,
+                                      experience, oldExperience)
+  for _,w in ipairs(self.UnitExperienceList) do
+    w:UnitExperience(unitID,     unitDefID,     unitTeam,
+                    experience, oldExperience)
   end
   return
 end
@@ -1839,6 +1857,7 @@ function widgetHandler:StockpileChanged(unitID, unitDefID, unitTeam,
   end
   return
 end
+
 
 
 --------------------------------------------------------------------------------

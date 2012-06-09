@@ -32,7 +32,7 @@ local armcomDefID = UnitDefNames.armcom.id
 local corcomDefID = UnitDefNames.corcom.id
 
 local validStartUnits = {
-    [armcomDefID] = true,
+    --[armcomDefID] = true,
     [corcomDefID] = true,
 }
 local spawnTeams = {} -- spawnTeams[teamID] = allyID

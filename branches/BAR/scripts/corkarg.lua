@@ -20,6 +20,12 @@ smokePiece = {torso}
 
 --------------------------------------------------------------------------------
 -- constants
+local sfxNone=SFX.NONE
+local sfxShatter=SFX.SHATTER
+local sfxSmoke=SFX.SMOKE
+local sfxFire=SFX.FIRE
+local sfxFall = SFX.FALL
+local sfxExplode = SFX.EXPLODE
 --------------------------------------------------------------------------------
 -- Signal definitions
 local SIG_WALK = 1

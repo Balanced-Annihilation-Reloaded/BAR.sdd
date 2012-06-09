@@ -182,7 +182,8 @@ return {
 				weaponvelocity = 300,
 				damage = {
 					default = 99999,
-				},
+    					chicken = 12000,
+			      },
 			},
 			armcomlaser = {
 				areaofeffect = 12,
@@ -217,6 +218,7 @@ return {
 					bombers = 180,
 					default = 75,
 					fighters = 110,
+					chicken = 120,
 					subs = 5,
 				},
 			},

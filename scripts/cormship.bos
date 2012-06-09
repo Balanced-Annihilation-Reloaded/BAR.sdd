@@ -161,6 +161,14 @@ RestoreAfterDelay()
 	start-script RequestState(1);
 	turn turret to y-axis <0.000000> speed <70.000000>;
 	turn sleeve to x-axis <0.000000> speed <30.000000>;
+
+	turn launcher to x-axis <0> speed <90>;
+	wait-for-turn launcher around x-axis;	
+
+	turn doorr to z-axis <0> speed <180>;
+	turn doorl to z-axis <0> speed <180>;
+	wait-for-turn doorr around z-axis;
+
 }
 
 Activate()
@@ -217,6 +225,11 @@ AimPrimary(heading, pitch)
 	{
 		sleep 250;
 	}
+	turn doorr to z-axis <-90> speed <180>;
+	turn doorl to z-axis <90> speed <180>;
+	wait-for-turn doorr around z-axis;
+	turn launcher to x-axis <-90> speed <90>;
+	wait-for-turn launcher around x-axis;
 	start-script RestoreAfterDelay();
 	return (1);
 }

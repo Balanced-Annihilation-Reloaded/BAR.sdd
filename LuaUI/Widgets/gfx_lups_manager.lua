@@ -74,11 +74,11 @@ end
 local UnitEffects = {
 
   [UnitDefNames["cjuno"].id] = {
-    {class='ShieldSphere',options=junoShieldSphere},
+    {class='ShieldSphere',options=cjunoShieldSphere},
     {class='GroundFlash',options=groundFlashJuno},
   },
   [UnitDefNames["ajuno"].id] = {
-    {class='ShieldSphere',options=junoShieldSphere},
+    {class='ShieldSphere',options=cjunoShieldSphere},
     {class='GroundFlash',options=groundFlashJuno},
   },
    [UnitDefNames["cormakr"].id] = {

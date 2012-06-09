@@ -40,7 +40,7 @@ return {
 		upright = true,
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.tga",
+			normaltex = "unittextures/Core_normal.dds",
 			paralyzemultiplier = 0,
 		},
 		featuredefs = {
@@ -78,7 +78,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 15067,
-				object = "3X3A",
+				object = "cor3X3A.s3",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

@@ -39,7 +39,7 @@ function animSmoke(getid, getpiece)
 					--nothing
 				else
 					while (true) do
-						EmitSfx(piece, SMOKE)
+						EmitSfx(piece, SFX.BLACK_SMOKE)
 						Sleep(100)
 					end
 				end

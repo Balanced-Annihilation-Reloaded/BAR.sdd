@@ -133,7 +133,7 @@ local function RestoreAfterDelay()
 end
 
 function script.AimWeapon(num, heading, pitch)
-	Spring.Echo('Aimweapon',num)
+	--Spring.Echo('Aimweapon',num)
 	if num == 1 then
 		Signal( SIG_AIM2)
 		SetSignalMask( SIG_AIM2)

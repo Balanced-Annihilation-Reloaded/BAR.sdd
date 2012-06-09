@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, beam, turret;
+piece  base, beam, nano;
 
 static-var  Static_Var_1, statechg_DesiredState, statechg_StateChanging;
 
@@ -39,16 +39,16 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 Go()
 {
-	turn turret to y-axis Static_Var_1 speed <160.038462>;
-	wait-for-turn turret around y-axis;
+	turn beam to y-axis Static_Var_1 speed <160.038462>;
+	wait-for-turn beam around y-axis;
 	set INBUILDSTANCE to 1;
 }
 
 Stop()
 {
 	set INBUILDSTANCE to 0;
-	turn turret to y-axis <0.000000> speed <160.038462>;
-	wait-for-turn turret around y-axis;
+	turn beam to y-axis <0.000000> speed <160.038462>;
+	wait-for-turn beam around y-axis;
 }
 
 InitState()
@@ -113,7 +113,7 @@ StopBuilding()
 
 QueryNanoPiece(piecenum)
 {
-	piecenum = beam;
+	piecenum = nano;
 }
 
 TargetHeading(Func_Var_1)
@@ -133,7 +133,7 @@ Killed(severity, corpsetype)
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
 		explode beam type BITMAPONLY | BITMAP2;
-		explode turret type BITMAPONLY | BITMAP2;
+		explode nano type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -141,7 +141,7 @@ Killed(severity, corpsetype)
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
 		explode beam type FALL | BITMAP2;
-		explode turret type FALL | BITMAP2;
+		explode nano type FALL | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -149,11 +149,11 @@ Killed(severity, corpsetype)
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
 		explode beam type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
 	explode beam type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 }

@@ -40,7 +40,7 @@ return {
 		upright = true,
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
+			normaltex = "unittextures/Core_normal.tga",
 			paralyzemultiplier = 0,
 		},
 		featuredefs = {
@@ -78,7 +78,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 15067,
-				object = "cor3X3A.s3o",
+				object = "3X3A",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
@@ -230,6 +230,8 @@ return {
 					heavyunits = 1,
 					mines = 3000,
 					nanos = 3000,
+					chicken = 1,
+
 				},
 			},
 		},

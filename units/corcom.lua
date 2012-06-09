@@ -121,7 +121,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 1250,
-				object = "cor2X2C.s3o",
+				object = "2X2C",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
@@ -182,6 +182,7 @@ return {
 				weaponvelocity = 300,
 				damage = {
 					default = 99999,
+					chicken = 12000,
 				},
 			},
 			armcomlaser = {
@@ -217,6 +218,7 @@ return {
 					bombers = 180,
 					default = 75,
 					fighters = 110,
+					chicken = 120,
 					subs = 5,
 				},
 			},

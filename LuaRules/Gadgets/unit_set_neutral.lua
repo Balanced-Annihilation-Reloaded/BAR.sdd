@@ -1,7 +1,7 @@
 function gadget:GetInfo()
   return {
-    name      = "DragonsDisguise",
-    desc      = "Sets Dragons claw & dragons maw to Neutral when closed",
+    name      = "SetNeutral",
+    desc      = "Sets Armoured Units to Neutral when closed",
     author    = "TheFatController",
     date      = "25 Nov 2008",
     license   = "GNU GPL, v2 or later",
@@ -12,6 +12,12 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
+local enabled = tonumber(Spring.GetModOptions().mo_chickengame) or 0
+
+if (enabled == 0) then 
+  return false
+end
 
 if (not gadgetHandler:IsSyncedCode()) then
   return
@@ -24,6 +30,12 @@ local neutralUnits = {}
 local armourTurrets = {}
 armourTurrets[UnitDefNames["cormaw"].id] = true
 armourTurrets[UnitDefNames["armclaw"].id] = true
+armourTurrets[UnitDefNames["corvipe"].id] = true
+armourTurrets[UnitDefNames["armpb"].id] = true
+armourTurrets[UnitDefNames["cortoast"].id] = true
+armourTurrets[UnitDefNames["armamb"].id] = true
+armourTurrets[UnitDefNames["cordoom"].id] = true
+armourTurrets[UnitDefNames["packo"].id] = true
 local UPDATE = 30
 local timeCounter = 15
 

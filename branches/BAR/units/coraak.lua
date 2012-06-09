@@ -22,6 +22,7 @@ return {
 		name = "Manticore",
 		nochasecategory = "ALL",
 		objectname = "CORAAK.s3o",
+		script = "coraak.lua",
 		seismicsignature = 1,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 390,

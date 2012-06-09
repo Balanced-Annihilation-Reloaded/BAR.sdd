@@ -50,7 +50,6 @@ return {
 			[14] = "corvoyr",
 			[15] = "corspy",
 			[16] = "corspec",
-			[17] = "commando",
 			[1] = "corack",
 			[2] = "corfast",
 			[3] = "corpyro",

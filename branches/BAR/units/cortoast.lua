@@ -37,7 +37,7 @@ return {
 		yardmap = "ooooooooo",
 		customparams = {
 			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
+			normaltex = "unittextures/Core_normal.tga",
 		},
 		featuredefs = {
 			dead = {
@@ -90,7 +90,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 241,
-				object = "cor3X3A.s3o",
+				object = "3X3A",
 				reclaimable = true,
 				world = "All Worlds",
 			},
@@ -142,6 +142,8 @@ return {
 				damage = {
 					bombers = 90,
 					default = 346,
+					chicken = 650,
+					tinychicken = 1000,
 					fighters = 90,
 					subs = 5,
 					vtol = 90,
@@ -171,6 +173,8 @@ return {
 					bombers = 90,
 					commanders = 1402,
 					default = 807,
+					chicken = 1300,
+					tinychicken = 1900,
 					fighters = 90,
 					subs = 5,
 					vtol = 90,

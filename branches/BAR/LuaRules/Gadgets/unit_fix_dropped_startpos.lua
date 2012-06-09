@@ -10,6 +10,12 @@ function gadget:GetInfo()
   }
 end
 
+local enabled = tonumber(Spring.GetModOptions().mo_chickengame) or 0
+
+if (enabled == 1) then 
+  return false
+end
+
 -- SYNCED
 if gadgetHandler:IsSyncedCode() then
 

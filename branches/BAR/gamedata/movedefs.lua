@@ -191,6 +191,31 @@ local moveDatas = {
 		subMarine = 1,
 	},
 	]]--
+	--Chickens
+	CHICKQUEEN =
+	{
+		footprintx=7;
+		footprintz=7;
+		maxwaterdepth=72;
+		maxslope=40;
+		crushstrength=15000;
+	},
+	CHICKENHKBOT3 =
+	{
+		footprintx=3;
+		footprintz=3;
+		maxwaterdepth=22;
+		maxslope=36;
+		crushstrength=1400;
+	},
+	CHICKENHKBOT4 =
+	{
+		footprintx=4;
+		footprintz=4;
+		maxwaterdepth=22;
+		maxslope=36;
+		crushstrength=11000;
+},
 }
 
 --------------------------------------------------------------------------------

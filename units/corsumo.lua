@@ -30,6 +30,7 @@ return {
 		name = "Sumo",
 		nochasecategory = "VTOL",
 		objectname = "CORSUMO.s3o",
+		script= 'corsumo.lua',
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 510,

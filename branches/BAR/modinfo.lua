@@ -1,8 +1,8 @@
 return {
-  name='Balanced Annihilation',
+  name='Balanced Annihilation Reloaded',
   description='Moooooo!',
-  shortname='BA',
-  version='V7.68 Remake v3',
+  shortname='BAR',
+  version='$VERSION',
   mutator='Official',
   game='Total Annihilation',
   shortGame='TA',

@@ -65,6 +65,7 @@ local queenAnger     = 0
 
 local guiPanel --// a displayList
 local updatePanel
+local hasChickenEvent = false
 
 local red             = "\255\255\001\001"
 local white           = "\255\255\255\255"
@@ -312,12 +313,8 @@ function ChickenEvent(chickenEventArgs)
 		waveMessage    = {}
 		waveMessage[1] = "The Queen is angered!"
 		waveTime = Spring.GetTimer()
-	elseif (chickenEventArgs.type == "scores") then
-		for i,v in pairs(chickenEventArgs) do
-			if i == Spring.GetMyTeamID() then
-				gotScore = v
-			end
-		end
+	elseif (chickenEventArgs.type == "score"..(Spring.GetMyTeamID())) then
+		gotScore = chickenEventArgs.number
 	end
 end
 
@@ -342,6 +339,9 @@ end
 
 
 function widget:Shutdown()
+  if hasChickenEvent then
+    Spring.SendCommands({"luarules HasChickenEvent 0"})
+  end
   fontHandler.FreeFont(panelFont)
   fontHandler.FreeFont(waveFont)
 
@@ -353,6 +353,10 @@ function widget:Shutdown()
 end
 
 function widget:GameFrame(n)
+  if n > 0 then
+    Spring.SendCommands({"luarules HasChickenEvent 1"})
+    hasChickenEvent = true
+  end
   if (n%30< 1) then
     UpdateRules()
 

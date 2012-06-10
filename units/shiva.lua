@@ -56,7 +56,7 @@ return {
 				height = 10,
 				hitdensity = 100,
 				metal = 937,
-				object = "SHIVA_DEAD",
+				object = "SHIVA_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

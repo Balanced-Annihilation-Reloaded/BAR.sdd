@@ -60,7 +60,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 577,
-				object = "CORTSHIP_DEAD",
+				object = "CORTSHIP_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

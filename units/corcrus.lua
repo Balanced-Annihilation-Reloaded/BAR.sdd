@@ -60,7 +60,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 1241,
-				object = "CORCRUS_DEAD",
+				object = "CORCRUS_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

@@ -71,7 +71,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 1026,
-				object = "CORCARRY_DEAD",
+				object = "CORCARRY_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

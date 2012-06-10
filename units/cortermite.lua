@@ -51,7 +51,7 @@ return {
 				height = 10,
 				hitdensity = 100,
 				metal = 523,
-				object = "CORTERMITE_DEAD",
+				object = "CORTERMITE_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "all",

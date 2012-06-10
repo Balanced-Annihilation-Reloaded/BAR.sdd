@@ -55,7 +55,7 @@ return {
 				height = 40,
 				hitdensity = 100,
 				metal = 1014,
-				object = "CORKARG_DEAD",
+				object = "CORKARG_DEAD.s3o",
 				reclaimable = true,
 				world = "All Worlds",
 			},

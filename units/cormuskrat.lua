@@ -104,7 +104,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 105,
-				object = "CORMUSKRAT_DEAD",
+				object = "CORMUSKRAT_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

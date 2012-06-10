@@ -41,7 +41,11 @@ unitDef = {
   moverate1           = "32",
   noAutoFire          = false,
   noChaseCategory     = "VTOL",
-  objectName          = "chicken_pidgeon.s3o",
+  		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
+		},
+		objectName          = "chicken_pidgeon.s3o",
   selfDestructAs      = "TALON_DEATH",
   separation          = "0.2",
   collisionVolumeType = "box",

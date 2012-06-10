@@ -39,7 +39,11 @@ unitDef = {
   moverate1           = "32",
   noAutoFire          = false,
   noChaseCategory     = "VTOL",
-  objectName          = "chickenf1.s3o",
+  		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
+		},
+		objectName          = "chickenf1.s3o",
   selfDestructAs      = "TALON_DEATH",
   steeringmode        = 1,
   collisionVolumeType = "box",

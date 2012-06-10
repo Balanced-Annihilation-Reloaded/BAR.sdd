@@ -49,7 +49,11 @@ unitDef = {
   maxWaterDepth       = 5000,
   movementClass       = "KBOT2",
   noAutoFire          = 0,
-  objectName          = "chicken_drone.s3o",
+  		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
+		},
+		objectName          = "chicken_drone.s3o",
   seismicSignature    = 1,
   selfDestructAs      = "WEAVER_DEATH",
   collisionVolumeType = "box",

@@ -33,7 +33,11 @@ unitDef = {
   movementClass       = "CHICKENHKBOT4",
   noAutoFire          = false,
   noChaseCategory     = "VTOL",
-  objectName          = "chickena.s3o",
+  		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
+		},
+		objectName          = "chickena.s3o",
   selfDestructAs      = "BIGBUG_DEATH",
   onlytargetcategory2 = "VTOL",
   collisionVolumeType = "box",

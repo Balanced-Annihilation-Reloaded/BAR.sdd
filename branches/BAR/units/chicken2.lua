@@ -34,7 +34,11 @@ unitDef = {
   movementClass       = "AKBOT2",
   noAutoFire          = false,
   noChaseCategory     = "VTOL",
-  objectName          = "chicken2.s3o",
+  		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
+		},
+		objectName          = "chicken2.s3o",
   selfDestructAs      = "BUG_DEATH",
   collisionVolumeType = "box",
   collisionVolumeOffsets = "0 -1 0",

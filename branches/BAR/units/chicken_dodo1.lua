@@ -37,7 +37,11 @@ unitDef = {
   movementClass         = "HOVER3",
   noAutoFire            = false,
   noChaseCategory       = "VTOL SINK HOVER",
-  objectName            = "chicken_dodo.s3o",
+  		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
+		},
+		objectName            = "chicken_dodo.s3o",
   seismicSignature      = 2,
   selfDestructAs        = "DODO_DEATH1",
   selfDestructCountdown = 0,

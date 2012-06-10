@@ -36,7 +36,11 @@ unitDef = {
   movementClass       = "CHICKQUEEN",
   noAutoFire          = false,
   noChaseCategory     = "VTOL",
-  objectName          = "chicken_colonizer.s3o",
+  		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
+		},
+		objectName          = "chicken_colonizer.s3o",
   seismicSignature    = 4,
   selfDestructAs      = "LOBBER_MORPH",
 

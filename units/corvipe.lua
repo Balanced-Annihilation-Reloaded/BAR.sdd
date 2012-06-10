@@ -73,7 +73,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 152,
-				object = "CORVIPE_DEAD.s3o2",
+				object = "CORVIPE_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

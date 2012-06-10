@@ -32,7 +32,11 @@ unitDef = {
   maxWaterDepth      = 0,
   noAutoFire         = false,
   noChaseCategory    = "MOBILE",
-  objectName         = "tube.s3o",
+  		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
+		},
+		objectName         = "tube.s3o",
   selfDestructAs     = "custom:blood_explode",
   collisionVolumeType = "box",
   collisionVolumeOffsets = "0 15 0",

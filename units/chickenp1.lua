@@ -33,7 +33,11 @@ unitDef = {
   movementClass       = "CHICKENHKBOT3",
   noAutoFire          = false,
   noChaseCategory     = "VTOL",
-  objectName          = "chicken_listener.s3o",
+  		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
+		},
+		objectName          = "chicken_listener.s3o",
   selfDestructAs      = "FLAMEBUG_DEATH",
   collisionVolumeType = "box",
   collisionVolumeOffsets = "0 2 0",

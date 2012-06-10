@@ -35,7 +35,11 @@ unitDef = {
   movementClass       = "CHICKQUEEN",
   noAutoFire          = false,
   noChaseCategory     = "VTOL",
-  objectName          = "epic_chickenq.s3o",
+  		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
+		},
+		objectName          = "epic_chickenq.s3o",
   selfDestructAs      = "QUEEN_DEATH",
   turnrate            = 700,
   collisionVolumeType = "box",

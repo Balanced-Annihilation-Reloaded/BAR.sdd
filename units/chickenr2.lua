@@ -29,7 +29,11 @@ unitDef = {
   movementClass       = "CHICKENHKBOT3",
   noAutoFire          = false,
   noChaseCategory     = "VTOL",
-  objectName          = "chickenr.s3o",
+  		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
+		},
+		objectName          = "chickenr.s3o",
   seismicSignature    = 4,
   selfDestructAs      = "WEAVER_DEATH",
   collisionVolumeType = "box",

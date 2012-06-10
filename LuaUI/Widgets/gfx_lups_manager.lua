@@ -182,7 +182,7 @@ local UnitEffects = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=8, length=75, piece="thrust", onActive=true}},
   },
   [UnitDefNames["corvamp"].id] = {
-    {class='AirJet',options={color={0.6,0.1,0}, width=3.5, length=65, piece="thrustb", onActive=true}},
+    {class='AirJet',options={color={0.6,0.1,0}, width=3.5, length=65, piece="thrusta", onActive=true}},
   },
   [UnitDefNames["corawac"].id] = {
     {class='AirJet',options={color={0.8,0.2,0}, width=4, length=50, piece="thrust", onActive=true}},

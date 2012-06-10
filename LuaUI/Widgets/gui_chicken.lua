@@ -353,7 +353,7 @@ function widget:Shutdown()
 end
 
 function widget:GameFrame(n)
-  if n > 0 then
+  if not(hasChickenEvent) and n > 0 then
     Spring.SendCommands({"luarules HasChickenEvent 1"})
     hasChickenEvent = true
   end

@@ -56,7 +56,7 @@ return {
 				height = 0,
 				hitdensity = 100,
 				metal = 103,
-				object = "CORWOLV_DEAD",
+				object = "CORWOLV_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "all",

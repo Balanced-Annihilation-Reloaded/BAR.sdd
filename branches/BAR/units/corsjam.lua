@@ -60,7 +60,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 88,
-				object = "CORSJAM_DEAD",
+				object = "CORSJAM_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

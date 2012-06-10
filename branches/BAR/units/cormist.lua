@@ -56,7 +56,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 134,
-				object = "CORMIST_DEAD",
+				object = "CORMIST_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

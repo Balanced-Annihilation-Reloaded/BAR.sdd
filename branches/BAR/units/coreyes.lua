@@ -10,7 +10,7 @@ return {
 		buildtime = 750,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		cloakcost = 10,
-		corpse = "CDRAGONSEYES_DEAD",
+		corpse = "CDRAGONSEYES_DEAD.s3o",
 		description = "Perimeter Camera",
 		energyuse = 5,
 		footprintx = 1,

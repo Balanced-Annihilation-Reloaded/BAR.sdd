@@ -58,7 +58,7 @@ return {
 				height = 8,
 				hitdensity = 100,
 				metal = 13959,
-				object = "GORG_DEAD",
+				object = "GORG_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

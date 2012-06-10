@@ -104,7 +104,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 2500,
-				object = "CORCOM_DEAD",
+				object = "CORCOM_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

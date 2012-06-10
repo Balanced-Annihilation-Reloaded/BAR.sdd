@@ -59,7 +59,7 @@ return {
 				height = 9,
 				hitdensity = 100,
 				metal = 642,
-				object = "CORPARROW_DEAD",
+				object = "CORPARROW_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "all",

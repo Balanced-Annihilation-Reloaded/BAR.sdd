@@ -62,7 +62,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 65,
-				object = "CORETER_DEAD",
+				object = "CORETER_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

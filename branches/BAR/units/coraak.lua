@@ -50,7 +50,7 @@ return {
 				height = 15,
 				hitdensity = 100,
 				metal = 395,
-				object = "CORAAK_DEAD",
+				object = "CORAAK_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

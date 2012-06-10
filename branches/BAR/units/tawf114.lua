@@ -61,7 +61,7 @@ return {
 				height = 30,
 				hitdensity = 100,
 				metal = 510,
-				object = "TAWF114_DEAD",
+				object = "TAWF114_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

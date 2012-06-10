@@ -60,7 +60,7 @@ return {
 				height = 8,
 				hitdensity = 100,
 				metal = 1118,
-				object = "TREM_DEAD",
+				object = "TREM_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

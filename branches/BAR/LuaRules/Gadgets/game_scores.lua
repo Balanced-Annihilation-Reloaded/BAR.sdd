@@ -109,9 +109,9 @@ end
 local function showScore()
 	local endScores = CalculateScores(teamInfo)
 	DisplayScores(endScores)
-	_G.chickenEventArgs = endScores
-	SendToUnsynced("ChickenEvent")
-	_G.chickenEventArgs = nil
+	for i,v in pairs(endScores) do
+		SendToUnsynced("ChickenEvent", "score"..i, v)
+	end
 end
 
 --function gadget:GameFrame(n)

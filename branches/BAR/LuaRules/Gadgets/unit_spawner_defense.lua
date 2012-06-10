@@ -1018,10 +1018,8 @@ local function SpawnChickens()
 	spawnQueue[i] = nil
 end
 
-local function chickenEvent(args)
-	_G.chickenEventArgs = args
-	SendToUnsynced("ChickenEvent")
-	_G.chickenEventArgs = nil
+local function chickenEvent(type, num, tech)
+	SendToUnsynced("ChickenEvent", type, num, tech)
 end
 
 
@@ -1029,7 +1027,7 @@ local function updateSpawnQueen()
 	if (not queenID) and (not gameOver) then -- spawn queen if not exists
 		queenID = SpawnQueen()
 		idleOrderQueue[queenID] = {cmd = CMD.STOP, params = {}, opts = {}}
-		chickenEvent({type="queen"}) -- notify unsynced about queen spawn
+		chickenEvent("queen") -- notify unsynced about queen spawn
 		_,queenMaxHP = GetUnitHealth(queenID)
 		SetUnitExperience(queenID, (expMod*1.5))
 		timeOfLastWave = t
@@ -1139,14 +1137,14 @@ function gadget:GameFrame(n)
 			SpawnBurrow()
 		end
 		if (burrowCount >= minBurrows) then timeOfLastSpawn = t end
-			chickenEvent({type="burrowSpawn"})
+			chickenEvent("burrowSpawn")
 			SetGameRulesParam("roostCount", SetCount(burrows))
 		end
     
 		if (burrowCount > 0) and (chickenSpawnRate < (t - timeOfLastWave)) then
 			local cCount = Wave()
 			if cCount and cCount > 0 and (not queenID) then
-				chickenEvent({type="wave", number=cCount, tech=currentWave})
+				chickenEvent("wave", cCount, currentWave)
 			end
 			timeOfLastWave = t
 		end
@@ -1279,13 +1277,23 @@ else
 --------------------------------------------------------------------------------
 
 local Script = Script
-local SYNCED = SYNCED
+local hasChickenEvent = false
 
-function WrapToLuaUI()
-  if (Script.LuaUI('ChickenEvent')) then
+local function HasChickenEvent(ce)
+  hasChickenEvent = (ec ~= "0")
+end
+
+function WrapToLuaUI(_, type, num, tech)
+  if hasChickenEvent then
     local chickenEventArgs = {}
-    for k, v in spairs(SYNCED.chickenEventArgs) do
-      chickenEventArgs[k] = v
+    if type ~= nil then
+      chickenEventArgs["type"] = type
+    end
+    if num ~= nil then
+      chickenEventArgs["number"] = num
+    end
+    if tech ~= nil then
+      chickenEventArgs["tech"] = tech
     end
     Script.LuaUI.ChickenEvent(chickenEventArgs)
   end
@@ -1293,6 +1301,11 @@ end
 
 function gadget:Initialize()
   gadgetHandler:AddSyncAction('ChickenEvent', WrapToLuaUI)
+  gadgetHandler:AddChatAction("HasChickenEvent", HasChickenEvent, "toggles hasChickenEvent setting")  
+end
+
+function gadget:Shutdown()
+  gadgetHandler:RemoveChatAction("HasChickenEvent")
 end
 
 --------------------------------------------------------------------------------

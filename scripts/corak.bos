@@ -160,7 +160,7 @@ walk()
 	}
 	if( bMoving )
 	{
-		move pelvis to y-axis [-0.900000] now;
+		move pelvis to y-axis [-0.100000] now;
 		turn pelvis to x-axis <-6.181319> now;
 		turn torso to x-axis <12.648352> now;
 		turn lthigh to x-axis <-12.390110> now;
@@ -345,7 +345,7 @@ walklegs()
 	}
 	if( bMoving )
 	{
-		move pelvis to y-axis [-0.900000] now;
+		move pelvis to y-axis [-0.100000] now;
 		turn pelvis to x-axis <-6.181319> now;
 		turn lthigh to x-axis <-12.390110> now;
 		turn rthigh to x-axis <-0.423077> now;
@@ -394,10 +394,10 @@ UnitSpeed()
 {
 	while(TRUE)
 	{
-		currentSpeed = (get CURRENT_SPEED)*100/moveSpeed;
-		if (currentSpeed<20) currentSpeed=20;
-		animSpeed = 6000 / currentSpeed;
-		sleep 142;
+		currentSpeed = (get CURRENT_SPEED)*100/moveSpeed;  // determine in % how fast we're going
+		if (currentSpeed<20) currentSpeed=20;	// prevent infinite timing
+		animSpeed = 3800 / currentSpeed;  // 38ms * (100 / currentSpeed in %)
+		sleep 142;	// sleep time is always rounded to nearest framerate (0..33, 34..66, 67..99, etc.)
 	}
 }
 
@@ -488,7 +488,7 @@ Create()
 	gun_1 = torso;
 	currentSpeed = 100;
 	moveSpeed = get MAX_SPEED;
-	animSpeed = 60;
+	animSpeed = 38;
 	start-script SmokeUnit();
 }
 

@@ -44,12 +44,12 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 Go()
 {
+	set ARMORED to 0;
 	move top to y-axis [0.000000] speed [19.989014];
 	wait-for-move top along y-axis;
 	move bore to z-axis [0.000000] speed [19.989014];
 	move barrel to z-axis [0.000000] speed [19.989014];
 	Static_Var_1 = 1;
-	set ARMORED to 0;
 }
 
 Stop()

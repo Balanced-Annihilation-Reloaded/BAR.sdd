@@ -133,10 +133,6 @@ local dynamicPieceCollisionVolume = {}	--dynamic per piece collision volume defi
 		on={112,60,112,0,28,0,1,1,1},
 		off={112,35,112,0,0,0,1,1,1},
 	}
-	unitCollisionVolume["corsolar"] = {
-		on={86,78,86,0,-25,0,0,1,0},
-		off={77,78,77,0,-35,0,0,1,0},
-	}
 	unitCollisionVolume["cortarg"] = {
 		on={64,20,64,0,0,0,1,1,1},
 		off={38,20,38,0,0,0,1,1,1},
@@ -163,7 +159,7 @@ local dynamicPieceCollisionVolume = {}	--dynamic per piece collision volume defi
 			["3"]={8,8,42,0,1,70,1,2},
 	}
 	pieceCollisionVolume["corcom"] = {
-			["7"]={36,57,29,0,-8,-1,0,0},
+			["7"]={30,57,20,0,-8,-3,0,0},
 	}	
 	pieceCollisionVolume["corint"] = {
 			["0"]={73,103,73,0,50,0,1,1},

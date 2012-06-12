@@ -147,7 +147,7 @@ local dynamicPieceCollisionVolume = {}	--dynamic per piece collision volume defi
 	}
 	unitCollisionVolume["shiva"] = {
 		on={54,50,50,0,2,-1,0,1,0},
-		off={54,45,50,0,-4,-1,0,1,0},
+		off={54,30,66,0,12,-7,0,1,0},
 	}
 	pieceCollisionVolume["armrad"] = {
 			["0"]={22,58,22,0,30,0,1,1},

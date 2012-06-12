@@ -207,6 +207,7 @@ local function water_check()
 		if ( swimming_modus == false ) then
 			Signal( SIG_walk )
 				-- moving legs in swimming modus
+				UnitScript.SetUnitValue(COB.ARMORED, 1);
 				Turn(lthigh, x_axis, math.rad(45), VAR_speed)
     			Turn(rthigh, x_axis, math.rad(45), VAR_speed)
     			Turn(lleg, x_axis, math.rad(130), VAR_speed)
@@ -237,6 +238,7 @@ local function water_check()
 		if ( swimming_modus == true ) then 
             Signal( SIG_wake )
 				-- change propellors back to feet
+				UnitScript.SetUnitValue(COB.ARMORED, 0);
 				StopSpin(lfoot, y_axis, VAR_speed_propellor, VAR_accel_propellor)
     			StopSpin(rfoot, y_axis, VAR_speed_propellor, VAR_accel_propellor)
 				Move(lfoot, y_axis, 0, VAR_speed)

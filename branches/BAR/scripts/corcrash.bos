@@ -19,116 +19,116 @@ walk()
 	{
 		move pelvis to y-axis [0.000000] now;
 		move lleg to y-axis [0.000000] now;
-		move lleg to z-axis [4.375000] now;
+		move lleg to z-axis [4.375000] speed [65.625000];
 		move rleg to y-axis [0.000000] now;
-		move rleg to z-axis [-4.000000] now;
-		turn pelvis to x-axis <6.000000> now;
-		turn lleg to x-axis <-6.000000> now;
+		move rleg to z-axis [-4.000000] speed [60.000000];
+		turn pelvis to x-axis <6.000000> speed <90.000000>;
+		turn lleg to x-axis <-6.000000> speed <90.000000>;
 		turn rleg to x-axis <0.000000> now;
 		sleep 6000 / currentSpeed;
 
-		move pelvis to y-axis [-1.250000] now;
-		move lleg to y-axis [1.250000] now;
-		move rleg to y-axis [1.250000] now;
-		turn pelvis to x-axis <4.912088> now;
-		turn lleg to x-axis <-4.912088> now;
-		turn rleg to x-axis <1.049451> now;
+		move pelvis to y-axis [-1.250000] speed [37.500000];
+		move lleg to y-axis [1.250000] speed [37.500000];
+		move rleg to y-axis [1.250000] speed [37.500000];
+		turn pelvis to x-axis <4.912088> speed <32.637360>;
+		turn lleg to x-axis <-4.912088> speed <32.637360>;
+		turn rleg to x-axis <1.049451> speed <31.483530>;
 		sleep 3000 / currentSpeed;
 
-		move pelvis to y-axis [-0.750000] now;
-		move lleg to y-axis [0.750000] now;
-		move rleg to y-axis [0.750000] now;
-		turn pelvis to x-axis <2.093407> now;
-		turn lleg to x-axis <-2.093407> now;
-		turn rleg to x-axis <2.802198> now;
+		move pelvis to y-axis [-0.750000] speed [15.000000];
+		move lleg to y-axis [0.750000] speed [15.000000];
+		move rleg to y-axis [0.750000] speed [15.000000];
+		turn pelvis to x-axis <2.093407> speed <84.560430>;
+		turn lleg to x-axis <-2.093407> speed <84.560430>;
+		turn rleg to x-axis <2.802198> speed <52.582410>;
 		sleep 2000 / currentSpeed;
 
-		move pelvis to y-axis [-0.250000] now;
-		move lleg to y-axis [0.250000] now;
-		move rleg to y-axis [0.250000] now;
-		turn pelvis to x-axis <1.049451> now;
-		turn lleg to x-axis <-1.038462> now;
-		turn rleg to x-axis <3.159341> now;
+		move pelvis to y-axis [-0.250000] speed [15.000000];
+		move lleg to y-axis [0.250000] speed [15.000000];
+		move rleg to y-axis [0.250000] speed [15.000000];
+		turn pelvis to x-axis <1.049451> speed <31.318680>;
+		turn lleg to x-axis <-1.038462> speed <31.648350>;
+		turn rleg to x-axis <3.159341> speed <10.714290>;
 		sleep 1000 / currentSpeed;
 
-		move pelvis to y-axis [0.000000] now;
+		move pelvis to y-axis [0.000000] speed [3.750000];
+		move lleg to y-axis [0.000000] speed [3.750000];
+		move rleg to y-axis [2.750000] speed [37.500000];
+		move rleg to z-axis [-4.625000] speed [9.375000];
+		turn pelvis to x-axis <0.000000> speed <15.741765>;
+		turn lleg to x-axis <0.000000> speed <15.576930>;
+		turn rleg to x-axis <0.000000> speed <47.390115>;
+		sleep 6000 / currentSpeed;
+
+		move lleg to z-axis [2.500000] speed [28.125000];
+		move rleg to z-axis [-0.875000] speed [56.250000];
+		sleep 6000 / currentSpeed;
+
 		move lleg to y-axis [0.000000] now;
-		move rleg to y-axis [2.750000] now;
-		move rleg to z-axis [-4.625000] now;
+		move lleg to z-axis [0.000000] speed [37.500000];
+		move rleg to z-axis [0.000000] speed [13.125000];
 		turn pelvis to x-axis <0.000000> now;
 		turn lleg to x-axis <0.000000> now;
 		turn rleg to x-axis <0.000000> now;
 		sleep 6000 / currentSpeed;
 
-		move lleg to z-axis [2.500000] now;
-		move rleg to z-axis [-0.875000] now;
-		sleep 6000 / currentSpeed;
-
-		move lleg to y-axis [0.000000] now;
-		move lleg to z-axis [0.000000] now;
-		move rleg to z-axis [0.000000] now;
-		turn pelvis to x-axis <0.000000> now;
-		turn lleg to x-axis <0.000000> now;
-		turn rleg to x-axis <0.000000> now;
-		sleep 6000 / currentSpeed;
-
-		move lleg to z-axis [-1.500000] now;
-		move rleg to z-axis [2.125000] now;
-		turn rleg to x-axis <-9.137363> now;
+		move lleg to z-axis [-1.500000] speed [11.250000];
+		move rleg to z-axis [2.125000] speed [15.937500];
+		turn rleg to x-axis <-9.137363> speed <68.530223>;
 		sleep 10000 / currentSpeed;
 
-		move lleg to z-axis [-3.000000] now;
-		move rleg to y-axis [0.000000] now;
-		turn pelvis to x-axis <6.000000> now;
-		turn rleg to x-axis <-6.000000> now;
+		move lleg to z-axis [-3.000000] speed [22.500000];
+		move rleg to y-axis [0.000000] speed [41.250000];
+		turn pelvis to x-axis <6.000000> speed <90.000000>;
+		turn rleg to x-axis <-6.000000> speed <47.060445>;
 		sleep 6000 / currentSpeed;
 
-		move pelvis to y-axis [-1.224991] now;
-		move lleg to y-axis [1.250000] now;
-		move rleg to y-axis [1.250000] now;
-		turn pelvis to x-axis <4.560440> now;
-		turn lleg to x-axis <0.692308> now;
-		turn rleg to x-axis <-4.912088> now;
+		move pelvis to y-axis [-1.224991] speed [36.749730];
+		move lleg to y-axis [1.250000] speed [37.500000];
+		move rleg to y-axis [1.250000] speed [37.500000];
+		turn pelvis to x-axis <4.560440> speed <43.186800>;
+		turn lleg to x-axis <0.692308> speed <20.769240>;
+		turn rleg to x-axis <-4.912088> speed <32.637360>;
 		sleep 3000 / currentSpeed;
 
-		move pelvis to y-axis [-0.699997] now;
-		move lleg to y-axis [0.750000] now;
-		move rleg to y-axis [0.750000] now;
-		turn pelvis to x-axis <2.093407> now;
-		turn lleg to x-axis <2.802198> now;
-		turn rleg to x-axis <-2.093407> now;
+		move pelvis to y-axis [-0.699997] speed [15.749820];
+		move lleg to y-axis [0.750000] speed [15.000000];
+		move rleg to y-axis [0.750000] speed [15.000000];
+		turn pelvis to x-axis <2.093407> speed <74.010990>;
+		turn lleg to x-axis <2.802198> speed <63.296700>;
+		turn rleg to x-axis <-2.093407> speed <84.560430>;
 		sleep 2000 / currentSpeed;
 
-		move pelvis to y-axis [-0.250000] now;
-		move lleg to y-axis [0.250000] now;
-		move rleg to y-axis [0.250000] now;
-		turn pelvis to x-axis <1.049451> now;
-		turn lleg to x-axis <2.456044> now;
-		turn rleg to x-axis <-1.038462> now;
+		move pelvis to y-axis [-0.250000] speed [13.499910];
+		move lleg to y-axis [0.250000] speed [15.000000];
+		move rleg to y-axis [0.250000] speed [15.000000];
+		turn pelvis to x-axis <1.049451> speed <31.318680>;
+		turn lleg to x-axis <2.456044> speed <10.384620>;
+		turn rleg to x-axis <-1.038462> speed <31.648350>;
 		sleep 1000 / currentSpeed;
 
-		move lleg to y-axis [2.750000] now;
-		move lleg to z-axis [-3.875000] now;
-		move rleg to y-axis [1.250000] now;
-		turn pelvis to x-axis <0.000000> now;
-		turn lleg to x-axis <0.000000> now;
+		move lleg to y-axis [2.750000] speed [37.500000];
+		move lleg to z-axis [-3.875000] speed [13.125000];
+		move rleg to y-axis [1.250000] speed [15.000000];
+		turn pelvis to x-axis <0.000000> speed <15.741765>;
+		turn lleg to x-axis <0.000000> speed <36.840660>;
+		turn rleg to x-axis <0.000000> speed <15.576930>;
+		sleep 6000 / currentSpeed;
+
+		move lleg to z-axis [-1.750000] speed [31.875000];
+		move rleg to z-axis [0.500000] speed [24.375000];
+		sleep 6000 / currentSpeed;
+
+		move lleg to z-axis [1.125000] speed [43.125000];
+		move rleg to y-axis [0.000000] speed [18.750000];
+		move rleg to z-axis [-0.750000] speed [18.750000];
 		turn rleg to x-axis <0.000000> now;
 		sleep 6000 / currentSpeed;
 
-		move lleg to z-axis [-1.750000] now;
-		move rleg to z-axis [0.500000] now;
-		sleep 6000 / currentSpeed;
-
-		move lleg to z-axis [1.125000] now;
+		move lleg to z-axis [2.500000] speed [10.312500];
 		move rleg to y-axis [0.000000] now;
-		move rleg to z-axis [-0.750000] now;
-		turn rleg to x-axis <0.000000> now;
-		sleep 6000 / currentSpeed;
-
-		move lleg to z-axis [2.500000] now;
-		move rleg to y-axis [0.000000] now;
-		move rleg to z-axis [-3.250000] now;
-		turn lleg to x-axis <-10.192308> now;
+		move rleg to z-axis [-3.250000] speed [18.750000];
+		turn lleg to x-axis <-10.192308> speed <76.442310>;
 		turn rleg to x-axis <0.000000> now;
 		sleep 10000 / currentSpeed;
 	}

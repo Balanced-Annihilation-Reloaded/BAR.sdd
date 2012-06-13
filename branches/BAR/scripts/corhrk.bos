@@ -17,178 +17,178 @@ walk()
 {
 	if( TRUE )
 	{
-		move torso to y-axis [-0.375000] now;
-		move lthigh to y-axis [0.385315] now;
-		move lthigh to z-axis [-0.114990] now;
-		move rthigh to y-axis [-0.489670] now;
-		move rthigh to z-axis [-0.114990] now;
-		turn lthigh to x-axis <12.307692> now;
-		turn rthigh to x-axis <-45.357143> now;
-		turn rleg to x-axis <-19.340659> now;
-		turn rfoot to x-axis <65.054945> now;
-		turn lleg to x-axis <4.923077> now;
-		turn lfoot to x-axis <-4.571429> now;
+		move torso to y-axis [-0.375000] speed [3.200431];
+		move lthigh to y-axis [0.385315] speed [3.288464];
+		move lthigh to z-axis [-0.114990] speed [0.981380];
+		move rthigh to y-axis [-0.489670] speed [4.179080];
+		move rthigh to z-axis [-0.114990] speed [0.981380];
+		turn lthigh to x-axis <12.307692> speed <105.039785>;
+		turn rthigh to x-axis <-45.357143> speed <387.099755>;
+		turn rleg to x-axis <-19.340659> speed <165.062521>;
+		turn rfoot to x-axis <65.054945> speed <555.210306>;
+		turn lleg to x-axis <4.923077> speed <42.015916>;
+		turn lfoot to x-axis <-4.571429> speed <39.014782>;
 		sleep 90;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.125000] now;
-		move lthigh to y-axis [0.260315] now;
-		move rthigh to y-axis [0.010315] now;
-		turn lthigh to x-axis <16.879121> now;
-		turn rthigh to x-axis <-55.906593> now;
-		turn rleg to x-axis <5.972527> now;
-		turn rfoot to x-axis <49.934066> now;
-		turn lleg to x-axis <-1.406593> now;
-		turn lfoot to x-axis <4.571429> now;
+		move torso to y-axis [-0.125000] speed [1.661074];
+		move lthigh to y-axis [0.260315] speed [0.830537];
+		move rthigh to y-axis [0.010315] speed [3.322048];
+		turn lthigh to x-axis <16.879121> speed <30.373924>;
+		turn rthigh to x-axis <-55.906593> speed <70.093661>;
+		turn rleg to x-axis <5.972527> speed <168.188283>;
+		turn rfoot to x-axis <49.934066> speed <100.467585>;
+		turn lleg to x-axis <-1.406593> speed <42.056197>;
+		turn lfoot to x-axis <4.571429> speed <60.747848>;
 		sleep 120;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [0.000000] now;
-		move rthigh to y-axis [-0.364670] now;
-		turn lthigh to x-axis <20.395604> now;
-		turn rthigh to x-axis <-30.593407> now;
-		turn rleg to x-axis <-9.494505> now;
-		turn rfoot to x-axis <40.087912> now;
-		turn lleg to x-axis <-5.978022> now;
-		turn lfoot to x-axis <12.302198> now;
+		move torso to y-axis [0.000000] speed [0.830537];
+		move rthigh to y-axis [-0.364670] speed [2.491511];
+		turn lthigh to x-axis <20.395604> speed <23.364551>;
+		turn rthigh to x-axis <-30.593407> speed <168.188283>;
+		turn rleg to x-axis <-9.494505> speed <102.767528>;
+		turn rfoot to x-axis <40.087912> speed <65.420755>;
+		turn lleg to x-axis <-5.978022> speed <30.373924>;
+		turn lfoot to x-axis <12.302198> speed <51.365512>;
 		sleep 117;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.750000] now;
-		move lthigh to y-axis [0.635315] now;
-		move rthigh to y-axis [0.885315] now;
-		turn lthigh to x-axis <19.340659> now;
-		turn rthigh to x-axis <-13.362637> now;
-		turn rleg to x-axis <-5.626374> now;
-		turn rfoot to x-axis <18.989011> now;
-		turn lleg to x-axis <-21.802198> now;
-		turn lfoot to x-axis <29.884615> now;
+		move torso to y-axis [-0.750000] speed [4.983221];
+		move lthigh to y-axis [0.635315] speed [2.491611];
+		move rthigh to y-axis [0.885315] speed [8.305269];
+		turn lthigh to x-axis <19.340659> speed <7.009366>;
+		turn rthigh to x-axis <-13.362637> speed <114.486324>;
+		turn rleg to x-axis <-5.626374> speed <25.701005>;
+		turn rfoot to x-axis <18.989011> speed <140.187329>;
+		turn lleg to x-axis <-21.802198> speed <105.140498>;
+		turn lfoot to x-axis <29.884615> speed <116.822771>;
 		sleep 113;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.375000] now;
-		move lthigh to y-axis [-0.364670] now;
-		move rthigh to y-axis [-0.364670] now;
-		turn lthigh to x-axis <4.571429> now;
-		turn rthigh to x-axis <-1.439560> now;
-		turn rleg to x-axis <-9.016484> now;
-		turn rleg to y-axis <0.351648> now;
-		turn rfoot to x-axis <10.719780> now;
-		turn lleg to x-axis <-41.142857> now;
-		turn lfoot to x-axis <46.763736> now;
+		move torso to y-axis [-0.375000] speed [4.472892];
+		move lthigh to y-axis [-0.364670] speed [11.927532];
+		move rthigh to y-axis [-0.364670] speed [14.909460];
+		turn lthigh to x-axis <4.571429> speed <176.163105>;
+		turn rthigh to x-axis <-1.439560> speed <142.215015>;
+		turn rleg to x-axis <-9.016484> speed <40.436252>;
+		turn rleg to y-axis <0.351648> speed <4.194356>;
+		turn rfoot to x-axis <10.719780> speed <98.632996>;
+		turn lleg to x-axis <-41.142857> speed <230.689788>;
+		turn lfoot to x-axis <46.763736> speed <201.329275>;
 		sleep 52;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.250000] now;
-		move lthigh to x-axis [0.062500] now;
-		move lthigh to y-axis [0.260315] now;
+		move torso to y-axis [-0.250000] speed [1.490964];
+		move lthigh to x-axis [0.062500] speed [0.745482];
+		move lthigh to y-axis [0.260315] speed [7.454640];
 		move rthigh to y-axis [-0.364670] now;
-		turn lthigh to x-axis <-18.456044> now;
-		turn rthigh to x-axis <-0.131868> now;
-		turn rleg to x-axis <-5.769231> now;
-		turn rfoot to x-axis <5.835165> now;
-		turn lleg to x-axis <-30.412088> now;
-		turn lfoot to x-axis <51.340659> now;
+		turn lthigh to x-axis <-18.456044> speed <274.665039>;
+		turn rthigh to x-axis <-0.131868> speed <15.597772>;
+		turn rleg to x-axis <-5.769231> speed <38.732295>;
+		turn rfoot to x-axis <5.835165> speed <58.262275>;
+		turn lleg to x-axis <-30.412088> speed <127.993510>;
+		turn lfoot to x-axis <51.340659> speed <54.592214>;
 		sleep 53;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.125000] now;
-		move lthigh to x-axis [0.125000] now;
-		move lthigh to y-axis [-0.614670] now;
-		move rthigh to y-axis [-0.239670] now;
-		turn lthigh to x-axis <-38.681319> now;
-		turn rthigh to x-axis <4.219780> now;
-		turn rleg to x-axis <-0.703297> now;
-		turn rfoot to x-axis <0.346154> now;
-		turn lleg to x-axis <-19.692308> now;
-		turn lfoot to x-axis <55.912088> now;
+		move torso to y-axis [-0.125000] speed [0.830537];
+		move lthigh to x-axis [0.125000] speed [0.415268];
+		move lthigh to y-axis [-0.614670] speed [5.813659];
+		move rthigh to y-axis [-0.239670] speed [0.830537];
+		turn lthigh to x-axis <-38.681319> speed <134.382700>;
+		turn rthigh to x-axis <4.219780> speed <28.913634>;
+		turn rleg to x-axis <-0.703297> speed <33.659561>;
+		turn rfoot to x-axis <0.346154> speed <36.470610>;
+		turn lleg to x-axis <-19.692308> speed <71.225384>;
+		turn lfoot to x-axis <55.912088> speed <30.373924>;
 		sleep 113;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [0.000000] now;
-		move lthigh to x-axis [0.000000] now;
-		move lthigh to y-axis [-0.364670] now;
-		move rthigh to y-axis [-0.364670] now;
-		turn lthigh to x-axis <-53.802198> now;
-		turn rthigh to x-axis <12.302198> now;
-		turn rleg to x-axis <-0.351648> now;
+		move torso to y-axis [0.000000] speed [0.830537];
+		move lthigh to x-axis [0.000000] speed [0.830537];
+		move lthigh to y-axis [-0.364670] speed [1.661074];
+		move rthigh to y-axis [-0.364670] speed [0.830537];
+		turn lthigh to x-axis <-53.802198> speed <100.467585>;
+		turn rthigh to x-axis <12.302198> speed <53.701972>;
+		turn rleg to x-axis <-0.351648> speed <2.336460>;
 		turn rfoot to x-axis <0.346154> now;
-		turn lleg to x-axis <4.219780> now;
-		turn lfoot to x-axis <49.582418> now;
+		turn lleg to x-axis <4.219780> speed <158.878974>;
+		turn lfoot to x-axis <49.582418> speed <42.056197>;
 		sleep 104;
 	}
 	if( TRUE )
 	{
-		move lthigh to x-axis [0.125000] now;
-		move lthigh to y-axis [-0.114670] now;
-		move rthigh to y-axis [-0.239670] now;
-		turn lthigh to x-axis <-35.164835> now;
-		turn rthigh to x-axis <22.148352> now;
-		turn rleg to x-axis <-9.494505> now;
-		turn rfoot to x-axis <19.335165> now;
-		turn lleg to x-axis <-5.978022> now;
-		turn lfoot to x-axis <41.494505> now;
+		move lthigh to x-axis [0.125000] speed [0.830537];
+		move lthigh to y-axis [-0.114670] speed [1.661074];
+		move rthigh to y-axis [-0.239670] speed [0.830537];
+		turn lthigh to x-axis <-35.164835> speed <123.832143>;
+		turn rthigh to x-axis <22.148352> speed <65.420755>;
+		turn rleg to x-axis <-9.494505> speed <60.747842>;
+		turn rfoot to x-axis <19.335165> speed <126.168597>;
+		turn lleg to x-axis <-5.978022> speed <67.757208>;
+		turn lfoot to x-axis <41.494505> speed <53.738482>;
 		sleep 115;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.750000] now;
+		move torso to y-axis [-0.750000] speed [4.983221];
 		move lthigh to x-axis [0.125000] now;
-		move lthigh to y-axis [0.385315] now;
-		move rthigh to y-axis [-0.114670] now;
-		turn lthigh to x-axis <-8.439560> now;
-		turn rthigh to x-axis <18.285714> now;
-		turn rleg to x-axis <-24.263736> now;
-		turn rfoot to x-axis <31.291209> now;
-		turn lleg to x-axis <-10.197802> now;
-		turn lfoot to x-axis <18.637363> now;
+		move lthigh to y-axis [0.385315] speed [3.322048];
+		move rthigh to y-axis [-0.114670] speed [0.830537];
+		turn lthigh to x-axis <-8.439560> speed <177.570619>;
+		turn rthigh to x-axis <18.285714> speed <25.664508>;
+		turn rleg to x-axis <-24.263736> speed <98.131132>;
+		turn rfoot to x-axis <31.291209> speed <79.439487>;
+		turn lleg to x-axis <-10.197802> speed <28.037464>;
+		turn lfoot to x-axis <18.637363> speed <151.869601>;
 		sleep 108;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.625000] now;
+		move torso to y-axis [-0.625000] speed [0.830537];
 		move lthigh to x-axis [0.125000] now;
-		move lthigh to y-axis [0.010315] now;
-		move rthigh to y-axis [-0.364670] now;
-		turn lthigh to x-axis <2.109890> now;
-		turn rthigh to x-axis <8.785714> now;
-		turn rleg to x-axis <-36.571429> now;
-		turn rfoot to x-axis <41.137363> now;
-		turn lleg to x-axis <-5.274725> now;
-		turn lfoot to x-axis <2.461538> now;
+		move lthigh to y-axis [0.010315] speed [2.491611];
+		move rthigh to y-axis [-0.364670] speed [1.661074];
+		turn lthigh to x-axis <2.109890> speed <70.093661>;
+		turn rthigh to x-axis <8.785714> speed <63.120805>;
+		turn rleg to x-axis <-36.571429> speed <81.775947>;
+		turn rfoot to x-axis <41.137363> speed <65.420755>;
+		turn lleg to x-axis <-5.274725> speed <32.710377>;
+		turn lfoot to x-axis <2.461538> speed <107.476958>;
 		sleep 110;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.500000] now;
-		move lthigh to y-axis [0.260315] now;
-		move rthigh to y-axis [-0.114685] now;
-		turn lthigh to x-axis <5.269231> now;
-		turn rthigh to x-axis <-8.087912> now;
-		turn rleg to x-axis <-34.461538> now;
-		turn rfoot to x-axis <53.796703> now;
-		turn lleg to x-axis <2.813187> now;
-		turn lfoot to x-axis <-7.736264> now;
+		move torso to y-axis [-0.500000] speed [1.490964];
+		move lthigh to y-axis [0.260315] speed [2.981928];
+		move rthigh to y-axis [-0.114685] speed [2.981749];
+		turn lthigh to x-axis <5.269231> speed <37.683706>;
+		turn rthigh to x-axis <-8.087912> speed <201.263732>;
+		turn rleg to x-axis <-34.461538> speed <25.166170>;
+		turn rfoot to x-axis <53.796703> speed <150.996947>;
+		turn lleg to x-axis <2.813187> speed <96.470276>;
+		turn lfoot to x-axis <-7.736264> speed <121.636433>;
 		sleep 62;
 	}
-	move torso to y-axis [-0.437500] now;
-	move lthigh to x-axis [0.062500] now;
-	move lthigh to y-axis [0.385315] now;
-	move rthigh to y-axis [0.135315] now;
-	turn lthigh to x-axis <8.785714> now;
-	turn rthigh to x-axis <-26.725275> now;
-	turn rleg to x-axis <-26.895604> now;
-	turn rleg to y-axis <0.170330> now;
-	turn rfoot to x-axis <59.423077> now;
-	turn lleg to x-axis <3.862637> now;
-	turn lfoot to x-axis <-6.153846> now;
+	move torso to y-axis [-0.437500] speed [0.745482];
+	move lthigh to x-axis [0.062500] speed [0.745482];
+	move lthigh to y-axis [0.385315] speed [1.490964];
+	move rthigh to y-axis [0.135315] speed [2.981928];
+	turn lthigh to x-axis <8.785714> speed <41.943592>;
+	turn rthigh to x-axis <-26.725275> speed <222.301077>;
+	turn rleg to x-axis <-26.895604> speed <90.244273>;
+	turn rleg to y-axis <0.170330> speed <2.162709>;
+	turn rfoot to x-axis <59.423077> speed <67.109762>;
+	turn lleg to x-axis <3.862637> speed <12.517536>;
+	turn lfoot to x-axis <-6.153846> speed <18.874624>;
 	sleep 61;
 	return (0);
 }
@@ -197,187 +197,187 @@ walklegs()
 {
 	if( TRUE )
 	{
-		move torso to y-axis [-0.375000] now;
-		move lthigh to y-axis [0.760315] now;
+		move torso to y-axis [-0.375000] speed [0.533405];
+		move lthigh to y-axis [0.760315] speed [3.200431];
 		move lthigh to z-axis [-0.114990] now;
-		move rthigh to y-axis [-0.489670] now;
+		move rthigh to y-axis [-0.489670] speed [5.333924];
 		move rthigh to z-axis [-0.114990] now;
-		turn lthigh to x-axis <12.307692> now;
-		turn rthigh to x-axis <-45.357143> now;
-		turn rleg to x-axis <-19.340659> now;
-		turn rfoot to x-axis <65.054945> now;
-		turn lleg to x-axis <4.923077> now;
-		turn lfoot to x-axis <-4.571429> now;
+		turn lthigh to x-axis <12.307692> speed <30.058261>;
+		turn rthigh to x-axis <-45.357143> speed <159.013356>;
+		turn rleg to x-axis <-19.340659> speed <64.477548>;
+		turn rfoot to x-axis <65.054945> speed <48.065080>;
+		turn lleg to x-axis <4.923077> speed <9.050307>;
+		turn lfoot to x-axis <-4.571429> speed <13.505111>;
 		sleep 90;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.125000] now;
-		move lthigh to y-axis [0.135300] now;
-		move rthigh to y-axis [-0.114670] now;
-		turn lthigh to x-axis <16.879121> now;
-		turn rthigh to x-axis <-55.906593> now;
-		turn rleg to x-axis <5.972527> now;
-		turn rfoot to x-axis <49.934066> now;
-		turn lleg to x-axis <-1.406593> now;
-		turn lfoot to x-axis <4.571429> now;
+		move torso to y-axis [-0.125000] speed [1.661074];
+		move lthigh to y-axis [0.135300] speed [4.152784];
+		move rthigh to y-axis [-0.114670] speed [2.491611];
+		turn lthigh to x-axis <16.879121> speed <30.373924>;
+		turn rthigh to x-axis <-55.906593> speed <70.093661>;
+		turn rleg to x-axis <5.972527> speed <168.188283>;
+		turn rfoot to x-axis <49.934066> speed <100.467585>;
+		turn lleg to x-axis <-1.406593> speed <42.056197>;
+		turn lfoot to x-axis <4.571429> speed <60.747848>;
 		sleep 120;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [0.000000] now;
-		move lthigh to y-axis [0.385315] now;
-		move rthigh to y-axis [-0.364685] now;
-		turn lthigh to x-axis <20.395604> now;
-		turn rthigh to x-axis <-30.593407> now;
-		turn rleg to x-axis <-9.494505> now;
-		turn rfoot to x-axis <40.087912> now;
-		turn lleg to x-axis <-5.978022> now;
-		turn lfoot to x-axis <12.302198> now;
+		move torso to y-axis [0.000000] speed [0.830537];
+		move lthigh to y-axis [0.385315] speed [1.661173];
+		move rthigh to y-axis [-0.364685] speed [1.661173];
+		turn lthigh to x-axis <20.395604> speed <23.364551>;
+		turn rthigh to x-axis <-30.593407> speed <168.188283>;
+		turn rleg to x-axis <-9.494505> speed <102.767528>;
+		turn rfoot to x-axis <40.087912> speed <65.420755>;
+		turn lleg to x-axis <-5.978022> speed <30.373924>;
+		turn lfoot to x-axis <12.302198> speed <51.365512>;
 		sleep 117;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.750000] now;
-		move lthigh to y-axis [0.760315] now;
-		move rthigh to y-axis [1.135315] now;
-		turn lthigh to x-axis <19.340659> now;
-		turn rthigh to x-axis <-13.362637> now;
-		turn rleg to x-axis <-5.626374> now;
-		turn rfoot to x-axis <18.989011> now;
-		turn lleg to x-axis <-21.802198> now;
-		turn lfoot to x-axis <29.884615> now;
+		move torso to y-axis [-0.750000] speed [4.983221];
+		move lthigh to y-axis [0.760315] speed [2.491611];
+		move rthigh to y-axis [1.135315] speed [9.966443];
+		turn lthigh to x-axis <19.340659> speed <7.009366>;
+		turn rthigh to x-axis <-13.362637> speed <114.486324>;
+		turn rleg to x-axis <-5.626374> speed <25.701005>;
+		turn rfoot to x-axis <18.989011> speed <140.187329>;
+		turn lleg to x-axis <-21.802198> speed <105.140498>;
+		turn lfoot to x-axis <29.884615> speed <116.822771>;
 		sleep 113;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.375000] now;
-		move lthigh to y-axis [-0.864685] now;
-		move rthigh to y-axis [-0.364670] now;
-		turn lthigh to x-axis <4.571429> now;
-		turn rthigh to x-axis <-1.439560> now;
-		turn rleg to x-axis <-9.016484> now;
-		turn rleg to y-axis <0.351648> now;
-		turn rfoot to x-axis <10.719780> now;
-		turn lleg to x-axis <-41.142857> now;
-		turn lfoot to x-axis <46.763736> now;
+		move torso to y-axis [-0.375000] speed [4.472892];
+		move lthigh to y-axis [-0.864685] speed [19.382530];
+		move rthigh to y-axis [-0.364670] speed [17.891387];
+		turn lthigh to x-axis <4.571429> speed <176.163105>;
+		turn rthigh to x-axis <-1.439560> speed <142.215015>;
+		turn rleg to x-axis <-9.016484> speed <40.436252>;
+		turn rleg to y-axis <0.351648> speed <2.162709>;
+		turn rfoot to x-axis <10.719780> speed <98.632996>;
+		turn lleg to x-axis <-41.142857> speed <230.689788>;
+		turn lfoot to x-axis <46.763736> speed <201.329275>;
 		sleep 52;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.250000] now;
+		move torso to y-axis [-0.250000] speed [1.490964];
 		move lthigh to x-axis [0.062500] now;
-		move lthigh to y-axis [-0.239670] now;
-		turn lthigh to x-axis <-18.456044> now;
-		turn rthigh to x-axis <-0.131868> now;
-		turn rleg to x-axis <-5.769231> now;
-		turn rfoot to x-axis <5.835165> now;
-		turn lleg to x-axis <-30.412088> now;
-		turn lfoot to x-axis <51.340659> now;
+		move lthigh to y-axis [-0.239670] speed [7.454998];
+		turn lthigh to x-axis <-18.456044> speed <274.665039>;
+		turn rthigh to x-axis <-0.131868> speed <15.597772>;
+		turn rleg to x-axis <-5.769231> speed <38.732295>;
+		turn rfoot to x-axis <5.835165> speed <58.262275>;
+		turn lleg to x-axis <-30.412088> speed <127.993510>;
+		turn lfoot to x-axis <51.340659> speed <54.592214>;
 		sleep 53;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.125000] now;
-		move lthigh to x-axis [0.125000] now;
-		move lthigh to y-axis [0.260315] now;
-		move rthigh to y-axis [0.010315] now;
-		turn lthigh to x-axis <-38.681319> now;
-		turn rthigh to x-axis <4.219780> now;
-		turn rleg to x-axis <-0.703297> now;
-		turn rfoot to x-axis <0.346154> now;
-		turn lleg to x-axis <-19.692308> now;
-		turn lfoot to x-axis <55.912088> now;
+		move torso to y-axis [-0.125000] speed [0.830537];
+		move lthigh to x-axis [0.125000] speed [0.415268];
+		move lthigh to y-axis [0.260315] speed [3.322048];
+		move rthigh to y-axis [0.010315] speed [2.491511];
+		turn lthigh to x-axis <-38.681319> speed <134.382700>;
+		turn rthigh to x-axis <4.219780> speed <28.913634>;
+		turn rleg to x-axis <-0.703297> speed <33.659561>;
+		turn rfoot to x-axis <0.346154> speed <36.470610>;
+		turn lleg to x-axis <-19.692308> speed <71.225384>;
+		turn lfoot to x-axis <55.912088> speed <30.373924>;
 		sleep 113;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [0.000000] now;
-		move lthigh to x-axis [0.000000] now;
-		move lthigh to y-axis [0.010315] now;
-		move rthigh to y-axis [-0.114670] now;
-		turn lthigh to x-axis <-53.802198> now;
-		turn rthigh to x-axis <12.302198> now;
-		turn rleg to x-axis <-0.351648> now;
+		move torso to y-axis [0.000000] speed [0.830537];
+		move lthigh to x-axis [0.000000] speed [0.830537];
+		move lthigh to y-axis [0.010315] speed [1.661074];
+		move rthigh to y-axis [-0.114670] speed [0.830437];
+		turn lthigh to x-axis <-53.802198> speed <100.467585>;
+		turn rthigh to x-axis <12.302198> speed <53.701972>;
+		turn rleg to x-axis <-0.351648> speed <2.336460>;
 		turn rfoot to x-axis <0.346154> now;
-		turn lleg to x-axis <4.219780> now;
-		turn lfoot to x-axis <49.582418> now;
+		turn lleg to x-axis <4.219780> speed <158.878974>;
+		turn lfoot to x-axis <49.582418> speed <42.056197>;
 		sleep 104;
 	}
 	if( TRUE )
 	{
-		move lthigh to x-axis [0.125000] now;
-		move lthigh to y-axis [-0.114685] now;
-		move rthigh to y-axis [0.010315] now;
-		turn lthigh to x-axis <-35.164835> now;
-		turn rthigh to x-axis <22.148352> now;
-		turn rleg to x-axis <-9.494505> now;
-		turn rfoot to x-axis <19.335165> now;
-		turn lleg to x-axis <-5.978022> now;
-		turn lfoot to x-axis <41.494505> now;
+		move lthigh to x-axis [0.125000] speed [0.830537];
+		move lthigh to y-axis [-0.114685] speed [0.830537];
+		move rthigh to y-axis [0.010315] speed [0.830437];
+		turn lthigh to x-axis <-35.164835> speed <123.832143>;
+		turn rthigh to x-axis <22.148352> speed <65.420755>;
+		turn rleg to x-axis <-9.494505> speed <60.747842>;
+		turn rfoot to x-axis <19.335165> speed <126.168597>;
+		turn lleg to x-axis <-5.978022> speed <67.757208>;
+		turn lfoot to x-axis <41.494505> speed <53.738482>;
 		sleep 115;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.750000] now;
+		move torso to y-axis [-0.750000] speed [4.983221];
 		move lthigh to x-axis [0.125000] now;
-		move lthigh to y-axis [0.510315] now;
-		move rthigh to y-axis [-0.114670] now;
-		turn lthigh to x-axis <-8.439560> now;
-		turn rthigh to x-axis <18.285714> now;
-		turn rleg to x-axis <-24.263736> now;
-		turn rfoot to x-axis <31.291209> now;
-		turn lleg to x-axis <-10.197802> now;
-		turn lfoot to x-axis <18.637363> now;
+		move lthigh to y-axis [0.510315] speed [4.152685];
+		move rthigh to y-axis [-0.114670] speed [0.830437];
+		turn lthigh to x-axis <-8.439560> speed <177.570619>;
+		turn rthigh to x-axis <18.285714> speed <25.664508>;
+		turn rleg to x-axis <-24.263736> speed <98.131132>;
+		turn rfoot to x-axis <31.291209> speed <79.439487>;
+		turn lleg to x-axis <-10.197802> speed <28.037464>;
+		turn lfoot to x-axis <18.637363> speed <151.869601>;
 		sleep 108;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.625000] now;
+		move torso to y-axis [-0.625000] speed [0.830537];
 		move lthigh to x-axis [0.125000] now;
-		move lthigh to y-axis [0.135315] now;
-		move rthigh to y-axis [-0.614670] now;
-		turn lthigh to x-axis <2.109890> now;
-		turn rthigh to x-axis <8.785714> now;
-		turn rleg to x-axis <-36.571429> now;
-		turn rfoot to x-axis <41.137363> now;
-		turn lleg to x-axis <-5.274725> now;
-		turn lfoot to x-axis <2.461538> now;
+		move lthigh to y-axis [0.135315] speed [2.491611];
+		move rthigh to y-axis [-0.614670] speed [3.322148];
+		turn lthigh to x-axis <2.109890> speed <70.093661>;
+		turn rthigh to x-axis <8.785714> speed <63.120805>;
+		turn rleg to x-axis <-36.571429> speed <81.775947>;
+		turn rfoot to x-axis <41.137363> speed <65.420755>;
+		turn lleg to x-axis <-5.274725> speed <32.710377>;
+		turn lfoot to x-axis <2.461538> speed <107.476958>;
 		sleep 110;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.500000] now;
-		move lthigh to y-axis [0.135300] now;
-		move rthigh to y-axis [-0.239670] now;
-		turn lthigh to x-axis <5.269231> now;
-		turn rthigh to x-axis <-8.087912> now;
-		turn rleg to x-axis <-34.461538> now;
-		turn rfoot to x-axis <53.796703> now;
-		turn lleg to x-axis <2.813187> now;
-		turn lfoot to x-axis <-7.736264> now;
+		move torso to y-axis [-0.500000] speed [1.490964];
+		move lthigh to y-axis [0.135300] speed [0.000179];
+		move rthigh to y-axis [-0.239670] speed [4.472892];
+		turn lthigh to x-axis <5.269231> speed <37.683706>;
+		turn rthigh to x-axis <-8.087912> speed <201.263732>;
+		turn rleg to x-axis <-34.461538> speed <25.166170>;
+		turn rfoot to x-axis <53.796703> speed <150.996947>;
+		turn lleg to x-axis <2.813187> speed <96.470276>;
+		turn lfoot to x-axis <-7.736264> speed <121.636433>;
 		sleep 62;
 	}
-	move torso to y-axis [-0.437500] now;
-	move lthigh to x-axis [0.062500] now;
-	move lthigh to y-axis [0.510300] now;
-	move rthigh to y-axis [0.135315] now;
-	turn lthigh to x-axis <8.785714> now;
-	turn rthigh to x-axis <-26.725275> now;
-	turn rleg to x-axis <-26.895604> now;
-	turn rleg to y-axis <0.170330> now;
-	turn rfoot to x-axis <59.423077> now;
-	turn lleg to x-axis <3.862637> now;
-	turn lfoot to x-axis <-6.153846> now;
+	move torso to y-axis [-0.437500] speed [0.745482];
+	move lthigh to x-axis [0.062500] speed [0.745482];
+	move lthigh to y-axis [0.510300] speed [4.472892];
+	move rthigh to y-axis [0.135315] speed [4.472713];
+	turn lthigh to x-axis <8.785714> speed <41.943592>;
+	turn rthigh to x-axis <-26.725275> speed <222.301077>;
+	turn rleg to x-axis <-26.895604> speed <90.244273>;
+	turn rleg to y-axis <0.170330> speed <2.162709>;
+	turn rfoot to x-axis <59.423077> speed <67.109762>;
+	turn lleg to x-axis <3.862637> speed <12.517536>;
+	turn lfoot to x-axis <-6.153846> speed <18.874624>;
 	sleep 61;
 	return (0);
 }
 
 stand()
 {
-	move lthigh to y-axis [0.000000] now;
+	move lthigh to y-axis [0.000000] speed [2.037085];
 	move rthigh to x-axis [0.000000] now;
-	move rthigh to y-axis [0.000000] now;
+	move rthigh to y-axis [0.000000] speed [0.540169];
 	move rfoot to x-axis [0.000000] now;
 	move lleg to x-axis [0.000000] now;
 	sleep 200;

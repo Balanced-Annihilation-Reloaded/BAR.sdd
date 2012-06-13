@@ -17,8 +17,8 @@ walkscr()
 	{
 		move torso to y-axis [-1.125000] now;
 		move torso to y-axis [-0.875000] speed [3.048782];
-		move rthigh to x-axis [0.000000] now;
-		move lthigh to x-axis [0.000000] now;
+		move rthigh to x-axis [0.000000] speed <180>;
+		move lthigh to x-axis [0.000000] speed <180>;
 		move lleg to y-axis [0.000000] now;
 		move lleg to z-axis [0.000000] now;
 		move lfoot to z-axis [0.000000] now;
@@ -27,17 +27,17 @@ walkscr()
 		move rfoot to z-axis [0.000000] now;
 		turn torso to z-axis <-8.703297> now;
 		turn torso to z-axis <-5.538462> speed <38.604396>;
-		turn rthigh to x-axis <-27.697802> now;
+		//turn rthigh to x-axis <-27.697802> now;
 		turn rthigh to x-axis <-11.076923> speed <202.675824>;
-		turn lthigh to x-axis <20.302198> now;
+		//turn lthigh to x-axis <20.302198> now;
 		turn lthigh to x-axis <14.593407> speed <69.560440>;
 		turn lleg to x-axis <0.538462> now;
 		turn lleg to x-axis <-13.989011> speed <177.225275>;
 		turn lfoot to x-axis <-2.884615> now;
 		turn lfoot to x-axis <12.164835> speed <183.532967>;
-		turn rleg to x-axis <3.956044> now;
+		//turn rleg to x-axis <3.956044> now;
 		turn rleg to x-axis <2.373626> speed <19.302198>;
-		turn rfoot to x-axis <22.950549> now;
+		//turn rfoot to x-axis <22.950549> now;
 		turn rfoot to x-axis <7.120879> speed <193.021978>;
 		sleep 82;
 	}
@@ -133,7 +133,6 @@ walkscr()
 		turn rfoot to x-axis <35.609890> speed <126.285714>;
 		sleep 94;
 	}
-	sleep 94;
 	return (0);
 }
 
@@ -183,6 +182,8 @@ MotionControl(Func_Var_1, Func_Var_2)
 			turn rleg to x-axis <0.000000> speed <200.043956>;
 			turn rfoot to x-axis <0.000000> speed <200.043956>;
 			turn lthigh to x-axis <0.000000> speed <200.043956>;
+			
+			turn rthigh to x-axis <0.000000> speed <200.043956>;
 			turn lleg to x-axis <0.000000> speed <200.043956>;
 			turn lfoot to x-axis <0.000000> speed <200.043956>;
 			Func_Var_2 = 0;

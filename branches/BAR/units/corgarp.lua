@@ -29,10 +29,10 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 234,
-		trackoffset = -6,
+		trackoffset = 0,
 		trackstrength = 6,
-		tracktype = "StdTank",
-		trackwidth = 30,
+		tracktype = "corparrowtracks",
+		trackwidth = 22,
 		turnrate = 387,
 		customparams = {
 			normalmaps = "yes",

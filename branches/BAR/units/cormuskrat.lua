@@ -35,7 +35,7 @@ return {
 		terraformspeed = 400,
 		trackoffset = 8,
 		trackstrength = 5,
-		tracktype = "StdTank",
+		tracktype = "corwidetracks",
 		trackwidth = 24,
 		turnrate = 300,
 		workertime = 80,

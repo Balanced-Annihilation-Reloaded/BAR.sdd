@@ -40,8 +40,8 @@ return {
 		sightdistance = 295.10000610352,
 		terraformspeed = 1250,
 		trackstrength = 6,
-		tracktype = "StdTank",
-		trackwidth = 34,
+		tracktype = "corwidetracks",
+		trackwidth = 28,
 		turnrate = 363,
 		workertime = 250,
 		buildoptions = {

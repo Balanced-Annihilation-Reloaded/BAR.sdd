@@ -34,8 +34,8 @@ return {
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 221,
 		trackstrength = 8,
-		tracktype = "StdTank",
-		trackwidth = 38,
+		tracktype = "corwidetracks",
+		trackwidth = 40,
 		turnrate = 520.29998779297,
 		customparams = {
 			normalmaps = "yes",

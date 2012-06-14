@@ -31,7 +31,7 @@ return {
 		sightdistance = 286,
 		trackoffset = 7,
 		trackstrength = 6,
-		tracktype = "StdTank",
+		tracktype = "corwidetracks",
 		trackwidth = 30,
 		turnrate = 366.20001220703,
 		customparams = {

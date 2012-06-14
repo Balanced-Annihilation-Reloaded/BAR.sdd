@@ -32,10 +32,10 @@ end
 if (gadgetHandler:IsSyncedCode()) then
 
 function gadget:RecvLuaMsg(msg, id)
-    -- if (msg:find("trimColor",1,true)) then
-		-- --Spring.Echo('mgs here', msg, id)
-		-- SendToUnsynced("trimcolor_msg", msg,id)
-    -- end
+    if (msg:find("trimColor",1,true)) then
+		--Spring.Echo('mgs here', msg, id)
+		SendToUnsynced("trimcolor_msg", msg,id)
+    end
  end
   function gadget:UnitFinished(unitID,unitDefID,teamID)
     SendToUnsynced("unitshaders_finished", unitID, unitDefID,teamID)
@@ -351,38 +351,37 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-
--- function gadget:TrimColorChange(msg,teamID)
+function gadget:TrimColorChange(msg,teamID)
 	
-	-- if (msg:find("trimColor",0,true)) then
-		-- r,g,b,a=string.match(msg, ",([^,]+),([^,]+),([^,]+),([^,]+)")
-		-- --Spring.Echo('wuaaagh',r,g,b,a)
-		-- trimColors[teamID]={r,g,b,a}
-		-- --Spring.Echo('trimColor changed for ',teamID,to_string(trimColors[teamID]))
-	-- end
--- end
--- function gadget:UnitFinished(unitID,unitDefID,teamID)
-  -- local unitMat = unitMaterialInfos[unitDefID]
-  -- if (unitMat) then
-    -- local mat = materialDefs[unitMat[1]]
-    -- if (normalmapping or mat.force) then
-      -- Spring.UnitRendering.ActivateMaterial(unitID,3)
-      -- Spring.UnitRendering.SetMaterial(unitID,3,"opaque",GetUnitMaterial(unitDefID))
-      -- for pieceID in ipairs(Spring.GetUnitPieceList(unitID) or {}) do
-        -- Spring.UnitRendering.SetPieceList(unitID,3,pieceID)
-      -- end
+	if (msg:find("trimColor",0,true)) then
+		r,g,b,a=string.match(msg, ",([^,]+),([^,]+),([^,]+),([^,]+)")
+		--Spring.Echo('wuaaagh',r,g,b,a)
+		trimColors[teamID]={r,g,b,a}
+		--Spring.Echo('trimColor changed for ',teamID,to_string(trimColors[teamID]))
+	end
+end
+function gadget:UnitFinished(unitID,unitDefID,teamID)
+  local unitMat = unitMaterialInfos[unitDefID]
+  if (unitMat) then
+    local mat = materialDefs[unitMat[1]]
+    if (normalmapping or mat.force) then
+      Spring.UnitRendering.ActivateMaterial(unitID,3)
+      Spring.UnitRendering.SetMaterial(unitID,3,"opaque",GetUnitMaterial(unitDefID))
+      for pieceID in ipairs(Spring.GetUnitPieceList(unitID) or {}) do
+        Spring.UnitRendering.SetPieceList(unitID,3,pieceID)
+      end
 
-      -- if (mat.DrawUnit) then
-        -- Spring.UnitRendering.SetUnitLuaDraw(unitID,true)
-        -- drawUnitList[unitID] = mat
-      -- end
+      if (mat.DrawUnit) then
+        Spring.UnitRendering.SetUnitLuaDraw(unitID,true)
+        drawUnitList[unitID] = mat
+      end
 
-      -- if (mat.UnitCreated) then
-        -- mat.UnitCreated(unitID, mat, 3)
-      -- end
-    -- end
-  -- end
--- end
+      if (mat.UnitCreated) then
+        mat.UnitCreated(unitID, mat, 3)
+      end
+    end
+  end
+end
 
 function gadget:UnitDestroyed(unitID,unitDefID)
   Spring.UnitRendering.DeactivateMaterial(unitID,3)
@@ -494,7 +493,7 @@ function gadget:Initialize()
   gadgetHandler:AddSyncAction("unitshaders_given", UnitGiven)
   gadgetHandler:AddSyncAction("unitshaders_cloak", UnitCloaked)
   gadgetHandler:AddSyncAction("unitshaders_decloak", UnitDecloaked)
- -- gadgetHandler:AddSyncAction("trimcolor_msg", TrimColorChange)
+  gadgetHandler:AddSyncAction("trimcolor_msg", TrimColorChange)
 
   gadgetHandler:AddChatAction("normalmapping", ToggleNormalmapping)
 end

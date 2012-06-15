@@ -36,7 +36,7 @@ return {
 		selfdestructas = "CRBLMSSL",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
-		yardmap = "ooooooooooooooooooooooooooooooooooo",
+		yardmap = "ooooooooooooooooooooooooooooooooooooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",

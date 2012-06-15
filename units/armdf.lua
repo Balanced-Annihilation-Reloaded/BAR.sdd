@@ -35,7 +35,7 @@ return {
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 210,
 		usebuildinggrounddecal = true,
-		yardmap = "oooooooooooooooooooo",
+		yardmap = "oooooooooooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",

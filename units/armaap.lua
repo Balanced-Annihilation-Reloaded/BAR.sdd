@@ -38,7 +38,7 @@ return {
 		terraformspeed = 1000,
 		usebuildinggrounddecal = true,
 		workertime = 200,
-		yardmap = "oooooooooooooooooooooooooooooooooooooooooooooooo",
+		yardmap = "oooooooooooooooooooooooooooooooooooooooooooooooooooooo",
 		buildoptions = {
 			[10] = "armcybr",
 			[1] = "armaca",

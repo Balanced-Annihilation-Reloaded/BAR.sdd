@@ -37,7 +37,7 @@ return {
 		selfdestructas = "MINE_NUKE",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
-		yardmap = "oooooooooooooooooooo",
+		yardmap = "oooooooooooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",

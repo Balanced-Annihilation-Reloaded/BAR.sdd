@@ -11,6 +11,12 @@ function gadget:GetInfo()
 end
 if (gadgetHandler:IsSyncedCode()) then
 
+  local enabled = tonumber(Spring.GetModOptions().mo_chickengame) or 0
+
+if (enabled == 0) then 
+  return false
+end
+  
 local function dump(o)
 	if type(o) == 'table' then
 		local s = '{ '

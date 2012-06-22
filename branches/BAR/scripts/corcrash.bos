@@ -6,15 +6,30 @@
 piece  rflare, lflare, torso, pelvis, lleg, rleg, lbarrel,
        rbarrel;
 
-static-var  gun_3, restore_delay, currentSpeed, moveSpeed;
+static-var  gun_3, notMoving, restore_delay, currentSpeed, moveSpeed;
 
 // Signal definitions
 #define SIG_MOVE			2
-#define SIG_AIM_3			4
+#define SIG_WALK			4
+#define SIG_AIM_3			8
 
+
+UnitSpeed()
+{
+	while(TRUE)
+	{
+		currentSpeed = (get CURRENT_SPEED)*20/moveSpeed;
+		if (currentSpeed<4) currentSpeed=4;
+		sleep 142;
+	}
+}
 
 walk()
 {
+	signal SIG_WALK;
+	set-signal-mask SIG_WALK;
+	notMoving = FALSE;
+	start-script UnitSpeed();
 	while( TRUE )
 	{
 		move pelvis to y-axis [0.000000] now;
@@ -161,34 +176,26 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	}
 }
 
-UnitSpeed()
-{
-	while(TRUE)
-	{
-		currentSpeed = (get CURRENT_SPEED)*20/moveSpeed;
-		if (currentSpeed<4) currentSpeed=4;
-		sleep 142;
-	}
-}
-
 StartMoving()
 {
 	signal SIG_MOVE;
-	set-signal-mask SIG_MOVE;
-	start-script UnitSpeed();
-	call-script walk();
+	if( notMoving ) start-script walk();
 }
 
 StopMoving()
 {
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
+	sleep 120;
+	signal SIG_WALK;
+	notMoving = TRUE;
 }
 
 Create()
 {
 	gun_3 = lflare;
 	restore_delay = 3000;
+	notMoving = TRUE;
 	moveSpeed = get MAX_SPEED;
 	currentSpeed = 100;
 	start-script StopMoving();

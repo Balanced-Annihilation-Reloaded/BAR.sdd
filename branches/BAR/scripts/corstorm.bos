@@ -6,15 +6,19 @@
 piece  torso, rfirept, lfirept, pelvis, rfoot, lfoot, launcher, lthigh,
        rthigh, rleg, lleg, turret, base,rexhaust,lexhaust;
 
-static-var  gun_1, moveSpeed, currentSpeed, animSpeed;
+static-var  gun_1, notMoving, moveSpeed, currentSpeed, animSpeed;
 
 // Signal definitions
 #define SIG_MOVE			2
-#define SIG_AIM				4
+#define SIG_WALK			4
+#define SIG_AIM				8
 
 
 walk()
 {
+	signal SIG_WALK;
+	set-signal-mask SIG_WALK;
+	notMoving = FALSE;
 	while( TRUE )
 	{
 		move pelvis to y-axis [0.750000] speed [0.375000] * currentSpeed;
@@ -198,14 +202,16 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 StartMoving()
 {
 	signal SIG_MOVE;
-	set-signal-mask SIG_MOVE;
-	call-script walk();
+	if( notMoving ) start-script walk();
 }
 
 StopMoving()
 {
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
+	sleep 120;
+	notMoving = TRUE;
+	signal SIG_WALK;
 	move pelvis to y-axis [0.000000] speed [1.000000];
 	turn pelvis to y-axis <0.000000> speed <150.032967>;
 	turn pelvis to z-axis <0.000000> speed <150.032967>;
@@ -220,6 +226,7 @@ StopMoving()
 Create()
 {
 	gun_1 = torso;
+	notMoving = TRUE;
 	currentSpeed = 100;
 	moveSpeed = get MAX_SPEED;
 	animSpeed = 75;

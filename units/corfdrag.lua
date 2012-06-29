@@ -42,7 +42,7 @@ return {
 				hitdensity = 100,
 				metal = 20,
 				nodrawundergray = true,
-				object = "corfdrag",
+				object = "corfdrag.s3o",
 				reclaimable = true,
 				world = "allworld",
 			},

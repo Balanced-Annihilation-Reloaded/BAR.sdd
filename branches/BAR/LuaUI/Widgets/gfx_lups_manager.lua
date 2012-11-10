@@ -81,18 +81,18 @@ local UnitEffects = {
     {class='ShieldSphere',options=cjunoShieldSphere},
     {class='GroundFlash',options=groundFlashJuno},
   },
-   [UnitDefNames["cormakr"].id] = {
-       {class='StaticParticles',options=cormakrEffect},
+  [UnitDefNames["cormakr"].id] = {
+    {class='StaticParticles',options=cormakrEffect},
   },
-     [UnitDefNames["corfmkr"].id] = {
-       {class='StaticParticles',options=cormakrEffect},
+  [UnitDefNames["corfmkr"].id] = {
+    {class='StaticParticles',options=cormakrEffect},
   },
   
   --// FUSIONS //--------------------------
   [UnitDefNames["cafus"].id] = {
     {class='Bursts',options=cafusBursts},
     {class='ShieldSphere',options=cafusShieldSphere},
-    {class='ShieldJitter',options={layer=-16, life=math.huge, pos={0,60,0}, size=36, precision=22, repeatEffect=true}},
+    {class='ShieldJitter',options={layer=-16, life=math.huge, pos={0,60,0}, size=33, precision=22, repeatEffect=true}},
     {class='GroundFlash',options=groundFlashBlue},
   },
   [UnitDefNames["corfus"].id] = {
@@ -102,14 +102,26 @@ local UnitEffects = {
     {class='GroundFlash',options=groundFlashGreen},
   },
   [UnitDefNames["aafus"].id] = {
-    {class='SimpleParticles2', options=MergeTable({pos={-38,70,-10}, delay=10, lifeSpread=300},sparks)},
-    {class='SimpleParticles2', options=MergeTable({pos={21,70,-10}, delay=60, lifeSpread=300},sparks)},
-    {class='ShieldJitter',options={layer=-16, life=math.huge, pos={-31,55,-10}, size=12, precision=22, repeatEffect=true}},
-    {class='ShieldJitter',options={layer=-16, life=math.huge, pos={31,55,-10}, size=12, precision=22, repeatEffect=true}},
+    {class='SimpleParticles2', options=MergeTable(sparks,{pos={-36,82,-36}, delay=10, lifeSpread=30, partpos="0,0,0"})},
+    {class='SimpleParticles2', options=MergeTable(sparks,{pos={36,82,-36}, delay=60, lifeSpread=30, partpos="0,0,0"})},
+    {class='SimpleParticles2', options=MergeTable(sparks,{pos={36,82,36}, delay=30, lifeSpread=30, partpos="0,0,0"})},
+    {class='SimpleParticles2', options=MergeTable(sparks,{pos={-36,82,36}, delay=90, lifeSpread=30, partpos="0,0,0"})},
+
+	{class='Sphere', options=MergeTable(aafusGlowBallWhite,{pos={31.2,32.7,0}})},
+	{class='Sphere', options=MergeTable(aafusGlowBallWhite,{pos={-31.2,32.7,0}})},
+	{class='Sphere', options=MergeTable(aafusGlowBallWhite,{pos={0,32.7,31.2}})},
+	{class='Sphere', options=MergeTable(aafusGlowBallWhite,{pos={0,32.7,-31.2}})},
+
+	{class='Sphere', options=MergeTable(aafusGlowBallTeal,{pos={28.2,36,28.2}})},
+	{class='Sphere', options=MergeTable(aafusGlowBallTeal,{pos={-28.2,36,28.2}})},
+	{class='Sphere', options=MergeTable(aafusGlowBallTeal,{pos={-28.2,36,-28.2}})},
+	{class='Sphere', options=MergeTable(aafusGlowBallTeal,{pos={28.2,36,-28.2}})},
+
+    {class='Bursts', options={pos={0,65,0}, size=24, sizeSpread=2, colormap={{1.0,0.1,0.1,0.2}}, life=20, arc=90, rotSpeed=0.5, rotSpread=1, count=33, directional=true, repeatEffect=true}},
+	{class='ShieldSphere', options={pos={0,65,0}, size=18, colormap1={ {1.0,0.0,0.0,0.4} }, colormap2={ {1.0,0.3,0.3,0.8},{1.0,0.0,0.0,0.5},{1.0,0.3,0.3,0.8} }, life=20, repeatEffect=true}},
+    {class='ShieldJitter', options={layer=-16, life=20, pos={0,65,0}, size=18.7, precision=22, repeatEffect=true}},
   },
-    [UnitDefNames["corgate"].id] = {
-
-
+  [UnitDefNames["corgate"].id] = {
     {class='Bursts',options=corgateBursts},
     {class='ShieldSphere',options=corgateShieldSphere},
     {class='ShieldJitter',options={life=math.huge, pos={0,42,0}, size=20, precision=2, repeatEffect=true}},
@@ -131,13 +143,13 @@ local UnitEffects = {
   --// PLANES still need to do work here //----------------------------
   [UnitDefNames["armfig"].id] = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=6, length=45, piece="rearthrust", onActive=true}},
- },
+  },
   [UnitDefNames["armsfig"].id] = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=6, length=45, piece="thrust", onActive=true}},
- },
+  },
   [UnitDefNames["armseap"].id] = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=6, length=45, piece="thrust", onActive=true}},
- },
+  },
   [UnitDefNames["armhawk"].id] = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=6, length=75, piece="rearthrust", onActive=true}},
   },
@@ -190,10 +202,10 @@ local UnitEffects = {
   [UnitDefNames["corhunt"].id] = {
     {class='AirJet',options={color={0.8,0.2,0}, width=4, length=50, piece="thrust", onActive=true}},
   },
- [UnitDefNames["armawac"].id] = {
+  [UnitDefNames["armawac"].id] = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=3.5, length=50, piece="thrust", onActive=true}},
   },
- [UnitDefNames["armsehak"].id] = {
+  [UnitDefNames["armsehak"].id] = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=3.5, length=50, piece="thrust", onActive=true}},
   },
   [UnitDefNames["armcybr"].id] = {
@@ -217,7 +229,7 @@ local UnitEffects = {
   [UnitDefNames["blade"].id] = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=3.7, length=28, piece="thrust1", onActive=true}},
   },
- [UnitDefNames["armbrawl"].id] = {
+  [UnitDefNames["armbrawl"].id] = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=3.7, length=15, piece="thrust1", onActive=true}},
     {class='AirJet',options={color={0.1,0.4,0.6}, width=3.7, length=15, piece="thrust2", onActive=true}},
   },
@@ -243,7 +255,7 @@ local UnitEffects = {
     {class='AirJet',options={color={0.7,0.4,0.1}, width=8, length=16, piece="thrust2", emitVector= {0,1,0}, onActive=true}},
     {class='AirJet',options={color={0.7,0.4,0.1}, width=8, length=16, piece="thrust4", emitVector= {0,1,0}, onActive=true}},
   },
-    [UnitDefNames["cortitan"].id] = {
+  [UnitDefNames["cortitan"].id] = {
     {class='AirJet',options={color={0.9,0.3,0}, width=10, length=52, piece="thrustb", onActive=true}},
     {class='AirJet',options={color={0.9,0.3,0}, width=6, length=35, piece="thrusta1", onActive=true}},
     {class='AirJet',options={color={0.9,0.3,0}, width=6, length=35, piece="thrusta2", onActive=true}},

@@ -117,9 +117,9 @@ local UnitEffects = {
 	{class='Sphere', options=MergeTable(aafusGlowBallTeal,{pos={-28.2,36,-28.2}})},
 	{class='Sphere', options=MergeTable(aafusGlowBallTeal,{pos={28.2,36,-28.2}})},
 
-    {class='Bursts', options={pos={0,65,0}, size=24, sizeSpread=2, colormap={{1.0,0.1,0.1,0.2}}, life=20, arc=90, rotSpeed=0.5, rotSpread=1, count=33, directional=true, repeatEffect=true}},
-	{class='ShieldSphere', options={pos={0,65,0}, size=18, colormap1={ {1.0,0.0,0.0,0.4} }, colormap2={ {1.0,0.3,0.3,0.8},{1.0,0.0,0.0,0.5},{1.0,0.3,0.3,0.8} }, life=20, repeatEffect=true}},
-    {class='ShieldJitter', options={layer=-16, life=20, pos={0,65,0}, size=18.7, precision=22, repeatEffect=true}},
+    {class='Bursts', options={pos={0,76,0}, size=35, sizeSpread=2, colormap={{1.0,0.2,0.2,0.4}}, life=20, arc=90, rotSpeed=0.7, rotSpread=1, count=43, directional=true, repeatEffect=true}},
+	{class='ShieldSphere', options={pos={0,76,0}, size=29, colormap1={ {1.0,0.0,0.0,0.5} }, colormap2={ {1.0,0.3,0.3,0.8},{1.0,0.0,0.0,0.5},{1.0,0.3,0.3,0.8} }, life=20, repeatEffect=true}},
+    {class='ShieldJitter', options={layer=-16, life=20, pos={0,76,0}, size=29.7, precision=22, repeatEffect=true}},
   },
   [UnitDefNames["corgate"].id] = {
     {class='Bursts',options=corgateBursts},

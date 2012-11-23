@@ -7,10 +7,10 @@
 
 function widget:GetInfo()
   return {
-    name      = "Chili Integral Menu",
-    desc      = "v0.352 Integral Command Menu",
-    author    = "Licho, KingRaptor, Google Frog",
-    date      = "12.10.2010",
+    name      = "Chili BA Command Menu",
+    desc      = "v0.1 Build/Command menu for BA (part of standard UI)",	--forked from ZK's integral menu
+    author    = "Licho, KingRaptor, Google Frog, Funkencool",
+    date      = "11.10.2012",
     license   = "GNU GPL, v2 or later",
     layer     = math.huge-1,
     enabled   = true,

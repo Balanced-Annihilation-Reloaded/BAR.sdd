@@ -40,7 +40,7 @@ local ORDER_FILENAME     = LUAUI_DIRNAME .. 'Config/' .. Game.modShortName:upper
 local CONFIG_FILENAME    = LUAUI_DIRNAME .. 'Config/' .. Game.modShortName:upper() .. '_data.lua'
 local WIDGET_DIRNAME     = LUAUI_DIRNAME .. 'Widgets/'
 
-local HANDLER_BASENAME = "cawidgets.lua"
+local HANDLER_BASENAME = "bawidgets.lua"
 local SELECTOR_BASENAME = 'selector.lua'
 
 if not VFS.FileExists(ORDER_FILENAME) then

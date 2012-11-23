@@ -2179,7 +2179,7 @@ function widget:Initialize()
     real_window_corner = Window:New{
 		name   = 'real_window_corner';
 		color = {0, 0, 0, 0},
-		x = (0.152*screenWidth); 
+		x = (0.13*screenWidth); 
 		bottom = 0;
         width = (0.22*screenWidth);
 		height = (0.18*screenHeight);

@@ -9,7 +9,7 @@ function widget:GetInfo()
     date      = "2012-06-30",
     license   = "GNU GPL, v2 or later",
     layer     = 50,
-    enabled   = false,
+    enabled   = True,
     --detailsDefault = 1
     -- based on v1.31 Chili Crude Player List by CarRepairer, KingRaptor, et al
   }

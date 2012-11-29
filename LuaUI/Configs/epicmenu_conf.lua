@@ -170,6 +170,7 @@ path='Settings/Interface/Interface Skin'
 			{ key = 'Carbon', name = 'Carbon', },
 			{ key = 'Robocracy', name = 'Robocracy', },
 			{ key = 'DarkHive', name = 'DarkHive', },
+			{ key = 'BA Default', name = 'BA Default', },
 		},
 	})
 

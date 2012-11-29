@@ -3,7 +3,7 @@
 
 local skin = {
   info = {
-    name    = "funkenblack",
+    name    = "BA Default",
     version = "0.1",
     author  = "funkencool",
   }

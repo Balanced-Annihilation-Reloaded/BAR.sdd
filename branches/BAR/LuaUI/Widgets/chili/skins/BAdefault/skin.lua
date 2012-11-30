@@ -11,6 +11,8 @@ local skin = {
 
 --//=============================================================================
 --//
+local teamID = Spring.GetLocalTeamID()
+local r,g,b = Spring.GetTeamColor(teamID)
 
 skin.general = {
   --font        = "FreeSansBold.ttf",
@@ -33,7 +35,7 @@ skin.button = {
   tiles = {22, 22, 22, 22}, --// tile widths: left,top,right,bottom
   padding = {10, 10, 10, 10},
 
-  backgroundColor = {1, 1, 1, 1},
+  backgroundColor = {r, g, b, 1},
 
   DrawControl = DrawButton,
 }
@@ -87,7 +89,7 @@ skin.panel = {
   TileImageFG = ":cl:empty.png",
   tiles = {22, 22, 22, 22},
 
-  backgroundColor = {1, 1, 1, 1},
+  backgroundColor = {r, g, b, 1},
 
   DrawControl = DrawPanel,
 }

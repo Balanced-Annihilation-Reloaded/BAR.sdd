@@ -1487,21 +1487,21 @@ local function MakeMenuBar()
 	
 	screen0:RemoveChild(window_exit)
 		
-	window_crude = Window:New{
+	window_crude = Panel:New{
 		name='epicmenubar',
 		right = 0,  
 		y = 50, -- resbar height
 		dockable = true,
 		clientWidth = crude_width,
-		clientHeight = crude_height,
+		clientHeight = (crude_height+10),
 		draggable = false,
 		tweakDraggable = true,
 		resizable = false,
 		minimizable = false,
-		backgroundColor = color.main_bg,
-		color = {1,1,1,0.5},
+--		backgroundColor = color.main_bg,
+		color = {0.5,0.5,0.5,0.5},
 		margin = {0,0,0,0},
-		padding = {0,0,0,0},
+		padding = {4,0,0,4},
 		
 		children = {
 			StackPanel:New{
@@ -1721,6 +1721,7 @@ function widget:Initialize()
 	Colorbars = Chili.Colorbars
 	Checkbox = Chili.Checkbox
 	Window = Chili.Window
+	Panel = Chili.Panel
 	ScrollPanel = Chili.ScrollPanel
 	StackPanel = Chili.StackPanel
 	LayoutPanel = Chili.LayoutPanel

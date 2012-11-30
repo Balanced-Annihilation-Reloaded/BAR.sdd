@@ -89,7 +89,7 @@ skin.panel = {
   TileImageFG = ":cl:empty.png",
   tiles = {22, 22, 22, 22},
 
-  backgroundColor = {r, g, b, 1},
+  backgroundColor = {r, g, b, .7},
 
   DrawControl = DrawPanel,
 }

@@ -82,7 +82,6 @@ local spDiffTimers           = Spring.DiffTimers
 local spGetVisibleUnits		 = Spring.GetVisibleUnits
 local spGetGroundNormal      = Spring.GetGroundNormal
 local spGetSelectedUnits     = Spring.GetSelectedUnits
-local spGetTeamColor         = Spring.GetTeamColor
 local spGetTimer             = Spring.GetTimer
 local spGetUnitBasePosition  = Spring.GetUnitBasePosition
 local spGetUnitDefDimensions = Spring.GetUnitDefDimensions
@@ -106,6 +105,7 @@ local clearquad
 local shapes = {}
 
 local myTeamID = Spring.GetLocalTeamID()
+local r,g,b = Spring.GetTeamColor(myTeamID)
 
 local circleDivs = 32 -- how precise circle? octagon by default
 local innersize = 0.9 -- circle scale compared to unit radius
@@ -116,7 +116,7 @@ local rectangleFactor = 3.5
 local CAlpha = 0.5
 
 local colorout = {   1,   1,   1,   0 } -- outer color
-local colorin  = {   1,   1,   1,   1 } -- inner color
+local colorin  = {   r,   g,   b,   1 } -- inner color
 
 local teamColors = {}
 local unitConf = {}
@@ -193,19 +193,6 @@ local function GetVisibleUnits()
 end
 
 
-local function GetTeamColorSet(teamID)
-  local colors = teamColors[teamID]
-  if (colors) then
-    return colors
-  end
-  local r,g,b = spGetTeamColor(teamID)
-  
-  colors = { r, g, b, 0 }
-	-- Alpha = 0 as it is drawn with DST_ALPHA and should Clear it afterwards
-  
-  teamColors[teamID] = colors
-  return colors
-end
 
 
 --------------------------------------------------------------------------------
@@ -466,7 +453,7 @@ function widget:DrawWorldPreUnit()
 		-- To fix Water
 		gl_ColorMask(false,false,false,true)
 		gl_BlendFunc(GL_ONE, GL_ONE)
-		glColor(0,1,0,1)
+		glColor(r,g,b,1)
 		-- Does not need to be drawn per Unit .. it covers the whole map
 		gl_DrawList(clearquad)
 		
@@ -500,7 +487,7 @@ function widget:DrawWorldPreUnit()
 		-- (without protecting form drawing them twice)
 		gl_ColorMask(true,true,true,true)
 		gl_BlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA)
-		glColor(0,1,0,1)
+		glColor(r,g,b,1)
 
 		-- Does not need to be drawn per Unit anymore
 		gl_DrawList(clearquad)
@@ -526,7 +513,7 @@ function widget:DrawWorldPreUnit()
 			unit = unitConf[udid]
 			
 			if (unit) then
-				glColor(0,1,0,0)
+				glColor(r,g,b,0)
 				glDrawListAtUnit(unitID, unit.shape.large, false, unit.xscale, 1.0, unit.zscale, degrot[unitID], 0, degrot[unitID], 0)
 			end
 		end

@@ -931,7 +931,7 @@ local function SmartTabSelect()
 		ColorTabs(1)
 	elseif options.disablesmartselect.value then 
 		return
-	elseif #n_units > 0 and #n_econ == 0 then
+	elseif #n_units > 1 and #n_econ == 0 then
 		menuChoice = 4	--selected factory, jump to units
 		ColorTabs(4)
 	elseif #n_econ > 0 and menuChoice == 3 then
@@ -1212,8 +1212,8 @@ local f,it,isFile = nil,nil,false
 	
 	--create main Chili elements
 	local screenWidth,screenHeight = Spring.GetWindowGeometry()
-	local height = tostring(math.floor(screenWidth/screenHeight*0.35*0.35*100)) .. "%"
-	local y = tostring(math.floor((1-screenWidth/screenHeight*0.35*0.35)*100)) .. "%"
+	local height = tostring(screenWidth/screenHeight*0.35*0.35*100) .. "%"
+	local y = tostring((1-screenWidth/screenHeight*0.35*0.35)*100) .. "%"
 	
 	--Spring.Echo(height)
 	--Spring.Echo(y)
@@ -1303,10 +1303,10 @@ local f,it,isFile = nil,nil,false
 			parent = commands_main,
 			resizeItems = true;
 			orientation   = "horizontal";
-			height = math.floor(100/numRows).."%";
+			height = (100/numRows).."%";
 			width = "100%";
 			x = "0%";
-			y = math.floor(100/numRows)*(i-1).."%";
+			y = (100/numRows)*(i-1).."%";
 			padding = {0, 0, 0, 0},
 			itemMargin  = {0, 0, 0, 0},
 			index = i,
@@ -1333,8 +1333,8 @@ local f,it,isFile = nil,nil,false
 			resizeItems = true;
 			orientation   = "vertical";
 			height = "100%";
-			width = math.floor(100/numStateColumns).."%";
-			x = (100 - (math.floor(100/numStateColumns))*i).."%";
+			width = "100%";
+			x = 0;
 			y = "0%";
 			padding = {0, 0, 0, 0},
 			itemMargin  = {0, 0, 0, 0},
@@ -1354,10 +1354,10 @@ local f,it,isFile = nil,nil,false
 		parent = commands_main,
 		resizeItems = true;
 		orientation   = "horizontal";
-		height = (math.floor(100/numRows)).."%";
+		height = (100/numRows).."%";
 		width = "100%";
 		x = "0%";
-		y = (math.floor(100/numRows))*(numRows-1).."%";
+		y = (100/numRows)*(numRows-1).."%";
 		padding = {0, 0, 0, 0},
 		itemMargin  = {0, 0, 0, 0},
 		backgroundColor = {0.2, 0.2, 0.2, 0.6}

@@ -1,80 +1,110 @@
 VFS.Include("LuaRules/Configs/customcmds.h.lua")
 
 --FIXME: use this table until state tooltip detection is fixed
-local tooltips = {
-	priority = "Priority: Set construction priority (low, normal, high)",
-	retreat = "Retreat: Retreat to closest retreat point at 30/60/90% of health (right-click to disable)",
-	landat = "Repair level: set the HP % at which this aircraft will go to a repair pad (0, 30, 50, 80)",
+local tooltips   = {
+	priority     = "Priority: Set construction priority (low, normal, high)",
+	retreat      = "Retreat: Retreat to closest retreat point at 30/60/90% of health (right-click to disable)",
+	landat       = "Repair level: set the HP % at which this aircraft will go to a repair pad (0, 30, 50, 80)",
 	factoryGuard = "Auto Assist: Newly built constructors automatically assist their factory",
-	diveBomb = "Dive bomb (never; target under shield; any target; always (including moving))",
+	diveBomb     = "Dive bomb (never; target under shield; any target; always (including moving))",
 	
-	fireState = "Fire State: Sets under what conditions a unit will fire without an explicit attack order (never, when attacked, always)",
-	moveState = "Move State: Sets how far out of its way a unit will move to attack enemies",
-	["repeat"] = "Repeat: if on the unit will continously push finished orders to the end of its order queue",
+	fireState    = "Fire State: Sets under what conditions a unit will fire without an explicit attack order (never, when attacked, always)",
+	moveState    = "Move State: Sets how far out of its way a unit will move to attack enemies",
+	["repeat"]   = "Repeat: if on the unit will continously push finished orders to the end of its order queue",
 }
 
-local strategic = {
-	coralab     = {order = 1},  --factory
-	corlab      = {order = 2},  --factory
-	corap       = {order = 3},  --factory
-	corsy       = {order = 4},  --factory
-	coravp		= {order = 5},	--factory
-	corhp       = {order = 6},  --factory
-	corvp       = {order = 7},  --factory
-    corfhp      = {order = 8},  --factory ,water
-	corason     = {order = 9},  --water
-	corasp      = {order = 10}, --air repair
-	corasy      = {order = 11}, --factory
-	coratl      = {order = 12}, --defense ,water
-	corbhmth    = {order = 13}, --defense
-	cordl       = {order = 14}, --defense ,water
-	cordoom     = {order = 15}, --defense
-	cordrag     = {order = 16}, --defense
-	corenaa     = {order = 17}, --unit?
-    corexp      = {order = 18}, --defense ,econ
-	coreyes     = {order = 19}, --LOS
-	corfatf     = {order = 20}, --LOS
-	corfort     = {order = 21}, --defense ,water
-	corfrad     = {order = 22}, --LOS 	  ,water
-	corfrt      = {order = 23}, --defense
-	corhlt      = {order = 24}, --defense
-	corllt      = {order = 25}, --defense
-    corplat     = {order = 26}, --factory ,water
-	corrad      = {order = 27}, --LOS
-	corrl       = {order = 28}, --defense
-	corsd       = {order = 29}, --LOS
-	corsilo     = {order = 30}, --NUKE
-	corsonar    = {order = 31}, --LOS     ,water
-	cortarg     = {order = 32}, --LOS
+local strategic   = {
+	coralab       = {order = 1 },   --factory
+	corlab        = {order = 2 },   --factory
+	corap         = {order = 3 },   --factory
+	corsy         = {order = 4 },   --factory
+	coravp		  = {order = 5 },	--factory
+	corhp         = {order = 6 },   --factory
+	corvp         = {order = 7 },   --factory
+	csubpen       = {order = 8 },   --factory
+	corasy        = {order = 9 },   --factory
+	coraap        = {order = 10},   --factory
+	corgant       = {order = 11},   --factory
+    corplat       = {order = 12},   --factory ,water
+    corfhp        = {order = 13},   --factory ,water
+	cornanotc     = {order = 14},   --NANO
+	corasp        = {order = 15},   --air repair
+	corenaa       = {order = 16},   --unit?
+	coreyes       = {order = 17},   --LOS
+	corfatf       = {order = 18},   --LOS
+	corrad        = {order = 19},   --LOS
+	corsd         = {order = 20},   --LOS
+	cortarg       = {order = 21},   --LOS
+	corarad       = {order = 22},   --LOS
+	corason       = {order = 23},   --LOS
+	coreyes       = {order = 24},   --LOS
+	corfatf       = {order = 25},   --LOS
+	corjamt       = {order = 26},   --LOS
+	corshroud     = {order = 27},   --LOS
+	corsonar      = {order = 28},   --LOS     ,water
+	corfrad       = {order = 29},   --LOS 	  ,water
+	forfdrag      = {order = 30},   --Special ,water
+	coratl        = {order = 31},   --water
+	corason       = {order = 32},   --water
+	corfhlt       = {order = 33},   --water
+	cormaw        = {order = 34},   --defense
+	corbuzz       = {order = 35},   --defense
+	corrl         = {order = 36},   --defense
+	corbhmth      = {order = 37},   --defense
+	cordoom       = {order = 38},   --defense
+	cordrag       = {order = 39},   --defense
+	corfort       = {order = 40},   --defense
+	corfrt        = {order = 41},   --defense
+	corhlt        = {order = 42},   --defense
+	corllt        = {order = 43},   --defense
+	corerad       = {order = 44},   --defense
+	corflak       = {order = 45},   --defense
+	corint        = {order = 46},   --defense
+	corpun        = {order = 47},   --defense
+	cortoast      = {order = 48},   --defense
+	hllt          = {order = 49},   --defense
+	madsam        = {order = 50},   --defense
+	screamer      = {order = 51},   --defense
+	corvipe       = {order = 52},   --defense
+	cordl         = {order = 53},   --defense ,water
+	coratl        = {order = 54},   --defense ,water
+	cortl         = {order = 55},   --defense ,water
+	cortron       = {order = 56},   --?
+	cjuno         = {order = 57},   --?
+	corfmd        = {order = 58},   --?
+	corsilo       = {order = 59},   --NUKE
 }
-
---Integral menu is NON-ROBUST
---all buildings (except facs) need a row or they won't appear!
---you can put too many things into the same row, but the buttons will be squished
-local econ     = {
-	cormex     = {order = 1},
-	corsolar   = {order = 2},
-	coradvsol  = {order = 3},
-	corwin     = {order = 4},
-	cormstor   = {order = 5},
-	corestor   = {order = 6},
-	cormakr    = {order = 7},
-	cortide    = {order = 8},
-	coruwms    = {order = 9},
-	coruwes    = {order = 10},
-	corrl      = {order = 13},
-	cormoho    = {order = 14},
-	cordl      = {order = 15},
-	cornanotc  = {order = 17},
-	cormexp    = {order = 18},
-	cortl      = {order = 19},
-	corjamt    = {order = 20},
-	coruwadves = {order = 21},
-	coruwadvms = {order = 22},
-	coruwfus   = {order = 24},
-	coruwmex   = {order = 25},
-	coruwmme   = {order = 26},
-	coruwmmm   = {order = 27},
+local econ        = {
+	cormex        = {order = 1 },
+	corsolar      = {order = 2 },
+	coradvsol     = {order = 3 },
+	corwin        = {order = 4 },
+	cormstor      = {order = 5 },
+	corestor      = {order = 6 },
+	cormakr       = {order = 7 },
+	corrl         = {order = 8 },
+	cormoho       = {order = 9 },
+	cordl         = {order = 10},
+	cornanotc     = {order = 11},
+	cormexp       = {order = 12},
+	cortl         = {order = 13},
+	corjamt       = {order = 14},
+	cafus	      = {order = 15},
+	cmgeo         = {order = 16},
+	corfmkr       = {order = 17},
+	corfus        = {order = 18},
+	corgeo        = {order = 19},
+	cormmkr       = {order = 20},
+	cortide       = {order = 21},   --water
+	coruwms       = {order = 22},   --water
+	coruwes       = {order = 23},   --water
+	coruwadves    = {order = 24},   --water
+	coruwadvms    = {order = 25},   --water
+	coruwfus      = {order = 26},   --water
+	coruwmex      = {order = 27},   --water
+	coruwmme      = {order = 28},   --water
+	coruwmmm      = {order = 29},   --water
+    corexp        = {order = 30},   --defense ,econ
 }
 
 
@@ -234,78 +264,78 @@ local custom_cmd_actions = {	-- states are 2, not states are 1
 
 	--SPRING COMMANDS
 
-	selfd=1,
-	attack=1,
-	stop=1,
-	fight=1,
-	guard=1,
-	move=1,
-	patrol=1,
-	wait=1,
-	repair=1,
-	reclaim=1,
-	resurrect=1,
-	manualfire=1,
-	loadunits=1,
-	unloadunits=1,
-	areaattack=1,
+	selfd                  =1,
+	attack                 =1,
+	stop                   =1,
+	fight                  =1,
+	guard                  =1,
+	move                   =1,
+	patrol                 =1,
+	wait                   =1,
+	repair                 =1,
+	reclaim                =1,
+	resurrect              =1,
+	manualfire             =1,
+	loadunits              =1,
+	unloadunits            =1,
+	areaattack             =1,
 	
 	-- states
-	onoff=2,
-	['repeat']=2,
-	cloak=2,
-	movestate=2,
-	firestate=2,
-	idlemode=2,
-	autorepairlevel=2,
+  	onoff				   =2,
+	['repeat']             =2,
+	cloak                  =2,
+	movestate              =2,
+	firestate              =2,
+	idlemode               =2,
+	autorepairlevel        =2,
 	
 	      
 	--CUSTOM COMMANDS
 
-	sethaven=1,
-	--build=1,
-	areamex=1,
-	disembark=1,
-	mine=1,
-	build=1,
-	jump=1,
-	find_pad=1,
-	embark=1,
-	disembark=1,
-	oneclickwep=1,
-	settarget=1,
-	canceltarget=1,
-	setferry=1, 
-	radialmenu=1,
-	placebeacon=1,
+	sethaven               =1,
+	--build                =1,
+	areamex                =1,
+	disembark              =1,
+	mine                   =1,
+	build                  =1,
+	jump                   =1,
+	find_pad               =1,
+	embark                 =1,
+	disembark              =1,
+	oneclickwep            =1,
+	settarget              =1,
+	canceltarget           =1,
+	setferry               =1, 
+	radialmenu             =1,
+	placebeacon            =1,
 	
 	-- terraform
-	rampground=1,
-	levelground=1,
-	raiseground=1,
-	smoothground=1,
-	restoreground=1,
-	--terraform_internal=1,
+	rampground             =1,
+	levelground            =1,
+	raiseground            =1,
+	smoothground           =1,
+	restoreground          =1,
+	--terraform_internal   =1,
 	
-	resetfire=1,
-	resetmove=1,
+	resetfire              =1,
+	resetmove              =1,
 	
 	--states
---	stealth=2, --no longer applicable
-	cloak_shield=2,
-	retreat=2,
-	['luaui noretreat']=2,
-	priority=2,
-	ap_fly_state=2,
-	ap_autorepairlevel=2,
-	floatstate=2,
-	dontfireatradar=2,
-	antinukezone=2,
-	unitai=2,
-	unit_kill_subordinates=2,
-	autoassist=2,	
-	airstrafe=2,
-	divestate=2,
+	--stealth=2, --no longer applicable
+	cloak_shield           =2,
+	retreat                =2,
+	['luaui noretreat']    =2,
+	priority               =2,
+	ap_fly_state           =2,
+	ap_autorepairlevel     =2,
+	floatstate             =2,
+	dontfireatradar        =2,
+	antinukezone           =2,
+	unitai                 =2,
+	unit_kill_subordinates =2,
+	autoassist             =2,	
+	airstrafe              =2,
+	divestate              =2,
 	
 	
 }

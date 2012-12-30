@@ -40,38 +40,45 @@ local fire_point = {
 local kinChain = {
 	left = {
 		{p=lthigh, aMax=rad(97.0), aMin=rad(-52.0)},	-- model piece number, max angle, min angle
-		{p=lknee, aMax=rad(13.0), aMin=rad(-12.0)},
+		{p=lknee, aMax=rad(13.0), aMin=rad(-11.0)},
 		{p=lleg, aMax=rad(61.0), aMin=rad(-34.0)},
-		{p=lfoot, aMax=rad(15.0), aMin=rad(-40.0)}
+		{p=lfoot, aMax=rad(25.0), aMin=rad(-60.0)}
 	},
 	right = {
 		{p=rthigh, aMax=rad(97.0), aMin=rad(-52.0)},
-		{p=rknee, aMax=rad(13.0), aMin=rad(-12.0)},
+		{p=rknee, aMax=rad(13.0), aMin=rad(-11.0)},
 		{p=rleg, aMax=rad(61.0), aMin=rad(-34.0)},
-		{p=rfoot, aMax=rad(15.0), aMin=rad(-40.0)}
+		{p=rfoot, aMax=rad(25.0), aMin=rad(-60.0)}
 	}
 }
 
 local gun = 1
 local bMoving = false
 
+local function angleCorrection(ang)	-- converts all angles from 0..2*pi into -pi..pi
+	if ang > 3.141592 then
+		ang = 6.2831853071 - ang
+	elseif ang < -3.141592 then
+		ang = -6.2831853071 -ang
+	end
+	return ang
+end
 ---[[
 local function InverseKinematics(leg, v, d, y, pos)	-- A Cyclic Coordinate Descent IK attempt
 	if v<=0.1 then
 		return
 	end
 	local kc = kinChain[leg]
-	local endLink = kc[#kc].p
-	local stp = 6
-	local stp_ = stp*.75
+	local endLink = kc[4].p
+	local stp = 5
+	--local stp_ = stp*.75
+	local from, to, s, rx, data
+	if pos then
+		from, to, s = 1, 3, 1
+	else
+		from, to, s = 3, 3, -1
+	end
 	for i=1, stp do
-		local rx, data
-		local from, to, s
-		if pos then
-			from, to, s = #kc-1, 1, -1
-		else
-			from, to, s = 1, #kc-1, 1
-		end
 		for p=from, to, s do
 			data = kc[p]
 			local _,y1,z1 = spGetPiecePosDir(data.p)
@@ -79,119 +86,34 @@ local function InverseKinematics(leg, v, d, y, pos)	-- A Cyclic Coordinate Desce
 			local oa = atan2(ey-y1,ez-z1)	--origin angle
 			local da = atan2(y-y1,d-z1)		--destination angle
 			local delta = oa-da
-			if delta > 3.141592 then
-				delta = 6.2831853071 - delta
-			elseif delta < -3.141592 then
-				delta = -6.2831853071 - delta
-			end
+			-- if delta > 3.141592 then
+				-- delta = 6.2831853071 - delta
+			-- elseif delta < -3.141592 then
+				-- delta = -6.2831853071 - delta
+			-- end
 			rx, _, _ = spGetPieceRotation(data.p)
 			local a = delta/(stp-i+1) + rx
 			a = max(data.aMin, a)	--clamp to max angles
 			a = min(data.aMax, a)
 			Turn(data.p, x_axis, a)	--instead of calculating the piece origin position manualy
 		end
-		data = kc[#kc-1]
+		data = kc[3]
 		rx, _, _  = spGetPieceRotation(data.p)
-		rx = max(data.aMin, rx)	--clamp to max angles
-		rx = min(data.aMax, rx)
+		if not pos then
+			if rx>0 then
+				rx=rx*1.7
+			else
+				rx=rx*.7
+			end
+		end
+		rx = max(kc[#kc].aMin, rx)	--clamp to max angles
+		rx = min(kc[#kc].aMax, rx)
 		Turn(endLink, x_axis, -rx)
-		--if stp>8 then
-			if i<stp then
-				Sleep(320/stp)
-			end
-		-- else
-			-- if i>1 and i<stp_ then
-				-- Sleep(300/stp)
-			-- end
-		-- end
-	end
-end
---]]
-
---[[
-local function RetLeg(leg)
-	local kc = kinChain[leg]
-	local a = {}
-	for i=1, #kc-1 do
-		local an, _, _ = spGetPieceRotation(kc[i].p)
-		a[i] = an/2
-		Turn(kc[i].p, x_axis, a[i], abs(a[i]*3))
-	end
-	--Spring.Echo()
-end
---]]
-
-
-
---[[
-local function InverseKinematics(leg, v, d, h)	-- A Cyclic Coordinate Descent IK attempt
-	if v<=0.1 then
-		return
-	end
-	local kc = kinChain[leg]
-	--local endLink = kc[#kc].p
-	local a, y, z, oy, oz = {}, {}, {}, {}, {}
-	for i=#kc, 1, -1 do
-		_, y[i], z[i] = spGetPiecePosDir(kc[i].p)
-		oy[i], oz[i] = y[i], z[i]
-		if i<#kc then
-			a[i] = atan2(y[i+1]-y[i], z[i+1]-z[i])
-		else
-			a[i] = 0
+		if i<stp then
+			Sleep(160/stp)
 		end
 	end
-	--local _, ey, ez = spGetPiecePosDir(endLink)
-	for i=1, 4 do
-		--local rx, data
-		for p=#kc-1, 1, -1 do
-			--data = kc[p]			
-			local ofZ, ofY = z[p], y[p]
-			local oa = atan2(y[#kc]-ofY,z[#kc]-ofZ)	--origin angle
-			local da = atan2(h-ofY,d-ofZ)		--destination angle
-			local delta = da-oa
-			if delta > 3.141592 then
-				delta = 6.2831853071 - delta
-			elseif delta < -3.141592 then
-				delta = -6.2831853071 - delta
-			end
-			--
-			rx, _, _ = spGetPieceRotation(data.p)
-			local a = delta + rx
-			a = max(data.aMin, a)	--clamp to max angles
-			a = min(data.aMax, a)
-			Tdelta = a - rx
-			--
-			for j=p+1, #kc do
-				local tZ, tY = z[j]-ofZ, y[j]-ofY
-				z[j] = ofZ + tZ*cos(delta) - tY*sin(delta)
-				y[j] = ofY + tZ*sin(delta) + tY*cos(delta)
-			end
-		end
-		
-		--Sleep(30)
-	end
-	for i=#kc-1, 1, -1 do
-		local s, _, _ = spGetPieceRotation(kc[i].p)
-		--local _, y1, z1 = spGetPiecePosDir(kc[i].p)
-		--local _, y2, z2 = spGetPiecePosDir(kc[i+1].p)
-		local oa = atan2(oy[i+1]-oy[i], oz[i+1]-oz[i])
-		local da = atan2(y[i+1]-y[i], z[i+1]-z[i])
-		local delta = da - oa
-		if delta > 3.141592 then
-			delta = 6.2831853071 - delta
-		elseif delta < -3.141592 then
-			delta = -6.2831853071 - delta
-		end
-		
-		--if b[i]<0 then b[i] = b[i]+3.141592 elseif b[i]>6.2831853071 then b[i]=b[i]-6.2831853071 end
-		--Spring.Echo(kc[i].p, deg(oa), deg(da), deg(delta),deg(s), deg(s+delta))
-		--Turn(kc[i].p, x_axis, a[i])
-		Turn(kc[i].p, x_axis, s + delta, abs(delta)*4)
-	end
 end
---]]
-
-local SLP = 750
 
 local function MotionControl()
 	local justMoved = true
@@ -204,17 +126,16 @@ local function MotionControl()
 				local he = atan2(dz,dx)
 				local heX, heZ = 5*sin(he), 5*cos(he)
 				local x, y, z = spGetUnitPosition(unitID)
-				local dyl = 1.5*(spGetGroundHeight(x+heX,z-heZ)-y)+1
-				local dyr = 1.5*(spGetGroundHeight(x+dx-heX,z+dz+heZ)-y)+1
-				--Spring.Echo(x,z, deg(he), dyl, dyr)--, dyl, dyr, he)
-				Move(pelvis, y_axis, -1, 8)
-				StartThread(InverseKinematics,"left", v, -v, dyl, true)
-				InverseKinematics("right", v, v*1.5, dyr, true)
+				local dyl = 1.5*(spGetGroundHeight(x+heX,z-heZ)-y)
+				local dyr = 1.5*(spGetGroundHeight(x+dx-heX,z+dz+heZ)-y)
+				Move(pelvis, y_axis, -1.5, 6)
+				StartThread(InverseKinematics,"right", v, v*1.2, dyr, true)
+				InverseKinematics("left", v, -v, dyl, true)
 				justMoved = true
-				Move(pelvis, y_axis, 0, 8)
 				x, y, z = spGetUnitPosition(unitID)
-				dyl = 1.5*(spGetGroundHeight(x+dx+heX,z+dz-heZ)-y)+6
-				dyr = 1.5*(spGetGroundHeight(x-heX,z+heZ)-y)+1
+				dyl = 1.5*(spGetGroundHeight(x+dx+heX,z+dz-heZ)-y)+4
+				dyr = 1.5*(spGetGroundHeight(x-heX,z+heZ)-y)
+				Move(pelvis, y_axis, 0, 6)
 				StartThread(InverseKinematics,"left", v, 0, dyl, false)
 				InverseKinematics("right", v, 0, dyr, true)
 				dx, _, dz = spGetUnitVelocity(unitID)
@@ -224,17 +145,17 @@ local function MotionControl()
 					x, y, z = spGetUnitPosition(unitID)
 					he = atan2(dz,dx)
 					heX, heZ = 5*sin(he), 5*cos(he)
-					dyl = 1.5*(spGetGroundHeight(x+dx+heX,z+dz-heZ)-y)+1
-					dyr = 1.5*(spGetGroundHeight(x-heX,z+heZ)-y)+1
-					Move(pelvis, y_axis, -1, 8)
-					StartThread(InverseKinematics,"left", v, v*1.5, dyl, true)
-					InverseKinematics("right", v, -v, dyr, true)
+					dyl = 1.5*(spGetGroundHeight(x+dx+heX,z+dz-heZ)-y)
+					dyr = 1.5*(spGetGroundHeight(x-heX,z+heZ)-y)
+					Move(pelvis, y_axis, -1.5, 6)
+					StartThread(InverseKinematics,"right", v, -v, dyr, true)
+					InverseKinematics("left", v, v*1.2, dyl, true)
 					x, y, z = spGetUnitPosition(unitID)
-					dyl = 1.5*(spGetGroundHeight(x+heX,z-heZ)-y)+1
-					dyr = 1.5*(spGetGroundHeight(x+dx-heX,z+dz+heZ)-y)+6
-					Move(pelvis, y_axis, 0, 8)
-					StartThread(InverseKinematics,"left", v, 0, dyl, true)
-					InverseKinematics("right", v, 0, dyr, false)
+					dyl = 1.5*(spGetGroundHeight(x+heX,z-heZ)-y)
+					dyr = 1.5*(spGetGroundHeight(x+dx-heX,z+dz+heZ)-y)+4
+					Move(pelvis, y_axis, 0, 6)
+					StartThread(InverseKinematics,"right", v, 0, dyr, false)
+					InverseKinematics("left", v, 0, dyl, true)
 				else
 					Sleep(100)
 				end

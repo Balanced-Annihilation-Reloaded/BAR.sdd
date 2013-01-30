@@ -4,12 +4,13 @@ Control = Object:Inherit{
   classname       = 'control',
   padding         = {5, 5, 5, 5},
   borderThickness = 1.5,
-  borderColor1    = {1,1,1,0.6},
-  borderColor2    = {0,0,0,0.8},
-  backgroundColor = {0.8, 0.8, 1, 0.4},
+  borderColor     = {1.0, 1.0, 1.0, 0.6},
+  borderColor2    = {0.0, 0.0, 0.0, 0.8},
+  backgroundColor = {0.8, 0.8, 1.0, 0.4},
+  focusColor      = {0.2, 0.2, 1.0, 0.6},
 
-  snapToGrid      = false,
   autosize        = false,
+  savespace       = true, --// if autosize==true, it shrinks the control to the minimum needed space, if disabled autosize _normally_ only enlarges the control
   resizeGripSize  = {11, 11},
   dragGripSize    = {10, 10},
 
@@ -20,7 +21,6 @@ Control = Object:Inherit{
   tweakDraggable   = false,
   tweakResizable   = false,
 
-  --minimumSize     = {50, 50}, --// deprecated; Todo replace everywhere with the beneath!
   minWidth        = 10,
   minHeight       = 10,
   maxWidth        = 1e9,
@@ -44,22 +44,21 @@ Control = Object:Inherit{
     autoOutlineColor = true,
   },
 
+  state = {
+    focused  = false,
+    hovered  = false,
+    checked  = false,
+    selected = false, --FIXME implement
+    pressed  = false,
+    enabled  = true, --FIXME implement
+  },
+
   skin            = nil,
   skinName        = nil,
 }
 
 local this = Control
 local inherited = this.inherited
-
---//=============================================================================
-
-local glCreateList    = gl.CreateList
-local glCallList      = gl.CallList
-local glDeleteList    = gl.DeleteList
-local glGetViewSizes  = gl.GetViewSizes
-local glPushMatrix    = gl.PushMatrix
-local glTranslate     = gl.Translate
-local glPopMatrix     = gl.PopMatrix
 
 --//=============================================================================
 
@@ -86,14 +85,11 @@ function Control:New(obj)
     obj.font = {}
   end
   FontBackwardCompa(obj)
-  local minimumSize = obj.minimumSize or {}
-  obj.minWidth = obj.minWidth or minimumSize[1]
-  obj.minHeight = obj.minHeight or minimumSize[2]
 
   --// load the skin for this control
   obj.classname = self.classname
   theme.LoadThemeDefaults(obj)
-  SkinHandler.LoadSkin(obj)
+  SkinHandler.LoadSkin(obj, self)
 
   --// call it twice, so skins can use old standards, too
   FontBackwardCompa(obj)
@@ -122,7 +118,7 @@ function Control:New(obj)
   --// add children after UpdateClientArea! (so relative width/height can be applied correctly)
   if (cn) then
     for i=1,#cn do
-      obj:AddChild(cn[i],true)
+      obj:AddChild(cn[i], true)
     end
   end
 
@@ -130,35 +126,29 @@ function Control:New(obj)
 end
 
 
-function Control:Dispose()
+function Control:Dispose(...)
   if (self._all_dlist) then
-    glDeleteList(self._all_dlist)
+    gl.DeleteList(self._all_dlist)
     self._all_dlist = nil
   end
   if (self._children_dlist) then
-    glDeleteList(self._children_dlist)
+    gl.DeleteList(self._children_dlist)
     self._children_dlist = nil
   end
   if (self._own_dlist) then
-    glDeleteList(self._own_dlist)
+    gl.DeleteList(self._own_dlist)
     self._own_dlist = nil
   end
 
-  if (not self.disposed) then
-    --self.font:Dispose()
-  end
-
-  inherited.Dispose(self)
-  self.font:Dispose()
+  inherited.Dispose(self,...)
+  self.font:SetParent()
 end
 
 --//=============================================================================
 
 function Control:SetParent(obj)
   inherited.SetParent(self,obj)
-  if (self:RequestRealign()) then
-    return
-  end
+  self:RequestRealign()
 end
 
 function Control:AddChild(obj, dontUpdate)
@@ -241,12 +231,12 @@ function Control:DetectRelativeBounds()
 
   --// check which constraints are relative
   self._givenBounds  = {
-    left   = not not self.x,
-    top    = not not self.y,
-    width  = not not self.width,
-    height = not not self.height,
-    right  = not not self.right,
-    bottom = not not self.bottom,
+    left   = self.x,
+    top    = self.y,
+    width  = self.width,
+    height = self.height,
+    right  = self.right,
+    bottom = self.bottom,
   }
   local rb = {
     left   = IsRelativeCoord(self.x) and self.x,
@@ -269,24 +259,30 @@ function Control:DetectRelativeBounds()
 end
 
 
-function Control:GetRelativeBox()
+function Control:GetRelativeBox(savespace)
+  local t = {self.x, self.y, self.width, self.height}
+  if (savespace) then
+    t = {0,0,self.minWidth,self.minHeight}
+  end
+
   if (not self._isRelative) then
-    return {self.x,self.y,self.width,self.height}
+    return t
   end
 
   local p = self.parent
   if (not p) then
-    return {self.x,self.y,self.width,self.height}
+    return t
   end
 
-  local _,_,pw,ph = p:_GetMaxChildConstraints(self)
+  --// FIXME use pl & pt too!!!
+  local pl,pt,pw,ph = p:_GetMaxChildConstraints(self)
 
   local givBounds = self._givenBounds
   local relBounds = self._relativeBounds
   local left   = self.x
   local top    = self.y
-  local width  = self.width
-  local height = self.height
+  local width  = (savespace and self.minWidth) or self.width
+  local height = (savespace and self.minHeight) or self.height
 
   --// ProcessRelativeCoord is defined in util.lua
   if (relBounds.left) then
@@ -317,7 +313,7 @@ function Control:GetRelativeBox()
     end
   end
 
-  return {left,top,width,height}
+  return {left, top, width, height}
 end
 
 
@@ -345,6 +341,11 @@ function Control:UpdateClientArea()
     self._oldwidth_uca  = self.width
     self._oldheight_uca = self.height
   end
+
+if (self.debug) then
+  Spring.Echo(self.name, self.width, self.height, self._realignRequested)
+end
+
   self:Invalidate() --FIXME correct place?
 end
 
@@ -355,9 +356,10 @@ function Control:AlignControl()
 end
 
 
-function Control:RequestRealign()
+function Control:RequestRealign(savespace)
   if (not self._inRealign) then
     self._realignRequested = true
+    self.__savespace = savespace
     self:RequestUpdate()
   end
 end
@@ -377,37 +379,57 @@ function Control:EnableRealign()
 end
 
 
-function Control:Realign()
+function Control:Realign(savespace)
   if (not self._realignDisabled) then
     if (not self._inRealign) then
+      self._savespace = savespace or self.savespace
       self._inRealign = true
-      self:AlignControl()
+      self:AlignControl() --FIXME still needed?
       local childrenAligned = self:UpdateLayout()
       self._realignRequested = nil
       if (not childrenAligned) then
         self:RealignChildren()
       end
       self._inRealign = nil
+      self._savespace = nil
     end
   else
-    self:RequestRealign()
+    self:RequestRealign(savespace)
   end
 end
 
 
 function Control:UpdateLayout()
   if (self.autosize) then
+    self:RealignChildren(true)
+
+    local neededWidth, neededHeight = self:GetChildrenMinimumExtents()
+
+    local relativeBox = self:GetRelativeBox(self._savespace or self.savespace)
+    neededWidth  = math.max(relativeBox[3], neededWidth)
+    neededHeight = math.max(relativeBox[4], neededHeight)
+
+    neededWidth  = neededWidth  - self.padding[1] - self.padding[3]
+    neededHeight = neededHeight - self.padding[2] - self.padding[4]
+
+    if (self.debug) then
+      local cminextW, cminextH = self:GetChildrenMinimumExtents()
+      Spring.Echo("Control:UpdateLayout", self.name,
+		      "GetChildrenMinimumExtents", cminextW, cminextH,
+		      "GetRelativeBox", relativeBox[3], relativeBox[4],
+		      "savespace", self._savespace)
+    end
+
+    self:Resize(neededWidth, neededHeight, true, true)
     self:RealignChildren()
-    local maxRight,maxBottom = self:GetChildrenExtents()
-    self:Resize(maxRight, maxBottom, true, true)
     self:AlignControl() --FIXME done twice!!! (1st in Realign)
     return true
   end
 end
 
 
-function Control:RealignChildren()
-  self:CallChildren"Realign"
+function Control:RealignChildren(savespace)
+  self:CallChildren("Realign", savespace)
 end
 
 --//=============================================================================
@@ -424,7 +446,7 @@ function Control:SetPos(x, y, w, h, clientArea, dontUpdateRelative)
     if (not dontUpdateRelative) then
       if (self._relativeBounds.left ~= x) then
         self._relativeBounds.left = false
-        self._givenBounds.left = false
+        self._givenBounds.left = x
         self._relativeBounds.right = false
         self._givenBounds.right = false
         changed = true
@@ -440,7 +462,7 @@ function Control:SetPos(x, y, w, h, clientArea, dontUpdateRelative)
     if (not dontUpdateRelative) then
       if (self._relativeBounds.top ~= y) then
         self._relativeBounds.top = false
-        self._givenBounds.top = false
+        self._givenBounds.top = y
         self._relativeBounds.bottom = false
         self._givenBounds.bottom = false
         changed = true
@@ -459,8 +481,8 @@ function Control:SetPos(x, y, w, h, clientArea, dontUpdateRelative)
     end
     if (not dontUpdateRelative) then
       if (self._relativeBounds.width ~= w) then
-        self._relativeBounds.width = w
-        self._givenBounds.width = true
+        self._relativeBounds.width = IsRelativeCoord(w) and w
+        self._givenBounds.width = w
         changed = true
       end
     end
@@ -476,8 +498,8 @@ function Control:SetPos(x, y, w, h, clientArea, dontUpdateRelative)
     end
     if (not dontUpdateRelative) then
       if (self._relativeBounds.height ~= h) then
-        self._relativeBounds.height = h
-        self._givenBounds.height = true
+        self._relativeBounds.height = IsRelativeCoord(h) and h
+        self._givenBounds.height = h
         changed = true
       end
     end
@@ -503,7 +525,7 @@ function Control:SetPosRelative(x, y, w, h, clientArea, dontUpdateRelative)
     if (not dontUpdateRelative) then
       if (self._relativeBounds.left ~= x) then
         self._relativeBounds.left = IsRelativeCoord(x) and x
-        self._givenBounds.left = IsRelativeCoord(x)
+        self._givenBounds.left = x
         changed = true
       end
     end
@@ -519,7 +541,7 @@ function Control:SetPosRelative(x, y, w, h, clientArea, dontUpdateRelative)
     if (not dontUpdateRelative) then
       if (self._relativeBounds.top ~= y) then
         self._relativeBounds.top = IsRelativeCoord(y) and y
-        self._givenBounds.top = IsRelativeCoord(y)
+        self._givenBounds.top = y
         changed = true
       end
     end
@@ -538,8 +560,8 @@ function Control:SetPosRelative(x, y, w, h, clientArea, dontUpdateRelative)
     end
     if (not dontUpdateRelative) then
       if (self._relativeBounds.width ~= w) then
-        self._relativeBounds.width = w
-        self._givenBounds.width = true
+        self._relativeBounds.width = IsRelativeCoord(w) and w
+        self._givenBounds.width = w
         changed = true
       end
     end
@@ -557,8 +579,8 @@ function Control:SetPosRelative(x, y, w, h, clientArea, dontUpdateRelative)
     end
     if (not dontUpdateRelative) then
       if (self._relativeBounds.height ~= h) then
-        self._relativeBounds.height = h
-        self._givenBounds.height = true
+        self._relativeBounds.height = IsRelativeCoord(h) and h
+        self._givenBounds.height = h
         changed = true
       end
     end
@@ -582,20 +604,119 @@ end
 
 --//=============================================================================
 
-function Control:GetChildrenExtents()
-  local maxRight  = 0
-  local maxBottom = 0
+function Control:GetMinimumExtents()
+  local maxRight, maxBottom = 0,0
+  if (self.autosize) then
+    --// FIXME handle me correctly!!! (:= do the parent offset)
+    maxRight, maxBottom = self:GetChildrenMinimumExtents()
+  end
+
+  if (not self._isRelative) then
+    local right  = self.x + self.width
+    local bottom = self.y + self.height
+
+    maxRight  = math.max(maxRight,  right)
+    maxBottom = math.max(maxBottom, bottom)
+  else
+    local cgb = self._givenBounds
+    local crb = self._relativeBounds
+
+    local left, width, right = 0,0,0
+    if (not crb.width) then if (self.autosize) then width = self.width or 0 else width = cgb.width or 0 end end
+    if (not crb.left)  then left  = cgb.left or 0 end
+    if (not IsRelativeCoord(crb.right)) then right = crb.right or 0 end
+    local totalWidth = left + width + right
+
+    local top, height, bottom = 0,0,0
+    if (not crb.height) then height = cgb.height or 0 end
+    if (not crb.top)    then top    = cgb.top    or 0 end
+    if (not IsRelativeCoord(crb.bottom)) then bottomt = crb.bottom or 0 end
+    local totalHeight = top + height + bottom
+
+--[[
+    if (crb.width) then width = cgb.width or 0 end
+    if (crb.left)  then left  = cgb.left or 0 end
+    if (IsRelativeCoord(cgb.right)) then right = cgb.right or 0 end
+
+    ...
+--]]
+
+    totalWidth  = math.max(totalWidth,  self.minWidth)
+    totalHeight = math.max(totalHeight, self.minHeight)
+
+    totalWidth  = math.min(totalWidth,  self.maxWidth)
+    totalHeight = math.min(totalHeight, self.maxHeight)
+
+    maxRight  = math.max(maxRight,  totalWidth)
+    maxBottom = math.max(maxBottom, totalHeight)
+  end
+
+  return maxRight, maxBottom
+end
+
+
+function Control:GetChildrenMinimumExtents()
+  local minWidth  = 0
+  local minHeight = 0
+
   local cn = self.children
   for i=1,#cn do
     local c = cn[i]
-    local right  = c.x + c.width
-    local bottom = c.y + c.height
-
-    if (right > maxRight) then maxRight = right end
-    if (bottom > maxBottom) then maxBottom = bottom end
+    if (c.GetMinimumExtents) then
+      local width, height = c:GetMinimumExtents()
+      minWidth  = math.max(minWidth,  width)
+      minHeight = math.max(minHeight, height)
+    end
   end
 
-  return maxRight,maxBottom
+  if (minWidth + minHeight > 0) then
+    local padding = self.padding
+    minWidth  = minWidth + padding[1] + padding[3]
+    minHeight = minHeight + padding[2] + padding[4]
+  end
+
+  return minWidth, minHeight
+end
+
+
+
+function Control:GetCurrentExtents()
+  local minLeft, minTop, maxRight, maxBottom = self:GetChildrenCurrentExtents()
+
+  local left = self.x
+  local top  = self.y
+  local right  = self.x + self.width
+  local bottom = self.y + self.height
+
+  if (left   < minLeft)   then minLeft   = left end
+  if (top    < minTop )   then minTop    = top end
+
+  if (right  > maxRight)  then maxRight  = right end
+  if (bottom > maxBottom) then maxBottom = bottom end
+
+  return minLeft, minTop, maxRight, maxBottom
+end
+
+
+function Control:GetChildrenCurrentExtents()
+  local minLeft   = 0
+  local minTop    = 0
+  local maxRight  = 0
+  local maxBottom = 0
+ 
+  local cn = self.children
+  for i=1,#cn do
+    local c = cn[i]
+    if (c.GetCurrentExtents) then
+      local left, top, right, bottom = c:GetCurrentExtents()
+      minLeft   = math.min(minLeft,   left)
+      minTop    = math.min(minTop,    top)
+      maxRight  = math.max(maxRight,  right)
+      maxBottom = math.max(maxBottom, bottom)
+    end
+  end
+
+  return minLeft, minTop, maxRight, maxBottom
 end
 
 --//=============================================================================
@@ -659,33 +780,48 @@ end
 --//=============================================================================
 
 function Control:Update()
-  if (self._realignRequested) then
-    self:Realign()
-    self._realignRequested = nil
-  end
-  if (self._needRedraw) then
-    if (self.useDList) then
---//FIXME don't recreate the own displaylist each time we _move_ a window
-      self:_UpdateOwnDList()
-      --self:_UpdateChildrenDList()
-      self:_UpdateAllDList()
-    end
-    self._needRedraw = nil
-  end
+	if (self._realignRequested) then
+		self:Realign(self.__savespace)
+		self._realignRequested = nil
+	end
+
+	if (self._needRedraw)and(self:IsInView()) then
+		if (self.useDList) then
+			--//FIXME don't recreate the own displaylist each time we _move_ a window
+			self:_UpdateOwnDList()
+			--self:_UpdateChildrenDList()
+			self:_UpdateAllDList()
+		end
+		self._needRedraw = nil
+	end
+end
+
+
+function Control:InstantUpdate()
+	if self:IsInView() then
+		if self._needRedraw then
+			self:Update()
+		else
+			self:_UpdateAllDList()
+		end
+	end
 end
 
 --//=============================================================================
 
 function Control:_UpdateOwnDList()
+  if (not self.parent) then return end
+  if not self:IsInView() then return end
+
   self:CallChildren('_UpdateOwnDList')
 
   if (self._needRedraw) then
     if (self._own_dlist) then
-      glDeleteList(self._own_dlist)
+      gl.DeleteList(self._own_dlist)
       self._own_dlist = nil
     end
 
-    self._own_dlist = glCreateList(self.DrawControl, self)
+    self._own_dlist = gl.CreateList(self.DrawControl, self)
 
     self._needRedraw = nil
   end
@@ -694,53 +830,85 @@ end
 --[[
 function Control:_UpdateChildrenDList()
   if (self._children_dlist) then
-    glDeleteList(self._children_dlist)
+    gl.DeleteList(self._children_dlist)
     self._children_dlist = nil
   end
-  self._children_dlist = glCreateList(self.CallChildrenInverse, self, 'DrawForList')
+  self._children_dlist = gl.CreateList(self.CallChildrenInverse, self, 'DrawForList')
 end
 --]]
 
 function Control:_UpdateAllDList()
+  if (not self.parent) then return end
+  if not self:IsInView() then return end
+
+  self._redrawCounter = (self._redrawCounter or 0) + 1
+
   if (self._all_dlist) then
-    glDeleteList(self._all_dlist)
+    gl.DeleteList(self._all_dlist)
     self._all_dlist = nil
   end
-  self._all_dlist = glCreateList(self.DrawForList,self)
+  self._all_dlist = gl.CreateList(self.DrawForList,self)
 
   if (self.parent)and(not self.parent._needRedraw)and(self.parent._UpdateAllDList)and(self.parent.useDList) then
-    (self.parent):_UpdateAllDList()
+    TaskHandler.RequestInstantUpdate(self.parent)
   end
 end
 
 --//=============================================================================
 
 function Control:_DrawInClientArea(fnc,...)
+  local clientX,clientY,clientWidth,clientHeight = unpack4(self.clientArea)
   if (self.safeOpengl) then
-    local clientX,clientY,clientWidth,clientHeight = unpack4(self.clientArea)
     local sx,sy = self:LocalToScreen(clientX,clientY)
+    sy = select(2,gl.GetViewSizes()) - (sy + clientHeight)
 
-    --gl.Color(1,0.1,0,0.2)
-    --gl.Rect(self.x + clientX, self.y + clientY, self.x + clientX + clientWidth, self.y + clientY + clientHeight)
-
-    sy = select(2,glGetViewSizes()) - (sy + clientHeight)
     PushScissor(sx,sy,math.ceil(clientWidth),math.ceil(clientHeight))
   end
 
-  glPushMatrix()
-  glTranslate(math.floor(self.x + self.clientArea[1]),math.floor(self.y + self.clientArea[2]),0)
+  gl.PushMatrix()
+  gl.Translate(math.floor(self.x + clientX),math.floor(self.y + clientY),0)
   fnc(...)
-  glPopMatrix()
+  gl.PopMatrix()
 
   if (self.safeOpengl) then
-    --gl.Scissor(false)
     PopScissor()
   end
 end
 
 
+function Control:IsInView()
+	if UnlinkSafe(self.parent) then
+		return self.parent:IsRectInView(self.x, self.y, self.width, self.height)
+	end
+	return false
+end
+
+
+function Control:IsChildInView(child)
+	return self:IsRectInView(child.x, child.y, child.width, child.height)
+end
+
+
+function Control:IsRectInView(x,y,w,h)
+	if (not self.parent) then
+		return false
+	end
+
+	local rect1 = {x,y,w,h}
+	local rect2 = {0,0,self.clientArea[3],self.clientArea[4]}
+	local inview = AreRectsOverlapping(rect1,rect2)
+
+	if not(inview) then
+		return false
+	end
+
+	local px,py = self:ClientToParent(x,y)
+	return (self.parent):IsRectInView(px,py,w,h)
+end
+
+
 function Control:_DrawChildrenInClientArea(event)
-  self:_DrawInClientArea(self.CallChildrenInverse,self, event or 'Draw')
+	self:_DrawInClientArea(self.CallChildrenInverseCheckFunc, self, self.IsChildInView, event or 'Draw')
 end
 
 --//=============================================================================
@@ -781,10 +949,6 @@ end
 
 
 function Control:DrawControl()
-  if self.snapToGrid then
-    self.x = math.floor(self.x) + 0.5
-    self.y = math.floor(self.y) + 0.5
-  end
   self:DrawBackground()
   self:DrawBorder()
 end
@@ -792,7 +956,7 @@ end
 
 function Control:DrawForList()
   if (self._own_dlist) then
-    glCallList(self._own_dlist);
+    gl.CallList(self._own_dlist);
   else
     self:DrawControl();
   end
@@ -818,7 +982,7 @@ function Control:Draw()
   end
 
   if (self._own_dlist) then
-    glCallList(self._own_dlist);
+    gl.CallList(self._own_dlist);
   else
     self:DrawControl();
   end
@@ -989,6 +1153,30 @@ end
 function Control:MouseWheel(x, y, ...)
   local cx,cy = self:LocalToClient(x,y)
   return inherited.MouseWheel(self, cx, cy, ...)
+end
+
+
+function Control:KeyPress(...)
+  return inherited.KeyPress(self, ...)
+end
+
+
+function Control:FocusUpdate(...)
+  return inherited.FocusUpdate(self, ...)
+end
+
+
+function Control:MouseOver(...)
+	inherited.MouseOver(self, ...)
+	self.state.hovered = true
+	self:Invalidate()
+end
+
+
+function Control:MouseOut(...)
+	inherited.MouseOut(self, ...)
+	self.state.hovered = false
+	self:Invalidate()
 end
 
 --//=============================================================================

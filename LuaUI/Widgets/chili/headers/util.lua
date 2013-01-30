@@ -6,10 +6,6 @@ end
 
 --//=============================================================================
 
-local glScissor = gl.Scissor
-
---//=============================================================================
-
 function unpack4(t)
   return t[1], t[2], t[3], t[4]
 end
@@ -136,7 +132,7 @@ function PushScissor(x,y,w,h)
   stackN = stackN + 1
   stack[stackN] = curScissor
 
-  glScissor(x,y,right - x,bottom - y)
+  gl.Scissor(x,y,right - x,bottom - y)
 end
 
 
@@ -145,20 +141,21 @@ function PopScissor()
   stackN = stackN - 1
   curScissor = stack[stackN]
   if (stackN == 1) then
-    glScissor(false)
+    gl.Scissor(false)
   else
     local x,y, right,bottom = unpack4(curScissor)
-    glScissor(x,y,right - x,bottom - y)
+    gl.Scissor(x,y,right - x,bottom - y)
   end
 end
 
 --//=============================================================================
 
 function AreRectsOverlapping(rect1,rect2)
-  return (rect1[2]+rect1[4] >= rect2[2]) and
-   (rect1[2] <= rect2[2]+rect2[4]) and
-   (rect1[1]+rect1[3] >= rect2[1]) and
-   (rect1[1] <= rect2[1]+rect2[3]) 
+	return
+		(rect1[1] <= rect2[1] + rect2[3]) and
+		(rect1[1] + rect1[3] >= rect2[1]) and
+		(rect1[2] <= rect2[2] + rect2[4]) and
+		(rect1[2] + rect1[4] >= rect2[2])
 end
 
 --//=============================================================================
@@ -333,6 +330,14 @@ function table:iequal(table2)
   return true
 end
 
+function table:size()
+  local cnt = 0
+  for _ in pairs(self) do
+    cnt = cnt + 1
+  end
+  return cnt
+end
+
 --//=============================================================================
 
 local weak_meta = {__mode='v'}
@@ -348,8 +353,9 @@ function math.round(num,idp)
   if (not idp) then
     return math.floor(num+.5)
   else
-    local mult = 10^(idp or 0)
-    return math.floor(num * mult + 0.5) / mult
+    return ("%." .. idp .. "f"):format(num)
+    --local mult = 10^(idp or 0)
+    --return math.floor(num * mult + 0.5) / mult
   end
 end
 
@@ -359,35 +365,42 @@ function InvertColor(c)
   return {1 - c[1], 1 - c[2], 1 - c[3], c[4]}
 end
 
-function mulColor(c,s)
+function math.mix(x, y, a)
+	return y * a + x * (1 - a)
+end
+
+function mulColor(c, s)
   return {s * c[1], s * c[2], s * c[3], c[4]}
 end
 
+function mulColors(c1, c2)
+  return {c1[1] * c2[1], c1[2] * c2[2], c1[3] * c2[3], c1[4] * c2[4]}
+end
+
+function mixColors(c1, c2, a)
+	return {
+		math.mix(c1[1], c2[1], a),
+		math.mix(c1[2], c2[2], a),
+		math.mix(c1[3], c2[3], a),
+		math.mix(c1[4], c2[4], a)
+	}
+end
+
 function color2incolor(r,g,b,a)
-	local colortable = {r,g,b,a}
 	if type(r) == 'table' then
-		colortable = r
+		r,g,b,a = unpack4(r)
 	end
-	local r,g,b,a = unpack(colortable)			
-	if r == 0 then r = 0.01 end
-	if g == 0 then g = 0.01 end
-	if b == 0 then b = 0.01 end
-	--if a == 0 then a = 0.01 end --seems transparent is bad in label text
-	a = 1
-	
+
 	local inColor = '\255\255\255\255'
 	if r then
-		inColor = string.char(a*255) .. string.char(r*255) ..  string.char(g*255) .. string.char(b*255)
+		inColor = string.char(255, r*255, g*255, b*255)
 	end
 	return inColor
 end
 
 function incolor2color(inColor)
 	local a = 255
-	local r = inColor:sub(2,2):byte()
-	local g = inColor:sub(3,3):byte()
-	local b = inColor:sub(4,4):byte()
-	
+	local r,g,b = inColor:sub(2,4):byte(1,3)
 	return r/255, g/255, b/255, a/255
 end
 

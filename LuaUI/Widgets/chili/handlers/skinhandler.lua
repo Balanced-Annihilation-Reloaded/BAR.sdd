@@ -4,18 +4,11 @@
 SkinHandler = {}
 
 --//=============================================================================
---// Some important folders
-
-local skinFolder = CHILI_DIRNAME .. "Skins/"
-
-SkinHandler.skinFolder = skinFolder
-
---//=============================================================================
 --// load shared skin utils
 
 local SkinUtilsEnv = {}
 setmetatable(SkinUtilsEnv,{__index = getfenv()})
-VFS.Include(CHILI_DIRNAME .. "Headers/skinutils.lua", SkinUtilsEnv)
+VFS.Include(CHILI_DIRNAME .. "headers/skinutils.lua", SkinUtilsEnv)
 
 --//=============================================================================
 --// translates the skin's FileNames to the correct FilePaths
@@ -58,18 +51,18 @@ knownSkins = {}
 SkinHandler.knownSkins = knownSkins
 
 local n = 1
-local skinDirs = VFS.SubDirs(skinFolder , "*", VFS.RAW_FIRST)
+local skinDirs = VFS.SubDirs(SKIN_DIRNAME , "*", VFS.RAW_FIRST)
 for i,dir in ipairs(skinDirs) do
   local skinCfgFile = dir .. 'skin.lua'
 
   if (VFS.FileExists(skinCfgFile, VFS.RAW_FIRST)) then
 
     --// use a custom enviroment (safety + auto loads skin utils)
-    local senv = {}
+    local senv = {SKINDIR = dir}
     setmetatable(senv,{__index = SkinUtilsEnv})
 
     --// load the skin
-    local skinConfig = VFS.Include(skinCfgFile,senv)
+    local skinConfig = VFS.Include(skinCfgFile,senv, VFS.RAW_FIRST)
     if (skinConfig)and(type(skinConfig)=="table")and(type(skinConfig.info)=="table") then
       skinConfig.info.dir = dir
       SkinHandler.knownSkins[n] = skinConfig
@@ -97,7 +90,7 @@ for i,skinConfig in ipairs(SkinHandler.knownSkins) do
   end
 
   --// add the default skindir to the end
-  dirs[#dirs+1] = skinFolder .. 'default/'
+  dirs[#dirs+1] = SKIN_DIRNAME .. 'default/'
 
   --// finally translate all paths
   TranslateFilePaths(skinConfig, dirs)
@@ -139,18 +132,45 @@ function SkinHandler.GetAvailableSkins()
 end
 
 
-function SkinHandler.LoadSkin(control)
-  local skin = GetSkin(control.skinName)
-  if (skin) then
-    if (skin[control.classname]) then
-      table.merge(control,skin[control.classname]) -- per-class defaults
-    end 
-    table.merge(control,skin.general)
-  end
+local function MergeProperties(obj, skin, classname)
+	local skinclass = skin[classname]
+	if not skinclass then return end
+	table.merge(obj, skinclass)
+	MergeProperties(obj, skin, skinclass.clone)
+end
 
-  skin = SkinHandler.defaultSkin
-  if (skin[control.classname]) then
-    table.merge(control,skin[control.classname]) -- per-class defaults
-  end
-  table.merge(control,skin.general)
+
+function SkinHandler.LoadSkin(control, class)
+	local skin = GetSkin(control.skinName)
+	local defskin = SkinHandler.defaultSkin
+
+	local found = false
+	local inherited = class.inherited
+	local classname = control.classname
+	repeat
+		--FIXME scan whole `depend` table
+
+		if (skin) then
+			--if (skin[classname]) then
+				MergeProperties(control, skin, classname) -- per-class defaults
+				MergeProperties(control, skin, "general")
+			if (skin[classname]) then
+				found = true
+			end
+		end
+
+
+		if (defskin[classname]) then
+			MergeProperties(control, defskin, classname) -- per-class defaults
+			MergeProperties(control, defskin, "general")
+			found = true
+		end
+
+		if inherited then
+			classname = inherited.classname
+			inherited = inherited.inherited
+		else
+			found = true
+		end
+	until (found)
 end

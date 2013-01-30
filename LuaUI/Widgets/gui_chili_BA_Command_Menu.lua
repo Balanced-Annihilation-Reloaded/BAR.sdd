@@ -1,9 +1,4 @@
--- TODO: make EPIC save changed options somehow!
--- TODO: add missing command icons
--- TODO: commandschanged gets called 2x for some reason, investigate
--- TODO: display which unit is currently selected
--- TODO: proper tooltips for queue buttons
--- TODO: make tab scrolling with keyboard detect actions prevmenu and nextmenu instead of KeyPress
+-- TODO: clean unnecessary clutter, then reimplement features as needed.
 
 function widget:GetInfo()
   return {
@@ -892,10 +887,10 @@ end
 
 local function MakeMenuTab(i, alpha)
 	local button = Button:New{
-		parent = menuTabRow;
+		parent = window;
 		y = (12.5*i-12).."%",
-		x = 0,
-		width = "75%",
+		x = "74%",
+		width = "10%",
 		height = "13%",
 		shadow = true,
 		fontsize = 11,
@@ -905,7 +900,7 @@ local function MakeMenuTab(i, alpha)
 				menuChoice = i
 				if i >= 2 and i <= 4 then lastBuildChoice = i end
 				Update(true)
-				ColorTabs(i)
+				-- ColorTabs(i)
 			end
 		},
 	}
@@ -915,31 +910,31 @@ end
 
 --need to recreate the tabs completely because chili is dumb
 --also needs to be non-local so MakeMenuTab can call it
-function ColorTabs(arg)
-	arg = arg or menuChoice
-	RemoveChildren(menuTabRow)
-	for i=1,4 do
-		if i ~= arg then menuTabs[i] = MakeMenuTab(i, 0.4) end
-	end
-	menuTabs[arg] = MakeMenuTab(arg, 1)
-end
+-- function ColorTabs(arg)
+	-- arg = arg or menuChoice
+	-- -- RemoveChildren(menuTabRow)
+	-- for i=1,4 do
+		-- if i ~= arg then menuTabs[i] = MakeMenuTab(i, 0.4) end
+	-- end
+	-- menuTabs[arg] = MakeMenuTab(arg, 1)
+-- end
 
 local function SmartTabSelect()
 	Update()
 	if options.hidetabs.value then
 		menuChoice = 1
-		ColorTabs(1)
+		-- ColorTabs(1)
 	elseif options.disablesmartselect.value then 
 		return
 	elseif #n_units > 1 and #n_econ == 0 then
 		menuChoice = 4	--selected factory, jump to units
-		ColorTabs(4)
+		-- ColorTabs(4)
 	elseif #n_econ > 0 and menuChoice == 3 then
 		menuChoice = lastBuildChoice	--selected non-fac and in units menu, jump to last build menu
-		ColorTabs(lastBuildChoice)
+		-- ColorTabs(lastBuildChoice)
 	elseif #n_strategic + #n_econ + #n_units == 0 then
 		menuChoice = 1	--selected non-builder, jump to common
-		ColorTabs(1)
+		-- ColorTabs(1)
 	end
 end
 
@@ -1017,7 +1012,7 @@ local function ScrollTabRight()
 	if menuChoice > #menuChoices then menuChoice = 1 end
 	if menuChoice >= 2 and menuChoice <= 4 then lastBuildChoice = menuChoice end
 	Update(true)
-	ColorTabs()
+	-- ColorTabs()
 end
 
 local function ScrollTabLeft()
@@ -1025,7 +1020,7 @@ local function ScrollTabLeft()
 	if menuChoice < 1 then menuChoice = #menuChoices end
 	if menuChoice >= 2 and menuChoice <= 4 then lastBuildChoice = menuChoice end
 	Update(true)
-	ColorTabs()
+	-- ColorTabs()
 end
 
 --------------------------------------
@@ -1051,7 +1046,7 @@ function widget:KeyPress(key, modifier, isRepeat)
 		hotkeyMode = false
 		menuChoice = 1 -- auto-return to orders to make it clear hotkey time is over
 		Update(true)
-		ColorTabs()
+		-- ColorTabs()
 		return thingsDone 
 	elseif menuChoice == 4 and options.unitstabhotkey.value and selectedFac then
 		local pos = gridKeyMap[key]
@@ -1106,21 +1101,21 @@ local function HotkeyTabFactory()
 	menuChoice = 2
 	hotkeyMode = true
 	Update(true)
-	ColorTabs()
+	-- ColorTabs()
 end
 
 local function HotkeyTabEconomy()
 	menuChoice = 3
 	hotkeyMode = true
 	Update(true)
-	ColorTabs()
+	-- ColorTabs()
 end
 
 local function HotkeyTabDefence()
 	menuChoice = 4
 	hotkeyMode = true
 	Update(true)
-	ColorTabs()
+	-- ColorTabs()
 end
 
 -- local function HotkeyTabSpecial()
@@ -1244,58 +1239,57 @@ local f,it,isFile = nil,nil,false
 		end },
 	}
 	
-	fakewindow = Panel:New{
-		parent = window,
-		x = 0,
-		y = 0,
-		width = "75%";
-		height = "100%";
-		--disableChildrenHitTest = false,
-		--itemMargin  = {0, 0, 0, 0},
-		dockable = false;
-		draggable = false,
-		resizable = false,
-		padding = {0, 0, 0, 0},
-		--backgroundColor = {0.1, 0.1, 0.1, 1},
---		skinName  = "DarkGlass",
+	-- fakewindow = Panel:New{
+		-- parent = window,
+		-- x = 0,
+		-- y = 0,
+		-- width = "75%";
+		-- height = "100%";
+		-- --disableChildrenHitTest = false,
+		-- --itemMargin  = {0, 0, 0, 0},
+		-- dockable = false;
+		-- draggable = false,
+		-- resizable = false,
+		-- padding = {0, 0, 0, 0},
+		-- --backgroundColor = {0.1, 0.1, 0.1, 1},
+-- --		skinName  = "DarkGlass",
 
-		OnMouseDown={ function(self) --// click+ space on any button on the integral-menu will open a Game-menu.
-			-- local forwardSlash = Spring.GetKeyState(0x02F) --reference: uikeys.txt
-			-- if not forwardSlash then return false end
-			local _,_, meta,_ = Spring.GetModKeyState()
-			if not meta then return false end --allow button to continue its function
-			WG.crude.OpenPath('Game/Commands')
-			WG.crude.ShowMenu() --make epic Chili menu appear.
-			return false
-		end },
-	}
+		-- OnMouseDown={ function(self) --// click+ space on any button on the integral-menu will open a Game-menu.
+			-- -- local forwardSlash = Spring.GetKeyState(0x02F) --reference: uikeys.txt
+			-- -- if not forwardSlash then return false end
+			-- local _,_, meta,_ = Spring.GetModKeyState()
+			-- if not meta then return false end --allow button to continue its function
+			-- WG.crude.OpenPath('Game/Commands')
+			-- WG.crude.ShowMenu() --make epic Chili menu appear.
+			-- return false
+		-- end },
+	-- }
 
-	menuTabRow = StackPanel:New{
-		parent = window,
-		resizeItems = true;
-		orientation   = "vertical";
-		height = "100%";
-		width = "15%";
-		x = '73%';
-		y = 0;
-		padding = {0, 0, 0, 0},
-		itemMargin  = {0, 0, 0, 0},
-	}
+	-- menuTabRow = Panel:New{
+		-- parent = window,
+		-- resizeItems = true;
+		-- orientation   = "vertical";
+		-- height = "100%";
+		-- width = "15%";
+		-- x = '73%';
+		-- y = 0;
+		-- color = {0, 0, 0, 0},
+		-- padding = {0, 0, 0, 0},
+		-- itemMargin  = {0, 0, 0, 0},
+	-- }
 	
 	for i=1,4 do
 		menuTabs[i] = MakeMenuTab(i, 1)
 	end
-	ColorTabs()
+	-- ColorTabs()
 	
-	commands_main = StackPanel:New{
-		parent = fakewindow,
-		resizeItems = true;
-		orientation   = "horizontal";
+	commands_main = Panel:New{
+		parent = window,
 		height = "100%";
-		width = COMMAND_SECTION_WIDTH.."%";
-		x = "1.5%";
-		y = "1.5%";
-		padding = {4, 0, 4, 0},
+		width = "75%";
+		x = 0;
+		y = 0;
+		padding = {4, 4, 4, 0},
 		itemMargin  = {0, 0, 0, 0},
 	}
 	for i=1,numRows do
@@ -1393,12 +1387,15 @@ function widget:DrawScreen()
 		if cmdid and commandButtons[cmdid]  then 
 			local but = commandButtons[cmdid].button
 			lastColor = but.backgroundColor
-			but.backgroundColor = {0.8, 0, 0, 1};
+			lastFocusColor = but.focusColor
+			but.backgroundColor = {0.8, 0, 0, 1}
+			but.focusColor = {0.8, 0, 0, 1}
 			but:Invalidate()
 		end 
 		if lastCmd ~= nil and commandButtons[lastCmd] then 
 			local but = commandButtons[lastCmd].button
 			but.backgroundColor = lastColor
+			but.focusColor = lastFocusColor
 			but:Invalidate()
 		end 
 		lastCmd = cmdid
@@ -1452,15 +1449,15 @@ function widget:Shutdown()
   Spring.ForceLayoutUpdate()
 end
 
-options.hidetabs.OnChange = function(self) 
-	fakewindow:SetPosRelative(_, self.value and 0 or '15%', _, self.value and '100%' or '86%')
-	fakewindow:SetPosRelative(_, self.value and 0 or '15%', _, self.value and '100%' or '86%')
+-- options.hidetabs.OnChange = function(self) 
+	-- fakewindow:SetPosRelative(_, self.value and 0 or '15%', _, self.value and '100%' or '86%')
+	-- fakewindow:SetPosRelative(_, self.value and 0 or '15%', _, self.value and '100%' or '86%')
 	
-	if self.value then 
-		window:RemoveChild(menuTabRow)
-	else
-		window:AddChild(menuTabRow)
-	end
-	menuChoice = 1
-	ColorTabs(1)
-end
+	-- if self.value then 
+		-- window:RemoveChild(menuTabRow)
+	-- else
+		-- window:AddChild(menuTabRow)
+	-- end
+	-- menuChoice = 1
+	-- ColorTabs(1)
+-- end

@@ -20,6 +20,8 @@ ImageListView = LayoutPanel:Inherit{
   items = {},
 
   dir = '',
+
+  OnDirChange = {},
 }
 
 local this = ImageListView
@@ -160,9 +162,7 @@ function ImageListView:ScanDir()
 
   self:DisableRealign()
     --// clear old
-    for i=#self.children,1,-1 do
-      self:RemoveChild(self.children[i])
-    end
+    self:ClearChildren()
 
     --// add ".."
     self:_AddFile('..',self.imageFolderUp)
@@ -184,6 +184,8 @@ function ImageListView:SetDir(directory)
   self:DeselectAll()
   self.dir = directory
   self:ScanDir()
+
+  self:CallListeners(self.OnDirChange, directory)
 
   if (self.parent) then
     self.parent:RequestRealign()

@@ -6,21 +6,28 @@ Object = {
   --y         = 0,
   --width     = 10,
   --height    = 10,
-  defaultWidth  = 10,
+  defaultWidth  = 10, --FIXME really needed?
   defaultHeight = 10,
+
+  visible = true,
 
   preserveChildrenOrder = false, --// if false adding/removing children is much faster, but also the order (in the .children array) isn't reliable anymore
 
   children    = {},
+  children_hidden = {},
   childrenByName = CreateWeakTable(),
 
-  OnDispose    = {},
-  OnClick      = {},
-  OnDblClick   = {},
-  OnMouseDown  = {},
-  OnMouseUp    = {},
-  OnMouseMove  = {},
-  OnMouseWheel = {},
+  OnDispose       = {},
+  OnClick         = {},
+  OnDblClick      = {},
+  OnMouseDown     = {},
+  OnMouseUp       = {},
+  OnMouseMove     = {},
+  OnMouseWheel    = {},
+  OnMouseOver     = {},
+  OnMouseOut      = {},
+  OnKeyPress      = {},
+  OnFocusUpdate   = {},
 
   disableChildrenHitTest = false, --// if set childrens are not clickable/draggable etc - their mouse events are not processed
 }
@@ -49,6 +56,7 @@ local function GetUniqueId(classname)
 end
 
 --//=============================================================================
+
 function Object:New(obj)
   obj = obj or {}
 
@@ -94,7 +102,7 @@ function Object:New(obj)
   setmetatable(obj,{__index = self})
 
   --// auto dispose remaining Dlists etc. when garbage collector frees this object
-  local hobj = MakeHardLink(obj,function() obj:Dispose(); obj=nil; end)
+  local hobj = MakeHardLink(obj)
 
   --// handle children & parent
   local parent = obj.parent
@@ -110,9 +118,6 @@ function Object:New(obj)
     obj:AddChild(cn[i],true)
   end
 
-  --// link some general events as Update()
-  --TaskHandler.AddObject(obj)
-
   --// sets obj._widget
   DebugHandler:RegisterObject(obj)
 
@@ -124,8 +129,20 @@ end
 -- children are disposed too
 -- todo: use scream, in case the user forgets
 -- nil -> nil
-function Object:Dispose()
+function Object:Dispose(_internal)
   if (not self.disposed) then
+
+    --// check if the control is still referenced (if so it would indicate a bug in chili's gc)
+    if _internal then
+      if self._hlinks and next(self._hlinks) then
+        local hlinks_cnt = table.size(self._hlinks)
+        local i,v = next(self._hlinks)
+        if hlinks_cnt > 1 or (v ~= self) then --// check if user called Dispose() directly
+          Spring.Echo(("Chili: tried to dispose \"%s\"! It's still referenced %i times!"):format(self.name, hlinks_cnt))
+        end
+      end
+    end
+ 
     self:CallListeners(self.OnDispose)
 
     self.disposed = true
@@ -136,18 +153,14 @@ function Object:Dispose()
     if (UnlinkSafe(self.parent)) then
       self.parent:RemoveChild(self)
     end
-    self.parent = nil
-
-    local children = self.children
-    local cn = #children
-    for i=cn,1,-1 do
-      local child = children[i]
-      --if (child.parent == self) then
-        child:SetParent(nil)
-      --end
-    end
-    self.children = {}
+    self:SetParent(nil)
+    self:ClearChildren()
   end
+end
+
+
+function Object:AutoDispose()
+  self:Dispose(true)
 end
 
 
@@ -203,26 +216,24 @@ end
 
 
 function Object:AddChild(obj, dontUpdate)
-  --FIXME cause of performance reasons it would be usefull to use the direct object, but then we need to cache the link somewhere to avoid the auto calling of dispose
   local objDirect = UnlinkSafe(obj)
 
   if (self.children[objDirect]) then
-    --if (self.debug) then
-      Spring.Echo("Chili: tried to add the same child multiple times (".. (obj.name or "") ..")")
-    --end
+    Spring.Echo(("Chili: tried to add multiple times \"%s\" to \"%s\"!"):format(obj.name, self.name))
     return
   end
 
+  local hobj = MakeHardLink(objDirect)
 
   if (obj.name) then
     if (self.childrenByName[obj.name]) then
       error(("Chili: There is already a control with the name `%s` in `%s`!"):format(obj.name, self.name))
       return
     end
-    self.childrenByName[obj.name] = objDirect
+    self.childrenByName[obj.name] = hobj
   end
 
-  if Unlink(obj.parent) then
+  if UnlinkSafe(obj.parent) then
     obj.parent:RemoveChild(obj)
   end
   obj:SetParent(self)
@@ -230,22 +241,43 @@ function Object:AddChild(obj, dontUpdate)
   local children = self.children
   local i = #children+1
   children[i] = objDirect
-  children[obj] = i --FIXME (unused/unuseful?)
+  children[hobj] = i
   children[objDirect] = i
   self:Invalidate()
 end
 
 
 function Object:RemoveChild(child)
+  if not isindexable(child) then
+    return child
+  end
+
   if CompareLinks(child.parent,self) then
     child:SetParent(nil)
+  end
+
+  local childDirect = UnlinkSafe(child)
+
+  if (self.children_hidden[childDirect]) then
+    self.children_hidden[childDirect] = nil
+    return true
+  end
+
+  if (not self.children[childDirect]) then
+    --Spring.Echo(("Chili: tried remove none child \"%s\" from \"%s\"!"):format(child.name, self.name))
+    --Spring.Echo(DebugHandler.Stacktrace())
+    return false
   end
 
   if (child.name) then
     self.childrenByName[child.name] = nil
   end
 
-  local childDirect = UnlinkSafe(child)
+  for i,v in pairs(self.children) do
+    if CompareLinks(childDirect,i) then
+      self.children[i] = nil
+    end
+  end
 
   local children = self.children
   local cn = #children
@@ -272,8 +304,21 @@ end
 
 
 function Object:ClearChildren()
-  self:CallChildrenInverse("Dispose") --FIXME instead of disposing perhaps just unlink from parent?
-  self.children = {}
+  --// make it faster
+  local old = self.preserveChildrenOrder
+  self.preserveChildrenOrder = false
+
+  --// remove all children  
+    for i=1,#self.children_hidden do
+      self:ShowChild(self.children_hidden[i])
+    end
+
+    for i=#self.children,1,-1 do
+      self:RemoveChild(self.children[i])
+    end
+
+  --// restore old state
+  self.preserveChildrenOrder = old
 end
 
 
@@ -283,13 +328,117 @@ end
 
 --//=============================================================================
 
-function Object:SetLayer(child,layer)
+function Object:HideChild(obj)
+  --FIXME cause of performance reasons it would be usefull to use the direct object, but then we need to cache the link somewhere to avoid the auto calling of dispose
+  local objDirect = UnlinkSafe(obj)
+
+  if (not self.children[objDirect]) then
+    --if (self.debug) then
+      Spring.Echo("Chili: tried to hide a non-child (".. (obj.name or "") ..")")
+    --end
+    return
+  end
+
+  if (self.children_hidden[objDirect]) then
+    --if (self.debug) then
+      Spring.Echo("Chili: tried to hide the same child multiple times (".. (obj.name or "") ..")")
+    --end
+    return
+  end
+
+  local hobj = MakeHardLink(objDirect)
+  local pos = {hobj, 0, nil, nil}
+
+  local children = self.children
+  local cn = #children
+  for i=1,cn+1 do
+    if CompareLinks(objDirect,children[i]) then
+      pos = {hobj, i, MakeWeakLink(children[i-1]), MakeWeakLink(children[i+1])}
+      break
+    end
+  end
+
+  self:RemoveChild(obj)
+  self.children_hidden[objDirect] = pos
+  obj.parent = self
+end
+
+
+function Object:ShowChild(obj)
+  --FIXME cause of performance reasons it would be usefull to use the direct object, but then we need to cache the link somewhere to avoid the auto calling of dispose
+  local objDirect = UnlinkSafe(obj)
+
+  if (not self.children_hidden[objDirect]) then
+    --if (self.debug) then
+      Spring.Echo("Chili: tried to show a non-child (".. (obj.name or "") ..")")
+    --end
+    return
+  end
+
+  if (self.children[objDirect]) then
+    --if (self.debug) then
+      Spring.Echo("Chili: tried to show the same child multiple times (".. (obj.name or "") ..")")
+    --end
+    return
+  end
+
+  local params = self.children_hidden[objDirect]
+  self.children_hidden[objDirect] = nil
+
+  local children = self.children
+  local cn = #children
+
+  if (params[3]) then
+    for i=1,cn do
+      if CompareLinks(params[3],children[i]) then
+        self:AddChild(obj)
+        self:SetChildLayer(obj,i+1)
+        return true
+      end
+    end
+  end
+
+  self:AddChild(obj)
+  self:SetChildLayer(obj,params[2])
+  return true
+end
+
+
+function Object:SetVisibility(visible)
+  if (visible) then
+    self.parent:ShowChild(self)
+  else
+    self.parent:HideChild(self)
+  end
+  self.visible = visible
+end
+
+
+function Object:Hide()
+  self:SetVisibility(false)
+end
+
+
+function Object:Show()
+  self:SetVisibility(true)
+end
+
+
+function Object:ToggleVisibility()
+  self:SetVisibility(not self.visible)
+end
+
+--//=============================================================================
+
+function Object:SetChildLayer(child,layer)
   child = UnlinkSafe(child)
   local children = self.children
 
+  layer = math.min(layer, #children)
+
   --// it isn't at the same pos anymore, search it!
   for i=1,#children do
-    if (UnlinkSafe(children[i]) == child) then
+    if CompareLinks(children[i], child) then
       table.remove(children,i)
       break
     end
@@ -299,10 +448,15 @@ function Object:SetLayer(child,layer)
 end
 
 
-function Object:BringToFront()
+function Object:SetLayer(layer)
   if (self.parent) then
-    (self.parent):SetLayer(self,1)
+    (self.parent):SetChildLayer(self, layer)
   end
+end
+
+
+function Object:BringToFront()
+  self:SetLayer(1)
 end
 
 --//=============================================================================
@@ -326,6 +480,12 @@ function Object:GetChildByName(name)
       return cn[i]
     end
   end
+
+  for c in pairs(self.children_hidden) do
+    if (name == c.name) then
+      return MakeWeakLink(c)
+    end
+  end
 end
 
 --// Backward-Compability
@@ -334,11 +494,24 @@ Object.GetChild = Object.GetChildByName
 
 --// Resursive search to find an object by its name
 function Object:GetObjectByName(name)
-  local cn = self.children
-  for i=1,#cn do
-    local c = cn[i]
+  local r = self.childrenByName[name]
+  if r then return r end
+
+  for i=1,#self.children do
+    local c = self.children[i]
     if (name == c.name) then
       return c
+    else
+      local result = c:GetObjectByName(name)
+      if (result) then
+        return result
+      end
+    end
+  end
+
+  for c in pairs(self.children_hidden) do
+    if (name == c.name) then
+      return MakeWeakLink(c)
     else
       local result = c:GetObjectByName(name)
       if (result) then
@@ -475,6 +648,9 @@ end
 
 
 function Object:CallChildrenHT(eventname, x, y, ...)
+  if self.disableChildrenHitTest then
+    return nil
+  end
   local children = self.children
   for i=1,#children do
     local c = children[i]
@@ -492,6 +668,9 @@ end
 
 
 function Object:CallChildrenHTWeak(eventname, x, y, ...)
+  if self.disableChildrenHitTest then
+    return nil
+  end
   local children = self.children
   for i=1,#children do
     local c = children[i]
@@ -512,7 +691,7 @@ end
 function Object:RequestUpdate()
   --// we have something todo in Update
   --// so we register this object in the taskhandler
-  TaskHandler.AddObject(self)
+  TaskHandler.RequestUpdate(self)
 end
 
 
@@ -577,7 +756,22 @@ end
 
 
 function Object:ScreenToClient(x,y)
+  if (not self.parent) then
+    return self:ParentToClient(x,y)
+  end
   return self:ParentToClient((self.parent):ScreenToClient(x,y))
+end
+
+
+function Object:LocalToObject(x, y, obj)
+  if CompareLinks(self,obj) then
+    return x, y
+  end
+  if (not self.parent) then
+    return -1,-1
+  end
+  x, y = self:LocalToParent(x, y)
+  return self.parent:LocalToObject(x, y, obj)
 end
 
 --//=============================================================================
@@ -668,9 +862,37 @@ function Object:MouseWheel(...)
   return self:CallChildrenHTWeak('MouseWheel', ...)
 end
 
+
+function Object:MouseOver(...)
+  if (self:CallListeners(self.OnMouseOver, ...)) then
+    return self
+  end
+end
+
+
+function Object:MouseOut(...)
+  if (self:CallListeners(self.OnMouseOut, ...)) then
+    return self
+  end
+end
+
+
+function Object:KeyPress(...)
+  if (self:CallListeners(self.OnKeyPress, ...)) then
+    return self
+  end
+
+  return false
+end
+
+
+function Object:FocusUpdate(...)
+  if (self:CallListeners(self.OnFocusUpdate, ...)) then
+    return self
+  end
+
+  return false
+end
+
 --//=============================================================================
-
-
-
-
 

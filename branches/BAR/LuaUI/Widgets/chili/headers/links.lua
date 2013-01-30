@@ -21,6 +21,7 @@
 --//=============================================================================
 
 local wmeta =  {__mode = "v"}
+local newproxy = newproxy or getfenv(0).newproxy
 
 function MakeWeakLink(obj,wlink)
   --// 2nd argument is optional, if it's given it will reuse the given link (-> less garbage)
@@ -61,18 +62,18 @@ end
 
 
 function MakeHardLink(obj,gc)
+  obj = UnlinkSafe(obj) --// unlink hard-/weak-links -> faster (else it would have to go through multiple metatables)
+
   if (not isindexable(obj)) then
     return obj
   end
-
-  obj = UnlinkSafe(obj) --// unlink hard-/weak-links -> faster (else it would have to go through multiple metatables)
 
   local hlink = newproxy(true)
   local mtab = getmetatable(hlink)
   mtab._islink = true
   mtab._ishard = true
   mtab._obj = obj
-  mtab.__gc = gc
+  mtab.__gc = gc or function() if not obj._hlinks or not next(obj._hlinks) then obj:AutoDispose() end end
   mtab.__index = obj
   mtab.__newindex = obj
   mtab.__call = function() return mtab._obj end
@@ -88,15 +89,12 @@ function MakeHardLink(obj,gc)
 end
 
 
-function Unlink(link)
-  --// this doesn't do a type check!
-  --// you have to be 100% sure it is a link!
-  return link and link()
-end
-
-
 function UnlinkSafe(link)
-  return ((type(link) == "userdata") and link()) or link
+	local link = link
+	while (type(link) == "userdata") do
+		link = link()
+	end
+	return link
 end
 
 

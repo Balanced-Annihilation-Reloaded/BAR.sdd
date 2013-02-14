@@ -129,7 +129,9 @@ return {
        vec3 normal = normalize(normalv);
     #endif
        float a    = max( dot(normal, sunPos), 0.0);
-       vec3 light = a * sunDiffuse + sunAmbient;
+      //vec3 light = a * sunDiffuse ;//+ 0.5*sunAmbient;
+      vec3 light = a * sunDiffuse + sunAmbient;
+       //vec3 light = a * sunDiffuse + sunAmbient;
 
        vec4 extraColor  = texture2D(textureS3o2, gl_TexCoord[0].st);
        vec3 reflectDir = reflect(cameraDir, normal);

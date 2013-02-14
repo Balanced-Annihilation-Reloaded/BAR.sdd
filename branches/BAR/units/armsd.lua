@@ -29,7 +29,7 @@ return {
 		maxslope = 36,
 		maxwaterdepth = 0,
 		name = "Tracer",
-		objectname = "ARMSD",
+		objectname = "bridge.s3o",
 		onoffable = true,
 		seismicdistance = 2000,
 		seismicsignature = 0,
@@ -37,6 +37,10 @@ return {
 		sightdistance = 240,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/gritty_normal.tif",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

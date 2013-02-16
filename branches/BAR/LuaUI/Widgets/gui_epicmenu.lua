@@ -18,6 +18,8 @@ end
 
 local spGetConfigInt    		= Spring.GetConfigInt
 local spSendCommands			= Spring.SendCommands
+local min = math.min
+local max = math.max
 
 local echo = Spring.Echo
 
@@ -577,9 +579,24 @@ local function AssignKeyBind(hotkey, path, option, verbose) -- param4 = verbose
 	
 	if option.type == 'bool' then
 		kbfunc = function()
+			if not pathoptions[path] or not pathoptions[path][option.wname..option.key] then
+				Spring.Echo("Warning, detected keybind mishap. Please report this info and help us fix it:")
+				Spring.Echo("Option path is "..path)
+				Spring.Echo("Option name is "..option.wname..option.key)
+				if pathoptions[path] then --pathoptions[path] table still intact, but option table missing
+					Spring.Echo("case: option table was missing")
+					pathoptions[path][option.wname..option.key] = option --re-add option table
+				else --both option table & pathoptions[path] was missing, probably was never initialized
+					Spring.Echo("case: whole path was never initialized")
+					pathoptions[path] = {}
+					pathoptions[path][option.wname..option.key] = option
+				end
+				-- [f=0088425] Error: LuaUI::RunCallIn: error = 2, ConfigureLayout, [string "LuaUI/Widgets/gui_epicmenu.lua"]:583: attempt to index field '?' (a nil value)
+			end
 			local wname = option.wname
 			newval = not pathoptions[path][option.wname..option.key].value	
 			pathoptions[path][option.wname..option.key].value	= newval
+			-- [f=0088425] Error: LuaUI::RunCallIn: error = 2, ConfigureLayout, [string "LuaUI/Widgets/gui_epicmenu.lua"]:583: attempt to index field '?' (a nil value)
 			
 			option.OnChange({checked=newval})
 			
@@ -623,7 +640,7 @@ local function UnassignKeyBind(path, option)
 	
 	local actionName = GetActionName(path, option)
 	
-	if option.action then
+	if option.action then --if keybindings was hardcoded by widget:
 		local uikey_hotkey_str = GetUikeyHotkeyStr(actionName)
 		if uikey_hotkey_str then
 			-- unbindaction doesn't work on a command+params, must be command only!
@@ -632,11 +649,10 @@ local function UnassignKeyBind(path, option)
 			--echo('unassign', "unbind " .. uikey_hotkey_str .. ' ' .. actionName_cmd)
 			Spring.SendCommands("unbind " .. uikey_hotkey_str .. ' ' .. actionName_cmd) 
 		end
-	else 
+	else --if keybindings were supplied by users:
 		--echo('unassign', "unbindaction " .. actionName)
 		Spring.SendCommands("unbindaction " .. actionName:lower()) -- this only works if lowercased, even if /keyprint says otherwise!
 	end
-	
 	
 	settings.keybounditems[actionName] = 'none'
 end
@@ -720,7 +736,7 @@ local function AddOption(path, option, wname )
 	if option.type == 'button' then
 		controlfunc = 
 			function(self)
-				if option.action then
+				if option.action then --if keybindings supplied by widgets
 					Spring.SendCommands{option.action} 
 				end
 			end
@@ -731,7 +747,7 @@ local function AddOption(path, option, wname )
 				if self then
 					option.value = self.checked
 				end
-				if option.springsetting then
+				if option.springsetting then --if widget supplies option for springsettings
 					Spring.SetConfigInt( option.springsetting, BoolToInt(option.value) )
 				end
 				settings.config[fullkey] = option.value
@@ -1119,12 +1135,12 @@ local function MakeHotkeyedControl(control, path, option)
 	local hklength = math.max( hotkeystring:len() * 10, 20)
 	local control2 = control
 	control.x = 0
-	control.right = hklength+2
+	control.right = hklength+2 --room for hotkey button on right side?
 	control:DetectRelativeBounds()
 	
 	local hkbutton = Button:New{
 		minHeight = 30,
-		right=0,
+		--right=0, --Note: uncommenting this entry cause hotkey-button's position to overlap with control-button's position. It happen after Chili merge/update (???)
 		width = hklength,
 		--x=-30,
 		caption = hotkeystring, 
@@ -1142,7 +1158,7 @@ local function MakeHotkeyedControl(control, path, option)
 		autosize = true,
 		itemMargin = {0,0,0,0},
 		margin = {0,0,0,0},
-		itemPadding = {2,0,0,0},
+		itemPadding = {2,0,-hklength-2,0}, --{left,top,right,bottom}. Note: removing -hklength-2 padding causes wide empty space to appear between control-buttons and hotkey-buttons. This happen after Chili update/merge (???)
 		padding = {0,0,0,0},
 		children={
 			control2,
@@ -1416,7 +1432,13 @@ end
 local function MakeMenuBar()
 	local btn_padding = {4,3,2,2}
 	local btn_margin = {0,0,0,0}
-		
+    local exit_menu_width = 210
+    local exit_menu_height = 280
+    local exit_menu_btn_width = 7*exit_menu_width/8
+    local exit_menu_btn_height = max(exit_menu_height/8, 30)
+    local exit_menu_cancel_width = exit_menu_btn_width/2
+    local exit_menu_cancel_height = 2*exit_menu_btn_height/3
+
 	local crude_width = 425
 	local crude_height = B_HEIGHT+10
 	
@@ -1426,15 +1448,15 @@ local function MakeMenuBar()
 	lbl_clock = Label:New{ name='lbl_clock', caption = 'Clock:', width = 35, height=5, textColor = color.main_fg, autosize=false, }
 	img_flag = Image:New{ tooltip='Choose Your Location', file=":cn:".. LUAUI_DIRNAME .. "Images/flags/".. settings.country ..'.png', width = 16,height = 11, OnClick = { MakeFlags }, margin={4,4,4,4}  }
 	
-	local screenWidth,screenHeight = Spring.GetWindowGeometry()
+	local screen_width,screen_height = Spring.GetWindowGeometry()
 	
 	window_exit = Window:New{
 		name='exitwindow',
-		x = screenWidth*0.5-50,  
-		y = screenHeight*0.5-70,  
+		x = screen_width/2 - exit_menu_width/2,  
+		y = screen_height/2 - exit_menu_height/2,  
 		dockable = false,
-		clientWidth = 120,
-		clientHeight = 150,
+		clientWidth = exit_menu_width,
+		clientHeight = exit_menu_height,
 		draggable = false,
 		tweakDraggable = true,
 		resizable = false,
@@ -1447,28 +1469,33 @@ local function MakeMenuBar()
 		children = {
 				
 			Label:New{ 
-				caption = 'Leave Battle?', 
-				x = 0,
-				y = 15,
-				width = 120, 
+				caption = 'Would you like to quit?', 
+				width = exit_menu_width,
+                x = 0,
+                y = 2*exit_menu_height/64,
 				align="center",
 				textColor = color.main_fg },
 				
 			Button:New{
-				caption = "Exit", OnMouseUp = { function() spSendCommands{"quit","quitforce"} end, }, 
-				x = 20,  
-				y = 46, 
-				height=25, 
-				width=80,
+                caption = "Resign and spectate",
+                OnMouseUp = { function()
+						spSendCommands{"spectator"}
+						screen0:RemoveChild(window_exit)
+						exitWindowVisible = false
+					end, }, 
+				height=exit_menu_btn_height, 
+				width=exit_menu_btn_width,
+                x = exit_menu_width/2 - exit_menu_btn_width/2, 
+                y = 24*exit_menu_height/64 - exit_menu_btn_height/2, 
 			},
 			
 			
 			Button:New{
-				caption = "Resign", OnMouseUp = { function() spSendCommands{"spectator"} end, }, 
-				x = 20,  
-				y = 78, 
-				height=25, 
-				width=80,
+				caption = "Exit game", OnMouseUp = { function() spSendCommands{"quit","quitforce"} end, },
+				height=exit_menu_btn_height, 
+				width=exit_menu_btn_width,
+                x = exit_menu_width/2 - exit_menu_btn_width/2,  
+                y = 36*exit_menu_height/64 - exit_menu_btn_height/2,
 			},
 			
 			Button:New{
@@ -1477,31 +1504,32 @@ local function MakeMenuBar()
 						screen0:RemoveChild(window_exit) 
 						exitWindowVisible = false
 					end, }, 
-				x = 20,  
-				y = 110, 
-				height=25, 
-				width=80,
+			
+				height=exit_menu_cancel_height, 
+				width=exit_menu_cancel_width,
+                x = 4*exit_menu_width/8, -- exit_menu_cancel_width,
+                y = 58*exit_menu_height/64 - exit_menu_cancel_height/2,
 			},
 		},
 	}
 	
 	screen0:RemoveChild(window_exit)
 		
-	window_crude = Panel:New{
+	window_crude = Window:New{
 		name='epicmenubar',
 		right = 0,  
 		y = 50, -- resbar height
 		dockable = true,
 		clientWidth = crude_width,
-		clientHeight = (crude_height+10),
+		clientHeight = crude_height,
 		draggable = false,
 		tweakDraggable = true,
 		resizable = false,
 		minimizable = false,
---		backgroundColor = color.main_bg,
-		color = {0.5,0.5,0.5,0.5},
+		backgroundColor = color.main_bg,
+		color = {1,1,1,0.5},
 		margin = {0,0,0,0},
-		padding = {4,0,0,4},
+		padding = {0,0,0,0},
 		
 		children = {
 			StackPanel:New{
@@ -1721,7 +1749,6 @@ function widget:Initialize()
 	Colorbars = Chili.Colorbars
 	Checkbox = Chili.Checkbox
 	Window = Chili.Window
-	Panel = Chili.Panel
 	ScrollPanel = Chili.ScrollPanel
 	StackPanel = Chili.StackPanel
 	LayoutPanel = Chili.LayoutPanel
@@ -1779,7 +1806,7 @@ function widget:Initialize()
 	AddOption('Settings/Interface/Mouse Cursor')
 	AddOption('Settings/Misc')
 
-	
+	-- Add pre-configured button/options found in epicmenu config file
 	local options_temp ={}
 	CopyTable(options_temp , epic_options);
 	for i=1, #options_temp do
@@ -1796,6 +1823,7 @@ function widget:Initialize()
 		echo 'Cleared all settings.'
 	end
 	
+	-- clear all keybindings
 	WG.crude.ResetKeys = function()
 		for actionName,_ in pairs(settings.keybounditems) do
 			--local actionNameL = actionName:lower()
@@ -1814,10 +1842,10 @@ function widget:Initialize()
 		echo 'Reset all hotkeys to default.'
 	end
 	
-	-- Add actions for keybinds
+	-- Add custom actions for the following keybinds
 	AddAction("crudemenu", ActionMenu, nil, "t")
 	AddAction("exitwindow", ActionExitWindow, nil, "t")
-	-- replace default key binds
+	-- replace default keybinds for quitmenu
 	Spring.SendCommands({
 		"unbind esc quitmessage",
 		"unbind esc quitmenu", --Upgrading to 0.82 doesn't change existing uikeys so pre-0.82 keybinds still apply.

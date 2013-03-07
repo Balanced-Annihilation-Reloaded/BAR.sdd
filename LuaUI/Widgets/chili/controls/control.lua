@@ -10,7 +10,7 @@ Control = Object:Inherit{
   focusColor      = {0.2, 0.2, 1.0, 0.6},
 
   autosize        = false,
-  savespace       = true, --// if autosize==true, it shrinks the control to the minimum needed space, if disabled autosize _normally_ only enlarges the control
+  savespace       = true, --// iff autosize==true, it shrinks the control to the minimum needed space, if disabled autosize _normally_ only enlarges the control
   resizeGripSize  = {11, 11},
   dragGripSize    = {10, 10},
 
@@ -55,6 +55,8 @@ Control = Object:Inherit{
 
   skin            = nil,
   skinName        = nil,
+
+  OnResize        = {},
 }
 
 local this = Control
@@ -62,37 +64,14 @@ local inherited = this.inherited
 
 --//=============================================================================
 
-local function FontBackwardCompa(obj)
-  obj.font.outline = obj.font.outline or obj.fontOutline
-  obj.font.color = obj.font.color or obj.captionColor
-  obj.font.color = obj.font.color or obj.textColor
-  obj.font.size = obj.font.size or obj.fontSize
-  obj.font.size = obj.font.size or obj.fontsize
-  obj.font.shadow = obj.font.shadow or obj.fontShadow
-  obj.fontOutline = nil
-  obj.textColor = nil
-  obj.captionColor = nil
-  obj.fontSize = nil
-  obj.fontsize = nil
-  obj.fontShadow = nil
-end
-
---//=============================================================================
-
 function Control:New(obj)
   --// backward compability
-  if (not obj.font) then
-    obj.font = {}
-  end
-  FontBackwardCompa(obj)
+  BackwardCompa(obj)
 
   --// load the skin for this control
   obj.classname = self.classname
   theme.LoadThemeDefaults(obj)
   SkinHandler.LoadSkin(obj, self)
-
-  --// call it twice, so skins can use old standards, too
-  FontBackwardCompa(obj)
 
   --// we want to initialize the children ourself (see downwards)
   local cn = obj.children
@@ -322,7 +301,7 @@ end
 function Control:UpdateClientArea()
   local padding = self.padding
 
-  self.clientWidth  = self.width - padding[1] - padding[3]
+  self.clientWidth  = self.width  - padding[1] - padding[3]
   self.clientHeight = self.height - padding[2] - padding[4]
 
   self.clientArea = {
@@ -347,6 +326,7 @@ if (self.debug) then
 end
 
   self:Invalidate() --FIXME correct place?
+  self:CallListeners(self.OnResize) --FIXME more arguments and filter unchanged resizes
 end
 
 
@@ -1045,9 +1025,6 @@ function Control:HitTest(x,y)
           end
         end
       end
-	  if self.hitTestAllowEmpty then
-		return self
-	  end
     end
   end
 
@@ -1104,7 +1081,7 @@ function Control:MouseMove(x, y, dx, dy, ...)
       oldState.size[1] + deltaMousePosX
     )
     local h = math.max(
-      self.minHeight, 
+      self.minHeight,
       oldState.size[2] + deltaMousePosY
     )
 

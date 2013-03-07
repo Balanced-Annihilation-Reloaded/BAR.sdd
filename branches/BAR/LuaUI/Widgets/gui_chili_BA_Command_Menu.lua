@@ -173,6 +173,12 @@ local MIN_HEIGHT = 80
 local MIN_WIDTH = 80
 local COMMAND_SECTION_WIDTH = 98	-- percent
 local STATE_SECTION_WIDTH = 60	-- percent
+local chiliColor = {
+		borderColor     = {0.5, 0.5, 0.5, 1.0},
+		borderColor2    = {1.0, 0.0, 0.0, 1.0},
+		backgroundColor = {0.0, 0.0, 0.0, 0.6},
+		focusColor      = {1.0, 1.0, 1.0, 1.0},
+		}
 
 local numRows = 8
 local numStateColumns = 1
@@ -415,6 +421,10 @@ local function MakeButton(container, cmd, insertItem, index)
 			isDisabled = cmd.disabled;
 			tooltip = tooltip;
 			cmdid = cmd.id;
+			borderColor     = chiliColor.borderColor,    
+			borderColor2    = chiliColor.borderColor2,
+			backgroundColor = chiliColor.backgroundColor,
+			focusColor      = chiliColor.focusColor,
 			OnMouseDown = {ClickFunc} --activate the clicked command
 		}
 		if cmd.OnClick then 
@@ -730,6 +740,10 @@ local function ManageBuildRow()
 					BuildRowButtonFunc(i, buildRowButtons[i].cmdid, left, right)
 					end},
 				padding = {1,1,1,1},
+				borderColor     = chiliColor.borderColor,    
+				borderColor2    = chiliColor.borderColor2,
+				backgroundColor = chiliColor.backgroundColor,
+				focusColor      = chiliColor.focusColor,
 				--keepAspect = true,
 			}
 			if overrun and i == MAX_COLUMNS then
@@ -895,6 +909,10 @@ local function MakeMenuTab(i, alpha)
 		shadow = true,
 		fontsize = 11,
 		caption = menuChoices[i].name,
+		borderColor     = chiliColor.borderColor,    
+		borderColor2    = chiliColor.borderColor2,
+		backgroundColor = chiliColor.backgroundColor,
+		focusColor      = chiliColor.focusColor,
 		OnClick = {
 			function()
 				menuChoice = i
@@ -1229,6 +1247,10 @@ local f,it,isFile = nil,nil,false
 		minWidth = MIN_WIDTH,
 		minHeight = MIN_HEIGHT,
 		padding = {0, 0, 0, 0},
+		borderColor     = chiliColor.borderColor,    
+		borderColor2    = chiliColor.borderColor2,
+		backgroundColor = chiliColor.backgroundColor,
+		focusColor      = chiliColor.focusColor,
 		--itemMargin  = {0, 0, 0, 0},
 		OnMouseDown={ function(self) --// click+ space on integral-menu tab will open a Game-menu.
 			local _,_, meta,_ = Spring.GetModKeyState()
@@ -1283,7 +1305,7 @@ local f,it,isFile = nil,nil,false
 	end
 	-- ColorTabs()
 	
-	commands_main = Panel:New{
+	commands_main = Window:New{
 		parent = window,
 		height = "100%";
 		width = "75%";
@@ -1291,6 +1313,10 @@ local f,it,isFile = nil,nil,false
 		y = 0;
 		padding = {4, 4, 4, 0},
 		itemMargin  = {0, 0, 0, 0},
+		borderColor     = chiliColor.borderColor,    
+		borderColor2    = chiliColor.borderColor2,
+		backgroundColor = chiliColor.backgroundColor,
+		focusColor      = chiliColor.focusColor,
 	}
 	for i=1,numRows do
 		sp_commands[i] = StackPanel:New{
@@ -1354,7 +1380,10 @@ local f,it,isFile = nil,nil,false
 		y = (100/numRows)*(numRows-1).."%";
 		padding = {0, 0, 0, 0},
 		itemMargin  = {0, 0, 0, 0},
-		backgroundColor = {0.2, 0.2, 0.2, 0.6}
+		borderColor     = chiliColor.borderColor,    
+		borderColor2    = chiliColor.borderColor2,
+		backgroundColor = chiliColor.backgroundColor,
+		focusColor      = chiliColor.focusColor,
 	}
 
 	buildProgress = Progressbar:New{

@@ -305,7 +305,7 @@ function DrawButton(obj)
   local bgcolor = obj.backgroundColor
   if (obj.state.pressed) then
     bgcolor = mulColor(bgcolor, 0.4)
-  elseif (obj.state.hovered) or (obj.state.focused) then
+  elseif (obj.state.hovered) --[[ or (obj.state.focused)]] then
     bgcolor = obj.focusColor
     --bgcolor = mixColors(bgcolor, obj.focusColor, 0.5)
   end
@@ -321,7 +321,7 @@ function DrawButton(obj)
   local fgcolor = obj.borderColor
   if (obj.state.pressed) then
     fgcolor = mulColor(fgcolor, 0.4)
-  elseif (obj.state.hovered) or (obj.state.focused) then
+  elseif (obj.state.hovered) --[[ or (obj.state.focused)]] then
     fgcolor = obj.focusColor
   end
   gl.Color(fgcolor)
@@ -689,25 +689,21 @@ function DrawProgressbar(obj)
   local skLeft,skTop,skRight,skBottom = unpack4(obj.tiles)
 
   gl.Color(obj.backgroundColor)
-  if not obj.noSkin then
-    TextureHandler.LoadTexture(0,obj.TileImageBK,obj)
+  TextureHandler.LoadTexture(0,obj.TileImageBK,obj)
     local texInfo = gl.TextureInfo(obj.TileImageBK) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
 
     gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, x,y,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
-    --gl.Texture(0,false)
-  end
+  --gl.Texture(0,false)
 
   gl.Color(obj.color)
   TextureHandler.LoadTexture(0,obj.TileImageFG,obj)
     local texInfo = gl.TextureInfo(obj.TileImageFG) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
 
-    -- workaround for catalyst >12.6 drivers: do the "clipping" by multiplying width by percentage in glBeginEnd instead of using glClipPlane
-    -- fuck AMD
-    --gl.ClipPlane(1, -1,0,0, x+w*percent)
-    gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, x,y,w*percent,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
-    --gl.ClipPlane(1, false)
+    gl.ClipPlane(1, -1,0,0, x+w*percent)
+    gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, x,y,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
+    gl.ClipPlane(1, false)
   gl.Texture(0,false)
 
   if (obj.caption) then
@@ -729,15 +725,13 @@ function DrawTrackbar(self)
   local pdLeft,pdTop,pdRight,pdBottom = unpack4(self.hitpadding)
 
   gl.Color(1,1,1,1)
-  if not self.noDrawBar then
-    TextureHandler.LoadTexture(0,self.TileImage,self)
+
+  TextureHandler.LoadTexture(0,self.TileImage,self)
     local texInfo = gl.TextureInfo(self.TileImage) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
     gl.BeginEnd(GL.TRIANGLE_STRIP, _DrawTiledTexture, x,y,w,h, skLeft,skTop,skRight,skBottom, tw,th, 0)
-  end
-    
-  if not self.noDrawStep then
-    TextureHandler.LoadTexture(0,self.StepImage,self)
+
+  TextureHandler.LoadTexture(0,self.StepImage,self)
     local texInfo = gl.TextureInfo(self.StepImage) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
 
@@ -774,16 +768,14 @@ function DrawTrackbar(self)
         mx = mx+stepWidth
       end
     end
-  end
 
   if (self.state.hovered) then
     gl.Color(self.focusColor)
   else
     gl.Color(1,1,1,1)
   end
-  
-  if not self.noDrawThumb then
-    TextureHandler.LoadTexture(0,self.ThumbImage,self)
+
+  TextureHandler.LoadTexture(0,self.ThumbImage,self)
     local texInfo = gl.TextureInfo(self.ThumbImage) or {xsize=1, ysize=1}
     local tw,th = texInfo.xsize, texInfo.ysize
 
@@ -797,8 +789,7 @@ function DrawTrackbar(self)
     mx = math.floor(mx - tw * 0.5)
     my = math.floor(my - th * 0.5)
     gl.TexRect(mx, my, mx + tw, my + th, false, true)
-  end
-  
+
   gl.Texture(0,false)
 end
 
@@ -910,7 +901,6 @@ function DrawLine(self)
 
   gl.Texture(0,false)
 end
-
 --//=============================================================================
 --//
 

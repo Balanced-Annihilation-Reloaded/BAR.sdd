@@ -465,26 +465,26 @@ local function WriteGroupInfo()
 	if gi_label then
 		window_corner:RemoveChild(gi_label)
 	end
-	-- gi_str = 
-		-- "Selected Units " .. gi_count .. "\n" ..
-		-- "Health " .. gi_hp .. " / " ..  gi_maxhp  .. "\n" ..
-		-- "Cost " .. gi_cost .. " / " ..  gi_finishedcost .. "\n" ..
-		-- "Metal \255\0\255\0+" .. gi_metalincome .. "\255\255\255\255 / \255\255\0\0-" ..  gi_metaldrain  .. "\255\255\255\255\n" ..
-		-- "Energy \255\0\255\0+" .. gi_energyincome .. "\255\255\255\255 / \255\255\0\0-" .. gi_energydrain .. "\255\255\255\255\n" ..
-		-- "Build Power " .. gi_usedbp .. " / " ..  gi_totalbp 
+	gi_str = 
+		"Selected Units " .. gi_count .. "\n" ..
+		"Health " .. gi_hp .. " / " ..  gi_maxhp  .. "\n" ..
+		"Cost " .. gi_cost .. " / " ..  gi_finishedcost .. "\n" ..
+		"Metal \255\0\255\0+" .. gi_metalincome .. "\255\255\255\255 / \255\255\0\0-" ..  gi_metaldrain  .. "\255\255\255\255\n" ..
+		"Energy \255\0\255\0+" .. gi_energyincome .. "\255\255\255\255 / \255\255\0\0-" .. gi_energydrain .. "\255\255\255\255\n" ..
+		"Build Power " .. gi_usedbp .. " / " ..  gi_totalbp 
 		
-	-- gi_label = Label:New{
-		-- parent = window_corner;
-		-- y=5,
-		-- right=5,
-		-- x=window_corner.width-150,
-		-- height  = '100%';
-		-- width = 120,
-		-- caption = gi_str;
-		-- valign  = 'top';
-		-- fontSize = 12;
-		-- fontShadow = true;
-	-- }
+	gi_label = Label:New{
+		parent = window_corner;
+		y=5,
+		right=5,
+		x=window_corner.width-150,
+		height  = '100%';
+		width = 120,
+		caption = gi_str;
+		valign  = 'top';
+		fontSize = 12;
+		fontShadow = true;
+	}
 end
 
 
@@ -535,12 +535,12 @@ local function AddSelectionIcon(barGrid,unitid,defid,unitids,counts)
 	local item = LayoutPanel:New{
 		name    = unitid or defid;
 		parent  = barGrid;
-		width   = '19.5%';
-		height  = '50%';
---		columns = 1;
+		width   = 50;
+		height  = 62;
+		columns = 1;
 		padding     = {0,0,0,0};
 		itemPadding = {0,0,0,0};
-		itemMargin  = {0,0,0,0};
+		itemMargin  = {0,0,0,1};
 		resizeItems = false;
 		centerItems = false;
 		autosize    = true;		
@@ -549,13 +549,13 @@ local function AddSelectionIcon(barGrid,unitid,defid,unitids,counts)
 		name = "selImage";
 		parent  = item;
 		tooltip = ud.humanName .. " - " .. ud.tooltip.. "\n\255\0\255\0Click: Select \nRightclick: Deselect \nAlt+Click: Select One \nCtrl+click: Select Type \nMiddle-click: Goto";
---		file2   = (WG.GetBuildIconFrame)and(WG.GetBuildIconFrame(UnitDefs[defid]));
+		file2   = (WG.GetBuildIconFrame)and(WG.GetBuildIconFrame(UnitDefs[defid]));
 		file    = "#" .. defid;
 		keepAspect = false;
---		height  = 50 * (options.squarepics.value and 1 or (4/5));
-		height  = '80%';
-		width   = '80%';
-		x = '10%',
+		height  = 50 * (options.squarepics.value and 1 or (4/5));
+		--height  = 50;
+		width   = 50;
+
 		padding = {0,0,0,0}; --FIXME something overrides the default in image.lua!!!!
 		OnClick = {function(_,_,_,button)
 			
@@ -625,8 +625,8 @@ local function AddSelectionIcon(barGrid,unitid,defid,unitids,counts)
 	Progressbar:New{
 		parent  = item;
 		name    = 'health';
-		width   = '100%';
-		height  = '20%';
+		width   = 50;
+		height  = 10;
 		max     = 1;
 		color   = {0.0,0.99,0.0,1};
 	};
@@ -642,9 +642,9 @@ local function MakeUnitGroupSelectionToolTip()
 		parent  = window_corner;
 		height  = "100%";
 		x=0,
-		width   = "100%";
---		right=options.showgroupinfo.value and 120 or 0,
---		columns = 6;
+		--width   = "100%";
+		right=options.showgroupinfo.value and 120 or 0,
+		--columns = 5;
 		itemPadding = {0,0,0,0};
 		itemMargin  = {0,0,2,2};
 		tooltip = "Left Click: Just select clicked unit(s)\nRight Click: Deselect unit(s)";
@@ -654,7 +654,7 @@ local function MakeUnitGroupSelectionToolTip()
 		WriteGroupInfo()
 	--end
 
-	if ((numSelectedUnits<10) and (not options.groupalways.value)) then
+	if ((numSelectedUnits<8) and (not options.groupalways.value)) then
 		for i=1,numSelectedUnits do
 			local unitid = selectedUnits[i]
 			local defid  = spGetUnitDefID(unitid)
@@ -682,7 +682,7 @@ local function UpdateSelectedUnitsTooltip()
 	if (numSelectedUnits>1) then
 			local barsContainer = window_corner.childrenByName['Bars']
 
-			if ((numSelectedUnits<10) and (not options.groupalways.value)) then
+			if ((numSelectedUnits<8) and (not options.groupalways.value)) then
 				for i=1,numSelectedUnits do
 					local unitid = selectedUnits[i]
 					--Spring.Echo(unitid)
@@ -1347,7 +1347,7 @@ local function BuildTooltip2(ttname, ttdata, sel)
 					itemMargin = {0,0,0,0},
 					resizeItems=false,
 					autosize=true,
-					width = 70,
+					width = 96,
 					children = children_leftbar,
 				}
 			leftside = true
@@ -1379,7 +1379,8 @@ local function BuildTooltip2(ttname, ttdata, sel)
 				autosize  = true,
 				--tweakDraggable = true,
 				backgroundColor = color.tooltip_bg, 
-				children = { stack_leftbar_temp, stack_main_temp, }
+				children = { stack_leftbar_temp, stack_main_temp, },
+				savespace = true
 			}
 		end
 		if sel then
@@ -1390,11 +1391,11 @@ local function BuildTooltip2(ttname, ttdata, sel)
 end
 
 local function GetUnitIcon(ud)
-	if not ud then return false end
-	return icontypes 
-		--and	icontypes[ud and ud.iconType or "default"].bitmap
-		--fixed: attempt to index field '?' (a nil value), figure out repurcusions
-		and 	'icons/'.. ud.iconType ..iconFormat
+	-- if not ud then return false end
+	-- return icontypes 
+		-- and	icontypes[(ud and ud.iconType or "default")].bitmap
+
+		-- or 	'icons/'.. ud.iconType ..iconFormat
 end
 
 
@@ -1996,7 +1997,7 @@ function widget:Update(dt)
 	--UNIT.STATUS start (by msafwan), function: add/show units task whenever individual pic is shown.
 	timer2 = timer2 + dt
 	if timer2 >= updateFrequency2  then
-		if options.unitCommand.value == true and ((numSelectedUnits<10) and (not options.groupalways.value)) then
+		if options.unitCommand.value == true and ((numSelectedUnits<8) and (not options.groupalways.value)) then
 			for i=1,numSelectedUnits do --//iterate over all selected unit *this variable is updated by 'widget:SelectionChanged()'
 				local unitID = selectedUnits[i]
 				local barGridItem = nil
@@ -2168,6 +2169,7 @@ function widget:Initialize()
 		children = { stack_leftbar, stack_main, },
 		minHeight = 32,
 		minWidth = 32,
+		savespace = true,
 	}
 	--FontChanged()
 	spSendCommands({"tooltip 0"})
@@ -2179,24 +2181,24 @@ function widget:Initialize()
     real_window_corner = Window:New{
 		name   = 'real_window_corner';
 		color = {0, 0, 0, 0},
-		x = (0.13*screenWidth); 
+		x = screen0.height * 0.7 * 0.5 * 0.6; 
 		bottom = 0;
-        width = (0.22*screenWidth);
-		height = (0.18*screenHeight);
-		dockable = false;
+    width = 450;
+		height = 130;
+		dockable = true;
 		draggable = false,
 		resizable = false,
 		tweakDraggable = true,
-		tweakResizable = false,
+		tweakResizable = true,
 		padding = {0, 0, 0, 0},
-        minWidth = 100, 
-		minHeight = 100,
+    minWidth = 450, 
+		minHeight = 130,
 		
 	}
-    
-	window_corner = Panel:New{
+
+	window_corner = Window:New{
 		parent = real_window_corner,
-        name   = 'unitinfo2';
+    name   = 'unitinfo2';
 		x = 0,
 		y = 0,
 		width = "100%";

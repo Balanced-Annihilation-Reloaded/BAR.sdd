@@ -58,7 +58,7 @@ options = {
 			end 
 			window_minimap.fixedRatio = self.value;			
 		end,
-	},
+},
 	--[[
 	simpleMinimapColors = {
 		name = 'Simplified Minimap Colors',
@@ -234,7 +234,7 @@ local function MakeMinimapButton(file, pos, option)
 		height=iconsize, width=iconsize, 
 		caption="",
 		margin={0,0,0,0},
-		padding={4,3,2,2},
+		padding={0,0,0,0},
 		bottom=0, 
 		x=iconsize*(pos-1), 
 		
@@ -256,43 +256,38 @@ MakeMinimapWindow = function()
 	if (window_minimap) then
 		window_minimap:Dispose()
 	end
-	
-	local screenWidth,screenHeight = Spring.GetWindowGeometry()
-	
-	local h = screenHeight*0.30
-	local w = h*Game.mapX/Game.mapY
+
+	local h = Chili.Screen0.height*0.30 + 8
+	local w = (h - iconsize) * Game.mapX/Game.mapY
+	if (Game.mapX/Game.mapY > 1) then
+		w = h*(Game.mapX/Game.mapY)^0.5 - 10
+		h = w * Game.mapY/Game.mapX + iconsize
+	end
 	
 	window_minimap = Chili.Window:New{  
 --		dockable = true,
 		name = "Minimap",
 		x = 0,  
 		y = 0,
-		color = {0,0,0,0},
-		padding = {0,0,0,0},
+		padding = {5,5,5,5},
 		margin = {0,0,0,0},
 		width  = w,
 		height = h,
 		parent = Chili.Screen0,
 		children = {
-			
---			Chili.Panel:New {bottom = (iconsize), x = 0, y = 0, right = 0, margin={0,0,0,0}, padding = {0,0,0,0}, skinName="DarkGlass"},			
-			Chili.Panel:New {bottom = (iconsize), x = 0, y = 0, right = 0, margin={0,0,0,0}, padding = {0,0,0,0}},
-			
-			MakeMinimapButton( 'LuaUI/images/Crystal_Clear_action_flag.png', 2, 'lastmsgpos' ),
 			MakeMinimapButton( 'LuaUI/images/map/standard.png', 3, 'viewstandard' ),
 			MakeMinimapButton( 'LuaUI/images/map/heightmap.png', 4, 'viewheightmap' ),
 			MakeMinimapButton( 'LuaUI/images/map/blockmap.png', 5, 'viewblockmap' ),
 			MakeMinimapButton( 'LuaUI/images/map/metalmap.png', 6, 'alwaysDisplayMexes'),
 			MakeMinimapButton( 'LuaUI/images/map/fow.png', 7, 'viewfow' ),
 --			MakeMinimapButton( 'LuaUI/images/map/minimap_colors_simple.png', 1, 'toggleTeamColors' ),
-			
 			Chili.Button:New{ 
 				height=iconsize, width=iconsize, 
 				caption="",
 				margin={0,0,0,0},
-				padding={4,3,2,2},
+				padding={4,4,4,4},
 				bottom=0, 
-				x=1, 
+				x=0, 
 				
 				tooltip = "Toggle simplified teamcolours",
 				
@@ -400,11 +395,11 @@ function widget:DrawScreen()
 	end
 	if (lw ~= window_minimap.width or lh ~= window_minimap.height or lx ~= window_minimap.x or ly ~= window_minimap.y) then 
 		local cx,cy,cw,ch = Chili.unpack4(window_minimap.clientArea)
-		ch = ch-iconsize	
-		cx = cx + 8
-		cy = cy + 4
-		cw = cw - 16 
-		ch = ch - 12
+		ch = ch	- iconsize
+		cx = cx + 2
+		cy = cy + 2
+		cw = cw - 4
+		ch = ch - 4
 		--window_minimap.x, window_minimap.y, window_minimap.width, window_minimap.height
 		--Chili.unpack4(window_minimap.clientArea)
 		cx,cy = window_minimap:LocalToScreen(cx,cy)

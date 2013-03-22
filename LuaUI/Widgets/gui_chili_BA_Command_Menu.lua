@@ -8,8 +8,8 @@ function widget:GetInfo()
     date      = "11.10.2012",
     license   = "GNU GPL, v2 or later",
     layer     = math.huge-1,
-    enabled   = true,
-	handler   = true,
+    enabled   = false,
+		handler   = true,
   }
 end
 

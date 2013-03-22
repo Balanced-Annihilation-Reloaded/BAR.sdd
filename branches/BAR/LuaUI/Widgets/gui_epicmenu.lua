@@ -1,16 +1,16 @@
 function widget:GetInfo()
-  return {
-    name      = "EPIC Menu",
-    desc      = "v1.302 Extremely Powerful Ingame Chili Menu.",
-    author    = "CarRepairer",
-    date      = "2009-06-02",
-    license   = "GNU GPL, v2 or later",
-    layer     = -100001,
-    handler   = true,
-    experimental = false,	
-    enabled   = true,
-	alwaysStart = true,
-  }
+	return {
+		name      = "EPIC Menu",
+		desc      = "v1.302 Extremely Powerful Ingame Chili Menu.",
+		author    = "CarRepairer",
+		date      = "2009-06-02",
+		license   = "GNU GPL, v2 or later",
+		layer     = -100001,
+		handler   = true,
+		experimental = false,
+		enabled   = true,
+		alwaysStart = true,
+	}
 end
 
 --------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ local screen0
 
 --------------------------------------------------------------------------------
 -- Global chili controls
-local window_crude 
+local window_crude
 local window_exit
 local window_flags
 local window_help
@@ -78,13 +78,13 @@ local curPath = ''
 local init = false
 local myCountry = 'wut'
 
-local pathoptions = {}	
-local alloptions = {}	
+local pathoptions = {}
+local alloptions = {}
 local pathorders = {}
 
 WG.GetWidgetOption = function(wname, path, key)  -- still fails if path and key are un-concatenatable
 	return (pathoptions and path and key and wname and pathoptions[path] and pathoptions[path][wname..key]) or {}
-end 
+end
 
 local exitWindowVisible = false
 
@@ -93,12 +93,12 @@ local exitWindowVisible = false
 include("keysym.h.lua")
 local keysyms = {}
 for k,v in pairs(KEYSYMS) do
-	keysyms['' .. v] = k	
+	keysyms['' .. v] = k
 end
 --[[
-for k,v in pairs(KEYSYMS) do
+	for k,v in pairs(KEYSYMS) do
 	keysyms['' .. k] = v
-end
+	end
 --]]
 local get_key = false
 local kb_option
@@ -153,9 +153,9 @@ local settings = {
 --------------------------------------------------------------------------------
 
 WG.crude.SetSkin = function(Skin)
-  if Chili then
-    Chili.theme.skin.general.skinName = Skin
-  end
+	if Chili then
+		Chili.theme.skin.general.skinName = Skin
+	end
 end
 
 --Reset custom widget settings, defined in Initialize
@@ -167,44 +167,44 @@ WG.crude.ResetKeys 		= function() end
 ----------------------------------------------------------------
 -- Helper Functions
 --[[
-local function to_string(data, indent)
-    local str = ""
-
-    if(indent == nil) then
-        indent = 0
-    end
+	local function to_string(data, indent)
+	local str = ""
+	
+	if(indent == nil) then
+	indent = 0
+	end
 	local indenter = "    "
-    -- Check the type
-    if(type(data) == "string") then
-        str = str .. (indenter):rep(indent) .. data .. "\n"
-    elseif(type(data) == "number") then
-        str = str .. (indenter):rep(indent) .. data .. "\n"
-    elseif(type(data) == "boolean") then
-        if(data == true) then
-            str = str .. "true"
-        else
-            str = str .. "false"
-        end
-    elseif(type(data) == "table") then
-        local i, v
-        for i, v in pairs(data) do
-            -- Check for a table in a table
-            if(type(v) == "table") then
-                str = str .. (indenter):rep(indent) .. i .. ":\n"
-                str = str .. to_string(v, indent + 2)
-            else
-                str = str .. (indenter):rep(indent) .. i .. ": " ..
-to_string(v, 0)
-            end
-        end
+	-- Check the type
+	if(type(data) == "string") then
+	str = str .. (indenter):rep(indent) .. data .. "\n"
+	elseif(type(data) == "number") then
+	str = str .. (indenter):rep(indent) .. data .. "\n"
+	elseif(type(data) == "boolean") then
+	if(data == true) then
+	str = str .. "true"
+	else
+	str = str .. "false"
+	end
+	elseif(type(data) == "table") then
+	local i, v
+	for i, v in pairs(data) do
+	-- Check for a table in a table
+	if(type(v) == "table") then
+	str = str .. (indenter):rep(indent) .. i .. ":\n"
+	str = str .. to_string(v, indent + 2)
+	else
+	str = str .. (indenter):rep(indent) .. i .. ": " ..
+	to_string(v, 0)
+	end
+	end
 	elseif(type(data) == "function") then
-		str = str .. (indenter):rep(indent) .. 'function' .. "\n"
-    else
-        echo(1, "Error: unknown data type: %s", type(data))
-    end
-
-    return str
-end
+	str = str .. (indenter):rep(indent) .. 'function' .. "\n"
+	else
+	echo(1, "Error: unknown data type: %s", type(data))
+	end
+	
+	return str
+	end
 --]]
 
 local function CapCase(str)
@@ -212,62 +212,62 @@ local function CapCase(str)
 	str = str:gsub( '_', ' ' )
 	str = str:sub(1,1):upper() .. str:sub(2)
 	
-	str = str:gsub( ' (.)', 
+	str = str:gsub( ' (.)',
 		function(x) return (' ' .. x):upper(); end
-		)
+	)
 	return str
 end
 
 
 local function explode(div,str)
-  if (div=='') then return false end
-  local pos,arr = 0,{}
-  -- for each divider found
-  for st,sp in function() return string.find(str,div,pos,true) end do
-    table.insert(arr,string.sub(str,pos,st-1)) -- Attach chars left of current divider
-    pos = sp + 1 -- Jump past current divider
-  end
-  table.insert(arr,string.sub(str,pos)) -- Attach chars right of last divider
-  return arr
+	if (div=='') then return false end
+	local pos,arr = 0,{}
+	-- for each divider found
+	for st,sp in function() return string.find(str,div,pos,true) end do
+		table.insert(arr,string.sub(str,pos,st-1)) -- Attach chars left of current divider
+		pos = sp + 1 -- Jump past current divider
+	end
+	table.insert(arr,string.sub(str,pos)) -- Attach chars right of last divider
+	return arr
 end
 
 
 local function GetIndex(t,v) local idx = 1; while (t[idx]<v)and(t[idx+1]) do idx=idx+1; end return idx end
 
 local function CopyTable(outtable,intable)
-  for i,v in pairs(intable) do 
-    if (type(v)=='table') then
-      if (type(outtable[i])~='table') then outtable[i] = {} end
-      CopyTable(outtable[i],v)
-    else
-      outtable[i] = v
-    end
-  end
+	for i,v in pairs(intable) do
+		if (type(v)=='table') then
+			if (type(outtable[i])~='table') then outtable[i] = {} end
+			CopyTable(outtable[i],v)
+			else
+			outtable[i] = v
+		end
+	end
 end
 
 --[[
-local function tableMerge(t1, t2, appendIndex)
+	local function tableMerge(t1, t2, appendIndex)
 	for k,v in pairs(t2) do
-		if type(v) == "table" then
-			if type(t1[k] or false) == "table" then
-				tableMerge(t1[k] or {}, t2[k] or {}, appendIndex)
-			else
-				if type(k) == 'number' and appendIndex then
-					t1[#t1+1] = v
-				else
-					t1[k] = v
-				end
-			end
-		else
-			if type(k) == 'number' and appendIndex then
-				t1[#t1+1] = v
-			else
-				t1[k] = v
-			end
-		end
+	if type(v) == "table" then
+	if type(t1[k] or false) == "table" then
+	tableMerge(t1[k] or {}, t2[k] or {}, appendIndex)
+	else
+	if type(k) == 'number' and appendIndex then
+	t1[#t1+1] = v
+	else
+	t1[k] = v
+	end
+	end
+	else
+	if type(k) == 'number' and appendIndex then
+	t1[#t1+1] = v
+	else
+	t1[k] = v
+	end
+	end
 	end
 	return t1
-end
+	end
 --]]
 
 local function tableremove(table1, item)
@@ -281,29 +281,29 @@ local function tableremove(table1, item)
 	return table2
 end
 --[[
-local function MergeTable(table1,table2)
-  local ret = {}
-  CopyTable(ret,table2)
-  CopyTable(ret,table1)
-  return ret
-end
+	local function MergeTable(table1,table2)
+	local ret = {}
+	CopyTable(ret,table2)
+	CopyTable(ret,table1)
+	return ret
+	end
 --]]
 
 -- function GetTimeString() taken from trepan's clock widget
 local function GetTimeString()
-  local secs = math.floor(Spring.GetGameSeconds())
-  if (timeSecs ~= secs) then
-    timeSecs = secs
-    local h = math.floor(secs / 3600)
-    local m = math.floor((secs % 3600) / 60)
-    local s = math.floor(secs % 60)
-    if (h > 0) then
-      timeString = string.format('%02i:%02i:%02i', h, m, s)
-    else
-      timeString = string.format('%02i:%02i', m, s)
-    end
-  end
-  return timeString
+	local secs = math.floor(Spring.GetGameSeconds())
+	if (timeSecs ~= secs) then
+		timeSecs = secs
+		local h = math.floor(secs / 3600)
+		local m = math.floor((secs % 3600) / 60)
+		local s = math.floor(secs % 60)
+		if (h > 0) then
+			timeString = string.format('%02i:%02i:%02i', h, m, s)
+			else
+			timeString = string.format('%02i:%02i', m, s)
+		end
+	end
+	return timeString
 end
 
 local function BoolToInt(bool)
@@ -319,17 +319,17 @@ local function AdjustWindow(window)
 	local nx
 	if (0 > window.x) then
 		nx = 0
-	elseif (window.x + window.width > screen0.width) then
+		elseif (window.x + window.width > screen0.width) then
 		nx = screen0.width - window.width
 	end
-
+	
 	local ny
 	if (0 > window.y) then
 		ny = 0
-	elseif (window.y + window.height > screen0.height) then
+		elseif (window.y + window.height > screen0.height) then
 		ny = screen0.height - window.height
 	end
-
+	
 	if (nx or ny) then
 		window:SetPos(nx,ny)
 	end
@@ -369,7 +369,7 @@ local function WidgetEnabled(wname)
 	local order = widgetHandler.orderList[wname]
 	return order and (order > 0)
 end
-			
+
 
 -- Kill submenu window
 local function KillSubWindow()
@@ -393,26 +393,26 @@ local function checkWidget(widget)
 end
 
 
-local function SetCountry(self) 
-	echo('Setting country: "' .. self.country .. '" ') 
+local function SetCountry(self)
+	echo('Setting country: "' .. self.country .. '" ')
 	
 	WG.country = self.country
 	settings.country = self.country
 	
-	WG.lang = self.countryLang 
+	WG.lang = self.countryLang
 	settings.lang = self.countryLang
 	
 	if img_flag then
 		img_flag.file = ":cn:".. LUAUI_DIRNAME .. "Images/flags/".. settings.country ..'.png'
 		img_flag:Invalidate()
 	end
-end 
+end
 
 --Make country chooser window
 local function MakeFlags()
-
+	
 	if window_flags then return end
-
+	
 	local countries = {}
 	local flagdir = 'LuaUI/Images/flags/'
 	local files = VFS.DirList(flagdir)
@@ -421,55 +421,55 @@ local function MakeFlags()
 		local country = file:sub( #flagdir+1, -5 )
 		countries[#countries+1] = country
 	end
-		
+	
 	local country_langs = {
 		br='bp',
 		de='de',
 		es='es',
-		fi='fi', 
+		fi='fi',
 		fr='fr',
 		it='it',
-		my='my', 
+		my='my',
 		pl='pl',
 		pt='pt',
 		pr='es',
 	}
-
+	
 	local flagChildren = {}
 	
 	flagChildren[#flagChildren + 1] = Label:New{ caption='Flag', align='center' }
-	flagChildren[#flagChildren + 1] = Button:New{ 
-		caption = 'Auto', 
-		country = myCountry, 
+	flagChildren[#flagChildren + 1] = Button:New{
+		caption = 'Auto',
+		country = myCountry,
 		countryLang = country_langs[myCountry] or 'en',
 		width='50%',
 		textColor = color.sub_button_fg,
-		backgroundColor = color.sub_button_bg, 
-		OnMouseUp = { SetCountry }  
+		backgroundColor = color.sub_button_bg,
+		OnMouseUp = { SetCountry }
 	}
 	
-
+	
 	local flagCount = 0
 	for i=1, #countries do
 		local country = countries[i]
 		local countryLang = country_langs[country] or 'en'
 		flagCount = flagCount + 1
 		flagChildren[#flagChildren + 1] = Image:New{ file=":cn:".. LUAUI_DIRNAME .. "Images/flags/".. country ..'.png', }
-		flagChildren[#flagChildren + 1] = Button:New{ caption = country:upper(), 
+		flagChildren[#flagChildren + 1] = Button:New{ caption = country:upper(),
 			width='50%',
 			textColor = color.sub_button_fg,
 			backgroundColor = color.sub_button_bg,
 			country = country,
 			countryLang = countryLang,
-			OnMouseUp = { SetCountry } 
+			OnMouseUp = { SetCountry }
 		}
 	end
 	local window_height = 300
 	local window_width = 170
 	window_flags = Window:New{
 		caption = 'Choose Your Location...',
-		x = settings.sub_pos_x,  
-		y = settings.sub_pos_y,  
+		x = settings.sub_pos_x,
+		y = settings.sub_pos_y,
 		clientWidth  = window_width,
 		clientHeight = window_height,
 		parent = screen0,
@@ -490,10 +490,10 @@ local function MakeFlags()
 				}
 			},
 			--close button
-			Button:New{ caption = 'Close',  x=10, y=0-B_HEIGHT, bottom=5, right=5, 
-				OnMouseUp = { function(self) window_flags:Dispose(); window_flags = nil; end },  
+			Button:New{ caption = 'Close',  x=10, y=0-B_HEIGHT, bottom=5, right=5,
+				OnMouseUp = { function(self) window_flags:Dispose(); window_flags = nil; end },
 				width=window_width-20, backgroundColor = color.sub_close_bg, textColor = color.sub_close_fg,
-				},
+			},
 		}
 	}
 end
@@ -505,8 +505,8 @@ local function MakeHelp(caption, text)
 	
 	window_help = Window:New{
 		caption = caption or 'Help?',
-		x = settings.sub_pos_x,  
-		y = settings.sub_pos_y,  
+		x = settings.sub_pos_x,
+		y = settings.sub_pos_y,
 		clientWidth  = window_width,
 		clientHeight = window_height,
 		parent = screen0,
@@ -536,21 +536,21 @@ end
 local function HotkeyFromUikey(uikey_hotkey)
 	local uikey_table = explode('+', uikey_hotkey)
 	local alt, ctrl, meta, shift
-
+	
 	for i=1, #uikey_table do
 		local str2 = uikey_table[i]:lower()
 		if str2 == 'alt' 		then alt = true
-		elseif str2 == 'ctrl' 	then ctrl = true
-		elseif str2 == 'shift' 	then shift = true
-		elseif str2 == 'meta' 	then meta = true
+			elseif str2 == 'ctrl' 	then ctrl = true
+			elseif str2 == 'shift' 	then shift = true
+			elseif str2 == 'meta' 	then meta = true
 		end
 	end
 	
 	local modstring = '' ..
-		(alt and 'A+' or '') ..
-		(ctrl and 'C+' or '') ..
-		(meta and 'M+' or '') ..
-		(shift and 'S+' or '')
+	(alt and 'A+' or '') ..
+	(ctrl and 'C+' or '') ..
+	(meta and 'M+' or '') ..
+	(shift and 'S+' or '')
 	return {
 		key = uikey_table[#uikey_table],
 		mod = modstring,
@@ -559,17 +559,17 @@ end
 
 local function GetReadableHotkeyMod(mod)
 	return (mod:lower():find('a+') and 'Alt+' or '') ..
-		(mod:lower():find('c+') and 'Ctrl+' or '') ..
-		(mod:lower():find('m+') and 'Meta+' or '') ..
-		(mod:lower():find('s+') and 'Shift+' or '') ..
-		''		
+	(mod:lower():find('c+') and 'Ctrl+' or '') ..
+	(mod:lower():find('m+') and 'Meta+' or '') ..
+	(mod:lower():find('s+') and 'Shift+' or '') ..
+	''
 end
 
 
 -- Assign a keybinding to settings and other tables that keep track of related info
 --local function AssignKeyBind(hotkey, menukey, itemindex, item, verbose)
 local function AssignKeyBind(hotkey, path, option, verbose) -- param4 = verbose
-
+	
 	if not (hotkey.key and hotkey.mod) then
 		Spring.Log(widget:GetInfo().name, LOG.ERROR, '<EPIC Menu> Wacky assign keybind error #1')
 		return
@@ -586,7 +586,7 @@ local function AssignKeyBind(hotkey, path, option, verbose) -- param4 = verbose
 				if pathoptions[path] then --pathoptions[path] table still intact, but option table missing
 					Spring.Echo("case: option table was missing")
 					pathoptions[path][option.wname..option.key] = option --re-add option table
-				else --both option table & pathoptions[path] was missing, probably was never initialized
+					else --both option table & pathoptions[path] was missing, probably was never initialized
 					Spring.Echo("case: whole path was never initialized")
 					pathoptions[path] = {}
 					pathoptions[path][option.wname..option.key] = option
@@ -594,7 +594,7 @@ local function AssignKeyBind(hotkey, path, option, verbose) -- param4 = verbose
 				-- [f=0088425] Error: LuaUI::RunCallIn: error = 2, ConfigureLayout, [string "LuaUI/Widgets/gui_epicmenu.lua"]:583: attempt to index field '?' (a nil value)
 			end
 			local wname = option.wname
-			newval = not pathoptions[path][option.wname..option.key].value	
+			newval = not pathoptions[path][option.wname..option.key].value
 			pathoptions[path][option.wname..option.key].value	= newval
 			-- [f=0088425] Error: LuaUI::RunCallIn: error = 2, ConfigureLayout, [string "LuaUI/Widgets/gui_epicmenu.lua"]:583: attempt to index field '?' (a nil value)
 			
@@ -647,9 +647,9 @@ local function UnassignKeyBind(path, option)
 			local actionName_split = explode(' ', actionName)
 			local actionName_cmd = actionName_split[1]
 			--echo('unassign', "unbind " .. uikey_hotkey_str .. ' ' .. actionName_cmd)
-			Spring.SendCommands("unbind " .. uikey_hotkey_str .. ' ' .. actionName_cmd) 
+			Spring.SendCommands("unbind " .. uikey_hotkey_str .. ' ' .. actionName_cmd)
 		end
-	else --if keybindings were supplied by users:
+		else --if keybindings were supplied by users:
 		--echo('unassign', "unbindaction " .. actionName)
 		Spring.SendCommands("unbindaction " .. actionName:lower()) -- this only works if lowercased, even if /keyprint says otherwise!
 	end
@@ -659,12 +659,12 @@ end
 
 
 local function AddOption(path, option, wname )
---echo(path, wname, option)
-
+	--echo(path, wname, option)
+	
 	if not wname then
 		wname = path
 	end
-
+	
 	local path2 = path
 	if not option then
 		if not pathoptions[path] then
@@ -708,7 +708,7 @@ local function AddOption(path, option, wname )
 		if option.type == 'bool' then
 			newval = IntToBool(newval)
 		end
-	else
+		else
 		--load option from widget settings
 		if settings.config[fullkey] ~= nil then --nil check as it can be false
 			newval = settings.config[fullkey]
@@ -718,9 +718,9 @@ local function AddOption(path, option, wname )
 	if option.default == nil then
 		if option.value ~= nil then
 			option.default = option.value
-		else
+			else
 			option.default = newval
-		end	
+		end
 	end
 	
 	if newval ~= nil and option.value ~= newval then --must nilcheck newval
@@ -734,67 +734,67 @@ local function AddOption(path, option, wname )
 	
 	local controlfunc
 	if option.type == 'button' then
-		controlfunc = 
-			function(self)
-				if option.action then --if keybindings supplied by widgets
-					Spring.SendCommands{option.action} 
-				end
+		controlfunc =
+		function(self)
+			if option.action then --if keybindings supplied by widgets
+				Spring.SendCommands{option.action}
 			end
-	elseif option.type == 'bool' then
+		end
+		elseif option.type == 'bool' then
 		
-		controlfunc = 
-			function(self)
-				if self then
-					option.value = self.checked
-				end
-				if option.springsetting then --if widget supplies option for springsettings
-					Spring.SetConfigInt( option.springsetting, BoolToInt(option.value) )
-				end
-				settings.config[fullkey] = option.value
+		controlfunc =
+		function(self)
+			if self then
+				option.value = self.checked
 			end
-	elseif option.type == 'number' then
+			if option.springsetting then --if widget supplies option for springsettings
+				Spring.SetConfigInt( option.springsetting, BoolToInt(option.value) )
+			end
+			settings.config[fullkey] = option.value
+		end
+		elseif option.type == 'number' then
 		if option.valuelist then
 			option.min 	= 1
 			option.max 	= #(option.valuelist)
 			option.step	= 1
 		end
-						
-		controlfunc = 
-			function(self) 
-				if self then
-					if option.valuelist then
-						option.value = option.valuelist[self.value]
+		
+		controlfunc =
+		function(self)
+			if self then
+				if option.valuelist then
+					option.value = option.valuelist[self.value]
 					else
-						option.value = self.value
-					end
+					option.value = self.value
 				end
-				
-				if option.springsetting then
-					if not option.value then
-						echo ('<EPIC Menu> Error #444', fullkey)
+			end
+			
+			if option.springsetting then
+				if not option.value then
+					echo ('<EPIC Menu> Error #444', fullkey)
 					else
-						Spring.SetConfigInt( option.springsetting, option.value )
-					end
+					Spring.SetConfigInt( option.springsetting, option.value )
 				end
-				settings.config[fullkey] = option.value
 			end
-	
-	elseif option.type == 'colors' then
-		controlfunc = 
-			function(self) 
-				if self then
-					option.value = self.color
-				end
-				settings.config[fullkey] = option.value
+			settings.config[fullkey] = option.value
+		end
+		
+		elseif option.type == 'colors' then
+		controlfunc =
+		function(self)
+			if self then
+				option.value = self.color
 			end
-	
-	elseif option.type == 'list' then
-		controlfunc = 
-			function(key)
-				option.value = key
-				settings.config[fullkey] = option.value
-			end
-	
+			settings.config[fullkey] = option.value
+		end
+		
+		elseif option.type == 'list' then
+		controlfunc =
+		function(key)
+			option.value = key
+			settings.config[fullkey] = option.value
+		end
+		
 	end
 	option.OnChange = function(self)
 		controlfunc(self)
@@ -802,9 +802,9 @@ local function AddOption(path, option, wname )
 	end
 	
 	--call onchange once
-	if valuechanged and option.type ~= 'button' and (origOnChange ~= nil) 
-	--and not option.springsetting --need a different solution
-	then 
+	if valuechanged and option.type ~= 'button' and (origOnChange ~= nil)
+		--and not option.springsetting --need a different solution
+		then
 		origOnChange(option)
 	end
 	
@@ -816,10 +816,10 @@ local function AddOption(path, option, wname )
 		local uikey_hotkey = uikey_hotkey_str and HotkeyFromUikey(uikey_hotkey_str)
 		
 		if option.hotkey then
-		  local orig_hotkey = {}
-		  CopyTable(orig_hotkey, option.hotkey)
-		  option.orig_hotkey = orig_hotkey
-		  echo(option.key, option.orig_hotkey.key)
+			local orig_hotkey = {}
+			CopyTable(orig_hotkey, option.hotkey)
+			option.orig_hotkey = orig_hotkey
+			echo(option.key, option.orig_hotkey.key)
 		end
 		
 		local hotkey = settings.keybounditems[actionName] or option.hotkey or uikey_hotkey
@@ -828,7 +828,7 @@ local function AddOption(path, option, wname )
 				UnassignKeyBind(path, option)
 			end
 			AssignKeyBind(hotkey, path, option, false)
-		end 
+		end
 	end
 	
 	pathoptions[path][wname..option.key] = option
@@ -880,7 +880,7 @@ local function PreIntegrateWidget(w)
 		end
 	end
 	
-
+	
 	for i=1, #w.options_order do
 		local k = w.options_order[i]
 		local option = options[k]
@@ -889,7 +889,7 @@ local function PreIntegrateWidget(w)
 			return
 		end
 		
-	
+		
 		option.key = k
 		option.wname = wname
 	end
@@ -909,10 +909,10 @@ local function IntegrateWidget(w, addoptions, index)
 	
 	
 	--[[
-	--If a widget disables itself in widget:Initialize it will run the removewidget before the insertwidget is complete. this fix doesn't work
-	if not WidgetEnabled(wname) then
+		--If a widget disables itself in widget:Initialize it will run the removewidget before the insertwidget is complete. this fix doesn't work
+		if not WidgetEnabled(wname) then
 		return
-	end
+		end
 	--]]
 	
 	if w.options.order then
@@ -952,18 +952,18 @@ local function IntegrateWidget(w, addoptions, index)
 		local origOnChange = w.options[k].OnChange
 		
 		if option.type ~= 'button' then
-			option.OnChange = 
-				function(self)
-					if self then
-						w.options[k].value = self.value
-					end
-					origOnChange(self)
+			option.OnChange =
+			function(self)
+				if self then
+					w.options[k].value = self.value
 				end
-		else
-			option.OnChange = 
-				function(self)
-					origOnChange(self)
-				end
+				origOnChange(self)
+			end
+			else
+			option.OnChange =
+			function(self)
+				origOnChange(self)
+			end
 		end
 		
 		local path = option.path or defaultpath
@@ -982,8 +982,8 @@ local function IntegrateWidget(w, addoptions, index)
 			if key == 'value' then
 				if(
 					not wname:find('Chili Chat')
-					) then
-					--echo ('get val', wname, k, key, t.priv_value)
+				) then
+				--echo ('get val', wname, k, key, t.priv_value)
 				end
 				--return t.priv_value
 				return t.priv_value
@@ -996,15 +996,15 @@ local function IntegrateWidget(w, addoptions, index)
 			
 			if key == 'value' then
 				if val ~= nil then -- maybe this isn't needed
-				  --echo ('set val', wname, k, key, val)
-				  t.priv_value = val
-				  
-				  local fullkey = GetFullKey(path, option)
-				  fullkey = fullkey:gsub(' ', '_')
-				  settings.config[fullkey] = option.value
+					--echo ('set val', wname, k, key, val)
+					t.priv_value = val
+					
+					local fullkey = GetFullKey(path, option)
+					fullkey = fullkey:gsub(' ', '_')
+					settings.config[fullkey] = option.value
 				end
-			else
-			  rawset(t,key,val)
+				else
+				rawset(t,key,val)
 			end
 			
 		end
@@ -1013,7 +1013,7 @@ local function IntegrateWidget(w, addoptions, index)
 		--]]
 		if addoptions then
 			AddOption(path, option, wname )
-		else
+			else
 			RemOption(path, option, wname )
 		end
 		
@@ -1037,7 +1037,7 @@ end
 
 -- Spring's widget list
 local function ShowWidgetList(self)
-	spSendCommands{"luaui selector"} 
+	spSendCommands{"luaui selector"}
 end
 
 -- Crudemenu's widget list
@@ -1050,7 +1050,7 @@ WG.crude.ShowFlags = function()
 end
 
 --Make little window to indicate user needs to hit a keycombo to save a keybinding
-local function MakeKeybindWindow( path, option, hotkey ) 
+local function MakeKeybindWindow( path, option, hotkey )
 	if hotkey then
 		UnassignKeyBind(path, option)
 	end
@@ -1065,11 +1065,11 @@ local function MakeKeybindWindow( path, option, hotkey )
 	
 	kb_option = option
 	kb_path = path
-		
+	
 	window_getkey = Window:New{
 		caption = 'Set a HotKey',
-		x = (scrW-window_width)/2,  
-		y = (scrH-window_height)/2,  
+		x = (scrW-window_width)/2,
+		y = (scrH-window_height)/2,
 		clientWidth  = window_width,
 		clientHeight = window_height,
 		parent = screen0,
@@ -1086,26 +1086,26 @@ end
 WG.crude.GetHotkey = function(actionName)
 	local hotkey = settings.keybounditems[actionName]
 	if not hotkey or hotkey == 'none' then
-	  return ''
+		return ''
 	end
 	return GetReadableHotkeyMod(hotkey.mod) .. CapCase(hotkey.key)
 end
 
 
 --[[
--- is this an improvement?
-WG.crude.GetHotkey = function(actionName)
+	-- is this an improvement?
+	WG.crude.GetHotkey = function(actionName)
 	local hotkey = settings.keybounditems[actionName]
 	if not hotkey then
-		local fallback = Spring.GetActionHotKeys(actionName)
-		if fallback and fallback[1] then
-			return CapCase(fallback[1])
-		else
-			return ''
-		end
+	local fallback = Spring.GetActionHotKeys(actionName)
+	if fallback and fallback[1] then
+	return CapCase(fallback[1])
+	else
+	return ''
+	end
 	end
 	return GetReadableHotkeyMod(hotkey.mod) .. CapCase(hotkey.key)
-end
+	end
 --]]
 
 
@@ -1124,14 +1124,14 @@ end
 
 --Make a stack with control and its hotkey button
 local function MakeHotkeyedControl(control, path, option)
-
+	
 	local hotkey, hotkeystring = GetHotkeyData(path, option)
-	local kbfunc = function() 
-			if not get_key then
-				MakeKeybindWindow( path, option, hotkey ) 
-			end
+	local kbfunc = function()
+		if not get_key then
+			MakeKeybindWindow( path, option, hotkey )
 		end
-
+	end
+	
 	local hklength = math.max( hotkeystring:len() * 10, 20)
 	local control2 = control
 	control.x = 0
@@ -1143,10 +1143,10 @@ local function MakeHotkeyedControl(control, path, option)
 		--right=0, --Note: uncommenting this entry cause hotkey-button's position to overlap with control-button's position. It happen after Chili merge/update (???)
 		width = hklength,
 		--x=-30,
-		caption = hotkeystring, 
+		caption = hotkeystring,
 		OnMouseUp = { kbfunc },
 		backgroundColor = color.sub_button_bg,
-		textColor = color.sub_button_fg, 
+		textColor = color.sub_button_fg,
 		tooltip = 'Hotkey: ' .. hotkeystring,
 	}
 	
@@ -1175,28 +1175,28 @@ local function ResetWinSettings(path)
 				option.value = option.valuelist and GetIndex(option.valuelist, option.default) or option.default
 				option.checked = option.value
 				option.OnChange(option)
-			elseif option.type == 'list' then
+				elseif option.type == 'list' then
 				option.value = option.default
 				option.OnChange(option.default)
-			elseif option.type == 'colors' then
+				elseif option.type == 'colors' then
 				option.color = option.default
 				option.OnChange(option)
 			end
-		else
+			else
 			Spring.Log(widget:GetInfo().name, LOG.ERROR, '<EPIC Menu> Error #627', option.name)
 		end
 	end
 end
 
 --[[ WIP
-WG.crude.MakeHotkey = function(path, optionkey)
+	WG.crude.MakeHotkey = function(path, optionkey)
 	local option = pathoptions[path][optionkey]
 	local hotkey, hotkeystring = GetHotkeyData(path, option)
 	if not get_key then
-		MakeKeybindWindow( path, option, hotkey ) 
+	MakeKeybindWindow( path, option, hotkey )
 	end
 	
-end
+	end
 --]]
 
 -- Make submenu window based on index from flat window list
@@ -1230,7 +1230,7 @@ MakeSubWindow = function(path)
 		
 		if option.advanced and not settings.config['epic_Settings_Show_Advanced_Settings'] then
 			--do nothing
-		elseif option.type == 'button' then
+			elseif option.type == 'button' then
 			local hide = false
 			
 			if option.wname == 'epic' then --menu
@@ -1246,90 +1246,90 @@ MakeSubWindow = function(path)
 					x=0,
 					--right = 30,
 					minHeight = 30,
-					caption = option.name, 
+					caption = option.name,
 					OnMouseUp = {option.OnChange},
 					backgroundColor = color.sub_button_bg,
-					textColor = color.sub_button_fg, 
+					textColor = color.sub_button_fg,
 					tooltip = option.desc
 				}
 				tree_children[#tree_children+1] = MakeHotkeyedControl(button, path, option)
 			end
 			
-		elseif option.type == 'label' then	
+			elseif option.type == 'label' then
 			tree_children[#tree_children+1] = Label:New{ caption = option.value or option.name, textColor = color.sub_header, }
 			
-		elseif option.type == 'text' then	
-			tree_children[#tree_children+1] = 
-				Button:New{
-					width = "100%",
-					minHeight = 30,
-					caption = option.name, 
-					OnMouseUp = { function() MakeHelp(option.name, option.value) end },
-					backgroundColor = color.sub_button_bg,
-					textColor = color.sub_button_fg, 
-					tooltip=option.desc
-				}
+			elseif option.type == 'text' then
+			tree_children[#tree_children+1] =
+			Button:New{
+				width = "100%",
+				minHeight = 30,
+				caption = option.name,
+				OnMouseUp = { function() MakeHelp(option.name, option.value) end },
+				backgroundColor = color.sub_button_bg,
+				textColor = color.sub_button_fg,
+				tooltip=option.desc
+			}
 			
-		elseif option.type == 'bool' then				
-			local chbox = Checkbox:New{ 
+			elseif option.type == 'bool' then
+			local chbox = Checkbox:New{
 				x=0,
 				right = 35,
-				caption = option.name, 
-				checked = option.value or false, 
+				caption = option.name,
+				checked = option.value or false,
 				
-				OnMouseUp = { option.OnChange, }, 
-				textColor = color.sub_fg, 
+				OnMouseUp = { option.OnChange, },
+				textColor = color.sub_fg,
 				tooltip   = option.desc,
 			}
 			tree_children[#tree_children+1] = MakeHotkeyedControl(chbox,  path, option)
 			
-		elseif option.type == 'number' then	
+			elseif option.type == 'number' then
 			settings_height = settings_height + B_HEIGHT
 			tree_children[#tree_children+1] = Label:New{ caption = option.name, textColor = color.sub_fg, }
 			if option.valuelist then
 				option.value = GetIndex(option.valuelist, option.value)
 			end
-			tree_children[#tree_children+1] = 
-				Trackbar:New{ 
-					width = "100%",
-					caption = option.name, 
-					value = option.value, 
-					trackColor = color.sub_fg, 
-					min=option.min or 0, 
-					max=option.max or 100, 
-					step=option.step or 1, 
-					OnMouseUp = { option.OnChange }, 
-					tooltip=option.desc 
-				}
+			tree_children[#tree_children+1] =
+			Trackbar:New{
+				width = "100%",
+				caption = option.name,
+				value = option.value,
+				trackColor = color.sub_fg,
+				min=option.min or 0,
+				max=option.max or 100,
+				step=option.step or 1,
+				OnMouseUp = { option.OnChange },
+				tooltip=option.desc
+			}
 			
 			
-		elseif option.type == 'list' then	
+			elseif option.type == 'list' then
 			tree_children[#tree_children+1] = Label:New{ caption = option.name, textColor = color.sub_header, }
 			for i=1, #option.items do
 				local item = option.items[i]
-				settings_height = settings_height + B_HEIGHT 
-				tree_children[#tree_children+1] = 
-					Button:New{
-						width = "100%",
-						caption = item.name, 
-						OnMouseUp = { function(self) option.OnChange(item.key) end },
-						backgroundColor = color.sub_button_bg,
-						textColor = color.sub_button_fg, 
-						tooltip=item.desc,
-					}
+				settings_height = settings_height + B_HEIGHT
+				tree_children[#tree_children+1] =
+				Button:New{
+					width = "100%",
+					caption = item.name,
+					OnMouseUp = { function(self) option.OnChange(item.key) end },
+					backgroundColor = color.sub_button_bg,
+					textColor = color.sub_button_fg,
+					tooltip=item.desc,
+				}
 			end
-		elseif option.type == 'colors' then
+			elseif option.type == 'colors' then
 			settings_height = settings_height + B_HEIGHT*2.5
 			tree_children[#tree_children+1] = Label:New{ caption = option.name, textColor = color.sub_fg, }
-			tree_children[#tree_children+1] = 
-				Colorbars:New{
-					width = "100%",
-					height = B_HEIGHT*2,
-					tooltip=option.desc,
-					color = option.value or {1,1,1,1},
-					OnMouseUp = { option.OnChange, },
-				}
-				
+			tree_children[#tree_children+1] =
+			Colorbars:New{
+				width = "100%",
+				height = B_HEIGHT*2,
+				tooltip=option.desc,
+				color = option.value or {1,1,1,1},
+				OnMouseUp = { option.OnChange, },
+			}
+			
 		end
 	end
 	
@@ -1339,62 +1339,62 @@ MakeSubWindow = function(path)
 	end
 	local window_width = 300
 	
-		
+	
 	local window_children = {}
 	window_children[#window_children+1] =
-		ScrollPanel:New{
-			x=0,y=15,
-			bottom=B_HEIGHT+20,
-			width = '100%',
-			children = {
-				StackPanel:New{
-					x=0,
-					y=0,
-					right=0,
-					orientation = "vertical",
-					--width  = "100%",
-					height = "100%",
-					backgroundColor = color.sub_bg,
-					children = tree_children,
-					itemMargin = {2,2,2,2},
-					resizeItems = false,
-					centerItems = false,
-					autosize = true,
-				},
-				
-			}
+	ScrollPanel:New{
+		x=0,y=15,
+		bottom=B_HEIGHT+20,
+		width = '100%',
+		children = {
+			StackPanel:New{
+				x=0,
+				y=0,
+				right=0,
+				orientation = "vertical",
+				--width  = "100%",
+				height = "100%",
+				backgroundColor = color.sub_bg,
+				children = tree_children,
+				itemMargin = {2,2,2,2},
+				resizeItems = false,
+				centerItems = false,
+				autosize = true,
+			},
+			
 		}
+	}
 	
 	window_height = window_height + B_HEIGHT
-	local backButton 
+	local backButton
 	--back button
 	if parent_path then
-		window_children[#window_children+1] = Button:New{ caption = 'Back', OnMouseUp = { KillSubWindow, function() MakeSubWindow(parent_path) end,  }, 
-			backgroundColor = color.sub_back_bg,textColor = color.sub_back_fg, x=0, bottom=1, width='33%', height=B_HEIGHT, }
+		window_children[#window_children+1] = Button:New{ caption = 'Back', OnMouseUp = { KillSubWindow, function() MakeSubWindow(parent_path) end,  },
+		backgroundColor = color.sub_back_bg,textColor = color.sub_back_fg, x=0, bottom=1, width='33%', height=B_HEIGHT, }
 	end
 	
 	
 	--reset button
-	window_children[#window_children+1] = Button:New{ caption = 'Reset', OnMouseUp = { function() ResetWinSettings(path); RemakeEpicMenu(); end }, 
-		textColor = color.sub_close_fg, backgroundColor = color.sub_close_bg, width='33%', x='33%', right='33%', bottom=1, height=B_HEIGHT, }
+	window_children[#window_children+1] = Button:New{ caption = 'Reset', OnMouseUp = { function() ResetWinSettings(path); RemakeEpicMenu(); end },
+	textColor = color.sub_close_fg, backgroundColor = color.sub_close_bg, width='33%', x='33%', right='33%', bottom=1, height=B_HEIGHT, }
 	
 	
 	--close button
-	window_children[#window_children+1] = Button:New{ caption = 'Close', OnMouseUp = { KillSubWindow }, 
-		textColor = color.sub_close_fg, backgroundColor = color.sub_close_bg, width='33%', x='66%', right=1, bottom=1, height=B_HEIGHT, }
+	window_children[#window_children+1] = Button:New{ caption = 'Close', OnMouseUp = { KillSubWindow },
+	textColor = color.sub_close_fg, backgroundColor = color.sub_close_bg, width='33%', x='66%', right=1, bottom=1, height=B_HEIGHT, }
 	
 	
 	
 	KillSubWindow()
 	curPath = path -- must be done after KillSubWindow
-	window_sub_cur = Window:New{  
+	window_sub_cur = Window:New{
 		caption=path,
-		x = settings.sub_pos_x,  
-		y = settings.sub_pos_y, 
+		x = settings.sub_pos_x,
+		y = settings.sub_pos_y,
 		clientWidth = window_width,
 		clientHeight = window_height+B_HEIGHT*4,
 		minWidth = 250,
-		minHeight = 350,		
+		minHeight = 350,
 		--resizable = false,
 		parent = settings.show_crudemenu and screen0 or nil,
 		backgroundColor = color.sub_bg,
@@ -1405,7 +1405,7 @@ end
 
 -- Show or hide menubar
 local function ShowHideCrudeMenu()
-	WG.crude.visible = settings.show_crudemenu -- HACK set it to wg to signal to player list 
+	WG.crude.visible = settings.show_crudemenu -- HACK set it to wg to signal to player list
 	if settings.show_crudemenu then
 		if window_crude then
 			screen0:AddChild(window_crude)
@@ -1415,7 +1415,7 @@ local function ShowHideCrudeMenu()
 		if window_sub_cur then
 			screen0:AddChild(window_sub_cur)
 		end
-	else
+		else
 		if window_crude then
 			screen0:RemoveChild(window_crude)
 			--WG.chat.hideConsole()
@@ -1432,102 +1432,90 @@ end
 local function MakeMenuBar()
 	local btn_padding = {4,3,2,2}
 	local btn_margin = {0,0,0,0}
-    local exit_menu_width = 210
-    local exit_menu_height = 280
-    local exit_menu_btn_width = 7*exit_menu_width/8
-    local exit_menu_btn_height = max(exit_menu_height/8, 30)
-    local exit_menu_cancel_width = exit_menu_btn_width/2
-    local exit_menu_cancel_height = 2*exit_menu_btn_height/3
-
-	local crude_width = 425
+	local exit_menu_width = 210
+	local exit_menu_height = 280
+	local exit_menu_btn_width = 7*exit_menu_width/8
+	local exit_menu_btn_height = max(exit_menu_height/8, 30)
+	local exit_menu_cancel_width = exit_menu_btn_width/2
+	local exit_menu_cancel_height = 2*exit_menu_btn_height/3
+	
+	local crude_width = 350
 	local crude_height = B_HEIGHT+10
 	
-
+	
 	lbl_fps = Label:New{ name='lbl_fps', caption = 'FPS:', textColor = color.sub_header,  }
 	lbl_gtime = Label:New{ name='lbl_gtime', caption = 'Time:', textColor = color.sub_header, align="center" }
 	lbl_clock = Label:New{ name='lbl_clock', caption = 'Clock:', width = 35, height=5, textColor = color.main_fg, autosize=false, }
-	img_flag = Image:New{ tooltip='Choose Your Location', file=":cn:".. LUAUI_DIRNAME .. "Images/flags/".. settings.country ..'.png', width = 16,height = 11, OnClick = { MakeFlags }, margin={4,4,4,4}  }
+--img_flag = Image:New{ tooltip='Choose Your Location', file=":cn:".. LUAUI_DIRNAME .. "Images/flags/".. settings.country ..'.png', width = 16,height = 11, OnClick = { MakeFlags }, margin={4,4,4,4}  }
 	
 	local screen_width,screen_height = Spring.GetWindowGeometry()
 	
 	window_exit = Window:New{
 		name='exitwindow',
-		x = screen_width/2 - exit_menu_width/2,  
-		y = screen_height/2 - exit_menu_height/2,  
+		x = screen_width/2 - exit_menu_width/2,
+		y = screen_height/2 - exit_menu_height/2,
 		dockable = false,
 		clientWidth = exit_menu_width,
 		clientHeight = exit_menu_height,
-		draggable = false,
-		tweakDraggable = true,
-		resizable = false,
-		minimizable = false,
-		backgroundColor = color.main_bg,
 		color = {1,1,1,0.5},
 		margin = {0,0,0,0},
 		padding = {0,0,0,0},
 		
 		children = {
-				
-			Label:New{ 
-				caption = 'Would you like to quit?', 
+			
+			Label:New{
+				caption = 'Would you like to quit?',
 				width = exit_menu_width,
-                x = 0,
-                y = 2*exit_menu_height/64,
+				x = 0,
+				y = 2*exit_menu_height/64,
 				align="center",
-				textColor = color.main_fg },
-				
+			textColor = color.main_fg },
+			
 			Button:New{
-                caption = "Resign and spectate",
-                OnMouseUp = { function()
-						spSendCommands{"spectator"}
-						screen0:RemoveChild(window_exit)
-						exitWindowVisible = false
-					end, }, 
-				height=exit_menu_btn_height, 
+				caption = "Resign and spectate",
+				OnMouseUp = { function()
+					spSendCommands{"spectator"}
+					screen0:RemoveChild(window_exit)
+					exitWindowVisible = false
+				end, },
+				height=exit_menu_btn_height,
 				width=exit_menu_btn_width,
-                x = exit_menu_width/2 - exit_menu_btn_width/2, 
-                y = 24*exit_menu_height/64 - exit_menu_btn_height/2, 
+				x = exit_menu_width/2 - exit_menu_btn_width/2,
+				y = 24*exit_menu_height/64 - exit_menu_btn_height/2,
 			},
 			
 			
 			Button:New{
 				caption = "Exit game", OnMouseUp = { function() spSendCommands{"quit","quitforce"} end, },
-				height=exit_menu_btn_height, 
-				width=exit_menu_btn_width,
-                x = exit_menu_width/2 - exit_menu_btn_width/2,  
-                y = 36*exit_menu_height/64 - exit_menu_btn_height/2,
+				height=exit_menu_btn_height,
+				width=exit_menu_btn_width - 20,
+				x = exit_menu_width/2 - (exit_menu_btn_width - 20)/2,
+				y = 36*exit_menu_height/64 - exit_menu_btn_height/2,
 			},
 			
 			Button:New{
-				caption = "Cancel", 
-				OnMouseUp = { function() 
-						screen0:RemoveChild(window_exit) 
-						exitWindowVisible = false
-					end, }, 
-			
-				height=exit_menu_cancel_height, 
+				caption = "Cancel",
+				OnMouseUp = { function()
+					screen0:RemoveChild(window_exit)
+					exitWindowVisible = false
+				end, },
+				
+				height=exit_menu_cancel_height,
 				width=exit_menu_cancel_width,
-                x = 4*exit_menu_width/8, -- exit_menu_cancel_width,
-                y = 58*exit_menu_height/64 - exit_menu_cancel_height/2,
+				x = 4*exit_menu_width/8, -- exit_menu_cancel_width,
+				y = 58*exit_menu_height/64 - exit_menu_cancel_height/2,
 			},
 		},
 	}
 	
 	screen0:RemoveChild(window_exit)
-		
+	
 	window_crude = Window:New{
 		name='epicmenubar',
-		right = 0,  
-		y = 50, -- resbar height
-		dockable = true,
+		right = 0,
+		y = 20, -- resbar height
 		clientWidth = crude_width,
 		clientHeight = crude_height,
-		draggable = false,
-		tweakDraggable = true,
-		resizable = false,
-		minimizable = false,
-		backgroundColor = color.main_bg,
-		color = {1,1,1,0.5},
 		margin = {0,0,0,0},
 		padding = {0,0,0,0},
 		
@@ -1543,10 +1531,10 @@ local function MakeMenuBar()
 				itemMargin = {1,1,1,1},
 				autoArrangeV = false,
 				autoArrangeH = false,
-						
+				
 				children = {
 					--GAME LOGO GOES HERE
-					Image:New{ tooltip = title_text, file = title_image, height=B_HEIGHT, width=B_HEIGHT, },
+					-- Image:New{ tooltip = title_text, file = title_image, height=B_HEIGHT, width=B_HEIGHT, },
 					
 					-- odd-number button width keeps image centered
 					Button:New{
@@ -1558,13 +1546,13 @@ local function MakeMenuBar()
 					},
 					Button:New{
 						caption = "", OnMouseUp = { function() MakeSubWindow('Settings') end, }, textColor=color.menu_fg, height=B_HEIGHT+4, width=B_HEIGHT+5,
-						padding = btn_padding, margin = btn_margin,	tooltip = 'General Settings...', 
+						padding = btn_padding, margin = btn_margin,	tooltip = 'General Settings...',
 						children = {
 							Image:New{ tooltip = 'Settings', file=LUAUI_DIRNAME .. 'Images/epicmenu/settings.png', height=B_HEIGHT-2,width=B_HEIGHT-2, },
 						},
 					},
 					Button:New{
-						caption = "", OnMouseUp = { function() spSendCommands{"luaui tweakgui"} end, }, textColor=color.menu_fg, height=B_HEIGHT+4, width=B_HEIGHT+5, 
+						caption = "", OnMouseUp = { function() spSendCommands{"luaui tweakgui"} end, }, textColor=color.menu_fg, height=B_HEIGHT+4, width=B_HEIGHT+5,
 						padding = btn_padding, margin = btn_margin, tooltip = "Move and resize parts of the user interface (\255\0\255\0Ctrl+F11\008) (Hit ESC to exit)",
 						children = {
 							Image:New{ file=LUAUI_DIRNAME .. 'Images/epicmenu/move.png', height=B_HEIGHT-2,width=B_HEIGHT-2, },
@@ -1606,98 +1594,46 @@ local function MakeMenuBar()
 								trackColor = color.main_fg,
 								value = settings.music_volume or 0.5,
 								prevValue = settings.music_volume or 0.5,
-								OnChange = { 
-									function(self)	
-										if (WG.music_start_volume or 0 > 0) then 
-											Spring.SetSoundStreamVolume(self.value / WG.music_start_volume) 
-										else 
-											Spring.SetSoundStreamVolume(self.value) 
-										end 
+								OnChange = {
+									function(self)
+										if (WG.music_start_volume or 0 > 0) then
+											Spring.SetSoundStreamVolume(self.value / WG.music_start_volume)
+											else
+											Spring.SetSoundStreamVolume(self.value)
+										end
 										settings.music_volume = self.value
 										WG.music_volume = self.value
-										if (self.prevValue > 0 and self.value <=0) then widgetHandler:DisableWidget("Music Player") end 
-										if (self.prevValue <=0 and self.value > 0) then widgetHandler:EnableWidget("Music Player") end 
+										if (self.prevValue > 0 and self.value <=0) then widgetHandler:DisableWidget("Music Player") end
+										if (self.prevValue <=0 and self.value > 0) then widgetHandler:EnableWidget("Music Player") end
 										self.prevValue = self.value
-									end	
+									end
 								},
 							},
 						},
-					
-					},
-
-					
-					Grid:New{
-						orientation = 'horizontal',
-						columns = 2,
-						rows = 2,
-						width = 120,
-						height = '100%',
-						--height = 40,
-						resizeItems = true,
-						autoArrangeV = true,
-						autoArrangeH = true,
-						padding = {0,0,0,0},
-						itemPadding = {0,0,0,0},
-						itemMargin = {0,0,0,0},
 						
-						children = {
-							
-							lbl_fps,
-							StackPanel:New{
-								orientation = 'horizontal',
-								width = 60,
-								height = '100%',
-								resizeItems = false,
-								autoArrangeV = false,
-								autoArrangeH = false,
-								padding = {0,0,0,0},
-								itemMargin = {2,0,0,0},
-								children = {
-									Image:New{ file= LUAUI_DIRNAME .. 'Images/epicmenu/game.png', width = 20,height = 20,  },
-									lbl_gtime,
-								},
-							},
-							
-							
-							img_flag,
-							StackPanel:New{
-								orientation = 'horizontal',
-								width = 60,
-								height = '100%',
-								resizeItems = false,
-								autoArrangeV = false,
-								autoArrangeH = false,
-								padding = {0,0,0,0},
-								itemMargin = {2,0,0,0},
-								children = {
-									Image:New{ file= LUAUI_DIRNAME .. 'Images/clock.png', width = 20,height = 20,  },
-									lbl_clock,
-								},
-							},
-							
-						},
 					},
 					
+
 					Button:New{
 						caption = "", OnMouseUp = { function() MakeSubWindow('Help') end, }, textColor=color.menu_fg, height=B_HEIGHT+4, width=B_HEIGHT+5,
-						padding = btn_padding, margin = btn_margin, tooltip = 'Help...', 
+						padding = btn_padding, margin = btn_margin, tooltip = 'Help...',
 						children = {
 							Image:New{ file=LUAUI_DIRNAME .. 'Images/epicmenu/questionmark.png', height=B_HEIGHT-2,width=B_HEIGHT-2,  },
 						},
 					},
 					Button:New{
-						caption = "", OnMouseUp = { function() 
-								if not exitWindowVisible then
-									screen0:AddChild(window_exit) 
-									exitWindowVisible = true
-								end
-							end, }, 
+						caption = "", OnMouseUp = { function()
+							if not exitWindowVisible then
+								screen0:AddChild(window_exit)
+								exitWindowVisible = true
+							end
+						end, },
 						textColor=color.menu_fg, height=B_HEIGHT+4, width=B_HEIGHT+5,
 						padding = btn_padding, margin = btn_margin, tooltip = 'Exit or Resign...',
 						children = {
-							Image:New{file=LUAUI_DIRNAME .. 'Images/epicmenu/quit.png', height=B_HEIGHT-2,width=B_HEIGHT-2,  }, 
+							Image:New{file=LUAUI_DIRNAME .. 'Images/epicmenu/quit.png', height=B_HEIGHT-2,width=B_HEIGHT-2,  },
 						},
-					},	
+					},
 				}
 			}
 		}
@@ -1709,7 +1645,7 @@ end
 RemakeEpicMenu = function()
 	local lastPath = curPath
 	KillSubWindow()
-	if lastPath ~= '' then	
+	if lastPath ~= '' then
 		MakeSubWindow(lastPath)
 	end
 end
@@ -1741,7 +1677,7 @@ function widget:Initialize()
 	Spring.SendCommands("unbindaction hotbind")
 	Spring.SendCommands("unbindaction hotunbind")
 	
-
+	
 	-- setup Chili
 	Chili = WG.Chili
 	Button = Chili.Button
@@ -1759,7 +1695,7 @@ function widget:Initialize()
 	Progressbar = Chili.Progressbar
 	Colorbars = Chili.Colorbars
 	screen0 = Chili.Screen0
-
+	
 	
 	
 	widget:ViewResize(Spring.GetViewGeometry())
@@ -1784,28 +1720,28 @@ function widget:Initialize()
 	end
 	
 	if not settings.country or settings.country == 'wut' then
-		myCountry = select(8, Spring.GetPlayerInfo( Spring.GetLocalPlayerID() ) ) 
+		myCountry = select(8, Spring.GetPlayerInfo( Spring.GetLocalPlayerID() ) )
 		if not myCountry or myCountry == '' then
 			myCountry = 'wut'
 		end
 		settings.country = myCountry
 	end
 	
-	WG.country = settings.country	
+	WG.country = settings.country
 	WG.lang = settings.lang
 	
-		-- add custom widget settings to crudemenu
+	-- add custom widget settings to crudemenu
 	AddAllCustSettings()
 	
-
+	
 	--this is done to establish order the correct button order
 	AddOption('Settings/Reset Settings')
 	AddOption('Settings/Camera')
-	AddOption('Settings/Graphics')	
+	AddOption('Settings/Graphics')
 	AddOption('Settings/Interface')
 	AddOption('Settings/Interface/Mouse Cursor')
 	AddOption('Settings/Misc')
-
+	
 	-- Add pre-configured button/options found in epicmenu config file
 	local options_temp ={}
 	CopyTable(options_temp , epic_options);
@@ -1834,9 +1770,9 @@ function widget:Initialize()
 		settings.keybounditems = {}
 		
 		for _,option in pairs(alloptions) do
-		    if option.orig_hotkey then
-			  AssignKeyBind(option.orig_hotkey, option.path, option, false)
-		    end
+			if option.orig_hotkey then
+				AssignKeyBind(option.orig_hotkey, option.path, option, false)
+			end
 		end
 		
 		echo 'Reset all hotkeys to default.'
@@ -1852,10 +1788,10 @@ function widget:Initialize()
 	})
 	Spring.SendCommands("bind esc crudemenu")
 	Spring.SendCommands("bind shift+esc exitwindow")
-
+	
 	MakeMenuBar()
 	
-	-- Override widgethandler functions for the purposes of alerting crudemenu 
+	-- Override widgethandler functions for the purposes of alerting crudemenu
 	-- when widgets are loaded, unloaded or toggled
 	widgetHandler.OriginalInsertWidget = widgetHandler.InsertWidget
 	widgetHandler.InsertWidget = function(self, widget)
@@ -1896,7 +1832,7 @@ function widget:Initialize()
 		local w = widgetHandler:FindWidget(name)
 		if w then
 			checkWidget(w)
-		else
+			else
 			checkWidget(name)
 		end
 		return ret
@@ -1909,7 +1845,7 @@ function widget:Shutdown()
 	if widgetHandler.OriginalRemoveWidget then
 		widgetHandler.InsertWidget = widgetHandler.OriginalInsertWidget
 		widgetHandler.OriginalInsertWidget = nil
-
+		
 		widgetHandler.RemoveWidget = widgetHandler.OriginalRemoveWidget
 		widgetHandler.OriginalRemoveWidget = nil
 		
@@ -1917,24 +1853,24 @@ function widget:Shutdown()
 		widgetHandler.OriginalToggleWidget = nil
 	end
 	
-
-  if window_crude then
-    screen0:RemoveChild(window_crude)
-  end
-  if window_sub_cur then
-    screen0:RemoveChild(window_sub_cur)
-  end
-
-  RemoveAction("crudemenu")
- 
-  -- restore key binds
-  --[[
-  Spring.SendCommands({
-    "bind esc quitmessage",
-    "bind esc quitmenu", -- FIXME made for licho, removed after 0.82 release
-  })
-  --]]
-  Spring.SendCommands("unbind esc crudemenu")
+	
+	if window_crude then
+		screen0:RemoveChild(window_crude)
+	end
+	if window_sub_cur then
+		screen0:RemoveChild(window_sub_cur)
+	end
+	
+	RemoveAction("crudemenu")
+	
+	-- restore key binds
+	--[[
+		Spring.SendCommands({
+		"bind esc quitmessage",
+		"bind esc quitmenu", -- FIXME made for licho, removed after 0.82 release
+		})
+	--]]
+	Spring.SendCommands("unbind esc crudemenu")
 end
 
 function widget:GetConfigData()
@@ -1972,8 +1908,8 @@ end
 
 
 function widget:KeyPress(key, modifier, isRepeat)
-	if key == KEYSYMS.LCTRL 
-		or key == KEYSYMS.RCTRL 
+	if key == KEYSYMS.LCTRL
+		or key == KEYSYMS.RCTRL
 		or key == KEYSYMS.LALT
 		or key == KEYSYMS.RALT
 		or key == KEYSYMS.LSHIFT
@@ -1986,22 +1922,22 @@ function widget:KeyPress(key, modifier, isRepeat)
 		return
 	end
 	
-	local modstring = 
-		(modifier.alt and 'A+' or '') ..
-		(modifier.ctrl and 'C+' or '') ..
-		(modifier.meta and 'M+' or '') ..
-		(modifier.shift and 'S+' or '')
+	local modstring =
+	(modifier.alt and 'A+' or '') ..
+	(modifier.ctrl and 'C+' or '') ..
+	(modifier.meta and 'M+' or '') ..
+	(modifier.shift and 'S+' or '')
 	
-	--Set a keybinding 
+	--Set a keybinding
 	if get_key then
 		get_key = false
 		window_getkey:Dispose()
 		translatedkey = transkey[ keysyms[''..key]:lower() ] or keysyms[''..key]:lower()
-		local hotkey = { key = translatedkey, mod = modstring, }		
+		local hotkey = { key = translatedkey, mod = modstring, }
 		
-		if key ~= KEYSYMS.ESCAPE then		
+		if key ~= KEYSYMS.ESCAPE then
 			AssignKeyBind(hotkey, kb_path, kb_option, true) -- param4 = verbose
-		else
+			else
 			local actionName = GetActionName(kb_path, kb_option)
 			echo( 'Unbound hotkeys from action: ' .. actionName )
 		end
@@ -2017,12 +1953,12 @@ end
 
 function ActionExitWindow()
 	if exitWindowVisible then
-		screen0:RemoveChild(window_exit) 
+		screen0:RemoveChild(window_exit)
 		exitWindowVisible = false
-	else
-		screen0:AddChild(window_exit) 
+		else
+		screen0:AddChild(window_exit)
 		exitWindowVisible = true
-	end						
+	end
 end
 
 function ActionMenu()
@@ -2031,7 +1967,7 @@ function ActionMenu()
 end
 
 function WG.crude.ShowMenu() --// allow other widget to toggle-up Epic-Menu. This'll enable access to game settings' Menu via click on other GUI elements.
-	if not settings.show_crudemenu then 
+	if not settings.show_crudemenu then
 		settings.show_crudemenu = true
 		ShowHideCrudeMenu()
 	end

@@ -825,20 +825,20 @@ function widget:Initialize()
 		bottom = 0,
 		right = 5,
 		height = inputsize,
-		backgroundColor = options.color_background.value,
-		--backgroundColor = {1,1,1,1},
+		backgroundColor = {0,0,0,0},
+		borderColor = {0,0,0,0},
 	}
 	
+	local inputspace = WG.Chili.Line:New{parent = window_console, bottom = inputsize - 5, width = "100%"}
+	
 	scrollpanel1 = WG.Chili.ScrollPanel:New{
-		--margin = {5,5,5,5},
-		padding = { 5, 5, 5, 5 },
+		padding = {0,0,0,0},
 		x = 0,
 		y = 0,
 		width = '100%',
+		borderColor = {0,0,0,0},
 		bottom = inputsize + 2, -- This line is temporary until chili is fixed so that ReshapeConsole() works both times! -- TODO is it still required??
 		verticalSmartScroll = true,
--- DISABLED FOR CLICKABLE TextBox		disableChildrenHitTest = true,
-		backgroundColor = options.color_background.value,
 		noMouseWheel = not options.mousewheel.value,
 		children = {
 			stack_console,
@@ -846,37 +846,17 @@ function widget:Initialize()
 	}
 	
 	window_console = WG.Chili.Window:New{  
-		margin = { 0, 0, 0, 0 },
-		padding = { 0, 0, 0, 0 },
-		dockable = true,
+		padding = {5,8,8,2},
 		name = "Chat",
-		y = 0,
-		right = 425, -- epic/resbar width
+		y = 20,
+		right = 350, -- epic/resbar width
 		width  = screenWidth * 0.30,
-		height = screenHeight * 0.20,
-		--parent = screen0,
-		--visible = false,
-		--backgroundColor = settings.col_bg,
-		draggable = false,
-		resizable = false,
-		tweakDraggable = true,
-		tweakResizable = true,
-		minimizable = true,
-        selfImplementedMinimizable = 
-            function (show)
-                if show then
-                    showConsole()
-                else
-                    hideConsole()
-                end
-            end,
+		height = inputsize,
+		draggable = true,
 		minWidth = MIN_WIDTH,
-		minHeight = MIN_HEIGHT,
-		color = { 0, 0, 0, 0 },
-		children = {
-			scrollpanel1,
-			inputspace,
-		},
+		children = {inputspace,},
+		OnMouseOver = {function(obj) obj:Resize(screenWidth * 0.30,screenHeight * 0.20); obj:AddChild(scrollpanel1); end},
+		OnMouseOut = {function(obj) obj:Resize(screenWidth * 0.30,inputsize); obj:RemoveChild(scrollpanel1); end},
 		OnMouseDown = {
 			function(self) --//click on scroll bar shortcut to "Settings/Interface/Chat/Console".
 				local _,_, meta,_ = Spring.GetModKeyState()

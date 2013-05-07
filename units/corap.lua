@@ -13,8 +13,8 @@ return {
 		buildtime = 7180,
 		canmove = true,
 		category = "ALL PLANT NOTLAND NOWEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
-		collisionvolumeoffsets = "0 12 -2",
-		collisionvolumescales = "123 31 85",
+		collisionvolumeoffsets = "0 -14 -23",
+		collisionvolumescales = "110 33 50",
 		collisionvolumetest = 1,
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
@@ -32,7 +32,7 @@ return {
 		maxwaterdepth = 0,
 		metalstorage = 100,
 		name = "Aircraft Plant",
-		objectname = "CORAP.s3o",
+		objectname = "CORAP",
 		radardistance = 510,
 		radaremitheight = 40,
 		seismicsignature = 0,
@@ -49,10 +49,6 @@ return {
 			[4] = "corshad",
 			[5] = "corvalk",
 			[6] = "bladew",
-		},
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
 		},
 		featuredefs = {
 			dead = {
@@ -72,7 +68,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 540,
-				object = "CORAP_DEAD.s3o",
+				object = "CORAP_DEAD",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
@@ -89,15 +85,10 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 216,
-				object = "cor6X6B.s3o",
+				object = "6X6B",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
-			},
-		},
-		sfxtypes = {
-			explosiongenerators = {
-				[1] = "custom:YellowLight",
 			},
 		},
 		sounds = {

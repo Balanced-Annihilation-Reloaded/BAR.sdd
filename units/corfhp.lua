@@ -24,7 +24,7 @@ return {
 		metalstorage = 200,
 		minwaterdepth = 30,
 		name = "Floating Hovercraft Platform",
-		objectname = "CORFHP.s3o",
+		objectname = "CORFHP",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
@@ -42,10 +42,6 @@ return {
 			[6] = "nsaclash",
 			[7] = "corthovr",
 		},
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = false,
@@ -62,7 +58,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 715,
-				object = "CORFHP_DEAD.s3o",
+				object = "CORFHP_DEAD",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

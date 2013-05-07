@@ -30,17 +30,12 @@ return {
 		maxslope = 20,
 		maxwaterdepth = 0,
 		name = "Moho Geothermal Powerplant",
-		objectname = "CMGEO.s3o",
-		script = "cmgeo.lua",
+		objectname = "CMGEO",
 		seismicsignature = 0,
 		selfdestructas = "NUCLEAR_MISSILE",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooo ooooooo oGGoooo oGGoooo ooooooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
-		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

@@ -4,15 +4,24 @@
 #include "exptype.h"
 
 piece  flarea, barrelb1, barrelb2, barrelb3, base, guna, turreta, turretb,
-       flareb1, flareb2, flareb3, wake, sleeveb1, sleeveb2, sleeveb3, sleevea, barrela1, barrela2, barrela3;
+       flareb1, flareb2, flareb3, wake1, wake2, sleeveb, ground;
 
-static-var  gun_2, bAiming, restore_delay, gun_1, Static_Var_7, Static_Var_8, aimDir;
+static-var  gun_2, bAiming, restore_delay, gun_1, Static_Var_7, Static_Var_8, aimDir, oldHead;
 
 // Signal definitions
 #define SIG_AIM_2			2
 #define SIG_AIM				4
 #define SIG_MOVE			8
 
+
+SetDirection(heading)
+{
+	var spd;
+	spd = (get ABS(oldHead) - get ABS(heading)) / 2;
+	turn ground to y-axis heading speed spd;
+	turn base to y-axis 0-heading speed spd;
+	oldHead = heading;
+}
 
 RockOnWaves()
 {
@@ -24,8 +33,8 @@ RockOnWaves()
 		while( get ABS(rockAng) < <1.11> )
 		{
 			rockSpeed = <1.25> - get ABS(rockAng);
-			turn base to x-axis rockAng speed rockSpeed*2;
-			wait-for-turn base around x-axis;
+			turn ground to x-axis rockAng speed rockSpeed*2;
+			wait-for-turn ground around x-axis;
 			rockAng = rockAng + rockDir;
 		}
 		rockDir = 0 - rockDir;
@@ -125,9 +134,7 @@ RestoreAfterDelay()
 	sleep restore_delay;
 	set-signal-mask 0;
 	turn turretb to y-axis <0.000000> speed <55.000000>;
-	turn sleeveb1 to x-axis <0.000000> speed <30.000000>;
-	turn sleeveb2 to x-axis <0.000000> speed <30.000000>;
-	turn sleeveb3 to x-axis <0.000000> speed <30.000000>;
+	turn turretb to x-axis <0.000000> speed <30.000000>;
 }
 
 RestoreSecondary()
@@ -158,8 +165,8 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from wake;
-		
+		emit-sfx 2 from wake1;
+		emit-sfx 2 from wake2;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 12000 / waketime;
@@ -188,13 +195,9 @@ AimPrimary(heading, pitch)
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
 	turn turretb to y-axis heading speed <55.000000>;
-	turn sleeveb1 to x-axis <0.000000> - pitch speed <30.000000>;
-	turn sleeveb2 to x-axis <0.000000> - pitch speed <30.000000>;
-	turn sleeveb3 to x-axis <0.000000> - pitch speed <30.000000>;
+	turn turretb to x-axis <0.000000> - pitch speed <30.000000>;
 	wait-for-turn turretb around y-axis;
-	wait-for-turn sleeveb1 around x-axis;
-	wait-for-turn sleeveb2 around x-axis;
-	wait-for-turn sleeveb3 around x-axis;
+	wait-for-turn turretb around x-axis;
 	aimDir = heading;
 	while( gun_1 )
 	{
@@ -237,21 +240,27 @@ FirePrimary()
 	start-script RockZ(-13, aimDir);
 	if( bAiming == 0 )
 	{
+		show flareb1;
 		move barrelb1 to z-axis [-2.500000] now;
 		sleep 150;
+		hide flareb1;
 		move barrelb1 to z-axis [0.000000] speed [1.000000];
 	}
 	else if( bAiming == 1 )
 	{
+		show flareb2;
 		move barrelb2 to z-axis [-2.500000] now;
 		sleep 150;
+		hide flareb2;
 		move barrelb2 to z-axis [0.000000] speed [1.000000];
 	}
 	else if( bAiming == 2 )
 	{
 		gun_1 = 1;
+		show flareb3;
 		move barrelb3 to z-axis [-2.500000] now;
 		sleep 150;
+		hide flareb3;
 		move barrelb3 to z-axis [0.000000] speed [1.000000];
 	}
 	++bAiming;
@@ -300,10 +309,11 @@ Killed(severity, corpsetype)
 		explode flareb2 type BITMAPONLY | BITMAP2;
 		explode flareb3 type BITMAPONLY | BITMAP3;
 		explode guna type BITMAPONLY | BITMAP4;
-		explode sleeveb1 type BITMAPONLY | BITMAP5;
+		explode sleeveb type BITMAPONLY | BITMAP5;
 		explode turreta type BITMAPONLY | BITMAP1;
 		explode turretb type BITMAPONLY | BITMAP2;
-		explode wake type BITMAPONLY | BITMAP3;
+		explode wake1 type BITMAPONLY | BITMAP3;
+		explode wake2 type BITMAPONLY | BITMAP4;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -318,10 +328,11 @@ Killed(severity, corpsetype)
 		explode flareb2 type FALL | BITMAP2;
 		explode flareb3 type FALL | BITMAP3;
 		explode guna type FALL | BITMAP4;
-		explode sleeveb1 type SHATTER | BITMAP5;
+		explode sleeveb type SHATTER | BITMAP5;
 		explode turreta type BITMAPONLY | BITMAP1;
 		explode turretb type BITMAPONLY | BITMAP2;
-		explode wake type FALL | BITMAP3;
+		explode wake1 type FALL | BITMAP3;
+		explode wake2 type FALL | BITMAP4;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -336,10 +347,11 @@ Killed(severity, corpsetype)
 		explode flareb2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		explode flareb3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		explode guna type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode sleeveb1 type SHATTER | BITMAP5;
+		explode sleeveb type SHATTER | BITMAP5;
 		explode turreta type BITMAPONLY | BITMAP1;
 		explode turretb type BITMAPONLY | BITMAP2;
-		explode wake type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	corpsetype = 3;
@@ -352,8 +364,9 @@ Killed(severity, corpsetype)
 	explode flareb2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 	explode flareb3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 	explode guna type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode sleeveb1 type SHATTER | EXPLODE_ON_HIT | BITMAP5;
+	explode sleeveb type SHATTER | EXPLODE_ON_HIT | BITMAP5;
 	explode turreta type BITMAPONLY | BITMAP1;
 	explode turretb type BITMAPONLY | BITMAP2;
-	explode wake type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 }

@@ -8,6 +8,20 @@ local moveDatas = {
 		maxslope = 36,
 		maxwaterdepth = 5000,
 		maxwaterslope = 50,
+		
+	},
+	AKBOTBOMB2 = {
+		crushstrength = 50,
+		depthmod = 0,
+		footprintx = 2,
+		footprintz = 2,
+		maxslope = 36,
+		maxwaterdepth = 5000,
+		maxwaterslope = 50,
+		depthModParams = {
+			constantCoeff = 1.5,
+		},
+		
 	},
 	ATANK3 = {
 		crushstrength = 30,
@@ -149,6 +163,12 @@ local moveDatas = {
 		maxslope = 18,
 		maxwaterdepth = 22,
 	},
+	TKBOT2 = {
+		crushstrength = 15,
+		footprintx = 2,
+		footprintz = 2,
+		maxwaterdepth = 22,
+	},
 	TKBOT3 = {
 		crushstrength = 15,
 		footprintx = 3,
@@ -191,31 +211,13 @@ local moveDatas = {
 		subMarine = 1,
 	},
 	]]--
-	--Chickens
-	CHICKQUEEN =
-	{
-		footprintx=7;
-		footprintz=7;
-		maxwaterdepth=72;
-		maxslope=40;
-		crushstrength=15000;
+	NANO = {
+		crushstrength = 0,
+		footprintx = 3,
+		footprintz = 3,
+		maxslope = 18,
+		maxwaterdepth = 0,
 	},
-	CHICKENHKBOT3 =
-	{
-		footprintx=3;
-		footprintz=3;
-		maxwaterdepth=22;
-		maxslope=36;
-		crushstrength=1400;
-	},
-	CHICKENHKBOT4 =
-	{
-		footprintx=4;
-		footprintz=4;
-		maxwaterdepth=22;
-		maxslope=36;
-		crushstrength=11000;
-},
 }
 
 --------------------------------------------------------------------------------

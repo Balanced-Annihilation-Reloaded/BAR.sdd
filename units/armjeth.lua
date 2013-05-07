@@ -9,6 +9,10 @@ return {
 		buildtime = 1831,
 		canmove = true,
 		category = "KBOT MOBILE WEAPON ALL NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
+		collisionvolumescales		= [[22.337184906006 33.337184906006 17.337184906006]],
+		collisionvolumeoffsets	= [[0 0 2]],
+		collisionvolumetest	    = 1,
+		collisionvolumetype	    = [[box]],
 		corpse = "DEAD",
 		description = "Amphibious Anti-air Kbot",
 		energymake = 0.40000000596046,
@@ -28,7 +32,6 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 377,
-		smoothanim = true,
 		turnrate = 1118,
 		upright = true,
 		featuredefs = {

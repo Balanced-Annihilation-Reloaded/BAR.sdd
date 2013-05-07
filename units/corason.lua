@@ -32,7 +32,7 @@ return {
 		maxslope = 10,
 		minwaterdepth = 24,
 		name = "Advanced Sonar Station",
-		objectname = "CORASON.s3o",
+		objectname = "CORASON",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
@@ -40,10 +40,6 @@ return {
 		sonardistance = 2400,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = false,
@@ -59,7 +55,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 99,
-				object = "CORASON_DEAD.s3o",
+				object = "CORASON_DEAD",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

@@ -28,16 +28,12 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Catalyst",
-		objectname = "CORTRON.s3o",
+		objectname = "CORTRON",
 		seismicsignature = 0,
 		selfdestructas = "NUCLEAR_MISSILE",
 		sightdistance = 455,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = true,
@@ -55,7 +51,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 445,
-				object = "CORTRON_DEAD.s3o",
+				object = "CORTRON_DEAD",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
@@ -72,7 +68,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 178,
-				object = "cor3X3A.s3o",
+				object = "3X3A",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
@@ -102,6 +98,8 @@ return {
 		weapondefs = {
 			cortron_weapon = {
 				areaofeffect = 512,
+				avoidfriendly = false,
+				collidefriendly = false,
 				commandfire = true,
 				craterboost = 4,
 				cratermult = 1.75,
@@ -113,7 +111,7 @@ return {
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
 				metalpershot = 550,
-				model = "cortronmissile.s3o",
+				model = "empmisl",
 				name = "TacticalNuke",
 				noselfdamage = true,
 				range = 3000,

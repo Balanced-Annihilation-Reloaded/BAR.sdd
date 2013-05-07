@@ -8,7 +8,7 @@ return {
 		builder = true,
 		buildinggrounddecaldecayspeed = 30,
 		buildinggrounddecalsizex = 8,
-		buildinggrounddecalsizey = 9,
+		buildinggrounddecalsizey = 7,
 		buildinggrounddecaltype = "armavp_aoplane.dds",
 		buildpic = "ARMAVP.DDS",
 		buildtime = 17940,
@@ -23,7 +23,7 @@ return {
 		energystorage = 200,
 		explodeas = "LARGE_BUILDINGEX",
 		footprintx = 7,
-		footprintz = 8,
+		footprintz = 6,
 		icontype = "building",
 		idleautoheal = 5,
 		idletime = 1800,
@@ -33,7 +33,7 @@ return {
 		maxwaterdepth = 0,
 		metalstorage = 200,
 		name = "Advanced Vehicle Plant",
-		objectname = "ARMAVP.s3o",
+		objectname = "ARMAVP",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
@@ -41,7 +41,7 @@ return {
 		terraformspeed = 1000,
 		usebuildinggrounddecal = true,
 		workertime = 300,
-		yardmap = "oooooooooooooooooooooooooooooocccoooocccoooocccoooocccoo",
+		yardmap = "occcccoocccccoocccccoocccccoocccccooccccco",
 		buildoptions = {
 			[10] = "armyork",
 			[11] = "armseer",
@@ -55,10 +55,6 @@ return {
 			[7] = "armmart",
 			[8] = "armmerl",
 			[9] = "armmanni",
-		},
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

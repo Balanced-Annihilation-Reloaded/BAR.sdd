@@ -1,24 +1,11 @@
-//            * Header Info *
-// VersionSignature                     4
-// NumberOfScripts                     17
-// NumberOfPieces                      17
-// LengthOfScripts                     355
-// NumberOfStaticVars                  4
-// UKZero                              0
-// OffsetToScriptCodeIndexArray        d80
-// OffsetToScriptNameOffsetArray       dc4
-// OffsetToPieceNameOffsetArray        e08
-// OffsetToScriptCode                  2c
-// OffsetToNameArray                   e4c
-
-// OffsetToFirstName                   e4c
-
 #define TA			// This is a TA script
 
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, flare;
+piece  base, globetop, globebottom, collar, gear, clamp1, clamp2, clamp3,
+       clamp4, clamp5, clamp6, tower, emit1, emit2, emit3, emit4,
+       flare1;
 
 static-var  gun_1, restore_delay, statechg_DesiredState, statechg_StateChanging;
 
@@ -26,171 +13,264 @@ static-var  gun_1, restore_delay, statechg_DesiredState, statechg_StateChanging;
 #define SIG_AIM				2
 
 
+Activatescr()
+{
+	emit-sfx 257 from emit1;
+	emit-sfx 257 from emit2;
+	emit-sfx 257 from emit1;
+	emit-sfx 257 from emit3;
+	emit-sfx 257 from emit2;
+	emit-sfx 257 from emit4;
+	emit-sfx 257 from emit3;
+	emit-sfx 257 from emit4;
+	emit-sfx 257 from emit1;
+	emit-sfx 257 from emit3;
+	emit-sfx 257 from emit2;
+	emit-sfx 257 from emit4;
+	sleep 250;
+	spin globetop around y-axis speed <85.016484>;
+	spin gear around y-axis speed <-165.038462>;
+	spin collar around y-axis speed <-65.005495>;
+	sleep 250;
+	emit-sfx 257 from emit1;
+	emit-sfx 257 from emit2;
+	emit-sfx 257 from emit1;
+	emit-sfx 257 from emit3;
+	emit-sfx 257 from emit2;
+	emit-sfx 257 from emit4;
+	emit-sfx 257 from emit3;
+	emit-sfx 257 from emit4;
+	emit-sfx 257 from emit1;
+	emit-sfx 257 from emit3;
+	emit-sfx 257 from emit2;
+	emit-sfx 257 from emit4;
+	sleep 250;
+}
+
+deactivatescr()
+{
+	emit-sfx 257 from emit1;
+	emit-sfx 257 from emit2;
+	emit-sfx 257 from emit3;
+	emit-sfx 257 from emit4;
+	sleep 250;
+	spin globetop around y-axis speed <25.005495>;
+	spin gear around y-axis speed <15.000000>;
+	spin collar around y-axis speed <15.000000>;
+	emit-sfx 257 from emit1;
+	emit-sfx 257 from emit2;
+	emit-sfx 257 from emit3;
+	emit-sfx 257 from emit4;
+	sleep 40;
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
-/*    e7:*/{
-/*    ea:*/	while( get BUILD_PERCENT_LEFT )
-/*    ec:*/	{
-/*    ee:*/		sleep 400;
-/*    f1:*/	}
-/*    f3:*/	while( TRUE )
-/*    f5:*/	{
-/*    f8:*/		healthpercent = get HEALTH;
-/*    ff:*/		if( healthpercent < 66 )
-/*   101:*/		{
-/*   106:*/			smoketype = 256 | 2;
-/*   110:*/			if( Rand( 1, 66 ) < healthpercent )
-/*   112:*/			{
-/*   117:*/				smoketype = 256 | 1;
-/*   119:*/			}
-/*   11b:*/			emit-sfx smoketype from base;
-/*   11d:*/		}
-/*   122:*/		sleeptime = healthpercent * 50;
-/*   129:*/		if( sleeptime < 200 )
-/*   12b:*/		{
-/*   12d:*/			sleeptime = 200;
-/*   12f:*/		}
-/*   131:*/		sleep sleeptime;
-/*   134:*/	}
-/*   136:*/	return (0);
-/*   137:*/}
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	while( TRUE )
+	{
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
+	}
+}
+
+NanoEmit()
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	while( TRUE )
+	{
+		emit-sfx 1024 from tower;
+		sleep 1200;
+	}
+}
 
 Go()
-/*   137:*/{
-/*   13c:*/	gun_1 = flare;
-/*   140:*/	return (0);
-/*   141:*/}
+{
+	call-script Activatescr();
+	gun_1 = globetop;
+}
 
 Stop()
-/*   141:*/{
-/*   143:*/	gun_1 = base;
-/*   14d:*/	return (0);
-/*   14e:*/}
+{
+	gun_1 = base;
+	sleep 4000;
+	call-script deactivatescr();
+}
 
 InitState()
-/*   14e:*/{
-/*   150:*/	statechg_DesiredState = TRUE;
-/*   154:*/	statechg_StateChanging = FALSE;
-/*   158:*/	return (0);
-/*   159:*/}
+{
+	statechg_DesiredState = TRUE;
+	statechg_StateChanging = FALSE;
+}
 
 RequestState(requestedstate, currentstate)
-/*   15b:*/{
-/*   15d:*/	if( statechg_StateChanging )
-/*   15f:*/	{
-/*   161:*/		statechg_DesiredState = requestedstate;
-/*   165:*/		return (0);
-/*   166:*/	}
-/*   168:*/	statechg_StateChanging = TRUE;
-/*   16c:*/	currentstate = statechg_DesiredState;
-/*   170:*/	statechg_DesiredState = requestedstate;
-/*   177:*/	while( statechg_DesiredState != currentstate )
-/*   179:*/	{
-/*   17e:*/		if( statechg_DesiredState == 0 )
-/*   180:*/		{
-/*   180:*/			call-script Go();
-/*   185:*/			currentstate = 0;
-/*   187:*/		}
-/*   18c:*/		if( statechg_DesiredState == 1 )
-/*   18e:*/		{
-/*   18e:*/			call-script Stop();
-/*   193:*/			currentstate = 1;
-/*   195:*/		}
-/*   197:*/	}
-/*   199:*/	statechg_StateChanging = FALSE;
-/*   19d:*/	return (0);
-/*   19e:*/}
+{
+	if( statechg_StateChanging )
+	{
+		statechg_DesiredState = requestedstate;
+		return (0);
+	}
+	statechg_StateChanging = TRUE;
+	currentstate = statechg_DesiredState;
+	statechg_DesiredState = requestedstate;
+	while( statechg_DesiredState != currentstate )
+	{
+		if( statechg_DesiredState == 0 )
+		{
+			call-script Go();
+			currentstate = 0;
+		}
+		if( statechg_DesiredState == 1 )
+		{
+			call-script Stop();
+			currentstate = 1;
+		}
+	}
+	statechg_StateChanging = FALSE;
+}
 
 Create()
-/*   19e:*/{
-/*   1a0:*/	gun_1 = base;
-/*   1a2:*/	hide flare;
-/*   1c6:*/	restore_delay = 300;
-/*   1c8:*/	start-script SmokeUnit();
-/*   1cb:*/	call-script InitState();
-/*   1d0:*/	return (0);
-/*   1d1:*/}
+{
+	gun_1 = base;
+	hide flare1;
+	dont-cache globetop;
+	dont-cache globebottom;
+	dont-cache collar;
+	dont-cache gear;
+	dont-cache clamp1;
+	dont-cache clamp2;
+	dont-cache clamp3;
+	dont-cache clamp4;
+	dont-cache clamp5;
+	dont-cache clamp6;
+	dont-shade collar;
+	dont-shade gear;
+	dont-shade globetop;
+	dont-shade globebottom;
+	dont-shade tower;
+	dont-shade base;
+	restore_delay = 3000;
+	start-script SmokeUnit();
+	start-script NanoEmit();
+	call-script InitState();
+}
 
 Activate()
-/*   1d1:*/{
-/*   1d3:*/	start-script RequestState(0);
-/*   1d8:*/	return (0);
-/*   1d9:*/}
+{
+	start-script RequestState(0);
+}
 
 Deactivate()
-/*   1d9:*/{
-/*   1db:*/	start-script RequestState(1);
-/*   1e0:*/	return (0);
-/*   1e1:*/}
+{
+	start-script RequestState(1);
+}
 
 SetMaxReloadTime(Func_Var_1)
-/*   1e2:*/{
-/*   1e7:*/	restore_delay = Func_Var_1 * 2;
-/*   1eb:*/	return (0);
-/*   1ec:*/}
+{
+	restore_delay = Func_Var_1 * 2;
+}
 
 RestoreAfterDelay()
-/*   1ec:*/{
-/*   1ee:*/	sleep restore_delay;
-/*   1f1:*/	set-signal-mask 0;
-/*   1f4:*/	start-script RequestState(1);
-/*   1f9:*/	return (0);
-/*   1fa:*/}
+{
+	sleep restore_delay;
+	set-signal-mask 0;
+	start-script RequestState(1);
+}
 
 AimPrimary(heading, pitch)
-/*   1fc:*/{
-/*   1fe:*/	start-script RequestState(0);
-/*   203:*/	signal SIG_AIM;
-/*   206:*/	set-signal-mask SIG_AIM;
-/*   20a:*/	while( !gun_1 )
-/*   20c:*/	{
-/*   20e:*/		sleep 250;
-/*   211:*/	}
-/*   211:*/	start-script RestoreAfterDelay();
-/*   216:*/	return (1);
-/*   217:*/}
+{
+	start-script RequestState(0);
+	signal SIG_AIM;
+	set-signal-mask SIG_AIM;
+	while( !gun_1 )
+	{
+		sleep 250;
+	}
+	start-script RestoreAfterDelay();
+	return (1);
+}
 
 FirePrimary()
-/*   217:*/{
-/*   21c:*/	explode flare type BITMAPONLY | BITMAP5;
-/*   220:*/	gun_1 = base;
-/*   224:*/	start-script RequestState(1);
-/*   229:*/	return (0);
-/*   22a:*/}
+{
+	explode flare1 type BITMAPONLY | BITMAP5;
+	gun_1 = base;
+	start-script RequestState(1);
+}
 
 QueryPrimary(piecenum)
-/*   22b:*/{
-/*   22d:*/	piecenum = flare;
-/*   231:*/	return (0);
-/*   232:*/}
+{
+	piecenum = flare1;
+}
 
 SweetSpot(piecenum)
-/*   233:*/{
-/*   235:*/	piecenum = flare;
-/*   239:*/	return (0);
-/*   23a:*/}
+{
+	piecenum = flare1;
+}
 
 Killed(severity, corpsetype)
-/*   23c:*/{
-/*   241:*/	if( severity <= 25 )
-/*   243:*/	{
-/*   245:*/		corpsetype = 1;
-/*   24c:*/		explode base type BITMAPONLY | BITMAP1;
-/*   26c:*/		return (0);
-/*   26d:*/	}
-/*   272:*/	if( severity <= 50 )
-/*   274:*/	{
-/*   276:*/		corpsetype = 2;
-/*   27d:*/		explode base type BITMAPONLY | BITMAP1;
-/*   29d:*/		return (0);
-/*   29e:*/	}
-/*   2a3:*/	if( severity <= 99 )
-/*   2a5:*/	{
-/*   2a7:*/		corpsetype = 3;
-/*   2ae:*/		explode base type BITMAPONLY | BITMAP1;
-/*   2f6:*/		return (0);
-/*   2f7:*/	}
-/*   2f9:*/	corpsetype = 3;
-/*   300:*/	explode base type BITMAPONLY | BITMAP1;
-/*   354:*/	return (0);
-/*   355:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1;
+		explode base type BITMAPONLY | BITMAP1;
+		explode collar type BITMAPONLY | BITMAP2;
+		explode gear type BITMAPONLY | BITMAP3;
+		explode globetop type BITMAPONLY | BITMAP2;
+		explode tower type BITMAPONLY | BITMAP5;
+		return (0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2;
+		explode base type BITMAPONLY | BITMAP1;
+		explode collar type BITMAPONLY | BITMAP2;
+		explode gear type BITMAPONLY | BITMAP3;
+		explode globetop type BITMAPONLY | BITMAP2;
+		explode tower type BITMAPONLY | BITMAP5;
+		return (0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3;
+		explode base type BITMAPONLY | BITMAP1;
+		explode collar type BITMAPONLY | BITMAP2;
+		explode gear type BITMAPONLY | BITMAP3;
+		explode globetop type BITMAPONLY | BITMAP1;
+		explode tower type BITMAPONLY | BITMAP5;
+		explode emit1 type FALL | SMOKE | BITMAP5;
+		explode emit2 type FALL | SMOKE | BITMAP5;
+		explode emit3 type FALL | SMOKE | BITMAP5;
+		explode emit4 type FALL | SMOKE | BITMAP5;
+		return (0);
+	}
+	corpsetype = 3;
+	explode base type BITMAPONLY | BITMAP1;
+	explode collar type BITMAPONLY | BITMAP2;
+	explode gear type BITMAPONLY | BITMAP3;
+	explode globetop type BITMAPONLY | BITMAP1;
+	explode tower type BITMAPONLY | BITMAP5;
+	explode emit1 type SHATTER | SMOKE | FIRE | BITMAP5;
+	explode emit2 type SHATTER | SMOKE | FIRE | BITMAP5;
+	explode emit3 type SHATTER | SMOKE | FIRE | BITMAP5;
+	explode emit4 type SHATTER | SMOKE | FIRE | BITMAP5;
+}

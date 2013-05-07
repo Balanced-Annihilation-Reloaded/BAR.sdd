@@ -7,7 +7,11 @@ return {
 		buildpic = "ARMFLEA.DDS",
 		buildtime = 789,
 		canmove = true,
-		category = "KBOT MOBILE WEAPON ALL NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
+		category = "KBOT MOBILE WEAPON ALL NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE GROUNDSCOUT",
+		collisionvolumeoffsets = "0 1 2",
+		collisionvolumescales = "16 17 22",
+		collisionvolumetype = "Box",
+		collisionvolumetest = 1,
 		corpse = "DEAD",
 		description = "Fast Scout Kbot",
 		energymake = 0.40000000596046,
@@ -29,7 +33,6 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "FLEA_EX",
 		sightdistance = 550,
-		smoothanim = true,
 		turnrate = 1672,
 		featuredefs = {
 			dead = {
@@ -112,7 +115,6 @@ return {
 				range = 140,
 				reloadtime = 0.60000002384186,
 				rgbcolor = "1 1 0",
-				soundhit = "lasrhit2",
 				soundstart = "lasrfir1",
 				soundtrigger = true,
 				targetmoveerror = 0.10000000149012,

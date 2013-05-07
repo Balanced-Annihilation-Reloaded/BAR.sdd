@@ -31,16 +31,12 @@ return {
 		maxslope = 20,
 		maxwaterdepth = 0,
 		name = "Geothermal Powerplant",
-		objectname = "ARMGEO.s3o",
+		objectname = "ARMGEO",
 		seismicsignature = 0,
 		selfdestructas = "ESTOR_BUILDING",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
 		yardmap = "oooo oGGo oGGo oooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = true,

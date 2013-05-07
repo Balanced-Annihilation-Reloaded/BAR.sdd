@@ -10,6 +10,10 @@ return {
 		canattack = false,
 		canmove = true,
 		category = "KBOT MOBILE ALL NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
+		collisionvolumeoffsets = "0 0 2",
+		collisionvolumescales = "26 24 16",
+		collisionvolumetest = 1,
+		collisionvolumetype = "box",
 		corpse = "dead",
 		description = "Radar Kbot",
 		energymake = 8,
@@ -30,7 +34,6 @@ return {
 		radardistance = 2200,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 900,
-		smoothanim = true,
 		sonardistance = 0,
 		turnrate = 505,
 		featuredefs = {

@@ -157,7 +157,6 @@
          	startSize = 2;
          	sizeExpansion = 0.6;
          	size = 10;
-         	sizeGrowth = 4;
 
          	pos = r-3 r3, r-3 r3, r-3 r3;
          	speed=0, 1 r2.3, 0;
@@ -333,7 +332,6 @@
          	startSize = 1;
          	sizeExpansion = 0.6;
          	size = 4;
-         	sizeGrowth = 1;
 
          	pos = r-3 r3, 7, r-3 r3;
          	speed=0, 1 r2.3, 0;
@@ -421,7 +419,6 @@
          	startSize = 1;
          	sizeExpansion = 0.6;
          	size = 4;
-         	sizeGrowth = 1;
 
          	pos = r-3 r3, 7, r-3 r3;
          	speed=0, 1 r2.3, 0;
@@ -523,7 +520,6 @@
          	startSize = 1;
          	sizeExpansion = 0.6;
          	size = 4;
-         	sizeGrowth = 1;
 
          	pos = r-3 r3, r-3 r3, r-3 r3;
          	speed=0, 1 r2.3, 0;
@@ -2100,13 +2096,12 @@
 		{
 			pos=0, -1.5, 0;
 			speed=0 r1, 1.5 r1, 0 r1;
-			heat=25;
+			heat=30;
 			maxheat=30;
-			heatfalloff=2;
+			heatfalloff=5;
 			size=10;
-			sizegrowth=-0.05;
+			sizegrowth=-0.01;
 			useAirLos=0;
-			//texture=pyroflame;
 		}
 		air=1;
 		ground=1;
@@ -2119,7 +2114,6 @@
 		{
 			agespeed=0.03;
 			size=2;
-			sizegrowth=2;
 			pos=0, 1, 0;
 			speed=0,1.75,0;
 			useAirLos=0;
@@ -2225,9 +2219,9 @@
 		flashsize=256;
 		flashalpha=1.2;
 		circlegrowth=7;
-		circlealpha=3;
-		ttl=35;
-		color=0.9,0.9,0;
+		circlealpha=0.2;
+		ttl=20;
+		color=0.0,0.6,0.6;
 	}
 	usedefaultexplosions=0;
 	air=1;

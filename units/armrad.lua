@@ -33,7 +33,7 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Radar Tower",
-		objectname = "ARMRAD.s3o",
+		objectname = "ARMRAD",
 		onoffable = true,
 		radardistance = 2100,
 		radaremitheight = 66,
@@ -43,10 +43,6 @@ return {
 		usebuildinggrounddecal = true,
 		usepiececollisionvolumes = 1,
 		yardmap = "oooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = true,

@@ -29,16 +29,12 @@ return {
 		mincloakdistance = 72,
 		name = "Pack0",
 		nochasecategory = "ALL",
-		objectname = "PACKO.s3o",
+		objectname = "PACKO",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 375,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = true,
@@ -73,7 +69,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 110,
-				object = "cor3X3B.s3o",
+				object = "3X3B",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

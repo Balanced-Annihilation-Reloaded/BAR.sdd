@@ -26,7 +26,7 @@ return {
 		nochasecategory = "NOTAIR",
 		objectname = "ARMSFIG",
 		seismicsignature = 0,
-		selfdestructas = "BIG_UNIT",
+		selfdestructas = "SMALL_UNIT_AIR",
 		sightdistance = 200,
 		turnrate = 1625,
 		sounds = {
@@ -92,9 +92,9 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badtargetcategory = "NOTAIR",
+				badTargetCategory = "NOTAIR",
 				def = "ARMSFIG_WEAPON",
-				onlytargetcategory = "NOTSUB",
+				onlyTargetCategory = "NOTSUB",
 			},
 		},
 	},

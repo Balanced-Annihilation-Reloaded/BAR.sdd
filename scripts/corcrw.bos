@@ -3,25 +3,16 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turretl, sleevel, barrell, flarel, turretr, sleever, barrelr, flarer, 
-       turretf, sleevef, barrelf, flaref, thrustrr, thrustrl, thrustfr, thrustfl, 
-       thrustrra, thrustrla, thrustfra, thrustfla;
-       
+piece  base, body, ring, Turret1, Turret2, Turret3, bladestop, bladesbottom,
+       wing1, wing2, wing3, wing2top, wing3top, sphere1, sphere2, sphere3,
+       flash1, flash2, flash3, engine, thrust;
 
-static-var  restore_delay, v1;
+static-var  restore_delay;
 
 // Signal definitions
 #define SIG_AIM				4
 #define SIG_AIM_2			8
 #define SIG_AIM_3			16
-#define MIN 131 // get
-#define MAX 132 // get
-#define ABS 133 // get
-#define GAME_FRAME 134 // get
-#define KSIN 135 // get (kiloSine : 1024*sin(x))
-#define KCOS 136 // get (kiloCosine : 1024*cos(x))
-#define KTAN 137 // get (kiloTangent : 1024*tan(x))
-#define SQRT 138 // get (square root)
 
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
@@ -55,6 +46,9 @@ Create()
 {
 	start-script SmokeUnit();
 	sleep 1500;
+	hide flash1;
+	hide flash2;
+	hide flash3;
 }
 
 SweetSpot(piecenum)
@@ -64,17 +58,17 @@ SweetSpot(piecenum)
 
 QueryPrimary(piecenum)
 {
-	piecenum = flaref;
+	piecenum = flash1;
 }
 
 QuerySecondary(piecenum)
 {
-	piecenum = flarel;
+	piecenum = flash2;
 }
 
 QueryTertiary(piecenum)
 {
-	piecenum = flarer;
+	piecenum = flash3;
 }
 
 SetMaxReloadTime(Func_Var_1)
@@ -87,52 +81,34 @@ RestoreAfterDelay()
 	sleep restore_delay;
 	turn base to y-axis <0.000000> speed <250.000000>;
 	turn base to x-axis <0.000000> speed <250.000000>;
-	turn turretf to z-axis <0> speed <250>;
-	turn sleevef to x-axis <0> speed <250>;
-	
-	turn turretl to x-axis <0> speed <250>;
-	turn sleevel to z-axis <0> speed <250>;
-	
-	turn turretr to x-axis <0> speed <250>;
-	turn sleever to z-axis <0> speed <250>;
+	turn body to y-axis <0.000000> speed <150.000000>;
+	turn body to x-axis <0.000000> speed <150.000000>;
 }
 
 StartMoving()
 {
+	spin bladestop around y-axis speed <600.357143> accelerate <50.005495>;
+	spin bladesbottom around y-axis speed <-600.357143> accelerate <50.005495>;
+	turn wing2top to z-axis <90.016484> speed <30.000000>;
+	turn wing3top to z-axis <-90.016484> speed <30.000000>;
 	sleep 1000;
 }
 
 StopMoving()
 {
+	stop-spin bladestop around y-axis decelerate <20.005495>;
+	stop-spin bladesbottom around y-axis decelerate <20.005495>;
+	turn wing2top to z-axis <0.000000> speed <30.000000>;
+	turn wing3top to z-axis <0.000000> speed <30.000000>;
 }
 
 AimPrimary(heading, pitch)
 {
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
-	
-	
-	var p;
-	var h;
-	var a;
-	p = get KTAN(pitch);
-	h = get KTAN(heading);
-	a= get ATAN(p*h,1000000);
-	turn turretf to z-axis a speed <2000.000000>;
-	
-	var x;
-	p = get KCOS(pitch);
-	h = get KCOS(heading);
-	x= p*h;
-	a= get SQRT(1000000-x*x);
-	a=a/x;
-	
-	a=get ATAN(a,1000);
-	
-	turn sleevef to x-axis <0>-  a speed <2000.000000>;
-	wait-for-turn turretf around z-axis;
-	wait-for-turn sleevef around x-axis;
-	start-script RestoreAfterDelay();
+	turn Turret1 to y-axis heading speed <200.000000>;
+	turn Turret1 to x-axis heading speed <200.000000>;
+	wait-for-turn Turret1 around y-axis;
 	return (1);
 }
 
@@ -140,9 +116,9 @@ AimSecondary(heading, pitch)
 {
 	signal SIG_AIM_2;
 	set-signal-mask SIG_AIM_2;
-	turn turretl to x-axis <0> - pitch speed <200.000000>;
-	turn sleevel to z-axis heading speed <200.000000>;
-	wait-for-turn turretl around x-axis;
+	turn Turret2 to x-axis heading speed <200.000000>;
+	turn Turret2 to y-axis heading speed <200.000000>;
+	wait-for-turn Turret2 around x-axis;
 	return (1);
 }
 
@@ -150,25 +126,31 @@ AimTertiary(heading, pitch)
 {
 	signal SIG_AIM_3;
 	set-signal-mask SIG_AIM_3;
-	turn turretr to x-axis heading speed <200.000000>;
-	turn sleever to z-axis <0> - pitch speed <200.000000>;
-	wait-for-turn turretr around x-axis;
+	turn Turret3 to x-axis heading speed <200.000000>;
+	turn Turret3 to y-axis heading speed <200.000000>;
+	wait-for-turn Turret3 around x-axis;
 	return (1);
 }
 
 FirePrimary()
 {
+	show flash1;
 	sleep 100;
+	hide flash1;
 }
 
 FireSecondary()
 {
+	show flash2;
 	sleep 100;
+	hide flash2;
 }
 
 FireTertiary()
 {
+	show flash3;
 	sleep 100;
+	hide flash3;
 }
 
 Killed(severity, corpsetype)
@@ -177,28 +159,36 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 3;
 		explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode turretl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode sleevel type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode barrell type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode turretr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode sleever type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode barrelr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustrr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustrl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode ring type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode wing1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode wing2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode wing3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode sphere1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode sphere2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode sphere3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode wing2top type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode wing3top type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode Turret1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode Turret2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode Turret3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode bladestop type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+		explode bladesbottom type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
 		return (0);
 	}
 	corpsetype = 3;
-		explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode turretl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode sleevel type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode barrell type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode turretr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode sleever type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode barrelr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustrr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustrl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode ring type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode wing1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode wing2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode wing3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode sphere1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode sphere2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode sphere3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode wing2top type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode wing3top type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode Turret1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode Turret2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode Turret3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode bladestop type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	explode bladesbottom type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
 }

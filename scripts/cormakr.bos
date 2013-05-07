@@ -3,10 +3,9 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base;
+piece  base, glow, plug;
 
-static-var  Static_Var_1;
-
+#define WHAT_DO 1024
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
@@ -35,39 +34,61 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	}
 }
 
+Go()
+{
+	dont-cache glow;
+	turn plug to z-axis <0.000000> speed <50.005495>;
+	wait-for-turn plug around z-axis;
+	cache plug;
+}
+
+Stop()
+{
+	cache plug;
+	turn plug to z-axis <180.038462> speed <50.005495>;
+	wait-for-turn plug around z-axis;
+	cache plug;
+	cache glow;
+}
+
+
+static-var  mmState;
 ImAMetalMaker()
 {
 	while( get BUILD_PERCENT_LEFT )
 	{
 		sleep 150;
 	}
-	Static_Var_1 = -1;
+	mmState = -1;
 	while( TRUE )
 	{
-		if( get UNKNOWN_UNIT_VALUE(1024) == 1 )
+		if ((get WHAT_DO) == 1)
 		{
-			if( Static_Var_1 != 1 )
-			{
-			set ACTIVATION to 1;
-			Static_Var_1 = 1;
+			if (mmState != 1) {
+				call-script Go();
+				mmState = 1;
 			}
 		}
-		else if( Static_Var_1 != 0 )
+		else
 		{
-			set ACTIVATION to 0;
-			Static_Var_1 = 0;
+			if (mmState != 0) {
+				call-script Stop();
+				mmState = 0;
+			}
 		}
-		sleep 10;
+		sleep 1000;
 	}
 }
 
 Create()
 {
-
-	call-script ImAMetalMaker();
+	dont-shade plug;
+	dont-shade glow;
+	dont-cache glow;
 	start-script SmokeUnit();
-
+	start-script ImAMetalMaker();
 }
+
 SweetSpot(piecenum)
 {
 	piecenum = base;
@@ -79,20 +100,28 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
+		explode glow type BITMAPONLY | BITMAP2;
+		explode plug type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
+		explode glow type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode plug type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
+		explode glow type SHATTER | BITMAP2;
+		explode plug type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
+	explode glow type SHATTER | EXPLODE_ON_HIT | BITMAP2;
+	explode plug type BITMAPONLY | BITMAP3;
 }

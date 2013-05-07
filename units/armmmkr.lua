@@ -25,16 +25,12 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Moho Energy Converter",
-		objectname = "ARMMMKR.s3o",
+		objectname = "ARMMMKR",
 		seismicsignature = 0,
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = true,

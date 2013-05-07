@@ -29,17 +29,13 @@ return {
 		maxwaterdepth = 0,
 		mincloakdistance = 35,
 		name = "Sneaky Pete",
-		objectname = "ARMJAMT.s3o",
+		objectname = "ARMJAMT",
 		onoffable = true,
 		radardistancejam = 500,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 195,
 		yardmap = "oooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = true,

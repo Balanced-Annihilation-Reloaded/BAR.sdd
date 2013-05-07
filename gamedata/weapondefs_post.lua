@@ -104,7 +104,7 @@ local inertialessWeapons = {
 	LightningCannon = true,
 }
 
-local modOptions = Spring.GetModOptions()
+-- local modOptions = Spring.GetModOptions() -- this crashes the mission editor and is not actually used here.
 
 -- Adjustment of terrain damage, kinetic force of weapons, avoidfeature==false for short range and explosive weapons, and add water hit sounds
 for id in pairs(WeaponDefs) do
@@ -119,19 +119,24 @@ for id in pairs(WeaponDefs) do
 			local AoE = tonumber(WeaponDefs[id].areaofeffect) or 0
 			if AoE<50 then
 				WeaponDefs[id].soundhitwet = "splshbig"
+				WeaponDefs[id].soundhitwetvolume = 0.5
 			elseif AoE<88 then
 				WeaponDefs[id].soundhitwet = "splssml"
+				WeaponDefs[id].soundhitwetvolume = 0.5
 			elseif AoE<145 then
 				WeaponDefs[id].soundhitwet = "splsmed"
+				WeaponDefs[id].soundhitwetvolume = 0.5
 			elseif AoE>450 then
 				WeaponDefs[id].soundhitwet = WeaponDefs[id].soundhitdry
 			else
 				WeaponDefs[id].soundhitwet = "splslrg"
+				WeaponDefs[id].soundhitwetvolume = 0.5
 			end
 		end
 	else
-		WeaponDefs[id].soundhitwet = "sizzle"		
-	end	
+		WeaponDefs[id].soundhitwet = "sizzle"
+		WeaponDefs[id].soundhitwetvolume = 0.5
+	end
 	if inertialessWeapons[WeaponDefs[id].weapontype] then
 		WeaponDefs[id].impulseboost = 0
 		WeaponDefs[id].impulsefactor = 0

@@ -5,8 +5,8 @@
 
 #define SIG_BUILD		4	
 
-piece  torso, pelvis, lthigh, rthigh, rleg, lleg, beamhinge,
-       rfoot, lfoot, beamcase, nano;
+piece  torso, nanospray2, pelvis, lthigh, rthigh, rleg, lleg, gunclamp,
+       rfoot, lfoot, guncover, nanogun, nozzle, ground;
 
 static-var  notBuilding, bMoving, moveSpeed, currentSpeed,
 			statechg_DesiredState, statechg_StateChanging;
@@ -16,175 +16,176 @@ walk()
 {
 	if( bMoving )
 	{
-		move pelvis to y-axis [-0.100000] speed [1.500000];
+		move pelvis to y-axis [-0.100000] speed [1.192771] *  currentSpeed / 100;
 		move lthigh to y-axis [0.000000] now;
 		move rthigh to y-axis [0.000000] now;
 		move rleg to y-axis [0.000000] now;
 		move lleg to y-axis [0.000000] now;
-		turn lthigh to x-axis <-44.291209> speed <664.368135>;
-		turn rthigh to x-axis <12.291209> speed <184.368135>;
-		turn rleg to x-axis <17.571429> speed <263.571435>;
-		turn rfoot to x-axis <-24.956044> speed <374.340660>;
-		turn lleg to x-axis <36.203297> speed <543.049455>;
-		turn lfoot to x-axis <2.445055> speed <36.675825>;
+		move gunclamp to y-axis [0.000000] now;
+		turn lthigh to x-axis <-44.291209> speed <528.292734> *  currentSpeed / 100;
+		turn rthigh to x-axis <12.291209> speed <146.605987> *  currentSpeed / 100;
+		turn rleg to x-axis <17.571429> speed <209.586924> *  currentSpeed / 100;
+		turn rfoot to x-axis <-24.956044> speed <297.668477> *  currentSpeed / 100;
+		turn lleg to x-axis <36.203297> speed <431.822458> *  currentSpeed / 100;
+		turn lfoot to x-axis <2.445055> speed <29.163909> *  currentSpeed / 100;
 		sleep 4700 / currentSpeed;
 	}
 	if( bMoving )
 	{
-		move pelvis to y-axis [-0.250000] speed [2.250000];
-		turn lthigh to x-axis <-46.758242> speed <37.005495>;
-		turn rthigh to x-axis <20.390110> speed <121.483515>;
-		turn rfoot to x-axis <-31.280220> speed <94.862640>;
-		turn lleg to x-axis <20.390110> speed <237.197805>;
-		turn lfoot to x-axis <14.401099> speed <179.340660>;
+		move pelvis to y-axis [-0.250000] speed [1.789157] *  currentSpeed / 100;
+		turn lthigh to x-axis <-46.758242> speed <29.426056> *  currentSpeed / 100;
+		turn rthigh to x-axis <20.390110> speed <96.601349> *  currentSpeed / 100;
+		turn rfoot to x-axis <-31.280220> speed <75.432943> *  currentSpeed / 100;
+		turn lleg to x-axis <20.390110> speed <188.615122> *  currentSpeed / 100;
+		turn lfoot to x-axis <14.401099> speed <142.608236> *  currentSpeed / 100;
 		sleep 4700 / currentSpeed;
 	}
 	if( bMoving )
 	{
-		move pelvis to y-axis [-0.400000] speed [2.250000];
-		turn lthigh to x-axis <-46.758242> speed <701.373630>;
-		turn rthigh to x-axis <30.582418> speed <152.884620>;
-		turn rleg to x-axis <22.137363> speed <68.489010>;
-		turn rfoot to x-axis <-34.456044> speed <47.637360>;
-		turn lleg to x-axis <3.505495> speed <253.269225>;
-		turn lfoot to x-axis <9.489011> speed <73.681320>;
+		move pelvis to y-axis [-0.400000] speed [1.789157] *  currentSpeed / 100;
+		turn lthigh to x-axis <-46.758242> now;
+		turn rthigh to x-axis <30.582418> speed <121.570903> *  currentSpeed / 100;
+		turn rleg to x-axis <22.137363> speed <54.461140> *  currentSpeed / 100;
+		turn rfoot to x-axis <-34.456044> speed <37.880310> *  currentSpeed / 100;
+		turn lleg to x-axis <3.505495> speed <201.394805> *  currentSpeed / 100;
+		turn lfoot to x-axis <9.489011> speed <58.589965> *  currentSpeed / 100;
 		sleep 4700 / currentSpeed;
 	}
 	if( bMoving )
 	{
-		move pelvis to y-axis [-0.500000] speed [1.000000];
-		turn lthigh to x-axis <-44.291209> speed <24.670330>;
-		turn rthigh to x-axis <43.236264> speed <126.538460>;
-		turn rleg to x-axis <20.027473> speed <21.098900>;
-		turn rfoot to x-axis <-42.538462> speed <80.824180>;
-		turn lleg to x-axis <44.291209> speed <407.857140>;
-		turn lfoot to x-axis <0.000000> speed <94.890110>;
+		move pelvis to y-axis [-0.500000] speed [0.853448] *  currentSpeed / 100;
+		turn lthigh to x-axis <-44.291209> speed <21.054851> *  currentSpeed / 100;
+		turn rthigh to x-axis <43.236264> speed <107.994031> *  currentSpeed / 100;
+		turn rleg to x-axis <20.027473> speed <18.006820> *  currentSpeed / 100;
+		turn rfoot to x-axis <-42.538462> speed <68.979257> *  currentSpeed / 100;
+		turn lleg to x-axis <44.291209> speed <348.084973> *  currentSpeed / 100;
+		turn lfoot to x-axis <0.000000> speed <80.983801> *  currentSpeed / 100;
 		sleep 8000 / currentSpeed;
 	}
 	if( bMoving )
 	{
-		move pelvis to y-axis [-0.400000] speed [1.500000];
-		turn lthigh to x-axis <-36.560440> speed <115.961535>;
-		turn rthigh to x-axis <24.956044> speed <274.203300>;
-		turn rleg to x-axis <49.214286> speed <437.802195>;
-		turn rfoot to x-axis <-54.148352> speed <174.148350>;
-		turn lleg to x-axis <44.291209> speed <664.368135>;
-		turn lfoot to x-axis <-8.769231> speed <131.538465>;
-		sleep 5300 / currentSpeed;
-	}
-	if( bMoving )
-	{
-		move pelvis to y-axis [-0.250000] speed [2.250000];
-		turn lthigh to x-axis <-27.071429> speed <142.335165>;
-		turn rthigh to x-axis <9.137363> speed <237.280215>;
-		turn rleg to x-axis <60.467033> speed <168.791205>;
-		turn rfoot to x-axis <-56.258242> speed <31.648350>;
+		move pelvis to y-axis [-0.400000] speed [1.192771] *  currentSpeed / 100;
+		turn lthigh to x-axis <-36.560440> speed <92.210377> *  currentSpeed / 100;
+		turn rthigh to x-axis <24.956044> speed <218.041178> *  currentSpeed / 100;
+		turn rleg to x-axis <49.214286> speed <348.131866> *  currentSpeed / 100;
+		turn rfoot to x-axis <-54.148352> speed <138.479411> *  currentSpeed / 100;
 		turn lleg to x-axis <44.291209> now;
-		turn lfoot to x-axis <-17.923077> speed <137.307690>;
-		sleep 4700 / currentSpeed;
-	}
-	if( bMoving )
-	{
-		move pelvis to y-axis [-0.900000] speed [9.750000];
-		turn lthigh to x-axis <-16.516484> speed <158.324175>;
-		turn rthigh to x-axis <0.000000> speed <137.060445>;
-		turn rleg to x-axis <60.115385> speed <5.274720>;
-		turn rfoot to x-axis <-47.467033> speed <131.868135>;
-		turn lleg to x-axis <33.038462> speed <168.791205>;
-		turn lfoot to x-axis <-16.516484> speed <21.098895>;
-		sleep 4700 / currentSpeed;
-	}
-	if( bMoving )
-	{
-		move pelvis to y-axis [0.000000] speed [13.500000];
-		turn lthigh to x-axis <-4.912088> speed <174.065940>;
-		turn rthigh to x-axis <-19.681319> speed <295.219785>;
-		turn rleg to x-axis <60.824176> speed <10.631865>;
-		turn rfoot to x-axis <-36.560440> speed <163.598895>;
-		turn lleg to x-axis <22.505495> speed <157.994505>;
-		turn lfoot to x-axis <-17.571429> speed <15.824175>;
-		sleep 4700 / currentSpeed;
-	}
-	if( bMoving )
-	{
-		move pelvis to y-axis [-0.100000] speed [1.500000];
-		turn lthigh to x-axis <4.912088> speed <147.362640>;
-		turn rthigh to x-axis <-46.401099> speed <400.796700>;
-		turn rfoot to x-axis <-19.681319> speed <253.186815>;
-		turn lleg to x-axis <23.203297> speed <10.467030>;
-		turn lfoot to x-axis <-25.313187> speed <116.126370>;
-		sleep 4700 / currentSpeed;
-	}
-	if( bMoving )
-	{
-		move pelvis to y-axis [-0.250000] speed [2.250000];
-		turn lthigh to x-axis <16.170330> speed <168.873630>;
-		turn rthigh to x-axis <-46.049451> speed <5.274720>;
-		turn rleg to x-axis <18.615385> speed <633.131865>;
-		turn rfoot to x-axis <13.000000> speed <490.219785>;
-		turn lleg to x-axis <22.505495> speed <10.467030>;
-		turn lfoot to x-axis <-34.456044> speed <137.142855>;
-		sleep 4700 / currentSpeed;
-	}
-	if( bMoving )
-	{
-		move pelvis to y-axis [-0.400000] speed [2.250000];
-		turn lthigh to x-axis <20.390110> speed <63.296700>;
-		turn rthigh to x-axis <-46.401099> speed <5.274720>;
-		turn rleg to x-axis <-8.423077> speed <405.576930>;
-		turn rfoot to x-axis <26.357143> speed <200.357145>;
-		turn lfoot to x-axis <-35.148352> speed <10.384620>;
-		sleep 4700 / currentSpeed;
-	}
-	if( bMoving )
-	{
-		move pelvis to y-axis [-0.500000] speed [1.000000];
-		turn lthigh to x-axis <23.203297> speed <28.131870>;
-		turn rthigh to x-axis <-45.005495> speed <13.956040>;
-		turn rleg to x-axis <46.049451> speed <544.725280>;
-		turn rfoot to x-axis <-1.390110> speed <277.472530>;
-		turn lleg to x-axis <37.615385> speed <151.098900>;
-		turn lfoot to x-axis <-43.593407> speed <84.450550>;
-		sleep 8000 / currentSpeed;
-	}
-	if( bMoving )
-	{
-		move pelvis to y-axis [-0.400000] speed [1.500000];
-		turn lthigh to x-axis <15.456044> speed <116.208795>;
-		turn rthigh to x-axis <-39.725275> speed <79.203300>;
-		turn rfoot to x-axis <-6.313187> speed <73.846155>;
-		turn lleg to x-axis <63.291209> speed <385.137360>;
-		turn lfoot to x-axis <-52.736264> speed <137.142855>;
+		turn lfoot to x-axis <-8.769231> speed <104.596852> *  currentSpeed / 100;
 		sleep 5300 / currentSpeed;
 	}
 	if( bMoving )
 	{
-		move pelvis to y-axis [-0.250000] speed [2.250000];
-		turn lthigh to x-axis <6.670330> speed <131.785710>;
-		turn rthigh to x-axis <-30.582418> speed <137.142855>;
-		turn rfoot to x-axis <-15.456044> speed <137.142855>;
-		turn lleg to x-axis <66.445055> speed <47.307690>;
-		turn lfoot to x-axis <-51.324176> speed <21.181320>;
+		move pelvis to y-axis [-0.250000] speed [1.789157] *  currentSpeed / 100;
+		turn lthigh to x-axis <-27.071429> speed <113.182179> *  currentSpeed / 100;
+		turn rthigh to x-axis <9.137363> speed <188.680653> *  currentSpeed / 100;
+		turn rleg to x-axis <60.467033> speed <134.219512> *  currentSpeed / 100;
+		turn rfoot to x-axis <-56.258242> speed <25.166158> *  currentSpeed / 100;
+		turn lleg to x-axis <44.291209> now;
+		turn lfoot to x-axis <-17.923077> speed <109.184428> *  currentSpeed / 100;
 		sleep 4700 / currentSpeed;
 	}
 	if( bMoving )
 	{
-		move pelvis to y-axis [-0.100000] speed [2.250000];
-		turn lthigh to x-axis <-2.445055> speed <136.730775>;
-		turn rthigh to x-axis <-20.027473> speed <158.324175>;
-		turn rleg to x-axis <41.835165> speed <63.214290>;
-		turn rfoot to x-axis <-21.791209> speed <95.027475>;
-		turn lleg to x-axis <66.802198> speed <5.357145>;
-		turn lfoot to x-axis <-55.901099> speed <68.653845>;
+		move pelvis to y-axis [-0.900000] speed [7.753012] *  currentSpeed / 100;
+		turn lthigh to x-axis <-16.516484> speed <125.896332> *  currentSpeed / 100;
+		turn rthigh to x-axis <0.000000> speed <108.987824> *  currentSpeed / 100;
+		turn rleg to x-axis <60.115385> speed <4.194356> *  currentSpeed / 100;
+		turn rfoot to x-axis <-47.467033> speed <104.858999> *  currentSpeed / 100;
+		turn lleg to x-axis <33.038462> speed <134.219512> *  currentSpeed / 100;
+		turn lfoot to x-axis <-16.516484> speed <16.777435> *  currentSpeed / 100;
 		sleep 4700 / currentSpeed;
 	}
-	move pelvis to y-axis [0.000000] speed [1.500000];
-	turn lthigh to x-axis <-18.626374> speed <242.719785>;
-	turn rthigh to x-axis <2.802198> speed <342.445065>;
-	turn rleg to x-axis <17.571429> speed <363.956040>;
-	turn rfoot to x-axis <-20.736264> speed <15.824175>;
-	turn lleg to x-axis <54.148352> speed <189.807690>;
-	turn lfoot to x-axis <-36.560440> speed <290.109885>;
+	if( bMoving )
+	{
+		move pelvis to y-axis [0.000000] speed [10.734940] *  currentSpeed / 100;
+		turn lthigh to x-axis <-4.912088> speed <138.413880> *  currentSpeed / 100;
+		turn rthigh to x-axis <-19.681319> speed <234.753082> *  currentSpeed / 100;
+		turn rleg to x-axis <60.824176> speed <8.454254> *  currentSpeed / 100;
+		turn rfoot to x-axis <-36.560440> speed <130.090688> *  currentSpeed / 100;
+		turn lleg to x-axis <22.505495> speed <125.634185> *  currentSpeed / 100;
+		turn lfoot to x-axis <-17.571429> speed <12.583079> *  currentSpeed / 100;
+		sleep 4700 / currentSpeed;
+	}
+	if( bMoving )
+	{
+		move pelvis to y-axis [-0.100000] speed [1.192771] *  currentSpeed / 100;
+		turn lthigh to x-axis <4.912088> speed <117.179931> *  currentSpeed / 100;
+		turn rthigh to x-axis <-46.401099> speed <318.705810> *  currentSpeed / 100;
+		turn rfoot to x-axis <-19.681319> speed <201.329275> *  currentSpeed / 100;
+		turn lleg to x-axis <23.203297> speed <8.323180> *  currentSpeed / 100;
+		turn lfoot to x-axis <-25.313187> speed <92.341451> *  currentSpeed / 100;
+		sleep 4700 / currentSpeed;
+	}
+	if( bMoving )
+	{
+		move pelvis to y-axis [-0.250000] speed [1.789157] *  currentSpeed / 100;
+		turn lthigh to x-axis <16.170330> speed <134.285055> *  currentSpeed / 100;
+		turn rthigh to x-axis <-46.049451> speed <4.194356> *  currentSpeed / 100;
+		turn rleg to x-axis <18.615385> speed <503.454254> *  currentSpeed / 100;
+		turn rfoot to x-axis <13.000000> speed <389.813323> *  currentSpeed / 100;
+		turn lleg to x-axis <22.505495> speed <8.323180> *  currentSpeed / 100;
+		turn lfoot to x-axis <-34.456044> speed <109.053355> *  currentSpeed / 100;
+		sleep 4700 / currentSpeed;
+	}
+	if( bMoving )
+	{
+		move pelvis to y-axis [-0.400000] speed [1.789157] *  currentSpeed / 100;
+		turn lthigh to x-axis <20.390110> speed <50.332316> *  currentSpeed / 100;
+		turn rthigh to x-axis <-46.401099> speed <4.194356> *  currentSpeed / 100;
+		turn rleg to x-axis <-8.423077> speed <322.506956> *  currentSpeed / 100;
+		turn rfoot to x-axis <26.357143> speed <159.320139> *  currentSpeed / 100;
+		turn lfoot to x-axis <-35.148352> speed <8.257650> *  currentSpeed / 100;
+		sleep 4700 / currentSpeed;
+	}
+	if( bMoving )
+	{
+		move pelvis to y-axis [-0.500000] speed [0.853448] *  currentSpeed / 100;
+		turn lthigh to x-axis <23.203297> speed <24.009096> *  currentSpeed / 100;
+		turn rthigh to x-axis <-45.005495> speed <11.910758> *  currentSpeed / 100;
+		turn rleg to x-axis <46.049451> speed <464.894851> *  currentSpeed / 100;
+		turn rfoot to x-axis <-1.390110> speed <236.808452> *  currentSpeed / 100;
+		turn lleg to x-axis <37.615385> speed <128.955096> *  currentSpeed / 100;
+		turn lfoot to x-axis <-43.593407> speed <72.074176> *  currentSpeed / 100;
+		sleep 8000 / currentSpeed;
+	}
+	if( bMoving )
+	{
+		move pelvis to y-axis [-0.400000] speed [1.192771] *  currentSpeed / 100;
+		turn lthigh to x-axis <15.456044> speed <92.406994> *  currentSpeed / 100;
+		turn rthigh to x-axis <-39.725275> speed <62.980937> *  currentSpeed / 100;
+		turn rfoot to x-axis <-6.313187> speed <58.721039> *  currentSpeed / 100;
+		turn lleg to x-axis <63.291209> speed <306.253804> *  currentSpeed / 100;
+		turn lfoot to x-axis <-52.736264> speed <109.053355> *  currentSpeed / 100;
+		sleep 5300 / currentSpeed;
+	}
+	if( bMoving )
+	{
+		move pelvis to y-axis [-0.250000] speed [1.789157] *  currentSpeed / 100;
+		turn lthigh to x-axis <6.670330> speed <104.793456> *  currentSpeed / 100;
+		turn rthigh to x-axis <-30.582418> speed <109.053355> *  currentSpeed / 100;
+		turn rfoot to x-axis <-15.456044> speed <109.053355> *  currentSpeed / 100;
+		turn lleg to x-axis <66.445055> speed <37.618163> *  currentSpeed / 100;
+		turn lfoot to x-axis <-51.324176> speed <16.842977> *  currentSpeed / 100;
+		sleep 4700 / currentSpeed;
+	}
+	if( bMoving )
+	{
+		move pelvis to y-axis [-0.100000] speed [1.789157] *  currentSpeed / 100;
+		turn lthigh to x-axis <-2.445055> speed <108.725677> *  currentSpeed / 100;
+		turn rthigh to x-axis <-20.027473> speed <125.896332> *  currentSpeed / 100;
+		turn rleg to x-axis <41.835165> speed <50.266785> *  currentSpeed / 100;
+		turn rfoot to x-axis <-21.791209> speed <75.564016> *  currentSpeed / 100;
+		turn lleg to x-axis <66.802198> speed <4.259898> *  currentSpeed / 100;
+		turn lfoot to x-axis <-55.901099> speed <54.592214> *  currentSpeed / 100;
+		sleep 4700 / currentSpeed;
+	}
+	move pelvis to y-axis [0.000000] speed [1.192771] *  currentSpeed / 100;
+	turn lthigh to x-axis <-18.626374> speed <193.006094> *  currentSpeed / 100;
+	turn rthigh to x-axis <2.802198> speed <272.305714> *  currentSpeed / 100;
+	turn rleg to x-axis <17.571429> speed <289.410827> *  currentSpeed / 100;
+	turn rfoot to x-axis <-20.736264> speed <12.583079> *  currentSpeed / 100;
+	turn lleg to x-axis <54.148352> speed <150.931416> *  currentSpeed / 100;
+	turn lfoot to x-axis <-36.560440> speed <230.689788> *  currentSpeed / 100;
 	sleep 4700 / currentSpeed;
 }
 
@@ -256,27 +257,63 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 Go()
 {
-	turn beamcase to z-axis <-90> speed <180>;
-	wait-for-turn beamcase around z-axis;
-	
-	turn beamhinge to x-axis <90> speed <360>;
-	wait-for-turn beamhinge around x-axis;
+	move lthigh to y-axis [0.000000] now;
+	move rthigh to y-axis [0.000000] now;
+	move rleg to y-axis [0.000000] now;
+	move lleg to y-axis [0.000000] now;
+	move gunclamp to y-axis [0.000000] now;
+	move guncover to x-axis [0.000000] now;
+	move guncover to x-axis [-0.939990] speed [20.000000];
+	sleep 200;
+
+	turn nanogun to z-axis <-90.016484> speed <600.000000>;
+	sleep 200;
+
+	turn gunclamp to y-axis <90.016484> speed <600.000000>;
+	sleep 200;
+
+	turn gunclamp to x-axis <0.000000> speed <0.000000>;
+	turn nanogun to z-axis <-180.038462> speed <600.000000>;
+	sleep 200;
+
+	move nozzle to x-axis [-3.850000] speed [20.000000];
+	turn gunclamp to x-axis <0.000000> speed <0.000000>;
+	turn nanogun to z-axis <-180.038462> speed <0.000000>;
+	sleep 200;
 }
 
 Stop()
 {
 	set INBUILDSTANCE to 0;
-	
-	turn beamhinge to x-axis <0> speed <360>;
-	wait-for-turn beamhinge around x-axis;	
-
-	turn beamcase to z-axis <0> speed <180>;
-	wait-for-turn beamcase around z-axis;
-	
-
-	
-	turn torso to y-axis <0.000000> speed <160.000000>;
+	turn torso to y-axis <0.000000> speed <600.000000>;
 	wait-for-turn torso around y-axis;
+
+	move lthigh to y-axis [0.000000] now;
+	move rthigh to y-axis [0.000000] now;
+	move rleg to y-axis [0.000000] now;
+	move lleg to y-axis [0.000000] now;
+	move gunclamp to y-axis [0.000000] now;
+	move guncover to x-axis [-0.939990] speed [3.752379];
+	move nozzle to x-axis [-3.850000] now;
+	move nozzle to x-axis [0.000000] speed [20.000000];
+	turn gunclamp to x-axis <0.000000> now;
+	turn gunclamp to x-axis <0.000000> speed <0.000000>;
+	turn gunclamp to y-axis <90.016484> speed <359.339997>;
+	turn nanogun to z-axis <-180.038462> speed <718.701925>;
+	sleep 200;
+
+	turn gunclamp to x-axis <0.000000> speed <0.000000>;
+	turn nanogun to z-axis <-90.016484> speed <600.000000>;
+	sleep 200;
+
+	turn gunclamp to y-axis <0.000000> speed <600.000000>;
+	sleep 200;
+
+	turn nanogun to z-axis <0.000000> speed <600.000000>;
+	sleep 200;
+
+	move guncover to x-axis [0.000000] speed [20.000000];
+	sleep 200;
 }
 
 RequestState(requestedstate, currentstate)
@@ -360,7 +397,7 @@ StopMoving()
 
 QueryNanoPiece(piecenum)
 {
-	piecenum = nano;
+	piecenum = nanospray2;
 }
 
 /*
@@ -380,12 +417,15 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode beamhinge type BITMAPONLY | BITMAP2;
+		explode ground type BITMAPONLY | BITMAP1;
+		explode gunclamp type BITMAPONLY | BITMAP2;
+		explode guncover type BITMAPONLY | BITMAP3;
 		explode lfoot type BITMAPONLY | BITMAP4;
 		explode lleg type BITMAPONLY | BITMAP5;
 		explode lthigh type BITMAPONLY | BITMAP1;
-		explode beamcase type BITMAPONLY | BITMAP2;
-		explode nano type BITMAPONLY | BITMAP3;
+		explode nanogun type BITMAPONLY | BITMAP2;
+		explode nanospray2 type BITMAPONLY | BITMAP3;
+		explode nozzle type BITMAPONLY | BITMAP4;
 		explode pelvis type BITMAPONLY | BITMAP5;
 		explode rfoot type BITMAPONLY | BITMAP1;
 		explode rleg type BITMAPONLY | BITMAP2;
@@ -396,11 +436,15 @@ Killed(severity, corpsetype)
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
+		explode ground type FALL | BITMAP1;
+		explode gunclamp type FALL | BITMAP2;
+		explode guncover type FALL | BITMAP3;
 		explode lfoot type FALL | BITMAP4;
 		explode lleg type FALL | BITMAP5;
 		explode lthigh type FALL | BITMAP1;
-		explode beamcase type FALL | BITMAP2;
-		explode nano type FALL | BITMAP3;
+		explode nanogun type FALL | BITMAP2;
+		explode nanospray2 type FALL | BITMAP3;
+		explode nozzle type FALL | BITMAP4;
 		explode pelvis type SHATTER | BITMAP5;
 		explode rfoot type FALL | BITMAP1;
 		explode rleg type FALL | BITMAP2;
@@ -411,12 +455,15 @@ Killed(severity, corpsetype)
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode beamhinge type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode ground type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+		explode gunclamp type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode guncover type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		explode lfoot type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		explode lleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 		explode lthigh type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode beamcase type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode nanogun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode nanospray2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode nozzle type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		explode pelvis type SHATTER | BITMAP5;
 		explode rfoot type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 		explode rleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
@@ -425,12 +472,15 @@ Killed(severity, corpsetype)
 		return (0);
 	}
 	corpsetype = 3;
-	explode beamhinge type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode ground type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode gunclamp type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode guncover type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 	explode lfoot type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 	explode lleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 	explode lthigh type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode beamcase type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode nanogun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode nanospray2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode nozzle type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 	explode pelvis type SHATTER | EXPLODE_ON_HIT | BITMAP5;
 	explode rfoot type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode rleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;

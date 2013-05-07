@@ -18,8 +18,8 @@ return {
 		footprintx = 3,
 		footprintz = 3,
 		icontype = "air",
-		idleautoheal = 5,
-		idletime = 1800,
+		idleautoheal = 5 ,
+		idletime = 1800 ,
 		maxdamage = 1727,
 		maxslope = 10,
 		maxvelocity = 10.920000076294,
@@ -28,7 +28,7 @@ return {
 		nochasecategory = "VTOL",
 		objectname = "ARMLANCE",
 		seismicsignature = 0,
-		selfdestructas = "BIG_UNIT",
+		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 455,
 		turnrate = 462,
 		sounds = {
@@ -87,9 +87,9 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badtargetcategory = "NOTSHIP",
+				badTargetCategory = "NOTSHIP",
 				def = "ARMAIR_TORPEDO",
-				onlytargetcategory = "NOTHOVER",
+				onlyTargetCategory= "NOTHOVER",
 			},
 		},
 	},

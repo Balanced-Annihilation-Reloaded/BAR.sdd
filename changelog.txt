@@ -1,3 +1,173 @@
+7.74->7.75
+26/03/2013
+-New version to overcome a conflict between rapid and Springfiles versions
+
+
+
+7.73-7.74
+26/03/2013
+-Fixed lua errors and odd behaviour caused by change to UnitPreDamaged arguments (fixes combomb, commando and other gadgetry)
+-Fixed comgate
+-Fixed dgun not firing if there was uneven ground in the way
+-Fixed some lua errors and set com_counter to not place markers by default
+-Made a modoption for no_close_spawn
+-Made adv_unit_marker place only local markers
+-Made enemy_spotter widget more visible
+-Made menu of lock_camera easier to read
+-Made snd_volume_osd enabled by default and made it go pop!
+-Removed dynamic_blob_shadows widget 
+
+
+
+7.72 -> 7.73
+23/03/2013
+-New loadscreens 
+-Added cmd_keep_target widget 
+-Added lock_camera widget 
+-Added com_counter widget
+-Added blackened crosshair cursor to show when an attack command will fail 
+-Added collision volumes for almost all units 
+-Replaced unit_marker widget with Adv_Unit_Marker 
+-Replaced snd_volume widget with snd_volume_osd (-> use -/+ keys to change volume ingame)
+-Made enemy_spotter widget look much nicer and handle multiple enemies 
+-Made z,x,c,v 'keybinds' work with initial_queue widget
+-Fixed t1 veh/sea cons lacking buildrange for t2 labs
+-Fixed bad maxwaterdepth making some sea unit unbuildable in 92.0+
+-Fixed un-killable paralysed aircraft 
+-Fixed mines blocking units in 92.0+
+-Fixed coop mode
+-Fixed liche 
+-Several small bugfixes
+-Pushing units is now a modoption, default enabled
+-Startpoints now cannot be placed within the dgun range of another start point
+-Took away radar, sonar and LOS from crashing aircraft
+-Units built by engineers changed: Consul now builds Fido,Zeus,Maverick; Freaker now builds Pyro,Can,Commando
+-Increased Panther energy cost 4200->6000
+-Removed 50% EMP damage reduction recieved by Bantha
+-Vanguard health decreased 12k->9k, reload time increased 6->8
+-Mercury & Screamer changed substantially, hopefully they are good anti-air-swarm defence now
+-Vulcan & Buzzsaw will now fire at/over/into hills
+
+
+
+7.71 -> 7.72
+9/21/2012
+-Fixed Customformations bomb line
+-Fixed nuke not firing if order given before missile is ready
+-Fixed subs and subkillers firing in any direction
+-Fixed nuke bombers refusing to fire at ground
+-Fixed aircraft getting stuck on air repair pads
+-Fixed reclaiming crashing aircraft giving lots of resources
+-Fixed killing crashing aircraft givings -1 XP
+-Fixed units getting stuck in labs
+-Fixed passive builders not detecting stall condition correctly
+-Reclaim command can now be waited
+-Added splash sounds
+-Crashing aircraft do less damage
+-Fixed turninplace for most units, handling and pathing improved
+-Added QTPFS modoption
+-Amph t1 vec cons now have better acceleration: handling>random nerf
+-Added logo (MAKE A BETTER ONE!)
+-Auto idle timer changed to 2.5 minutes
+
+
+
+7.70 -> 7.71
+9/4/2012
+- Fixed bombers + torp bombers ignoring attack commands 91 (Customformations line attack DOES NOT work for bombers in 91)
+- Fixed Transports for 91
+- Non gunship aircraft have 50% chance of crashing to ground instead of exploding
+- Fixed builddistance for 91 
+- Remove blur shader (ugly and resource intensive) 
+- Give corsktl a larger hitsphere so unit self explodes correctly 
+- Add modified xta Splashgadget with custom cegs 
+- Add fixed weaponDefs_post.lua and water hit splash sounds 
+- Armsniper weapontype changed to Rifle. Should fix snipers shooting … 
+- Torps no longer fire at Pelicans 
+- Juno now kills jeffy, flea and weasel. Juno metalpershot cost added, 250M per shot
+- Add Kloots dynamic lighting gadget and custom config (more bling) 
+- Added dynamic projectile lights widget (bling bling) 
+- Reduced all crawling bomb's underwater speed by 33% 
+- Further optimized gfx_dynamic_blob_shadow.lua 
+- Increased unit under attack warning alarminterval to 15 
+- Smoothed out all Kbot animations with smoothanim.py 
+
+7.67(8) -> 7.70
+7/25/2012
+- Perfomance optimized blob shadows (nearly 30% faster) 
+- Optimized group label widget 
+- Fixed keybind/hotkey screen 
+- Fixed cortide yardmap
+- Xray widgets removed 
+- Guardian and punisher 15% less metal costs 
+- Arm cloakable fus cloak cost reduced to 100 (from 200) auto cloaks when built
+- Added mute support to red console Syntax: /mute <PlayerName?> /unmute … 
+- Merl AOE increased (100->150) Diplomat AOE increased (90->150)
+- From BrainDamage: take command for idle players 
+- Added 'Prevent Excessive Share' gadget, fixes lost resources on take bug
+- Added modoption to switch to classic pathfinder 
+- Changed to BrainDamage's dynamic stockpiler 
+- Decreased HP of t1 metal storages by 30%
+- reduced morty speed by 20% 
+- Updated game energy converion gadget, stunned mm no longer produce m, each mm now shows output like old times
+- DGUN Unstall widget replaced by DGUN stall assist widget
+- Fixed crash in mo_preventdraw when game is acutally a draw 
+- Added 3 more widgets on request: cmd_factoryqmanager.lua  gui_idle_builders_new.lua unit_only_fighters_patrol.lua 
+- Mex upgrader fix
+- Set collisionvolumetest true for all unit's 
+- Fixed comm reduced airblast
+- Nano towers are now transportable, in t1 transports too. 
+- Fix units receiving damage on not-so-nice unloads from transports. 
+- Vanguard nerf: hp 15k->12k, weaponvelocity 610->500, predicboost 0.75->0.25
+- Plenty of widget and gadget fixes, optimizations for MT.
+
+
+7.66->7.67
+3/24/2012
+- Removed hacky 87 gadgets
+- Added ZXCV building hotkeys
+- Added widget enemy spotter which marks enemy units. disabled by default 
+- Blob shadow fix
+
+7.65 -> 7.66
+3/15/2012
+- Fixed area reclaim
+- Fixed cons getting stuck
+- Fixed mexupgrader
+
+7.64 -> 7.65
+3/15/2012
+- Units that shouldnt shoot air now dont
+- Fixed submerged nanoframe targetting
+- Core adv torp now officially underwater unit
+- Area reclaim fixed
+- Torp launchers dont target hovers at all now
+- Sniper and others couldnt be targetted by most units
+- Core aircraft plant heights increased
+
+7.63 -> 7.64
+2012/03/06:
+
+-fixes for .87
+-Tank and Hover turninplacespeedlimit=unitvelocity/2
+-Kbot turninplaceanglelimit=91
+-Torpedos and depthcharges no longer target hovers
+-Per piece collision volumes fixed (viper being immune to beamlaser bug)
+-Carriers no longer assist building
+-Nanos get restarted automatically
+-Nanos are built with passive mode by default
+-Added ranks api gadget
+-Radar units now emit radar and los from their actual radar dishes (results in greatly improved t2 radar and LOS)
+-Many widget fixes, and performace optimizations
+
+7.62 -> 7.63
+2011/24/12:
+
+-fixes for engine 85.0
+-attempt to fix unit velocities
+-units die instantly now in shot down air transports
+-fixed unit animations
+
 7.61 -> 7.62
 11/29/11:
 

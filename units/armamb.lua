@@ -141,8 +141,6 @@ return {
 				damage = {
 					bombers = 90,
 					default = 345,
-					chicken = 600,
-					tinychicken = 900,
 					fighters = 90,
 					subs = 5,
 					vtol = 90,
@@ -171,8 +169,6 @@ return {
 				damage = {
 					bombers = 90,
 					commanders = 1504,
-					chicken = 1200,
-					tinychicken = 1800,
 					default = 865,
 					fighters = 90,
 					subs = 5,
@@ -182,13 +178,14 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badtargetcategory = "VTOL",
+				badtargetcategory = "VTOL GROUNDSCOUT",
 				def = "ARMAMB_GUN",
 				maindir = "0 1 0",
 				maxangledif = 230,
 				onlytargetcategory = "SURFACE",
 			},
 			[2] = {
+				badtargetcategory = "VTOL GROUNDSCOUT",
 				def = "ARMAMB_GUN_HIGH",
 				onlytargetcategory = "SURFACE",
 			},

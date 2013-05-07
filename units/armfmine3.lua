@@ -1,6 +1,7 @@
 return {
 	armfmine3 = {
 		acceleration = 0,
+		blocking = false,
 		brakerate = 0,
 		buildcostenergy = 1500,
 		buildcostmetal = 25,
@@ -12,10 +13,10 @@ return {
 		category = "ALL WEAPON MINE NOTSUB KAMIKAZE NOTAIR NOTHOVER SURFACE",
 		cloakcost = 2,
 		collide = false,
-		collisionvolumeoffsets = "0 -1.5 0",
-		collisionvolumescales = "18 5 18",
-		collisionvolumetest = 1,
-		collisionvolumetype = "Ell",
+		collisionVolumeScales		= [[22 5 22]],
+		collisionVolumeOffsets	= [[0 -1.5 0]],
+		collisionVolumeTest	    = 1,
+		collisionVolumeType	    = [[CylY]],
 		description = "Heavy Mine. Naval Series",
 		explodeas = "FMINE_HEAVY",
 		firestate = 2,
@@ -27,7 +28,6 @@ return {
 		initcloaked = true,
 		maxdamage = 10,
 		maxslope = 40,
-		maxwaterdepth = 10,
 		mincloakdistance = 8,
 		minwaterdepth = 0,
 		name = "Mega NS",
@@ -39,7 +39,6 @@ return {
 		sightdistance = 78,
 		stealth = true,
 		waterline = 1,
-		yardmap = "w",
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

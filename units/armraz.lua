@@ -30,7 +30,6 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "MECH_BLAST",
 		sightdistance = 450,
-		smoothanim = true,
 		turnrate = 668,
 		upright = true,
 		featuredefs = {
@@ -113,7 +112,6 @@ return {
 				reloadtime = 0.15000000596046,
 				rgbcolor = "0.75 0 0",
 				rgbcolor2 = "0.9 0.9 0.6",
-				soundhit = "lasrhit1",
 				soundstart = "lasfirerb",
 				soundtrigger = true,
 				thickness = 3.5,
@@ -132,7 +130,7 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badtargetcategory = "VTOL",
+				badtargetcategory = "VTOL GROUNDSCOUT",
 				def = "MECH_RAPIDLASER",
 				onlytargetcategory = "NOTSUB",
 			},

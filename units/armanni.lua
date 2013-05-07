@@ -117,7 +117,6 @@ return {
 				range = 1400,
 				reloadtime = 9.8999996185303,
 				rgbcolor = "0 0 1",
-				soundhit = "xplolrg1",
 				soundstart = "annigun1",
 				targetmoveerror = 0.30000001192093,
 				thickness = 7,
@@ -134,7 +133,7 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badtargetcategory = "VTOL",
+				badtargetcategory = "VTOL GROUNDSCOUT",
 				def = "ATA",
 				onlytargetcategory = "SURFACE",
 			},

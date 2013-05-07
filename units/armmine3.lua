@@ -1,6 +1,7 @@
 return {
 	armmine3 = {
-		acceleration = 0,
+		acceleration = 0,		
+		blocking = false,
 		brakerate = 0,
 		buildcostenergy = 1250,
 		buildcostmetal = 20,
@@ -12,10 +13,10 @@ return {
 		category = "ALL NOTLAND WEAPON MINE NOTSUB KAMIKAZE NOTSHIP NOTAIR NOTHOVER SURFACE",
 		cloakcost = 1.5,
 		collide = false,
-		collisionvolumeoffsets = "0 -2 0",
-		collisionvolumescales = "15 6 15",
-		collisionvolumetest = 1,
-		collisionvolumetype = "Ell",
+		collisionVolumeScales		= [[15 14 15]],
+		collisionVolumeOffsets	= [[0 5 0]],
+		collisionVolumeTest	    = 1,
+		collisionVolumeType	    = [[CylY]],
 		description = "Heavy Mine",
 		explodeas = "MINE_HEAVY",
 		firestate = 2,
@@ -38,7 +39,6 @@ return {
 		selfdestructcountdown = 0,
 		sightdistance = 83.199996948242,
 		stealth = true,
-		yardmap = "y",
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

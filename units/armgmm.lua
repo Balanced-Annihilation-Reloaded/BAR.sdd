@@ -30,16 +30,12 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Prude",
-		objectname = "ARMGMM.s3o",
+		objectname = "ARMGMM",
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooo ooooo ooGoo ooooo ooooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

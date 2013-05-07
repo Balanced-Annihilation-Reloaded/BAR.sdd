@@ -31,7 +31,7 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Shroud",
-		objectname = "CORSHROUD.s3o",
+		objectname = "CORSHROUD",
 		onoffable = true,
 		radardistancejam = 700,
 		seismicsignature = 0,
@@ -39,10 +39,6 @@ return {
 		sightdistance = 155,
 		usebuildinggrounddecal = true,
 		yardmap = "oooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = true,
@@ -60,7 +56,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 81,
-				object = "CORSHROUD_DEAD.s3o",
+				object = "CORSHROUD_DEAD",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
@@ -77,7 +73,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 32,
-				object = "cor2X2A.s3o",
+				object = "2X2A",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

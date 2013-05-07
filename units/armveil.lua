@@ -31,7 +31,7 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Veil",
-		objectname = "ARMVEIL.s3o",
+		objectname = "ARMVEIL",
 		onoffable = true,
 		radardistancejam = 760,
 		seismicsignature = 0,
@@ -40,10 +40,6 @@ return {
 		usebuildinggrounddecal = true,
 		usepiececollisionvolumes = 1,
 		yardmap = "oooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = true,

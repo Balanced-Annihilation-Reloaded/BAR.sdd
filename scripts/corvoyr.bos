@@ -3,7 +3,8 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  torso, rthigh, lthigh, lleg, lfoot, rleg, rfoot, dish1,belt,dish2,cover1,cover2,cover3,lens1,lens2,lens3;
+piece  body, thigh1, thigh2, leg2, foot2, leg1, foot1, dish1,
+       arm1, arm2;
 
 static-var  bMoving, Static_Var_2;
 
@@ -15,124 +16,125 @@ walkscr()
 {
 	if( TRUE )
 	{
-		move torso to y-axis [-1.125000] now;
-		move torso to y-axis [-0.875000] speed [3.048782];
-		move rthigh to x-axis [0.000000] speed <180>;
-		move lthigh to x-axis [0.000000] speed <180>;
-		move lleg to y-axis [0.000000] now;
-		move lleg to z-axis [0.000000] now;
-		move lfoot to z-axis [0.000000] now;
-		move rleg to y-axis [0.000000] now;
-		move rleg to z-axis [0.000000] now;
-		move rfoot to z-axis [0.000000] now;
-		turn torso to z-axis <-8.703297> now;
-		turn torso to z-axis <-5.538462> speed <38.604396>;
-		//turn rthigh to x-axis <-27.697802> now;
-		turn rthigh to x-axis <-11.076923> speed <202.675824>;
-		//turn lthigh to x-axis <20.302198> now;
-		turn lthigh to x-axis <14.593407> speed <69.560440>;
-		turn lleg to x-axis <0.538462> now;
-		turn lleg to x-axis <-13.989011> speed <177.225275>;
-		turn lfoot to x-axis <-2.884615> now;
-		turn lfoot to x-axis <12.164835> speed <183.532967>;
-		//turn rleg to x-axis <3.956044> now;
-		turn rleg to x-axis <2.373626> speed <19.302198>;
-		//turn rfoot to x-axis <22.950549> now;
-		turn rfoot to x-axis <7.120879> speed <193.021978>;
+		move body to y-axis [-1.125000] now;
+		move body to y-axis [-0.875000] speed [3.048782];
+		move thigh1 to x-axis [0.000000] now;
+		move thigh2 to x-axis [0.000000] now;
+		move leg2 to y-axis [0.000000] now;
+		move leg2 to z-axis [0.000000] now;
+		move foot2 to z-axis [0.000000] now;
+		move leg1 to y-axis [0.000000] now;
+		move leg1 to z-axis [0.000000] now;
+		move foot1 to z-axis [0.000000] now;
+		turn body to z-axis <-8.703297> now;
+		turn body to z-axis <-5.538462> speed <38.604396>;
+		turn thigh1 to x-axis <-27.697802> now;
+		turn thigh1 to x-axis <-11.076923> speed <202.675824>;
+		turn thigh2 to x-axis <20.302198> now;
+		turn thigh2 to x-axis <14.593407> speed <69.560440>;
+		turn leg2 to x-axis <0.538462> now;
+		turn leg2 to x-axis <-13.989011> speed <177.225275>;
+		turn foot2 to x-axis <-2.884615> now;
+		turn foot2 to x-axis <12.164835> speed <183.532967>;
+		turn leg1 to x-axis <3.956044> now;
+		turn leg1 to x-axis <2.373626> speed <19.302198>;
+		turn foot1 to x-axis <22.950549> now;
+		turn foot1 to x-axis <7.120879> speed <193.021978>;
 		sleep 82;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.750000] speed [1.358688];
-		turn torso to z-axis <-3.956044> speed <17.203297>;
-		turn rthigh to x-axis <2.373626> speed <146.236264>;
-		turn lthigh to x-axis <1.214286> speed <145.450549>;
-		turn lfoot to x-axis <19.697802> speed <81.890110>;
-		turn rleg to x-axis <4.747253> speed <25.802198>;
-		turn rfoot to x-axis <-6.329670> speed <146.236264>;
+		move body to y-axis [-0.750000] speed [1.358688];
+		turn body to z-axis <-3.956044> speed <17.203297>;
+		turn thigh1 to x-axis <2.373626> speed <146.236264>;
+		turn thigh2 to x-axis <1.214286> speed <145.450549>;
+		turn foot2 to x-axis <19.697802> speed <81.890110>;
+		turn leg1 to x-axis <4.747253> speed <25.802198>;
+		turn foot1 to x-axis <-6.329670> speed <146.236264>;
 		sleep 92;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [0.000000] speed [7.812500];
-		turn torso to z-axis <-0.791209> speed <32.972527>;
-		turn rthigh to x-axis <10.285714> speed <82.434066>;
-		turn lthigh to x-axis <-26.532967> speed <289.071429>;
-		turn lleg to x-axis <-10.335165> speed <38.010989>;
-		turn lfoot to x-axis <31.016484> speed <117.928571>;
-		turn rleg to x-axis <15.032967> speed <107.164835>;
-		turn rfoot to x-axis <-25.324176> speed <197.846154>;
+		move body to y-axis [0.000000] speed [7.812500];
+		turn body to z-axis <-0.791209> speed <32.972527>;
+		turn thigh1 to x-axis <10.285714> speed <82.434066>;
+		turn thigh2 to x-axis <-26.532967> speed <289.071429>;
+		turn leg2 to x-axis <-10.335165> speed <38.010989>;
+		turn foot2 to x-axis <31.016484> speed <117.928571>;
+		turn leg1 to x-axis <15.032967> speed <107.164835>;
+		turn foot1 to x-axis <-25.324176> speed <197.846154>;
 		sleep 96;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-2.125000] speed [22.849472];
-		turn torso to z-axis <12.659341> speed <144.664835>;
-		turn rthigh to x-axis <21.362637> speed <119.131868>;
-		turn lthigh to x-axis <-58.043956> speed <338.835165>;
-		turn lleg to x-axis <21.115385> speed <338.274725>;
-		turn lfoot to x-axis <36.681319> speed <60.901099>;
-		turn rleg to x-axis <16.615385> speed <17.016484>;
-		turn rfoot to x-axis <-5.538462> speed <212.741758>;
+		move body to y-axis [-2.125000] speed [22.849472];
+		turn body to z-axis <12.659341> speed <144.664835>;
+		turn thigh1 to x-axis <21.362637> speed <119.131868>;
+		turn thigh2 to x-axis <-58.043956> speed <338.835165>;
+		turn leg2 to x-axis <21.115385> speed <338.274725>;
+		turn foot2 to x-axis <36.681319> speed <60.901099>;
+		turn leg1 to x-axis <16.615385> speed <17.016484>;
+		turn foot1 to x-axis <-5.538462> speed <212.741758>;
 		sleep 93;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-1.375000] speed [8.333344];
-		turn torso to z-axis <9.494505> speed <35.170330>;
-		turn rthigh to x-axis <18.197802> speed <35.170330>;
-		turn lthigh to x-axis <-40.631868> speed <193.450549>;
-		turn lleg to x-axis <12.412088> speed <96.725275>;
-		turn lfoot to x-axis <27.978022> speed <96.725275>;
-		turn rleg to x-axis <7.120879> speed <105.516484>;
-		turn rfoot to x-axis <-11.076923> speed <61.549451>;
+		move body to y-axis [-1.375000] speed [8.333344];
+		turn body to z-axis <9.494505> speed <35.170330>;
+		turn thigh1 to x-axis <18.197802> speed <35.170330>;
+		turn thigh2 to x-axis <-40.631868> speed <193.450549>;
+		turn leg2 to x-axis <12.412088> speed <96.725275>;
+		turn foot2 to x-axis <27.978022> speed <96.725275>;
+		turn leg1 to x-axis <7.120879> speed <105.516484>;
+		turn foot1 to x-axis <-11.076923> speed <61.549451>;
 		sleep 90;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.875000] speed [5.319122];
-		turn torso to z-axis <5.538462> speed <42.093407>;
-		turn rthigh to x-axis <9.494505> speed <92.609890>;
-		turn lthigh to x-axis <-17.681319> speed <244.153846>;
-		turn lleg to x-axis <3.703297> speed <92.609890>;
-		turn lfoot to x-axis <13.730769> speed <151.543956>;
-		turn rleg to x-axis <-4.747253> speed <126.285714>;
-		turn rfoot to x-axis <10.285714> speed <227.313187>;
+		move body to y-axis [-0.875000] speed [5.319122];
+		turn body to z-axis <5.538462> speed <42.093407>;
+		turn thigh1 to x-axis <9.494505> speed <92.609890>;
+		turn thigh2 to x-axis <-17.681319> speed <244.153846>;
+		turn leg2 to x-axis <3.703297> speed <92.609890>;
+		turn foot2 to x-axis <13.730769> speed <151.543956>;
+		turn leg1 to x-axis <-4.747253> speed <126.285714>;
+		turn foot1 to x-axis <10.285714> speed <227.313187>;
 		sleep 94;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-0.375000] speed [5.319153];
-		turn rthigh to x-axis <-11.868132> speed <227.313187>;
-		turn lthigh to x-axis <3.681319> speed <227.313187>;
-		turn lleg to x-axis <2.912088> speed <8.417582>;
-		turn lfoot to x-axis <-7.631868> speed <227.313187>;
-		turn rleg to x-axis <-4.747253> speed <0.000000>;
-		turn rfoot to x-axis <17.406593> speed <75.769231>;
+		move body to y-axis [-0.375000] speed [5.319153];
+		turn thigh1 to x-axis <-11.868132> speed <227.313187>;
+		turn thigh2 to x-axis <3.681319> speed <227.313187>;
+		turn leg2 to x-axis <2.912088> speed <8.417582>;
+		turn foot2 to x-axis <-7.631868> speed <227.313187>;
+		turn leg1 to x-axis <-4.747253> speed <0.000000>;
+		turn foot1 to x-axis <17.406593> speed <75.769231>;
 		sleep 94;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [0.000000] speed [4.032272];
-		turn torso to z-axis <0.000000> speed <59.565934>;
-		turn rthigh to x-axis <-27.697802> speed <170.192308>;
-		turn lthigh to x-axis <17.131868> speed <144.664835>;
-		turn lleg to x-axis <13.203297> speed <110.620879>;
-		turn lfoot to x-axis <-14.752747> speed <76.582418>;
-		turn rfoot to x-axis <23.741758> speed <68.076923>;
+		move body to y-axis [0.000000] speed [4.032272];
+		turn body to z-axis <0.000000> speed <59.565934>;
+		turn thigh1 to x-axis <-27.697802> speed <170.192308>;
+		turn thigh2 to x-axis <17.131868> speed <144.664835>;
+		turn leg2 to x-axis <13.203297> speed <110.620879>;
+		turn foot2 to x-axis <-14.752747> speed <76.582418>;
+		turn foot1 to x-axis <23.741758> speed <68.076923>;
 		sleep 93;
 	}
 	if( TRUE )
 	{
-		move torso to y-axis [-2.125000] speed [22.606369];
-		turn torso to z-axis <-8.703297> speed <92.609890>;
-		turn rthigh to x-axis <-53.021978> speed <269.412088>;
-		turn lthigh to x-axis <22.675824> speed <58.934066>;
-		turn lfoot to x-axis <-11.587912> speed <33.675824>;
-		turn rleg to x-axis <17.406593> speed <235.736264>;
-		turn rfoot to x-axis <35.609890> speed <126.285714>;
+		move body to y-axis [-2.125000] speed [22.606369];
+		turn body to z-axis <-8.703297> speed <92.609890>;
+		turn thigh1 to x-axis <-53.021978> speed <269.412088>;
+		turn thigh2 to x-axis <22.675824> speed <58.934066>;
+		turn foot2 to x-axis <-11.587912> speed <33.675824>;
+		turn leg1 to x-axis <17.406593> speed <235.736264>;
+		turn foot1 to x-axis <35.609890> speed <126.285714>;
 		sleep 94;
 	}
+	sleep 94;
 	return (0);
 }
 
@@ -152,7 +154,7 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 			{
 				smoketype = 256 | 1;
 			}
-			emit-sfx smoketype from torso;
+			emit-sfx smoketype from body;
 		}
 		sleeptime = healthpercent * 50;
 		if( sleeptime < 200 )
@@ -177,15 +179,13 @@ MotionControl(Func_Var_1, Func_Var_2)
 		}
 		if( !Func_Var_1 )
 		{
-			turn torso to z-axis <0.000000> speed <200.043956>;
-			move torso to y-axis [0.000000] speed [2.500000];
-			turn rleg to x-axis <0.000000> speed <200.043956>;
-			turn rfoot to x-axis <0.000000> speed <200.043956>;
-			turn lthigh to x-axis <0.000000> speed <200.043956>;
-			
-			turn rthigh to x-axis <0.000000> speed <200.043956>;
-			turn lleg to x-axis <0.000000> speed <200.043956>;
-			turn lfoot to x-axis <0.000000> speed <200.043956>;
+			turn body to z-axis <0.000000> speed <200.043956>;
+			move body to y-axis [0.000000] speed [2.500000];
+			turn leg1 to x-axis <0.000000> speed <200.043956>;
+			turn foot1 to x-axis <0.000000> speed <200.043956>;
+			turn thigh2 to x-axis <0.000000> speed <200.043956>;
+			turn leg2 to x-axis <0.000000> speed <200.043956>;
+			turn foot2 to x-axis <0.000000> speed <200.043956>;
 			Func_Var_2 = 0;
 		}
 		sleep 100;
@@ -206,15 +206,7 @@ Activate()
 {
 	signal SIG_ACTIVATE;
 	set-signal-mask SIG_ACTIVATE;
-	spin belt around y-axis speed <20.021978> accelerate <5>;
-	spin dish1 around x-axis speed <100.021978> accelerate <50>;
-	spin dish2 around x-axis speed <-100.021978> accelerate <50>;
-	turn cover1 to x-axis <270> speed <90>;
-	turn cover2 to x-axis <60> speed <60>;
-	turn cover3 to x-axis <178> speed <178>;
-	
-	move lens1 to z-axis [2] speed [1];
-	move lens3 to z-axis [-3] speed [2];
+	spin dish1 around y-axis speed <100.021978>;
 	return (0);
 }
 
@@ -222,18 +214,8 @@ Deactivate()
 {
 	signal SIG_ACTIVATE;
 	set-signal-mask SIG_ACTIVATE;
-	turn belt to y-axis <0.000000> speed <10.021978>;
-	turn dish1 to x-axis <0.000000> speed <100.021978>;
-	turn dish2 to x-axis <0.000000> speed <100.021978>;
-
-	turn cover1 to x-axis <0> speed <90>;
-	turn cover2 to x-axis <0> speed <60>;
-	turn cover3 to x-axis <0> speed <178>;
-	
-	move lens1 to z-axis [0] speed [5];
-	move lens3 to z-axis [0] speed [7];
-	
-	wait-for-turn belt around y-axis;
+	turn dish1 to y-axis <0.000000> speed <100.021978>;
+	wait-for-turn dish1 around y-axis;
 	return (0);
 }
 
@@ -257,7 +239,7 @@ RestoreAfterDelay()
 
 SweetSpot(piecenum)
 {
-	piecenum = torso;
+	piecenum = body;
 	return (0);
 }
 
@@ -266,50 +248,58 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode torso type BITMAPONLY | BITMAP3;
+		explode arm1 type BITMAPONLY | BITMAP1;
+		explode arm2 type BITMAPONLY | BITMAP2;
+		explode body type BITMAPONLY | BITMAP3;
 		explode dish1 type BITMAPONLY | BITMAP4;
-		explode rfoot type BITMAPONLY | BITMAP5;
-		explode lfoot type BITMAPONLY | BITMAP1;
-		explode rleg type BITMAPONLY | BITMAP2;
-		explode lleg type BITMAPONLY | BITMAP3;
-		explode rthigh type BITMAPONLY | BITMAP4;
-		explode lthigh type BITMAPONLY | BITMAP5;
+		explode foot1 type BITMAPONLY | BITMAP5;
+		explode foot2 type BITMAPONLY | BITMAP1;
+		explode leg1 type BITMAPONLY | BITMAP2;
+		explode leg2 type BITMAPONLY | BITMAP3;
+		explode thigh1 type BITMAPONLY | BITMAP4;
+		explode thigh2 type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode torso type BITMAPONLY | BITMAP3;
+		explode arm1 type FALL | BITMAP1;
+		explode arm2 type FALL | BITMAP2;
+		explode body type BITMAPONLY | BITMAP3;
 		explode dish1 type SHATTER | BITMAP4;
-		explode rfoot type FALL | BITMAP5;
-		explode lfoot type FALL | BITMAP1;
-		explode rleg type FALL | BITMAP2;
-		explode lleg type FALL | BITMAP3;
-		explode rthigh type FALL | BITMAP4;
-		explode lthigh type FALL | BITMAP5;
+		explode foot1 type FALL | BITMAP5;
+		explode foot2 type FALL | BITMAP1;
+		explode leg1 type FALL | BITMAP2;
+		explode leg2 type FALL | BITMAP3;
+		explode thigh1 type FALL | BITMAP4;
+		explode thigh2 type FALL | BITMAP5;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode torso type BITMAPONLY | BITMAP3;
+		explode arm1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+		explode arm2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode body type BITMAPONLY | BITMAP3;
 		explode dish1 type SHATTER | BITMAP4;
-		explode rfoot type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode lfoot type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode rleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode lleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode rthigh type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode lthigh type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+		explode foot1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+		explode foot2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+		explode leg1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode leg2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode thigh1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+		explode thigh2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 		return (0);
 	}
 	corpsetype = 3;
-	explode torso type BITMAPONLY | BITMAP3;
+	explode arm1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode arm2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode body type BITMAPONLY | BITMAP3;
 	explode dish1 type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-	explode rfoot type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode lfoot type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode rleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode lleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode rthigh type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode lthigh type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+	explode foot1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+	explode foot2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode leg1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode leg2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode thigh1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+	explode thigh2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 	return (0);
 }

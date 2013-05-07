@@ -31,7 +31,6 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "CRAWL_BLASTSML",
 		sightdistance = 455,
-		smoothanim = true,
 		turnrate = 1056,
 		upright = true,
 		featuredefs = {
@@ -68,7 +67,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 237,
-				object = "cor3X3F.s3o",
+				object = "3X3F",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
@@ -160,6 +159,7 @@ return {
 		},
 		weapons = {
 			[1] = {
+				badtargetcategory = "GROUNDSCOUT",
 				def = "ARMMECH_CANNON",
 				onlytargetcategory = "SURFACE",
 			},

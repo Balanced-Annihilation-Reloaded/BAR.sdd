@@ -4,7 +4,7 @@
 #include "exptype.h"
 
 piece  support, flare, Thigh1, Thigh2, Torso, Shoulder, Barrel, Foot2,
-       Foot1, Forearm, Leg2, Leg1, pelvis;
+       Foot1, Forearm, Leg2, Leg1, ground;
 
 static-var  bMoving, bAiming, Static_Var_3, restore_delay, Static_Var_5,
             Static_Var_6;
@@ -17,17 +17,17 @@ walk()
 {
 	if( TRUE )
 	{
-	//	move Thigh1 to z-axis [0.000000] now;
-	//	move Thigh2 to z-axis [0.000000] now;
-	//	move Torso to x-axis [0.000000] now;
+		move Thigh1 to z-axis [0.000000] now;
+		move Thigh2 to z-axis [0.000000] now;
+		move Torso to x-axis [0.000000] now;
 		move Torso to y-axis [-0.125000] speed [0.830537];
-	//	move Shoulder to x-axis [0.000000] now;
-	//	move support to y-axis [0.000000] now;
-	//	move support to z-axis [0.000000] now;
-	//	move Barrel to x-axis [0.000000] now;
-	//	move Foot2 to z-axis [0.000000] now;
-	//	move Foot1 to x-axis [0.000000] now;
-		//move Foot1 to z-axis [0.000000] now;
+		move Shoulder to x-axis [0.000000] now;
+		move support to y-axis [0.000000] now;
+		move support to z-axis [0.000000] now;
+		move Barrel to x-axis [0.000000] now;
+		move Foot2 to z-axis [0.000000] now;
+		move Foot1 to x-axis [0.000000] now;
+		move Foot1 to z-axis [0.000000] now;
 		turn Thigh1 to x-axis <16.879121> speed <112.149864>;
 		turn Thigh2 to x-axis <-45.714286> speed <303.739216>;
 		turn Torso to x-axis <1.758242> speed <11.682279>;
@@ -159,11 +159,11 @@ walk()
 	}
 	move Torso to y-axis [-0.375000] speed [0.830537];
 	turn Thigh1 to x-axis <11.604396> speed <86.448853>;
-	turn Thigh2 to x-axis <-15.164835> speed <137.887379>;
+	turn Thigh2 to x-axis <-35.164835> speed <137.887379>;
 	turn Torso to z-axis <-1.054945> speed <7.009366>;
 	turn Shoulder to x-axis <-2.461538> speed <11.682272>;
 	turn Forearm to x-axis <-4.219780> speed <28.037464>;
-	//turn Leg2 to x-axis <76.659341> speed <49.102073>;
+	turn Leg2 to x-axis <76.659341> speed <49.102073>;
 	turn Foot1 to x-axis <-14.065934> speed <93.458219>;
 	sleep 103;
 	return (0);
@@ -261,26 +261,26 @@ walklegs()
 		turn Leg1 to x-axis <2.461538> speed <144.860242>;
 		sleep 100;
 	}
-	//turn Thigh1 to x-axis <11.604396> speed <86.448853>;
-	//turn Thigh2 to x-axis <-35.164835> speed <137.887379>;
-	//turn Leg2 to x-axis <76.659341> speed <49.102073>;
-	//turn Foot1 to x-axis <-14.065934> speed <93.458219>;
-	//sleep 100;
+	turn Thigh1 to x-axis <11.604396> speed <86.448853>;
+	turn Thigh2 to x-axis <-35.164835> speed <137.887379>;
+	turn Leg2 to x-axis <76.659341> speed <49.102073>;
+	turn Foot1 to x-axis <-14.065934> speed <93.458219>;
+	sleep 100;
 	return (0);
 }
 
 stand()
 {
-	turn Thigh1 to x-axis [180.000000] now;
-	turn Thigh2 to x-axis [0.000000] now;
-	turn Torso to x-axis [0.000000] now;
-	turn Shoulder to x-axis [0.000000] now;
-	turn Leg1 to x-axis [0.000000] now;
-	turn Leg2 to x-axis [0.000000] now;
+	move Thigh1 to z-axis [0.000000] now;
+	move Thigh2 to z-axis [0.000000] now;
+	move Torso to x-axis [0.000000] now;
+	move Shoulder to x-axis [0.000000] now;
+	move support to y-axis [0.000000] now;
+	move support to z-axis [0.000000] now;
 	move Barrel to x-axis [0.000000] now;
-	turn Foot2 to x-axis [0.000000] now;
-	turn Foot1 to x-axis [0.000000] now;
-	turn Foot1 to z-axis [0.000000] now;
+	move Foot2 to z-axis [0.000000] now;
+	move Foot1 to x-axis [0.000000] now;
+	move Foot1 to z-axis [0.000000] now;
 	sleep 200;
 	return (0);
 }
@@ -442,7 +442,7 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode pelvis type BITMAPONLY | BITMAP1;
+		explode ground type BITMAPONLY | BITMAP1;
 		explode Barrel type BITMAPONLY | BITMAP2;
 		explode Foot1 type BITMAPONLY | BITMAP4;
 		explode Foot2 type BITMAPONLY | BITMAP5;
@@ -459,7 +459,7 @@ Killed(severity, corpsetype)
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode pelvis type FALL | BITMAP1;
+		explode ground type FALL | BITMAP1;
 		explode Barrel type BITMAPONLY | BITMAP2;
 		explode Foot1 type FALL | BITMAP3;
 		explode Foot2 type FALL | BITMAP4;
@@ -476,7 +476,7 @@ Killed(severity, corpsetype)
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode pelvis type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+		explode ground type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 		explode Barrel type BITMAPONLY | BITMAP2;
 		explode Foot1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		explode Foot2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
@@ -491,7 +491,7 @@ Killed(severity, corpsetype)
 		return (0);
 	}
 	corpsetype = 3;
-	explode pelvis type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode ground type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode Barrel type BITMAPONLY | BITMAP2;
 	explode Foot1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 	explode Foot2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;

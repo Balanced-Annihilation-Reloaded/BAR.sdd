@@ -8,6 +8,10 @@ return {
 		buildtime = 8775,
 		canmove = true,
 		category = "ALL TANK MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
+		collisionvolumeoffsets = "0 -2 0",
+		collisionvolumescales = "42 28 42",
+		collisionvolumetest = 1,
+		collisionvolumetype = "CylY",
 		corpse = "DEAD",
 		description = "All-Terrain Rocket Spider",
 		energymake = 0.69999998807907,
@@ -27,7 +31,6 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 440,
-		smoothanim = true,
 		turnrate = 1122,
 		featuredefs = {
 			dead = {

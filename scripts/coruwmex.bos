@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, drive, emit1, emit2, emit3,emit4;
+piece  base, drive, fan, emit1, emit2, emit3;
 
 static-var  Static_Var_1, Static_Var_2, Static_Var_3, statechg_DesiredState, statechg_StateChanging;
 
@@ -66,6 +66,7 @@ Create()
 	{
 		sleep 1000;
 	}
+	spin fan around y-axis speed <-400.093407>;
 }
 
 Activate()
@@ -78,7 +79,6 @@ Activate()
 		emit-sfx 259 from emit1;
 		emit-sfx 259 from emit2;
 		emit-sfx 259 from emit3;
-		emit-sfx 259 from emit4;
 		sleep 250;
 	}
 }
@@ -91,7 +91,7 @@ Deactivate()
 
 SweetSpot(piecenum)
 {
-	piecenum = base;
+	piecenum = fan;
 }
 
 SetSpeed(Func_Var_1)

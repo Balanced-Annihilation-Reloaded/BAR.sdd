@@ -35,7 +35,6 @@ return {
 		selfdestructas = "CRBLMSSL",
 		selfdestructcountdown = 10,
 		sightdistance = 910,
-		smoothanim = true,
 		turnrate = 396,
 		upright = true,
 		featuredefs = {
@@ -140,7 +139,7 @@ return {
 				color = 1,
 				craterboost = 0,
 				cratermult = 0,
-				cylindertargetting = 1,
+				cylindertargeting = 1,
 				edgeeffectiveness = 0.85000002384186,
 				explosiongenerator = "custom:FLASH3",
 				gravityaffected = "true",
@@ -214,9 +213,6 @@ return {
 			[3] = {
 				def = "ORCONE_ROCKET",
 				onlytargetcategory = "SURFACE",
-			},
-			[4] = {
-				def = "ORCONE_SHIELD",
 			},
 		},
 	},

@@ -27,15 +27,11 @@ return {
 		maxwaterdepth = 0,
 		name = "Rapier",
 		nochasecategory = "VTOL",
-		objectname = "CORAPE.s3o",
+		objectname = "CORAPE",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 550,
 		turnrate = 594,
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
-		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -67,7 +63,7 @@ return {
 				firestarter = 70,
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
-				model = "cormissile.s3o",
+				model = "missile",
 				name = "RiotRocket",
 				noselfdamage = true,
 				range = 410,
@@ -97,7 +93,7 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badtargetcategory = "VTOL",
+				badTargetCategory = "VTOL",
 				def = "VTOL_ROCKET",
 				onlytargetcategory = "SURFACE",
 			},

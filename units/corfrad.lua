@@ -29,7 +29,7 @@ return {
 		maxslope = 10,
 		minwaterdepth = 5,
 		name = "Floating Radar Tower",
-		objectname = "CORFRAD.s3o",
+		objectname = "CORFRAD",
 		onoffable = true,
 		radardistance = 2100,
 		radaremitheight = 72,
@@ -38,10 +38,6 @@ return {
 		sightdistance = 740,
 		waterline = 4,
 		yardmap = "wwwwwwwww",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = false,
@@ -57,7 +53,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 80,
-				object = "CORFRAD_DEAD.s3o",
+				object = "CORFRAD_DEAD",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

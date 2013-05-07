@@ -28,17 +28,13 @@ return {
 		maxslope = 10,
 		minwaterdepth = 10,
 		name = "Sonar Station",
-		objectname = "CORSONAR.s3o",
+		objectname = "CORSONAR",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 485,
 		sonardistance = 1200,
 		yardmap = "oooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = false,
@@ -54,7 +50,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 13,
-				object = "CORSONAR_DEAD.s3o",
+				object = "CORSONAR_DEAD",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

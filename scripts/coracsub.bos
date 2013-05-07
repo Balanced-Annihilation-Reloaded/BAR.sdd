@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, flare, wake1, wake2, door1, door2, neck, gun ;
+piece  base, flare, exhaust, door1, door2, boom, neck, gun;
 
 static-var  notBuilding, statechg_DesiredState, statechg_StateChanging;
 
@@ -14,22 +14,39 @@ static-var  notBuilding, statechg_DesiredState, statechg_StateChanging;
 
 activatescr()
 {
+	move exhaust to y-axis [-0.403192] now;
+	move exhaust to z-axis [3.775989] now;
+	move flare to y-axis [0.172803] now;
+	move flare to z-axis [-1.375995] now;
 	turn door1 to z-axis <0.000000> now;
-	turn door1 to z-axis <-175> speed <209.241758>;
+	turn door1 to z-axis <-227.868132> speed <209.241758>;
 	turn door2 to z-axis <0.000000> now;
-	turn door2 to z-axis <175> speed <208.917582>;
+	turn door2 to z-axis <227.516484> speed <208.917582>;
 	sleep 1089;
-	move neck to y-axis [12] speed [20];
+
+	turn boom to x-axis <39.384615> speed <42.994505>;
+	turn neck to x-axis <-39.027473> speed <42.609890>;
 	sleep 916;
 }
 
 deactivatescr()
 {
 	set INBUILDSTANCE to 0;
-	turn gun to y-axis <0.000000> speed <160.038462>;
+	turn neck to y-axis <0.000000> speed <160.038462>;
 	wait-for-turn neck around y-axis;
-	move neck to y-axis [0] speed [20];
+
+	move exhaust to y-axis [-0.403192] now;
+	move exhaust to z-axis [3.775989] now;
+	move flare to y-axis [0.172803] now;
+	move flare to z-axis [-1.375995] now;
+	turn boom to x-axis <39.384615> now;
+	turn boom to x-axis <0.000000> speed <51.818681>;
+	turn door1 to z-axis <-227.868132> now;
+	turn door2 to z-axis <227.516484> now;
+	turn neck to x-axis <-39.027473> now;
+	turn neck to x-axis <0.000000> speed <51.357143>;
 	sleep 760;
+
 	turn door1 to z-axis <0.000000> speed <185.258242>;
 	turn door2 to z-axis <0.000000> speed <184.972527>;
 	sleep 1230;
@@ -41,8 +58,7 @@ StartMoving()
 	set-signal-mask SIG_MOVE;
 	while( TRUE )
 	{
-		emit-sfx 259 from wake1;
-		emit-sfx 259 from wake2;
+		emit-sfx 259 from exhaust;
 		sleep 250;
 	}
 }
@@ -102,8 +118,8 @@ StartBuilding(heading, pitch)
 	start-script RequestState(0);
 	while( notBuilding ) sleep 100;
 	signal SIG_BUILD;
-	turn gun to y-axis heading speed <160.038462>;
-	wait-for-turn gun around y-axis;
+	turn neck to y-axis heading speed <160.038462>;
+	wait-for-turn neck around y-axis;
 	set INBUILDSTANCE to 1;
 }
 
@@ -140,8 +156,10 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
+		explode boom type BITMAPONLY | BITMAP2;
 		explode door1 type BITMAPONLY | BITMAP3;
 		explode door2 type BITMAPONLY | BITMAP4;
+		explode exhaust type BITMAPONLY | BITMAP5;
 		explode flare type BITMAPONLY | BITMAP1;
 		explode gun type BITMAPONLY | BITMAP2;
 		explode neck type BITMAPONLY | BITMAP3;
@@ -151,8 +169,10 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
+		explode boom type FALL | BITMAP2;
 		explode door1 type BITMAPONLY | BITMAP3;
 		explode door2 type BITMAPONLY | BITMAP4;
+		explode exhaust type FALL | BITMAP5;
 		explode flare type FALL | BITMAP1;
 		explode gun type FALL | BITMAP2;
 		explode neck type FALL | BITMAP3;
@@ -162,8 +182,10 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
+		explode boom type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
 		explode door1 type BITMAPONLY | BITMAP3;
 		explode door2 type BITMAPONLY | BITMAP4;
+		explode exhaust type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP5;
 		explode flare type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP1;
 		explode gun type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
 		explode neck type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP3;
@@ -171,8 +193,10 @@ Killed(severity, corpsetype)
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
+	explode boom type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
 	explode door1 type BITMAPONLY | BITMAP3;
 	explode door2 type BITMAPONLY | BITMAP4;
+	explode exhaust type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP5;
 	explode flare type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP1;
 	explode gun type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
 	explode neck type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP3;

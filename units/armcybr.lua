@@ -10,7 +10,7 @@ return {
 		canmove = true,
 		category = "ALL WEAPON NOTSUB VTOL NOTHOVER",
 		collide = false,
-		cruisealt = 300,
+		cruisealt = 150,
 		description = "Atomic Bomber",
 		energyuse = 40,
 		explodeas = "SMALL_BUILDING",
@@ -28,7 +28,7 @@ return {
 		nochasecategory = "VTOL",
 		objectname = "ARMCYBR",
 		seismicsignature = 0,
-		selfdestructas = "LARGE_BUILDING",
+		selfdestructas = "BIGUNITEX",
 		sightdistance = 455,
 		turnrate = 535,
 		sounds = {
@@ -58,7 +58,7 @@ return {
 				avoidfeature = false,
 				avoidfriendly = false,
 				collidefriendly = false,
-				commandfire = true,
+				commandfire = true, 
 				craterboost = 0,
 				cratermult = 0,
 				edgeeffectiveness = 0.5,
@@ -93,7 +93,7 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badtargetcategory = "VTOL",
+				badTargetCategory = "VTOL",
 				def = "ARM_PIDR",
 				onlytargetcategory = "SURFACE",
 			},

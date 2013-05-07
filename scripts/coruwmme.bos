@@ -3,7 +3,8 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, disc;
+piece  base, doors1, doors2, drive, fan, emit1, emit2, emit3,
+       emit4, patch;
 
 static-var  Static_Var_1, Static_Var_2, Static_Var_3, Static_Var_4, statechg_DesiredState,
             statechg_StateChanging;
@@ -14,17 +15,29 @@ static-var  Static_Var_1, Static_Var_2, Static_Var_3, Static_Var_4, statechg_Des
 
 fixGo()
 {
-	spin disc around y-axis speed Static_Var_1 accelerate Static_Var_2;
+	spin drive around y-axis speed Static_Var_1 accelerate Static_Var_2;
+	move doors1 to y-axis [-5.000000] speed [5.000000];
+	move doors2 to y-axis [-5.000000] speed [5.000000];
+	wait-for-move doors1 along y-axis;
+	wait-for-move doors2 along y-axis;
+	turn doors1 to y-axis <30.005495> speed <60.000000>;
+	turn doors2 to y-axis <-30.005495> speed <60.000000>;
 	set ARMORED to 0;
 	Static_Var_4 = 1;
 }
 
 Stop()
 {
-	stop-spin disc around y-axis decelerate Static_Var_3;
+	stop-spin drive around y-axis decelerate Static_Var_3;
+	wait-for-turn drive around y-axis;
 	Static_Var_4 = 0;
+	turn doors1 to y-axis <0.000000> speed <60.000000>;
+	turn doors2 to y-axis <0.000000> speed <60.000000>;
+	wait-for-turn doors1 around y-axis;
+	wait-for-turn doors2 around y-axis;
 	set ARMORED to 1;
-
+	move doors1 to y-axis [0.000000] speed [10.000000];
+	move doors2 to y-axis [0.000000] speed [10.000000];
 }
 
 InitState()
@@ -65,11 +78,20 @@ Create()
 	Static_Var_1 = 0;
 	Static_Var_2 = 91;
 	Static_Var_3 = 910;
+	dont-cache drive;
+	dont-cache doors1;
+	dont-cache doors2;
+	dont-cache fan;
+	dont-shade drive;
+	dont-shade doors1;
+	dont-shade doors2;
+	dont-shade fan;
 	call-script InitState();
 	while( get BUILD_PERCENT_LEFT )
 	{
 		sleep 1000;
 	}
+	spin fan around y-axis speed <-400.093407>;
 	set ARMORED to 1;
 }
 
@@ -82,7 +104,10 @@ Activate()
 	{
 		if( Static_Var_4 )
 		{
-			emit-sfx 259 from disc;
+			emit-sfx 259 from emit1;
+			emit-sfx 259 from emit2;
+			emit-sfx 259 from emit3;
+			emit-sfx 259 from emit4;
 		}
 		sleep 250;
 	}
@@ -109,25 +134,33 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode disc type BITMAPONLY | BITMAP1;
+		explode drive type BITMAPONLY | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
+		explode doors1 type BITMAPONLY | BITMAP3;
+		explode doors2 type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode disc type BITMAPONLY | BITMAP1;
+		explode drive type SHATTER | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
+		explode doors1 type BITMAPONLY | BITMAP3;
+		explode doors2 type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode disc type BITMAPONLY | BITMAP1;
+		explode drive type SHATTER | EXPLODE_ON_HIT | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
+		explode doors1 type BITMAPONLY | BITMAP3;
+		explode doors2 type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
-		explode disc type BITMAPONLY | BITMAP1;
-		explode base type BITMAPONLY | BITMAP2;
+	explode drive type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP2;
+	explode doors1 type BITMAPONLY | BITMAP3;
+	explode doors2 type BITMAPONLY | BITMAP2;
 }

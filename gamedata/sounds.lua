@@ -1,9 +1,5 @@
 local Sounds = {
    SoundItems = {
-      IncomingChat = {
-		file = "sounds/beep4.wav",
-		in3d = "false",
-      },
       MultiSelect = {
 		file = "sounds/button9.wav",
 		in3d = "false",
@@ -19,7 +15,7 @@ local Sounds = {
       warning2 = {
 		file = "sounds/warning2.wav",
 		rolloff = 0.2,
-		dopperscale = 0,      
+		dopplerscale = 0,      
       },
       lasrfir1 = {
 	   file = "sounds/lasrfir1.wav",
@@ -132,23 +128,6 @@ local Sounds = {
        pitchmod = 0.05,
        maxconcurrent = 4,	  
       },
-      smallchickenattack = {
-       file = "sounds/smallchickenattack.wav",
-       pitchmod = 0.025,
-       gainmod = 0.2,
-       maxconcurrent = 8,	  
-      },
-      bugdie = {
-       file = "sounds/bugdie.wav",
-       gainmod = 0.2,
-       pitchmod = 0.15,  
-      },
-      bigbugdie = {
-       file = "sounds/bigbugdie.wav",
-       gainmod = 0.2,
-       pitchmod = 0.15,  
-      },
-      
    },
 }
 

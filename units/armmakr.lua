@@ -27,16 +27,12 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Energy Converter",
-		objectname = "ARMMAKR.s3o",
+		objectname = "ARMMAKR",
 		seismicsignature = 0,
 		selfdestructas = "ARMESTOR_BUILDING",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		sounds = {
 			activate = "metlon1",
 			canceldestruct = "cancel2",

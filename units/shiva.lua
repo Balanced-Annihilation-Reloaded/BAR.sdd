@@ -27,18 +27,12 @@ return {
 		movementclass = "HAKBOT4",
 		name = "Shiva",
 		nochasecategory = "VTOL",
-		objectname = "SHIVA.s3o",
-		script = "shiva_script.lua",
+		objectname = "SHIVA",
 		seismicsignature = 0,
 		selfdestructas = "MECH_BLAST",
 		sightdistance = 299,
-		smoothanim = true,
 		turnrate = 616,
 		upright = true,
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = true,
@@ -56,7 +50,7 @@ return {
 				height = 10,
 				hitdensity = 100,
 				metal = 937,
-				object = "SHIVA_DEAD.s3o",
+				object = "SHIVA_DEAD",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
@@ -73,15 +67,10 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 375,
-				object = "cor3X3F.s3o",
+				object = "3X3F",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
-			},
-		},
-		sfxtypes = {
-			explosiongenerators = {
-				[1] = "custom:MEDIUMFLARE",
 			},
 		},
 		sounds = {
@@ -132,10 +121,6 @@ return {
 				},
 			},
 			shiva_rocket = {
-				--explosiongenerator = "custom:STARFIRE",
-				--model = "corkbmissl1.s3o",
-				--soundhit = "xplomed4",
-				--soundstart = "Rockhvy1",
 				areaofeffect = 60,
 				craterboost = 0,
 				cratermult = 0,
@@ -146,7 +131,7 @@ return {
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
 				metalpershot = 0,
-				model = "corkbmissl1.s3o",
+				model = "corkbmissl1",
 				name = "HeavyRockets",
 				noselfdamage = true,
 				range = 800,
@@ -167,14 +152,12 @@ return {
 		},
 		weapons = {
 			[1] = {
+				badtargetcategory = "GROUNDSCOUT",
 				def = "SHIVA_GUN",
 				onlytargetcategory = "SURFACE",
 			},
-			[2] = {
-				def = "SHIVA_GUN",
-				onlytargetcategory = "NOTAIR",
-			},
 			[3] = {
+				badtargetcategory = "GROUNDSCOUT",
 				def = "SHIVA_ROCKET",
 				onlytargetcategory = "SURFACE",
 			},

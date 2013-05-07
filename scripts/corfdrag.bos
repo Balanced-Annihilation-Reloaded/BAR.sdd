@@ -3,11 +3,11 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece base;
+piece ground;
 
 
 Create()
 {
-	dont-shade base;
-	dont-cache base;
+	dont-shade ground;
+	dont-cache ground;
 }

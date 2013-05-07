@@ -30,16 +30,12 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Energy Storage",
-		objectname = "ARMESTOR.s3o",
+		objectname = "ARMESTOR",
 		seismicsignature = 0,
 		selfdestructas = "ESTOR_BUILDING",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = true,

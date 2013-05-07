@@ -19,8 +19,8 @@ return {
 		footprintx = 3,
 		footprintz = 3,
 		icontype = "air",
-		idleautoheal = 5,
-		idletime = 1800,
+		idleautoheal = 5 ,
+		idletime = 1800 ,
 		maxdamage = 1646,
 		maxslope = 10,
 		maxvelocity = 9.039999961853,
@@ -29,7 +29,7 @@ return {
 		nochasecategory = "VTOL",
 		objectname = "ARMSEAP",
 		seismicsignature = 0,
-		selfdestructas = "BIG_UNIT",
+		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 455,
 		turnrate = 597,
 		sounds = {
@@ -91,9 +91,9 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badtargetcategory = "NOTSHIP",
+				badTargetCategory = "NOTSHIP",
 				def = "ARMSEAP_WEAPON1",
-				onlytargetcategory = "NOTHOVER",
+				onlyTargetCategory= "NOTHOVER",
 			},
 		},
 	},

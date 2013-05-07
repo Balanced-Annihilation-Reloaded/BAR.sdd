@@ -25,7 +25,7 @@ return {
 		nochasecategory = "NOTAIR",
 		objectname = "ARMHAWK",
 		seismicsignature = 0,
-		selfdestructas = "BIG_UNIT",
+		selfdestructas = "SMALL_UNIT_AIR",
 		sightdistance = 200,
 		stealth = true,
 		turnrate = 1425,
@@ -91,14 +91,14 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badtargetcategory = "NOTAIR",
+				badTargetCategory = "NOTAIR",
 				def = "ARMVTOL_ADVMISSILE",
-				onlytargetcategory = "NOTSUB",
+				onlyTargetCategory = "NOTSUB",
 			},
 			[2] = {
-				badtargetcategory = "NOTAIR",
+				badTargetCategory = "NOTAIR",
 				def = "ARMVTOL_ADVMISSILE",
-				onlytargetcategory = "NOTSUB",
+				onlyTargetCategory = "NOTSUB",
 			},
 		},
 	},

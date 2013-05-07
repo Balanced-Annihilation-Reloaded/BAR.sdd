@@ -32,7 +32,7 @@ return {
 		maxwaterdepth = 0,
 		metalstorage = 100,
 		name = "Kbot Lab",
-		objectname = "ARMLAB.s3o",
+		objectname = "ARMLAB",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
@@ -40,7 +40,7 @@ return {
 		terraformspeed = 500,
 		usebuildinggrounddecal = true,
 		workertime = 100,
-		yardmap = "oooooooooooooooooocccccccccccccccccc",
+		yardmap = "occccooccccooccccooccccooccccoocccco",
 		buildoptions = {
 			[1] = "armck",
 			[2] = "armpw",
@@ -50,10 +50,6 @@ return {
 			[6] = "armjeth",
 			[7] = "armwar",
 			[8] = "armflea",
-		},
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

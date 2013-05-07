@@ -3,7 +3,8 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, head1,head2,head3,head4,nano1,nano2,nano3,nano4,nano5,nano6,nano7,nano8,pad;
+piece  base, beam1, beam2, blinks, gun1, gun2, explodpt1, explodpt2,
+       explodpt3, explodpt4, blinka, blinkb;
 
 static-var  spray, unitviewer, statechg_DesiredState, statechg_StateChanging;
 
@@ -11,20 +12,30 @@ static-var  spray, unitviewer, statechg_DesiredState, statechg_StateChanging;
 #define SIG_ACTIVATE			2
 
 
-
+Standby()
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 100;
+	}
+	while( TRUE )
+	{
+		emit-sfx 1024 + 0 from blinka;
+		sleep 450;
+		emit-sfx 1024 + 0 from blinkb;
+		sleep 450;
+	}
+	sleep 50;
+	start-script Standby();
+}
 activatescr()
 {
 	if( TRUE )
 	{
-		turn head1 to y-axis <0.000000> now;
-		turn head1 to y-axis <-45.0> speed <45>;
-		turn head2 to y-axis <0.000000> now;
-		turn head2 to y-axis <45.0> speed <45>;
-		turn head3 to y-axis <0.000000> now;
-		turn head3 to y-axis <-45.0> speed <45>;
-		turn head4 to y-axis <0.000000> now;
-		turn head4 to y-axis <45.0> speed <45>;
-
+		turn gun1 to z-axis <0.000000> now;
+		turn gun1 to z-axis <-89.752747> speed <60.071429>;
+		turn gun2 to z-axis <0.000000> now;
+		turn gun2 to z-axis <89.752747> speed <60.071429>;
 		sleep 1494;
 	}
 	sleep 8;
@@ -34,11 +45,10 @@ deactivatescr()
 {
 	if( TRUE )
 	{
-		turn head1 to y-axis <0.0> speed <45>;
-		turn head2 to y-axis <0.0> speed <45>;
-		turn head3 to y-axis <0.0> speed <45>;
-		turn head4 to y-axis <0.0> speed <45>;
-
+		turn gun1 to z-axis <-89.752747> now;
+		turn gun1 to z-axis <0.000000> speed <60.357143>;
+		turn gun2 to z-axis <89.752747> now;
+		turn gun2 to z-axis <0.000000> speed <60.357143>;
 		sleep 1487;
 	}
 	sleep 11;
@@ -97,6 +107,10 @@ CloseYard()
 
 Go()
 {
+	dont-cache beam1;
+	dont-cache beam2;
+	dont-cache gun1;
+	dont-cache gun2;
 	call-script activatescr();
 	call-script OpenYard();
 	set INBUILDSTANCE to 1;
@@ -107,6 +121,10 @@ Stop()
 	set INBUILDSTANCE to 0;
 	call-script CloseYard();
 	call-script deactivatescr();
+	cache beam1;
+	cache beam2;
+	cache gun1;
+	cache gun2;
 }
 
 InitState()
@@ -143,53 +161,33 @@ RequestState(requestedstate, currentstate)
 
 Create()
 {
-
+	dont-shade blinks;
+	dont-cache blinks;
+	dont-shade beam1;
+	dont-shade beam2;
+	dont-shade gun1;
+	dont-shade gun2;
+	dont-shade base;
 	unitviewer = FALSE;
-	spray = nano1;
+	spray = base;
 	call-script InitState();
 	start-script SmokeUnit();
+	start-script Standby();
 }
 
 QueryNanoPiece(piecenum)
 {
 	if( spray == 0 )
 	{
-		piecenum = nano1;
+		piecenum = beam1;
 	}
-	if( spray == 1 )
+	if( spray != 0 )
 	{
-		piecenum = nano2;
+		piecenum = beam2;
 	}
-	if( spray == 2 )
-	{
-		piecenum = nano3;
-	}
-	if( spray == 3 )
-	{
-		piecenum = nano4;
-	}
-	if( spray == 4 )
-	{
-		piecenum = nano5;
-	}
-	if( spray == 5 )
-	{
-		piecenum = nano6;
-	}
-	if( spray == 6 )
-	{
-		piecenum = nano7;
-	}
-	if( spray == 7 )
-	{
-		piecenum = nano8;
-	}
-	spray = spray +1;
-	if( spray > 7)
-	{
-		spray=0;
-	}
+	spray = !spray;
 }
+
 Demo()
 {
 	unitviewer = TRUE;
@@ -220,7 +218,7 @@ QueryBuildInfo(piecenum)
 
 SweetSpot(piecenum)
 {
-	piecenum = pad;
+	piecenum = blinks;
 }
 
 Killed(severity, corpsetype)
@@ -229,80 +227,56 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
-		
-		explode head1 type BITMAPONLY | BITMAP2;
-		explode head2 type BITMAPONLY | BITMAP2;
-		explode head3 type BITMAPONLY | BITMAP2;
-		explode head4 type BITMAPONLY | BITMAP2;
-		
-		explode nano1 type BITMAPONLY | BITMAP2;
-		explode nano2 type BITMAPONLY | BITMAP2;
-		explode nano3 type BITMAPONLY | BITMAP2;
-		explode nano4 type BITMAPONLY | BITMAP2;
-		explode nano5 type BITMAPONLY | BITMAP2;
-		explode nano6 type BITMAPONLY | BITMAP2;
-		explode nano7 type BITMAPONLY | BITMAP2;
-		explode nano8 type BITMAPONLY | BITMAP2;	
-		explode pad type BITMAPONLY | BITMAP3;
+		explode beam1 type BITMAPONLY | BITMAP2;
+		explode beam2 type BITMAPONLY | BITMAP3;
+		explode blinks type BITMAPONLY | BITMAP4;
+		explode gun1 type BITMAPONLY | BITMAP5;
+		explode gun2 type BITMAPONLY | BITMAP1;
+		explode explodpt1 type BITMAPONLY | BITMAP1;
+		explode explodpt2 type BITMAPONLY | BITMAP2;
+		explode explodpt3 type BITMAPONLY | BITMAP3;
+		explode explodpt4 type BITMAPONLY | BITMAP4;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		
-		explode head1 type FALL | BITMAP3;
-		explode head2 type FALL | BITMAP3;
-		explode head3 type FALL | BITMAP3;
-		explode head4 type FALL | BITMAP3;
-		
-		explode nano1 type BITMAPONLY | BITMAP2;
-		explode nano2 type BITMAPONLY | BITMAP2;
-		explode nano3 type BITMAPONLY | BITMAP2;
-		explode nano4 type BITMAPONLY | BITMAP2;
-		explode nano5 type BITMAPONLY | BITMAP2;
-		explode nano6 type BITMAPONLY | BITMAP2;
-		explode nano7 type BITMAPONLY | BITMAP2;
-		explode nano8 type BITMAPONLY | BITMAP2;	
-		explode pad type BITMAPONLY | BITMAP3;
+		explode base type SHATTER | BITMAP1;
+		explode beam1 type FALL | BITMAP2;
+		explode beam2 type FALL | BITMAP3;
+		explode blinks type SHATTER | BITMAP4;
+		explode gun1 type FALL | BITMAP5;
+		explode gun2 type SHATTER | BITMAP1;
+		explode explodpt1 type FALL | BITMAP1;
+		explode explodpt2 type FALL | BITMAP2;
+		explode explodpt3 type FALL | BITMAP3;
+		explode explodpt4 type FALL | BITMAP4;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		
-		explode head1 type FALL | BITMAP3;
-		explode head2 type FALL | BITMAP3;
-		explode head3 type FALL | BITMAP3;
-		explode head4 type FALL | BITMAP3;
-		
-		explode nano1 type BITMAPONLY | BITMAP2;
-		explode nano2 type BITMAPONLY | BITMAP2;
-		explode nano3 type BITMAPONLY | BITMAP2;
-		explode nano4 type BITMAPONLY | BITMAP2;
-		explode nano5 type BITMAPONLY | BITMAP2;
-		explode nano6 type BITMAPONLY | BITMAP2;
-		explode nano7 type BITMAPONLY | BITMAP2;
-		explode nano8 type BITMAPONLY | BITMAP2;	
-		explode pad type BITMAPONLY | BITMAP3;
+		explode base type SHATTER | BITMAP1;
+		explode beam1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode beam2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode blinks type SHATTER | BITMAP4;
+		explode gun1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+		explode gun2 type SHATTER | BITMAP1;
+		explode explodpt1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+		explode explodpt2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode explodpt3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode explodpt4 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		
-		explode head1 type FALL | BITMAP3;
-		explode head2 type FALL | BITMAP3;
-		explode head3 type FALL | BITMAP3;
-		explode head4 type FALL | BITMAP3;
-		
-		explode nano1 type BITMAPONLY | BITMAP2;
-		explode nano2 type BITMAPONLY | BITMAP2;
-		explode nano3 type BITMAPONLY | BITMAP2;
-		explode nano4 type BITMAPONLY | BITMAP2;
-		explode nano5 type BITMAPONLY | BITMAP2;
-		explode nano6 type BITMAPONLY | BITMAP2;
-		explode nano7 type BITMAPONLY | BITMAP2;
-		explode nano8 type BITMAPONLY | BITMAP2;	
-		explode pad type BITMAPONLY | BITMAP3;
+	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+	explode beam1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode beam2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode blinks type SHATTER | EXPLODE_ON_HIT | BITMAP4;
+	explode gun1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+	explode gun2 type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+	explode explodpt1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode explodpt2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode explodpt3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode explodpt4 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 }

@@ -27,17 +27,12 @@ return {
 		movementclass = "HKBOT4",
 		name = "Catapult",
 		nochasecategory = "VTOL",
-		objectname = "ARMRAVEN.s3o",
+		objectname = "ARMRAVEN",
 		seismicsignature = 0,
 		selfdestructas = "MECH_BLAST",
 		sightdistance = 700,
-		smoothanim = true,
 		turnrate = 979,
 		upright = true,
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = true,
@@ -115,7 +110,7 @@ return {
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
 				metalpershot = 0,
-				model = "catapultmissile.s3o",
+				model = "exphvyrock",
 				movingaccuracy = 600,
 				name = "RavenCatapultRockets",
 				noselfdamage = true,
@@ -143,7 +138,7 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badtargetcategory = "VTOL",
+				badtargetcategory = "VTOL GROUNDSCOUT",
 				def = "EXP_HEAVYROCKET",
 				onlytargetcategory = "SURFACE",
 			},

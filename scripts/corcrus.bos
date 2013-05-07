@@ -3,9 +3,9 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, wake, chrgflare, turret, sleeve, barrel1, barrel2,
-       foreturret, foreflare, aftturret, aftflare, flare1,
-       flare2 ;
+piece  base, wake1, wake2, chrgflare, turret, sleeve, barrels,
+       foreturret, foregun, foreflare, aftturret, aftgun, aftflare, flare1,
+       flare2, ground;
 
 static-var  restore_delay, gun_2, gun_1, bMoving, oldHead;
 
@@ -14,6 +14,15 @@ static-var  restore_delay, gun_2, gun_1, bMoving, oldHead;
 #define SIG_AIM				4
 #define SIG_MOVE			8
 
+
+SetDirection(heading)
+{
+	var spd;
+	spd = (get ABS(oldHead) - get ABS(heading)) / 2;
+	turn ground to y-axis heading speed spd;
+	turn base to y-axis 0-heading speed spd;
+	oldHead = heading;
+}
 
 RockOnWaves()
 {
@@ -25,8 +34,8 @@ RockOnWaves()
 		while( get ABS(rockAng) < <1.31> )
 		{
 			rockSpeed = <1.45> - get ABS(rockAng);
-			turn base to x-axis rockAng speed rockSpeed*4;
-			wait-for-turn base around x-axis;
+			turn ground to x-axis rockAng speed rockSpeed*4;
+			wait-for-turn ground around x-axis;
 			rockAng = rockAng + rockDir;
 		}
 		rockDir = 0 - rockDir;
@@ -93,9 +102,9 @@ RestoreDeckLaser()
 	sleep 3000;
 	set-signal-mask 0;
 	turn foreturret to y-axis <0.000000> speed <150.000000>;
-	turn foreturret to x-axis <0.000000> speed <100.000000>;
+	turn foregun to x-axis <0.000000> speed <100.000000>;
 	turn aftturret to y-axis <0.000000> speed <150.000000>;
-	turn aftturret to x-axis <0.000000> speed <100.000000>;
+	turn aftgun to x-axis <0.000000> speed <100.000000>;
 }
 
 waveSplash()
@@ -119,7 +128,8 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from wake;
+		emit-sfx 2 from wake1;
+		emit-sfx 4 from wake2;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 12000 / waketime;
@@ -140,16 +150,16 @@ AimSecondary(heading, pitch)
 	if( gun_2 )
 	{
 		turn aftturret to y-axis heading speed <300.000000>;
-		turn aftturret to x-axis <0.000000> - pitch speed <200.000000>;
+		turn aftgun to x-axis <0.000000> - pitch speed <200.000000>;
 		wait-for-turn aftturret around y-axis;
-		wait-for-turn aftturret around x-axis;
+		wait-for-turn aftgun around x-axis;
 	}
 	else
 	{
 		turn foreturret to y-axis heading speed <300.000000>;
-		turn foreturret to x-axis <0.000000> - pitch speed <200.000000>;
+		turn foregun to x-axis <0.000000> - pitch speed <200.000000>;
 		wait-for-turn foreturret around y-axis;
-		wait-for-turn foreturret around x-axis;
+		wait-for-turn foregun around x-axis;
 	}
 	start-script RestoreDeckLaser();
 	return (1);
@@ -176,11 +186,11 @@ AimFromSecondary(piecenum)
 {
 	if( gun_2 )
 	{
-		piecenum = aftturret;
+		piecenum = aftgun;
 	}
 	else
 	{
-		piecenum = foreturret;
+		piecenum = foregun;
 	}
 }
 
@@ -272,8 +282,13 @@ Killed(severity, corpsetype)
 		explode sleeve type BITMAPONLY | BITMAP2;
 		explode base type BITMAPONLY | BITMAP3;
 		explode turret type BITMAPONLY | BITMAP2;
+		explode barrels type BITMAPONLY | BITMAP2;
 		explode foreturret type BITMAPONLY | BITMAP2;
 		explode aftturret type BITMAPONLY | BITMAP1;
+		explode foregun type BITMAPONLY | BITMAP3;
+		explode aftgun type BITMAPONLY | BITMAP1;
+		explode wake1 type BITMAPONLY | BITMAP3;
+		explode wake2 type BITMAPONLY | BITMAP4;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -281,9 +296,14 @@ Killed(severity, corpsetype)
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP3;
 		explode turret type BITMAPONLY | BITMAP2;
+		explode barrels type BITMAPONLY | BITMAP2;
 		explode sleeve type BITMAPONLY | BITMAP3;
 		explode foreturret type SHATTER | EXPLODE_ON_HIT | BITMAP2;
 		explode aftturret type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+		explode foregun type FALL | EXPLODE_ON_HIT | BITMAP3;
+		explode aftgun type FALL | EXPLODE_ON_HIT | BITMAP2;
+		explode wake1 type FALL | BITMAP3;
+		explode wake2 type FALL | BITMAP4;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -291,15 +311,25 @@ Killed(severity, corpsetype)
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP3;
 		explode turret type BITMAPONLY | BITMAP2;
+		explode barrels type BITMAPONLY | BITMAP2;
 		explode sleeve type BITMAPONLY | BITMAP3;
 		explode foreturret type SHATTER | EXPLODE_ON_HIT | BITMAP2;
 		explode aftturret type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+		explode foregun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode aftgun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP3;
 	explode turret type BITMAPONLY | BITMAP2;
+	explode barrels type BITMAPONLY | BITMAP2;
 	explode sleeve type BITMAPONLY | BITMAP3;
 	explode foreturret type SHATTER | EXPLODE_ON_HIT | BITMAP2;
 	explode aftturret type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+	explode foregun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode aftgun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 }

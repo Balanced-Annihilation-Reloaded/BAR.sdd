@@ -8,6 +8,10 @@ return {
 		buildtime = 19137,
 		canmove = true,
 		category = "KBOT MOBILE WEAPON ALL NOTSHIP NOTAIR NOTHOVER NOTSUB SURFACE",
+		collisionvolumeoffsets = "0 -1 0",
+		collisionvolumescales = "26 41 16",
+		collisionvolumetest = 1,
+		collisionvolumetype = "box",
 		cloakcost = 75,
 		cloakcostmoving = 200,
 		corpse = "DEAD",
@@ -31,7 +35,6 @@ return {
 		radardistancejam = 10,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 455,
-		smoothanim = true,
 		turnrate = 1338,
 		upright = true,
 		featuredefs = {
@@ -118,7 +121,7 @@ return {
 				soundstartvolume = 4,
 				thickness = 0.5,
 				turret = true,
-				weapontype = "LaserCannon",
+				weapontype = "Rifle",
 				weaponvelocity = 3000,
 				damage = {
 					commanders = 1025,

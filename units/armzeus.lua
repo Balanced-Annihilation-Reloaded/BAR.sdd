@@ -8,6 +8,10 @@ return {
 		buildtime = 7252,
 		canmove = true,
 		category = "KBOT MOBILE WEAPON ALL NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
+		collisionvolumeoffsets = "0 -11 -3",
+		collisionvolumescales = "27 33 14",
+		collisionvolumetest = 1,
+		collisionvolumetype = "box",
 		corpse = "DEAD",
 		description = "Assault Kbot",
 		energymake = 3.5,
@@ -27,7 +31,6 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 331.5,
-		smoothanim = true,
 		turnrate = 1056,
 		upright = true,
 		featuredefs = {
@@ -94,8 +97,6 @@ return {
 		weapondefs = {
 			lightning = {
 				areaofeffect = 8,
-				color = 128,
-				color2 = 130,
 				craterboost = 0,
 				cratermult = 0,
 				duration = 10,

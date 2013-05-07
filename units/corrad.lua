@@ -33,7 +33,7 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Radar Tower",
-		objectname = "CORRAD.s3o",
+		objectname = "CORRAD",
 		onoffable = true,
 		radardistance = 2100,
 		radaremitheight = 72,
@@ -42,10 +42,6 @@ return {
 		sightdistance = 680,
 		usebuildinggrounddecal = true,
 		yardmap = "oooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Core_normal.dds",
-		},
 		featuredefs = {
 			dead = {
 				blocking = true,
@@ -63,7 +59,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 36,
-				object = "CORRAD_DEAD.s3o",
+				object = "CORRAD_DEAD",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
@@ -80,7 +76,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 14,
-				object = "cor2X2D.s3o",
+				object = "2X2D",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

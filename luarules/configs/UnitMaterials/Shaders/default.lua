@@ -89,6 +89,7 @@ return {
     uniform vec3 sunAmbient;
 	uniform float frameLoc;
 	uniform float healthLoc;
+	uniform vec4 trimColor;
 
   #ifdef use_shadows
     #ifdef use_perspective_correct_shadows
@@ -128,12 +129,13 @@ return {
        vec3 normal = normalize(normalv);
     #endif
        float a    = max( dot(normal, sunPos), 0.0);
-       vec3 light = a * sunDiffuse + sunAmbient;
+      //vec3 light = a * sunDiffuse ;//+ 0.5*sunAmbient;
+      vec3 light = a * sunDiffuse + sunAmbient;
+       //vec3 light = a * sunDiffuse + sunAmbient;
 
        vec4 extraColor  = texture2D(textureS3o2, gl_TexCoord[0].st);
-
        vec3 reflectDir = reflect(cameraDir, normal);
-       vec3 specular   = textureCube(specularTex, reflectDir).rgb * extraColor.b * 4.0;
+       vec3 specular   = textureCube(specularTex, reflectDir).rgb * extraColor.g * 8.0;
        vec3 reflection = textureCube(reflectTex,  reflectDir).rgb;
 
     #ifdef use_shadows
@@ -151,7 +153,9 @@ return {
        reflection += extraColor.rrr*frameLoc; // self-illum
 
        gl_FragColor     = texture2D(textureS3o1, gl_TexCoord[0].st);
-       gl_FragColor.rgb = mix(gl_FragColor.rgb, teamColor.rgb, gl_FragColor.a); // teamcolor
+       gl_FragColor.rgb = mix(gl_FragColor.rgb, teamColor.rgb, gl_FragColor.a-extraColor.b*trimColor.a); // teamcolor
+		gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.0,0.0,0.0), extraColor.b*trimColor.a); // trimcolor
+		gl_FragColor.rgb = mix(gl_FragColor.rgb, trimColor.rgb, (extraColor.b/255.0)*trimColor.a); // trimcolor
        gl_FragColor.rgb = gl_FragColor.rgb * reflection + specular;
        gl_FragColor.a   = extraColor.a;
 	   gl_FragColor.rgb = gl_FragColor.rgb +gl_FragColor.rgb*(normaltex.a-0.5)*healthLoc;

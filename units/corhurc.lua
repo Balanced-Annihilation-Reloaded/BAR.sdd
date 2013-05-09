@@ -27,11 +27,15 @@ return {
 		name = "Hurricane",
 		noautofire = true,
 		nochasecategory = "VTOL",
-		objectname = "CORHURC",
+		objectname = "CORHURC.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 221,
 		turnrate = 220,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -67,7 +71,7 @@ return {
 				gravityaffected = "true",
 				impulseboost = 0.123,
 				impulsefactor = 0.123,
-				model = "bomb",
+				model = "bombrr.s3o",
 				mygravity = 0.4,
 				name = "AdvancedBombs",
 				noselfdamage = true,
@@ -86,9 +90,9 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "MOBILE",
+				badtargetcategory = "MOBILE",
 				def = "CORADVBOMB",
-				onlyTargetCategory = "NOTSUB",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

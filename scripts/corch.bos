@@ -3,8 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, beam, door1, door2, boom, neck, gun, wake1,
-       wake2, wake3, wake4, wake5, wake6, wake7, wake8;
+piece  base, turret, nano, wake;
 
 static-var  terrain, notBuilding, statechg_DesiredState, statechg_StateChanging;
 
@@ -14,34 +13,13 @@ static-var  terrain, notBuilding, statechg_DesiredState, statechg_StateChanging;
 
 activatescr()
 {
-	turn door1 to z-axis <0.000000> now;
-	turn door1 to z-axis <-150.000000> speed <300.000000>;
-	turn door2 to z-axis <0.000000> now;
-	turn door2 to z-axis <150.000000> speed <300.000000>;
-	sleep 683;
 
-	turn boom to x-axis <43.000000> speed <62.000000>;
-	turn neck to x-axis <-43.000000> speed <62.000000>;
-	sleep 689;
 }
 
 deactivatescr()
 {
 	set INBUILDSTANCE to 0;
-	turn gun to y-axis <0.000000> speed <160.000000>;
-	wait-for-turn gun around y-axis;
 
-	turn door1 to z-axis <-150.000000> now;
-	turn door2 to z-axis <150.000000> now;
-	turn boom to x-axis <43.000000> now;
-	turn boom to x-axis <0.000000> speed <64.000000>;
-	turn neck to x-axis <-43.000000> now;
-	turn neck to x-axis <0.000000> speed <64.000000>;
-	sleep 672;
-
-	turn door1 to z-axis <0.000000> speed <300.000000>;
-	turn door2 to z-axis <0.000000> speed <300.000000>;
-	sleep 689;
 }
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
@@ -85,13 +63,11 @@ RequestState(requestedstate, currentstate)
 	{
 		if( statechg_DesiredState )
 		{
-			call-script deactivatescr();
 			notBuilding = 1;
 			currentstate = 1;
 		}
 		else
 		{
-			call-script activatescr();
 			notBuilding = 0;
 			currentstate = 0;
 		}
@@ -107,22 +83,22 @@ StartMoving()
 	{
 		if( terrain == 1 OR terrain == 2 )
 		{
-			emit-sfx 5 from wake1;
-			emit-sfx 5 from wake2;
-			emit-sfx 5 from wake3;
-			emit-sfx 5 from wake4;
-			emit-sfx 5 from wake5;
-			emit-sfx 5 from wake6;
-			emit-sfx 3 from wake7;
-			emit-sfx 3 from wake8;
-			emit-sfx 3 from wake1;
-			emit-sfx 3 from wake2;
-			emit-sfx 3 from wake3;
-			emit-sfx 3 from wake4;
-			emit-sfx 3 from wake5;
-			emit-sfx 3 from wake6;
-			emit-sfx 5 from wake7;
-			emit-sfx 5 from wake8;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
 		}
 		sleep 300;
 	}
@@ -160,8 +136,8 @@ StartBuilding(heading, pitch)
 	start-script RequestState(0);
 	while( notBuilding ) sleep 100;
 	signal SIG_BUILD;
-	turn gun to y-axis heading speed <160.000000>;
-	wait-for-turn gun around y-axis;
+	turn turret to y-axis heading speed <160.000000>;
+	wait-for-turn turret around y-axis;
 	set INBUILDSTANCE to 1;
 }
 
@@ -177,7 +153,7 @@ StopBuilding()
 
 QueryNanoPiece(piecenum)
 {
-	piecenum = beam;
+	piecenum = nano;
 }
 
 /*
@@ -199,23 +175,15 @@ Killed(severity, corpsetype)
 		if( severity <= 50 )
 		{
 			corpsetype = 2;
-			explode boom type FALL | BITMAP1;
-			explode beam type FALL | BITMAP2;
+			explode nano type FALL | BITMAP1;
+			explode turret type FALL | BITMAP2;
 			explode base type BITMAPONLY | BITMAP3;
-			explode door1 type BITMAPONLY | BITMAP4;
-			explode door2 type BITMAPONLY | BITMAP5;
-			explode gun type SHATTER | BITMAP1;
-			explode neck type FALL | BITMAP2;
 			return (0);
 		}
 		corpsetype = 3;
-		explode boom type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode beam type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+		explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		explode base type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode gun type SHATTER | BITMAP1;
-		explode neck type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		return (0);
 	}
 	if( terrain == 2 )
@@ -223,67 +191,43 @@ Killed(severity, corpsetype)
 		if( severity <= 50 )
 		{
 			corpsetype = 2;
-			explode boom type FALL | BITMAP1;
-			explode beam type FALL | BITMAP2;
+			explode nano type FALL | BITMAP1;
+			explode turret type FALL | BITMAP2;
 			explode base type BITMAPONLY | BITMAP3;
-			explode door1 type BITMAPONLY | BITMAP4;
-			explode door2 type BITMAPONLY | BITMAP5;
-			explode gun type SHATTER | BITMAP1;
-			explode neck type FALL | BITMAP2;
 			return (0);
 		}
 		corpsetype = 3;
-		explode boom type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode beam type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+		explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		explode base type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode gun type SHATTER | BITMAP1;
-		explode neck type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		return (0);
 	}
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode boom type BITMAPONLY | BITMAP1;
-		explode beam type BITMAPONLY | BITMAP2;
+		explode nano type BITMAPONLY | BITMAP1;
+		explode turret type BITMAPONLY | BITMAP2;
 		explode base type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode gun type BITMAPONLY | BITMAP1;
-		explode neck type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode boom type FALL | BITMAP1;
-		explode beam type FALL | BITMAP2;
+		explode nano type FALL | BITMAP1;
+		explode turret type FALL | BITMAP2;
 		explode base type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode gun type SHATTER | BITMAP1;
-		explode neck type FALL | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode boom type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode beam type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+		explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		explode base type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode gun type SHATTER | BITMAP1;
-		explode neck type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
-	explode boom type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode beam type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 	explode base type BITMAPONLY | BITMAP3;
-	explode door1 type BITMAPONLY | BITMAP4;
-	explode door2 type BITMAPONLY | BITMAP5;
-	explode gun type SHATTER | EXPLODE_ON_HIT | BITMAP1;
-	explode neck type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 }

@@ -88,7 +88,7 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "VTOL",
+				badtargetcategory = "VTOL",
 				def = "MED_EMG",
 				onlytargetcategory = "SURFACE",
 			},

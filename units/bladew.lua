@@ -26,13 +26,17 @@ return {
 		maxwaterdepth = 0,
 		name = "Bladewing",
 		nochasecategory = "COMMANDERS VTOL",
-		objectname = "BLADEW",
+		objectname = "BLADEW.s3o",
 		seismicsignature = 0,
 		selfdestructas = "TINY_BUILDINGEX",
 		sightdistance = 364,
 		turnrate = 1144,
 		upright = true,
 		usesmoothmesh = 0,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

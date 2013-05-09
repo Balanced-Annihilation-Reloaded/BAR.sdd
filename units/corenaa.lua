@@ -26,12 +26,16 @@ return {
 		maxdamage = 1820,
 		minwaterdepth = 2,
 		name = "Cobra - NS",
-		objectname = "CORENAA",
+		objectname = "CORENAA.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 550,
 		waterline = 0.30000001192093,
 		yardmap = "wwwwwwwwwwwwwwww",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,
@@ -48,7 +52,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 541,
-				object = "CORENAA_DEAD",
+				object = "CORENAA_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

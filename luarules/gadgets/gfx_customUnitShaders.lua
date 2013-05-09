@@ -31,6 +31,12 @@ end
 
 if (gadgetHandler:IsSyncedCode()) then
 
+function gadget:RecvLuaMsg(msg, id)
+    if (msg:find("trimColor",1,true)) then
+		--Spring.Echo('mgs here', msg, id)
+		SendToUnsynced("trimcolor_msg", msg,id)
+    end
+ end
   function gadget:UnitFinished(unitID,unitDefID,teamID)
     SendToUnsynced("unitshaders_finished", unitID, unitDefID,teamID)
   end
@@ -97,7 +103,6 @@ VFS.Include("LuaRules/UnitRendering.lua")
 if (not gl.CreateShader) then
   return false
 end
-
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -109,7 +114,7 @@ local drawUnitList = {}
 local unitMaterialInfos,bufMaterials = {},{}
 local materialDefs = {}
 local loadedTextures = {}
-
+trimColors={}
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -191,10 +196,12 @@ local function CompileMaterialShaders()
         mat_src.frameLoc        = gl.GetUniformLocation(GLSLshader,"frameLoc")
         mat_src.speedLoc        = gl.GetUniformLocation(GLSLshader,"speed")
         mat_src.healthLoc        = gl.GetUniformLocation(GLSLshader,"healthLoc")
+        mat_src.trimColor        = gl.GetUniformLocation(GLSLshader,"trimColor")
       end
     end
   end
 end
+
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -344,7 +351,15 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-
+function gadget:TrimColorChange(msg,teamID)
+	
+	if (msg:find("trimColor",0,true)) then
+		r,g,b,a=string.match(msg, ",([^,]+),([^,]+),([^,]+),([^,]+)")
+		--Spring.Echo('wuaaagh',r,g,b,a)
+		trimColors[teamID]={r,g,b,a}
+		--Spring.Echo('trimColor changed for ',teamID,to_string(trimColors[teamID]))
+	end
+end
 function gadget:UnitFinished(unitID,unitDefID,teamID)
   local unitMat = unitMaterialInfos[unitDefID]
   if (unitMat) then
@@ -464,7 +479,13 @@ function gadget:Initialize()
       unitMaterialInfos[(UnitDefNames[unitName] or {id=-1}).id] = materialInfo
     end
   end
-
+	--// Initialize the trim colors for each team
+	
+	--Spring.Echo(to_string(Spring.GetPlayerList()))
+	pl=Spring.GetPlayerList()
+	for k,v in pairs(pl) do
+		trimColors[v]={0,0,0,0}
+	end
   --// insert synced actions
   gadgetHandler:AddSyncAction("unitshaders_finished", UnitFinished)
   gadgetHandler:AddSyncAction("unitshaders_destroyed", UnitDestroyed)
@@ -472,9 +493,50 @@ function gadget:Initialize()
   gadgetHandler:AddSyncAction("unitshaders_given", UnitGiven)
   gadgetHandler:AddSyncAction("unitshaders_cloak", UnitCloaked)
   gadgetHandler:AddSyncAction("unitshaders_decloak", UnitDecloaked)
+  gadgetHandler:AddSyncAction("trimcolor_msg", TrimColorChange)
 
   gadgetHandler:AddChatAction("normalmapping", ToggleNormalmapping)
 end
 
+function to_string(data, indent)
+    local str = ""
+
+    if(indent == nil) then
+        indent = 0
+    end
+
+    -- Check the type
+    if(type(data) == "string") then
+        str = str .. ("	"):rep(indent) .. data .. "\n"
+    elseif(type(data) == "number") then
+        str = str .. ("	"):rep(indent) .. data .. "\n"
+    elseif(type(data) == "boolean") then
+        if(data == true) then
+            str = str .. "true"
+        else
+            str = str .. "false"
+        end
+    elseif(type(data) == "table") then
+        local i, v
+        for i, v in pairs(data) do
+            -- Check for a table in a table
+            if(type(v) == "table") then
+                str = str .. ("	"):rep(indent) .. i .. ":\n"
+                str = str .. to_string(v, indent + 2)
+            else
+                str = str .. ("	"):rep(indent) .. i .. ": " ..
+to_string(v, 0)
+            end
+        end
+    elseif (data ==nil) then
+		str=str..'nil'
+	else
+        --print_debug(1, "Error: unknown data type: %s", type(data))
+		str=str.. "Error: unknown data type:" .. type(data)
+		Spring.Echo('X data type')
+    end
+
+    return str
+end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

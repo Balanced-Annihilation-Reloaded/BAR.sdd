@@ -85,38 +85,64 @@ junoBursts = {
   count      = 20,
 }
 
-
 corfusBursts = {
   life       = math.huge,
-  pos        = {0,50,-5},
+  pos        = {0,50,0},
+
   rotSpeed   = 0.75,
   rotSpread  = 1,
   rotairdrag = 1,
   arc        = 90,
   arcSpread  = 0,
-  size       = 28,
-  sizeSpread = 0,
+
+  size       = 40,
+  sizeSpread = 5,
+
   colormap   = { {0.7, 1, 0.7, 0.5} },
   directional= true,
   repeatEffect = true,
+
   count      = 30,
 }
 
+
 cafusBursts = {
   life       = math.huge,
-  pos        = {0,58,-5},
+  pos        = {0,60,0},
+
   rotSpeed   = 0.5,
   rotSpread  = 1,
+
   arc        = 90,
   arcSpread  = 0,
-  size       = 35,
+
+
+
+  size       = 44,
   sizeSpread = 10,
   colormap   = { {0.5, 0.5, 1.0, 0.2} },
   directional= true,
   repeatEffect = true,
+
   count      = 50,
 }
+corgateBursts = {
+  life       = math.huge,
+  pos        = {0,42,0},
+  rotSpeed   = 0.5,
+  rotSpread  = 1,
+  arc        = 90,
+  arcSpread  = 0,
 
+
+
+  size       = 16,
+  sizeSpread = 3,
+  colormap   = { {1, 0.5, 0.5, 0.2} },
+  directional= true,
+  repeatEffect = true,
+  count      = 50,
+}
 corjamtBursts = {
   layer      = -35,
   life       = math.huge,
@@ -138,11 +164,28 @@ corjamtBursts = {
 ----------------------------------------------------------------------------
 -- COLORSPHERES ------------------------------------------------------------
 ----------------------------------------------------------------------------
+aafusGlowBallTeal = {
+  size=0.125,
+  colormap={ {0.3,0.5,1.0,0.8},{0.0,0.3,1.0,0.5},{0.3,0.5,1.0,0.8} },
+  life=20,
+  piece="collar1",
+  repeatEffect=true
+}
+
+aafusGlowBallWhite = {
+  size=0.1,
+  colormap={ {1.0,1.0,1.0,1.0},{1.0,1.0,1.0,0.5},{1.0,1.0,1.0,1.0} },
+  life=20,
+  piece="collar2",
+  repeatEffect=true
+}
+
 cafusShieldSphere = {
   layer=-35,
   life=20,
-  pos={0,58.9,-4.5},
-  size=24,
+  pos={0,60,0},
+
+  size=32,
   colormap1 = { {0.9, 0.9, 1, 0.75},{0.9, 0.9, 1, 1.0},{0.9, 0.9, 1, 1.0},{0.9, 0.9, 1, 0.75} },
   colormap2 = { {0.2, 0.2, 1, 0.7},{0.2, 0.2, 1, 0.75},{0.2, 0.2, 1, 0.75},{0.2, 0.2, 1, 0.7} },
   repeatEffect=true
@@ -151,20 +194,30 @@ cafusShieldSphere = {
 corfusShieldSphere = {
   layer=-35,
   life=20,
-  pos = {0,50,-5},
-  size=22,
+  pos = {0,50,0},
+
+  size=24,
   colormap1 = { {0.9, 0.9, 1, 0.75},{0.9, 0.9, 1, 1.0},{0.9, 0.9, 1, 1.0},{0.9, 0.9, 1, 0.75} },
   colormap2 = { {0.2, 0.6, 0.2, 0.4},{0.2, 0.6, 0.2, 0.45},{0.2, 0.6, 0.2, 0.45},{0.2, 0.6, 0.2, 0.4} },
   repeatEffect=true
 }
 
-junoShieldSphere = {
+corgateShieldSphere = {
   layer=-35,
   life=20,
-  pos = {0,76,0},
-  size=13,
-  colormap1 = { {0.55,0.55,0.9, 0.8},{0.55,0.55,0.9, 0.8},{0.55,0.55,0.9, 0.8},{0.55,0.55,0.9, 0.8} },
-  colormap2 = { {0, 0, 0, 1},{0, 0, 0, 1},{0, 0, 0, 1},{0, 0, 0, 1} },
+  pos = {0,42,0},
+  size=8,
+  colormap1 = { {0.9, 0.9, 1, 0.75},{0.9, 0.9, 1, 1.0},{0.9, 0.9, 1, 1.0},{0.9, 0.9, 1, 0.75} },
+  colormap2 = { {0.2, 0.6, 0.2, 0.4},{0.2, 0.6, 0.2, 0.45},{0.2, 0.6, 0.2, 0.45},{0.2, 0.6, 0.2, 0.4} },
+  repeatEffect=true
+}
+cjunoShieldSphere = {
+  layer=-35,
+  life=20,
+  pos = {0,72,0},
+  size=16,
+  colormap1 = { {0.9, 0.9, 1, 0.75},{0.9, 0.9, 1, 1.0},{0.9, 0.9, 1, 1.0},{0.9, 0.9, 1, 0.75} },
+  colormap2 = { {0.8, 0.2, 0.2, 0.4},{0.8, 0.2, 0.2, 0.45},{0.9, 0.2, 0.2, 0.45},{0.9, 0.1, 0.2, 0.4} },
   repeatEffect=true
 }
 
@@ -336,4 +389,14 @@ sparks1 = {
   texture      = 'bitmaps/PD/Lightningball.TGA',
   count        = 6,
   repeatEffect = true,
+}
+cormakrEffect = {
+  life       = math.huge,
+  pos        = {0,24,0},
+  size       = 26,
+  sizeSpread = 7,
+  colormap   = { {0.8, 0.8, 0.5, 0.01} },
+  onActive   = true,
+  texture    = 'bitmaps/flare.TGA',
+
 }

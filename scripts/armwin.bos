@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, blades, post;
+piece  base, blades, turbine;
 
 static-var  Static_Var_1, Static_Var_2, statechg_DesiredState, statechg_StateChanging;
 
@@ -38,13 +38,13 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 Go()
 {
 	spin blades around z-axis speed Static_Var_1;
-	turn post to y-axis Static_Var_2 speed <30.000000>;
+	turn turbine to y-axis Static_Var_2 speed <30.000000>;
 }
 
 Stop()
 {
 	spin blades around z-axis speed <0.000000>;
-	turn post to y-axis Static_Var_2 speed <0.000000>;
+	turn turbine to y-axis Static_Var_2 speed <0.000000>;
 }
 
 InitState()
@@ -82,9 +82,9 @@ RequestState(requestedstate, currentstate)
 Create()
 {
 	dont-cache blades;
-	dont-cache post;
+	dont-cache turbine;
 	dont-shade blades;
-	dont-shade post;
+	dont-shade turbine;
 	Static_Var_1 = 800;
 	Static_Var_2 = 0;
 	call-script InitState();
@@ -116,7 +116,7 @@ SetDirection(Func_Var_1)
 	Static_Var_2 = Func_Var_1;
 	if( !get BUILD_PERCENT_LEFT )
 	{
-		turn post to y-axis Func_Var_1 speed <20.000000>;
+		turn turbine to y-axis Func_Var_1 speed <20.000000>;
 	}
 }
 
@@ -132,7 +132,7 @@ Killed(severity, corpsetype)
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
 		explode blades type BITMAPONLY | BITMAP2;
-		explode post type BITMAPONLY | BITMAP3;
+		explode turbine type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -140,7 +140,7 @@ Killed(severity, corpsetype)
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
 		explode blades type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode post type BITMAPONLY | BITMAP3;
+		explode turbine type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -148,11 +148,11 @@ Killed(severity, corpsetype)
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
 		explode blades type SHATTER | BITMAP2;
-		explode post type BITMAPONLY | BITMAP3;
+		explode turbine type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
 	explode blades type SHATTER | BITMAP2;
-	explode post type BITMAPONLY | BITMAP3;
+	explode turbine type BITMAPONLY | BITMAP3;
 }

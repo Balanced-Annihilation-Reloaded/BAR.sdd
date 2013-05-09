@@ -23,11 +23,15 @@ return {
 		maxwaterdepth = 255,
 		name = "Avenger",
 		nochasecategory = "NOTAIR",
-		objectname = "CORVENG",
+		objectname = "CORVENG.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT_AIR",
 		sightdistance = 200,
 		turnrate = 839,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -60,7 +64,7 @@ return {
 				impulseboost = 0,
 				impulsefactor = 0,
 				metalpershot = 0,
-				model = "missile",
+				model = "cormissile.s3o",
 				name = "GuidedMissiles",
 				noselfdamage = true,
 				range = 530,
@@ -89,9 +93,9 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "NOTAIR",
+				badtargetcategory = "NOTAIR",
 				def = "CORVTOL_MISSILE_A2A",
-				onlyTargetCategory = "NOTSUB",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

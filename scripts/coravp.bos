@@ -3,8 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, pad, beam1, beam2, wing1, wing2, wing3, drawer1,
-       drawer2, gun2, gun1, blink, blinka, blinkb;
+piece  base,doorl,doorr ,nano1,nano2,nano3,nano4,nano5,nano6,nano7,nano8,pad;
 
 static-var  spray, unitviewer, statechg_DesiredState, statechg_StateChanging;
 
@@ -12,57 +11,19 @@ static-var  spray, unitviewer, statechg_DesiredState, statechg_StateChanging;
 #define SIG_ACTIVATE			2
 
 
-Standby()
-{
-	while( get BUILD_PERCENT_LEFT )
-	{
-		sleep 100;
-	}
-	while( TRUE )
-	{
-		emit-sfx 1024 + 0 from blinka;
-		sleep 450;
-		emit-sfx 1024 + 0 from blinkb;
-		sleep 450;
-	}
-	sleep 50;
-	start-script Standby();
-}
 
 activatescr()
 {
 	if( TRUE )
 	{
-		turn wing1 to z-axis <0.000000> now;
-		turn wing1 to z-axis <-90.016484> speed <180.758242>;
-		turn wing2 to x-axis <0.000000> now;
-		turn wing2 to x-axis <-90.016484> speed <180.758242>;
-		turn wing3 to z-axis <0.000000> now;
-		turn wing3 to z-axis <90.016484> speed <180.758242>;
-		sleep 498;
+		move doorl to x-axis [0.0] now;
+		move doorl to x-axis [-24.0] speed [24];
+		move doorr to x-axis [0.0] now;
+		move doorr to x-axis [24.0] speed [24];
+		wait-for-move doorl along x-axis;
+		sleep 1000;
 	}
-	if( TRUE )
-	{
-		turn wing1 to z-axis <-180.038462> speed <180.758242>;
-		turn wing2 to x-axis <-179.500000> speed <179.681319>;
-		turn wing3 to z-axis <179.500000> speed <179.681319>;
-		sleep 498;
-	}
-	if( TRUE )
-	{
-		move drawer1 to y-axis [8.250000] speed [13.136951];
-		move drawer2 to y-axis [8.200000] speed [13.057312];
-		move pad to z-axis [9.200000] speed [14.649683];
-		sleep 628;
-	}
-	if( TRUE )
-	{
-		move gun2 to x-axis [3.100000] speed [6.595746];
-		move gun2 to z-axis [3.100000] speed [6.595740];
-		move gun1 to x-axis [-3.100000] speed [6.595740];
-		move gun1 to z-axis [3.150000] speed [6.702118];
-		sleep 470;
-	}
+
 	sleep 6;
 }
 
@@ -70,42 +31,10 @@ deactivatescr()
 {
 	if( TRUE )
 	{
-		move drawer1 to y-axis [8.250000] now;
-		move drawer2 to y-axis [8.200000] now;
-		move pad to z-axis [9.200000] now;
-		move gun2 to x-axis [3.100000] now;
-		move gun2 to x-axis [0.000000] speed [3.202472];
-		move gun2 to z-axis [3.100000] now;
-		move gun2 to z-axis [0.000000] speed [3.202472];
-		move gun1 to x-axis [-3.100000] now;
-		move gun1 to x-axis [0.000000] speed [3.202472];
-		move gun1 to z-axis [3.150000] now;
-		move gun1 to z-axis [0.000000] speed [3.254126];
-		turn wing1 to z-axis <-180.038462> now;
-		turn wing2 to x-axis <-179.500000> now;
-		turn wing3 to z-axis <179.500000> now;
+		move doorl to x-axis [0.0] speed [24];
+		move doorr to x-axis [0.0] speed [24];
+		wait-for-move doorl along x-axis;
 		sleep 968;
-	}
-	if( TRUE )
-	{
-		move drawer1 to y-axis [0.000000] speed [13.074475];
-		move drawer2 to y-axis [0.000000] speed [12.995233];
-		move pad to z-axis [0.000000] speed [14.580017];
-		sleep 631;
-	}
-	if( TRUE )
-	{
-		turn wing1 to z-axis <-90.016484> speed <358.648352>;
-		turn wing2 to x-axis <-90.016484> speed <356.505495>;
-		turn wing3 to z-axis <90.016484> speed <356.505495>;
-		sleep 251;
-	}
-	if( TRUE )
-	{
-		turn wing1 to z-axis <0.000000> speed <358.648352>;
-		turn wing2 to x-axis <0.000000> speed <358.648352>;
-		turn wing3 to z-axis <0.000000> speed <358.648352>;
-		sleep 251;
 	}
 	sleep 12;
 }
@@ -163,16 +92,6 @@ CloseYard()
 
 Go()
 {
-	dont-cache beam1;
-	dont-cache beam2;
-	dont-cache drawer1;
-	dont-cache drawer2;
-	dont-cache gun1;
-	dont-cache gun2;
-	dont-cache pad;
-	dont-cache wing1;
-	dont-cache wing2;
-	dont-cache wing3;
 	call-script activatescr();
 	call-script OpenYard();
 	set INBUILDSTANCE to 1;
@@ -183,16 +102,6 @@ Stop()
 	set INBUILDSTANCE to 0;
 	call-script CloseYard();
 	call-script deactivatescr();
-	cache beam1;
-	cache beam2;
-	cache drawer1;
-	cache drawer2;
-	cache gun1;
-	cache gun2;
-	cache pad;
-	cache wing1;
-	cache wing2;
-	cache wing3;
 }
 
 InitState()
@@ -229,36 +138,51 @@ RequestState(requestedstate, currentstate)
 
 Create()
 {
-	dont-shade blink;
-	dont-cache blink;
-	dont-shade beam1;
-	dont-shade beam2;
-	dont-shade drawer1;
-	dont-shade drawer2;
-	dont-shade gun1;
-	dont-shade gun2;
-	dont-shade pad;
-	dont-shade wing1;
-	dont-shade wing2;
-	dont-shade wing3;
 	unitviewer = FALSE;
 	spray = base;
 	call-script InitState();
 	start-script SmokeUnit();
-	start-script Standby();
 }
 
 QueryNanoPiece(piecenum)
 {
 	if( spray == 0 )
 	{
-		piecenum = beam1;
+		piecenum = nano1;
 	}
-	if( spray != 0 )
+	if( spray == 1 )
 	{
-		piecenum = beam2;
+		piecenum = nano2;
 	}
-	spray = !spray;
+	if( spray == 2 )
+	{
+		piecenum = nano3;
+	}
+	if( spray == 3 )
+	{
+		piecenum = nano4;
+	}
+	if( spray == 4 )
+	{
+		piecenum = nano5;
+	}
+	if( spray == 5 )
+	{
+		piecenum = nano6;
+	}
+	if( spray == 6 )
+	{
+		piecenum = nano7;
+	}
+	if( spray == 7 )
+	{
+		piecenum = nano8;
+	}
+	spray = spray +1;
+	if( spray > 7)
+	{
+		spray=0;
+	}
 }
 
 Demo()
@@ -286,12 +210,10 @@ Deactivate()
 
 StartBuilding()
 {
-	spin pad around y-axis speed <0.000000>;
 }
 
 StopBuilding()
 {
-	stop-spin pad around y-axis;
 }
 
 QueryBuildInfo(piecenum)
@@ -310,64 +232,64 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
-		explode beam1 type BITMAPONLY | BITMAP2;
-		explode beam2 type BITMAPONLY | BITMAP3;
-		explode blink type BITMAPONLY | BITMAP4;
-		explode drawer1 type BITMAPONLY | BITMAP5;
-		explode drawer2 type BITMAPONLY | BITMAP1;
-		explode gun1 type BITMAPONLY | BITMAP2;
-		explode gun2 type BITMAPONLY | BITMAP3;
-		explode pad type BITMAPONLY | BITMAP4;
-		explode wing1 type BITMAPONLY | BITMAP5;
-		explode wing2 type BITMAPONLY | BITMAP1;
-		explode wing3 type BITMAPONLY | BITMAP2;
+		explode nano1 type BITMAPONLY | BITMAP2;
+		explode nano2 type BITMAPONLY | BITMAP2;
+		explode nano3 type BITMAPONLY | BITMAP2;
+		explode nano4 type BITMAPONLY | BITMAP2;
+		explode nano5 type BITMAPONLY | BITMAP2;
+		explode nano6 type BITMAPONLY | BITMAP2;
+		explode nano7 type BITMAPONLY | BITMAP2;
+		explode nano8 type BITMAPONLY | BITMAP2;
+		explode doorl type BITMAPONLY | BITMAP2;
+		explode doorr type BITMAPONLY | BITMAP2;
+		explode pad type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
-		explode beam1 type FALL | BITMAP2;
-		explode beam2 type FALL | BITMAP3;
-		explode blink type SHATTER | BITMAP4;
-		explode drawer1 type FALL | BITMAP5;
-		explode drawer2 type FALL | BITMAP1;
-		explode gun1 type FALL | BITMAP2;
-		explode gun2 type FALL | BITMAP3;
-		explode pad type BITMAPONLY | BITMAP4;
-		explode wing1 type BITMAPONLY | BITMAP5;
-		explode wing2 type BITMAPONLY | BITMAP1;
-		explode wing3 type BITMAPONLY | BITMAP2;
+		explode nano1 type BITMAPONLY | BITMAP2;
+		explode nano2 type BITMAPONLY | BITMAP2;
+		explode nano3 type BITMAPONLY | BITMAP2;
+		explode nano4 type BITMAPONLY | BITMAP2;
+		explode nano5 type BITMAPONLY | BITMAP2;
+		explode nano6 type BITMAPONLY | BITMAP2;
+		explode nano7 type BITMAPONLY | BITMAP2;
+		explode nano8 type BITMAPONLY | BITMAP2;
+		explode doorl type BITMAPONLY | BITMAP2;
+		explode doorr type BITMAPONLY | BITMAP2;
+		explode pad type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
-		explode beam1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode beam2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode blink type SHATTER | BITMAP4;
-		explode drawer1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode drawer2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode gun1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode gun2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode pad type BITMAPONLY | BITMAP4;
-		explode wing1 type BITMAPONLY | BITMAP5;
-		explode wing2 type BITMAPONLY | BITMAP1;
-		explode wing3 type BITMAPONLY | BITMAP2;
+		explode nano1 type BITMAPONLY | BITMAP2;
+		explode nano2 type BITMAPONLY | BITMAP2;
+		explode nano3 type BITMAPONLY | BITMAP2;
+		explode nano4 type BITMAPONLY | BITMAP2;
+		explode nano5 type BITMAPONLY | BITMAP2;
+		explode nano6 type BITMAPONLY | BITMAP2;
+		explode nano7 type BITMAPONLY | BITMAP2;
+		explode nano8 type BITMAPONLY | BITMAP2;
+		explode doorl type BITMAPONLY | BITMAP2;
+		explode doorr type BITMAPONLY | BITMAP2;
+		explode pad type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode beam1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode beam2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode blink type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-	explode drawer1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode drawer2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode gun1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode gun2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode pad type BITMAPONLY | BITMAP4;
-	explode wing1 type BITMAPONLY | BITMAP5;
-	explode wing2 type BITMAPONLY | BITMAP1;
-	explode wing3 type BITMAPONLY | BITMAP2;
+		explode base type BITMAPONLY | BITMAP1;
+		explode nano1 type BITMAPONLY | BITMAP2;
+		explode nano2 type BITMAPONLY | BITMAP2;
+		explode nano3 type BITMAPONLY | BITMAP2;
+		explode nano4 type BITMAPONLY | BITMAP2;
+		explode nano5 type BITMAPONLY | BITMAP2;
+		explode nano6 type BITMAPONLY | BITMAP2;
+		explode nano7 type BITMAPONLY | BITMAP2;
+		explode nano8 type BITMAPONLY | BITMAP2;
+		explode doorl type BITMAPONLY | BITMAP2;
+		explode doorr type BITMAPONLY | BITMAP2;
+		explode pad type BITMAPONLY | BITMAP2;
 }

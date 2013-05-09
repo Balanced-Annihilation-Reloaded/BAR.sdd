@@ -30,7 +30,7 @@ return {
 		maxwaterdepth = 0,
 		metalstorage = 200,
 		name = "Hovercraft Platform",
-		objectname = "CORHP",
+		objectname = "CORHP.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
@@ -47,6 +47,10 @@ return {
 			[5] = "cormh",
 			[6] = "nsaclash",
 			[7] = "corthovr",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		featuredefs = {
 			dead = {
@@ -66,7 +70,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 662,
-				object = "CORHP_DEAD",
+				object = "CORHP_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
@@ -83,7 +87,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 265,
-				object = "7X7D",
+				object = "cor7X7D.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

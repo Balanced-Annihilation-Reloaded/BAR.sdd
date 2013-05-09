@@ -32,7 +32,7 @@ return {
 		metalstorage = 160,
 		minwaterdepth = 25,
 		name = "Amphibious Complex",
-		objectname = "CSUBPEN",
+		objectname = "CSUBPEN.s3o",
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 240,
@@ -51,6 +51,10 @@ return {
 			[8] = "intruder",
 			[9] = "corsub",
 		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,
@@ -68,7 +72,7 @@ return {
 				height = 5,
 				hitdensity = 100,
 				metal = 596,
-				object = "CSUBPEN_DEAD",
+				object = "CSUBPEN_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

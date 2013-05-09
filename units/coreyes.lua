@@ -25,12 +25,16 @@ return {
 		maxwaterdepth = 0,
 		mincloakdistance = 36,
 		name = "Dragon's Eye",
-		objectname = "COREYES",
+		objectname = "COREYES.s3o",
 		seismicsignature = 0,
 		sightdistance = 540,
 		stealth = true,
 		waterline = 5,
 		yardmap = "o",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			cdragonseyes_dead = {
 				blocking = false,
@@ -47,7 +51,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 12,
-				object = "1X1B",
+				object = "cor1X1B.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

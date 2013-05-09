@@ -29,13 +29,17 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Wind Generator",
-		objectname = "ARMWIN",
+		objectname = "ARMWIN.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
 		windgenerator = 25,
 		yardmap = "ooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

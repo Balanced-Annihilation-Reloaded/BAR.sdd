@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, arms, hand1, hand2, hand3, stand;
+piece  base,stand;
 
 static-var  Static_Var_1, Static_Var_2, Static_Var_3, statechg_DesiredState, statechg_StateChanging;
 
@@ -38,29 +38,18 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 fixGo()
 {
 	set ARMORED to 0;
-	dont-cache arms;
-	dont-cache hand1;
-	dont-cache hand2;
-	dont-cache hand3;
-	dont-cache stand;
-	move stand to y-axis [13.750000] speed [5.000000];
+	move stand to y-axis [20.000000] speed [10.000000];
 	wait-for-move stand along y-axis;
-	spin arms around y-axis speed Static_Var_1 accelerate Static_Var_2;
+	spin stand around y-axis speed Static_Var_1 accelerate Static_Var_2;
 }
 
 Stop()
 {
-	stop-spin arms around y-axis decelerate Static_Var_3;
-	wait-for-turn arms around y-axis;
-	turn arms to y-axis <0.000000> speed <70.000000>;
-	wait-for-turn arms around y-axis;
+	stop-spin stand around y-axis decelerate Static_Var_3;
+	wait-for-turn stand around y-axis;
+	turn stand to y-axis <0.000000> speed <70.000000>;
+	wait-for-turn stand around y-axis;
 	move stand to y-axis [0.000000] speed [10.000000];
-	wait-for-move arms along y-axis;
-	cache arms;
-	cache hand1;
-	cache hand2;
-	cache hand3;
-	cache stand;
 	set ARMORED to 1;
 }
 
@@ -101,11 +90,6 @@ Create()
 	Static_Var_1 = 500;
 	Static_Var_2 = 80;
 	Static_Var_3 = 160;
-	dont-shade arms;
-	dont-shade hand1;
-	dont-shade hand2;
-	dont-shade hand3;
-	dont-shade stand;
 	call-script InitState();
 	start-script SmokeUnit();
 	while( get BUILD_PERCENT_LEFT )
@@ -139,31 +123,25 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode arms type BITMAPONLY | BITMAP1;
+		explode stand type BITMAPONLY | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode arms type FALL | BITMAP1;
-		explode hand1 type SHATTER | BITMAP1;
-		explode hand2 type SHATTER | BITMAP1;
-		explode hand3 type SHATTER | BITMAP1;
+		explode stand type FALL | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode arms type FALL | BITMAP1;
-		explode hand1 type SHATTER | BITMAP1;
-		explode hand2 type FALL | BITMAP1;
-		explode hand3 type SHATTER | BITMAP1;
+		explode stand type FALL | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
-	explode arms type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+	explode stand type SHATTER | EXPLODE_ON_HIT | BITMAP1;
 	explode base type BITMAPONLY | BITMAP2;
 }

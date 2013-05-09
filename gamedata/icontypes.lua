@@ -41,6 +41,10 @@ local icontypes = {
   building = {
     bitmap="icons/square.tga",
     size=0.8,
+  },  
+  blank = {
+    bitmap="icons/blank.tga",
+    size=1,
   },
 }
 

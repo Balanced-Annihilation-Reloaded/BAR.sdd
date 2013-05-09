@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turret, barrel, sleeve, emit, shell, treads;
+piece  base, turret, barrel, sleeve, flare;
 
 static-var  restore_delay;
 
@@ -72,7 +72,7 @@ RestoreAfterDelay()
 {
 	sleep restore_delay;
 	turn turret to y-axis <0.000000> speed <45.000000>;
-	turn sleeve to x-axis <0.000000> speed <23.000000>;
+	turn turret to x-axis <0.000000> speed <23.000000>;
 }
 
 AimPrimary(heading, pitch)
@@ -80,9 +80,9 @@ AimPrimary(heading, pitch)
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
 	turn turret to y-axis heading speed <55.000000>;
-	turn sleeve to x-axis <0.000000> - pitch speed <35.000000>;
+	turn turret to x-axis <0.000000> - pitch speed <35.000000>;
 	wait-for-turn turret around y-axis;
-	wait-for-turn sleeve around x-axis;
+	wait-for-turn turret around x-axis;
 	start-script RestoreAfterDelay();
 	return (1);
 }
@@ -90,15 +90,13 @@ AimPrimary(heading, pitch)
 FirePrimary()
 {
 	move barrel to z-axis [-4.000000] speed [500.000000];
-	explode emit type BITMAPONLY | BITMAP5;
 	sleep 150;
-	explode shell type FALL | SMOKE;
 	move barrel to z-axis [0.000000] speed [6.000000];
 }
 
 QueryPrimary(piecenum)
 {
-	piecenum = emit;
+	piecenum = flare;
 }
 
 AimFromPrimary(piecenum)
@@ -120,7 +118,6 @@ Killed(severity, corpsetype)
 		explode sleeve type FALL | EXPLODE_ON_HIT | BITMAP2;
 		explode base type BITMAPONLY | BITMAP3;
 		explode turret type BITMAPONLY | BITMAP2;
-		explode treads type BITMAPONLY | BITMAP4;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -130,7 +127,6 @@ Killed(severity, corpsetype)
 		explode sleeve type FALL | EXPLODE_ON_HIT | BITMAP2;
 		explode base type BITMAPONLY | BITMAP3;
 		explode turret type FALL | EXPLODE_ON_HIT | BITMAP2;
-		explode treads type BITMAPONLY | BITMAP4;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -140,7 +136,6 @@ Killed(severity, corpsetype)
 		explode sleeve type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		explode base type BITMAPONLY | BITMAP3;
 		explode turret type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode treads type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	corpsetype = 3;
@@ -148,5 +143,4 @@ Killed(severity, corpsetype)
 	explode sleeve type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 	explode base type BITMAPONLY | BITMAP3;
 	explode turret type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode treads type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 }

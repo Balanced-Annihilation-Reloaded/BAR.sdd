@@ -31,7 +31,7 @@ return {
 		maxslope = 32,
 		maxwaterdepth = 0,
 		name = "Castro",
-		objectname = "CORJAMT",
+		objectname = "CORJAMT.s3o",
 		onoffable = true,
 		radardistancejam = 360,
 		seismicsignature = 0,
@@ -39,6 +39,10 @@ return {
 		sightdistance = 104,
 		usebuildinggrounddecal = true,
 		yardmap = "oooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,
@@ -55,7 +59,7 @@ return {
 				height = 3,
 				hitdensity = 100,
 				metal = 71,
-				object = "CORJAMT_DEAD",
+				object = "CORJAMT_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "all",

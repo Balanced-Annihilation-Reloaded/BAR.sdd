@@ -3,23 +3,14 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, pad1, pad2, dish, wake1, wake2, silo, collar,
-       wedge, anti, ground;
+piece  base, pad1, pad2, dish, wake, beam1, beam2, nano1, nano2, anti, dtr, dtl, dbr, dbl;
 
 static-var  Static_Var_1, oldHead;
 
 // Signal definitions
 #define SIG_MOVE			2
+#define SIG_AIM				3
 
-
-SetDirection(heading)
-{
-	var spd;
-	spd = (get ABS(oldHead) - get ABS(heading)) / 2;
-	turn ground to y-axis heading speed spd;
-	turn base to y-axis 0-heading speed spd;
-	oldHead = heading;
-}
 
 RockOnWaves()
 {
@@ -31,8 +22,8 @@ RockOnWaves()
 		while( get ABS(rockAng) < <1.11> )
 		{
 			rockSpeed = <1.25> - get ABS(rockAng);
-			turn ground to x-axis rockAng speed rockSpeed*2;
-			wait-for-turn ground around x-axis;
+			turn base to x-axis rockAng speed rockSpeed*2;
+			wait-for-turn base around x-axis;
 			rockAng = rockAng + rockDir;
 		}
 		rockDir = 0 - rockDir;
@@ -105,8 +96,7 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from wake1;
-		emit-sfx 2 from wake2;
+		emit-sfx 2 from wake;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 12000 / waketime;
@@ -137,8 +127,36 @@ QueryLandingPad(Func_Var_1, Func_Var_2)
 	}
 }
 
+RestoreAfterDelay()
+{
+	sleep 3000;
+	set-signal-mask 0;
+	move dbl to x-axis [0] speed [8];
+	move dbl to z-axis [0] speed [8];
+	move dbr to x-axis [0] speed [8];
+	move dbr to z-axis [0] speed [8];
+	move dtl to x-axis [0] speed [8];
+	move dtl to z-axis [0] speed [8];
+	move dtr to x-axis [0] speed [8];
+	move dtr to z-axis [0] speed [8];
+	return (0);
+}
+
+
 AimPrimary(heading, pitch)
 {
+	signal SIG_AIM;
+	set-signal-mask SIG_AIM;
+	move dbl to x-axis [-5.6] speed [8];
+	move dbl to z-axis [-5.6] speed [8];
+	move dbr to x-axis [5.6] speed [8];
+	move dbr to z-axis [-5.6] speed [8];
+	move dtl to x-axis [-5.6] speed [8];  
+	move dtl to z-axis [5.6] speed [8];
+	move dtr to x-axis [5.6] speed [8];
+	move dtr to z-axis [5.6] speed [8];
+	wait-for-move dtr along x-axis;
+	start-script RestoreAfterDelay();
 	return (1);
 }
 
@@ -163,52 +181,24 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
-		explode dish type BITMAPONLY | BITMAP2;
-		explode pad1 type BITMAPONLY | BITMAP3;
-		explode pad2 type BITMAPONLY | BITMAP4;
-		explode wake1 type BITMAPONLY | BITMAP5;
-		explode wake2 type BITMAPONLY | BITMAP1;
-		explode silo type BITMAPONLY | BITMAP3;
-		explode collar type BITMAPONLY | BITMAP4;
-		explode wedge type BITMAPONLY | BITMAP5;
+
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
-		explode dish type SHATTER | BITMAP2;
-		explode pad1 type FALL | BITMAP3;
-		explode pad2 type FALL | BITMAP4;
-		explode wake1 type FALL | BITMAP5;
-		explode wake2 type FALL | BITMAP1;
-		explode silo type SHATTER | BITMAP3;
-		explode collar type FALL | BITMAP4;
-		explode wedge type FALL | BITMAP5;
+
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
-		explode dish type SHATTER | BITMAP2;
-		explode pad1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode pad2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode silo type SHATTER | BITMAP2;
-		explode collar type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode wedge type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
-	explode dish type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode pad1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode pad2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode silo type SHATTER | BITMAP2;
-	explode collar type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode wedge type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+
 }

@@ -19,11 +19,15 @@ return {
 		maxslope = 32,
 		minwaterdepth = 1,
 		name = "Shark's Teeth",
-		objectname = "CORFDRAG",
+		objectname = "CORFDRAG.s3o",
 		seismicsignature = 0,
 		sightdistance = 130,
 		waterline = 3,
 		yardmap = "wwww",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			floatingteeth_core = {
 				autoreclaimable = 0,
@@ -37,7 +41,7 @@ return {
 				height = 75,
 				hitdensity = 100,
 				metal = 20,
-				object = "corfdrag",
+				object = "corfdrag.s3o",
 				reclaimable = true,
 				world = "allworld",
 			},

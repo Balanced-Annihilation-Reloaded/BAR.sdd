@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  flare1, flare2, base, gun, arms, turret, flare3, exhaust;
+piece  flare1, flare2, base, gun, turret, exhaust;
 
 static-var  gun_1, restore_delay, statechg_DesiredState, statechg_StateChanging;
 
@@ -15,11 +15,6 @@ activatescr()
 {
 	if( TRUE )
 	{
-		move arms to y-axis [0.000000] now;
-		move arms to y-axis [3.199994] speed [2.415088];
-		move gun to y-axis [0.000000] now;
-		move gun to y-axis [2.400000] speed [1.811316];
-		sleep 1325;
 	}
 	sleep 22;
 }
@@ -28,11 +23,6 @@ deactivatescr()
 {
 	if( TRUE )
 	{
-		move arms to y-axis [3.199994] now;
-		move arms to y-axis [0.000000] speed [2.415088];
-		move gun to y-axis [2.400000] now;
-		move gun to y-axis [0.000000] speed [1.811316];
-		sleep 1325;
 	}
 	sleep 20;
 }
@@ -174,11 +164,18 @@ AimFromPrimary(piecenum)
 {
 	piecenum = gun;
 }
-
 QueryPrimary(piecenum)
 {
-	piecenum = gun_1;
+	if( gun_1 == 0 )
+	{
+		piecenum = flare1;
+	}
+	if( gun_1 == 1 )
+	{
+		piecenum = flare2;
+	}
 }
+
 
 SweetSpot(piecenum)
 {
@@ -190,11 +187,9 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode arms type BITMAPONLY | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		explode flare1 type BITMAPONLY | BITMAP3;
 		explode flare2 type BITMAPONLY | BITMAP4;
-		explode flare3 type BITMAPONLY | BITMAP5;
 		explode gun type BITMAPONLY | BITMAP1;
 		explode turret type BITMAPONLY | BITMAP2;
 		return (0);
@@ -202,11 +197,9 @@ Killed(severity, corpsetype)
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode arms type SHATTER | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		explode flare1 type FALL | BITMAP3;
 		explode flare2 type FALL | BITMAP4;
-		explode flare3 type FALL | BITMAP5;
 		explode gun type FALL | BITMAP1;
 		explode turret type BITMAPONLY | BITMAP2;
 		return (0);
@@ -214,21 +207,17 @@ Killed(severity, corpsetype)
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode arms type SHATTER | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode flare3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 		explode gun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 		explode turret type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
-	explode arms type SHATTER | EXPLODE_ON_HIT | BITMAP1;
 	explode base type BITMAPONLY | BITMAP2;
 	explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 	explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode flare3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 	explode gun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode turret type BITMAPONLY | BITMAP2;
 }

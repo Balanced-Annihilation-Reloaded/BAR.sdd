@@ -9,10 +9,10 @@ return {
 		buildtime = 276057,
 		canmove = true,
 		category = "KBOT WEAPON ALL NOTSUB NOTAIR NOTHOVER SURFACE",
-		collisionVolumeScales		= [[48 76 48]],
-		collisionVolumeOffsets	= [[0 -10 0]],
-		collisionVolumeTest	    = 1,
-		collisionVolumeType	    = [[CylY]],
+		collisionvolumeoffsets = "0 -8 0",
+		collisionvolumescales = "59 83 51",
+		collisionvolumetest = 1,
+		collisionvolumetype = "Ell",
 		corpse = "DEAD",
 		description = "Assault Mech",
 		energymake = 12,
@@ -37,6 +37,9 @@ return {
 		sightdistance = 617,
 		turnrate = 1056,
 		upright = true,
+		customparams = {
+			paralyzemultiplier = 0.5,
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

@@ -3,8 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, door1, door2, door3, door4, turret, launcher, firep1,
-       firep2;
+piece  base, turret, sleeve, barrel1, barrel2, flare1, flare2;
 
 static-var  Static_Var_1, Static_Var_2, restore_delay, Static_Var_4, statechg_DesiredState,
             statechg_StateChanging;
@@ -15,47 +14,20 @@ static-var  Static_Var_1, Static_Var_2, restore_delay, Static_Var_4, statechg_De
 
 Activatescr()
 {
-	move door1 to y-axis [0.000000] now;
-	move door1 to y-axis [-3.000000] speed [16.000000];
-	move door2 to y-axis [0.000000] now;
-	move door2 to y-axis [-3.000000] speed [16.000000];
-	move door3 to y-axis [0.000000] now;
-	move door3 to y-axis [-3.000000] speed [16.000000];
-	move door4 to y-axis [0.000000] now;
-	move door4 to y-axis [-3.000000] speed [16.000000];
-	move turret to y-axis [0.000000] speed [50.000000];
-	turn door1 to x-axis <90.016484> now;
-	turn door1 to x-axis <0.000000> speed <450.000000>;
-	turn door2 to z-axis <-90.016484> now;
-	turn door2 to z-axis <0.000000> speed <450.000000>;
-	turn door3 to x-axis <-90.016484> now;
-	turn door3 to x-axis <0.000000> speed <450.000000>;
-	turn door4 to z-axis <90.016484> now;
-	turn door4 to z-axis <0.000000> speed <450.000000>;
-	move turret to y-axis [3.000000] speed [30.000000];
+	move turret to y-axis [10] speed [40];
+	wait-for-move turret along y-axis;
+	move barrel2 to z-axis [7] speed [28];
+	move barrel1 to z-axis [7] speed [28];
 	sleep 200;
 }
 
 Deactivatescr()
 {
-	move door1 to y-axis [0.000000] now;
-	move door1 to y-axis [0.000000] speed [0.000000];
-	move door2 to y-axis [0.000000] now;
-	move door2 to y-axis [0.000000] speed [0.000000];
-	move door3 to y-axis [0.000000] now;
-	move door3 to y-axis [0.000000] speed [0.000000];
-	move door4 to y-axis [0.000000] now;
-	move door4 to y-axis [0.000000] speed [0.000000];
-	turn launcher to x-axis <0.000000> speed <80.000000>;
-	turn launcher to y-axis <0.000000> speed <100.000000>;
-	wait-for-turn launcher around x-axis;
-	wait-for-turn launcher around y-axis;
-	move turret to y-axis [-15.000000] speed [22.000000];
-	turn door1 to x-axis <90.016484> speed <225.000000>;
-	turn door2 to z-axis <-90.016484> speed <225.000000>;
-	turn door3 to x-axis <-90.016484> speed <225.000000>;
-	turn door4 to z-axis <90.016484> speed <225.000000>;
-	sleep 300;
+	move turret to y-axis [0] speed [40];
+	wait-for-move turret along y-axis;
+	move barrel2 to z-axis [0] speed [28];
+	move barrel1 to z-axis [0] speed [28];
+	sleep 200;
 }
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
@@ -87,10 +59,6 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 Go()
 {
-	dont-cache door1;
-	dont-cache door2;
-	dont-cache door3;
-	dont-cache door4;
 	if( !Static_Var_1 )
 	{
 		call-script Activatescr();
@@ -101,10 +69,6 @@ Go()
 
 Stop()
 {
-	cache door1;
-	cache door2;
-	cache door3;
-	cache door4;
 	set ARMORED to 1;
 	Static_Var_1 = 0;
 	call-script Deactivatescr();
@@ -145,16 +109,11 @@ RestoreAfterDelay()
 
 Create()
 {
-	dont-shade base;
-	dont-shade door1;
-	dont-shade door2;
-	dont-shade door3;
-	dont-shade door4;
+
 	Static_Var_1 = 1;
 	Static_Var_2 = 0;
 	Static_Var_4 = 1;
 	restore_delay = 3000;
-	move launcher to y-axis [2.0] now;
 	statechg_DesiredState = TRUE;
 	statechg_StateChanging = FALSE;
 	start-script SmokeUnit();
@@ -181,22 +140,21 @@ AimPrimary(heading, pitch)
 	{
 		sleep 250;
 	}
-	turn turret to y-axis heading speed <900.000000>;
-	turn launcher to x-axis <0.000000> - pitch speed <240.000000>;
+	turn sleeve to y-axis heading speed <900.000000>;
 	wait-for-turn turret around y-axis;
-	wait-for-turn launcher around x-axis;
 	start-script RestoreAfterDelay();
 	return (1);
 }
 
 QueryPrimary(piecenum)
 {
-	piecenum = firep1 + Static_Var_2;
+	
+	piecenum = flare1 + Static_Var_2;
 }
 
 AimFromPrimary(piecenum)
 {
-	piecenum = turret;
+	piecenum = sleeve;
 }
 
 SweetSpot(piecenum)
@@ -215,24 +173,24 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
-		explode launcher type BITMAPONLY | BITMAP1;
+		explode sleeve type BITMAPONLY | BITMAP1;
 		explode turret type BITMAPONLY | BITMAP2;
-		explode door1 type BITMAPONLY | BITMAP5;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode door3 type BITMAPONLY | BITMAP5;
-		explode door4 type BITMAPONLY | BITMAP5;
+		explode barrel1 type BITMAPONLY | BITMAP5;
+		explode barrel2 type BITMAPONLY | BITMAP5;
+		explode flare1 type BITMAPONLY | BITMAP5;
+		explode flare2 type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
-		explode launcher type BITMAPONLY | BITMAP1;
+		explode sleeve type BITMAPONLY | BITMAP1;
 		explode turret type BITMAPONLY | BITMAP2;
-		explode door1 type BITMAPONLY | BITMAP5;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode door3 type BITMAPONLY | BITMAP5;
-		explode door4 type BITMAPONLY | BITMAP5;
+		explode barrel1 type BITMAPONLY | BITMAP5;
+		explode barrel2 type BITMAPONLY | BITMAP5;
+		explode flare1 type BITMAPONLY | BITMAP5;
+		explode flare2 type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -242,24 +200,24 @@ Killed(severity, corpsetype)
 		explode turret type BITMAPONLY | BITMAP2;
 		if( Static_Var_1 )
 		{
-			explode launcher type SHATTER | EXPLODE_ON_HIT | BITMAP4;
+			explode sleeve type SHATTER | EXPLODE_ON_HIT | BITMAP4;
 		}
 		if( !Static_Var_1 )
 		{
-			explode launcher type BITMAPONLY | BITMAP5;
+			explode sleeve type BITMAPONLY | BITMAP5;
 		}
-		explode door1 type BITMAPONLY | BITMAP2;
-		explode door2 type BITMAPONLY | BITMAP2;
-		explode door3 type BITMAPONLY | BITMAP2;
-		explode door4 type BITMAPONLY | BITMAP2;
+		explode barrel1 type BITMAPONLY | BITMAP2;
+		explode barrel2 type BITMAPONLY | BITMAP2;
+		explode flare1 type BITMAPONLY | BITMAP2;
+		explode flare2 type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	corpsetype = 4;
 	explode base type BITMAPONLY | BITMAP1;
 	explode turret type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode launcher type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode door1 type BITMAPONLY | BITMAP3;
-	explode door2 type BITMAPONLY | BITMAP3;
-	explode door3 type BITMAPONLY | BITMAP3;
-	explode door4 type BITMAPONLY | BITMAP3;
+	explode sleeve type SHATTER | EXPLODE_ON_HIT | BITMAP2;
+	explode barrel1 type BITMAPONLY | BITMAP3;
+	explode barrel2 type BITMAPONLY | BITMAP3;
+	explode flare1 type BITMAPONLY | BITMAP3;
+	explode flare2 type BITMAPONLY | BITMAP3;
 }

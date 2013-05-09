@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, extractor;
+piece  base, arms1, arms2;
 
 static-var  Static_Var_1, statechg_DesiredState, statechg_StateChanging;
 
@@ -37,13 +37,15 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 fixGo()
 {
-	spin extractor around y-axis speed Static_Var_1 accelerate <0.500000>;
+	spin arms1 around y-axis speed Static_Var_1 accelerate <0.500000>;
+	spin arms2 around y-axis speed -1*Static_Var_1 accelerate <0.500000>;
 }
 
 Stop()
 {
-	stop-spin extractor around y-axis decelerate <1.000000>;
-	wait-for-turn extractor around y-axis;
+	stop-spin arms1 around y-axis decelerate <1.000000>;
+	stop-spin arms2 around y-axis decelerate <1.000000>;
+	wait-for-turn arms1 around y-axis;
 }
 
 InitState()
@@ -80,8 +82,6 @@ RequestState(requestedstate, currentstate)
 
 Create()
 {
-	dont-shade extractor;
-	dont-cache extractor;
 	Static_Var_1 = 500;
 	call-script InitState();
 	start-script SmokeUnit();
@@ -112,25 +112,29 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode extractor type BITMAPONLY | BITMAP1;
+		explode arms1 type BITMAPONLY | BITMAP1;
+		explode arms2 type BITMAPONLY | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode extractor type SHATTER | BITMAP1;
+		explode arms1 type SHATTER | BITMAP1;
+		explode arms2 type SHATTER | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode extractor type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+		explode arms1 type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+		explode arms2 type SHATTER | EXPLODE_ON_HIT | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
-	explode extractor type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode arms1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode arms2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP2;
 }

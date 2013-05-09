@@ -28,13 +28,17 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Retaliator",
-		objectname = "ARMSILO",
+		objectname = "ARMSILO.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "NUCLEAR_MISSILE",
 		sightdistance = 455,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooooooooooooooooooooooooooooooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

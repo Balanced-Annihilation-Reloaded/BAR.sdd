@@ -91,14 +91,14 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "NOTAIR",
+				badtargetcategory = "NOTAIR",
 				def = "ARMVTOL_ADVMISSILE",
-				onlyTargetCategory = "NOTSUB",
+				onlytargetcategory = "NOTSUB",
 			},
 			[2] = {
-				badTargetCategory = "NOTAIR",
+				badtargetcategory = "NOTAIR",
 				def = "ARMVTOL_ADVMISSILE",
-				onlyTargetCategory = "NOTSUB",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

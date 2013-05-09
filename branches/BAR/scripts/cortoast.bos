@@ -1,365 +1,376 @@
+//            * Header Info *
+// VersionSignature                     4
+// NumberOfScripts                     22
+// NumberOfPieces                      13
+// LengthOfScripts                     57e
+// NumberOfStaticVars                  5
+// UKZero                              0
+// OffsetToScriptCodeIndexArray        1624
+// OffsetToScriptNameOffsetArray       167c
+// OffsetToPieceNameOffsetArray        16d4
+// OffsetToScriptCode                  2c
+// OffsetToNameArray                   1708
+
+// OffsetToFirstName                   1708
+
 #define TA			// This is a TA script
 
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  frame, flare, turret, pillartops, barrel2, turretback, barrel1, door2,
-       door1, barrel3, hole, turretssides, ground;
+piece  base,flare,turret,door1,door2,barrel,bore;
 
 static-var  Static_Var_1, restore_delay, statechg_DesiredState, statechg_StateChanging, Static_Var_5;
 
 
 activatescr()
-{
-	move pillartops to y-axis [-9.150000] now;
-	move barrel2 to z-axis [-2.450000] now;
-	move turretback to z-axis [1.300000] now;
-	move barrel1 to z-axis [-12.550000] now;
-	move door2 to y-axis [0.000000] now;
-	move door2 to y-axis [0.000000] speed [0.000012];
-	turn door1 to z-axis <0.000000> now;
-	turn door1 to z-axis <-88.615385> speed <300.390110>;
-	turn door2 to z-axis <0.000000> now;
-	turn door2 to z-axis <89.313187> speed <302.769231>;
-	sleep 295;
-
-	move pillartops to y-axis [1.450000] speed [17.263843];
-	move door1 to y-axis [-7.699994] speed [12.540704];
-	move door2 to y-axis [-7.699994] speed [12.540717];
-	sleep 614;
-
-	move barrel2 to z-axis [0.000000] speed [7.753162];
-	move turretback to z-axis [0.000000] speed [4.113916];
-	move barrel1 to z-axis [0.000000] speed [39.715192];
-	sleep 316;
-}
+/*     0:*/{
+/*     2:*/	if( TRUE )
+/*     4:*/	{
+/*    26:*/		turn door1 to z-axis <0.000000> now;
+/*    2d:*/		turn door1 to z-axis <90> speed <300>;
+/*    32:*/		turn door2 to z-axis <0.000000> now;
+/*    39:*/		turn door2 to z-axis <-90> speed <300>;
+				wait-for-turn door1 around z-axis;
+/*    3e:*/		sleep 100;
+/*    3f:*/	}
+/*    41:*/	if( TRUE )
+/*    43:*/	{
+/*    4e:*/		move door1 to y-axis [-17] speed [17];
+/*    55:*/		move door2 to y-axis [-17] speed [17];
+				move turret to y-axis [16] speed [17];
+/*    5a:*/		sleep 700;
+/*    5b:*/	}
+/*    5d:*/	if( TRUE )
+/*    5f:*/	{
+/*    63:*/		move bore to z-axis [6] speed [12];
+/*    6a:*/		move barrel to z-axis [9] speed [18];
+/*    76:*/		sleep 316;
+/*    77:*/	}
+/*    79:*/	sleep 10;
+/*    7c:*/	return (0);
+/*    7d:*/}
 
 deactivatescr()
-{
-		move barrel2 to z-axis [0.000000] now;
-		move barrel2 to z-axis [-2.450000] speed [8.812946];
-		move turretback to z-axis [0.000000] now;
-		move turretback to z-axis [1.300000] speed [4.676251];
-		move barrel1 to z-axis [0.000000] now;
-		move barrel1 to z-axis [-12.550000] speed [45.143878];
-		move door1 to y-axis [-7.699994] now;
-		move door2 to y-axis [-7.699994] now;
-		turn door1 to z-axis <-88.615385> now;
-		turn door2 to z-axis <89.313187> now;
-		sleep 278;
+/*    7d:*/{
 
-		move pillartops to y-axis [-9.150000] speed [18.531470];
-		move door1 to y-axis [0.000000] speed [13.461536];
-		move door2 to y-axis [0.000000] speed [13.461536];
-		sleep 572;
 
-		move door2 to y-axis [0.000000] speed [0.000006];
-		turn door1 to z-axis <0.000000> speed <236.934066>;
-		turn door2 to z-axis <0.000000> speed <238.813187>;
-		sleep 374;
-}
+/*    5d:*/	if( TRUE )
+/*    5f:*/	{
+/*    63:*/		move bore to z-axis [0] speed [12];
+/*    6a:*/		move barrel to z-axis [0] speed [18];
+/*    76:*/		sleep 316;
+/*    77:*/	}
 
-Go()
-{
-	if( !Static_Var_1 )
-	{
-		call-script activatescr();
-	}
-	Static_Var_1 = 1;
-	set ARMORED to 0;
-}
-
-Stop()
-{
-	set ARMORED to 1;
-	Static_Var_1 = 0;
-	call-script deactivatescr();
-}
-
-RequestState(requestedstate, currentstate)
-{
-	if( statechg_StateChanging )
-	{
-		statechg_DesiredState = requestedstate;
-		return (0);
-	}
-	statechg_StateChanging = TRUE;
-	currentstate = statechg_DesiredState;
-	statechg_DesiredState = requestedstate;
-	while( statechg_DesiredState != currentstate )
-	{
-		if( statechg_DesiredState )
-		{
-			call-script Stop();
-			currentstate = 1;
-		}
-		else
-		{
-			call-script Go();
-			currentstate = 0;
-		}
-	}
-	statechg_StateChanging = FALSE;
-}
-
-RestoreAfterDelay()
-{
-	sleep restore_delay;
-	set-signal-mask 0;
-	turn pillartops to y-axis <0.000000> speed <100.016484>;
-	turn turret to x-axis <0.000000> speed <50.005495>;
-	wait-for-turn pillartops around y-axis;
-	wait-for-turn turret around x-axis;
-	start-script RequestState(1);
-}
+/*    41:*/	if( TRUE )
+/*    43:*/	{
+/*    4e:*/		move door1 to y-axis [0] speed [17];
+/*    55:*/		move door2 to y-axis [0] speed [17];
+				move turret to y-axis [0] speed [17];
+/*    5a:*/		sleep 700;
+/*    5b:*/	}
+/*     2:*/	if( TRUE )
+/*     4:*/	{
+/*    2d:*/		turn door1 to z-axis <0> speed <300>;
+/*    39:*/		turn door2 to z-axis <0> speed <300>;
+				wait-for-turn door1 around z-axis;
+/*    3e:*/		sleep 100;
+/*    3f:*/	}
+/*    79:*/	sleep 10;
+/*    7c:*/	return (0);;
+/*    fa:*/}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
-{
-	while( get BUILD_PERCENT_LEFT )
-	{
-		sleep 500;
-	}
-	start-script RestoreAfterDelay();
-	while( TRUE )
-	{
-		healthpercent = get HEALTH;
-		if( healthpercent < 66 )
-		{
-			smoketype = 258;
-			if( Rand( 1, 66 ) < healthpercent )
-			{
-				smoketype = 257;
-			}
-			emit-sfx smoketype from frame;
-		}
-		sleeptime = healthpercent * 50;
-		if( sleeptime < 200 )
-		{
-			sleeptime = 200;
-		}
-		sleep sleeptime;
-	}
-}
+/*    fd:*/{
+/*   100:*/	while( get BUILD_PERCENT_LEFT )
+/*   102:*/	{
+/*   104:*/		sleep 400;
+/*   107:*/	}
+/*   109:*/	while( TRUE )
+/*   10b:*/	{
+/*   10e:*/		healthpercent = get HEALTH;
+/*   115:*/		if( healthpercent < 66 )
+/*   117:*/		{
+/*   11c:*/			smoketype = 256 | 2;
+/*   126:*/			if( Rand( 1, 66 ) < healthpercent )
+/*   128:*/			{
+/*   12d:*/				smoketype = 256 | 1;
+/*   12f:*/			}
+/*   131:*/			emit-sfx smoketype from base;
+/*   133:*/		}
+/*   138:*/		sleeptime = healthpercent * 50;
+/*   13f:*/		if( sleeptime < 200 )
+/*   141:*/		{
+/*   143:*/			sleeptime = 200;
+/*   145:*/		}
+/*   147:*/		sleep sleeptime;
+/*   14a:*/	}
+/*   14c:*/	return (0);
+/*   14d:*/}
+
+Go()
+/*   14d:*/{
+/*   150:*/	if( !Static_Var_1 )
+/*   152:*/	{
+/*   152:*/		call-script activatescr();
+/*   155:*/	}
+/*   157:*/	Static_Var_1 = 1;
+/*   15d:*/	set ARMORED to 0;
+/*   160:*/	return (0);
+/*   161:*/}
+
+Stop()
+/*   161:*/{
+/*   165:*/	set ARMORED to 1;
+/*   168:*/	Static_Var_1 = 0;
+/*   16a:*/	call-script deactivatescr();
+/*   16f:*/	return (0);
+/*   170:*/}
+
+InitState()
+/*   170:*/{
+/*   172:*/	statechg_DesiredState = FALSE;
+/*   176:*/	statechg_StateChanging = FALSE;
+/*   17a:*/	return (0);
+/*   17b:*/}
+
+RequestState(requestedstate, currentstate)
+/*   17d:*/{
+/*   17f:*/	if( statechg_StateChanging )
+/*   181:*/	{
+/*   183:*/		statechg_DesiredState = requestedstate;
+/*   187:*/		return (0);
+/*   188:*/	}
+/*   18a:*/	statechg_StateChanging = TRUE;
+/*   18e:*/	currentstate = statechg_DesiredState;
+/*   192:*/	statechg_DesiredState = requestedstate;
+/*   199:*/	while( statechg_DesiredState != currentstate )
+/*   19b:*/	{
+/*   1a0:*/		if( statechg_DesiredState == 0 )
+/*   1a2:*/		{
+/*   1a2:*/			call-script Go();
+/*   1a7:*/			currentstate = 0;
+/*   1a9:*/		}
+/*   1ae:*/		if( statechg_DesiredState == 1 )
+/*   1b0:*/		{
+/*   1b0:*/			call-script Stop();
+/*   1b5:*/			currentstate = 1;
+/*   1b7:*/		}
+/*   1b9:*/	}
+/*   1bb:*/	statechg_StateChanging = FALSE;
+/*   1bf:*/	return (0);
+/*   1c0:*/}
+
+RestoreAfterDelay()
+/*   1c0:*/{
+/*   1c2:*/	sleep restore_delay;
+/*   1c5:*/	set-signal-mask 0;
+/*   1ca:*/	turn turret to y-axis <0.000000> speed <100.016484>;
+/*   1d1:*/	turn turret to x-axis <0.000000> speed <50.005495>;
+/*   1d4:*/	wait-for-turn turret around y-axis;
+/*   1d7:*/	wait-for-turn turret around x-axis;
+/*   1dc:*/	start-script RequestState(1);
+/*   1e1:*/	return (0);
+/*   1e2:*/}
 
 Create()
-{
-	dont-shade barrel1;
-	dont-shade barrel2;
-	dont-shade barrel3;
-	dont-shade door1;
-	dont-shade door2;
-	dont-shade flare;
-	dont-shade hole;
-	dont-shade pillartops;
-	dont-shade turret;
-	dont-shade turretback;
-	dont-shade turretssides;
-	hide flare;
-	move turret to y-axis [2.25] now;
-	move pillartops to y-axis [1.45] now;
-	Static_Var_1 = 1;
-	Static_Var_5 = 0;
-	restore_delay = 3000;
-	statechg_DesiredState = TRUE;
-	statechg_StateChanging = FALSE;
-	start-script SmokeUnit();
-	start-script RequestState(0);
-}
+/*   1e2:*/{
+/*   1f8:*/	hide flare;
+/*   1fc:*/	Static_Var_1 = 0;
+/*   200:*/	Static_Var_5 = 0;
+/*   204:*/	restore_delay = 3000;
+/*   206:*/	call-script InitState();
+/*   209:*/	start-script SmokeUnit();
+/*   20e:*/	start-script RequestState(0);
+/*   213:*/	set-signal-mask 2;
+/*   217:*/	while( get BUILD_PERCENT_LEFT )
+/*   219:*/	{
+/*   21b:*/		sleep 1000;
+/*   21e:*/	}
+			call-script Go();
+/*   21e:*/	start-script RestoreAfterDelay();
+/*   223:*/	return (0);
+/*   224:*/}
 
 Reload1()
-{
-	sleep 2100;
-	Static_Var_5 = 0;
-}
+/*   224:*/{
+/*   226:*/	sleep 2100;
+/*   229:*/	Static_Var_5 = 0;
+/*   22d:*/	return (0);
+/*   22e:*/}
 
 Reload2()
-{
-	sleep 3780;
-	Static_Var_5 = 0;
-}
+/*   22e:*/{
+/*   230:*/	sleep 3780;
+/*   233:*/	Static_Var_5 = 0;
+/*   237:*/	return (0);
+/*   238:*/}
 
 SetMaxReloadTime(Func_Var_1)
-{
-	restore_delay = Func_Var_1 * 2;
-}
+/*   239:*/{
+/*   23e:*/	restore_delay = Func_Var_1 * 2;
+/*   242:*/	return (0);
+/*   243:*/}
 
-AimWeapon1(heading, pitch)
-{
-	start-script RequestState(0);
-	signal 2;
-	set-signal-mask 2;
-	if( pitch >= 10012 OR Static_Var_5 == 1 )
-	{
-		return (0);
-	}
-	while( !Static_Var_1 )
-	{
-		sleep 250;
-	}
-	turn pillartops to y-axis heading speed <100.016484>;
-	turn turret to x-axis <0.000000> - pitch speed <50.005495>;
-	wait-for-turn pillartops around y-axis;
-	wait-for-turn turret around x-axis;
-	start-script RestoreAfterDelay();
-	return (1);
-}
+AimWeapon1(Func_Var_1, Func_Var_2)
+/*   245:*/{
+/*   247:*/	start-script RequestState(0);
+/*   24c:*/	signal 2;
+/*   24f:*/	set-signal-mask 2;
+/*   25b:*/	if( Func_Var_2 >= 10012 OR Static_Var_5 == 1 )
+/*   25d:*/	{
+/*   25f:*/		return (0);
+/*   260:*/	}
+/*   263:*/	while( !Static_Var_1 )
+/*   265:*/	{
+/*   267:*/		sleep 250;
+/*   26a:*/	}
+/*   26e:*/	turn turret to y-axis Func_Var_1 speed <100.016484>;
+/*   278:*/	turn turret to x-axis <0.000000> - Func_Var_2 speed <50.005495>;
+/*   27b:*/	wait-for-turn turret around y-axis;
+/*   27e:*/	wait-for-turn turret around x-axis;
+/*   281:*/	start-script RestoreAfterDelay();
+/*   286:*/	return (1);
+/*   287:*/}
 
 FireWeapon1()
-{
-	Static_Var_5 = 1;
-	start-script Reload1();
-	move barrel3 to z-axis [-5.000000] speed [500.000000];
-	show flare;
-	sleep 250;
-	hide flare;
-	move barrel3 to z-axis [0.000000] speed [3.000000];
-}
+/*   287:*/{
+/*   289:*/	Static_Var_5 = 1;
+/*   28b:*/	start-script Reload1();
+/*   292:*/	move barrel to z-axis [4.000000] speed [500.000000];
+/*   295:*/	show flare;
+/*   299:*/	sleep 250;
+/*   29a:*/	hide flare;
+/*   2a0:*/	move barrel to z-axis [9.000000] speed [3.000000];
+/*   2a5:*/	return (0);
+/*   2a6:*/}
 
-AimFromWeapon1(piecenum)
-{
-	piecenum = turret;
-}
+AimFromWeapon1(Func_Var_1)
+/*   2a7:*/{
+/*   2a9:*/	Func_Var_1 = 2;
+/*   2ad:*/	return (0);
+/*   2ae:*/}
 
-QueryWeapon1(piecenum)
-{
-	piecenum = flare;
-}
+QueryWeapon1(Func_Var_1)
+/*   2af:*/{
+/*   2b1:*/	Func_Var_1 = 1;
+/*   2b5:*/	return (0);
+/*   2b6:*/}
 
-AimWeapon2(heading, pitch)
-{
-	start-script RequestState(0);
-	signal 4;
-	set-signal-mask 4;
-	if( pitch < 10012 OR Static_Var_5 == 1 )
-	{
-		return (0);
-	}
-	while( !Static_Var_1 )
-	{
-		sleep 250;
-	}
-	turn pillartops to y-axis heading speed <100.016484>;
-	turn turret to x-axis <0.000000> - pitch speed <50.005495>;
-	wait-for-turn pillartops around y-axis;
-	wait-for-turn turret around x-axis;
-	start-script RestoreAfterDelay();
-	return (1);
-}
+AimWeapon2(Func_Var_1, Func_Var_2)
+/*   2b8:*/{
+/*   2ba:*/	start-script RequestState(0);
+/*   2bf:*/	signal 4;
+/*   2c2:*/	set-signal-mask 4;
+/*   2ce:*/	if( Func_Var_2 < 10012 OR Static_Var_5 == 1 )
+/*   2d0:*/	{
+/*   2d2:*/		return (0);
+/*   2d3:*/	}
+/*   2d6:*/	while( !Static_Var_1 )
+/*   2d8:*/	{
+/*   2da:*/		sleep 250;
+/*   2dd:*/	}
+/*   2e1:*/	turn turret to y-axis Func_Var_1 speed <100.016484>;
+/*   2eb:*/	turn turret to x-axis <0.000000> - Func_Var_2 speed <50.005495>;
+/*   2ee:*/	wait-for-turn turret around y-axis;
+/*   2f1:*/	wait-for-turn turret around x-axis;
+/*   2f4:*/	start-script RestoreAfterDelay();
+/*   2f9:*/	return (1);
+/*   2fa:*/}
 
 FireWeapon2()
-{
-	Static_Var_5 = 1;
-	start-script Reload2();
-	move barrel3 to z-axis [-5.000000] speed [500.000000];
-	show flare;
-	sleep 250;
-	hide flare;
-	move barrel3 to z-axis [0.000000] speed [3.000000];
-}
+/*   2fa:*/{
+/*   2fc:*/	Static_Var_5 = 1;
+/*   2fe:*/	start-script Reload2();
+/*   305:*/	move barrel to z-axis [4.000000] speed [500.000000];
+/*   308:*/	show flare;
+/*   30c:*/	sleep 250;
+/*   30d:*/	hide flare;
+/*   313:*/	move barrel to z-axis [9.000000] speed [3.000000];
+/*   318:*/	return (0);
+/*   319:*/}
 
-AimFromWeapon2(piecenum)
-{
-	piecenum = turret;
-}
+AimFromWeapon2(Func_Var_1)
+/*   31a:*/{
+/*   31c:*/	Func_Var_1 = 2;
+/*   320:*/	return (0);
+/*   321:*/}
 
-QueryWeapon2(piecenum)
-{
-	piecenum = flare;
-}
+QueryWeapon2(Func_Var_1)
+/*   322:*/{
+/*   324:*/	Func_Var_1 = 1;
+/*   328:*/	return (0);
+/*   329:*/}
 
 SweetSpot(piecenum)
-{
-	piecenum = frame;
-}
+/*   32a:*/{
+/*   32c:*/	piecenum = base;
+/*   330:*/	return (0);
+/*   331:*/}
 
 Killed(severity, corpsetype)
-{
-	hide flare;
-	if( severity <= 25 )
-	{
-		if( Static_Var_1 )
-		{
-			corpsetype = 1;
-		}
-		if( !Static_Var_1 )
-		{
-			corpsetype = 2;
-		}
-		explode barrel1 type BITMAPONLY | BITMAP1;
-		explode barrel2 type BITMAPONLY | BITMAP2;
-		explode door1 type BITMAPONLY | BITMAP3;
-		explode door2 type BITMAPONLY | BITMAP4;
-		explode frame type BITMAPONLY | BITMAP5;
-		explode ground type BITMAPONLY | BITMAP1;
-		explode hole type BITMAPONLY | BITMAP2;
-		explode pillartops type BITMAPONLY | BITMAP3;
-		explode turret type BITMAPONLY | BITMAP4;
-		explode turretback type BITMAPONLY | BITMAP5;
-		explode turretssides type BITMAPONLY | BITMAP1;
-		return (0);
-	}
-	if( severity <= 50 )
-	{
-		if( Static_Var_1 )
-		{
-			corpsetype = 2;
-		}
-		if( !Static_Var_1 )
-		{
-			corpsetype = 3;
-		}
-		explode barrel1 type BITMAPONLY | BITMAP1;
-		explode barrel2 type FALL | BITMAP2;
-		explode barrel3 type FALL | BITMAP3;
-		explode door1 type FALL | BITMAP4;
-		explode door2 type FALL | BITMAP5;
-		explode flare type FALL | BITMAP1;
-		explode frame type BITMAPONLY | BITMAP2;
-		explode ground type BITMAPONLY | BITMAP3;
-		explode hole type BITMAPONLY | BITMAP4;
-		explode pillartops type SHATTER | BITMAP5;
-		explode turret type FALL | BITMAP1;
-		explode turretback type FALL | BITMAP2;
-		explode turretssides type FALL | BITMAP3;
-		return (0);
-	}
-	if( severity <= 99 )
-	{
-		if( Static_Var_1 )
-		{
-			corpsetype = 3;
-		}
-		if( !Static_Var_1 )
-		{
-			corpsetype = 4;
-		}
-		explode barrel1 type BITMAPONLY | BITMAP1;
-		explode barrel2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode barrel3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode door1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode door2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode frame type BITMAPONLY | BITMAP2;
-		explode ground type BITMAPONLY | BITMAP3;
-		explode hole type BITMAPONLY | BITMAP4;
-		explode pillartops type SHATTER | BITMAP5;
-		explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode turretback type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode turretssides type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		return (0);
-	}
-	corpsetype = 4;
-	explode barrel1 type BITMAPONLY | BITMAP1;
-	explode barrel2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode barrel3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode door1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode door2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode frame type BITMAPONLY | BITMAP2;
-	explode ground type BITMAPONLY | BITMAP3;
-	explode hole type BITMAPONLY | BITMAP4;
-	explode pillartops type SHATTER | EXPLODE_ON_HIT | BITMAP5;
-	explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode turretback type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode turretssides type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-}
+/*   333:*/{
+/*   333:*/	hide flare;
+/*   33a:*/	if( severity <= 25 )
+/*   33c:*/	{
+/*   33e:*/		if( Static_Var_1 )
+/*   340:*/		{
+/*   342:*/			corpsetype = 1;
+/*   344:*/		}
+/*   347:*/		if( !Static_Var_1 )
+/*   349:*/		{
+/*   34b:*/			corpsetype = 2;
+/*   34d:*/		}
+/*   352:*/		explode barrel type BITMAPONLY | BITMAP1;
+/*   359:*/		explode bore type BITMAPONLY | BITMAP2;
+/*   360:*/		explode door1 type BITMAPONLY | BITMAP3;
+/*   367:*/		explode door2 type BITMAPONLY | BITMAP4;
+/*   36e:*/		explode base type BITMAPONLY | BITMAP5;
+/*   37c:*/		explode turret type BITMAPONLY | BITMAP2;
+/*   39c:*/		return (0);
+/*   39d:*/	}
+/*   3a2:*/	if( severity <= 50 )
+/*   3a4:*/	{
+/*   3a6:*/		if( Static_Var_1 )
+/*   3a8:*/		{
+/*   3aa:*/			corpsetype = 2;
+/*   3ac:*/		}
+/*   3af:*/		if( !Static_Var_1 )
+/*   3b1:*/		{
+/*   3b3:*/			corpsetype = 3;
+/*   3b5:*/		}
+/*   352:*/		explode barrel type BITMAPONLY | BITMAP1;
+/*   359:*/		explode bore type BITMAPONLY | BITMAP2;
+/*   360:*/		explode door1 type BITMAPONLY | BITMAP3;
+/*   367:*/		explode door2 type BITMAPONLY | BITMAP4;
+/*   36e:*/		explode base type BITMAPONLY | BITMAP5;
+/*   37c:*/		explode turret type BITMAPONLY | BITMAP2;
+/*   412:*/		return (0);
+/*   413:*/	}
+/*   418:*/	if( severity <= 99 )
+/*   41a:*/	{
+/*   41c:*/		if( Static_Var_1 )
+/*   41e:*/		{
+/*   420:*/			corpsetype = 3;
+/*   422:*/		}
+/*   425:*/		if( !Static_Var_1 )
+/*   427:*/		{
+/*   429:*/			corpsetype = 4;
+/*   42b:*/		}
+/*   352:*/		explode barrel type BITMAPONLY | BITMAP1;
+/*   359:*/		explode bore type BITMAPONLY | BITMAP2;
+/*   360:*/		explode door1 type BITMAPONLY | BITMAP3;
+/*   367:*/		explode door2 type BITMAPONLY | BITMAP4;
+/*   36e:*/		explode base type BITMAPONLY | BITMAP5;
+/*   37c:*/		explode turret type BITMAPONLY | BITMAP2;
+/*   4d0:*/		return (0);
+/*   4d1:*/	}
+/*   4d3:*/	corpsetype = 4;
+/*   352:*/		explode barrel type BITMAPONLY | BITMAP1;
+/*   359:*/		explode bore type BITMAPONLY | BITMAP2;
+/*   360:*/		explode door1 type BITMAPONLY | BITMAP3;
+/*   367:*/		explode door2 type BITMAPONLY | BITMAP4;
+/*   36e:*/		explode base type BITMAPONLY | BITMAP5;
+/*   37c:*/		explode turret type BITMAPONLY | BITMAP2;
+/*   57d:*/	return (0);
+/*   57e:*/}

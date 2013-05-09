@@ -28,11 +28,15 @@ return {
 		name = "Maelstrom",
 		noautofire = true,
 		nochasecategory = "VTOL",
-		objectname = "CORSB",
+		objectname = "CORSB.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 455,
 		turnrate = 368,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",
@@ -71,7 +75,7 @@ return {
 				gravityaffected = "true",
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
-				model = "bomb",
+				model = "bombyr.s3o",
 				name = "SeaAdvancedBombs",
 				noselfdamage = true,
 				range = 1280,
@@ -88,9 +92,9 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "VTOL",
+				badtargetcategory = "VTOL",
 				def = "CORE_SEAADVBOMB",
-				onlyTargetCategory = "NOTSUB",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

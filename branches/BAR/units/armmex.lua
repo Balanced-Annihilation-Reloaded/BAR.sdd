@@ -13,10 +13,6 @@ return {
 		buildpic = "ARMMEX.DDS",
 		buildtime = 1800,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
-		collisionVolumeScales		= [[41 26 41]],
-		collisionVolumeOffsets	= [[0 0 0]],
-		collisionVolumeTest	    = 1,
-		collisionVolumeType	    = [[CylY]],
 		corpse = "DEAD",
 		description = "Extracts Metal",
 		explodeas = "TINY_BUILDINGEX",
@@ -31,7 +27,7 @@ return {
 		maxwaterdepth = 20,
 		metalstorage = 50,
 		name = "Metal Extractor",
-		objectname = "ARMMEX",
+		objectname = "ARMMEX.s3o",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "TINY_BUILDINGEX",
@@ -39,6 +35,10 @@ return {
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

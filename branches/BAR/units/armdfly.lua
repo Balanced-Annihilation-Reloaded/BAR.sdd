@@ -10,10 +10,6 @@ return {
 		canmove = true,
 		category = "ALL NOTLAND MOBILE NOTSUB VTOL NOWEAPON NOTSHIP NOTHOVER",
 		collide = false,
-		collisionVolumeScales = [[52 21 52]],
-		collisionVolumeOffsets = [[1 1 5]],
-		collisionVolumeTest = 1,
-		collisionVolumeType = [[CylY]],
 		cruisealt = 150,
 		description = "Stealthy Armed Transport",
 		energymake = 0.60000002384186,
@@ -94,9 +90,9 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "VTOL",
+				badtargetcategory = "VTOL",
 				def = "ARMDFLY_PARALYZER",
-				onlyTargetCategory = "NOTSUB",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

@@ -26,12 +26,16 @@ return {
 		maxwaterdepth = 0,
 		name = "Krow",
 		nochasecategory = "VTOL",
-		objectname = "CORCRW",
+		objectname = "CORCRW.s3o",
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 494,
 		turnrate = 297,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

@@ -29,7 +29,7 @@ return {
 		maxslope = 36,
 		maxwaterdepth = 0,
 		name = "Nemesis",
-		objectname = "CORSD",
+		objectname = "CORSD.s3o",
 		onoffable = true,
 		seismicdistance = 2000,
 		seismicsignature = 0,
@@ -37,6 +37,10 @@ return {
 		sightdistance = 225,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,
@@ -54,7 +58,7 @@ return {
 				height = 15,
 				hitdensity = 100,
 				metal = 584,
-				object = "CORSD_DEAD",
+				object = "CORSD_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
@@ -71,7 +75,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 234,
-				object = "4X4A",
+				object = "cor4X4A.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

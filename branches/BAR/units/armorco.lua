@@ -214,6 +214,9 @@ return {
 				def = "ORCONE_ROCKET",
 				onlytargetcategory = "SURFACE",
 			},
+			[4] = {
+				def = "ORCONE_SHIELD",
+			},
 		},
 	},
 }

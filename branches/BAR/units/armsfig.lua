@@ -92,9 +92,9 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "NOTAIR",
+				badtargetcategory = "NOTAIR",
 				def = "ARMSFIG_WEAPON",
-				onlyTargetCategory = "NOTSUB",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

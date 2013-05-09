@@ -28,11 +28,15 @@ return {
 		maxwaterdepth = 255,
 		name = "Cutlass",
 		nochasecategory = "VTOL",
-		objectname = "CORCUT",
+		objectname = "CORCUT.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 595,
 		turnrate = 828,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",
@@ -88,7 +92,7 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "VTOL",
+				badtargetcategory = "VTOL",
 				def = "VTOL_ROCKET2",
 				onlytargetcategory = "SURFACE",
 			},

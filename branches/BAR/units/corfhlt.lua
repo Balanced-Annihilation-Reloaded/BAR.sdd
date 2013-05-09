@@ -27,12 +27,16 @@ return {
 		minwaterdepth = 5,
 		name = "Thunderbolt",
 		nochasecategory = "MOBILE",
-		objectname = "CORFHLT",
+		objectname = "CORFHLT.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 598,
 		waterline = 3,
 		yardmap = "wwwwwwwww",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,
@@ -48,7 +52,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 363,
-				object = "CORFHLT_DEAD",
+				object = "CORFHLT_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

@@ -1,7 +1,7 @@
 return {
-  name='Balanced Annihilation',
+  name='Balanced Annihilation Reloaded Alpha',
   description='Moooooo!',
-  shortname='BA',
+  shortname='BAR',
   version='$VERSION',
   mutator='Official',
   game='Total Annihilation',

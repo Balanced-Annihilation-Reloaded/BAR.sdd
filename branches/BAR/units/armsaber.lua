@@ -92,7 +92,7 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "VTOL",
+				badtargetcategory = "VTOL",
 				def = "VTOL_EMG2",
 				onlytargetcategory = "SURFACE",
 			},

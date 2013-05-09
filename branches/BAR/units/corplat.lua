@@ -23,7 +23,7 @@ return {
 		metalstorage = 200,
 		minwaterdepth = 30,
 		name = "Seaplane Platform",
-		objectname = "CORPLAT",
+		objectname = "CORPLAT.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
@@ -40,6 +40,10 @@ return {
 			[5] = "corsfig",
 			[6] = "corhunt",
 		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,
@@ -55,7 +59,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 1748,
-				object = "CORPLAT_DEAD",
+				object = "CORPLAT_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

@@ -32,7 +32,7 @@ return {
 		maxwaterdepth = 0,
 		name = "Doomsday Machine",
 		nochasecategory = "VTOL",
-		objectname = "CORDOOM",
+		objectname = "CORDOOM.s3o",
 		onoffable = true,
 		radardistance = 1200,
 		radaremitheight = 80,
@@ -41,6 +41,10 @@ return {
 		sightdistance = 780,
 		usebuildinggrounddecal = true,
 		yardmap = "yooy oooo oooo yooy",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,
@@ -58,7 +62,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 1611,
-				object = "CORDOOM_DEAD",
+				object = "CORDOOM_DEAD.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
@@ -75,7 +79,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 644,
-				object = "3X3E",
+				object = "cor3X3E.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

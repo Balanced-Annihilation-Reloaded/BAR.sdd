@@ -3,25 +3,28 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  torso, ruparm, luparm, lloarm, firept, pelvis, rleg, rfoot,
-       lleg, lfoot, lthigh, rthigh, flame1, flame2, flame3, ground;
+piece  torso, ruparm, luparm, flare, pelvis, rleg, rfoot,
+       lleg, lfoot, lthigh, rthigh;
 
 static-var  bMoving, bAiming, Static_Var_3, restore_delay;
 
 // Signal definitions
 #define SIG_AIM				4
 
+lua_FlameShot(weapon) //Distortion and lups flame effect
+{
+  return 0;
+}
 
 walk()
 {
 	if( bMoving )
 	{
-		move pelvis to y-axis [-0.450000] now;
+		move pelvis to y-axis [-0.450000] speed [5.367470];
 		move ruparm to y-axis [0.000000] now;
 		move luparm to x-axis [0.000000] now;
-		move luparm to y-axis [1.389990] speed [16.579399];
+		move luparm to y-axis [1.389984] speed [16.579327];
 		move luparm to z-axis [0.000000] now;
-		move lloarm to y-axis [0.000000] now;
 		move rleg to y-axis [0.000000] now;
 		move rleg to z-axis [0.000000] now;
 		move rfoot to z-axis [0.000000] now;
@@ -40,7 +43,7 @@ walk()
 	}
 	if( bMoving )
 	{
-		move pelvis to y-axis [-0.400000] speed [4.771084];
+		move pelvis to y-axis [-0.400000] speed [0.596386];
 		turn pelvis to x-axis <-3.082418> speed <31.719850>;
 		turn lthigh to x-axis <34.093407> speed <274.730570>;
 		turn rthigh to x-axis <-27.890110> speed <169.019599>;
@@ -208,9 +211,8 @@ walklegs()
 		move pelvis to y-axis [-0.450000] speed [1.192771];
 		move ruparm to y-axis [0.000000] now;
 		move luparm to x-axis [0.000000] now;
-		move luparm to y-axis [1.389990] now;
+		move luparm to y-axis [1.389984] now;
 		move luparm to z-axis [0.000000] now;
-		move lloarm to y-axis [0.000000] now;
 		move rleg to y-axis [0.000000] now;
 		move rleg to z-axis [0.000000] now;
 		move rfoot to z-axis [0.000000] now;
@@ -443,7 +445,6 @@ MotionControl(moving, aiming, justmoved)
 				{
 					turn torso to y-axis <0.000000> speed <90.000000>;
 					turn ruparm to x-axis <0.000000> speed <200.000000>;
-					turn lloarm to x-axis <0.000000> speed <200.000000>;
 					turn luparm to x-axis <0.000000> speed <200.000000>;
 				}
 				justmoved = FALSE;
@@ -461,16 +462,13 @@ PilotLight(Func_Var_1)
 		{
 			sleep 100;
 		}
-		emit-sfx 1024 + 0 from flame1;
-		sleep 30;
+		emit-sfx 1024 + 0 from flare;
+		sleep 150;
 	}
 }
 
 Create()
 {
-	hide flame1;
-	hide flame2;
-	hide flame3;
 	bMoving = FALSE;
 	bAiming = FALSE;
 	Static_Var_3 = 1;
@@ -519,7 +517,7 @@ AimFromPrimary(piecenum)
 
 QueryPrimary(piecenum)
 {
-	piecenum = firept;
+	piecenum = flare;
 }
 
 AimPrimary(heading, pitch)
@@ -541,22 +539,20 @@ AimPrimary(heading, pitch)
 	return (1);
 }
 
+Shot1()
+{
+	call-script lua_FlameShot(1);
+	return (TRUE);
+}
+
 Killed(severity, corpsetype)
 {
-	hide flame1;
-	hide flame2;
-	hide flame3;
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode firept type BITMAPONLY | BITMAP1;
-		explode flame1 type BITMAPONLY | BITMAP2;
-		explode flame2 type BITMAPONLY | BITMAP3;
-		explode flame3 type BITMAPONLY | BITMAP4;
-		explode ground type BITMAPONLY | BITMAP5;
+		explode flare type BITMAPONLY | BITMAP1;
 		explode lfoot type BITMAPONLY | BITMAP1;
 		explode lleg type BITMAPONLY | BITMAP2;
-		explode lloarm type BITMAPONLY | BITMAP3;
 		explode lthigh type BITMAPONLY | BITMAP4;
 		explode luparm type BITMAPONLY | BITMAP5;
 		explode pelvis type BITMAPONLY | BITMAP1;
@@ -570,14 +566,9 @@ Killed(severity, corpsetype)
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode firept type FALL | BITMAP1;
-		explode flame1 type FALL | BITMAP2;
-		explode flame2 type FALL | BITMAP3;
-		explode flame3 type FALL | BITMAP4;
-		explode ground type FALL | BITMAP5;
+		explode flare type FALL | BITMAP1;
 		explode lfoot type FALL | BITMAP1;
 		explode lleg type FALL | BITMAP2;
-		explode lloarm type FALL | BITMAP3;
 		explode lthigh type FALL | BITMAP4;
 		explode luparm type FALL | BITMAP5;
 		explode pelvis type FALL | BITMAP1;
@@ -591,14 +582,9 @@ Killed(severity, corpsetype)
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode firept type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode flame1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode flame2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode flame3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode ground type FALL | SMOKE | FIRE | BITMAP5;
+		explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 		explode lfoot type FALL | SMOKE | FIRE | BITMAP1;
 		explode lleg type FALL | SMOKE | FIRE | BITMAP2;
-		explode lloarm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		explode lthigh type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		explode luparm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 		explode pelvis type FALL | SMOKE | FIRE | BITMAP1;
@@ -610,14 +596,9 @@ Killed(severity, corpsetype)
 		return (0);
 	}
 	corpsetype = 3;
-	explode firept type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode flame1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode flame2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode flame3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode ground type FALL | SMOKE | FIRE | BITMAP5;
+	explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode lfoot type FALL | SMOKE | FIRE | BITMAP1;
 	explode lleg type FALL | SMOKE | FIRE | BITMAP2;
-	explode lloarm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 	explode lthigh type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 	explode luparm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 	explode pelvis type FALL | SMOKE | FIRE | BITMAP1;

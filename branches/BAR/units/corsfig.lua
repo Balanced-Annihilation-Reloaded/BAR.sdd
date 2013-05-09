@@ -24,11 +24,15 @@ return {
 		maxwaterdepth = 255,
 		name = "Voodoo",
 		nochasecategory = "NOTAIR",
-		objectname = "CORSFIG",
+		objectname = "CORSFIG.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT_AIR",
 		sightdistance = 200,
 		turnrate = 1547,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",
@@ -63,7 +67,7 @@ return {
 				impulseboost = 0,
 				impulsefactor = 0,
 				metalpershot = 0,
-				model = "missile",
+				model = "cormissile.s3o",
 				name = "GuidedMissiles",
 				noselfdamage = true,
 				range = 520,
@@ -92,9 +96,9 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "NOTAIR",
+				badtargetcategory = "NOTAIR",
 				def = "CORSFIG_WEAPON",
-				onlyTargetCategory = "NOTSUB",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

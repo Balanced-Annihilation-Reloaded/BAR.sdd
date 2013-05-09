@@ -27,11 +27,15 @@ return {
 		name = "Shadow",
 		noautofire = true,
 		nochasecategory = "VTOL",
-		objectname = "CORSHAD",
+		objectname = "CORSHAD.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 169,
 		turnrate = 807,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -69,7 +73,7 @@ return {
 				gravityaffected = "true",
 				impulseboost = 0.30000001192093,
 				impulsefactor = 0.30000001192093,
-				model = "bomb",
+				model = "bombyy.s3o",
 				name = "Bombs",
 				noselfdamage = true,
 				range = 1280,
@@ -86,9 +90,9 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "MOBILE",
+				badtargetcategory = "MOBILE",
 				def = "COREBOMB",
-				onlyTargetCategory = "NOTSUB",
+				onlytargetcategory = "NOTSUB",
 			},
 		},
 	},

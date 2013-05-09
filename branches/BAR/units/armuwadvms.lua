@@ -27,12 +27,16 @@ return {
 		maxwaterdepth = 9999,
 		metalstorage = 10000,
 		name = "Hardened Metal Storage",
-		objectname = "ARMUWADVMS",
+		objectname = "ARMUWADVMS.s3o",
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 195,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

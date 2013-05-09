@@ -3,9 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turret, barrel, flare, wake1, wake2, wake3, wake4,
-       wake5, wake6, wake7, wake8;
-
+piece  base, turret, barrel, flare, wake, fan1, fan2;
 static-var  Static_Var_1, restore_delay;
 
 // Signal definitions
@@ -68,41 +66,41 @@ StartMoving()
 	{
 		if( Static_Var_1 == 1 )
 		{
-			emit-sfx 5 from wake1;
-			emit-sfx 5 from wake2;
-			emit-sfx 5 from wake3;
-			emit-sfx 5 from wake4;
-			emit-sfx 5 from wake5;
-			emit-sfx 5 from wake6;
-			emit-sfx 3 from wake7;
-			emit-sfx 3 from wake8;
-			emit-sfx 3 from wake1;
-			emit-sfx 3 from wake2;
-			emit-sfx 3 from wake3;
-			emit-sfx 3 from wake4;
-			emit-sfx 3 from wake5;
-			emit-sfx 3 from wake6;
-			emit-sfx 5 from wake7;
-			emit-sfx 5 from wake8;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
 		}
 		if( Static_Var_1 == 2 )
 		{
-			emit-sfx 5 from wake1;
-			emit-sfx 5 from wake2;
-			emit-sfx 5 from wake3;
-			emit-sfx 5 from wake4;
-			emit-sfx 5 from wake5;
-			emit-sfx 5 from wake6;
-			emit-sfx 3 from wake7;
-			emit-sfx 3 from wake8;
-			emit-sfx 3 from wake1;
-			emit-sfx 3 from wake2;
-			emit-sfx 3 from wake3;
-			emit-sfx 3 from wake4;
-			emit-sfx 3 from wake5;
-			emit-sfx 3 from wake6;
-			emit-sfx 5 from wake7;
-			emit-sfx 5 from wake8;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 3 from wake;
+			emit-sfx 5 from wake;
+			emit-sfx 5 from wake;
 		}
 		sleep 300;
 	}
@@ -121,6 +119,9 @@ setSFXoccupy(Func_Var_1)
 Create()
 {
 	hide flare;
+	spin fan1 around y-axis speed <300>;
+	
+	spin fan2 around y-axis speed <300>;
 	restore_delay = 3000;
 	start-script SmokeUnit();
 }
@@ -179,12 +180,7 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
-		explode wake1 type BITMAPONLY | BITMAP2;
-		explode wake2 type BITMAPONLY | BITMAP3;
-		explode wake3 type BITMAPONLY | BITMAP4;
-		explode wake4 type BITMAPONLY | BITMAP5;
-		explode wake5 type BITMAPONLY | BITMAP1;
-		explode wake6 type BITMAPONLY | BITMAP2;
+
 		return (0);
 	}
 	if( severity <= 50 )
@@ -192,12 +188,6 @@ Killed(severity, corpsetype)
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP2;
 		explode turret type SHATTER | BITMAP3;
-		explode wake1 type FALL | BITMAP4;
-		explode wake2 type FALL | BITMAP5;
-		explode wake3 type FALL | BITMAP1;
-		explode wake4 type FALL | BITMAP2;
-		explode wake5 type FALL | BITMAP3;
-		explode wake6 type FALL | BITMAP4;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -205,21 +195,11 @@ Killed(severity, corpsetype)
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP2;
 		explode turret type SHATTER | BITMAP3;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode wake3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode wake4 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode wake5 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode wake6 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP2;
 	explode turret type SHATTER | BITMAP3;
-	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode wake3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode wake4 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode wake5 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode wake6 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+
 }

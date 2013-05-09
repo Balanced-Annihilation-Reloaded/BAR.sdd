@@ -19,8 +19,8 @@ return {
 		footprintx = 3,
 		footprintz = 3,
 		icontype = "air",
-		idleautoheal = 5 ,
-		idletime = 1800 ,
+		idleautoheal = 5,
+		idletime = 1800,
 		maxdamage = 1646,
 		maxslope = 10,
 		maxvelocity = 9.039999961853,
@@ -91,9 +91,9 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "NOTSHIP",
+				badtargetcategory = "NOTSHIP",
 				def = "ARMSEAP_WEAPON1",
-				onlyTargetCategory= "NOTHOVER",
+				onlytargetcategory = "NOTHOVER",
 			},
 		},
 	},

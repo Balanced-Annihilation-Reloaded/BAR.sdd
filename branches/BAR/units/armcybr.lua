@@ -58,7 +58,7 @@ return {
 				avoidfeature = false,
 				avoidfriendly = false,
 				collidefriendly = false,
-				commandfire = true, 
+				commandfire = true,
 				craterboost = 0,
 				cratermult = 0,
 				edgeeffectiveness = 0.5,
@@ -93,7 +93,7 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badTargetCategory = "VTOL",
+				badtargetcategory = "VTOL",
 				def = "ARM_PIDR",
 				onlytargetcategory = "SURFACE",
 			},

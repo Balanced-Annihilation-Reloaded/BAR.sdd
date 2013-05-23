@@ -293,21 +293,21 @@ function widget:Update(dt)
 				if musicType == 0 then
 					labelString = JustTheName(curPeaceTrack)
 					songLabel:SetCaption(labelString)
-					spPlaySoundStream(curPeaceTrack, WG.music_volume or 0.6)
+					spPlaySoundStream(curPeaceTrack)
 					songLabel.font.color = {0.5,1,0.0,1}
 					songLabel.font.outlineColor = {0.5,1,0.0,0.2}
 					curMusicType = 0
 				elseif musicType == 1 then
 					labelString = JustTheName(curColdwarTrack)
 					songLabel:SetCaption(labelString)
-					spPlaySoundStream(curColdwarTrack, WG.music_volume or 0.6)
+					spPlaySoundStream(curColdwarTrack)
 					songLabel.font.color = {1,0.5,0,1}
 					songLabel.font.outlineColor = {1,0.5,0,0.2}
 					curMusicType = 1
 				elseif musicType == 2 then
 					labelString = JustTheName(curWarTrack)
 					songLabel:SetCaption(labelString)
-					spPlaySoundStream(curWarTrack, WG.music_volume or 0.6)
+					spPlaySoundStream(curWarTrack)
 					curMusicType = 2
 					songLabel.font.color = {1,0,0,1}
 					songLabel.font.outlineColor = {1,0,0,0.2}

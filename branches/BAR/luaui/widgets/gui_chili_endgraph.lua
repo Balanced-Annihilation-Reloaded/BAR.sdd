@@ -51,13 +51,6 @@ local engineStats = {
 	-- {"unitsOutCaptured", ""},
 }
 
-local customStats = {
--- {external_dataArray, "button label"},
-[[Not Implemented yet:
-	I organize the engine stats in this widget but custom will have to be handled by themselves
-  Probably in a dataArray = {player1_array = {data}, player2_array = {data}} ]]
-}
-
 local graphLength = 0
 local gameOver = false
 local isDelta = false
@@ -114,12 +107,12 @@ end
 local function drawGraph(graphArray, graph_m, teamID)
 	--get's all the needed info about players and teams
 	local _,teamLeader,isDead,isAI = Spring.GetTeamInfo(teamID)
-	local playerName, isActive, isSpec = Spring.GetPlayerInfo(teamID)
+	local playerName, isActive, isSpec = Spring.GetPlayerInfo(teamLeader)
 	local r,g,b,a = Spring.GetTeamColor(teamID)
 	local teamColor = {r,g,b,a}
 	local lineLabel = numFormat(graphArray[#graphArray])
 	local shortName
-	playerName = playerNames[teamID]
+	--playerName = playerNames[teamID]
 	--Sets AI name to reflect AI used and player hosting it
 	if isAI then
 		local _,botID,_,shortName = Spring.GetAIInfo(teamID)
@@ -197,7 +190,7 @@ local function getEngineArrays(statistic, labelCaption)
 		for b=1, graphLength - 1 do
 			temp[b] = stats[b][statistic]
 			if isDelta then temp[b] = stats[b+1][statistic] - stats[b][statistic] end
-			if (graphMax < temp[b]) then graphMax = temp[b] end
+			if (graphMax < temp[b]) then graphMax = temp[b] end --TODO: check for to see if team has any stats, if not don't show
 		end
 		teamScores[a] = temp
 	end
@@ -227,9 +220,9 @@ function loadpanel()
 			function(obj) graphPanel:ClearChildren();lineLabels:ClearChildren();getEngineArrays(obj.name,obj.caption);end}}
 	end
 
-	local exitButton = Chili.Button:New{name = "exit", caption = "Exit", bottom = 0, right = 0, height = 30, width = 40 , parent = window0, OnClick = {
+	Chili.Button:New{name = "exit", caption = "Exit", bottom = 0, right = 0, height = 30, width = 40 , parent = window0, OnClick = {
 		function() Spring.SendCommands("quit");end}}
-	local exitButton = Chili.Button:New{caption = "Delta", bottom = 0, right = 45, height = 30, width = 50 , parent = window0, OnClick = {
+	Chili.Checkbox:New{caption = "Delta", bottom = 0, right = 45, height = 30, width = 50 , parent = window0, checked = false, OnChange = {
 		function()  isDelta = not isDelta; if curGraph.name then graphPanel:ClearChildren();lineLabels:ClearChildren();getEngineArrays(curGraph.name,curGraph.caption)end;end}}
 
 end
@@ -239,13 +232,12 @@ function widget:GameStart()
 	local teams	= Spring.GetTeamList()
 	local teams = (#teams - 1)
 	for teamID=0, teams do
-		playerNames[teamID] = Spring.GetPlayerInfo(teamID)
+		playerNames[teamID],_ = Spring.GetPlayerInfo(teamID)
 		Spring.Echo(playerNames[teamID])
 	end
 end
 
 function widget:GameOver()
-	gameOver = true
 	Spring.SendCommands("endgraph 0")
 	loadpanel()
 end

@@ -114,6 +114,7 @@ local function makeMenuTabs()
 	if #menu > 1 then menuChoice = 2 end
 	window0:AddChild(menu[menuChoice])
 end
+
 local function createMenus()
 	menu = {}
 	for i=0, 4 do
@@ -153,6 +154,7 @@ local function switchTabs(window,x,y,up,value,mods)
 		menuTab[menuChoice].state.hovered = true
 		window0:AddChild(menu[menuChoice])
 		menuTab[menuChoice]:Invalidate()
+		return true
 end
 
 function queueHandler()

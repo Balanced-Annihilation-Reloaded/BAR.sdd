@@ -30,12 +30,17 @@ return {
 		mincloakdistance = 70,
 		name = "Ambusher",
 		nochasecategory = "MOBILE",
-		objectname = "ARMAMB",
+		objectname = "ARMAMB.s3o",
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 442,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
+		
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

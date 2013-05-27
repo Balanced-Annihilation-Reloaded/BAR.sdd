@@ -36,7 +36,6 @@ local spGetActiveCmdDescs 	= Spring.GetActiveCmdDescs
 local spGetSelectedUnits    = Spring.GetSelectedUnits
 local spSendCommands        = Spring.SendCommands
 local spGetCmdDescIndex = Spring.GetCmdDescIndex
-local spGetSelectedUnits = Spring.GetSelectedUnits
 local spGetFullBuildQueue = Spring.GetFullBuildQueue
 local Echo = Spring.Echo
 
@@ -64,7 +63,7 @@ end
 local function createMyButton(container, texture, cmd,isState)
 	if cmd.name ~= "" then
 		local button = Chili.Button:New{
-			name = cmd.name,
+			cmdname = cmd.name,
 			caption = string.gsub(cmd.name,"%s+", "\n"),
 			tooltip = cmd.tooltip,
 			cmdid       = cmd.id,
@@ -99,21 +98,22 @@ local function makeMenuTabs()
 	local tabCount = 0
 	local tempMenu = {}
 	tempMenu[1] = menu[1]
-	menuTab[1] = Chili.Button:New{parent = menuTabs, right = 0, y = 5, width = 40, height = 90, caption = "O\nR\nD\nE\nR", OnClick = {
+	menuTab[1] = Chili.Button:New{parent = menuTabs, right = 20, y = 5, width = 80, height = 45, caption = "ORDER", OnMouseOver = {
 		function() window0:ClearChildren(); window0:AddChild(menu[1]); menuChoice = 1;end}}
-	local caption = {"O\nR\nD\nE\nR","E\nC\nO\nN","T\nA\nC\nT","U\nN\nI\nT"}
+	local caption = {"ORDER","ECON","TACT","UNIT"}
 	for i=2, 4 do
 		if #menu[i].children > 0 then
 			local tab = tabCount + 2
 			tempMenu[tab] = menu[i]
-			menuTab[tab] = Chili.Button:New{parent = menuTabs, right = 5, y = 85 + tabCount * 60, width = 35, height = 70, caption = caption[i], OnClick = {
+			menuTab[tab] = Chili.Button:New{parent = menuTabs, right = 30, y = 35 + tabCount * 25, width = 70, height = 40, caption = caption[i], OnMouseOver = {
 				function() window0:ClearChildren(); window0:AddChild(menu[tab]); menuChoice = tab; end}}
 			tabCount = tabCount + 1
 		end
 	end
 	menu = tempMenu
+	if not menu[menuChoice] then menuChoice = 1 end
 	--if #menu > 1 then menuChoice = 2 end
-	window0:AddChild(menu[menuChoice])
+	if #menu>0 then window0:AddChild(menu[menuChoice]) end
 end
 
 local function createMenus()
@@ -146,13 +146,13 @@ local function loadPanel()
 end
 
 local function switchTabs(window,x,y,up,value,mods)
-	menuTab[menuChoice].borderColor = {1,1,1,1}
+	menuTab[menuChoice].state.hovered = false
 	menuTab[menuChoice]:Invalidate()
 	menuChoice = menuChoice - value
 	if menuChoice > #menu then menuChoice = 1 end
 	if menuChoice == 0 then menuChoice = #menu end
 	window0:ClearChildren()
-	menuTab[menuChoice].borderColor =  menuTab[menuChoice].focusColor
+	menuTab[menuChoice].state.hovered = true
 	window0:AddChild(menu[menuChoice])
 	menuTab[menuChoice]:Invalidate()
 	return true
@@ -168,8 +168,8 @@ function queueHandler()
 			for i=1, #cmd do
 				if cmd[i].id < 0 then
 					if i == 1 or (i>1 and cmd[i-1].id ~= cmd[i].id) then 
-						buildQueue.children[#buildQueue.children+1] = Chili.Image:New{parent = buildQueue, x = 35*#buildQueue.children, y = 0, width  = 30, height = 30, file = '#'..-cmd[i].id,cmdid = cmd[i].id, OnClick = {ClickFunc}}
-						buildQueue.children[#buildQueue.children]:AddChild(Chili.Label:New{caption = ""})
+						buildQueue.children[#buildQueue.children+1]=Chili.Image:New{parent=buildQueue, x=45*#buildQueue.children, y=0, width =40, height=40, file='#'..-cmd[i].id,cmdid=cmd[i].id, OnClick={ClickFunc}}
+						buildQueue.children[#buildQueue.children]:AddChild(Chili.Label:New{caption=""})
 						queueNum = 1
 					else 
 						queueNum = queueNum + 1	
@@ -177,7 +177,7 @@ function queueHandler()
 					if queueNum > 1 then buildQueue.children[#buildQueue.children].children[1]:SetCaption(""..queueNum) end
 				end
 			end 
-		queueControl:Resize(35*#buildQueue.children+30)
+		queueControl:Resize(45*#buildQueue.children+30)
 		end
 	end
 	if #buildQueue.children < 1 and #queueControl.children == 1 then queueControl:RemoveChild(buildQueue) 
@@ -202,9 +202,9 @@ function widget:Initialize()
 	winW = panW * 0.6
 	
 	window0         = Chili.Window:New{x = 0, y = 0, bottom = 0, width = winW, padding = {0,0,0,0}, margin = {0,0,0,0}, OnMouseWheel = {switchTabs}}
-	menuTabs 				= Chili.Control:New{x = winW * 0.965, y = 0, bottom = 0, width = 30, padding = {0,0,0,0}, margin = {0,0,0,0}}
+	menuTabs 				= Chili.Control:New{x = winW * 0.965, y = 0, bottom = 0, width = 90, padding = {0,0,0,0}, margin = {0,0,0,0}}
 	stateWindow 		= Chili.Grid:New{y = 10, bottom = 0, x = winW + 15, width  = 30, padding = {0, 0, 0, 0}, columns = 1, rows = 16}
-	queueControl		= Chili.Control:New{parent = screen0, x = winW - 10, bottom = 0, width = 300, height = 60, margin = {0,0,0,0}}
+	queueControl		= Chili.Control:New{parent = screen0, x = winW - 10, bottom = 0, width = 300, height = 70, margin = {0,0,0,0}}
 	buildQueue 			= Chili.Panel:New{parent = queueControl, y = 0, height = "100%", width = "100%", right = 10, padding = {15,10,10,10}}
 	
 	panel0 = Chili.Control:New{
@@ -228,13 +228,15 @@ function widget:CommandsChanged()
 	updateRequired = true
 end
 
-function widget:GameFrame(n)
-    if updateRequired and n%5 == 0 then
-      updateRequired = false
-			selectedUnits = spGetSelectedUnits()
-			loadPanel()
-			queueHandler()
-    end
+function widget:DrawScreen(n)
+	if updateRequired == true then
+	if selectedUnits ~= spGetSelectedUnits() then
+    updateRequired = false
+		loadPanel()
+		queueHandler()
+		selectedUnits = spGetSelectedUnits()
+	end
+	end
 end
 
 function widget:Shutdown()

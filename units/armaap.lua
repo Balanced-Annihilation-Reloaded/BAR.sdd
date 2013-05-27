@@ -31,7 +31,7 @@ return {
 		maxwaterdepth = 0,
 		metalstorage = 200,
 		name = "Advanced Aircraft Plant",
-		objectname = "ARMAAP",
+		objectname = "ARMAAP.s3o",
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 312,
@@ -39,6 +39,10 @@ return {
 		usebuildinggrounddecal = true,
 		workertime = 200,
 		yardmap = "oooooooooooooooooooooooooooooooooooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		buildoptions = {
 			[10] = "armcybr",
 			[1] = "armaca",

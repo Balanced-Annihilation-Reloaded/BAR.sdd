@@ -30,12 +30,16 @@ return {
 		maxslope = 15,
 		maxwaterdepth = 0,
 		name = "Moho Geothermal Powerplant",
-		objectname = "AMGEO",
+		objectname = "AMGEO.s3o",
 		seismicsignature = 0,
 		selfdestructas = "NUCLEAR_MISSILE",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooo ooooo ooooo ooooo ooooo oGGGo oGGGo ooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

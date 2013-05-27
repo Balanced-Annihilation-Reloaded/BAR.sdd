@@ -31,7 +31,7 @@ return {
 		maxwaterdepth = 0,
 		metalstorage = 200,
 		name = "Advanced Kbot Lab",
-		objectname = "ARMALAB",
+		objectname = "ARMALAB.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
@@ -40,6 +40,11 @@ return {
 		usebuildinggrounddecal = true,
 		workertime = 300,
 		yardmap = "occccooccccooccccooccccooccccoocccco",
+		
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		buildoptions = {
 			[10] = "armfboy",
 			[11] = "armspid",

@@ -33,7 +33,7 @@ return {
 		maxwaterdepth = 0,
 		metalstorage = 200,
 		name = "Advanced Vehicle Plant",
-		objectname = "ARMAVP",
+		objectname = "ARMAVP.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
@@ -42,6 +42,10 @@ return {
 		usebuildinggrounddecal = true,
 		workertime = 300,
 		yardmap = "occcccoocccccoocccccoocccccoocccccooccccco",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		buildoptions = {
 			[10] = "armyork",
 			[11] = "armseer",

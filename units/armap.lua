@@ -6,22 +6,24 @@ return {
 		buildcostmetal = 850,
 		builder = true,
 		buildinggrounddecaldecayspeed = 30,
-		buildinggrounddecalsizex = 9,
+		buildinggrounddecalsizex = 10,
 		buildinggrounddecalsizey = 7,
 		buildinggrounddecaltype = "armap_aoplane.dds",
 		buildpic = "ARMAP.DDS",
 		buildtime = 7240,
 		canmove = true,
 		category = "ALL NOTLAND PLANT NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
-		collisionvolumeoffsets = "11 -17 -22",
-		collisionvolumescales = "85 39 51",
+		collisionVolumeScales = [[134 49 82]],
+		collisionVolumeOffsets = [[0 8 1]],
+
+
 		collisionvolumetest = 1,
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
 		description = "Produces Level 1 Aircraft",
 		energystorage = 100,
 		explodeas = "LARGE_BUILDINGEX",
-		footprintx = 8,
+		footprintx = 9,
 		footprintz = 6,
 		icontype = "building",
 		idleautoheal = 5,
@@ -31,7 +33,7 @@ return {
 		maxwaterdepth = 0,
 		metalstorage = 100,
 		name = "Aircraft Plant",
-		objectname = "ARMAP",
+		objectname = "ARMAP.s3o",
 		radardistance = 500,
 		radaremitheight = 72,
 		seismicsignature = 0,
@@ -40,7 +42,8 @@ return {
 		terraformspeed = 500,
 		usebuildinggrounddecal = true,
 		workertime = 100,
-		yardmap = "oooooooooooooooooooooooooooooooooooooooooooooooo",
+		yardmap = "ooooooooo ooooooooo ooooooooo ooooooooo ooooooooo ooooooooo",
+
 		buildoptions = {
 			[1] = "armca",
 			[2] = "armpeep",
@@ -48,6 +51,10 @@ return {
 			[4] = "armthund",
 			[5] = "armatlas",
 			[6] = "armkam",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

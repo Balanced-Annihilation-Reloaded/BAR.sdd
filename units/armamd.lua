@@ -29,13 +29,17 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Protector",
-		objectname = "ARMAMD",
+		objectname = "ARMAMD.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 201,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

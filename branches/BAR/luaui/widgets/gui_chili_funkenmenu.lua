@@ -61,16 +61,15 @@ local function ClickFunc(chiliButton, x, y, button, mods)
 	end
 end
 
-local function createMyButton(container, texture, minsize, cmd)
+local function createMyButton(container, texture, cmd,isState)
 	if cmd.name ~= "" then
 		local button = Chili.Button:New{
 			name = cmd.name,
 			caption = string.gsub(cmd.name,"%s+", "\n"),
 			tooltip = cmd.tooltip,
-			hidden = cmd.disabled,
 			cmdid       = cmd.id,
-			minHeight = minsize,
-			minWidth  = minsize,
+			minHeight = winW/3+5,
+			minWidth  = winW/3+5,
 			padding 	= {9,9,9,9},
 			margin		= {0,0,0,0},
 			OnClick = {ClickFunc},
@@ -78,6 +77,8 @@ local function createMyButton(container, texture, minsize, cmd)
 	if texture then 
 		button.caption = '' 
 		button.children = {Chili.Image:New{width = "100%", height = "100%", x = 0, y = 0, file = texture, parent = button}}
+	elseif isState then
+		button.caption = string.gsub(cmd.params[cmd.params[1] + 2],"%s+", "\n")
 	end
 	container:AddChild(button)
 	end
@@ -87,10 +88,10 @@ local function findButtonData(cmd)
 	local isState = (cmd.type == CMDTYPE.ICON_MODE and #cmd.params > 1)
 	local isBuild = (cmd.id < 0)
 	if ignore_commands[cmd.action]	then  return
-	elseif not isBuild then 									createMyButton(menu[1], _, winW/3+5, cmd)
-	elseif econ_commands[cmd.name] then 			createMyButton(menu[2], '#'..-cmd.id, winW/3+5, cmd)
-	elseif strategic_commands[cmd.name] then 	createMyButton(menu[3], '#'..-cmd.id, winW/3+5, cmd)
-	else 																			createMyButton(menu[4], '#'..-cmd.id, winW/3+5, cmd)
+	elseif not isBuild then 									createMyButton(menu[1], _, cmd,isState)
+	elseif econ_commands[cmd.name] then 			createMyButton(menu[2], '#'..-cmd.id, cmd)
+	elseif strategic_commands[cmd.name] then 	createMyButton(menu[3], '#'..-cmd.id, cmd)
+	else 																			createMyButton(menu[4], '#'..-cmd.id, cmd)
 	end
 end
 

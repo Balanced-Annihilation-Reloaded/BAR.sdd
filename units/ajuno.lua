@@ -27,13 +27,17 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Arm Juno",
-		objectname = "AJUNO",
+		objectname = "AJUNO.s3o",
 		seismicsignature = 0,
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 494,
 		stealth = true,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

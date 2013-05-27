@@ -24,7 +24,7 @@ local window0, menuTabs, panel0, stateWindow, scroll0, menu, menuTab, buildQueue
 
 local imageDir = 'LuaUI/Images/commands/'
 local updateRequired = true
-local menuChoice
+local menuChoice = 1
 local selectedUnits = {}
 
 
@@ -64,9 +64,8 @@ end
 local function createMyButton(container, texture, minsize, cmd)
 	if cmd.name ~= "" then
 		local button = Chili.Button:New{
-			cmdname = cmd.name,
-			action = cmd.action,
-			caption = "",
+			name = cmd.name,
+			caption = string.gsub(cmd.name,"%s+", "\n"),
 			tooltip = cmd.tooltip,
 			hidden = cmd.disabled,
 			cmdid       = cmd.id,
@@ -75,8 +74,11 @@ local function createMyButton(container, texture, minsize, cmd)
 			padding 	= {9,9,9,9},
 			margin		= {0,0,0,0},
 			OnClick = {ClickFunc},
-			children = {Chili.Image:New{width = "100%", height = "100%", x = 0, y = 0, file = texture, parent = button}},
-		}	
+		}
+	if texture then 
+		button.caption = '' 
+		button.children = {Chili.Image:New{width = "100%", height = "100%", x = 0, y = 0, file = texture, parent = button}}
+	end
 	container:AddChild(button)
 	end
 end
@@ -84,18 +86,16 @@ end
 local function findButtonData(cmd)
 	local isState = (cmd.type == CMDTYPE.ICON_MODE and #cmd.params > 1)
 	local isBuild = (cmd.id < 0)
-	if ignore_commands[cmd.action]	then return
-	elseif isState then 											createMyButton(stateWindow, 'luaUI/Images/commands/states/' .. cmd.action .. cmd.params[1] + 2 .. '.png', 1, cmd)
-	elseif not isState and not isBuild then 	createMyButton(menu[1], 'luaUI/Images/commands/bold/' .. cmd.action .. '.png', winW/3+5, cmd)
-	elseif strategic_commands[cmd.name] then 	createMyButton(menu[3], '#'..-cmd.id, winW/3+5, cmd)
+	if ignore_commands[cmd.action]	then  return
+	elseif not isBuild then 									createMyButton(menu[1], _, winW/3+5, cmd)
 	elseif econ_commands[cmd.name] then 			createMyButton(menu[2], '#'..-cmd.id, winW/3+5, cmd)
+	elseif strategic_commands[cmd.name] then 	createMyButton(menu[3], '#'..-cmd.id, winW/3+5, cmd)
 	else 																			createMyButton(menu[4], '#'..-cmd.id, winW/3+5, cmd)
 	end
 end
 
 local function makeMenuTabs()	
 	local tabCount = 0
-	menuChoice = 1
 	local tempMenu = {}
 	tempMenu[1] = menu[1]
 	menuTab[1] = Chili.Button:New{parent = menuTabs, right = 0, y = 5, width = 40, height = 90, caption = "O\nR\nD\nE\nR", OnClick = {
@@ -111,7 +111,7 @@ local function makeMenuTabs()
 		end
 	end
 	menu = tempMenu
-	if #menu > 1 then menuChoice = 2 end
+	--if #menu > 1 then menuChoice = 2 end
 	window0:AddChild(menu[menuChoice])
 end
 
@@ -145,16 +145,16 @@ local function loadPanel()
 end
 
 local function switchTabs(window,x,y,up,value,mods)
-		menuTab[menuChoice].state.hovered = false
-		menuTab[menuChoice]:Invalidate()
-		menuChoice = menuChoice - value
-		if menuChoice > #menu then menuChoice = 1 end
-		if menuChoice == 0 then menuChoice = #menu end
-		window0:ClearChildren()
-		menuTab[menuChoice].state.hovered = true
-		window0:AddChild(menu[menuChoice])
-		menuTab[menuChoice]:Invalidate()
-		return true
+	menuTab[menuChoice].borderColor = {1,1,1,1}
+	menuTab[menuChoice]:Invalidate()
+	menuChoice = menuChoice - value
+	if menuChoice > #menu then menuChoice = 1 end
+	if menuChoice == 0 then menuChoice = #menu end
+	window0:ClearChildren()
+	menuTab[menuChoice].borderColor =  menuTab[menuChoice].focusColor
+	window0:AddChild(menu[menuChoice])
+	menuTab[menuChoice]:Invalidate()
+	return true
 end
 
 function queueHandler()

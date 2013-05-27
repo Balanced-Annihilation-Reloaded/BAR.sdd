@@ -12,9 +12,9 @@
 
 function widget:GetInfo()
   return {
-    name      = "Chili Chat 2.1",
+    name      = "BAR's Chili Chat 2.1",
     desc      = "v0.909 Alternate Chili Chat Console.",
-    author    = "CarRepairer, Licho, Shaun",
+    author    = "CarRepairer, Licho, Shaun, funkencool", -- modification of original Chili Chat 2.1
     date      = "2012-06-12",
     license   = "GNU GPL, v2 or later",
     layer     = 50,

@@ -50,7 +50,7 @@ local spGetUnitHealth = Spring.GetUnitHealth
 local Echo = Spring.Echo
 local Chili
 
-local musicControl, playButton, skipButton, songLabel, window0, pauseIcon, playIcon
+local musicControl, playButton, skipButton, songLabel, window0, pauseIcon, playIcon,volumeLbl, volume
 ----------------------------------------------------------------------------------------
 -- Music Volume draw --
 ----------------------------------------------------------------------------------------
@@ -129,13 +129,14 @@ function widget:Initialize()  --loads .ogg files from the directories to table
 	
 	skipButton  	= Chili.Button:New{right = 0, bottom = 0, width = 40, height = 40, padding 	= {8,8,8,8}, caption = "", children = {
 		Chili.Image:New{width = "100%", height = "95%", x = 0, bottom = 0, file = "luaUI/Images/nextsong.png", OnClick = {function() playNew = true end},}}}
-
+	volumeLbl 		= Chili.Label:New{caption = "Volume:",bottom=12, right = 145}
+	volume 				= Chili.Trackbar:New{right = 80, height = 15, bottom = 10, width=60, value=Spring.GetConfigInt("snd_volmusic"),OnChange = { function(self)	Spring.SendCommands("set snd_volmusic " .. self.value) end},}
 	playIcon 			= Chili.Image:New{width = "100%", height = "95%", x = 0, bottom = 0, file = "luaUI/Images/playsong.png", OnClick = {function() playButton:ClearChildren(); playButton:AddChild(pauseIcon);spPauseSoundStream() end},}
 	pauseIcon			= Chili.Image:New{width = "100%", height = "95%", x = 0, bottom = 0, file = "luaUI/Images/pausesong.png", OnClick = {function() playButton:ClearChildren(); playButton:AddChild(playIcon); spPauseSoundStream() end},}
 	playButton  	= Chili.Button:New{right = 35, bottom = 0, width = 40, height = 40, padding 	= {8,8,8,8}, caption = "", children = {pauseIcon}}
 	songLabel		 	= Chili.Label:New{x = 0, caption = "No Song"}
-	musicControl 	= Chili.Control:New{parent = screen0,right = 0, y = 85, height = 40, width = 300, children = {skipButton,playButton}, borderColor = {0,0,0,0}}
-	window0			 	= Chili.Window:New{parent = screen0,minHeight = 0, right = 0, y = 70, height = 20, width = 200, children = {songLabel}, padding = {5,2,5,0}}
+	musicControl 	= Chili.Control:New{parent = screen0,right = 0, y = 35, height = 40, width = 300, children = {skipButton,playButton,volume,volumeLbl}}
+	window0			 	= Chili.Window:New{parent = screen0,minHeight = 0, right = 0, y = 20, height = 20, width = 200, children = {songLabel}, padding = {5,2,5,0}}
 end
 
 local function JustTheName(text)
@@ -292,26 +293,24 @@ function widget:Update(dt)
 				spStopSoundStream()
 				if musicType == 0 then
 					labelString = JustTheName(curPeaceTrack)
-					songLabel:SetCaption(labelString)
 					spPlaySoundStream(curPeaceTrack)
 					songLabel.font.color = {0.5,1,0.0,1}
 					songLabel.font.outlineColor = {0.5,1,0.0,0.2}
 					curMusicType = 0
 				elseif musicType == 1 then
 					labelString = JustTheName(curColdwarTrack)
-					songLabel:SetCaption(labelString)
 					spPlaySoundStream(curColdwarTrack)
 					songLabel.font.color = {1,0.5,0,1}
 					songLabel.font.outlineColor = {1,0.5,0,0.2}
 					curMusicType = 1
 				elseif musicType == 2 then
 					labelString = JustTheName(curWarTrack)
-					songLabel:SetCaption(labelString)
 					spPlaySoundStream(curWarTrack)
 					curMusicType = 2
 					songLabel.font.color = {1,0,0,1}
 					songLabel.font.outlineColor = {1,0,0,0.2}
 				end
+				songLabel:SetCaption(labelString)
 				labelVar = 0
 				playNew=false
 			end
@@ -325,7 +324,6 @@ function widget:Update(dt)
 				metalDestroyedCounter = 0
 			end
 		end
-		
 	end
 end
 

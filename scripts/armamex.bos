@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, arms, panel1, panel2, panel3, panel4, rod, edges;
+piece  base, spinner;
 
 static-var  Static_Var_1, Static_Var_2, Static_Var_3, statechg_DesiredState, statechg_StateChanging;
 
@@ -40,37 +40,12 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 fixGo()
 {
 	set ARMORED to 0;
-	move rod to y-axis [7.500000] speed [62.500000];
-	move edges to y-axis [-7.500000] speed [62.500000];
-	move panel1 to y-axis [12.500000] speed [25.000000];
-	move panel2 to y-axis [12.500000] speed [25.000000];
-	move panel3 to y-axis [12.500000] speed [25.000000];
-	move panel4 to y-axis [12.500000] speed [25.000000];
-	turn panel1 to x-axis <-90.021978> speed <40.000000>;
-	turn panel2 to x-axis <90.021978> speed <40.000000>;
-	turn panel3 to z-axis <90.021978> speed <40.000000>;
-	turn panel4 to z-axis <-90.021978> speed <40.000000>;
-	spin arms around y-axis speed Static_Var_1 accelerate Static_Var_2;
-	spin panel1 around y-axis speed Static_Var_1 accelerate Static_Var_2;
-	spin panel2 around y-axis speed Static_Var_1 accelerate Static_Var_2;
-	spin panel3 around y-axis speed Static_Var_1 accelerate Static_Var_2;
-	spin panel4 around y-axis speed Static_Var_1 accelerate Static_Var_2;
+	spin spinner around y-axis speed Static_Var_1 accelerate Static_Var_2;
 }
 
 Stop()
 {
-	stop-spin arms around y-axis decelerate Static_Var_3;
-	turn panel1 to x-axis <0.000000> speed <60.000000>;
-	turn panel2 to x-axis <0.000000> speed <60.000000>;
-	turn panel3 to z-axis <0.000000> speed <60.000000>;
-	turn panel4 to z-axis <0.000000> speed <60.000000>;
-	wait-for-turn panel1 around x-axis;
-	move rod to y-axis [0.000000] speed [62.500000];
-	move edges to y-axis [0.000000] speed [62.500000];
-	move panel1 to y-axis [0.000000] speed [25.000000];
-	move panel2 to y-axis [0.000000] speed [25.000000];
-	move panel3 to y-axis [0.000000] speed [25.000000];
-	move panel4 to y-axis [0.000000] speed [25.000000];
+	stop-spin spinner around y-axis decelerate Static_Var_3;
 	set ARMORED to 1;
 }
 
@@ -111,8 +86,6 @@ Create()
 	Static_Var_1 = 0;
 	Static_Var_2 = 91;
 	Static_Var_3 = 182;
-	dont-shade arms;
-	dont-cache arms;
 	call-script InitState();
 	start-script SmokeUnit();
 }
@@ -153,33 +126,25 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode arms type BITMAPONLY | BITMAP1;
-		explode panel1 type SHATTER | EXPLODE_ON_HIT | BITMAP3;
-		explode panel2 type SHATTER | EXPLODE_ON_HIT | BITMAP3;
-		explode panel3 type SHATTER | EXPLODE_ON_HIT | BITMAP3;
-		explode panel4 type SHATTER | EXPLODE_ON_HIT | BITMAP3;
+		explode spinner type BITMAPONLY | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode arms type SHATTER | BITMAP1;
-		explode panel1 type SHATTER | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode panel2 type SHATTER | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode panel3 type SHATTER | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode panel2 type SHATTER | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode spinner type SHATTER | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode arms type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+		explode spinner type SHATTER | EXPLODE_ON_HIT | BITMAP1;
 		explode base type SHATTER | SMOKE | FIRE | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
-	explode arms type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode spinner type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP2;
 }

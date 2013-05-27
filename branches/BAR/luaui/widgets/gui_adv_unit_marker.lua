@@ -22,7 +22,7 @@ end
 
 local unitList = {}
 --MARKER LIST ------------------------------------
-unitList["BA"] = {
+unitList["BARC"] = {
 --[UnitDefNames["armcom"].id] = true,
 --[UnitDefNames["corcom"].id] = true,
 

@@ -41,19 +41,18 @@ skin.button = {
   tiles = {22, 22, 22, 22}, --// tile widths: left,top,right,bottom
   padding = {5, 5, 5, 5},
 
-  backgroundColor = {0,0,0,1},
+  backgroundColor = {0,0,0,0.5},
   borderColor = {1,1,1,1},
 
   DrawControl = DrawButton,
 }
 
 skin.combobox = {
-	TileImageBK = ":cl:combobox_ctrl.png",
-	TileImageFG = ":cl:combobox_ctrl_fg.png",
+	TileImageBK = ":cl:glassbk.png",
+	TileImageFG = ":cl:glassfg.png",
 	TileImageArrow = ":cl:combobox_ctrl_arrow.png",
 	tiles   = {22, 22, 48, 22},
 	padding = {5, 5, 5, 5},
-
 	backgroundColor = {1, 1, 1, 0.7},
 	borderColor = {1,1,1,0},
 
@@ -63,8 +62,9 @@ skin.combobox = {
 
 skin.combobox_window = {
 	clone     = "window";
-	TileImage = ":cl:combobox_wnd.png";
+	TileImage = ":cl:glassbk.png";
 	tiles     = {10, 10, 10, 10};
+	backgroundColor = {1, 1, 1, 0.7},
 	padding   = {4, 3, 3, 4};
 }
 
@@ -212,7 +212,7 @@ skin.window = {
   hitpadding = {4, 4, 4, 4},
 	resizable = false,
   captionColor = {1, 1, 1, 0.45},
-  backgroundColor = {0, 0, 0, 1},
+  backgroundColor = {0, 0, 0, .8},
 
   boxes = {
     resize = {-21, -21, -10, -10},
@@ -245,7 +245,7 @@ skin.tabbaritem = {
   TileImageFG = ":cl:tech_tabbaritem_fg.png",
   tiles = {10, 10, 10, 0}, --// tile widths: left,top,right,bottom
   padding = {5, 3, 3, 2},
-  backgroundColor = {1, 1, 1, 1.0},
+  backgroundColor = {1, 1, 1, 0.8},
 
   DrawControl = DrawTabBarItem,
 }

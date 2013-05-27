@@ -23,7 +23,7 @@ local screenWidth, screenHeight = Spring.GetWindowGeometry()
 
 local function initWindow()
 	control0	= Chili.Window:New{parent = screen0, width = 300, height = 75, padding = {5,0,0,0}}
-	tip				= Chili.Label:New{parent = control0, x = 0, y = 0, font = {size = 10}}
+	tip				= Chili.TextBox:New{parent = control0, x = 0, y = 0, right = 0, bottom = 0}
 end
 
 local function MakeToolTip(tooltip)
@@ -33,7 +33,7 @@ local function MakeToolTip(tooltip)
 		else control0:SetPos(mousePosX - 300, screenHeight - mousePosY) end
 		control0:BringToFront()
 	elseif control0:IsDescendantOf(screen0) then screen0:RemoveChild(control0) end
-	tip:SetCaption(tooltip)
+	tip:SetText(tooltip)
 end
 
 function widget:DrawScreen()

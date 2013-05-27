@@ -31,12 +31,16 @@ return {
 		maxslope = 13,
 		maxwaterdepth = 0,
 		name = "Advanced Fusion Reactor",
-		objectname = "AAFUS",
+		objectname = "AAFUS.s3o",
 		seismicsignature = 0,
 		selfdestructas = "CRBLMSSL",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooooooooooooooooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

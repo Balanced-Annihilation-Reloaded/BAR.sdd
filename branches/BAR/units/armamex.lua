@@ -34,7 +34,7 @@ return {
 		metalstorage = 75,
 		mincloakdistance = 66,
 		name = "Twilight",
-		objectname = "ARMAMEX",
+		objectname = "ARMAMEX.s3o",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "TWILIGHT",
@@ -43,6 +43,10 @@ return {
 		stealth = true,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

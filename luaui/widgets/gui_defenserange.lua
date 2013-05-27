@@ -1,4 +1,4 @@
-include("colors.h.lua")
+-- modinclude("colors.h.lua")
 include("keysym.h.lua")
 
 local versionNumber = "6.32"
@@ -110,8 +110,8 @@ modConfig["BA"]["dps"]["air"]["max"] = 500
 -- BA
 --to support other mods
 --table initialized and unitList is needed!
-modConfig["BAR"] = {}
-modConfig["BAR"]["unitList"] = 
+modConfig["BARC"] = {}
+modConfig["BARC"]["unitList"] = 
 							{ 
 								armclaw = { weapons = { 1 } },
 								cormaw = { weapons = { 1 } },
@@ -173,16 +173,16 @@ modConfig["BAR"]["unitList"] =
 
 --implement this if you want dps-depending ring-colors
 --colors will be interpolated by dps scores between min and max values. values outside range will be set to nearest value in range -> min or max
-modConfig["BAR"]["armorTags"] = {}
-modConfig["BAR"]["armorTags"]["air"] = "vtol"
-modConfig["BAR"]["armorTags"]["ground"] = "else"
-modConfig["BAR"]["dps"] = {}
-modConfig["BAR"]["dps"]["ground"] = {}
-modConfig["BAR"]["dps"]["air"] = {}
-modConfig["BAR"]["dps"]["ground"]["min"] = 50
-modConfig["BAR"]["dps"]["ground"]["max"] = 500
-modConfig["BAR"]["dps"]["air"]["min"] = 80
-modConfig["BAR"]["dps"]["air"]["max"] = 500
+modConfig["BARC"]["armorTags"] = {}
+modConfig["BARC"]["armorTags"]["air"] = "vtol"
+modConfig["BARC"]["armorTags"]["ground"] = "else"
+modConfig["BARC"]["dps"] = {}
+modConfig["BARC"]["dps"]["ground"] = {}
+modConfig["BARC"]["dps"]["air"] = {}
+modConfig["BARC"]["dps"]["ground"]["min"] = 50
+modConfig["BARC"]["dps"]["ground"]["max"] = 500
+modConfig["BARC"]["dps"]["air"]["min"] = 80
+modConfig["BARC"]["dps"]["air"]["max"] = 500
 
 --implement this if you want custom colors - we dont want it for BA
 --[[

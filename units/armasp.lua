@@ -33,7 +33,7 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 1,
 		name = "Air Repair Pad",
-		objectname = "ARMASP",
+		objectname = "ARMASP.s3o",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
@@ -42,6 +42,10 @@ return {
 		usebuildinggrounddecal = true,
 		workertime = 1000,
 		yardmap = "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

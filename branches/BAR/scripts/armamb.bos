@@ -229,11 +229,11 @@ FireWeapon1()
 {
 	Static_Var_5 = 1;
 	start-script Reload1();
-	move barrel to z-axis [-12.500000] speed [1250.000000];
+	move barrel to z-axis [12.500000] speed [1250.000000];
 	show flare;
 	sleep 250;
 	hide flare;
-	move barrel to z-axis [0.000000] speed [7.500000];
+	move barrel to z-axis [17.000000] speed [7.500000];
 	return (0);
 }
 

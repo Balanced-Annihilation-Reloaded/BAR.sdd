@@ -1,0 +1,293 @@
+function widget:GetInfo()
+	return {
+		name		  = "BAR's Options Menu",
+		desc		  = "v0.1 of Graphics, Interface, and Sound Options Menu (WIP)",
+		author		= "Funkencool",
+		date		  = "2013",
+		license   = "GNU GPL, v2 or later",
+		layer		  = -1000000,
+		handler 	= true,
+		enabled   = true
+	}
+end
+
+local spSendCommands = Spring.SendCommands
+local spSetConfigInt = Spring.SetConfigInt
+local spGetConfigInt = Spring.GetConfigInt
+
+local Chili, mainMenu, menuTabs
+local barSettings = {}
+local menuVisible = false
+local widgetList = {}
+local tabs = {}
+local changelog = 
+[[ 7.61 -> 7.62
+11/29/11:
+
+-Better handling for most units with turninplace
+-Fix t1 destroyer bad handling (by reverting to old behaivour, a combo of …
+-Torpedoes no longer hit hovers
+-Fix the Dominator hack
+-Added ability for maps to override engine start positions. Thanks zwzsg
+-Add Updated air release gadget and new airlab fix gadget , and cmd_lstpos …
+-Fix problem with armbrtha hitsphere
+-Updated Dynamic Collision Volume gadget to support dynamic per piece …
+-Update mex snap Widget
+-Viper and Pitbull script fix (thanks KingRaptor and Juzza)]]
+
+local groupDescs = {api = "For Developers",camera = "Camera",cmd = "Commands",
+	dbg = "For Developers",gfx = "Effects",gui = "GUI",hook = "Commands",ico = "GUI",init = "Initialization",
+	map = "Map",minimap = "Minimap",mission = "Mission",snd = "Sound",test = "For Developers",unit = "Units",
+	ungrouped = "Ungrouped"}
+
+local	function toggleWidget(self) 
+	widgetHandler:ToggleWidget(self.name)
+	if self.checked then  
+		self.font.color = {1,0.5,0,1}
+		self.font.outlineColor = {1,0.5,0,0.2}
+	else
+		self.font.color = {0.5,1,0,1}
+		self.font.outlineColor = {0.5,1,0,0.2}
+	end
+	self:Invalidate()
+end
+
+local function sortWidgetList(list,filter)
+	local widgets = {}
+	local categories = {}
+	local showCat = {}
+	local tooltips = {}
+	local filter = filter or ""
+	for name,data in pairs(list) do
+		if --[[not data.alwaysStart
+			and]] ((barSettings.searchWidgetName and string.find(string.lower(name), string.lower(filter)))
+			or (barSettings.searchWidgetDesc and string.find(string.lower(data.desc), string.lower(filter)))
+			or (barSettings.searchWidgetAuth and string.find(string.lower(data.author), string.lower(filter)))) then
+		local _, _, category = string.find(data.basename, "([^_]*)")
+		widgets[#widgets+1] = name
+		tooltips[#widgets] = '(By ' .. tostring(data.author) .. ")\n" .. tostring(data.desc)
+		categories[name] = category or "ungrouped"
+		showCat[category] = true
+		end
+	end
+	table.sort(widgets)
+	return widgets,categories,showCat,tooltips
+end
+
+local function makeWidgetList(filter)
+	local widgetNum = 0
+	local control = tabs["Interface"]
+	local scrollpanel = control:GetObjectByName("widgetList")
+	local sortedWidgets, widgetcats, showCat, tooltip = sortWidgetList(widgetHandler.knownWidgets,filter)
+	scrollpanel:ClearChildren()
+	for cat,catName in pairs(groupDescs) do
+		if showCat[cat] then 
+			widgetNum = widgetNum + 1
+			Chili.Label:New{parent = scrollpanel,caption = '- '..catName..' -', y = widgetNum*20, x = 0}
+			widgetNum = widgetNum + 1
+		end
+		for i=1,#sortedWidgets do
+			if widgetcats[sortedWidgets[i]] == cat then
+				local enabled = widgetHandler.orderList[sortedWidgets[i]]>0
+				local fontColor
+				if enabled then fontColor = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
+				else fontColor = {color = {1,0.5,0,1}, outlineColor = {1,0.5,0,0.2}} end
+				Chili.Checkbox:New{
+					name			= sortedWidgets[i],
+					caption 	= sortedWidgets[i],
+					parent		= scrollpanel,
+					tooltip		= tooltip[i],
+					x 				= 0,
+					right 		= 0,
+					y 				= widgetNum*20,
+					height 		= 19,
+					font 			= fontColor,
+					checked 	= enabled,
+					OnChange 	= {toggleWidget},
+				}
+				widgetNum = widgetNum + 1
+			end
+		end
+	end
+end
+
+local function showHide()
+	if mainMenu then mainMenu:ToggleVisibility() end
+end
+
+local function sTab(_,tabName)
+		if barSettings.tabSelected then mainMenu:RemoveChild(tabs[barSettings.tabSelected]) end
+		mainMenu:AddChild(tabs[tabName])
+		barSettings.tabSelected = tabName
+end
+
+local function addFilter() 
+	local control = tabs["Interface"]
+	local editbox = control:GetObjectByName("widgetFilter")
+	makeWidgetList(editbox.text)
+	editbox:SetText("")
+end
+
+local function chngSkin()
+	local control = tabs["Interface"]
+	local editbox = control:GetObjectByName("skin")
+	Chili.theme.skin.general.skinName = editbox.text
+	barSettings.chiliSkin = editbox.text
+	spSendCommands("luaui reload")
+end
+
+local function loadMenu()
+	mainMenu = Chili.Window:New{parent=Chili.Screen0,x = 350, y = 150, width = 500, height = 400,padding = {5,8,5,8}}
+	menuTabs = Chili.TabBar:New{parent = mainMenu, x = 0, width = '100%', y = 0, height = 20, minItemWidth = 70,selected=barSettings.tabSelected or 'General',
+		tabs = {"General","Interface", "Graphics", "Sound"}, OnChange = {sTab}}
+	Chili.Line:New{parent = mainMenu,y = 15,width = "100%"}
+	Chili.Line:New{parent = mainMenu,bottom = 15,width = "100%"}
+end
+
+local function addComBox(tab,vert,caption,name,items,rItems,showLine)
+	local control = tabs[tab]
+	local selected = barSettings[name]
+	if showLine then control:AddChild(Chili.Line:New{y=vert-4,width='50%'}) end
+	control:AddChild(Chili.Label:New{caption = caption,y = vert,height=20,right=378})
+	control:AddChild(Chili.ComboBox:New{name = name,y = vert,right = 250,width = 125,height=26,items = items,rItems = rItems, selected = selected,
+		OnSelect = {function(_,boxNum) spSetConfigInt(name,rItems[boxNum]);barSettings[name] = boxNum end}})
+		-- OnSelect = {function(_,boxNum) spSendCommands(name.." "..rItems[boxNum]);barSettings[name] = boxNum end}})
+end
+
+local function getGlobals()
+	--Spring.Echo(Chili.SkinHandler.GetAvailableSkins())
+	local nodes = {}
+	local location = 'Chili'
+	local function buildNode(oTable)
+		for name,data in pairs(oTable) do
+			location = location..'.1'..name
+			if type(data)=='string' or type(data)=='number' then
+				nodes[#nodes+1] = Chili.Label:New{x=0,y=#nodes*20,caption=location}
+				nodes[#nodes+1] = Chili.Label:New{right=0,y=(#nodes/2)*20,caption='='..data}
+			elseif type(data)=='table' then 
+			--	buildNode(name)
+			end
+		end
+	end
+	buildNode(Chili)
+	Chili.ScrollPanel:New{parent=Chili.Screen0, right=0,height=300,width=200,bottom=70,children=nodes}
+end
+-----OPTIONS-----------------
+-----------------------------
+local function Options()
+-- Each tab has its own control {General,Interface,Graphics, and Sound}
+-- 	Each graphical element is defined as a child of these controls and given a function to fullfill, when a certain even happens(i.e. OnClick)
+	
+-- Graphics --
+	tabs.Graphics = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', 
+	children = {}}
+	-- addComBox('Graphics', 0  , "Water    ", "ReflectiveWater", {"Basic","Reflective","Dynamic","Refractive","Bump-Mapped"}, {0,1,2,3,4})
+	-- addComBox('Graphics', 30 , "-Reflection", "BumpWaterReflection", {"Off","Performance","Full"}, {0,1,2})
+	-- addComBox('Graphics', 60 , "-Refraction", "BumpWaterRefraction", {"Off","Performance","Full"}, {0,1,2})
+	-- addComBox('Graphics', 90 , "Shadows   ", "Shadows", {"Off","Fast","Full"}, {0,2,1},true)
+	-- addComBox('Graphics', 120, "-Resolution", "ShadowMapSize", {"Low","Medium","High"}, {1024,2048,4096})
+	-- addComBox('Graphics', 150, "-SmoothLines-", "SmoothLines", {"Safe","Performance","Balanced","Power"}, {0,1,2,3},true)
+	-- addComBox('Graphics', 180, "-SmoothPoints-", "SmoothPoints", {"Safe","Performance","Balanced","Power"}, {0,1,2,3})
+	-- addComBox('Graphics', 210, "-FSAA", "FSAALevel", {"Safe","Performance","Balanced","Power"}, {0,2,4,8})
+	-- addComBox('Graphics', 30, "-Shadows-", "Shadows", {"Low","Medium","High"}, {"3 1024","3 2048","3 4096"},true)
+	
+-- Interface --
+	tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', --Control attached to tab
+	children = {
+		Chili.ScrollPanel:New{name="widgetList",x = '50%',y = 0,right = 0,bottom = 0},
+		Chili.EditBox:New{name="widgetFilter",x=0,y=0,width = '50%',text=''},
+		Chili.Button:New{right='50%',y=20,height=24,width='15%',caption='Filter',OnMouseUp={addFilter}},
+		Chili.Checkbox:New{caption="Search Widget Name",x=0,y=40,width='35%',textalign="left",boxalign="right",checked=barSettings.searchWidgetName,
+			OnChange = {function() barSettings.searchWidgetName = not barSettings.searchWidgetName end}},	
+		Chili.Checkbox:New{caption="Search Description",x=0,y=20,width='35%',textalign="left",boxalign="right",checked=barSettings.searchWidgetDesc,
+			OnChange = {function() barSettings.searchWidgetDesc = not barSettings.searchWidgetDesc end}},
+		Chili.Checkbox:New{caption="Search Author",x=0,y=60,width='35%',textalign="left",boxalign="right",checked=barSettings.searchWidgetAuth,
+			OnChange = {function() barSettings.searchWidgetAuth = not barSettings.searchWidgetAuth end}},
+		Chili.Line:New{width='50%',y=80},
+		Chili.EditBox:New{name='skin',x=0,y=90,width='50%',text=''},
+		Chili.Button:New{right='50%',y=110,height=24,width='20%',caption='Change Skin',OnMouseUp={chngSkin}},
+--		Chili.Button:New{right='75%',y=150,height=24,width='25%',caption='Chili Globals',OnMouseUp={getGlobals}},
+	}}
+	
+-- General --
+	tabs.General = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', 
+	children = {
+		Chili.Label:New{caption="Recent Changes:",x='30%'},
+		Chili.ScrollPanel:New{width = '70%', right=0, y=20, bottom=0, children ={Chili.TextBox:New{width='100%',text=changelog}}},
+		Chili.Button:New{caption = "Resign and Spectate",height = 30,width = '30%',x = 0,bottom=30,
+			OnMouseUp = {}},
+		Chili.Button:New{caption = "Exit To Desktop",height = 30,width = '30%',x = 0,bottom=0,
+			OnMouseUp = { function() spSendCommands{"quit","quitforce"} end }},
+		Chili.Button:New{caption = "Restart Spring",height = 20,width = '20%',x = 0,bottom=60,
+			OnMouseUp = { function() Spring.Restart() end }},
+	}}		
+
+-- Sound --
+	tabs.Sound = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', children = {
+		Chili.Label:New{caption = "Master Volume:",},
+		Chili.Trackbar:New{x = 120,height = 15,right = 150,value = spGetConfigInt("snd_volmaster"),
+			OnChange = { function(self)	spSendCommands{"set snd_volmaster " .. self.value} end	},},
+		Chili.Label:New{caption = "General Volume:",y = 20},
+		Chili.Trackbar:New{x = 120,y = 20,height = 15,right = 150,value = spGetConfigInt("snd_volgeneral"),
+			OnChange = { function(self)	spSendCommands{"set snd_volgeneral " .. self.value} end	},},
+		Chili.Label:New{caption = "Music Volume:",y = 40},
+		Chili.Trackbar:New{x = 120,y = 40,height = 15,right = 150,value = spGetConfigInt("snd_volmusic"),
+			OnChange = { function(self)	spSendCommands{"set snd_volmusic " .. self.value} end	},},
+	}}
+
+end
+-----------------------------
+-----------------------------
+function widget:GetConfigData()
+	if barSettings ~= WG.barSettings then 
+	for name,data in pairs(barsettings) do
+		WG.barSettings[name] = data
+	end
+	end
+	return WG.barSettings
+end
+
+function widget:SetConfigData(data)
+	if (data and type(data) == 'table') then 
+	WG.barSettings = data 
+-- Localize global 
+	barSettings = WG.barSettings
+-- Defaults ---
+	barSettings.searchWidgetDesc=true
+	barSettings.searchWidgetAuth=true
+	barSettings.searchWidgetName=true
+	barSettings.widget = {}
+	barSettings.UIwidget = {}
+------------------------------------
+	end
+end
+
+function widget:Initialize()
+	Chili = WG.Chili
+	Chili.theme.skin.general.skinName = barSettings.chiliSkin
+	Options()
+	makeWidgetList()
+	loadMenu()
+end
+function widget:KeyPress(key,mod)
+	local control = tabs["Interface"]
+	local editbox = control:GetObjectByName("widgetFilter")
+	Spring.Echo()
+	if key==13 and editbox.state.focused then
+		makeWidgetList(editbox.text)
+		editbox:SetText("")
+		return true
+	elseif key==292 then
+		showHide()
+		menuTabs:Select('Interface')
+	elseif key==27 then
+		showHide()
+		menuTabs:Select('General')
+	-- elseif key==
+	end
+end
+
+function widget:ShutDown()
+	-- spSendCommands("unbind esc MainMenu")
+	-- spSendCommands("bind shift+esc General")
+end

@@ -25,12 +25,16 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Chainsaw",
-		objectname = "ARMCIR",
+		objectname = "ARMCIR.s3o",
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 350,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

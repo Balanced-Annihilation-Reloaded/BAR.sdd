@@ -18,7 +18,7 @@ local strategic_commands, econ_commands, ignore_commands = include("Configs/Buil
 -- Chili objects
 local Chili
 local panH, panW, winW
-local window0, menuTabs, panel0, stateWindow, scroll0, menu, menuTab, buildQueue, queueControl, idx
+local window0, menuTabs, panel0, stateWindow, scroll0, menu, menuTab, buildQueue, queueControl, idx, screen0
 ----------------
 
 
@@ -193,7 +193,7 @@ function widget:Initialize()
 	end
 
 	Chili = WG.Chili
-	local screen0 = Chili.Screen0
+	screen0 = Chili.Screen0
 	panH = screen0.height * 0.7
 	panW = panH * 0.5
 	winW = panW * 0.6
@@ -227,12 +227,12 @@ end
 
 function widget:DrawScreen(n)
 	if updateRequired == true then
-	if selectedUnits ~= spGetSelectedUnits() then
     updateRequired = false
 		loadPanel()
 		queueHandler()
 		selectedUnits = spGetSelectedUnits()
-	end
+		if #menuTab == 0 and panel0.visible then panel0:Hide()
+		elseif #menuTab > 0 and panel0.hidden then panel0:Show() end
 	end
 end
 

@@ -18,7 +18,7 @@ local strategic_commands, econ_commands, ignore_commands = include("Configs/Buil
 -- Chili objects
 local Chili
 local panH, panW, winW
-local window0, menuTabs, panel0, stateWindow, scroll0, menu, menuTab, buildQueue, queueControl, idx, screen0
+local window0, menuTabs, panel0, stateWindow, scroll0, menu, menuTab, buildQueue, idx, screen0
 ----------------
 
 
@@ -87,30 +87,28 @@ local function findButtonData(cmd)
 	local isBuild = (cmd.id < 0)
 	if ignore_commands[cmd.action]	then  return
 	elseif not isBuild then 									createMyButton(menu[1], _, cmd,isState)
-	elseif econ_commands[cmd.name] then 			createMyButton(menu[2], '#'..-cmd.id, cmd)
 	elseif strategic_commands[cmd.name] then 	createMyButton(menu[3], '#'..-cmd.id, cmd)
-	else 																			createMyButton(menu[4], '#'..-cmd.id, cmd)
+	elseif econ_commands[cmd.name] then 			createMyButton(menu[4], '#'..-cmd.id, cmd)
+	else 																			createMyButton(menu[2], '#'..-cmd.id, cmd)
 	end
 end
 
 local function makeMenuTabs()	
 	local tabCount = 0
 	local tempMenu = {}
-	tempMenu[1] = menu[1]
-	local caption = {"ORDER","ECON","TACT","UNIT"}
+	local caption = {"ORDER","BUILD","TACT","ECON"}
 	for i=1, 4 do
 		if #menu[i].children > 0 then
 			local tab = tabCount + 1
 			tempMenu[tab] = menu[i]
-			menuTab[tab] = Chili.Button:New{parent = menuTabs, right = 20+8*i, y = tabCount * 41, width = 80-8*i, height = 40, caption = caption[i], OnMouseOver = {
+			menuTab[tab] = Chili.Button:New{parent = menuTabs, right = 20+8*i, y = tabCount * 41, width = 80-8*i, height = 40, caption = caption[i], OnClick = {
 				function() window0:ClearChildren(); window0:AddChild(menu[tab]); menuChoice = tab; end}}
 			tabCount = tabCount + 1
 		end
 	end
 	menu = tempMenu
-	if not menu[menuChoice] then menuChoice = 1 end
-	--if #menu > 1 then menuChoice = 2 end
-	if #menu>0 then window0:AddChild(menu[menuChoice]) end
+	if tabCount>0 and not menu[menuChoice] then menuChoice = menu[tabCount] end
+	if tabCount>0 then window0:AddChild(menu[menuChoice]) end
 end
 
 local function createMenus()
@@ -165,7 +163,7 @@ function queueHandler()
 			for i=1, #cmd do
 				if cmd[i].id < 0 then
 					if i == 1 or (i>1 and cmd[i-1].id ~= cmd[i].id) then 
-						buildQueue.children[#buildQueue.children+1]=Chili.Image:New{parent=buildQueue, x=45*#buildQueue.children, y=0, width =40, height=40, file='#'..-cmd[i].id,cmdid=cmd[i].id, OnClick={ClickFunc}}
+						buildQueue.children[#buildQueue.children+1]=Chili.Image:New{parent=buildQueue, x=45*#buildQueue.children+5, y=5, width =40, height=40, file='#'..-cmd[i].id,cmdid=cmd[i].id, OnClick={ClickFunc}}
 						buildQueue.children[#buildQueue.children]:AddChild(Chili.Label:New{caption=""})
 						queueNum = 1
 					else 
@@ -174,11 +172,11 @@ function queueHandler()
 					if queueNum > 1 then buildQueue.children[#buildQueue.children].children[1]:SetCaption(""..queueNum) end
 				end
 			end 
-		queueControl:Resize(45*#buildQueue.children+30)
+		buildQueue:Resize(45*#buildQueue.children+5)
 		end
 	end
-	if #buildQueue.children < 1 and #queueControl.children == 1 then queueControl:RemoveChild(buildQueue) 
-	elseif #buildQueue.children > 0 then queueControl:AddChild(buildQueue) 
+	if #buildQueue.children < 1 and buildQueue.visible then buildQueue:Hide() 
+	elseif #buildQueue.children > 0 and buildQueue.hidden then buildQueue:Show()
 	end
 end
 
@@ -201,8 +199,7 @@ function widget:Initialize()
 	window0         = Chili.Window:New{x = 0, y = 0, bottom = 0, width = winW, padding = {0,0,0,0}, margin = {0,0,0,0}, OnMouseWheel = {switchTabs}}
 	menuTabs 				= Chili.Control:New{x = winW, y = 0, bottom = 0, width = 90, padding = {0,0,0,0}, margin = {0,0,0,0}}
 	stateWindow 		= Chili.Grid:New{y = 10, bottom = 0, x = winW + 15, width  = 30, padding = {0, 0, 0, 0}, columns = 1, rows = 16}
-	queueControl		= Chili.Control:New{parent = screen0, x = winW - 10, bottom = 0, width = 300, height = 70, margin = {0,0,0,0}}
-	buildQueue 			= Chili.Panel:New{parent = queueControl, y = 0, height = "100%", width = "100%", right = 10, padding = {15,10,10,10}}
+	buildQueue 			= Chili.Window:New{parent = screen0, x = winW, bottom = 1, width = 20, height = 40, hidden = true,padding = {0,0,0,0}}
 	
 	panel0 = Chili.Control:New{
 		parent = screen0,

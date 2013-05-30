@@ -96,7 +96,7 @@ end
 local function makeMenuTabs()	
 	local tabCount = 0
 	local tempMenu = {}
-	local caption = {"ORDER","BUILD","TACT","ECON"}
+	local caption = {"ORDER","BUILD"," TACT","  ECON"}
 	for i=1, 4 do
 		if #menu[i].children > 0 then
 			local tab = tabCount + 1

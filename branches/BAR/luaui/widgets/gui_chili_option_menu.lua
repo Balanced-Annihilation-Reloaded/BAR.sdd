@@ -30,7 +30,9 @@ local menuVisible = false
 local widgetList = {}
 local tabs = {}
 local changelog = 
-[[ 7.61 -> 7.62
+[[ (for future when it matters) 
+	Example ChangeLog:
+	7.61 -> 7.62
 11/29/11:
 
 -Better handling for most units with turninplace
@@ -156,8 +158,8 @@ local function loadMainMenu()
 					OnMouseUp = {function() spSendCommands{"quit","quitforce"} end }},
 		}}
 	
-	menuTabs = Chili.TabBar:New{parent = mainMenu, x = 0, width = '100%', y = 0, height = 20, minItemWidth = 70,selected=barSettings.tabSelected or 'General',
-		tabs = {"General","Interface", "Graphics", "Sound"}, OnChange = {sTab}}
+	menuTabs = Chili.TabBar:New{parent = mainMenu, x = 0, width = '100%', y = 0, height = 20, minItemWidth = 70,selected=barSettings.tabSelected or 'Info',
+		tabs = {"Info","Interface", "Graphics", "Sound"}, OnChange = {sTab}}
 			
 	showHide()
 end
@@ -179,28 +181,18 @@ local function addComBox(tab,vert,caption,name,items,rItems,showLine)
 		-- OnSelect = {function(_,boxNum) spSendCommands(name.." "..rItems[boxNum]);barSettings[name] = boxNum end}})
 end
 
-local function getGlobals()
-	--Spring.Echo(Chili.SkinHandler.GetAvailableSkins())
-	local nodes = {}
-	local location = 'Chili'
-	local function buildNode(oTable)
-		for name,data in pairs(oTable) do
-			location = location..'.1'..name
-			if type(data)=='string' or type(data)=='number' then
-				nodes[#nodes+1] = Chili.Label:New{x=0,y=#nodes*20,caption=location}
-				nodes[#nodes+1] = Chili.Label:New{right=0,y=(#nodes/2)*20,caption='='..data}
-			elseif type(data)=='table' then 
-			--	buildNode(name)
-			end
-		end
-	end
-	buildNode(Chili)
-	Chili.ScrollPanel:New{parent=Chili.Screen0, right=0,height=300,width=200,bottom=70,children=nodes}
+local function addPlayerList()
+	-- local list = Spring.GetPlayerRoster()
+	-- for i=1,#list do
+		-- for name,data in pairs(list[i]) do Spring.Echo(name,data) end
+		-- local r,g,b = Spring.GetTeamColor(list[i][3])
+		-- local label = Chili.Label:New{parent=tabs.Info,x='70%',y=20*i+20,font={color = {r,g,b,1}}, caption = list[i][1]}
+	-- end
 end
 -----OPTIONS-----------------
 -----------------------------
 local function Options()
--- Each tab has its own control {General,Interface,Graphics, and Sound}
+-- Each tab has its own control {Info,Interface,Graphics, and Sound}
 -- 	Each graphical element is defined as a child of these controls and given a function to fullfill, when a certain even happens(i.e. OnClick)
 	
 -- Graphics --
@@ -234,11 +226,11 @@ local function Options()
 --		Chili.Button:New{right='75%',y=150,height=24,width='25%',caption='Chili Globals',OnMouseUp={getGlobals}},
 	}}
 	
--- General --
-	tabs.General = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', 
+-- Info --
+	tabs.Info = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', 
 	children = {
-		Chili.Label:New{caption="Recent Changes:",x='30%'},
-		Chili.ScrollPanel:New{width = '70%', right=0, y=20, bottom=0, children ={Chili.TextBox:New{width='100%',text=changelog}}},
+		Chili.Label:New{caption="-- Recent Changes --",x='0%',width="70%",align = 'center'},
+		Chili.ScrollPanel:New{width = '70%', x=0, y=20, bottom=0, children ={Chili.TextBox:New{width='100%',text=changelog}}},
 	}}		
 
 -- Sound --
@@ -304,7 +296,7 @@ function widget:KeyPress(key,mod)
 		menuTabs:Select('Interface')
 	elseif key==27 then
 		showHide()
-		menuTabs:Select('General')
+		menuTabs:Select('Info')
 	-- elseif key==
 	end
 end
@@ -316,9 +308,10 @@ function widget:Initialize()
 	makeWidgetList()
 	loadMainMenu()
 	loadMinMenu()
+	addPlayerList()
 end
 
 function widget:ShutDown()
 	-- spSendCommands("unbind esc MainMenu")
-	-- spSendCommands("bind shift+esc General")
+	-- spSendCommands("bind shift+esc Info")
 end

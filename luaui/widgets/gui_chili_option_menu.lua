@@ -1,6 +1,6 @@
 function widget:GetInfo()
 	return {
-		name		  = "BAR's Options Menu",
+		name		  = "BAR's Main Menu",
 		desc		  = "v0.1 of Graphics, Interface, and Sound Options Menu (WIP)",
 		author		= "Funkencool",
 		date		  = "2013",
@@ -14,9 +14,18 @@ end
 local spSendCommands = Spring.SendCommands
 local spSetConfigInt = Spring.SetConfigInt
 local spGetConfigInt = Spring.GetConfigInt
+local spgetFPS       = Spring.GetFPS
+local spGetTimer     = Spring.GetTimer
 
-local Chili, mainMenu, menuTabs
+local Chili, mainMenu, menuTabs,timeLbl,fpsLbl ,menuBtn,minMenu,oTime
 local barSettings = {}
+-- Defaults ---
+	barSettings.searchWidgetDesc=true
+	barSettings.searchWidgetAuth=true
+	barSettings.searchWidgetName=true
+	barSettings.widget = {}
+	barSettings.UIwidget = {}
+------------------------------------
 local menuVisible = false
 local widgetList = {}
 local tabs = {}
@@ -88,7 +97,7 @@ local function makeWidgetList(filter)
 		end
 		for i=1,#sortedWidgets do
 			if widgetcats[sortedWidgets[i]] == cat then
-				local enabled = widgetHandler.orderList[sortedWidgets[i]]>0
+				local enabled = (widgetHandler.orderList[sortedWidgets[i]] or 0)>0
 				local fontColor
 				if enabled then fontColor = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
 				else fontColor = {color = {1,0.5,0,1}, outlineColor = {1,0.5,0,0.2}} end
@@ -136,12 +145,28 @@ local function chngSkin()
 	spSendCommands("luaui reload")
 end
 
-local function loadMenu()
-	mainMenu = Chili.Window:New{parent=Chili.Screen0,x = 350, y = 150, width = 500, height = 400,padding = {5,8,5,8}}
+local function loadMainMenu()
+	mainMenu = Chili.Window:New{parent=Chili.Screen0,x = 350, y = 150, width = 500, height = 400,padding = {5,8,5,5},
+		children = {
+			Chili.Line:New{parent = mainMenu,y = 15,width = "100%"},
+			Chili.Line:New{parent = mainMenu,bottom = 20,width = "100%"},
+			Chili.Button:New{caption = "Resign and Spectate",height = 20,width = '25%',x = 20,bottom=0,
+				OnMouseUp = {function() spSendCommands{"Spectator"};showHide() end }},
+			Chili.Button:New{caption = "Exit To Desktop",height = 20,width = '25%',right = 20,bottom=0,
+					OnMouseUp = {function() spSendCommands{"quit","quitforce"} end }},
+		}}
+	
 	menuTabs = Chili.TabBar:New{parent = mainMenu, x = 0, width = '100%', y = 0, height = 20, minItemWidth = 70,selected=barSettings.tabSelected or 'General',
 		tabs = {"General","Interface", "Graphics", "Sound"}, OnChange = {sTab}}
-	Chili.Line:New{parent = mainMenu,y = 15,width = "100%"}
-	Chili.Line:New{parent = mainMenu,bottom = 15,width = "100%"}
+			
+	showHide()
+end
+
+local function loadMinMenu()
+	timeLbl = Chili.Label:New{caption = "10:30pm", x = 0}
+	fpsLbl = Chili.Label:New{caption = "FPS: 65",x = 70}
+	menuBtn = Chili.Button:New{caption = 'Menu', right = 0, height = '100%', width = 50, Onclick = {showHide}}
+	minMenu	= Chili.Window:New{parent=Chili.Screen0,right = 210, y = 20, width = 180,minheight = 20, height = 20,padding = {5,0,0,0},children = {timeLbl,fpsLbl,menuBtn}}
 end
 
 local function addComBox(tab,vert,caption,name,items,rItems,showLine)
@@ -214,12 +239,6 @@ local function Options()
 	children = {
 		Chili.Label:New{caption="Recent Changes:",x='30%'},
 		Chili.ScrollPanel:New{width = '70%', right=0, y=20, bottom=0, children ={Chili.TextBox:New{width='100%',text=changelog}}},
-		Chili.Button:New{caption = "Resign and Spectate",height = 30,width = '30%',x = 0,bottom=30,
-			OnMouseUp = {}},
-		Chili.Button:New{caption = "Exit To Desktop",height = 30,width = '30%',x = 0,bottom=0,
-			OnMouseUp = { function() spSendCommands{"quit","quitforce"} end }},
-		Chili.Button:New{caption = "Restart Spring",height = 20,width = '20%',x = 0,bottom=60,
-			OnMouseUp = { function() Spring.Restart() end }},
 	}}		
 
 -- Sound --
@@ -238,41 +257,44 @@ local function Options()
 end
 -----------------------------
 -----------------------------
-function widget:GetConfigData()
-	if barSettings ~= WG.barSettings then 
-	for name,data in pairs(barsettings) do
-		WG.barSettings[name] = data
-	end
-	end
-	return WG.barSettings
-end
+-- function widget:GetConfigData()
+	-- if barSettings ~= WG.barSettings then 
+	-- for name,data in pairs(barsettings) do
+		-- WG.barSettings[name] = data
+	-- end
+	-- end
+	-- return barSettings
+-- end
 
-function widget:SetConfigData(data)
-	if (data and type(data) == 'table') then 
-	WG.barSettings = data 
--- Localize global 
-	barSettings = WG.barSettings
--- Defaults ---
-	barSettings.searchWidgetDesc=true
-	barSettings.searchWidgetAuth=true
-	barSettings.searchWidgetName=true
-	barSettings.widget = {}
-	barSettings.UIwidget = {}
-------------------------------------
+-- function widget:SetConfigData(data)
+	-- if (data and type(data) == 'table') then 
+	-- WG.barSettings = data 
+-- -- Localize global 
+	-- barSettings = WG.barSettings
+-- -- Defaults ---
+	-- barSettings.searchWidgetDesc=true
+	-- barSettings.searchWidgetAuth=true
+	-- barSettings.searchWidgetName=true
+	-- barSettings.widget = {}
+	-- barSettings.UIwidget = {}
+-- --------------------------------
+	-- end
+-- end
+function widget:DrawScreen()
+	local fps = 'FPS: '..'\255\255\127\0'..spgetFPS()
+	fpsLbl:SetCaption(fps)
+	local rTime = os.date("%I:%M %p")
+	if oTime ~= rTime then
+		oTime = rTime
+		if string.find(rTime,'0')==1 then rTime = string.sub(rTime,2) end
+		timeLbl:SetCaption('\255\255\127\0'..string.lower(rTime))
 	end
-end
-
-function widget:Initialize()
-	Chili = WG.Chili
-	Chili.theme.skin.general.skinName = barSettings.chiliSkin
-	Options()
-	makeWidgetList()
-	loadMenu()
+	-- gametime = gametime/60
+	-- timeLbl:SetCaption(gametime)
 end
 function widget:KeyPress(key,mod)
 	local control = tabs["Interface"]
 	local editbox = control:GetObjectByName("widgetFilter")
-	Spring.Echo()
 	if key==13 and editbox.state.focused then
 		makeWidgetList(editbox.text)
 		editbox:SetText("")
@@ -285,6 +307,15 @@ function widget:KeyPress(key,mod)
 		menuTabs:Select('General')
 	-- elseif key==
 	end
+end
+
+function widget:Initialize()
+	Chili = WG.Chili
+	Chili.theme.skin.general.skinName = barSettings.chiliSkin or 'Flat'
+	Options()
+	makeWidgetList()
+	loadMainMenu()
+	loadMinMenu()
 end
 
 function widget:ShutDown()

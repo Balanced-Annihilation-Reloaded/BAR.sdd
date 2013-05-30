@@ -37,7 +37,6 @@ local spGetSelectedUnits    = Spring.GetSelectedUnits
 local spSendCommands        = Spring.SendCommands
 local spGetCmdDescIndex = Spring.GetCmdDescIndex
 local spGetFullBuildQueue = Spring.GetFullBuildQueue
-local Echo = Spring.Echo
 
 
 -- SCRIPT FUNCTIONS
@@ -67,9 +66,9 @@ local function createMyButton(container, texture, cmd,isState)
 			caption = string.gsub(cmd.name,"%s+", "\n"),
 			tooltip = cmd.tooltip,
 			cmdid       = cmd.id,
-			minHeight = winW/3+5,
-			minWidth  = winW/3+5,
-			padding 	= {9,9,9,9},
+			minHeight = winW/3,
+			minWidth  = winW/3,
+			padding 	= {3,3,2,3},
 			margin		= {0,0,0,0},
 			OnClick = {ClickFunc},
 		}
@@ -98,14 +97,12 @@ local function makeMenuTabs()
 	local tabCount = 0
 	local tempMenu = {}
 	tempMenu[1] = menu[1]
-	menuTab[1] = Chili.Button:New{parent = menuTabs, right = 20, y = 5, width = 80, height = 45, caption = "ORDER", OnMouseOver = {
-		function() window0:ClearChildren(); window0:AddChild(menu[1]); menuChoice = 1;end}}
 	local caption = {"ORDER","ECON","TACT","UNIT"}
-	for i=2, 4 do
+	for i=1, 4 do
 		if #menu[i].children > 0 then
-			local tab = tabCount + 2
+			local tab = tabCount + 1
 			tempMenu[tab] = menu[i]
-			menuTab[tab] = Chili.Button:New{parent = menuTabs, right = 30, y = 35 + tabCount * 25, width = 70, height = 40, caption = caption[i], OnMouseOver = {
+			menuTab[tab] = Chili.Button:New{parent = menuTabs, right = 20+8*i, y = tabCount * 41, width = 80-8*i, height = 40, caption = caption[i], OnMouseOver = {
 				function() window0:ClearChildren(); window0:AddChild(menu[tab]); menuChoice = tab; end}}
 			tabCount = tabCount + 1
 		end
@@ -119,7 +116,7 @@ end
 local function createMenus()
 	menu = {}
 	for i=0, 4 do
-		menu[i] = Chili.Grid:New{height = "100%", width  = "95%", padding = {0,0,0,0}, color = {0,0,0,0}, columns = 3, rows = 10}
+		menu[i] = Chili.Grid:New{height = "100%", width  = "100%", padding = {0,0,0,0}, color = {0,0,0,0}, columns = 3, rows = 10}
 	end
 end
 
@@ -202,7 +199,7 @@ function widget:Initialize()
 	winW = panW * 0.6
 	
 	window0         = Chili.Window:New{x = 0, y = 0, bottom = 0, width = winW, padding = {0,0,0,0}, margin = {0,0,0,0}, OnMouseWheel = {switchTabs}}
-	menuTabs 				= Chili.Control:New{x = winW * 0.965, y = 0, bottom = 0, width = 90, padding = {0,0,0,0}, margin = {0,0,0,0}}
+	menuTabs 				= Chili.Control:New{x = winW, y = 0, bottom = 0, width = 90, padding = {0,0,0,0}, margin = {0,0,0,0}}
 	stateWindow 		= Chili.Grid:New{y = 10, bottom = 0, x = winW + 15, width  = 30, padding = {0, 0, 0, 0}, columns = 1, rows = 16}
 	queueControl		= Chili.Control:New{parent = screen0, x = winW - 10, bottom = 0, width = 300, height = 70, margin = {0,0,0,0}}
 	buildQueue 			= Chili.Panel:New{parent = queueControl, y = 0, height = "100%", width = "100%", right = 10, padding = {15,10,10,10}}

@@ -9,7 +9,7 @@ theme.name = "default"
 --//=============================================================================
 --// Define default skins
 
-local defaultSkin = "BARdefault"
+local defaultSkin = "Flat"
 
 theme.skin = {
   general = {

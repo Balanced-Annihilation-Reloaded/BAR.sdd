@@ -9,7 +9,7 @@ function widget:GetInfo()
 		enabled   	= true
 	}
 end
-local Chili,window0,stackpanel1,editbox0,whosListening
+local Chili,conOut,editbox0,whosListening,control0,window0
 local messages = {}
 local box
 local numShowMsg = 1
@@ -17,7 +17,7 @@ local windowHeight = 1
 
 
 local function updateMsgWindow()
-	window0:ClearChildren()
+	conOut:ClearChildren()
 	local text = ''
 	for i=1, numShowMsg do
 		local msg = messages[#messages-numShowMsg+i]
@@ -33,15 +33,18 @@ local function updateMsgWindow()
 	box = Chili.TextBox:New{name='console',width=300,text=text}
 	local wText = box.font:WrapText(text, 300, 500)
 	_,_,box.lines = box.font:GetTextHeight(wText)
-	window0:Resize(300,(box.lines-1)*15)
-	window0:AddChild(box)
+	conOut:Resize(300,(box.lines-1)*15)
+	conOut:AddChild(box)
 end
 
 function widget:Initialize()
 	Chili = WG.Chili
 	local screen = Chili.Screen0
-	editbox0 = Chili.EditBox:New{parent=screen,right=300,y=20,height=30,width=300}
-	window0 = Chili.Window:New{parent=screen,padding = {5,0,5,0},minHeight = 15,right = 250,y = 50,width = 300}
+--	control0 = Chili.Control:New{parent=screen,right=500,y=20,height=30,width=300,padding={0,0,0,0}}
+	window0 = Chili.Window:New{parent=screen,right=500,y=20,minHeight=20,height=30,width=300,padding={0,0,0,0}}
+	editbox0 = Chili.EditBox:New{parent=window0,right=0,x=0,y=0,right=0,bottom=0,text='  --Takes over Enter/Return when entering text--',
+	OnMouseDown = {function(obj) obj.text = '' end}}
+	conOut = Chili.Window:New{parent=screen,padding = {5,0,2,0},minHeight = 15,right = 450,y = 50,width = 300}
 	
 	local buffer = Spring.GetConsoleBuffer(200)
 	for i=1,#buffer do
@@ -49,8 +52,8 @@ function widget:Initialize()
 	end
 	
 	Spring.SendCommands("console 0")
-	Spring.SendCommands("inputtextgeo "..(editbox0.x/Chili.Screen0.width+0.004)..' '
-		..(1 - (editbox0.y + editbox0.height) / Chili.Screen0.height + 0.003)..' 0.02 '..(editbox0.width / Chili.Screen0.width))
+	Spring.SendCommands("inputtextgeo "..(window0.x/Chili.Screen0.width-0.035)..' '
+		..(1 - (window0.y + window0.height) / Chili.Screen0.height + 0.003)..' 0.02 '..(window0.width / Chili.Screen0.width))
 end
 
 function widget:GameFrame(n)
@@ -67,10 +70,21 @@ function widget:AddConsoleMessage(msg)
 	if numShowMsg < 6 then numShowMsg = numShowMsg+1 end
 end
 function widget:KeyPress(key)
-	if key==13 and editbox0.state.focused then
-		Spring.SendCommands('Say '..editbox0.text)
+	if key==13 then
+		if editbox0.state.focused then
+			if string.find(editbox0.text,'/')==1 then
+				Spring.SendCommands(string.sub(editbox0.text,2))
+			else
+				Spring.SendCommands('Say '..editbox0.text)
+			end
+		-- else 
+			-- editbox0.state.focused = true
+			-- editbox0.text=''
+			-- editbox0:Update()
+			return true
+		end
 		editbox0.text = ''
-	return true
+		editbox0:Invalidate()
 	end
 end
 function widget:Shutdown()

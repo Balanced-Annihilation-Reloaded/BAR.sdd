@@ -27,13 +27,17 @@ return {
 		maxslope = 15,
 		maxwaterdepth = 0,
 		name = "Anemone",
-		objectname = "ARMDL",
+		objectname = "ARMDL.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 617,
 		sonardistance = 515,
 		usebuildinggrounddecal = true,
-		yardmap = "oooo",
+		yardmap = "oooo",		 
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

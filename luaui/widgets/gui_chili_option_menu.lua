@@ -67,29 +67,30 @@ local function sortWidgetList(list,filter)
 	local widgets = {}
 	local categories = {}
 	local showCat = {}
-	local tooltips = {}
 	local filter = filter or ""
 	for name,data in pairs(list) do
 		if --[[not data.alwaysStart
 			and]] ((barSettings.searchWidgetName and string.find(string.lower(name), string.lower(filter)))
 			or (barSettings.searchWidgetDesc and string.find(string.lower(data.desc), string.lower(filter)))
-			or (barSettings.searchWidgetAuth and string.find(string.lower(data.author), string.lower(filter)))) then
-		local _, _, category = string.find(data.basename, "([^_]*)")
-		widgets[#widgets+1] = name
-		tooltips[#widgets] = '(By ' .. tostring(data.author) .. ")\n" .. tostring(data.desc)
-		categories[name] = category or "ungrouped"
-		showCat[category] = true
+			or (barSettings.searchWidgetAuth and string.find(string.lower(data.author), string.lower(filter)))) 
+		then
+			local _, _, category = string.find(data.basename, "([^_]*)")
+			widgets[#widgets+1] = {}
+			widgets[#widgets].name = name
+			widgets[#widgets].tooltip = '(By '..data.author.. ")\n"..data.desc or ''
+			categories[name] = category or "ungrouped"
+			showCat[category] = true
 		end
 	end
-	table.sort(widgets)
-	return widgets,categories,showCat,tooltips
+	table.sort(widgets,function(a,b) return a.name<b.name end)
+	return widgets,categories,showCat
 end
 
 local function makeWidgetList(filter)
 	local widgetNum = 0
 	local control = tabs["Interface"]
 	local scrollpanel = control:GetObjectByName("widgetList")
-	local sortedWidgets, widgetcats, showCat, tooltip = sortWidgetList(widgetHandler.knownWidgets,filter)
+	local sortedWidgets, widgetcats, showCat = sortWidgetList(widgetHandler.knownWidgets,filter)
 	scrollpanel:ClearChildren()
 	for cat,catName in pairs(groupDescs) do
 		if showCat[cat] then 
@@ -98,16 +99,16 @@ local function makeWidgetList(filter)
 			widgetNum = widgetNum + 1
 		end
 		for i=1,#sortedWidgets do
-			if widgetcats[sortedWidgets[i]] == cat then
-				local enabled = (widgetHandler.orderList[sortedWidgets[i]] or 0)>0
+			if widgetcats[sortedWidgets[i].name] == cat then
+				local enabled = (widgetHandler.orderList[sortedWidgets[i].name] or 0)>0
 				local fontColor
 				if enabled then fontColor = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
 				else fontColor = {color = {1,0.5,0,1}, outlineColor = {1,0.5,0,0.2}} end
 				Chili.Checkbox:New{
-					name			= sortedWidgets[i],
-					caption 	= sortedWidgets[i],
+					name			= sortedWidgets[i].name,
+					caption 	= sortedWidgets[i].name,
 					parent		= scrollpanel,
-					tooltip		= tooltip[i],
+					tooltip		= sortedWidgets[i].tooltip,
 					x 				= 0,
 					right 		= 0,
 					y 				= widgetNum*20,

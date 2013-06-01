@@ -76,17 +76,19 @@ local function numFormat(label)
 	end
 	return string
 end
+
 local function formatTime(seconds)
 	local minutes = math.floor(seconds/60)
-	local hours = math.floor(minutes/60)
 	local seconds = seconds % 60
-	if minutes < 10 then minutes = "0" .. minutes end
-	if seconds < 10 then seconds = "0" .. seconds end
-	return hours .. ":" .. minutes .. ":" .. seconds
+	-- if minutes < 10 then minutes = "0" .. minutes end
+	-- if seconds < 10 then seconds = "0" .. seconds end
+	-- return hours .. ":" .. minutes .. ":" .. seconds
+	return "\255\255\127\0"..minutes.."\bmin, ".."\255\255\127\0"..seconds.."\bsec"
 end
+
 local function drawIntervals(graphMax)
 	for i=1, 4 do
-		local line = Chili.Line:New{parent = graphPanel, x = 0, bottom = (i)/5*100 .. "%", width = "100%", color = {0.1,0.1,0.1,0.1}}
+		local line = Chili.Line:New{parent = graphPanel, x = 0, bottom = (i)/5*100 .. "%", width = "100%"}
 		local label = Chili.Label:New{parent = graphPanel, x = 0, bottom = (i)/5*100 .. "%", width = "100%", caption = numFormat(graphMax*i/5)}
 	end
 end
@@ -94,29 +96,32 @@ end
 local function fixLabelAlignment()
 	local doAgain
 	for a=1, #lineLabels.children do
-		for b=1, #lineLabels.children do
-			if lineLabels.children[a] ~= lineLabels.children[b] then
+		for b=a+1, #lineLabels.children do
 				if lineLabels.children[a].y >= lineLabels.children[b].y and lineLabels.children[a].y < lineLabels.children[b].y+11 then
 					lineLabels.children[a]:SetPos(0, lineLabels.children[b].y+11)
 					doAgain = false
-	end end end end
+	end end end
 	if doAgain then fixLabelAlignment() end
 end
+
 ------------------------------------------------------------------------
 --Total package of graph: Draws graph and labels for each nonSpec player
 local function drawGraph(graphArray, graph_m, teamID)
 	--get's all the needed info about players and teams
 	local _,teamLeader,isDead,isAI = Spring.GetTeamInfo(teamID)
 	local playerName, isActive, isSpec = Spring.GetPlayerInfo(teamLeader)
+	local playerRoster = Spring.GetPlayerRoster()
 	local r,g,b,a = Spring.GetTeamColor(teamID)
 	local teamColor = {r,g,b,a}
 	local lineLabel = numFormat(graphArray[#graphArray])
 	local shortName
-	--playerName = playerNames[teamID]
+	
 	--Sets AI name to reflect AI used and player hosting it
 	if isAI then
 		local _,botID,_,shortName = Spring.GetAIInfo(teamID)
 		playerName = shortName .."-" .. botID .. ""
+	-- else
+		-- playerName = playerRoster[teamID][1]
 	end
 
 
@@ -135,10 +140,16 @@ local function drawGraph(graphArray, graph_m, teamID)
 		end
 
 		--adds value to end of graph
-		local label1 = Chili.Label:New{parent = lineLabels, y = (1 - graphArray[#graphArray]/graph_m) * 88 - 1 .. "%", width = "100%", caption = lineLabel, font = {color = teamColor}}
+		local label1 = Chili.Label:New{
+			parent = lineLabels, y = (1 - graphArray[#graphArray]/graph_m) * 88 - 1 .. "%", width = "100%", 
+			caption = lineLabel, font = {color = teamColor, outlineColor = {1,1,1,0.1}}
+			}
 
 		--adds player to Legend
-		local label2 = Chili.Label:New{parent = graphPanel, x = 55, y = (teamID)*20 + 5, width = "100%", height  = 20, caption = playerName, font = {color = teamColor}}
+		local label2 = Chili.Label:New{
+			parent = graphPanel, x = 55, y = (teamID)*20 + 5, width = "100%", height  = 20, 
+			caption = playerName, font = {color = teamColor, outlineColor = {1,1,1,0.1}}
+			}
 
 		--creates graph element
 		local graph = Chili.Control:New{
@@ -209,9 +220,9 @@ function loadpanel()
 	local selW  = 150
 	window0 		= Chili.Window:New{parent = screen0, x = "20%", y = "20%", width = "60%", height = "60%", padding = {5,5,5,5}}
 
-	lineLabels 	= Chili.Control:New{parent = window0, right = 0, y = 0, width = 37, height = "100%", padding = {0,0,0,0},}
+	lineLabels 	= Chili.Control:New{parent = window0, right = 0, y = 0, width = 39, height = "100%", padding = {0,0,0,0},}
 	graphSelect	= Chili.StackPanel:New{minHeight = 70, parent = window0, x =  0, y = 0, width = selW, height = "100%",}
-	graphPanel 	= Chili.Panel:New{parent = window0, x = selW, right = 30, y = 0, bottom = 40, padding = {10,10,10,10}}
+	graphPanel 	= Chili.Window:New{parent = window0, x = selW, right = 40, y = 0, bottom = 40, padding = {10,10,10,10}}
 	graphLabel  = Chili.Label:New{autosize = true, parent = window0, bottom = 0,caption = "", align = "center", width = "70%", x = "20%", height = "10%", font = {size = 30,},}
 	graphTime		= Chili.Label:New{parent = window0, bottom = 30,caption = "", width = 50, right = 50, height = 10}
 
@@ -233,7 +244,6 @@ function widget:GameStart()
 	local teams = (#teams - 1)
 	for teamID=0, teams do
 		playerNames[teamID],_ = Spring.GetPlayerInfo(teamID)
-		Spring.Echo(playerNames[teamID])
 	end
 end
 

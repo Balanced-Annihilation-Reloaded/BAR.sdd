@@ -1,7 +1,7 @@
 function widget:GetInfo()
 	return {
 		name		    = "BAR's Chat Console",
-		desc		    = "v0.1 of simple tooltip",
+		desc		    = "v0.1 of BAR's new chat console",
 		author		  = "Funkencool",
 		date		    = "2013",
 		license     = "GNU GPL, v2 or later",

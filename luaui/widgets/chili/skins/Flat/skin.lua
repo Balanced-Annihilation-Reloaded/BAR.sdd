@@ -19,7 +19,7 @@ skin.general = {
   focusColor = {r, g, b, 1},
 
   font = {
-    font    = "luaUI/fonts/Bedoy.ttf",
+    font    = "luaUI/fonts/AGENCYB.TTF",
     color        = {1,1,1,1},
     outlineColor = {0.05,0.05,0.05,0.9},
     outline = false,

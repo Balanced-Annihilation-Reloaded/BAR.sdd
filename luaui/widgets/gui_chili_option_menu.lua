@@ -95,7 +95,7 @@ local function makeWidgetList(filter)
 	for cat,catName in pairs(groupDescs) do
 		if showCat[cat] then 
 			widgetNum = widgetNum + 1
-			Chili.Label:New{parent = scrollpanel,caption = '- '..catName..' -', y = widgetNum*20, x = 0}
+			Chili.Label:New{parent = scrollpanel,caption = '- '..catName..' -', y = widgetNum*20-10, x = 0, align = 'center'}
 			widgetNum = widgetNum + 1
 		end
 		for i=1,#sortedWidgets do

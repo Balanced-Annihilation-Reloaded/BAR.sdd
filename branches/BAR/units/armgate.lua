@@ -31,13 +31,17 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Keeper",
-		objectname = "ARMGATE",
+		objectname = "ARMGATE.s3o",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "MINE_NUKE",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

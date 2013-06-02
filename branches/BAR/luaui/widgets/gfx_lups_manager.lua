@@ -127,6 +127,12 @@ local UnitEffects = {
     {class='ShieldJitter',options={life=math.huge, pos={0,42,0}, size=20, precision=2, repeatEffect=true}},
     {class='GroundFlash',options=groundFlashGreen},
   },    
+  [UnitDefNames["armgate"].id] = {
+    {class='Bursts',options=armgateBursts},
+    {class='ShieldSphere',options=armgateShieldSphere},
+    {class='ShieldJitter',options={life=math.huge, pos={0,20,-5}, size=20, precision=2, repeatEffect=true}},
+    {class='GroundFlash',options=groundFlashGreen},
+  },    
   [UnitDefNames["cjuno"].id] = {
     {class='ShieldSphere',options=cjunoShieldSphere},
     {class='ShieldJitter',options={life=math.huge, pos={0,72,0}, size=20, precision=22, repeatEffect=true}},

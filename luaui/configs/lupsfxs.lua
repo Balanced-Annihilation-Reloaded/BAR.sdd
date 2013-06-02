@@ -143,6 +143,23 @@ corgateBursts = {
   repeatEffect = true,
   count      = 50,
 }
+armgateBursts = {
+  life       = math.huge,
+  pos        = {0,20,-5},
+  rotSpeed   = 0.5,
+  rotSpread  = 1,
+  arc        = 90,
+  arcSpread  = 0,
+
+
+
+  size       = 16,
+  sizeSpread = 3,
+  colormap   = { {1, 0.5, 0.5, 0.2} },
+  directional= true,
+  repeatEffect = true,
+  count      = 50,
+}
 corjamtBursts = {
   layer      = -35,
   life       = math.huge,
@@ -218,6 +235,15 @@ cjunoShieldSphere = {
   size=16,
   colormap1 = { {0.9, 0.9, 1, 0.75},{0.9, 0.9, 1, 1.0},{0.9, 0.9, 1, 1.0},{0.9, 0.9, 1, 0.75} },
   colormap2 = { {0.8, 0.2, 0.2, 0.4},{0.8, 0.2, 0.2, 0.45},{0.9, 0.2, 0.2, 0.45},{0.9, 0.1, 0.2, 0.4} },
+  repeatEffect=true
+}
+armgateShieldSphere = {
+  layer=-35,
+  life=20,
+  pos = {0,20,-5},
+  size=16,
+  colormap1 = { {0.9, 0.9, 1, 0.75},{0.9, 0.9, 1, 1.0},{0.9, 0.9, 1, 1.0},{0.9, 0.9, 1, 0.75} },
+  colormap2 = { {0.2, 0.8, 0.2, 0.4},{0.2, 0.8, 0.2, 0.45},{0.2, 0.9, 0.2, 0.45},{0.1, 0.9, 0.2, 0.4} },
   repeatEffect=true
 }
 

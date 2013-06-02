@@ -32,7 +32,7 @@ return {
 		maxwaterdepth = 0,
 		name = "Dragon's Claw",
 		nochasecategory = "MOBILE",
-		objectname = "ARMCLAW",
+		objectname = "ARMCLAW.s3o",
 		radardistancejam = 8,
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",

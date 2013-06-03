@@ -30,12 +30,16 @@ return {
 		maxwaterdepth = 0,
 		name = "Guardian",
 		nochasecategory = "MOBILE",
-		objectname = "ARMGUARD",
+		objectname = "ARMGUARD.s3o",
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 455,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

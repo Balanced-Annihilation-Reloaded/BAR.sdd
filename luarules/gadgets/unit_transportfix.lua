@@ -40,13 +40,7 @@ currentFrame = 0
 function gadget:UnitUnloaded(unitID, unitDefID, teamID, transportID)
 
 	--Spring.Echo ("unloaded " .. unitID .. " (" .. unitDefID .. "), from transport " .. transportID)
-	
-	--BA has no transport that "normally" releaseHeld=true, so this is commented out
-	--local transDefID =Spring.GetUnitDefID(transportID)
-	--local transDef = UnitDefs [transDefID]
-	--if (not transDef) then Spring.Echo ("transDef = nil!!!!!!!!!!!!!!!!!!!!!!!!") end		
-	--if (not (transDef.customParams and transDef.customParams.releaseheld)) then *** 
-	
+
 	if (unitDefID ~= COMMANDO) then		
 		if (not toKill[currentFrame+1]) then toKill[currentFrame+1] = {} end
 		toKill[currentFrame+1][unitID] = true

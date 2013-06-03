@@ -32,11 +32,13 @@ return {
 		name = "Turtle",
 		nochasecategory = "ALL",
 		objectname = "CORTHOVR.s3o",
+		releaseheld = true,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 325,
 		transportcapacity = 20,
 		transportsize = 3,
+		transportunloadmethod = 0, 
 		turnrate = 370,
 		waterline = 4,
 		customparams = {

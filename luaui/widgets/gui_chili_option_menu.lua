@@ -149,7 +149,7 @@ local function chngSkin()
 end
 
 local function loadMainMenu()
-	mainMenu = Chili.Window:New{parent=Chili.Screen0,x = 350, y = 150, width = 500, height = 400,padding = {5,8,5,5},
+	mainMenu = Chili.Window:New{parent=Chili.Screen0,x = 400, y = 200, width = 500, height = 400,padding = {5,8,5,5}, draggable = true,
 		children = {
 			Chili.Line:New{parent = mainMenu,y = 15,width = "100%"},
 			Chili.Line:New{parent = mainMenu,bottom = 20,width = "100%"},
@@ -282,9 +282,8 @@ function widget:DrawScreen()
 		if string.find(rTime,'0')==1 then rTime = string.sub(rTime,2) end
 		timeLbl:SetCaption('\255\255\127\0'..string.lower(rTime))
 	end
-	-- gametime = gametime/60
-	-- timeLbl:SetCaption(gametime)
 end
+
 function widget:KeyPress(key,mod)
 	local control = tabs["Interface"]
 	local editbox = control:GetObjectByName("widgetFilter")
@@ -295,9 +294,11 @@ function widget:KeyPress(key,mod)
 	elseif key==292 then
 		showHide()
 		menuTabs:Select('Interface')
+		return true
 	elseif key==27 then
 		showHide()
 		menuTabs:Select('Info')
+		return true
 	-- elseif key==
 	end
 end
@@ -310,9 +311,4 @@ function widget:Initialize()
 	loadMainMenu()
 	loadMinMenu()
 	addPlayerList()
-end
-
-function widget:ShutDown()
-	-- spSendCommands("unbind esc MainMenu")
-	-- spSendCommands("bind shift+esc Info")
 end

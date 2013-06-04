@@ -17,6 +17,7 @@ local r,g,b = Spring.GetTeamColor(teamID)
 skin.general = {
   borderColor  = {1, 1, 1, .8},
   focusColor = {r, g, b, 1},
+	draggable = false,
 
   font = {
     font    = "luaUI/fonts/AGENCYB.TTF",

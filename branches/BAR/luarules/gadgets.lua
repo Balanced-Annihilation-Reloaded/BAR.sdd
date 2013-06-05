@@ -79,6 +79,8 @@ gadgetHandler = {
   yViewSizeOld = 1,
 
   mouseOwner = nil,
+  
+    actionHandler = actionHandler,	-- FIXME: not in base
 }
 
 

@@ -33,7 +33,7 @@ return {
 		mincloakdistance = 8,
 		name = "Kilo",
 		nochasecategory = "VTOL",
-		objectname = "ARMMINE2",
+		objectname = "ARMMINE2.s3o",
 		seismicsignature = 0,
 		selfdestructas = "MINE_MEDIUM",
 		selfdestructcountdown = 0,

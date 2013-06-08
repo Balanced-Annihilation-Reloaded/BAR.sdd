@@ -30,12 +30,16 @@ return {
 		maxwaterdepth = 0,
 		name = "LLT",
 		nochasecategory = "MOBILE",
-		objectname = "ARMLLT",
+		objectname = "ARMLLT.s3o",
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 494,
 		usebuildinggrounddecal = true,
 		yardmap = "oooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

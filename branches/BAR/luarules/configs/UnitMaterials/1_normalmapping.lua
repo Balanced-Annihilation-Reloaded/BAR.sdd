@@ -13,7 +13,7 @@ local GetUnitTeam = Spring.GetUnitTeam
 local GADGET_DIR = "LuaRules/Configs/"
 local function DrawUnit(unitID, material)
   glUniform(material.frameLoc, 2* maximum(0,sine(modulo(unitID,10)+GetGameFrame()/(modulo(unitID,7)+6))))
-  health,maxhealth=GetUnitHealth(unitID)
+  local  health,maxhealth=GetUnitHealth(unitID)
   glUniform(material.healthLoc, 2*maximum(0, (-2*health)/(maxhealth)+1) )--inverse of health, 0 if health is 100%-50%, goes to 1 by 0 health
   local trimC=trimColors[GetUnitTeam(unitID) ]
   --Spring.Echo('trimcomgwwtf',to_string(trimColors[teamID]))

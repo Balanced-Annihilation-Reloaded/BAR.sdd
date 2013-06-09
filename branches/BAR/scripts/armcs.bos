@@ -5,8 +5,7 @@
 
 #define SIG_BUILD		4	
 
-piece  base, beam, plate, arm, nano, door1, door2, wake1,
-       wake2, turret, ground;
+piece  base,doorlf, doorlb, doorrf, doorrb, nano, turret, ground;
 
 static-var  statechg_DesiredState, statechg_StateChanging,
 			notBuilding, oldHead;
@@ -17,61 +16,26 @@ static-var  statechg_DesiredState, statechg_StateChanging,
 
 activatescr()
 {
-	move plate to z-axis [0.000000] now;
-	move arm to y-axis [0.000000] now;
-	move nano to y-axis [0.000000] now;
-	move beam to x-axis [0.000000] now;
-	move beam to z-axis [0.000000] now;
-	turn door1 to z-axis <0.000000> now;
-	turn door1 to z-axis <-70.016484> speed <182.000000>;
-	turn door2 to z-axis <0.000000> now;
-	turn door2 to z-axis <71.016484> speed <184.000000>;
-	sleep 388;
+	move doorlf to z-axis [7] speed [10];
+	move doorrf to z-axis [7] speed [10];
+	move doorrb to z-axis [-7] speed [10];
+	move doorlb to z-axis [-7] speed [10];
+	sleep 700;
 
-	move door1 to y-axis [-3.550000] speed [9.000000];
-	move door2 to y-axis [-3.550000] speed [9.000000];
-	sleep 389;
 
-	move plate to y-axis [3.700000] speed [9.000000];
-	sleep 389;
-
-	turn arm to x-axis <89.016484> speed <229.000000>;
-	turn nano to x-axis <-69.016484> speed <178.000000>;
-	sleep 410;
 }
 
 deactivatescr()
 {
 	set INBUILDSTANCE to 0;
-	turn turret to y-axis <0.000000> speed <160.000000>;
-	wait-for-turn turret around y-axis;
 
-	move plate to y-axis [3.700000] now;
-	move plate to z-axis [0.000000] now;
-	move door1 to y-axis [-3.550000] now;
-	move door2 to y-axis [-3.550000] now;
-	move arm to y-axis [0.000000] now;
-	move nano to y-axis [0.000000] now;
-	move beam to x-axis [0.000000] now;
-	move beam to z-axis [0.000000] now;
-	turn door1 to z-axis <-70.653846> now;
-	turn door2 to z-axis <71.554945> now;
-	turn arm to x-axis <89.560440> now;
-	turn arm to x-axis <0.000000> speed <230.000000>;
-	turn nano to x-axis <-69.741758> now;
-	turn nano to x-axis <0.000000> speed <179.000000>;
-	sleep 388;
-
-	move plate to y-axis [0.000000] speed [9.000000];
-	sleep 389;
-
-	move door1 to y-axis [0.000000] speed [9.000000];
-	move door2 to y-axis [0.000000] speed [9.000000];
-	sleep 389;
-
-	turn door1 to z-axis <0.000000> speed <181.000000>;
-	turn door2 to z-axis <0.000000> speed <183.000000>;
-	sleep 410;
+	turn turret to y-axis <0> speed <270>;
+	sleep 300;
+	move doorlf to z-axis [0] speed [10];
+	move doorrf to z-axis [0] speed [10];
+	move doorrb to z-axis [0] speed [10];
+	move doorlb to z-axis [0] speed [10];
+	sleep 700;
 }
 
 SetDirection(heading)
@@ -151,8 +115,8 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from Wake1;
-		emit-sfx 2 from Wake2;
+		emit-sfx 2 from base;
+		emit-sfx 2 from base;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 15000 / waketime;
@@ -234,7 +198,7 @@ StopBuilding()
 
 QueryNanoPiece(piecenum)
 {
-	piecenum = beam;
+	piecenum = nano;
 }
 
 /*
@@ -254,57 +218,45 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode arm type BITMAPONLY | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
-		explode beam type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
+		explode doorlf type BITMAPONLY | BITMAP4;
+		explode doorlb type BITMAPONLY | BITMAP5;
 		explode nano type BITMAPONLY | BITMAP1;
-		explode plate type BITMAPONLY | BITMAP2;
 		explode turret type BITMAPONLY | BITMAP3;
-		explode wake1 type BITMAPONLY | BITMAP4;
-		explode wake2 type BITMAPONLY | BITMAP5;
+		explode doorrf type BITMAPONLY | BITMAP4;
+		explode doorrb type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode arm type FALL | EXPLODE_ON_HIT | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
-		explode beam type FALL | EXPLODE_ON_HIT | BITMAP3;
-		explode door1 type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-		explode door2 type SHATTER | EXPLODE_ON_HIT | BITMAP5;
+		explode doorlf type SHATTER | EXPLODE_ON_HIT | BITMAP4;
+		explode doorlb type SHATTER | EXPLODE_ON_HIT | BITMAP5;
 		explode nano type FALL | EXPLODE_ON_HIT | BITMAP1;
-		explode plate type BITMAPONLY | BITMAP2;
 		explode turret type FALL | EXPLODE_ON_HIT | BITMAP3;
-		explode wake1 type FALL | EXPLODE_ON_HIT | BITMAP4;
-		explode wake2 type FALL | EXPLODE_ON_HIT | BITMAP5;
+		explode doorrf type FALL | EXPLODE_ON_HIT | BITMAP4;
+		explode doorrb type FALL | EXPLODE_ON_HIT | BITMAP5;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode arm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
-		explode beam type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode door1 type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-		explode door2 type SHATTER | EXPLODE_ON_HIT | BITMAP5;
+		explode doorlf type SHATTER | EXPLODE_ON_HIT | BITMAP4;
+		explode doorlb type SHATTER | EXPLODE_ON_HIT | BITMAP5;
 		explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode plate type BITMAPONLY | BITMAP2;
 		explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+		explode doorrf type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+		explode doorrb type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 		return (0);
 	}
 	corpsetype = 3;
-	explode arm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode base type BITMAPONLY | BITMAP2;
-	explode beam type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode door1 type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-	explode door2 type SHATTER | EXPLODE_ON_HIT | BITMAP5;
+	explode doorlf type SHATTER | EXPLODE_ON_HIT | BITMAP4;
+	explode doorlb type SHATTER | EXPLODE_ON_HIT | BITMAP5;
 	explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode plate type BITMAPONLY | BITMAP2;
 	explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+	explode doorrf type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+	explode doorrb type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 }

@@ -4,7 +4,7 @@
 #include "exptype.h"
 
 piece  base, turret1, turret2, abarrela, abarrelb, bbarrela, bbarrelb, flare11,
-       flare12, flare21, flare22, wake1, wake2, ground;
+       flare12, flare21, flare22, ground;
 
 static-var  gun_1, gun_2, restore_delay, oldHead;
 
@@ -119,8 +119,8 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from wake1;
-		emit-sfx 2 from wake2;
+		emit-sfx 2 from base;
+		emit-sfx 2 from base;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 9000 / waketime;
@@ -249,8 +249,8 @@ Killed(severity, corpsetype)
 		explode flare12 type BITMAPONLY | BITMAP5;
 		explode flare21 type BITMAPONLY | BITMAP1;
 		explode turret1 type BITMAPONLY | BITMAP2;
-		explode wake1 type BITMAPONLY | BITMAP3;
-		explode wake2 type BITMAPONLY | BITMAP4;
+		explode base type BITMAPONLY | BITMAP3;
+		explode base type BITMAPONLY | BITMAP4;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -263,8 +263,8 @@ Killed(severity, corpsetype)
 		explode flare22 type FALL | BITMAP5;
 		explode flare21 type FALL | BITMAP1;
 		explode turret2 type BITMAPONLY | BITMAP2;
-		explode wake1 type FALL | BITMAP3;
-		explode wake2 type FALL | BITMAP4;
+		explode base type FALL | BITMAP3;
+		explode base type FALL | BITMAP4;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -277,8 +277,8 @@ Killed(severity, corpsetype)
 		explode flare22 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 		explode flare12 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 		explode turret1 type SHATTER | BITMAP2;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+		explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	corpsetype = 3;
@@ -289,6 +289,6 @@ Killed(severity, corpsetype)
 	explode flare21 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 	explode flare22 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode turret1 type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+	explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 }

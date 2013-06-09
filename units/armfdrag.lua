@@ -40,6 +40,7 @@ return {
 				nodrawundergray = true,
 				object = "armfdrag.s3o",
 				reclaimable = true,
+				upright=true,
 				world = "allworld",
 			},
 		},

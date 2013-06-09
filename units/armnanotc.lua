@@ -27,7 +27,7 @@ return {
 		maxwaterdepth = 0,
 		movementclass = "NANO",
 		name = "Nano Turret",
-		objectname = "ARMNANOTC",
+		objectname = "ARMNANOTC.s3o",
 		seismicsignature = 0,
 		selfdestructas = "TINY_BUILDINGEX",
 		sightdistance = 380,
@@ -35,6 +35,11 @@ return {
 		turnrate = 1,
 		upright = true,
 		workertime = 200,
+		yardmap = "ooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",

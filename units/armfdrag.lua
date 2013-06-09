@@ -22,7 +22,7 @@ return {
 		objectname = "ARMFDRAG.s3o",
 		seismicsignature = 0,
 		sightdistance = 130,
-		waterline = 12,
+		waterline = 0,
 		yardmap = "wwww",
 		featuredefs = {
 			floatingteeth = {

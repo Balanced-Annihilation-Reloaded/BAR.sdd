@@ -33,7 +33,7 @@ return {
 		minwaterdepth = 15,
 		movementclass = "BOAT4",
 		name = "Construction Ship",
-		objectname = "ARMCS",
+		objectname = "ARMCS.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
@@ -41,7 +41,7 @@ return {
 		terraformspeed = 1250,
 		turninplace = 0,
 		turnrate = 648,
-		waterline = 4,
+		waterline = 0,
 		windgenerator = 0.0010000000474975,
 		workertime = 250,
 		buildoptions = {
@@ -63,6 +63,10 @@ return {
 			[7] = "armuwes",
 			[8] = "armsy",
 			[9] = "armasy",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  flare1, flare2, base, turret, wake1, wake2, barrel1, barrel2, ground;
+piece  flare1, flare2, base, turret, sleeve1, sleeve2, depthturret, depthflare, barrel1, barrel2, ground;
 
 static-var  gun_1, restore_delay, aimDir, Static_Var_4, Static_Var_5, oldHead;
 
@@ -129,7 +129,10 @@ RestoreAfterDelay()
 	sleep restore_delay;
 	set-signal-mask 0;
 	turn turret to y-axis <0.000000> speed <35.000000>;
-	turn turret to x-axis <0.000000> speed <15.000000>;
+	turn sleeve1 to x-axis <0.000000> speed <15.000000>;
+	turn sleeve2 to x-axis <0.000000> speed <15.000000>;
+	
+	turn depthturret to y-axis <0.000000> speed <35.000000>;
 }
 
 waveSplash()
@@ -153,8 +156,8 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from wake1;
-		emit-sfx 2 from wake2;
+		emit-sfx 2 from base;
+		emit-sfx 2 from base;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 10000 / waketime;
@@ -170,6 +173,10 @@ StopMoving()
 
 AimSecondary(heading, pitch)
 {
+
+
+	turn depthturret to y-axis heading speed <400.000000>;
+	wait-for-turn depthturret around y-axis;
 	return (1);
 }
 
@@ -180,7 +187,7 @@ AimFromSecondary(piecenum)
 
 QuerySecondary(piecenum)
 {
-	piecenum = base;
+	piecenum = depthflare;
 }
 
 AimPrimary(heading, pitch)
@@ -188,9 +195,11 @@ AimPrimary(heading, pitch)
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
 	turn turret to y-axis heading speed <150.000000>;
-	turn turret to x-axis <0.000000> - pitch speed <40.000000>;
+	turn sleeve1 to x-axis <0.000000> - pitch speed <40.000000>;
+	turn sleeve2 to x-axis <0.000000> - pitch speed <40.000000>;
 	wait-for-turn turret around y-axis;
-	wait-for-turn turret around x-axis;
+	wait-for-turn sleeve1 around x-axis;
+	wait-for-turn sleeve2 around x-axis;
 	aimDir = heading;
 	start-script RestoreAfterDelay();
 	return (1);
@@ -204,18 +213,14 @@ FirePrimary()
 		move barrel2 to z-axis [-2.000000] speed [500.000000];
 		wait-for-move barrel2 along z-axis;
 		move barrel2 to z-axis [0.000000] speed [3.000000];
-		show flare2;
 		sleep 150;
-		hide flare2;
 	}
 	else
 	{
 		move barrel1 to z-axis [-2.000000] speed [500.000000];
 		wait-for-move barrel1 along z-axis;
 		move barrel1 to z-axis [0.000000] speed [3.000000];
-		show flare1;
 		sleep 150;
-		hide flare1;
 	}
 	gun_1 = !gun_1;
 }
@@ -248,8 +253,8 @@ Killed(severity, corpsetype)
 		explode flare1 type BITMAPONLY | BITMAP4;
 		explode flare2 type BITMAPONLY | BITMAP5;
 		explode turret type BITMAPONLY | BITMAP2;
-		explode wake1 type BITMAPONLY | BITMAP3;
-		explode wake2 type BITMAPONLY | BITMAP4;
+		explode sleeve1 type BITMAPONLY | BITMAP3;
+		explode sleeve2 type BITMAPONLY | BITMAP4;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -261,8 +266,8 @@ Killed(severity, corpsetype)
 		explode flare1 type FALL | BITMAP4;
 		explode flare2 type FALL | BITMAP5;
 		explode turret type BITMAPONLY | BITMAP2;
-		explode wake1 type FALL | BITMAP3;
-		explode wake2 type FALL | BITMAP4;
+		explode sleeve1 type FALL | BITMAP3;
+		explode sleeve2 type FALL | BITMAP4;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -274,8 +279,8 @@ Killed(severity, corpsetype)
 		explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 		explode turret type SHATTER | BITMAP2;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+		explode sleeve1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode sleeve2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	corpsetype = 3;
@@ -285,6 +290,6 @@ Killed(severity, corpsetype)
 	explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 	explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 	explode turret type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+	explode sleeve1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode sleeve2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 }

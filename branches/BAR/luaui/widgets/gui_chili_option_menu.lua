@@ -64,6 +64,11 @@ local wCategories = {
  {cat = "unit"     , label = "Units"         , list = {}, },
  {cat = "ungrouped", label = "Ungrouped"     , list = {}, }
  }
+local function getElement(tab,name)
+ local control = tabs[tab]
+ local element = control:GetObjectByName(name)
+ return element
+end
 
 local function toggleWidget(self) 
  widgetHandler:ToggleWidget(self.name)
@@ -104,8 +109,7 @@ end
 local function makeWidgetList(filter)
  sortWidgetList(filter)
  local widgetNum = 0
- local control = tabs["Interface"]
- local scrollpanel = control:GetObjectByName("widgetList")
+ local scrollpanel = tabs["Interface"]:GetObjectByName("widgetList")
  scrollpanel:ClearChildren()
  for a=1,#wCategories do
   local list = wCategories[a].list
@@ -122,7 +126,7 @@ local function makeWidgetList(filter)
      name      = list[b].name,
      caption   = list[b].name,
      parent    = scrollpanel,
-     tooltip   = 'By '..list[b].wData.author.. ")\n"..list[b].wData.desc or '',
+     tooltip   = 'Author: '..list[b].wData.author.. "\n"..list[b].wData.desc or '',
      x         = 0,
      right     = 0,
      y         = widgetNum*20,
@@ -148,16 +152,14 @@ local function sTab(_,tabName)
   barSettings.tabSelected = tabName
 end
 
-local function addFilter() 
- local control = tabs["Interface"]
- local editbox = control:GetObjectByName("widgetFilter")
+local function addFilter()
+ local editbox = tabs["Interface"]:GetObjectByName("widgetFilter")
  makeWidgetList(editbox.text)
  editbox:SetText("")
 end
 
 local function chngSkin()
- local control = tabs["Interface"]
- local editbox = control:GetObjectByName("skin")
+ local editbox = tabs["Interface"]:GetObjectByName("skin")
  Chili.theme.skin.general.skinName = editbox.text
  barSettings.chiliSkin = editbox.text
  spSendCommands("luaui reload")
@@ -168,14 +170,14 @@ local function loadMainMenu()
   children = {
    Chili.Line:New{parent = mainMenu,y = 15,width = "100%"},
    Chili.Line:New{parent = mainMenu,bottom = 20,width = "100%"},
-   Chili.Button:New{caption = "Resign and Spectate",height = 20,width = '25%',x = 20,bottom=0,
+   Chili.Button:New{caption = "Resign and Spectate",height = 20,width = '25%',x = '15%',bottom=0,
     OnMouseUp = {function() spSendCommands{"Spectator"};showHide() end }},
-   Chili.Button:New{caption = "Exit To Desktop",height = 20,width = '25%',right = 20,bottom=0,
+   Chili.Button:New{caption = "Exit To Desktop",height = 20,width = '25%',right = '15%',bottom=0,
      OnMouseUp = {function() spSendCommands{"quit","quitforce"} end }},
   }}
  
  menuTabs = Chili.TabBar:New{parent = mainMenu, x = 0, width = '100%', y = 0, height = 20, minItemWidth = 70,selected=barSettings.tabSelected or 'Info',
-  tabs = {"Info","Interface", "Graphics", "Sound"}, OnChange = {sTab}}
+  tabs = {"Info","Interface", "Graphics", "Sound", "Log"}, itemPadding = {1,0,1,0},OnChange = {sTab}}
    
  showHide()
 end
@@ -190,11 +192,22 @@ end
 local function addComBox(tab,vert,caption,name,items,rItems,showLine)
  local control = tabs[tab]
  local selected = barSettings[name]
- if showLine then control:AddChild(Chili.Line:New{y=vert-4,width='50%'}) end
- control:AddChild(Chili.Label:New{caption = caption,y = vert,height=20,right=378})
- control:AddChild(Chili.ComboBox:New{name = name,y = vert,right = 250,width = 125,height=26,items = items,rItems = rItems, selected = selected,
-  OnSelect = {function(_,boxNum) spSetConfigInt(name,rItems[boxNum]);barSettings[name] = boxNum end}})
-  -- OnSelect = {function(_,boxNum) spSendCommands(name.." "..rItems[boxNum]);barSettings[name] = boxNum end}})
+ control:AddChild(Chili.Label:New{caption = caption,y = vert,height=20,x=0})
+ control:AddChild(Chili.ComboBox:New{name = name,y = vert,right = 250,width = 125,height=20,items = items,rItems = rItems, selected = selected,
+	OnSelect = {function(_,boxNum) spSendCommands(name.." "..rItems[boxNum]);barSettings[name] = boxNum end}})
+end
+
+local function showSkins(self)
+ -- if not self.parent:GetObjectByName('skins') then 
+ -- self.parent:AddChild(
+  -- Chili.Window:New{
+   -- name='skins',
+	 -- x=self.x,
+	 -- y=self.y+self.height,
+	 -- height=80,
+	 -- width = self.width,
+	-- })
+ -- else self.parent:RemoveChild(self.parent:GetObjectByName('skins')) end
 end
 
 local function addPlayerList()
@@ -214,31 +227,24 @@ local function Options()
 -- Graphics --
  tabs.Graphics = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', 
  children = {}}
- -- addComBox('Graphics', 0  , "Water    ", "ReflectiveWater", {"Basic","Reflective","Dynamic","Refractive","Bump-Mapped"}, {0,1,2,3,4})
- -- addComBox('Graphics', 30 , "-Reflection", "BumpWaterReflection", {"Off","Performance","Full"}, {0,1,2})
- -- addComBox('Graphics', 60 , "-Refraction", "BumpWaterRefraction", {"Off","Performance","Full"}, {0,1,2})
- -- addComBox('Graphics', 90 , "Shadows   ", "Shadows", {"Off","Fast","Full"}, {0,2,1},true)
- -- addComBox('Graphics', 120, "-Resolution", "ShadowMapSize", {"Low","Medium","High"}, {1024,2048,4096})
- -- addComBox('Graphics', 150, "-SmoothLines-", "SmoothLines", {"Safe","Performance","Balanced","Power"}, {0,1,2,3},true)
- -- addComBox('Graphics', 180, "-SmoothPoints-", "SmoothPoints", {"Safe","Performance","Balanced","Power"}, {0,1,2,3})
- -- addComBox('Graphics', 210, "-FSAA", "FSAALevel", {"Safe","Performance","Balanced","Power"}, {0,2,4,8})
- -- addComBox('Graphics', 30, "-Shadows-", "Shadows", {"Low","Medium","High"}, {"3 1024","3 2048","3 4096"},true)
+ -- addComBox('Graphics', 0  , "-Water-"  , "Water"  , {"Basic","Reflective","Dynamic","Refractive","Bump-Mapped"}, {0,1,2,3,4})
+ -- addComBox('Graphics', 30 , "-Shadows-", "Shadows", {"Off","Very Low","Low","Medium","High","Very High"}, {"0","2 1024","2 2048","1 1024","1 2048","1 4096"})
  
 -- Interface --
  tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', --Control attached to tab
  children = {
   Chili.ScrollPanel:New{name="widgetList",x = '50%',y = 0,right = 0,bottom = 0},
-  Chili.EditBox:New{name="widgetFilter",x=0,y=0,width = '50%',text=''},
-  Chili.Button:New{right='50%',y=20,height=24,width='15%',caption='Filter',OnMouseUp={addFilter}},
-  Chili.Checkbox:New{caption="Search Widget Name",x=0,y=40,width='35%',textalign="left",boxalign="right",checked=barSettings.searchWidgetName,
+  Chili.EditBox:New{name="widgetFilter",x=0,y=0,width = '35%',text=' Enter filter -> Hit Return,  or -->',OnMouseDown = {function(obj) obj.text = '' end}},
+  Chili.Button:New{right='50%',y=0,height=20,width='15%',caption='Filter',OnMouseUp={addFilter}},
+  Chili.Checkbox:New{caption="Search Widget Name",x=0,y=40,width='25%',textalign="left",boxalign="right",checked=barSettings.searchWidgetName,
    OnChange = {function() barSettings.searchWidgetName = not barSettings.searchWidgetName end}}, 
-  Chili.Checkbox:New{caption="Search Description",x=0,y=20,width='35%',textalign="left",boxalign="right",checked=barSettings.searchWidgetDesc,
+  Chili.Checkbox:New{caption="Search Description",x=0,y=20,width='25%',textalign="left",boxalign="right",checked=barSettings.searchWidgetDesc,
    OnChange = {function() barSettings.searchWidgetDesc = not barSettings.searchWidgetDesc end}},
-  Chili.Checkbox:New{caption="Search Author",x=0,y=60,width='35%',textalign="left",boxalign="right",checked=barSettings.searchWidgetAuth,
+  Chili.Checkbox:New{caption="Search Author",x=0,y=60,width='25%',textalign="left",boxalign="right",checked=barSettings.searchWidgetAuth,
    OnChange = {function() barSettings.searchWidgetAuth = not barSettings.searchWidgetAuth end}},
   Chili.Line:New{width='50%',y=80},
-  Chili.EditBox:New{name='skin',x=0,y=90,width='50%',text=''},
-  Chili.Button:New{right='50%',y=110,height=24,width='20%',caption='Change Skin',OnMouseUp={chngSkin}},
+  Chili.EditBox:New{name='skin',x=0,y=90,width='30%',text=barSettings.chiliSkin or 'Flat',OnFocusUpdate={showSkins}},
+  Chili.Button:New{right='50%',y=90,height=20,width='20%',caption='Change Skin',OnMouseUp={chngSkin}},
 --  Chili.Button:New{right='75%',y=150,height=24,width='25%',caption='Chili Globals',OnMouseUp={getGlobals}},
  }}
  
@@ -250,7 +256,8 @@ local function Options()
  }}  
 
 -- Sound --
- tabs.Sound = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', children = {
+ tabs.Sound = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', 
+ children = {
   Chili.Label:New{caption = "Master Volume:",},
   Chili.Trackbar:New{x = 120,height = 15,right = '50%',value = spGetConfigInt("snd_volmaster"),
    OnChange = { function(self) spSendCommands{"set snd_volmaster " .. self.value} end },},
@@ -260,6 +267,12 @@ local function Options()
   Chili.Label:New{caption = "Music Volume:",y = 40},
   Chili.Trackbar:New{x = 120,y = 40,height = 15,right = '50%',value = spGetConfigInt("snd_volmusic"),
    OnChange = { function(self) spSendCommands{"set snd_volmusic " .. self.value} end },},
+ }}
+
+-- Log --
+ tabs.Log = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', 
+ children = {
+  Chili.ScrollPanel:New{x=0,y=0,right=0,bottom=0,name="mLog",children = {Chili.TextBox:New{x=0,y=0,right=0,bottom=0,}}}
  }}
 
 end
@@ -300,8 +313,7 @@ function widget:DrawScreen()
 end
 
 function widget:KeyPress(key,mod)
- local control = tabs["Interface"]
- local editbox = control:GetObjectByName("widgetFilter")
+ local editbox = tabs["Interface"]:GetObjectByName("widgetFilter")
  if key==13 and editbox.state.focused then
   makeWidgetList(editbox.text)
   editbox:SetText("")
@@ -318,6 +330,7 @@ function widget:KeyPress(key,mod)
  end
 end
 
+
 function widget:Initialize()
  Chili = WG.Chili
  Chili.theme.skin.general.skinName = barSettings.chiliSkin or 'Flat'
@@ -326,4 +339,18 @@ function widget:Initialize()
  loadMainMenu()
  loadMinMenu()
  addPlayerList()
+ local buffer = Spring.GetConsoleBuffer()
+ for i=1,#buffer do
+  widget:AddConsoleMessage(buffer[i])
+ end
+end
+
+local mLogText = ''
+function widget:AddConsoleMessage(msg)
+ if tabs.Log then
+  mLogText = mLogText..msg.text..'\n'
+  local scrollpanel = tabs["Log"]:GetObjectByName("mLog")
+  scrollpanel.children[1].text = mLogText
+  scrollpanel.children[1]:UpdateLayout()
+ end
 end

@@ -13,7 +13,7 @@ local skin = {
 --//
 local teamID = Spring.GetLocalTeamID()
 local r,g,b = Spring.GetTeamColor(teamID)
-
+if r+g+b < 0.1 or r+g+b > 2.3 then r,g,b = 0.4,0.4,0.4 end
 skin.general = {
   borderColor  = {1, 1, 1, .8},
   focusColor = {r, g, b, 1},

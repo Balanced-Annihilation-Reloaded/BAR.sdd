@@ -162,7 +162,6 @@ local function chngSkin()
  local editbox = tabs["Interface"]:GetObjectByName("skin")
  Chili.theme.skin.general.skinName = editbox.text
  barSettings.chiliSkin = editbox.text
- spSendCommands("luaui reload")
 end
 
 local function loadMainMenu()
@@ -194,20 +193,44 @@ local function addComBox(tab,vert,caption,name,items,rItems,showLine)
  local selected = barSettings[name]
  control:AddChild(Chili.Label:New{caption = caption,y = vert,height=20,x=0})
  control:AddChild(Chili.ComboBox:New{name = name,y = vert,right = 250,width = 125,height=20,items = items,rItems = rItems, selected = selected,
-	OnSelect = {function(_,boxNum) spSendCommands(name.." "..rItems[boxNum]);barSettings[name] = boxNum end}})
+ OnSelect = {function(_,boxNum) spSendCommands(name.." "..rItems[boxNum]);barSettings[name] = boxNum end}})
 end
 
-local function showSkins(self)
- -- if not self.parent:GetObjectByName('skins') then 
- -- self.parent:AddChild(
-  -- Chili.Window:New{
-   -- name='skins',
-	 -- x=self.x,
-	 -- y=self.y+self.height,
-	 -- height=80,
-	 -- width = self.width,
-	-- })
- -- else self.parent:RemoveChild(self.parent:GetObjectByName('skins')) end
+local function comboBox(obj)
+ local obj=obj
+ local checked=false
+ local options = {}
+ local choice = function(self)
+  local box = tabs[obj.parent]:GetObjectByName(obj.name)
+	box.text = self.caption
+	box:Invalidate()
+ end
+ if not obj.options then obj.options=obj.labels end
+ for i=1, #obj.labels do
+  if barSettings[obj.name] == obj.labels[i] then checked = true else checked = false end
+	options[#options+1] = Chili.Checkbox:New{width='100%',caption=obj.labels[i],height=20,y=21*(i-1),checked=checked,OnChange={choice}}
+ end
+ local thing = Chili.Window:New{
+	padding={0,0,0,0},
+  x=obj.x,
+  y=obj.y+20,
+  height=#options*20,
+  width = '30%',
+	children = options,
+ }
+ 
+ local dropdown = function(self)
+  if not self.opened then 
+   self.parent:AddChild(self.thing)
+	 self.opened = true
+  else 
+	 self.parent:RemoveChild(self.thing)
+	 self.opened = false
+	end
+ end
+
+ Chili.EditBox:New{parent=tabs[obj.parent],name=obj.name,x=0,y=obj.y,width='30%',text='',thing=thing,OnFocusUpdate={dropdown}}
+ Chili.Button:New{parent=tabs[obj.parent],right='50%',y=obj.y,height=20,width='20%',caption='Change Skin',OnMouseUp=obj.OnMouseUp}
 end
 
 local function addPlayerList()
@@ -243,10 +266,10 @@ local function Options()
   Chili.Checkbox:New{caption="Search Author",x=0,y=60,width='25%',textalign="left",boxalign="right",checked=barSettings.searchWidgetAuth,
    OnChange = {function() barSettings.searchWidgetAuth = not barSettings.searchWidgetAuth end}},
   Chili.Line:New{width='50%',y=80},
-  Chili.EditBox:New{name='skin',x=0,y=90,width='30%',text=barSettings.chiliSkin or 'Flat',OnFocusUpdate={showSkins}},
-  Chili.Button:New{right='50%',y=90,height=20,width='20%',caption='Change Skin',OnMouseUp={chngSkin}},
---  Chili.Button:New{right='75%',y=150,height=24,width='25%',caption='Chili Globals',OnMouseUp={getGlobals}},
+  -- Chili.EditBox:New{name='skin',x=0,y=90,width='30%',text=barSettings.chiliSkin or 'Flat',OnFocusUpdate={showSkins}},
+  -- Chili.Button:New{right='50%',y=90,height=20,width='20%',caption='Change Skin',OnMouseUp={chngSkin}},
  }}
+ comboBox{parent='Interface',name='skin',y=90,labels={'Flat','Robocracy','Carbon','DarkHive'},OnMouseUp = {chngSkin}}
  
 -- Info --
  tabs.Info = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', 
@@ -278,18 +301,18 @@ local function Options()
 end
 -----------------------------
 -----------------------------
--- function widget:GetConfigData()
+function widget:GetConfigData()
  -- if barSettings ~= WG.barSettings then 
  -- for name,data in pairs(barsettings) do
   -- WG.barSettings[name] = data
  -- end
  -- end
- -- return barSettings
--- end
+ return barSettings
+end
 
--- function widget:SetConfigData(data)
- -- if (data and type(data) == 'table') then 
- -- WG.barSettings = data 
+function widget:SetConfigData(data)
+ if (data and type(data) == 'table') then 
+ barSettings = data 
 -- -- Localize global 
  -- barSettings = WG.barSettings
 -- -- Defaults ---
@@ -299,8 +322,9 @@ end
  -- barSettings.widget = {}
  -- barSettings.UIwidget = {}
 -- --------------------------------
- -- end
--- end
+ end
+end
+
 function widget:DrawScreen()
  local fps = 'FPS: '..'\255\255\127\0'..spgetFPS()
  fpsLbl:SetCaption(fps)
@@ -329,7 +353,6 @@ function widget:KeyPress(key,mod)
  -- elseif key==
  end
 end
-
 
 function widget:Initialize()
  Chili = WG.Chili

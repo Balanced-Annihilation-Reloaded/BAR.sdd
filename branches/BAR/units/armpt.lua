@@ -30,14 +30,18 @@ return {
 		movementclass = "BOAT4",
 		name = "Skeeter",
 		nochasecategory = "VTOL UNDERWATER",
-		objectname = "ARMPT",
+		objectname = "ARMPT.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 650,
 		turninplace = 0,
 		turnrate = 644,
-		waterline = 3,
+		waterline = 0,
 		windgenerator = 0.0010000000474975,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

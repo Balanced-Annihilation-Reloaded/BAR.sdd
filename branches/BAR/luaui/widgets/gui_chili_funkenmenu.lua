@@ -211,7 +211,7 @@ function widget:Initialize()
  panW = panH * 0.5
  winW = panW * 0.6
  
- window0         = Chili.Window:New{x = 0, y = 0, bottom = 0, width = winW, padding = {0,0,0,0}, margin = {0,0,0,0}, OnMouseWheel = {switchTabs}}
+ window0         = Chili.Window:New{skinName='Flat',x = 0, y = 0, bottom = 0, width = winW, padding = {0,0,0,0}, margin = {0,0,0,0}, OnMouseWheel = {switchTabs}}
  menuTabs     = Chili.Control:New{x = winW, y = 0, bottom = 0, width = 90, padding = {0,0,0,0}, margin = {0,0,0,0}}
  stateWindow   = Chili.Grid:New{y = 10, bottom = 0, x = winW + 15, width  = 30, padding = {0, 0, 0, 0}, columns = 1, rows = 16}
  buildQueue    = Chili.Window:New{parent = screen0, x = winW, bottom = 1, width = 20, height = 40, hidden = true,padding = {0,0,0,0}}

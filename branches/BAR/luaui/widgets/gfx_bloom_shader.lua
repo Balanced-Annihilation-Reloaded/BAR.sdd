@@ -169,7 +169,7 @@ function widget:ViewResize(viewSizeX, viewSizeY)
 	})
 
 	screenTexture = glCreateTexture(vsx, vsy, {
-		min_filter = GL.NEAREST, mag_filter = GL.NEAREST,
+		min_filter = GL.LINEAR, mag_filter = GL.NEAREST,
 	})
 
 	if (brightTexture1 == nil or brightTexture2 == nil or screenTexture == nil) then

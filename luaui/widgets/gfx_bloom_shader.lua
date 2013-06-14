@@ -18,7 +18,7 @@ local dbgDraw = 0					-- draw only the bloom-mask? [0 | 1]
 local glowAmplifier = 1.2			-- intensity multiplier when filtering a glow source fragment [1, n]
 local blurAmplifier = 1.1		-- intensity multiplier when applying a blur pass [1, n] (should be set close to 1)
 local illumThreshold = 0.5			-- how bright does a fragment need to be before being considered a glow source? [0, 1]
-local blurPasses = 2				-- how many iterations of (7x7) Gaussian blur should be applied to the glow sources?
+local blurPasses = 4				-- how many iterations of (7x7) Gaussian blur should be applied to the glow sources?
 local dilatePass = 0				-- dilate the glow sources after blurring? [0 | 1]
 
 -- non-editables

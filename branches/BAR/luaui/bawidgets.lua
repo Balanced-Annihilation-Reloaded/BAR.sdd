@@ -68,9 +68,11 @@ local localWidgets = false
 
 if VFS.FileExists(CONFIG_FILENAME) then
   local cadata = VFS.Include(CONFIG_FILENAME)
-  if cadata["Local Widgets Config"] then
-    localWidgetsFirst = cadata["Local Widgets Config"].localWidgetsFirst
-    localWidgets = cadata["Local Widgets Config"].localWidgets
+  if cadata then
+	if cadata["Local Widgets Config"] then
+      localWidgetsFirst = cadata["Local Widgets Config"].localWidgetsFirst
+      localWidgets = cadata["Local Widgets Config"].localWidgets
+	end
   end
 end
 
@@ -407,15 +409,21 @@ MessageProcessor:Initialize()
 
 function widgetHandler:LoadOrderList()
   local chunk, err = loadfile(ORDER_FILENAME)
-  if (chunk == nil) then
-    self.orderList = {} -- safety
-    return {}
-  else
+	if (chunk == nil) or (err) then
+		if err then
+			Spring.Log("bawidgets.lua", LOG.INFO, err)
+		end
+		return {}
+	elseif (chunk() == nil) then
+		Spring.Log("bawidgets.lua", LOG.ERROR, 'Luaui order config file was blank')
+		return {}
+	end 
+	
     local tmp = {}
     setfenv(chunk, tmp)
     self.orderList = chunk()
     if (not self.orderList) then
-      self.orderList = {} -- safety
+		self.orderList = {} -- safety
     end
 	if (self.orderList.version or 0) < ORDER_VERSION then 
 		self.orderList = {}
@@ -426,7 +434,6 @@ function widgetHandler:LoadOrderList()
 		resetWidgetDetailLevel = true
 		self.orderList.lastWidgetDetailLevel = detailLevel
 	end 
-  end
 end
 
 
@@ -444,9 +451,16 @@ end
 
 function widgetHandler:LoadConfigData()
   local chunk, err = loadfile(CONFIG_FILENAME)
-  if (chunk == nil) then
-    return {}
-  else
+	if (chunk == nil) or (err) then
+		if err then
+			Spring.Log("bawidgets.lua", LOG.INFO, err)
+		end
+		return {}
+	elseif (chunk() == nil) then
+		Spring.Log("bawidgets.lua", LOG.ERROR, 'Luaui data config file was blank')
+		return {}
+	end
+
     local tmp = {}
     setfenv(chunk, tmp)
     self.configData = chunk()
@@ -457,8 +471,6 @@ function widgetHandler:LoadConfigData()
 		self.configData = {}
 		self.configData.version = DATA_VERSION
 	end 
-
-  end
 end
 
 

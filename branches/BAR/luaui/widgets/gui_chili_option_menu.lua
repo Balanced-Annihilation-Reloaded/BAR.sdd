@@ -195,9 +195,7 @@ local function applySetting(self)
  self:Invalidate()
 end
 ----------------------------
-
-local ddWindow
-local function comboBox(obj)
+local comboBox = function(obj)
  local obj=obj
  local comboBox = Chili.Control:New{name=obj.name,parent=tabs[obj.parent],y=obj.y,width='50%',bottom=0,x=0}
 
@@ -218,45 +216,72 @@ local function comboBox(obj)
   
    -- local ddWindow = Chili.Window:New{name='ddWindow',padding={0,0,0,0},x='10%',y=35,height=#obj.labels*20+16,width = '70%',}
    local x,y = comboBox:ClientToScreen(25,35)
-   ddWindow = Chili.Window:New{name='ddWindow',padding={0,0,0,0},x=x,y=y,height=#obj.labels*20+16,width=150,}
+   comboBox.ddWindow = Chili.Window:New{name='ddWindow',padding={0,0,0,0},x=x,y=y,height='100%',width=150,}
 
    for i=1, #obj.labels do
     local checked = (barSettings[obj.name] == obj.labels[i])
-    ddWindow:AddChild(Chili.Checkbox:New{x='5%',width='90%',option=obj.options[i],caption=obj.labels[i],height=20,y=21*(i-1)+8,checked=checked,OnChange={OnSelect}})
+    comboBox.ddWindow:AddChild(Chili.Checkbox:New{x='5%',width='90%',option=obj.options[i],caption=obj.labels[i],height=20,y=21*(i-1)+8,checked=checked,OnChange={OnSelect}})
    end
 
-   Chili.Screen0:AddChild(ddWindow)
-   ddWindow:BringToFront()
+   Chili.Screen0:AddChild(comboBox.ddWindow)
+   comboBox.ddWindow:BringToFront()
    -- combobox:AddChild(ddWindow)
    self.opened = true
   else
-   ddWindow:Dispose()
+   comboBox.ddWindow:Dispose()
    self.opened = false
   end
   self:Invalidate()
   self.parent:Invalidate()
  end
- comboBox:AddChild(Chili.Label:New{x=0,y=0,caption=obj.name})
+ comboBox:AddChild(Chili.Label:New{x=10,y=0,caption=obj.name})
  comboBox:AddChild(Chili.EditBox:New{name='EditBox',x='10%',y=15,width='70%',text='',OnFocusUpdate={dropdown},})
  comboBox:AddChild(Chili.Button:New{name='Button',y=15,right=0,height=20,width='20%',caption='Apply',font={color={0.5,0.5,0.5,1}},OnMouseUp={applySetting}})
 end
 
+local incDec = function(obj)
+ local incDec = Chili.Control:New{name=obj.name,parent=tabs[obj.parent],y=obj.y,width='50%',height=30,right=0,padding={0,0,0,0}}
+ local decOption = function(self)
+  spSendCommands('luaui -'..self.parent.name)
+ end
+ local incOption = function(self)
+  spSendCommands('luaui +'..self.parent.name)
+ end
+ incDec:AddChild(Chili.Label:New{right=65,y=0,caption=obj.label})
+ incDec:AddChild(Chili.Button:New{right=0,y=0,width=30,height=20,caption='Inc',OnMouseUp={incOption}})
+ incDec:AddChild(Chili.Button:New{right=30,y=0,width=30,height=20,caption='Dec',OnMouseUp={decOption}})
+end
 
 -----OPTIONS-----------------
 -----------------------------
 local function Options()
 -- Each tab has its own control {Info,Interface,Graphics, and Sound}
---  Each graphical element is defined as a child of these controls and given a function to fullfill, when a certain even happens(i.e. OnClick)
+-- mainMenu = Chili.Window:New{parent=Chili.Screen0,x = 400, y = 200, width = 500, height = 400,padding = {5,8,5,5}, draggable = true,
+--  Each graphical element is defined as a child of these controls and given a function to fullfill, when a certain event happens(i.e. OnClick)
 
 -- Graphics --
  tabs.Graphics = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
-  children = {}}
+  children = {
+   Chili.Line:New{right='40%',height='100%',style='vertical'},
+   Chili.Line:New{x='50%',right=0,y=160},
+   Chili.Label:New{x='55%',y=10,caption='Bloom Options'},
+   Chili.Checkbox:New{caption="Dilate Pass",x='80%',y=20,right=0,textalign="left",boxalign="right",checked=false, 
+    OnChange = {function(self) if not self.checked then spSendCommands('luaui +dilatepass') else spSendCommands('luaui -dilatepass') end  end}}, 
+   Chili.Checkbox:New{caption="Debug Mode",x='80%',y=40,right=0,textalign="left",boxalign="right",checked=false, 
+    OnChange = {function(self) if not self.checked then spSendCommands('luaui +bloomdebug') else spSendCommands('luaui -bloomdebug') end  end}}, 
+   -- Chili.Checkbox:New{caption="Search Author",x='50%',y=120,width='35%',textalign="left",boxalign="right",OnChange={}},
+   }}
+   
    comboBox{parent='Graphics',name="Water",y=0,
     labels={"Basic","Reflective","Dynamic","Refractive","Bump-Mapped"},
     options={0,1,2,3,4},}
    comboBox{parent='Graphics',name="Shadows",y=40,
     labels={"Off","Very Low","Low","Medium","High","Very High"},
     options={"0","2 1024","2 2048","1 1024","1 2048","1 4096"},}
+   incDec{parent='Graphics',name='illumthres',y=60,label='Illumination Threshold'}
+   incDec{parent='Graphics',name='glowamplif',y=85,label='Glow Amplifier'}
+   incDec{parent='Graphics',name='bluramplif',y=110,label='Blur Amplifier'}
+   incDec{parent='Graphics',name='blurpasses',y=135,label='Blur Passes'}
 
 -- Interface --
  tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', --Control attached to tab
@@ -309,26 +334,12 @@ end
 -----------------------------
 -----------------------------
 function widget:GetConfigData()
- -- if barSettings ~= WG.barSettings then
- -- for name,data in pairs(barsettings) do
-  -- WG.barSettings[name] = data
- -- end
- -- end
  return barSettings
 end
 
 function widget:SetConfigData(data)
  if (data and type(data) == 'table') then
- barSettings = data
--- -- Localize global
- -- barSettings = WG.barSettings
--- -- Defaults ---
- -- barSettings.searchWidgetDesc=true
- -- barSettings.searchWidgetAuth=true
- -- barSettings.searchWidgetName=true
- -- barSettings.widget = {}
- -- barSettings.UIwidget = {}
--- --------------------------------
+  barSettings = data
  end
 end
 

@@ -111,7 +111,6 @@ end
 local function makeMenuTabs() 
  local tabCount = 0
  local tempMenu = {}
- menuChoice = 1
  local caption = {"ORDER","BUILD"," TACT","  ECON"}
  for i=1, 4 do
   if #menu[i].children > 0 then
@@ -123,8 +122,13 @@ local function makeMenuTabs()
   end
  end
  menu = tempMenu
- if tabCount>1 and not menu[menuChoice] then menuChoice = tabCount end
- if tabCount>0 then window0:AddChild(menu[menuChoice]) end
+ 
+ local units = spGetSelectedUnits()
+ if selectedUnits[1] ~= units[1] then
+  selectedUnits = units
+  menuChoice = tabCount
+ end
+ if tabCount>0 then window0:AddChild(menu[menuChoice] or menu[1]) end
 end
 
 local function createMenus()
@@ -243,7 +247,6 @@ function widget:DrawScreen(n)
     updateRequired = false
   loadPanel()
   queueHandler()
-  selectedUnits = spGetSelectedUnits()
   if #menuTab == 0 and panel0.visible then panel0:Hide()
   elseif #menuTab > 0 and panel0.hidden then panel0:Show() end
  end

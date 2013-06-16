@@ -111,6 +111,7 @@ end
 local function makeMenuTabs() 
  local tabCount = 0
  local tempMenu = {}
+ menuChoice = 1
  local caption = {"ORDER","BUILD"," TACT","  ECON"}
  for i=1, 4 do
   if #menu[i].children > 0 then
@@ -122,7 +123,7 @@ local function makeMenuTabs()
   end
  end
  menu = tempMenu
- if tabCount>0 and (not menu[menuChoice]) then menuChoice = tabCount end
+ if tabCount>1 and not menu[menuChoice] then menuChoice = tabCount end
  if tabCount>0 then window0:AddChild(menu[menuChoice]) end
 end
 

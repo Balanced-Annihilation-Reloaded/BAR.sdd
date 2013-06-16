@@ -216,7 +216,7 @@ local comboBox = function(obj)
   
    -- local ddWindow = Chili.Window:New{name='ddWindow',padding={0,0,0,0},x='10%',y=35,height=#obj.labels*20+16,width = '70%',}
    local x,y = comboBox:ClientToScreen(25,35)
-   comboBox.ddWindow = Chili.Window:New{name='ddWindow',padding={0,0,0,0},x=x,y=y,height='100%',width=150,}
+   comboBox.ddWindow = Chili.Window:New{name='ddWindow',padding={0,0,0,0},x=x,y=y,height=#obj.labels*21+16,width=150,}
 
    for i=1, #obj.labels do
     local checked = (barSettings[obj.name] == obj.labels[i])

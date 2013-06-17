@@ -99,7 +99,7 @@ deactivatescr()
 Go()
 {
 	call-script activatescr();
-	turn NanoTurret to y-axis <180>-Static_Var_2 speed <160.000000>;
+	turn NanoTurret to y-axis <180>+Static_Var_2 speed <160.000000>;
 	wait-for-turn NanoTurret around y-axis;
 	set INBUILDSTANCE to 1;
 }

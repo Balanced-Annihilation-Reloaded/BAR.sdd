@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, body, wake1, wake2, wake3, wake4, wake5, ponton,
+piece  ground, base, dish, 
        tur1, tur2, tur3, tur4, tur5, flaktur1, flaktur2, sleeve1,
        sleeve2, sleeve3, sleeve4, sleeve5, flaksleeve1, flaksleeve2, barrel1a, barrel1b,
        barrel2a, barrel2b, barrel2c, barrel3a, barrel3b, barrel4a, barrel4b, barrel4c,
@@ -22,8 +22,8 @@ SetDirection(heading)
 {
 	var spd;
 	spd = (get ABS(oldHead) - get ABS(heading)) / 2;
-	turn base to y-axis heading speed spd;
-	turn body to y-axis 0-heading speed spd;
+	turn ground to y-axis heading speed spd;
+	turn base to y-axis 0-heading speed spd;
 	oldHead = heading;
 }
 
@@ -37,8 +37,8 @@ RockOnWaves()
 		while( get ABS(rockAng) < <1.11> )
 		{
 			rockSpeed = <1.25> - get ABS(rockAng);
-			turn base to x-axis rockAng speed rockSpeed*2;
-			wait-for-turn base around x-axis;
+			turn ground to x-axis rockAng speed rockSpeed*2;
+			wait-for-turn ground around x-axis;
 			rockAng = rockAng + rockDir;
 		}
 		rockDir = 0 - rockDir;
@@ -67,7 +67,7 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 			Func_Var_4 = Rand( 1, 3 );
 			if( Func_Var_4 == 1 )
 			{
-				emit-sfx smoketype from body;
+				emit-sfx smoketype from base;
 			}
 			if( Func_Var_4 == 2 )
 			{
@@ -75,7 +75,7 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 			}
 			if( Func_Var_4 == 3 )
 			{
-				emit-sfx smoketype from ponton;
+				emit-sfx smoketype from tur1;
 			}
 		}
 		sleeptime = healthpercent * 50;
@@ -110,6 +110,7 @@ Create()
 	Static_Var_5 = 0;
 	Static_Var_6 = 0;
 	Static_Var_7 = 0;
+	spin dish around y-axis speed <100.021978>;
 	restore_delay = 6000;
 	start-script SmokeUnit();
 }
@@ -152,12 +153,12 @@ waveSplash()
 {
 	while( TRUE )
 	{
-		turn body to x-axis <-1.0> speed <1.0>;
-		move body to y-axis [0.23] speed [0.17];
-		wait-for-turn body around x-axis;
-		turn body to x-axis <0.0> speed <1.0>;
-		move body to y-axis [0.0] speed [0.17];
-		wait-for-turn body around x-axis;
+		turn base to x-axis <-1.0> speed <1.0>;
+		move base to y-axis [0.23] speed [0.17];
+		wait-for-turn base around x-axis;
+		turn base to x-axis <0.0> speed <1.0>;
+		move base to y-axis [0.0] speed [0.17];
+		wait-for-turn base around x-axis;
 	}
 }
 
@@ -169,11 +170,11 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from wake1;
-		emit-sfx 2 from wake2;
-		emit-sfx 2 from wake3;
-		emit-sfx 2 from wake4;
-		emit-sfx 2 from wake5;
+		emit-sfx 2 from base;
+		emit-sfx 2 from base;
+		emit-sfx 2 from base;
+		emit-sfx 2 from base;
+		emit-sfx 2 from base;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 12000 / waketime;
@@ -183,8 +184,8 @@ StartMoving()
 StopMoving()
 {
 	signal SIG_MOVE;
-	turn body to x-axis <0.0> speed <1.0>;
-	move body to y-axis [0.0] speed [0.17];
+	turn base to x-axis <0.0> speed <1.0>;
+	move base to y-axis [0.0] speed [0.17];
 }
 
 AimWeapon1(heading, pitch)
@@ -526,7 +527,7 @@ QueryWeapon7(piecenum)
 
 SweetSpot(piecenum)
 {
-	piecenum = base;
+	piecenum = ground;
 }
 
 Killed(severity, corpsetype)
@@ -541,12 +542,9 @@ Killed(severity, corpsetype)
 		explode barrel1b type BITMAPONLY | BITMAP5;
 		explode tur1 type BITMAPONLY | BITMAP3;
 		explode tur2 type BITMAPONLY | BITMAP4;
-		explode ponton type BITMAPONLY | BITMAP5;
-		explode base type BITMAPONLY | BITMAP1;
+		explode ground type BITMAPONLY | BITMAP1;
 		explode tur3 type BITMAPONLY | BITMAP4;
 		explode flaktur1 type BITMAPONLY | BITMAP5;
-		explode wake1 type BITMAPONLY | BITMAP1;
-		explode wake2 type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -562,10 +560,7 @@ Killed(severity, corpsetype)
 		explode tur2 type FALL | EXPLODE_ON_HIT | BITMAP3;
 		explode tur3 type FALL | EXPLODE_ON_HIT | BITMAP4;
 		explode tur4 type FALL | EXPLODE_ON_HIT | BITMAP5;
-		explode base type BITMAPONLY | BITMAP1;
-		explode ponton type SHATTER | BITMAP5;
-		explode wake1 type FALL | EXPLODE_ON_HIT | BITMAP1;
-		explode wake2 type FALL | EXPLODE_ON_HIT | BITMAP2;
+		explode ground type BITMAPONLY | BITMAP1;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -580,11 +575,8 @@ Killed(severity, corpsetype)
 		explode tur2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		explode tur3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		explode tur4 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode ponton type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode base type BITMAPONLY | BITMAP1;
+		explode ground type BITMAPONLY | BITMAP1;
 		explode tur5 type SHATTER | EXPLODE_ON_HIT | BITMAP5;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
@@ -598,8 +590,6 @@ Killed(severity, corpsetype)
 	explode tur2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 	explode tur1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 	explode tur3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode base type BITMAPONLY | BITMAP1;
-	explode body type SHATTER | EXPLODE_ON_HIT | BITMAP5;
-	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode ground type BITMAPONLY | BITMAP1;
+	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP5;
 }

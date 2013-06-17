@@ -3,8 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  flare1, flare2, base, launcher2, door1, door2, plate, wake1,
-       wake2, fp11, fp12, fp13, ground;
+piece  flare21, flare22, base, turret2, launcher2, door1, door2, flare11, flare12, flare13, ground;
 
 static-var  Static_Var_1, gun_1, gun_3, restore_delay, Static_Var_5,
             statechg_DesiredState, statechg_StateChanging, oldHead;
@@ -17,22 +16,18 @@ static-var  Static_Var_1, gun_1, gun_3, restore_delay, Static_Var_5,
 
 activatescr()
 {
-	move door1 to x-axis [0.000000] now;
-	move door1 to x-axis [4.000000] speed [6.000000];
-	move door2 to x-axis [0.000000] now;
-	move door2 to x-axis [-4.000000] speed [7.000000];
+	turn door1 to z-axis <0> now;
+	turn door1 to z-axis <-90> speed <160>;
+	turn door2 to z-axis <0> now;
+	turn door2 to z-axis <90> speed <160>;
 	sleep 600;
 }
 
 deactivatescr()
 {
-	move plate to y-axis [0.000000] now;
-	move door1 to x-axis [4.000000] now;
-	move door2 to x-axis [-4.000000] now;
-	sleep 750;
 
-	move door1 to x-axis [0.000000] speed [6.000000];
-	move door2 to x-axis [0.000000] speed [7.000000];
+	turn door1 to z-axis <0> speed <160>;
+	turn door2 to z-axis <0> speed <160>;
 	sleep 600;
 }
 
@@ -164,7 +159,7 @@ RestoreAfterDelay()
 	sleep restore_delay;
 	Static_Var_5 = 0;
 	start-script RequestState(1);
-	turn launcher2 to y-axis <0.000000> speed <70.016484>;
+	turn turret2 to y-axis <0.000000> speed <70.016484>;
 	turn launcher2 to x-axis <0.000000> speed <30.005495>;
 }
 
@@ -189,8 +184,8 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from wake1;
-		emit-sfx 2 from wake2;
+		emit-sfx 2 from base;
+		emit-sfx 2 from base;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 12000 / waketime;
@@ -221,9 +216,9 @@ AimTertiary(heading, pitch)
 {
 	signal SIG_AIM_3;
 	set-signal-mask SIG_AIM_3;
-	turn launcher2 to y-axis heading speed <170.038462>;
+	turn turret2 to y-axis heading speed <170.038462>;
 	turn launcher2 to x-axis <0.000000> - pitch speed <130.027473>;
-	wait-for-turn launcher2 around y-axis;
+	wait-for-turn turret2 around y-axis;
 	wait-for-turn launcher2 around x-axis;
 	start-script abaim();
 	return (1);
@@ -247,7 +242,7 @@ FireTertiary()
 
 AimFromPrimary(piecenum)
 {
-	piecenum = plate;
+	piecenum = flare12;
 }
 
 AimFromTertiary(piecenum)
@@ -257,7 +252,7 @@ AimFromTertiary(piecenum)
 
 QueryPrimary(piecenum)
 {
-	piecenum = fp11 + gun_1;
+	piecenum = flare11 + gun_1;
 }
 
 QueryTertiary(piecenum)
@@ -278,12 +273,9 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY | BITMAP1;
 		explode door1 type BITMAPONLY | BITMAP2;
 		explode door2 type BITMAPONLY | BITMAP3;
-		explode flare1 type BITMAPONLY | BITMAP4;
-		explode flare2 type BITMAPONLY | BITMAP5;
+		explode flare21 type BITMAPONLY | BITMAP4;
+		explode flare22 type BITMAPONLY | BITMAP5;
 		explode launcher2 type BITMAPONLY | BITMAP2;
-		explode plate type BITMAPONLY | BITMAP3;
-		explode wake1 type BITMAPONLY | BITMAP3;
-		explode wake2 type BITMAPONLY | BITMAP4;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -292,12 +284,9 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY | BITMAP1;
 		explode door1 type BITMAPONLY | BITMAP2;
 		explode door2 type BITMAPONLY | BITMAP3;
-		explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+		explode flare21 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+		explode flare22 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 		explode launcher2 type SHATTER | BITMAP2;
-		explode plate type BITMAPONLY | BITMAP3;
-		explode wake1 type FALL | EXPLODE_ON_HIT | BITMAP3;
-		explode wake2 type FALL | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -306,22 +295,16 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY | BITMAP1;
 		explode door1 type BITMAPONLY | BITMAP2;
 		explode door2 type BITMAPONLY | BITMAP3;
-		explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+		explode flare21 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+		explode flare22 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 		explode launcher2 type SHATTER | BITMAP2;
-		explode plate type BITMAPONLY | BITMAP3;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
 	explode door1 type BITMAPONLY | BITMAP2;
 	explode door2 type BITMAPONLY | BITMAP3;
-	explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+	explode flare21 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+	explode flare22 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 	explode launcher2 type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode plate type BITMAPONLY | BITMAP3;
-	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 }

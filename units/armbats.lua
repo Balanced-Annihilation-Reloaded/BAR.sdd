@@ -30,13 +30,17 @@ return {
 		movementclass = "DBOAT6",
 		name = "Millennium",
 		nochasecategory = "VTOL",
-		objectname = "ARMBATS",
+		objectname = "ARMBATS.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 455,
 		turnrate = 310,
-		waterline = 12,
+		waterline = 0,
 		windgenerator = 0.0010000000474975,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

@@ -29,6 +29,7 @@ return {
 		name = "A.K.",
 		nochasecategory = "VTOL",
 		objectname = "CORAK.s3o",
+		script= "corak.cob",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 500,

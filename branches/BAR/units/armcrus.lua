@@ -31,15 +31,19 @@ return {
 		movementclass = "BOAT5",
 		name = "Conqueror",
 		nochasecategory = "VTOL",
-		objectname = "ARMCRUS",
+		objectname = "ARMCRUS.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 572,
 		sonardistance = 375,
 		turninplace = 0,
 		turnrate = 454,
-		waterline = 5,
+		waterline = 0,
 		windgenerator = 0.0010000000474975,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

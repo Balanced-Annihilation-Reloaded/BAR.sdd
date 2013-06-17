@@ -37,7 +37,7 @@ return {
 		sightdistance = 475,
 		turninplace = 0,
 		turnrate = 416,
-		waterline = 4,
+		waterline = 0,
 		windgenerator = 0.0010000000474975,
 		customparams = {
 			normalmaps = "yes",

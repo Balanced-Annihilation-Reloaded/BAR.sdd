@@ -30,10 +30,10 @@ activatescr()
 /*     0:*/{
 /*     2:*/	if( TRUE )
 /*     4:*/	{
-/*     6:*/		turn door1 to x-axis <0.000000> now;
-/*     d:*/		turn door1 to x-axis <40> speed <73.000000>;
-/*    12:*/		turn door2 to x-axis <0.000000> now;
-/*    19:*/		turn door2 to x-axis <-40> speed <74.000000>;
+/*     6:*/		turn door1 to z-axis <0.000000> now;
+/*     d:*/		turn door1 to z-axis <40> speed <73.000000>;
+/*    12:*/		turn door2 to z-axis <0.000000> now;
+/*    19:*/		turn door2 to z-axis <-40> speed <74.000000>;
 /*    36:*/		sleep 768;
 /*    3e:*/	}
 
@@ -45,10 +45,10 @@ deactivatescr()
 /*    44:*/{
 /*    46:*/	if( TRUE )
 /*    48:*/	{
-/*    4a:*/		turn door1 to x-axis <-90> now;
-/*    51:*/		turn door1 to x-axis <0.000000> speed <73.000000>;
-/*    56:*/		turn door2 to x-axis <90> now;
-/*    5d:*/		turn door2 to x-axis <0.000000> speed <74.000000>;
+/*    4a:*/		turn door1 to z-axis <-90> now;
+/*    51:*/		turn door1 to z-axis <0.000000> speed <73.000000>;
+/*    56:*/		turn door2 to z-axis <90> now;
+/*    5d:*/		turn door2 to z-axis <0.000000> speed <74.000000>;
 /*    7a:*/		sleep 762;
 /*    7b:*/	}
 

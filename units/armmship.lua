@@ -31,15 +31,19 @@ return {
 		movementclass = "BOAT5",
 		name = "Ranger",
 		nochasecategory = "VTOL",
-		objectname = "ARMMSHIP",
+		objectname = "ARMMSHIP.s3o",
 		radardistance = 1400,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 318.5,
 		turninplace = 0,
 		turnrate = 347,
-		waterline = 5,
+		waterline = 0,
 		windgenerator = 0.0010000000474975,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

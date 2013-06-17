@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, fork, wake1, wake2, ground;
+piece  base, fork1, fork2, ground;
 
 static-var  Static_Var_1, oldHead;
 
@@ -69,10 +69,7 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 Create()
 {
-	dont-cache fork;
-	dont-shade fork;
-	dont-cache base;
-	dont-shade base;
+
 	start-script SmokeUnit();
 	Static_Var_1 = 0;
 }
@@ -84,12 +81,14 @@ Activate()
 		set ACTIVATION to 0;
 		return (0);
 	}
-	spin fork around z-axis speed <100.021978>;
+	spin fork1 around z-axis speed <100.021978>;
+	spin fork2 around z-axis speed <100.021978>;
 }
 
 Deactivate()
 {
-	stop-spin fork around z-axis;
+	stop-spin fork1 around z-axis;
+	stop-spin fork2 around z-axis;
 }
 
 HitByWeapon(anglex, anglez)
@@ -130,8 +129,8 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from wake1;
-		emit-sfx 2 from wake2;
+		emit-sfx 2 from base;
+		emit-sfx 2 from base;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 12000 / waketime;
@@ -156,32 +155,32 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
-		explode fork type SHATTER | BITMAP2;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+		explode fork1 type SHATTER | BITMAP2;
+		explode fork2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode ground type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
-		explode fork type SHATTER | BITMAP2;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+		explode fork1 type SHATTER | BITMAP2;
+		explode fork2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode ground type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
-		explode fork type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+		explode fork1 type SHATTER | EXPLODE_ON_HIT | BITMAP2;
+		explode fork2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+		explode ground type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
-	explode fork type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+	explode fork1 type SHATTER | EXPLODE_ON_HIT | BITMAP2;
+	explode fork2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	explode ground type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 }

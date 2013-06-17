@@ -33,17 +33,19 @@ return {
 		minwaterdepth = 15,
 		movementclass = "DBOAT6",
 		name = "Epoch",
-		objectname = "ASEADRAGON",
+		objectname = "ASEADRAGON.s3o",
 		radardistance = 1530,
 		radaremitheight = 52,
 		seismicsignature = 0,
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 689,
 		turnrate = 272,
-		waterline = 13,
+		waterline = 0,
 		windgenerator = 0.0010000000474975,
 		customparams = {
 			paralyzemultiplier = 0,
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

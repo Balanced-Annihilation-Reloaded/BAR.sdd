@@ -40,7 +40,7 @@ return {
 		movementclass = "DBOAT6",
 		name = "Colossus",
 		nochasecategory = "ALL",
-		objectname = "ARMCARRY",
+		objectname = "ARMCARRY.s3o",
 		radardistance = 2950,
 		radaremitheight = 56,
 		seismicsignature = 0,
@@ -49,9 +49,13 @@ return {
 		sonardistance = 760,
 		terraformspeed = 5000,
 		turnrate = 210,
-		waterline = 7,
+		waterline = 0,
 		windgenerator = 0.0010000000474975,
 		workertime = 1000,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

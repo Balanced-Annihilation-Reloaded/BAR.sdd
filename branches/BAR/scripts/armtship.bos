@@ -3,8 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turret, arm1, arm2, arm3, link, door1, door2,
-       wake1, wake2, magnet, arm4, arm5, arm6, arm7, ground;
+piece  base, turret, arm1, arm2, arm3, link, door1, door2, magnet, arm4, arm5, arm6, arm7, ground;
 
 static-var  Static_Var_1, Static_Var_2, Static_Var_3, Static_Var_4, oldHead;
 
@@ -93,8 +92,8 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from wake1;
-		emit-sfx 2 from wake2;
+		emit-sfx 2 from base;
+		emit-sfx 2 from base;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 10000 / waketime;
@@ -139,7 +138,7 @@ BoomCalc(posxz, posy)
 BoomExtend()
 {
 	start-script StartDoorOpen();
-	turn turret to y-axis Static_Var_2 speed <160.000000>;
+	turn turret to y-axis <180>-Static_Var_2 speed <160.000000>;
 	turn magnet to x-axis Static_Var_3 speed <80.000000>;
 	turn arm1 to x-axis <0.000000> - Static_Var_3 speed <80.000000>;
 	move arm2 to z-axis Static_Var_1 / [0.000037] speed [60.000000];
@@ -241,8 +240,6 @@ Killed(severity, corpsetype)
 		explode door2 type BITMAPONLY | BITMAP5;
 		explode link type BITMAPONLY | BITMAP1;
 		explode turret type BITMAPONLY | BITMAP2;
-		explode wake1 type BITMAPONLY | BITMAP3;
-		explode wake2 type BITMAPONLY | BITMAP4;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -256,8 +253,6 @@ Killed(severity, corpsetype)
 		explode door2 type BITMAPONLY | BITMAP5;
 		explode link type FALL | BITMAP1;
 		explode turret type BITMAPONLY | BITMAP2;
-		explode wake1 type FALL | BITMAP3;
-		explode wake2 type FALL | BITMAP4;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -271,8 +266,6 @@ Killed(severity, corpsetype)
 		explode door2 type BITMAPONLY | BITMAP5;
 		explode link type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 		explode turret type BITMAPONLY | BITMAP2;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	corpsetype = 3;
@@ -284,6 +277,4 @@ Killed(severity, corpsetype)
 	explode door2 type BITMAPONLY | BITMAP5;
 	explode link type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode turret type BITMAPONLY | BITMAP2;
-	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 }

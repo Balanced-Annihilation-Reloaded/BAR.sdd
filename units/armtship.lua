@@ -31,15 +31,19 @@ return {
 		movementclass = "DBOAT6",
 		name = "Hulk",
 		nochasecategory = "ALL",
-		objectname = "ARMTSHIP",
+		objectname = "ARMTSHIP.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 325,
 		transportcapacity = 40,
 		transportsize = 4,
 		turnrate = 361,
-		waterline = 13,
+		waterline = 0,
 		windgenerator = 0.0010000000474975,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

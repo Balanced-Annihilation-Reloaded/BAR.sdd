@@ -3,14 +3,14 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, landpad1, landpad2, radar, wake1, wake2, door1, door2,
-       door3, door4, anti, ground;
+piece  base, landpad1, landpad2, radar, door1, door2, antiflare, ground;
 
 static-var  Static_Var_1, oldHead;
 
 // Signal definitions
 #define SIG_MOVE			2
 
+#define SIG_AIM_2			4
 
 SetDirection(heading)
 {
@@ -38,6 +38,14 @@ RockOnWaves()
 		rockDir = 0 - rockDir;
 		rockAng = rockAng + rockDir + rockDir;
 	}
+}
+RestoreAfterDelay()
+{
+	sleep 3000;
+	set-signal-mask 0;
+	turn door1 to z-axis <0> speed <70>;
+	turn door2 to z-axis <0> speed <70>;
+	wait-for-turn door1 around z-axis;
 }
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
@@ -105,8 +113,8 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from wake1;
-		emit-sfx 2 from wake2;
+		emit-sfx 2 from base;
+		emit-sfx 2 from base;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 12000 / waketime;
@@ -139,7 +147,14 @@ QueryLandingPad(Func_Var_1, Func_Var_2)
 
 AimPrimary(heading, pitch)
 {
-	return (1);
+
+	signal SIG_AIM_2;
+	set-signal-mask SIG_AIM_2;
+	turn door1 to z-axis <-40> speed <70>;
+	turn door2 to z-axis <40> speed <70>;
+	wait-for-turn door1 around z-axis;
+	start-script RestoreAfterDelay();
+	return(1);
 }
 
 FirePrimary()
@@ -149,12 +164,12 @@ FirePrimary()
 
 QueryPrimary(piecenum)
 {
-	piecenum = anti;
+	piecenum = antiflare;
 }
 
 AimFromPrimary(piecenum)
 {
-	piecenum = anti;
+	piecenum = antiflare;
 }
 
 Killed(severity, corpsetype)
@@ -166,12 +181,10 @@ Killed(severity, corpsetype)
 		explode landpad1 type BITMAPONLY | BITMAP2;
 		explode landpad2 type BITMAPONLY | BITMAP3;
 		explode radar type BITMAPONLY | BITMAP4;
-		explode wake1 type BITMAPONLY | BITMAP5;
-		explode wake2 type BITMAPONLY | BITMAP1;
+		explode base type BITMAPONLY | BITMAP5;
+		explode base type BITMAPONLY | BITMAP1;
 		explode door1 type BITMAPONLY | BITMAP4;
 		explode door2 type BITMAPONLY | BITMAP3;
-		explode door3 type BITMAPONLY | BITMAP4;
-		explode door4 type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -181,12 +194,10 @@ Killed(severity, corpsetype)
 		explode landpad1 type FALL | EXPLODE_ON_HIT | BITMAP2;
 		explode landpad2 type FALL | EXPLODE_ON_HIT | BITMAP3;
 		explode radar type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-		explode wake1 type FALL | EXPLODE_ON_HIT | BITMAP5;
-		explode wake2 type FALL | EXPLODE_ON_HIT | BITMAP1;
+		explode base type FALL | EXPLODE_ON_HIT | BITMAP5;
+		explode base type FALL | EXPLODE_ON_HIT | BITMAP1;
 		explode door1 type FALL | EXPLODE_ON_HIT | BITMAP3;
 		explode door2 type FALL | EXPLODE_ON_HIT | BITMAP4;
-		explode door3 type FALL | EXPLODE_ON_HIT | BITMAP3;
-		explode door4 type FALL | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -196,12 +207,10 @@ Killed(severity, corpsetype)
 		explode landpad1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		explode landpad2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		explode radar type SHATTER | BITMAP4;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+		explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+		explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 		explode door1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		explode door2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode door3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode door4 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		return (0);
 	}
 	corpsetype = 3;
@@ -209,10 +218,8 @@ Killed(severity, corpsetype)
 	explode landpad1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 	explode landpad2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 	explode radar type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+	explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode door1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 	explode door2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode door3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode door4 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 }

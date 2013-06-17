@@ -31,7 +31,7 @@ return {
 		movementclass = "BOAT4",
 		name = "Archer",
 		nochasecategory = "ALL",
-		objectname = "ARMAAS",
+		objectname = "ARMAAS.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 475,
@@ -39,6 +39,10 @@ return {
 		turnrate = 416,
 		waterline = 4,
 		windgenerator = 0.0010000000474975,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

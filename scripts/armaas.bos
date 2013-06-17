@@ -3,8 +3,8 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  flare1, flare2, missileemitt1, missileemitt2, base, missilebox1, missilebox2, turretgun1,
-       turretgun2, wake1, wake2, gunbarrel1, gunbarrel2, ground;
+piece  flare1, flare2, missileflare1, missileflare2, base, missilebox1, missilebox2, turretgun1,
+       turretgun2, gunbarrel1, gunbarrel2, ground;
 
 static-var  gun_3, restore_delay, gun_2, oldHead;
 
@@ -118,8 +118,8 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 4 from wake1;
-		emit-sfx 2 from wake2;
+		emit-sfx 4 from base;
+		emit-sfx 2 from base;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 12000 / waketime;
@@ -217,7 +217,7 @@ QueryPrimary(piecenum)
 
 QuerySecondary(piecenum)
 {
-	piecenum = missileemitt1 + gun_2;
+	piecenum = missileflare1 + gun_2;
 }
 
 QueryTertiary(piecenum)
@@ -261,8 +261,8 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY | BITMAP1;
 		explode missilebox1 type BITMAPONLY | BITMAP2;
 		explode missilebox2 type BITMAPONLY | BITMAP3;
-		explode missileemitt1 type BITMAPONLY | BITMAP4;
-		explode missileemitt2 type BITMAPONLY | BITMAP5;
+		explode missileflare1 type BITMAPONLY | BITMAP4;
+		explode missileflare2 type BITMAPONLY | BITMAP5;
 		explode flare1 type BITMAPONLY | BITMAP1;
 		explode flare2 type BITMAPONLY | BITMAP2;
 		explode gunbarrel1 type BITMAPONLY | BITMAP3;
@@ -277,8 +277,8 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY | BITMAP1;
 		explode missilebox1 type SHATTER | BITMAP2;
 		explode missilebox2 type BITMAPONLY | BITMAP3;
-		explode missileemitt1 type FALL | BITMAP4;
-		explode missileemitt2 type FALL | BITMAP5;
+		explode missileflare1 type FALL | BITMAP4;
+		explode missileflare2 type FALL | BITMAP5;
 		explode flare1 type FALL | BITMAP1;
 		explode flare2 type FALL | BITMAP2;
 		explode gunbarrel1 type BITMAPONLY | BITMAP3;
@@ -293,8 +293,8 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY | BITMAP1;
 		explode missilebox1 type SHATTER | BITMAP2;
 		explode missilebox2 type BITMAPONLY | BITMAP3;
-		explode missileemitt1 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP4;
-		explode missileemitt2 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP5;
+		explode missileflare1 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP4;
+		explode missileflare2 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP5;
 		explode flare1 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP1;
 		explode flare2 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
 		explode gunbarrel1 type BITMAPONLY | BITMAP3;
@@ -307,8 +307,8 @@ Killed(severity, corpsetype)
 	explode base type BITMAPONLY | BITMAP1;
 	explode missilebox1 type SHATTER | EXPLODE_ON_HIT | BITMAP2;
 	explode missilebox2 type BITMAPONLY | BITMAP3;
-	explode missileemitt1 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP4;
-	explode missileemitt2 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP5;
+	explode missileflare1 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP4;
+	explode missileflare2 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP5;
 	explode flare1 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP1;
 	explode flare2 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
 	explode gunbarrel1 type BITMAPONLY | BITMAP3;

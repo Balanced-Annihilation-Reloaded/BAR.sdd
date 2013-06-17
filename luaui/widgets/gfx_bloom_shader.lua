@@ -539,10 +539,10 @@ end
 
 local function Bloom()
 
-	bloomin=bloomin+1
-	if (bloomin%100==0) then
-		Spring.Echo('Blooming!!!',bloomin)
-	end
+	-- bloomin=bloomin+1
+	-- if (bloomin%100==0) then
+		-- Spring.Echo('Blooming!!!',bloomin)
+	-- end
 	gl.Color(1, 1, 1, 1)
 	local k=1
 	local l=-1
@@ -613,31 +613,33 @@ function widget:DrawScreenEffects() Bloom() end
 
 
 function widget:TextCommand(command)
-	if (string.find(command, "+illumthres") == 1) then illumThreshold = illumThreshold + 0.02 end
-	if (string.find(command, "-illumthres") == 1) then illumThreshold = illumThreshold - 0.02 end
+	local mycommand=false
+	if (string.find(command, "+illumthres") == 1) then illumThreshold = illumThreshold + 0.02 ; mycommand=true end
+	if (string.find(command, "-illumthres") == 1) then illumThreshold = illumThreshold - 0.02 ; mycommand=true end
 
-	if (string.find(command, "+glowamplif") == 1) then glowAmplifier = glowAmplifier + 0.05 end
-	if (string.find(command, "-glowamplif") == 1) then glowAmplifier = glowAmplifier - 0.05 end
+	if (string.find(command, "+glowamplif") == 1) then glowAmplifier = glowAmplifier + 0.05 ; mycommand=true end
+	if (string.find(command, "-glowamplif") == 1) then glowAmplifier = glowAmplifier - 0.05 ; mycommand=true end
 
-	if (string.find(command, "+bluramplif") == 1) then blurAmplifier = blurAmplifier + 0.05 end
-	if (string.find(command, "-bluramplif") == 1) then blurAmplifier = blurAmplifier - 0.05 end
+	if (string.find(command, "+bluramplif") == 1) then blurAmplifier = blurAmplifier + 0.05 ; mycommand=true end
+	if (string.find(command, "-bluramplif") == 1) then blurAmplifier = blurAmplifier - 0.05 ; mycommand=true end
 
-	if (string.find(command, "+blurpasses") == 1) then blurPasses = blurPasses + 1 end
-	if (string.find(command, "-blurpasses") == 1) then blurPasses = blurPasses - 1 end
+	if (string.find(command, "+blurpasses") == 1) then blurPasses = blurPasses + 1; mycommand=true  end
+	if (string.find(command, "-blurpasses") == 1) then blurPasses = blurPasses - 1 ; mycommand=true end
 
-	if (string.find(command, "+dilatepass") == 1) then dilatePass = 1 end
-	if (string.find(command, "-dilatepass") == 1) then dilatePass = 0 end
+	if (string.find(command, "+dilatepass") == 1) then dilatePass = 1 ; mycommand=true end
+	if (string.find(command, "-dilatepass") == 1) then dilatePass = 0 ; mycommand=true end
 
-	if (string.find(command, "+bloomdebug") == 1) then dbgDraw = 1 end
-	if (string.find(command, "-bloomdebug") == 1) then dbgDraw = 0 end
+	if (string.find(command, "+bloomdebug") == 1) then dbgDraw = 1; mycommand=true  end
+	if (string.find(command, "-bloomdebug") == 1) then dbgDraw = 0 ; mycommand=true end
 
 	illumThreshold = math.max(0.0, math.min(1.0, illumThreshold))
 	blurPasses = math.max(0, blurPasses)
-
-	Spring.Echo("[BloomShader::TextCommand]")
-	Spring.Echo("   illumThreshold: " .. illumThreshold)
-	Spring.Echo("   glowAmplifier:  " .. glowAmplifier)
-	Spring.Echo("   blurAmplifier:  " .. blurAmplifier)
-	Spring.Echo("   blurPasses:     " .. blurPasses)
-	Spring.Echo("   dilatePass:     " .. dilatePass)
+	if (mycommand) then 
+		Spring.Echo("[BloomShader::TextCommand]")
+		Spring.Echo("   illumThreshold: " .. illumThreshold)
+		Spring.Echo("   glowAmplifier:  " .. glowAmplifier)
+		Spring.Echo("   blurAmplifier:  " .. blurAmplifier)
+		Spring.Echo("   blurPasses:     " .. blurPasses)
+		Spring.Echo("   dilatePass:     " .. dilatePass)
+	end
 end

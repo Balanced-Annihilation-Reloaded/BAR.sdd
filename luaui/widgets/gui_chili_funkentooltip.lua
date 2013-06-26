@@ -18,19 +18,42 @@ local tooltip = ''
 local spTraceScreenRay          = Spring.TraceScreenRay
 local spGetMouseState           = Spring.GetMouseState
 local spGetUnitTooltip          = Spring.GetUnitTooltip
+local spGetUnitResources        = Spring.GetUnitResources
 local screenWidth, screenHeight = Spring.GetWindowGeometry()
 
 -----------------------------------
 local function initWindow()
- tipWindow = Chili.Window:New{parent = screen0, width = 300, height = 75, padding = {5,0,0,0},minHeight=1}
+ tipWindow = Chili.Window:New{parent = screen0, skin = 'Flat', width = 300, height = 75, padding = {5,0,0,0},minHeight=1}
  tip = Chili.TextBox:New{parent = tipWindow, x = 0, y = 0, right = 0, bottom = 0,margin = {0,0,0,0}}
+end
+-----------------------------------
+local function getUnitTooltip(ID)
+ local tooltip = spGetUnitTooltip(ID)
+ local metalMake, metalUse, energyMake, energyUse = spGetUnitResources(ID)
+ 
+ local metal = ((metalMake or 0) - (MetalUse or 0))
+ local energy = ((energyMake or 0) - (energyUse or 0))
+ 
+ if metal < 0 then metal = '\255\255\127\0 -'..metal
+ elseif metal > 0 then metal = '\255\127\255\0 +'..metal end
+ 
+ if energy < 0 then energy = '\255\255\127\0 -'..energy
+ elseif energy > 0 then energy = '\255\127\255\0 +'..energy end
+ 
+ tooltip = tooltip..'\nMetal: '..metal..'/s\b\nEnergy: '..energy..'/s'
+ return tooltip
+end
+-----------------------------------
+local function getFeatureTooltip()
+ 
 end
 -----------------------------------
 local function getTooltip()
  mousePosX, mousePosY   = spGetMouseState()
  local typeOver, ID     = spTraceScreenRay(mousePosX, mousePosY)
  if screen0.currentTooltip then tooltip = screen0.currentTooltip
- elseif typeOver == 'unit' then tooltip = spGetUnitTooltip(ID)
+ elseif typeOver == 'unit' then tooltip = getUnitTooltip(ID)
+ elseif typeOver == 'feature' then tooltip = getFeatureTooltip(ID)
  else                           tooltip = '' 
  end
 end

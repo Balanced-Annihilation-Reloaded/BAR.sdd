@@ -22,12 +22,16 @@ return {
 		maxdamage = 1450,
 		minwaterdepth = 1,
 		name = "Harpoon",
-		objectname = "ARMTL",
+		objectname = "ARMTL.s3o",
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 455,
 		waterline = 13,
 		yardmap = "wwwwwwwww",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

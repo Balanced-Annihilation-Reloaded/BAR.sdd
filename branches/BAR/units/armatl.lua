@@ -22,12 +22,16 @@ return {
 		maxdamage = 1520,
 		minwaterdepth = 12,
 		name = "Moray",
-		objectname = "ARMATL",
+		objectname = "ARMATL.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 585,
 		waterline = 30,
 		yardmap = "oooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

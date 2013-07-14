@@ -32,7 +32,7 @@ return {
 		minwaterdepth = 0,
 		name = "Mega NS",
 		nochasecategory = "VTOL",
-		objectname = "ARMFMINE3",
+		objectname = "ARMFMINE3.s3o",
 		seismicsignature = 0,
 		selfdestructas = "FMINE_HEAVY",
 		selfdestructcountdown = 0,

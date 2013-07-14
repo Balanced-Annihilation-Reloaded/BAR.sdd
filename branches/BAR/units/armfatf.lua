@@ -24,16 +24,19 @@ return {
 		idletime = 1800,
 		istargetingupgrade = true,
 		maxdamage = 1451,
-		maxslope = 10,
 		minwaterdepth = 30,
 		name = "Floating Targeting Facility",
-		objectname = "ARMFATF",
+		objectname = "ARMFATF.s3o",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 273,
-		waterline = 3,
+		waterline = 0,
 		yardmap = "wwwwwwwwwwwwwwww",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

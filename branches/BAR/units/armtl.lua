@@ -26,7 +26,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 455,
-		waterline = 13,
+		waterline = 0,
 		yardmap = "wwwwwwwww",
 		customparams = {
 			normalmaps = "yes",

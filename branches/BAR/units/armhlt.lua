@@ -30,12 +30,16 @@ return {
 		maxwaterdepth = 0,
 		name = "Sentinel",
 		nochasecategory = "MOBILE",
-		objectname = "ARMHLT",
+		objectname = "ARMHLT.s3o",
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 494,
 		usebuildinggrounddecal = true,
 		yardmap = "oooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

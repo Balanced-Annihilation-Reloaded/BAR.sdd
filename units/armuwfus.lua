@@ -18,7 +18,7 @@ return {
 		energymake = 1200,
 		energystorage = 2500,
 		explodeas = "ATOMIC_BLAST",
-		footprintx = 5,
+		footprintx = 6,
 		footprintz = 4,
 		icontype = "building",
 		idleautoheal = 5,
@@ -27,12 +27,16 @@ return {
 		maxslope = 10,
 		minwaterdepth = 25,
 		name = "Underwater Fusion Plant",
-		objectname = "ARMUWFUS",
+		objectname = "ARMUWFUS.s3o",
 		seismicsignature = 0,
 		selfdestructas = "MINE_NUKE",
 		sightdistance = 143,
 		usebuildinggrounddecal = true,
-		yardmap = "oooooooooooooooooooo",
+		yardmap = "oooooooooooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

@@ -25,12 +25,16 @@ return {
 		metalstorage = 3000,
 		minwaterdepth = 31,
 		name = "Underwater Metal Storage",
-		objectname = "ARMUWMS",
+		objectname = "ARMUWMS.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 182,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

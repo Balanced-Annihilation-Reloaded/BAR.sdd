@@ -27,7 +27,7 @@ return {
 		minwaterdepth = 2,
 		name = "Stingray",
 		nochasecategory = "MOBILE",
-		objectname = "ARMFHLT",
+		objectname = "ARMFHLT.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 624,

@@ -27,11 +27,11 @@ return {
 		minwaterdepth = 2,
 		name = "Sentry",
 		nochasecategory = "ALL",
-		objectname = "ARMFRT",
+		objectname = "ARMFRT.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 468,
-		waterline = 0.30000001192093,
+		waterline = 0,
 		yardmap = "wwwwwwwwwwwwwwww",
 		featuredefs = {
 			dead = {

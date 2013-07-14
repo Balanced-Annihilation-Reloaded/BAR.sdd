@@ -3,12 +3,33 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, flare, turret, barrel, gun;
+piece  base, flare, turret, sleeve, gun, barrel;
 
 static-var  gun_1;
 
 // Signal definitions
 #define SIG_AIM				2
+
+
+
+RockOnWaves()
+{
+	var rockDir, rockAng, rockSpeed;
+	rockDir = <-0.1>;
+	rockAng = <-0.1>;
+	while( TRUE )
+	{
+		while( get ABS(rockAng) < <1.31> )
+		{
+			rockSpeed = <1.45> - get ABS(rockAng);
+			turn base to x-axis rockAng speed rockSpeed*5;
+			wait-for-turn base around x-axis;
+			rockAng = rockAng + rockDir;
+		}
+		rockDir = 0 - rockDir;
+		rockAng = rockAng + rockDir + rockDir;
+	}
+}
 
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
@@ -17,6 +38,7 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	{
 		sleep 400;
 	}
+	start-script RockOnWaves();
 	while( TRUE )
 	{
 		healthpercent = get HEALTH;
@@ -39,7 +61,6 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	return (0);
 	// Build by COBBLER Ver4.0 Copyright @1998 DIGITAL CONCEPT SOFTWARE (MANU@inext.fr) / http://www.annihilationcenter.com/DCS/  
 }
-
 RockUnit(anglex, anglez)
 {
 	turn base to x-axis anglex speed <15.000000>;
@@ -63,12 +84,12 @@ RockUnit(anglex, anglez)
 Create()
 {
 	hide flare;
-	dont-cache barrel;
+	dont-cache sleeve;
 	dont-cache base;
 	dont-cache gun;
 	dont-cache turret;
 	dont-cache flare;
-	dont-shade barrel;
+	dont-shade sleeve;
 	dont-shade base;
 	dont-shade gun;
 	dont-shade turret;
@@ -84,19 +105,19 @@ AimPrimary(heading, pitch)
 	set-signal-mask SIG_AIM;
 	if( gun_1 == 1 )
 	{
-		turn barrel to z-axis <0.000000> speed <400.000000>;
+		turn sleeve to z-axis <0.000000> speed <400.000000>;
 	}
 	if( gun_1 == 2 )
 	{
-		turn barrel to z-axis <120.027473> speed <400.000000>;
+		turn sleeve to z-axis <120.027473> speed <400.000000>;
 	}
 	if( gun_1 == 3 )
 	{
-		turn barrel to z-axis <-120.027473> speed <400.000000>;
+		turn sleeve to z-axis <-120.027473> speed <400.000000>;
 	}
 	turn turret to y-axis heading speed <450.000000>;
 	turn gun to x-axis <0.000000> - pitch speed <450.000000>;
-	wait-for-turn barrel around z-axis;
+	wait-for-turn sleeve around z-axis;
 	wait-for-turn turret around y-axis;
 	wait-for-turn gun around x-axis;
 	return (1);
@@ -135,7 +156,7 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode barrel type BITMAPONLY | BITMAP1;
+		explode sleeve type BITMAPONLY | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		explode flare type BITMAPONLY | BITMAP3;
 		explode gun type BITMAPONLY | BITMAP4;
@@ -145,7 +166,7 @@ Killed(severity, corpsetype)
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode barrel type FALL | BITMAP1;
+		explode sleeve type FALL | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		explode flare type FALL | BITMAP3;
 		explode gun type SHATTER | BITMAP4;
@@ -155,7 +176,7 @@ Killed(severity, corpsetype)
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode barrel type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+		explode sleeve type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
 		explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		explode gun type SHATTER | BITMAP4;
@@ -163,7 +184,7 @@ Killed(severity, corpsetype)
 		return (0);
 	}
 	corpsetype = 3;
-	explode barrel type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode sleeve type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode base type BITMAPONLY | BITMAP2;
 	explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 	explode gun type SHATTER | EXPLODE_ON_HIT | BITMAP4;

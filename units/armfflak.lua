@@ -24,12 +24,16 @@ return {
 		maxdamage = 1730,
 		minwaterdepth = 5,
 		name = "Flakker NS",
-		objectname = "ARMFFLAK",
+		objectname = "ARMFFLAK.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 550,
 		waterline = 0.30000001192093,
 		yardmap = "wwwwwwwww",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

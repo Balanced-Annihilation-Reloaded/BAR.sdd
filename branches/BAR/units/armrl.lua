@@ -29,12 +29,16 @@ return {
 		maxwaterdepth = 0,
 		name = "Defender",
 		nochasecategory = "ALL",
-		objectname = "ARMRL",
+		objectname = "ARMRL.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 455,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

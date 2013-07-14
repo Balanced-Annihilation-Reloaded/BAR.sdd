@@ -22,14 +22,18 @@ return {
 		maxslope = 10,
 		minwaterdepth = 20,
 		name = "Tidal Generator",
-		objectname = "ARMTIDE",
+		objectname = "ARMTIDE.s3o",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 130,
 		tidalgenerator = 1,
-		waterline = 10,
+		waterline = 0,
 		yardmap = "wwwwwwwww",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

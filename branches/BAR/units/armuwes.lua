@@ -25,12 +25,16 @@ return {
 		maxslope = 20,
 		minwaterdepth = 30,
 		name = "Underwater Energy Storage",
-		objectname = "ARMUWES",
+		objectname = "ARMUWES.s3o",
 		seismicsignature = 0,
 		selfdestructas = "ESTOR_BUILDING",
 		sightdistance = 182,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

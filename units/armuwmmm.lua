@@ -25,12 +25,16 @@ return {
 		maxslope = 16,
 		minwaterdepth = 15,
 		name = "Underwater Moho Energy Converter",
-		objectname = "ARMUWMMM",
+		objectname = "ARMUWMMM.s3o",
 		seismicsignature = 0,
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 156,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

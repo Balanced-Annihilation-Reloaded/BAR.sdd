@@ -3,11 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  ground, base, lid1, lid2, lid3, lid4, bubble1, bubble2,
-       bubble3, bubble4, bubble5, housing, dome, building, pipe1, pipe2,
-       pipe3, stack1, stack2, bubble6, bubble7;
-
-static-var  Static_Var_1;
+piece  base, cover1, cover2;
 
 #define WHAT_DO 1024
 
@@ -15,103 +11,61 @@ activatescr()
 {
 	if( TRUE )
 	{
-		emit-sfx 259 from bubble3;
-		turn lid2 to x-axis <0.598901> now;
-		turn lid2 to x-axis <30.005495> speed <19.000000>;
-		turn lid3 to x-axis <0.598901> now;
-		turn lid3 to x-axis <-26.005495> speed <17.000000>;
-		sleep 772;
-		emit-sfx 259 from bubble2;
-		emit-sfx 259 from bubble4;
-		sleep 772;
+		turn cover1 to y-axis <-45> speed <60>;
+		turn cover2 to y-axis <45> speed <60>;
+		sleep 1603;
 	}
-	if( TRUE )
-	{
-		emit-sfx 259 from bubble1;
-		emit-sfx 259 from bubble5;
-		turn lid1 to x-axis <35.005495> speed <22.000000>;
-		turn lid4 to x-axis <-30.005495> speed <19.000000>;
-		turn lid2 to x-axis <60.010989> speed <19.000000>;
-		turn lid3 to x-axis <-74.016484> speed <30.000000>;
-		sleep 574;
-	}
-	if( TRUE )
-	{
-		turn dome to x-axis <0.000000> now;
-		turn dome to x-axis <180.043956> speed <112.000000>;
-	}
-	sleep 774;
-	return (0);
-	// Build by COBBLER Ver4.0 Copyright @1998 DIGITAL CONCEPT SOFTWARE (MANU@inext.fr) / http://www.annihilationcenter.com/DCS/  
+	sleep 73;
 }
 
 deactivatescr()
 {
 	if( TRUE )
 	{
-		turn dome to x-axis <180.280220> now;
-		turn dome to x-axis <0.000000> speed <112.000000>;
-		sleep 387;
+		turn cover1 to y-axis <0> speed <60>;
+		turn cover2 to y-axis <0> speed <60>;
+		sleep 1603;
 	}
-	if( TRUE )
-	{
-		turn lid1 to x-axis <35.263736> now;
-		turn lid4 to x-axis <-30.406593> now;
-		turn lid2 to x-axis <60.813187> now;
-		turn lid3 to x-axis <-74.197802> now;
-		sleep 683;
-	}
-	if( TRUE )
-	{
-		turn lid1 to x-axis <0.000000> speed <25.000000>;
-		turn lid4 to x-axis <0.000000> speed <22.000000>;
-		turn lid2 to x-axis <30.005495> speed <22.000000>;
-		turn lid3 to x-axis <-26.005495> speed <34.000000>;
-		sleep 1374;
-	}
-	if( TRUE )
-	{
-		turn lid2 to x-axis <0.000000> speed <21.000000>;
-		turn lid3 to x-axis <0.000000> speed <20.000000>;
-		sleep 684;
-	}
-	sleep 688;
+	sleep 73;
 }
 
-BubbleStacks()
+SmokeUnit(healthpercent, sleeptime, smoketype)
 {
-	signal 4;
-	set-signal-mask 4;
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
 	while( TRUE )
 	{
-		emit-sfx 259 from bubble6;
-		emit-sfx 259 from bubble7;
-		sleep 1000;
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
 	}
 }
 
 Go()
 {
-	dont-cache lid1;
-	dont-cache lid2;
-	dont-cache lid3;
-	dont-cache lid4;
-	call-script activatescr();
-	dont-cache dome;
-	start-script BubbleStacks();
-	set ARMORED to 0;
+	start-script activatescr();
+	dont-cache cover1;
 }
 
 Stop()
 {
-	set ARMORED to 1;
-	signal 4;
 	call-script deactivatescr();
-	cache dome;
-	cache lid1;
-	cache lid2;
-	cache lid3;
-	cache lid4;
+	cache cover1;
 }
 
 static-var  mmState;
@@ -144,19 +98,12 @@ ImAMetalMaker()
 
 Create()
 {
-	dont-shade lid1;
-	dont-shade lid2;
-	dont-shade lid3;
-	dont-shade lid4;
-	dont-shade dome;
-	Static_Var_1 = 0;
-	while( get BUILD_PERCENT_LEFT )
-	{
-		sleep 1000;
-	}
-	set ARMORED to 1;
+	dont-cache cover1;
+	dont-shade cover1;
+	start-script SmokeUnit();
 	start-script ImAMetalMaker();
 }
+
 
 SweetSpot(piecenum)
 {
@@ -169,56 +116,24 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
-		explode lid1 type BITMAPONLY | BITMAP3;
-		explode lid2 type BITMAPONLY | BITMAP4;
-		explode lid3 type BITMAPONLY | BITMAP5;
-		explode lid4 type BITMAPONLY | BITMAP1;
-		explode housing type BITMAPONLY | BITMAP1;
-		explode dome type BITMAPONLY | BITMAP2;
-		explode building type BITMAPONLY | BITMAP3;
-		explode stack1 type BITMAPONLY | BITMAP4;
-		explode stack2 type BITMAPONLY | BITMAP5;
+		explode cover1 type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
-		explode lid1 type FALL | BITMAP3;
-		explode lid2 type FALL | BITMAP4;
-		explode lid3 type FALL | BITMAP5;
-		explode lid4 type FALL | BITMAP1;
-		explode housing type BITMAPONLY | BITMAP1;
-		explode dome type BITMAPONLY | BITMAP2;
-		explode building type BITMAPONLY | BITMAP3;
-		explode stack1 type BITMAPONLY | BITMAP4;
-		explode stack2 type BITMAPONLY | BITMAP5;
+		explode cover1 type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
-		explode lid1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode lid2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode lid3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode lid4 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode housing type BITMAPONLY | BITMAP1;
-		explode dome type BITMAPONLY | BITMAP2;
-		explode building type BITMAPONLY | BITMAP3;
-		explode stack1 type BITMAPONLY | BITMAP4;
-		explode stack2 type BITMAPONLY | BITMAP5;
+		explode cover1 type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
-	explode lid1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode lid2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode lid3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode lid4 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode housing type BITMAPONLY | BITMAP1;
-	explode dome type BITMAPONLY | BITMAP2;
-	explode building type BITMAPONLY | BITMAP3;
-	explode stack1 type BITMAPONLY | BITMAP4;
-	explode stack2 type BITMAPONLY | BITMAP5;
+	explode cover1 type BITMAPONLY | BITMAP2;
 }

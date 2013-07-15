@@ -3,27 +3,48 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, arms1, arms2, emit1, emit2, emit3, emit4;
+piece  base, turret, arm, head1, head2, claw1, claw2;
 
 static-var  Static_Var_1, Static_Var_2, Static_Var_3, Static_Var_4, Static_Var_5,
             Static_Var_6, Static_Var_7, statechg_DesiredState, statechg_StateChanging;
 
 // Signal definitions
 #define SIG_ACTIVATE			2
+#define SIG_WORK 4
 
 
 fixGo()
 {
-	spin arms1 around y-axis speed Static_Var_1 accelerate Static_Var_3;
-	spin arms2 around y-axis speed Static_Var_2 accelerate Static_Var_4;
+	signal SIG_WORK;
+	set-signal-mask SIG_WORK;
+	
+	spin claw1 around z-axis speed Static_Var_1 accelerate Static_Var_1/100.0;
+	spin claw2 around z-axis speed -Static_Var_1 accelerate Static_Var_1/100.0;
+	spin turret around y-axis speed Static_Var_1/3 accelerate Static_Var_1/300.0;
+	while(TRUE){
+		turn arm to z-axis <90> speed <45>;
+		move head1 to x-axis [-12] speed [6];
+		move head2 to y-axis [12] speed [6];
+		sleep 3000;
+		
+		turn arm to z-axis <0> speed <45>;
+		move head1 to x-axis [0] speed [6];
+		move head2 to y-axis [0] speed [6];
+		sleep 3000;
+	
+	}
 }
 
 Stop()
 {
-	stop-spin arms1 around y-axis decelerate Static_Var_5;
-	stop-spin arms2 around y-axis decelerate Static_Var_6;
-	wait-for-turn arms1 around y-axis;
-	wait-for-turn arms2 around y-axis;
+
+	stop-spin claw1 around z-axis decelerate Static_Var_1/100.0;
+	stop-spin claw2 around z-axis decelerate Static_Var_1/100.0;
+	stop-spin turret around y-axis decelerate Static_Var_1/300.0;
+	turn arm to z-axis <0> speed <45>;
+	move head1 to x-axis [0] speed [6];
+	move head2 to y-axis [0] speed [6];
+	sleep 3000;
 }
 
 InitState()
@@ -46,12 +67,13 @@ RequestState(requestedstate, currentstate)
 	{
 		if( statechg_DesiredState == 0 )
 		{
-			call-script fixGo();
+			start-script fixGo();
 			currentstate = 0;
 		}
 		if( statechg_DesiredState == 1 )
 		{
-			call-script Stop();
+			signal SIG_WORK;
+			start-script Stop();
 			currentstate = 1;
 		}
 	}
@@ -60,17 +82,7 @@ RequestState(requestedstate, currentstate)
 
 Create()
 {
-	Static_Var_7 = 0;
 	Static_Var_1 = 0;
-	Static_Var_2 = 0;
-	Static_Var_3 = 91;
-	Static_Var_4 = -91;
-	Static_Var_5 = 455;
-	Static_Var_6 = -455;
-	dont-cache arms1;
-	dont-cache arms2;
-	dont-shade arms1;
-	dont-shade arms2;
 	call-script InitState();
 }
 
@@ -81,10 +93,8 @@ Activate()
 	set-signal-mask SIG_ACTIVATE;
 	while( TRUE )
 	{
-		emit-sfx 259 from emit1;
-		emit-sfx 259 from emit2;
-		emit-sfx 259 from emit3;
-		emit-sfx 259 from emit4;
+		emit-sfx 259 from claw1;
+		emit-sfx 259 from claw2;
 		sleep 250;
 	}
 }
@@ -102,9 +112,7 @@ SweetSpot(piecenum)
 
 SetSpeed(Func_Var_1)
 {
-	Static_Var_7 = Func_Var_1 * 30;
-	Static_Var_1 = Func_Var_1 * 45;
-	Static_Var_2 = 0 - Static_Var_7;
+	Static_Var_1 = Func_Var_1 * 4;
 }
 
 Killed(severity, corpsetype)
@@ -112,29 +120,25 @@ Killed(severity, corpsetype)
 	if( severity <= 10 )
 	{
 		corpsetype = 1;
-		explode arms1 type BITMAPONLY | BITMAP1;
-		explode arms2 type BITMAPONLY | BITMAP3;
+
 		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode arms1 type SHATTER | BITMAP1;
-		explode arms2 type SHATTER | BITMAP3;
+
 		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode arms1 type SHATTER | EXPLODE_ON_HIT | BITMAP1;
-		explode arms2 type SHATTER | EXPLODE_ON_HIT | BITMAP3;
+
 		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
-	explode arms1 type SHATTER | EXPLODE_ON_HIT | BITMAP1;
-	explode arms2 type SHATTER | EXPLODE_ON_HIT | BITMAP3;
+
 	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP2;
 }

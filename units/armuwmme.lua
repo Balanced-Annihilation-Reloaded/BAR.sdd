@@ -28,13 +28,17 @@ return {
 		metalstorage = 1000,
 		minwaterdepth = 15,
 		name = "Underwater Moho Mine",
-		objectname = "ARMUWMME",
+		objectname = "ARMUWMME.s3o",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 182,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooooooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

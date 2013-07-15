@@ -33,6 +33,10 @@ return {
 		sightdistance = 468,
 		waterline = 0,
 		yardmap = "wwwwwwwwwwwwwwww",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

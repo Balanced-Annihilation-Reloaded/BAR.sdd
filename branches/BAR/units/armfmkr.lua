@@ -20,12 +20,16 @@ return {
 		maxslope = 10,
 		minwaterdepth = 11,
 		name = "Floating Energy Converter",
-		objectname = "ARMFMKR",
+		objectname = "ARMFMKR.s3o",
 		seismicsignature = 0,
 		selfdestructas = "ARMESTOR_BUILDING",
 		sightdistance = 273,
-		waterline = 4,
+		waterline = 0,
 		yardmap = "wwwwwwwww",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			activate = "metlon1",
 			canceldestruct = "cancel2",

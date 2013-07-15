@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, dome;
+piece  base, cover1, cover2;
 
 #define WHAT_DO 1024
 
@@ -11,8 +11,8 @@ activatescr()
 {
 	if( TRUE )
 	{
-		turn dome to x-axis <0.000000> now;
-		turn dome to x-axis <180.285714> speed <112.467033>;
+		turn cover1 to x-axis <75> speed <60>;
+		turn cover2 to x-axis <-75> speed <60>;
 		sleep 1603;
 	}
 	sleep 73;
@@ -22,8 +22,8 @@ deactivatescr()
 {
 	if( TRUE )
 	{
-		turn dome to x-axis <180.285714> now;
-		turn dome to x-axis <0.000000> speed <112.467033>;
+		turn cover1 to x-axis <0> speed <60>;
+		turn cover2 to x-axis <0> speed <60>;
 		sleep 1603;
 	}
 	sleep 73;
@@ -59,13 +59,13 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 Go()
 {
 	start-script activatescr();
-	dont-cache dome;
+	dont-cache cover1;
 }
 
 Stop()
 {
 	call-script deactivatescr();
-	cache dome;
+	cache cover1;
 }
 
 static-var  mmState;
@@ -98,8 +98,8 @@ ImAMetalMaker()
 
 Create()
 {
-	dont-cache dome;
-	dont-shade dome;
+	dont-cache cover1;
+	dont-shade cover1;
 	start-script SmokeUnit();
 	start-script ImAMetalMaker();
 }
@@ -116,24 +116,24 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
-		explode dome type BITMAPONLY | BITMAP2;
+		explode cover1 type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
-		explode dome type BITMAPONLY | BITMAP2;
+		explode cover1 type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
-		explode dome type BITMAPONLY | BITMAP2;
+		explode cover1 type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
-	explode dome type BITMAPONLY | BITMAP2;
+	explode cover1 type BITMAPONLY | BITMAP2;
 }

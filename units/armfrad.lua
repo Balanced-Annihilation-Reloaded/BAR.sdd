@@ -29,7 +29,7 @@ return {
 		maxslope = 10,
 		minwaterdepth = 5,
 		name = "Floating Radar Tower",
-		objectname = "ARMFRAD",
+		objectname = "ARMFRAD.s3o",
 		onoffable = true,
 		radardistance = 2100,
 		radaremitheight = 52,
@@ -38,6 +38,10 @@ return {
 		sightdistance = 760,
 		waterline = 1,
 		yardmap = "wwwwwwwww",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

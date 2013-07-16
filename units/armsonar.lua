@@ -28,13 +28,17 @@ return {
 		maxslope = 10,
 		minwaterdepth = 10,
 		name = "Sonar Station",
-		objectname = "ARMSONAR",
+		objectname = "ARMSONAR.s3o",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 515,
 		sonardistance = 1200,
 		yardmap = "oooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

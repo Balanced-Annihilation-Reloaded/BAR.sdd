@@ -1,6 +1,6 @@
 return {
   name='Balanced Annihilation Reloaded Core',
-  description='meow!',
+  description='Balanced Annihilation Reloaded Core',
   shortname='BARC',
   version='$VERSION',
   mutator='Official',

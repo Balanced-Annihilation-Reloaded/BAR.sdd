@@ -28,7 +28,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 550,
-		waterline = 0.30000001192093,
+		waterline = 0,
 		yardmap = "wwwwwwwww",
 		customparams = {
 			normalmaps = "yes",

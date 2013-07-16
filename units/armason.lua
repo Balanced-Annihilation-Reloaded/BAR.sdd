@@ -29,7 +29,7 @@ return {
 		maxslope = 10,
 		minwaterdepth = 24,
 		name = "Advanced Sonar Station",
-		objectname = "ARMASON",
+		objectname = "ARMASON.s3o",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
@@ -37,6 +37,10 @@ return {
 		sonardistance = 2400,
 		usebuildinggrounddecal = true,
 		yardmap = "yooy oooo oooo yooy",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

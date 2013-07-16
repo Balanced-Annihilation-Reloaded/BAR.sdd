@@ -10,7 +10,7 @@ static-var  statechg_DesiredState, statechg_StateChanging;
 
 Go()
 {
-	spin dish around y-axis speed <60.010989>;
+	spin dish around y-axis speed <20.010989>;
 	return (0);
 	// Build by COBBLER Ver4.0 Copyright @1998 DIGITAL CONCEPT SOFTWARE (MANU@inext.fr) / http://www.annihilationcenter.com/DCS/  
 }

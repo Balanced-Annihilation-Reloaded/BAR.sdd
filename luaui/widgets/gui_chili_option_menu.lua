@@ -33,12 +33,13 @@ local changelog = VFS.LoadFile('changelog.txt')
 if changelog == '' then changelog = "changelog is blank, normally this would read the changelog.txt in the games base directory" end
 
 local cursorNames = {
-  'cursornormal','cursorareaattack','cursorattack','cursorattack','cursorbuildbad',
-  'cursorbuildgood','cursorcapture','cursorcentroid','cursordwatch','cursorwait',
-  'cursordgun','cursorattack','cursorfight','cursorattack','cursorgather','cursorwait',
-  'cursordefend','cursorpickup','cursormove','cursorpatrol','cursorreclamate',
+  'cursornormal','cursorareaattack','cursorattack','cursorattack',
+  'cursorbuildbad','cursorbuildgood','cursorcapture','cursorcentroid',
+  'cursorwait','cursortime','cursorwait','cursorunload','cursorwait',
+  'cursordwatch','cursorwait','cursordgun','cursorattack','cursorfight',
+  'cursorattack','cursorgather','cursorwait','cursordefend','cursorpickup',
   'cursorrepair','cursorrevive','cursorrepair','cursorrestore','cursorrepair',
-  'cursorselfd','cursornumber','cursorwait','cursortime','cursorwait','cursorunload','cursorwait',
+  'cursormove','cursorpatrol','cursorreclamate','cursorselfd','cursornumber',
 }
 
 local wCategories = {
@@ -59,7 +60,8 @@ local wCategories = {
  {cat = "unit"     , label = "Units"         , list = {}, },
  {cat = "ungrouped", label = "Ungrouped"     , list = {}, }
  }
-----------------------------
+---------------------------- 
+                          --
 local function setCursor(cursorSet)
  for i=1, #cursorNames do
   local topLeft = (cursorNames[i] == 'cursornormal' and cursorSet ~= 'k_haos_girl')
@@ -67,7 +69,8 @@ local function setCursor(cursorSet)
   else Spring.ReplaceMouseCursor(cursorNames[i], cursorSet.."/"..cursorNames[i], topLeft) end
  end
 end
-----------------------------
+---------------------------- Toggles widgets enabled/disabled when clicked
+                          --  does not account for failed initialization of widgets
 local function toggleWidget(self)
  widgetHandler:ToggleWidget(self.name)
  if self.checked then
@@ -79,7 +82,8 @@ local function toggleWidget(self)
  end
  self:Invalidate()
 end
-----------------------------
+---------------------------- 
+                          -- 
 local function groupWidget(name,wData)
  local _, _, category = string.find(wData.basename, "([^_]*)")
  if category then
@@ -92,7 +96,8 @@ local function groupWidget(name,wData)
   wCategories[#wCategories].list = list
  end
 end
-----------------------------
+---------------------------- 
+                          --
 local function sortWidgetList(filter)
  local filter = filter or ""
  for name,wData in pairs(widgetHandler.knownWidgets) do
@@ -107,7 +112,8 @@ local function sortWidgetList(filter)
   end
  end
 end
-----------------------------
+---------------------------- 
+                          --
 local function makeWidgetList(filter)
  sortWidgetList(filter)
  local widgetNum = 0
@@ -143,24 +149,28 @@ local function makeWidgetList(filter)
  wCategories[a].list = {}
  end
 end
-----------------------------
+---------------------------- 
+                          --
 local function showHide(tab)
  if mainMenu then mainMenu:ToggleVisibility() end
  if tab then menuTabs:Select(tab) end
 end
-----------------------------
+---------------------------- 
+                          --
 local function sTab(_,tabName)
   if barSettings.tabSelected then mainMenu:RemoveChild(tabs[barSettings.tabSelected]) end
   mainMenu:AddChild(tabs[tabName])
   barSettings.tabSelected = tabName
 end
-----------------------------
+---------------------------- 
+                          --
 local function addFilter()
  local editbox = tabs["Interface"]:GetObjectByName("widgetFilter")
  makeWidgetList(editbox.text)
  editbox:SetText("")
 end
-----------------------------
+---------------------------- 
+                          --
 local function loadMainMenu()
  mainMenu = Chili.Window:New{parent=Chili.Screen0,x = 400, y = 200, width = 500, height = 400,padding = {5,8,5,5}, draggable = true,
   children = {
@@ -177,24 +187,28 @@ local function loadMainMenu()
 
  showHide()
 end
-----------------------------
+---------------------------- The always visible window beneath resbars
+                          --    for access to menu, as well as time and FPS
 local function loadMinMenu()
  timeLbl = Chili.Label:New{caption = "10:30pm", x = 0}
  fpsLbl = Chili.Label:New{caption = "FPS: 65",x = 70}
  menuBtn = Chili.Button:New{caption = 'Menu', right = 0, height = '100%', width = 50, Onclick = {showHide}}
  minMenu = Chili.Window:New{parent=Chili.Screen0,right = 210, y = 20, width = 180,minheight = 20, height = 20,padding = {5,0,0,0},children = {timeLbl,fpsLbl,menuBtn}}
 end
-----------------------------
+---------------------------- 
+                          -- 
 local function applySetting(self)
  local editbox = self.parent.childrenByName['EditBox']
- if self.parent.name == 'Skin' then Chili.theme.skin.general.skinName = editbox.option; Spring.Echo("To see skin changes; \"/luaui reload\"")
- elseif self.parent.name == 'Cursor' then setCursor(editbox.option)
- else spSendCommands(self.parent.name.." "..editbox.option) end
- barSettings[self.parent.name] = editbox.option
+ local setting = (editbox.option or editbox.text)
+ if self.parent.name == 'Skin' then Chili.theme.skin.general.skinName = setting; Spring.Echo("To see skin changes; \"/luaui reload\"")
+ elseif self.parent.name == 'Cursor' then setCursor(setting)
+ else spSendCommands(self.parent.name.." "..setting) end
+ barSettings[self.parent.name] = setting
  self.font.color = {0.5,0.5,0.5,1}
  self:Invalidate()
 end
-----------------------------
+---------------------------- Creates a combobox style control
+                          --  Allows custom (unlisted) options to be typed and selected through editbox
 local comboBox = function(obj)
  local obj=obj
  local comboBox = Chili.Control:New{name=obj.name,parent=tabs[obj.parent],y=obj.y,width='50%',bottom=0,x=0}
@@ -213,19 +227,17 @@ local comboBox = function(obj)
 
  local dropdown = function(self)
   if not self.opened then
-  
-   -- local ddWindow = Chili.Window:New{name='ddWindow',padding={0,0,0,0},x='10%',y=35,height=#obj.labels*20+16,width = '70%',}
+
    local x,y = comboBox:ClientToScreen(25,35)
    comboBox.ddWindow = Chili.Window:New{name='ddWindow',padding={0,0,0,0},x=x,y=y,height=#obj.labels*21+16,width=150,}
 
    for i=1, #obj.labels do
-    local checked = (barSettings[obj.name] == obj.labels[i])
+    local checked = (barSettings[obj.name] == obj.options[i])
     comboBox.ddWindow:AddChild(Chili.Checkbox:New{x='5%',width='90%',option=obj.options[i],caption=obj.labels[i],height=20,y=21*(i-1)+8,checked=checked,OnChange={OnSelect}})
    end
 
    Chili.Screen0:AddChild(comboBox.ddWindow)
    comboBox.ddWindow:BringToFront()
-   -- combobox:AddChild(ddWindow)
    self.opened = true
   else
    comboBox.ddWindow:Dispose()
@@ -234,11 +246,12 @@ local comboBox = function(obj)
   self:Invalidate()
   self.parent:Invalidate()
  end
- comboBox:AddChild(Chili.Label:New{x=10,y=0,caption=obj.name})
+ comboBox:AddChild(Chili.Label:New{x=0,y=0,caption=obj.name})
  comboBox:AddChild(Chili.EditBox:New{name='EditBox',x='10%',y=15,width='70%',text='',OnFocusUpdate={dropdown},})
  comboBox:AddChild(Chili.Button:New{name='Button',y=15,right=0,height=20,width='20%',caption='Apply',font={color={0.5,0.5,0.5,1}},OnMouseUp={applySetting}})
 end
-
+---------------------------- Temporary control to work exclusively for default bloom options
+                          --  The same interface could be added to other widgets although it would probably be easier to come up with a better sytem and add that to the bloom widget.
 local incDec = function(obj)
  local incDec = Chili.Control:New{name=obj.name,parent=tabs[obj.parent],y=obj.y,width='50%',height=30,right=0,padding={0,0,0,0}}
  local decOption = function(self)
@@ -247,15 +260,15 @@ local incDec = function(obj)
  local incOption = function(self)
   spSendCommands('luaui +'..self.parent.name)
  end
- incDec:AddChild(Chili.Label:New{right=65,y=0,caption=obj.label})
- incDec:AddChild(Chili.Button:New{right=0,y=0,width=30,height=20,caption='Inc',OnMouseUp={incOption}})
- incDec:AddChild(Chili.Button:New{right=30,y=0,width=30,height=20,caption='Dec',OnMouseUp={decOption}})
+ incDec:AddChild(Chili.Label:New{right=45,y=0,caption=obj.label})
+ incDec:AddChild(Chili.Button:New{right=0,y=0,width=20,height=16,font={size=20},caption='+',OnMouseUp={incOption}})
+ incDec:AddChild(Chili.Button:New{right=21,y=0,width=20,height=16,font={size=20},caption='-',OnMouseUp={decOption}})
 end
 
 -----OPTIONS-----------------
 -----------------------------
 local function Options()
--- Each tab has its own control {Info,Interface,Graphics, and Sound}
+-- Each tab has its own control, which is shown when selected {Info,Interface,Graphics, and Sound}
 -- mainMenu = Chili.Window:New{parent=Chili.Screen0,x = 400, y = 200, width = 500, height = 400,padding = {5,8,5,5}, draggable = true,
 --  Each graphical element is defined as a child of these controls and given a function to fullfill, when a certain event happens(i.e. OnClick)
 
@@ -268,8 +281,7 @@ local function Options()
    Chili.Checkbox:New{caption="Dilate Pass",x='80%',y=20,right=0,textalign="left",boxalign="right",checked=false, 
     OnChange = {function(self) if not self.checked then spSendCommands('luaui +dilatepass') else spSendCommands('luaui -dilatepass') end  end}}, 
    Chili.Checkbox:New{caption="Debug Mode",x='80%',y=40,right=0,textalign="left",boxalign="right",checked=false, 
-    OnChange = {function(self) if not self.checked then spSendCommands('luaui +bloomdebug') else spSendCommands('luaui -bloomdebug') end  end}}, 
-   -- Chili.Checkbox:New{caption="Search Author",x='50%',y=120,width='35%',textalign="left",boxalign="right",OnChange={}},
+    OnChange = {function(self) if not self.checked then spSendCommands('luaui +bloomdebug') else spSendCommands('luaui -bloomdebug') end  end}},
    }}
    
    comboBox{parent='Graphics',name="Water",y=0,
@@ -277,7 +289,19 @@ local function Options()
     options={0,1,2,3,4},}
    comboBox{parent='Graphics',name="Shadows",y=40,
     labels={"Off","Very Low","Low","Medium","High","Very High"},
-    options={"0","2 1024","2 2048","1 1024","1 2048","1 4096"},}
+    options={"0","2 1024","2 2048","1 1024","1 2048","1 4096"},}   
+   comboBox{parent='Graphics',name="DistDraw",y=80,
+    labels={"Low","Medium","High","Very High"},
+    options={100,200,300,400},}
+   comboBox{parent='Graphics',name="DistIcon",y=120,
+    labels={"Low","Medium","High","Very High"},
+    options={100,200,300,400},}
+   comboBox{parent='Graphics',name="MaxNanoParticles",y=160,
+    labels={"Very Low","Low","Medium","High","Very High"},
+    options={500,1000,2000,3000,5000},}
+   comboBox{parent='Graphics',name="MaxParticles",y=200,
+    labels={"Very Low","Low","Medium","High","Very High"},
+    options={500,1000,2000,3000,5000},}
    incDec{parent='Graphics',name='illumthres',y=60,label='Illumination Threshold'}
    incDec{parent='Graphics',name='glowamplif',y=85,label='Glow Amplifier'}
    incDec{parent='Graphics',name='bluramplif',y=110,label='Blur Amplifier'}
@@ -298,7 +322,7 @@ local function Options()
    Chili.Line:New{width='50%',y=80},
   }}
    comboBox{parent='Interface',name='Skin',y=90,
-    labels={'Flat','Robocracy','Carbon','DarkHive'}}
+    labels=Chili.SkinHandler.GetAvailableSkins()}
    comboBox{parent='Interface',name='Cursor',y=125,
     labels={'Default','ZK Animated','ZK Static','CA Classic','CA Static','Erom','Masse','Lathan','K_haos_girl'},
     options={'ba','zk','zk_static','ca','ca_static','erom','masse','Lathan','k_haos_girl'}}
@@ -362,7 +386,8 @@ function widget:KeyPress(key,mod)
   return true
  end
 end
---------------------------
+-------------------------- 
+                        --
 function widget:Initialize()
  Chili = WG.Chili
  Chili.theme.skin.general.skinName = barSettings.Skin or 'Flat'
@@ -376,8 +401,8 @@ function widget:Initialize()
   widget:AddConsoleMessage(buffer[i])
  end
  
---------------------------
------ Shortcuts
+ -------------------------- 
+ ----- Shortcuts         --
  local openMenu = function() showHide('Info') end
  local openWidgets = function() showHide('Interface') end
  local openLog = function() showHide('Log') end
@@ -394,19 +419,22 @@ function widget:Initialize()
  -- widgetHandler.actionHandler:AddAction("openLog", openLog, nil, "t")
  -- spSendCommands("bind hotkey openLog")
 end
---------------------------
+-------------------------- 
+                        --
 function widget:Shutdown()
  spSendCommands("unbind S+esc openMenu")
  spSendCommands("unbind f11 openWidgets")
  spSendCommands("unbind esc hideMenu")
 end
---------------------------
+-------------------------- 
+                        --
 local mLogText = ''
 function widget:AddConsoleMessage(msg)
  if tabs.Log then
   mLogText = mLogText..msg.text..'\n'
   local scrollpanel = tabs["Log"]:GetObjectByName("mLog")
-  scrollpanel.children[1].text = mLogText
-  scrollpanel.children[1]:UpdateLayout()
+  local textbox = scrollpanel.children[1]
+  textbox.text = mLogText
+  textbox:UpdateLayout()
  end
 end

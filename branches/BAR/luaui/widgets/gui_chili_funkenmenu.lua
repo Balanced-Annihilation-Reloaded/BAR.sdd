@@ -15,31 +15,31 @@ end
 local strategic_commands, econ_commands, ignore_commands = include("Configs/BuildMenu.lua")
 -----------
 
--- Chili objects
 local Chili
 local panH, panW, winW
-local window0, menuTabs, panel0, stateWindow, scroll0, menu, menuTab, buildQueue, idx, screen0
+local menuBackground, menuTabs, panel0, stateWindow, scroll0, menuTab, buildQueue, idx, screen0,menuBackground
+local menuPanel = {}
+local menu = {}
+local names = {"ORDER","BUILD"," TACT","  ECON"}
+local activeWindows = {false,false,false,false}
 ----------------
-
-
 local imageDir = 'LuaUI/Images/commands/'
 local updateRequired = true
-local menuChoice = 1
+local menuChoice = 2
 local selectedUnits = {}
 
-
--- CONTROLS
 local spGetActiveCommand  = Spring.GetActiveCommand
 local spSetActiveCommand  = Spring.SetActiveCommand
 local spGetActiveCmdDesc  = Spring.GetActiveCmdDesc
-local spGetActiveCmdDescs  = Spring.GetActiveCmdDescs
-local spGetSelectedUnits    = Spring.GetSelectedUnits
-local spSendCommands        = Spring.SendCommands
-local spGetCmdDescIndex = Spring.GetCmdDescIndex
+local spGetActiveCmdDescs = Spring.GetActiveCmdDescs
+local spGetSelectedUnits  = Spring.GetSelectedUnits
+local spSendCommands      = Spring.SendCommands
+local spGetCmdDescIndex   = Spring.GetCmdDescIndex
 local spGetFullBuildQueue = Spring.GetFullBuildQueue
 
 
--- SCRIPT FUNCTIONS
+---------------------------
+                         --
 function LayoutHandler(xIcons, yIcons, cmdCount, commands)
  widgetHandler.commands   = commands
  widgetHandler.commands.n = cmdCount
@@ -49,8 +49,9 @@ function LayoutHandler(xIcons, yIcons, cmdCount, commands)
 
  return "", xIcons, yIcons, {}, customCmds, {}, {}, {}, {}, reParamsCmds, {[1337]=9001}
 end
-
-local function ClickFunc(chiliButton, x, y, button, mods) 
+---------------------------
+                         --
+local function cmdAction(chiliButton, x, y, button, mods) 
  local index = spGetCmdDescIndex(chiliButton.cmdid)
  if (index) then
   local left, right = (button == 1), (button == 3)
@@ -58,122 +59,143 @@ local function ClickFunc(chiliButton, x, y, button, mods)
   spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)
  end
 end
-
-local function createMyButton(container, texture, cmd,isState)
- if cmd.name ~= "" then
-  local button = Chili.Button:New{
-   cmdname   = cmd.name,
-   caption   = string.gsub(cmd.name,"%s+", "\n"),
-   tooltip   = cmd.tooltip,
-   cmdid     = cmd.id,
-   minHeight = winW/3,
-   minWidth  = winW/3,
-   padding   = {0,0,0,0},
-   margin    = {0,0,0,0},
-   OnClick   = {ClickFunc},
-   font      = {size = 13},
-  }
- if texture then
-  button = Chili.Image:New{
-   cmdname   = cmd.name,
-   tooltip   = cmd.tooltip,
-   cmdid     = cmd.id,
-   file      = texture,
-   minHeight = winW/3,
-   minWidth  = winW/3,
-   padding   = {0,0,0,0},
-   margin    = {0,0,0,0},
-	 OnClick = {ClickFunc},
-	 OnMouseOver = {function(self) self.children[1].borderColor={1,1,1,0.5};self.children[1]:Invalidate() end},
-	 OnMouseOut = {function(self) self.children[1].borderColor={0,0,0,0};self.children[1]:Invalidate() end},
-	 OnMouseDown = {function(self) self.color={1,1,1,0.5};self:Invalidate() end},
-   OnMouseUp = {function(self) self.color={1,1,1,1};self:Invalidate() end},
-   children  = {Chili.Button:New{x=0,y=winW/3-12,height=12,width=30,borderColor={0,0,0,0},caption = UnitDefNames[cmd.name]['metalCost']}}
-  }
- elseif isState then
-  button.caption = string.gsub(cmd.params[cmd.params[1] + 2],"%s+", "\n")
+--------------------------- Selects tab when tab is clicked or scrolled
+                         --  
+local function selectTab(self,x,y,up,value,mods)
+ menuPanel[menuChoice]:ToggleVisibility()
+ --menuTab[menuChoice].hovered = false
+ if self.name == 'menuBackground' then
+  menuChoice = menuChoice - value
+  for i=1,4 do
+   if not activeWindows[menuChoice] then menuChoice = menuChoice - value end
+   if menuChoice > 4 then menuChoice = 1
+   elseif menuChoice < 1 then menuChoice = 4
+   end
+  end
+ else
+  menuChoice = self.tabNum
  end
- container:AddChild(button)
+ menuPanel[menuChoice]:ToggleVisibility()
+ menuTab[menuChoice].hovered = true
+ return true
+end
+--------------------------- Adds icons/commands to the menu panels accordingly
+                         -- 
+local function createMenus()
+ menuBackground:ClearChildren()
+ local button
+ local menuNum
+ local cmds = spGetActiveCmdDescs()
+ 
+ for i=1,4 do menu[i] = {} end
+ 
+ for i = 1, #cmds do
+  local cmd = cmds[i]
+  
+  if cmd.id >= 0 then                      menuNum = 1
+  elseif strategic_commands[cmd.name] then menuNum = 3
+  elseif econ_commands[cmd.name] then      menuNum = 4
+  else                                     menuNum = 2
+  end
+  
+  if cmd.name ~= "" and not ignore_commands[cmd.action] then
+   if menuNum == 1 then
+    button = Chili.Button:New{
+     cmdname   = cmd.name,
+     caption   = string.gsub(cmd.name,"%s+", "\n"),
+     tooltip   = cmd.tooltip,
+     cmdid     = cmd.id,
+     padding   = {0,0,0,0},
+     margin    = {0,0,0,0},
+     OnMouseUp = {cmdAction},
+     font      = {size = 12},
+    }
+   else    
+    button = Chili.Image:New{
+     cmdname   = cmd.name,
+     tooltip   = cmd.tooltip,
+     cmdid     = cmd.id,
+     file      = '#'..-cmd.id,
+     margin    = {1,1,1,1},
+     OnClick = {cmdAction},
+     OnMouseOver = {function(self) self.children[1].borderColor={1,1,1,0.5};self.children[1]:Invalidate() end},
+     OnMouseOut = {function(self) self.children[1].borderColor={0,0,0,0};self.children[1]:Invalidate() end},
+	   OnMouseDown = {function(self) self.color={1,1,1,0.5};self:Invalidate() end},
+     OnMouseUp = {function(self) self.color={1,1,1,1};self:Invalidate() end},
+     children  = {Chili.Button:New{x=0,y=winW/3-12,height=12,width=30,borderColor={0,0,0,0},caption = UnitDefNames[cmd.name]['metalCost']}}
+    }
+   end
+   if #cmd.params > 1 then button.caption = string.gsub(cmd.params[cmd.params[1] + 2],"%s+", "\n") end
+   menu[menuNum][#menu[menuNum]+1] = button
+  end
+ end
+
+ 
+
+ for i=1,#menu do
+  menuPanel[i] = Chili.Grid:New{
+   name = names[i],
+   parent = menuBackground,
+   x = 0, right = 0, 
+   y = 0, bottom = 0,
+   rows = 10, columns= 3,
+   padding = {0,0,0,0}, margin = {0,0,0,0},
+   children = menu[i],
+  }
+  if menuChoice ~= i and #menu[i] > 1 then menuPanel[i]:Hide() end
  end
 end
-
-local function findButtonData(cmd)
- local isState = (cmd.type == CMDTYPE.ICON_MODE and #cmd.params > 1)
- local isBuild = (cmd.id < 0)
- if ignore_commands[cmd.action] then  return
- elseif not isBuild then                   createMyButton(menu[1], _, cmd,isState)
- elseif strategic_commands[cmd.name] then  createMyButton(menu[3], '#'..-cmd.id, cmd)
- elseif econ_commands[cmd.name] then       createMyButton(menu[4], '#'..-cmd.id, cmd)
- else                                      createMyButton(menu[2], '#'..-cmd.id, cmd)
- end
-end
-
-local function makeMenuTabs() 
+--------------------------- Creates a tab for each menu Panel with a command
+                         --
+local function makeMenuTabs()
+ menuTabs:ClearChildren()
+ menuTab = {}
+ activeWindows = {}
  local tabCount = 0
  local tempMenu = {}
- local caption = {"ORDER","BUILD"," TACT","  ECON"}
  for i=1, 4 do
-  if #menu[i].children > 0 then
-   local tab = tabCount + 1
-   tempMenu[tab] = menu[i]
-   menuTab[tab] = Chili.Button:New{parent = menuTabs, right = 20+8*i, y = tabCount * 41, width = 80-8*i, height = 40, caption = caption[i], OnClick = {
-    function() window0:ClearChildren(); window0:AddChild(menu[tab]); menuChoice = tab; end}}
+  if #menu[i] > 0 then
+
+   activeWindows[i] = true
+   
+   menuTab[i] = Chili.Button:New{
+   tabNum  = i,
+   parent  = menuTabs,
+   right   = 20+6*i,
+   width   = 80-6*i,
+   y       = (tabCount) * 41,
+   height  = 40,
+   caption = names[i],
+   OnClick = {selectTab}
+   }
    tabCount = tabCount + 1
   end
  end
- menu = tempMenu
+end
+--------------------------- Chooses initial tab when a new unit is selected
+                         --
+local function chooseTab()
+ local tab = {tabNum = 1}
+ for i=1, 4 do
+  if activeWindows[i] then tab.tabNum = i end
+ end
+ selectTab(tab)
+end
+--------------------------- Loads/reloads the icon panels for commands
+                         --
+local function loadPanels()
+ createMenus()
+ makeMenuTabs()
  
  local units = spGetSelectedUnits()
  if selectedUnits[1] ~= units[1] then
   selectedUnits = units
-  menuChoice = tabCount
- end
- if tabCount>0 then window0:AddChild(menu[menuChoice] or menu[1]) end
-end
-
-local function createMenus()
- menu = {}
- for i=0, 4 do
-  menu[i] = Chili.Grid:New{height = "100%", width  = "100%", padding = {0,0,0,0}, color = {0,0,0,0}, columns = 3, rows = 10}
+  chooseTab()
  end
 end
-
-local function resetWindow()
- window0:ClearChildren()
- stateWindow:ClearChildren()
- menuTabs:ClearChildren()
- for i=0, 4 do
-  menu[i]:Dispose()
- end
-end
-
-local function loadPanel()
-
- createMenus()
- menuTab = {}
- resetWindow()
- 
- local commands = spGetActiveCmdDescs()
- for cmdid = 1, #commands do
-  findButtonData(commands[cmdid]) 
- end
- makeMenuTabs()
-end
-
-local function switchTabs(window,x,y,up,value,mods)
- menuTab[menuChoice].state.hovered = false
- menuTab[menuChoice]:Invalidate()
- menuChoice = menuChoice - value
- if menuChoice > #menu then menuChoice = 1 end
- if menuChoice == 0 then menuChoice = #menu end
- window0:ClearChildren()
- menuTab[menuChoice].state.hovered = true
- window0:AddChild(menu[menuChoice])
- menuTab[menuChoice]:Invalidate()
- return true
-end
-
-function queueHandler()
+--------------------------- Adds icons to queue panel depending on build commands in queue
+                         --  or hides it if there are none
+local function queueHandler()
  buildQueue:ClearChildren()
  local unitID = Spring.GetSelectedUnits()
  local queueNum
@@ -183,7 +205,7 @@ function queueHandler()
    for i=1, #cmd do
     if cmd[i].id < 0 then
      if i == 1 or (i>1 and cmd[i-1].id ~= cmd[i].id) then 
-      buildQueue.children[#buildQueue.children+1]=Chili.Image:New{parent=buildQueue, x=45*#buildQueue.children+5, y=5, width =40, height=40, file='#'..-cmd[i].id,cmdid=cmd[i].id, OnClick={ClickFunc}}
+      buildQueue.children[#buildQueue.children+1]=Chili.Image:New{parent=buildQueue, x=45*#buildQueue.children+5, y=5, width =40, height=40, file='#'..-cmd[i].id,cmdid=cmd[i].id, OnClick={cmdAction}}
       buildQueue.children[#buildQueue.children]:AddChild(Chili.Label:New{caption=""})
       queueNum = 1
      else 
@@ -199,7 +221,8 @@ function queueHandler()
  elseif #buildQueue.children > 0 and buildQueue.hidden then buildQueue:Show()
  end
 end
-
+--------------------------- Iniatilizes main/permanent chili controls 
+                         --  These are then shown/hidden when needed
 function widget:Initialize()
  widgetHandler:ConfigLayoutHandler(LayoutHandler)
  Spring.ForceLayoutUpdate()
@@ -212,50 +235,61 @@ function widget:Initialize()
 
  Chili = WG.Chili
  screen0 = Chili.Screen0
- panH = screen0.height * 0.7
- panW = panH * 0.5
- winW = panW * 0.6
+ winH = screen0.height * 0.7
+ winW = winH * 0.3
  
- window0         = Chili.Window:New{skinName='Flat',x = 0, y = 0, bottom = 0, width = winW, padding = {0,0,0,0}, margin = {0,0,0,0}, OnMouseWheel = {switchTabs}}
- menuTabs     = Chili.Control:New{x = winW, y = 0, bottom = 0, width = 90, padding = {0,0,0,0}, margin = {0,0,0,0}}
- stateWindow   = Chili.Grid:New{y = 10, bottom = 0, x = winW + 15, width  = 30, padding = {0, 0, 0, 0}, columns = 1, rows = 16}
- buildQueue    = Chili.Window:New{parent = screen0, x = winW, bottom = 1, width = 20, height = 40, hidden = true,padding = {0,0,0,0}}
- 
- panel0 = Chili.Control:New{
+ menuBackground = Chili.Window:New{
+  name = 'menuBackground',
   parent = screen0,
-  x = 0,
-  bottom = 0,
-  width = panW,
-  height = panH,
+  skinName = 'Flat',
+  x = 0, width = winW,
+  bottom = 0, height = winH,
   padding = {0,0,0,0},
-  margin = {0,0,0,0},
-  color = {0,0,0,0}, 
-  children = {menuTabs, window0, stateWindow},
+  OnMouseWheel = {selectTab},
+ } 
+ menuTabs = Chili.Control:New{
+  parent = screen0,
+  x = winW, width = 90, 
+  bottom = 0, height = winH, 
+  padding = {0,0,0,0}, margin = {0,0,0,0}
  }
+ buildQueue = Chili.Window:New{
+  parent = screen0, 
+  x = winW, bottom = 1, 
+  width = 20, height = 40, 
+  hidden = true,padding = {0,0,0,0}
+ }
+
+ 
  if WG['blur_api'] then
   WG['blur_api'].UseNoise(true)
   idx = WG['blur_api'].InsertBlurRect(5,screen0.height * 0.7+5,winW-5,5)
  end
 end
-
+--------------------------- When Available Commands change this is called
+                         --  sets Updaterequired to true
 function widget:CommandsChanged()
  updateRequired = true
 end
-
-function widget:DrawScreen(n)
- if updateRequired == true then
+--------------------------- If update is required this Loads the panel and queue for the new unit or hides them if none exists
+                         --  There is an offset to prevent the panel dissappearing right after a command has changed (for fast clicking)
+function widget:GameFrame(n)
+ if updateRequired == true and ((n % 4) < 1) then
     updateRequired = false
-  loadPanel()
+  loadPanels()
   queueHandler()
-  if #menuTab == 0 and panel0.visible then panel0:Hide()
-  elseif #menuTab > 0 and panel0.hidden then panel0:Show() end
+  if not activeWindows[1] and menuBackground.visible then menuBackground:Hide()
+  elseif activeWindows[1] and menuBackground.hidden then menuBackground:Show() end
  end
 end
-
+---------------------------
+                         --
 function widget:Shutdown()
- panel0:Dispose()
-  widgetHandler:ConfigLayoutHandler(nil)
-  Spring.ForceLayoutUpdate()
+ menuBackground:Dispose()
+ menuTabs:Dispose()
+ buildQueue:Dispose()
+ widgetHandler:ConfigLayoutHandler(nil)
+ Spring.ForceLayoutUpdate()
  if idx then WG['blur_api'].RemoveBlurRect(idx) end
-  spSendCommands({"tooltip 1"})
+ spSendCommands({"tooltip 1"})
 end

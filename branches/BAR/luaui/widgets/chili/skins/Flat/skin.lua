@@ -39,7 +39,7 @@ skin.icons = {
 skin.button = {
   TileImageBK = ":cl:glassbk.png",
   TileImageFG = ":cl:glassfg.png",
-  tiles = {22, 22, 22, 22}, --// tile widths: left,top,right,bottom
+  tiles = {0, 0, 0, 0}, --// tile widths: left,top,right,bottom
   padding = {5, 5, 5, 5},
   focusColor = {r, g, b, 0.5},
 
@@ -245,7 +245,7 @@ skin.tabbar = {
 skin.tabbaritem = {
   TileImageBK = ":cl:glassbk.png",
   TileImageFG = ":cl:glassfg.png",
-  tiles = {10, 10, 10, 0}, --// tile widths: left,top,right,bottom
+  tiles = {0, 0, 0, 0}, --// tile widths: left,top,right,bottom
   padding = {5, 3, 3, 2},
 	borderColor = {0, 0, 0, 0.8},
   focusColor = {r, g, b, 0.5},

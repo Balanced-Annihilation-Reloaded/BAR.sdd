@@ -33,7 +33,7 @@ return {
 		movementclass = "AKBOT2",
 		name = "Commando",
 		nochasecategory = "VTOL",
-		objectname = "COMMANDO",
+		objectname = "COMMANDO.s3o",
 		radardistance = 900,
 		radardistancejam = 150,
 		seismicsignature = 4,
@@ -52,6 +52,10 @@ return {
 			[6] = "cordrag",
 			[7] = "coreyes",
 			[8] = "corjamt",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		sounds = {
 			build = "nanlath2",

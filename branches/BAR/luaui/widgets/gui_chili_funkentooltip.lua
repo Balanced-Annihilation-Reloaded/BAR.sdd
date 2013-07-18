@@ -34,10 +34,10 @@ local function getUnitTooltip(ID)
  local metal = ((metalMake or 0) - (MetalUse or 0))
  local energy = ((energyMake or 0) - (energyUse or 0))
  
- if metal < 0 then metal = '\255\255\127\0 -'..metal
+ if metal < 0 then metal = '\255\255\127\0 '..metal
  elseif metal > 0 then metal = '\255\127\255\0 +'..metal end
  
- if energy < 0 then energy = '\255\255\127\0 -'..energy
+ if energy < 0 then energy = '\255\255\127\0 '..energy
  elseif energy > 0 then energy = '\255\127\255\0 +'..energy end
  
  tooltip = tooltip..'\nMetal: '..metal..'/s\b\nEnergy: '..energy..'/s'

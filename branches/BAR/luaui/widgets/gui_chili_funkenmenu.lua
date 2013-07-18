@@ -188,7 +188,7 @@ local function loadPanels()
  makeMenuTabs()
  
  local units = spGetSelectedUnits()
- if selectedUnits[1] ~= units[1] then
+ if units[1] and selectedUnits[1] ~= units[1] then
   selectedUnits = units
   chooseTab()
  end

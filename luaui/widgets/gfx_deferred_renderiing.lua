@@ -318,10 +318,13 @@ local fragSrc = ([[
 	float dist_light_here = length(lightpos.xyz - here4.xyz);
 	float cosphi = max(0.0 , dot (herenormal4.xyz, lightpos.xyz - here4.xyz) / dist_light_here);
 	//float attentuation = 1.0 / ( 1.0 + 1.0*dist + 1.0 *dist*dist); // alternative attentuation function
-	float attentuation =  saturate( ( 1.0 - (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w)) );
+	//float attentuation =  saturate( ( 1.0 - (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w)) );
+	float attentuation =  max(0, ( 1.0 - (dist_light_here)/(lightpos.w)) );
 	attentuation *=attentuation;
-
+	
 	//gl_FragColor=vec4(normalize(herenormal4.xyz), cosphi*(lightpos.w/(dist_light_here*dist_light_here)));
+	//if (attentuation > 0.001) gl_FragColor(1,0,0,1);
+	//else gl_FragColor(0,1,0,1);
 	gl_FragColor=vec4(lightcolor.rgb, cosphi*attentuation);
 	return;
   }
@@ -390,7 +393,7 @@ function widget:DrawWorld()
 		-- setup the shader and its uniform values
 		glBlending("alpha_add")
 		glUseShader(depthShader)
-
+		--Spring.Echo('Camera FOV=',Spring.GetCameraFOV()) -- default TA cam fov = 45
 		-- set uniforms
 		local cpx, cpy, cpz = spGetCameraPosition()
 		glUniform(uniformEyePos, cpx, cpy, cpz)
@@ -411,13 +414,29 @@ function widget:DrawWorld()
 			else
 				lightparams=projectileLightTypes[spGetProjectileName(pID)]
 			end
-			if (spIsSphereInView(x,y,z,lightparams[4])) then
+			if (lightparams and spIsSphereInView(x,y,z,lightparams[4])) then
 				local sx,sy,sz = spWorldToScreenCoords(x,y,z) -- returns x,y,z, where x and y are screen pixels, and z is z buffer depth.
 				--Spring.Echo('screencoords',sx,sy,sz)
+				sx = sx/vsx
+				sy = sy/vsy 
 				local cx,cy,cz = spGetCameraPosition()
+				local dist_sq = (x-cx)^2 + (y-cy)^2 + (z-cz)^2
+				local ratio= lightparams[4] / math.sqrt(dist_sq)
+				ratio=ratio*2
 				glUniform(lightposloc, x,y,z, lightparams[4]) --IN world space
 				glUniform(lightcolorloc, 1,1,1,1) --IN world space
-				gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1) -- screen size goes from -1,-1 to 1,1; uvs go from 0,0 to 1,1
+				--Spring.Echo('screenratio',ratio,sx,sy)
+				
+				gl.TexRect(
+					math.max(-1 , (sx-0.5)*2-ratio), 
+					math.max(-1 , (sy-0.5)*2-ratio), 
+					math.min( 1 , (sx-0.5)*2+ratio), 
+					math.min( 1 , (sy-0.5)*2+ratio), 
+					math.max( 0 , sx - 0.5*ratio), 
+					math.max( 0 , sy - 0.5*ratio), 
+					math.min( 1 , sx + 0.5*ratio),
+					math.min( 1 , sy + 0.5*ratio)) -- screen size goes from -1,-1 to 1,1; uvs go from 0,0 to 1,1
+				--gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1) -- screen size goes from -1,-1 to 1,1; uvs go from 0,0 to 1,1
 			end
 		end
 		--gl.TexRect(0.5,0.5, 1, 1, 0.5, 0.5, 1, 1)

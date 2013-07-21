@@ -7,7 +7,7 @@ function widget:GetInfo()
     desc      = "Deferred rendering widget",
     author    = "beherith",
     date      = "2013 july",
-    license   = "GNU GPL, v2 or later",
+    license   = "CC-BY-ND",
     layer     = -1000000000,
     enabled   = true
   }
@@ -424,7 +424,7 @@ function widget:DrawWorld()
 				local ratio= lightparams[4] / math.sqrt(dist_sq)
 				ratio=ratio*2
 				glUniform(lightposloc, x,y,z, lightparams[4]) --IN world space
-				glUniform(lightcolorloc, 1,1,1,1) --IN world space
+				glUniform(lightcolorloc, lightparams[1],lightparams[2],lightparams[3], 1) 
 				--Spring.Echo('screenratio',ratio,sx,sy)
 				
 				gl.TexRect(

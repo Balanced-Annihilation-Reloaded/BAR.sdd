@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base;
+piece  base,wing1,wing2,jet1,jet2;
 
 static-var  statechg_DesiredState, statechg_StateChanging;
 

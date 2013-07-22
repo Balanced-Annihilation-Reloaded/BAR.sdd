@@ -25,13 +25,17 @@ return {
 		maxvelocity = 13.800000190735,
 		maxwaterdepth = 0,
 		name = "Peeper",
-		objectname = "ARMPEEP",
+		objectname = "ARMPEEP.s3o",
 		radardistance = 1140,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT_AIR",
 		selfdestructcountdown = 1,
 		sightdistance = 865,
 		turnrate = 880,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

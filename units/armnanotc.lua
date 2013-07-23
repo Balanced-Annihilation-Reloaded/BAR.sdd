@@ -35,10 +35,9 @@ return {
 		turnrate = 1,
 		upright = true,
 		workertime = 200,
-		yardmap = "ooooooooo",
 		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
+			--normalmaps = "yes",
+			--normaltex = "unittextures/Arm_normals.dds",
 		},
 		sounds = {
 			build = "nanlath1",

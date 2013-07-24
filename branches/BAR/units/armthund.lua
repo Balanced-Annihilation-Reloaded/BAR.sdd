@@ -32,6 +32,10 @@ return {
 		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 195,
 		turnrate = 829,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

@@ -30,13 +30,17 @@ return {
 		metalmake = 0.050000000745058,
 		metalstorage = 25,
 		name = "Construction Aircraft",
-		objectname = "ARMCA",
+		objectname = "ARMCA.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT_AIR",
 		sightdistance = 390,
 		terraformspeed = 225,
 		turnrate = 110,
 		workertime = 45,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		buildoptions = {
 			[10] = "armasp",
 			[11] = "armaap",

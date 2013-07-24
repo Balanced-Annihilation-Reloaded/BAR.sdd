@@ -27,7 +27,7 @@ return {
 		name = "Thunder",
 		noautofire = true,
 		nochasecategory = "MOBILE",
-		objectname = "ARMTHUND",
+		objectname = "ARMTHUND.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 195,

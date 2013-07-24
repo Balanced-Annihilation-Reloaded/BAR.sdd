@@ -26,7 +26,7 @@ return {
 		maxvelocity = 8.25,
 		maxwaterdepth = 0,
 		name = "Atlas",
-		objectname = "ARMATLAS",
+		objectname = "ARMATLAS.s3o",
 		releaseheld = true,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
@@ -35,6 +35,10 @@ return {
 		transportmass = 5000,
 		transportsize = 3,
 		turnrate = 550,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

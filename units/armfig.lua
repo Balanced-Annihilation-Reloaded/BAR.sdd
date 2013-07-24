@@ -23,11 +23,15 @@ return {
 		maxwaterdepth = 255,
 		name = "Freedom Fighter",
 		nochasecategory = "NOTAIR",
-		objectname = "ARMFIG",
+		objectname = "ARMFIG.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT_AIR",
 		sightdistance = 200,
 		turnrate = 891,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

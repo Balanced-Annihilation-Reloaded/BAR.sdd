@@ -3,9 +3,9 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, smoke;
+piece  smoke1,smoke2,smoke3,smoke4,base, arm1,arm2,arm3,clamp1,clamp2,barrell, barrelr,hotr,hotl,fan;
 
-
+static-var smoker;
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
 	while( get BUILD_PERCENT_LEFT )
@@ -32,10 +32,202 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 		sleep sleeptime;
 	}
 }
+Activate()
+{
+	spin fan around y-axis speed <80> accelerate <5>;
+	while(TRUE){
+		turn arm2 to x-axis <90> speed <180>;
+		sleep 500;
+		move arm3 to y-axis [-6] speed [12];
+		move clamp1 to z-axis [-1] speed [2];
+		move clamp2 to z-axis [1] speed [2];
+		hide hotr;
+		sleep 500;
+		move barrelr to z-axis [4.3] speed [12];
+		sleep 500;
+		
+		move clamp1 to z-axis [0] speed [2];
+		move clamp2 to z-axis [0] speed [2];
+		sleep 500;
+		
+		move arm3 to y-axis [0] speed [12];
+		move barrelr to z-axis [10.3] speed [12];
+		sleep 500;
+		turn arm2 to x-axis <0> speed <180>;
+		turn barrelr to x-axis <-90> speed <180>;
+		sleep 500;
+		move arm3 to y-axis [-7] speed [14];
+		move barrelr to y-axis [-7] speed [14];
+		sleep 500;
+		
+		move clamp1 to z-axis [-1] speed [2];
+		move clamp2 to z-axis [1] speed [2];
+		sleep 500;
+				
+		move arm3 to y-axis [0] speed [14];
+		
+		move barrelr to y-axis [-11] speed [8];
+		sleep 500;
+		show hotr;
+		move clamp1 to z-axis [0] speed [2];
+		move clamp2 to z-axis [0] speed [2];
+		
+		sleep 500;
+		turn arm1 to y-axis <180> speed <180>; ////TICK
+		
+		sleep 1000;
+		
+		turn arm2 to x-axis <-90> speed <180>;
+		sleep 500;
+		move arm3 to y-axis [-6] speed [12];
+		move clamp1 to z-axis [-1] speed [2];
+		move clamp2 to z-axis [1] speed [2];
+		hide hotl;
+		sleep 500;
+		move barrell to z-axis [4.3] speed [12];
+		sleep 500;
+		
+		move clamp1 to z-axis [0] speed [2];
+		move clamp2 to z-axis [0] speed [2];
+		sleep 500;
+		
+		move arm3 to y-axis [0] speed [12];
+		move barrell to z-axis [10.3] speed [12];
+		sleep 500;
+		turn arm2 to x-axis <0> speed <180>;
+		turn barrell to x-axis <-90> speed <180>;
+		sleep 500;
+		move arm3 to y-axis [-7] speed [14];
+		move barrell to y-axis [-7] speed [14];
+		sleep 500;
+		
+		move clamp1 to z-axis [-1] speed [2];
+		move clamp2 to z-axis [1] speed [2];
+		sleep 500;
+				
+		move arm3 to y-axis [0] speed [14];
+		
+		move barrell to y-axis [-11] speed [8];
+		sleep 500;
+		show hotl;
+		move clamp1 to z-axis [0] speed [2];
+		move clamp2 to z-axis [0] speed [2];
+		sleep 500;
+		
+		turn arm1 to y-axis <0> speed <180>; ////TICK
+		
+		sleep 2000;
+		
+		
+		move clamp1 to z-axis [-1] speed [2];
+		move clamp2 to z-axis [1] speed [2];
+		sleep 500;
+		
+		move arm3 to y-axis [-7] speed [14];
+		move barrelr to y-axis [-7] speed [14];
+		sleep 500;	
+		
+		move clamp1 to z-axis [0] speed [2];
+		move clamp2 to z-axis [0] speed [2];
+		sleep 500;
+		
+		move arm3 to y-axis [0] speed [14];
+		move barrelr to y-axis [0] speed [16];
+		sleep 500;
+		
+		
+		turn arm2 to x-axis <90> speed <180>;
+		turn barrelr to x-axis <0> speed <180>;
+		sleep 500;
+				
+		move arm3 to y-axis [-6] speed [12];
+		move barrelr to z-axis [4.3] speed [12];
+		sleep 500;
+		
+		move arm3 to y-axis [-6] speed [12];
+		move clamp1 to z-axis [-1] speed [2];
+		move clamp2 to z-axis [1] speed [2];
+		
+		sleep 500;
+		move barrelr to z-axis [0] speed [12];
+		move arm3 to y-axis [0] speed [12];
+	
+		
+		sleep 500;
+		
+		turn arm1 to y-axis <180> speed <180>; ////TICK
+		sleep 100;
+		
+		turn arm2 to x-axis <0> speed <180>;
+		sleep 500;
+		
+		move clamp1 to z-axis [-1] speed [2];
+		move clamp2 to z-axis [1] speed [2];
+		sleep 500;
+		
+		move arm3 to y-axis [-7] speed [14];
+		move barrell to y-axis [-7] speed [14];
+		sleep 500;	
+		
+		move clamp1 to z-axis [0] speed [2];
+		move clamp2 to z-axis [0] speed [2];
+		sleep 500;
+		
+		move arm3 to y-axis [0] speed [14];
+		move barrell to y-axis [0] speed [16];
+		sleep 500;
+		
+		
+		turn arm2 to x-axis <-90> speed <180>;
+		turn barrell to x-axis <0> speed <180>;
+		sleep 500;
+				
+		move arm3 to y-axis [-6] speed [12];
+		move barrell to z-axis [4.3] speed [12];
+		sleep 500;
+		
+		move clamp1 to z-axis [-1] speed [2];
+		move clamp2 to z-axis [1] speed [2];
+		
+		sleep 500;
+		move barrell to z-axis [0] speed [12];
+		move arm3 to y-axis [0] speed [12];
+	
+		
+		sleep 500;
+		
+		
+		turn arm1 to y-axis <0> speed <180>; ////TICK
+		sleep 1000;
+		
+		
+		
+	
+	}
+}
+
+GeoSmoke()
+{
+	while( TRUE )
+	{
+		if (smoker==0) emit-sfx 257 from smoke1;
+		if (smoker==1) emit-sfx 257 from smoke2;
+		if (smoker==2) emit-sfx 257 from smoke3;
+		if (smoker==3) emit-sfx 257 from smoke4;
+		smoker=smoker+1;
+		if (smoker>3) {
+			smoker=0;
+		}
+		sleep 500;
+	}
+}
 
 Create()
 {
+	smoker=0;
 	start-script SmokeUnit();
+	start-script Activate();
+	start-script GeoSmoke();
 }
 
 SweetSpot(piecenum)
@@ -49,23 +241,19 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
-		explode smoke type BITMAPONLY | BITMAP2;
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
-		explode smoke type FALL | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
-		explode smoke type FALL | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
-	explode smoke type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 }

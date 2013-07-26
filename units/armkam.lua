@@ -26,11 +26,15 @@ return {
 		maxwaterdepth = 0,
 		name = "Banshee",
 		nochasecategory = "VTOL",
-		objectname = "ARMKAM",
+		objectname = "ARMKAM.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 520,
 		turnrate = 693,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

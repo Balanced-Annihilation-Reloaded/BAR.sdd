@@ -3,8 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, carlingue, raile, rwing, laile, lwing, lflare, rflare,
-       flash;
+piece  base, lflare, rflare, lfin, rfin, rturret, lturret, engine, thrusta, thrustb, engines;
 
 // Signal definitions
 #define SIG_MOVE			2
@@ -12,27 +11,16 @@ piece  base, carlingue, raile, rwing, laile, lwing, lflare, rflare,
 
 Create()
 {
-	hide lflare;
-	hide rflare;
-	hide flash;
 }
 
 RestoreAfterDelay()
 {
 	sleep 100;
-	turn rwing to x-axis <0.000000> speed <50.000000>;
-	turn lwing to x-axis <0.000000> speed <50.000000>;
+	turn lturret to x-axis <0.000000> speed <50.000000>;
+	turn rturret to x-axis <0.000000> speed <50.000000>;
 }
 
-ProcessFlames()
-{
-	while( TRUE )
-	{
-		emit-sfx 0 from rflare;
-		emit-sfx 0 from lflare;
-		sleep 30;
-	}
-}
+
 
 MoveRate1()
 {
@@ -40,7 +28,7 @@ MoveRate1()
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
 	turn base to z-axis <0.000000> speed <120.000000>;
-	start-script ProcessFlames();
+	//start-script ProcessFlames();
 }
 
 MoveRate2()
@@ -48,7 +36,7 @@ MoveRate2()
 	start-script RestoreAfterDelay();
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
-	start-script ProcessFlames();
+	//start-script ProcessFlames();
 	sleep 1000;
 	turn base to z-axis <240.000000> speed <120.000000>;
 	wait-for-turn base around z-axis;
@@ -62,31 +50,25 @@ MoveRate3()
 	start-script RestoreAfterDelay();
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
-	start-script ProcessFlames();
+	//start-script ProcessFlames();
 	turn base to z-axis <0.000000> speed <120.000000>;
 }
 
 AimFromPrimary(piecenum)
 {
-	piecenum = flash;
+	piecenum = base;
 }
 
 QueryPrimary(piecenum)
 {
-	piecenum = flash;
+	piecenum = base;
 }
 
 FirePrimary()
 {
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
-	turn rwing to x-axis <270.000000> speed <50.000000>;
-	turn lwing to x-axis <270.000000> speed <50.000000>;
-	wait-for-turn rwing around x-axis;
-	wait-for-turn lwing around x-axis;
-	show flash;
 	sleep 200;
-	hide flash;
 }
 
 StartMoving()
@@ -94,10 +76,10 @@ StartMoving()
 	start-script RestoreAfterDelay();
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
-	turn raile to z-axis <0.000000> speed <60.000000>;
-	turn laile to z-axis <0.000000> speed <60.000000>;
-	wait-for-turn raile around z-axis;
-	wait-for-turn laile around z-axis;
+	move lfin to z-axis [-8] speed [8];
+	move rfin to z-axis [-8] speed [8];
+	turn engines to x-axis <90> speed <90>;
+	wait-for-move lfin along z-axis;
 }
 
 StopMoving()
@@ -105,10 +87,11 @@ StopMoving()
 	start-script RestoreAfterDelay();
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
-	turn raile to z-axis <270.000000> speed <40.000000>;
-	turn laile to z-axis <90.000000> speed <40.000000>;
-	wait-for-turn raile around z-axis;
-	wait-for-turn laile around z-axis;
+	move lfin to z-axis [0] speed [8];
+	move rfin to z-axis [0] speed [8];
+	
+	turn engines to x-axis <0> speed <90>;
+	wait-for-move lfin along z-axis;
 }
 
 SweetSpot(piecenum)
@@ -119,8 +102,4 @@ SweetSpot(piecenum)
 Killed(severity, corpsetype)
 {
 	corpsetype = 1;
-	explode base type 3;
-	explode carlingue type 3;
-	explode rwing type 30;
-	explode lwing type 30;
 }

@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, lflare, rflare, lfin, rfin, rturret, lturret, engine, thrusta, thrustb, engines;
+piece  base, lflare, rflare, lfin, rfin, rturret, lturret, thrusta, thrustb, engines;
 
 // Signal definitions
 #define SIG_MOVE			2
@@ -15,9 +15,12 @@ Create()
 
 RestoreAfterDelay()
 {
-	sleep 100;
+	sleep 500;
 	turn lturret to x-axis <0.000000> speed <50.000000>;
 	turn rturret to x-axis <0.000000> speed <50.000000>;
+	
+
+	
 }
 
 
@@ -36,6 +39,7 @@ MoveRate2()
 	start-script RestoreAfterDelay();
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
+	turn engines to x-axis <90> speed <90>;
 	//start-script ProcessFlames();
 	sleep 1000;
 	turn base to z-axis <240.000000> speed <120.000000>;
@@ -43,6 +47,7 @@ MoveRate2()
 	turn base to z-axis <120.000000> speed <180.000000>;
 	wait-for-turn base around z-axis;
 	turn base to z-axis <0.000000> speed <120.000000>;
+	
 }
 
 MoveRate3()
@@ -52,6 +57,8 @@ MoveRate3()
 	set-signal-mask SIG_MOVE;
 	//start-script ProcessFlames();
 	turn base to z-axis <0.000000> speed <120.000000>;
+	
+	turn engines to x-axis <90> speed <90>;
 }
 
 AimFromPrimary(piecenum)
@@ -69,6 +76,9 @@ FirePrimary()
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
 	sleep 200;
+	turn engines to x-axis <0> speed <90>;
+	
+	start-script RestoreAfterDelay();
 }
 
 StartMoving()

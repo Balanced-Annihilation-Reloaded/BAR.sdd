@@ -175,6 +175,10 @@ local function GetLightsFromUnitDefs()
 					Spring.Echo('LightningCannon',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size'])
 					--size=WeaponDefs[weaponID]['size']
 					plighttable[WeaponDefs[weaponID]['name']]={0.2,0.2,1,100}
+				elseif (WeaponDefs[weaponID]['type'] == 'BeamLaser') then
+					Spring.Echo('BeamLaser',WeaponDefs[weaponID]['name'],'rgbcolor', WeaponDefs[weaponID]['visuals']['colorR'])
+					--size=WeaponDefs[weaponID]['size']
+					plighttable[WeaponDefs[weaponID]['name']]={WeaponDefs[weaponID]['visuals']['colorR'],WeaponDefs[weaponID]['visuals']['colorG'],WeaponDefs[weaponID]['visuals']['colorB'],math.min(WeaponDefs[weaponID]['range'],600)}
 				end
 			end
 		end

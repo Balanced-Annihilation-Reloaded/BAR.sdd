@@ -30,7 +30,7 @@ return {
 		metalmake = 0.10000000149012,
 		metalstorage = 50,
 		name = "Advanced Construction Aircraft",
-		objectname = "ARMACA",
+		objectname = "ARMACA.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT_AIR",
@@ -38,6 +38,10 @@ return {
 		terraformspeed = 650,
 		turnrate = 138,
 		workertime = 170,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		buildoptions = {
 			[10] = "armveil",
 			[11] = "armfort",

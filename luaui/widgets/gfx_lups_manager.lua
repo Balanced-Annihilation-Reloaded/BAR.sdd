@@ -147,8 +147,21 @@ local UnitEffects = {
   },
 
   --// PLANES still need to do work here //----------------------------
+  [UnitDefNames["armatlas"].id] = {
+    {class='AirJet',options={color={0.1,0.4,0.6}, width=7, length=30, piece="thrust", onActive=true}},
+  },
+  [UnitDefNames["armpeep"].id] = {
+    {class='AirJet',options={color={0.1,0.4,0.6}, width=5, length=30, piece="jet1", onActive=true}},
+    {class='AirJet',options={color={0.1,0.4,0.6}, width=5, length=30, piece="jet2", onActive=true}},
+  },
+  [UnitDefNames["armca"].id] = {
+    {class='AirJet',options={color={0.1,0.4,0.6}, width=8, length=30, piece="thrust", onActive=true}},
+  },
+  [UnitDefNames["armaca"].id] = {
+    {class='AirJet',options={color={0.1,0.4,0.6}, width=8, length=30, piece="thrust", onActive=true}},
+  },
   [UnitDefNames["armfig"].id] = {
-    {class='AirJet',options={color={0.1,0.4,0.6}, width=6, length=45, piece="rearthrust", onActive=true}},
+    {class='AirJet',options={color={0.1,0.4,0.6}, width=6, length=45, piece="thrust", onActive=true}},
   },
   [UnitDefNames["armsfig"].id] = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=6, length=45, piece="thrust", onActive=true}},
@@ -185,11 +198,16 @@ local UnitEffects = {
     {class='AirJet',options={color={0.1,0.4,0}, width=6, length=40, piece="thrustb2", onActive=true}},
   },
 
+  [UnitDefNames["armkam"].id] = {
+    {class='ThundAirJet',options={color={0.1,0.4,0.6}, width=2, length=47, piece="thrusta", onActive=true}},
+    {class='ThundAirJet',options={color={0.1,0.4,0.6}, width=2, length=47, piece="thrustb", onActive=true}},
+  },
   [UnitDefNames["armthund"].id] = {
     {class='ThundAirJet',options={color={0.1,0.4,0.6}, width=2, length=47, piece="thrust1", onActive=true}},
     {class='ThundAirJet',options={color={0.1,0.4,0.6}, width=2, length=47, piece="thrust2", onActive=true}},
     {class='ThundAirJet',options={color={0.1,0.4,0.6}, width=2, length=47, piece="thrust3", onActive=true}},
     {class='ThundAirJet',options={color={0.1,0.4,0.6}, width=2, length=47, piece="thrust4", onActive=true}},
+    {class='ThundAirJet',options={color={0.1,0.4,0.6}, width=5, length=60, piece="thrustc", onActive=true}},
   },
   [UnitDefNames["corhurc"].id] = {
     {class='AirJet',options={color={0.9,0.3,0}, width=10, length=80, piece="thrustb", onActive=true}},
@@ -219,8 +237,8 @@ local UnitEffects = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=3.5, length=60, piece="thrust2", onActive=true}},
   },
   [UnitDefNames["armdfly"].id] = {
-    {class='AirJet',options={color={0.1,0.4,0.6}, width=3.5, length=60, piece="jet1", onActive=true}},
-    {class='AirJet',options={color={0.1,0.4,0.6}, width=3.5, length=60, piece="jet2", onActive=true}},
+    {class='AirJet',options={color={0.1,0.4,0.6}, width=3.5, length=60, piece="thrusta", onActive=true}},
+    {class='AirJet',options={color={0.1,0.4,0.6}, width=3.5, length=60, piece="thrustb", onActive=true}},
   },
   [UnitDefNames["corsb"].id] = {
     {class='AirJet',options={color={0.6,0.1,0}, width=3.5, length=76, piece="thrusta", onActive=true}},

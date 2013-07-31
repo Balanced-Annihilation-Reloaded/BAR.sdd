@@ -27,7 +27,7 @@ return {
 		maxwaterdepth = 0,
 		name = "Dragonfly",
 		nochasecategory = "VTOL",
-		objectname = "ARMDFLY",
+		objectname = "ARMDFLY.s3o",
 		releaseheld = true,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
@@ -36,6 +36,10 @@ return {
 		transportcapacity = 30,
 		transportsize = 15,
 		turnrate = 420,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

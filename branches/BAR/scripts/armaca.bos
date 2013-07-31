@@ -3,32 +3,42 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, link, flare, barrel, fan1,fan2,fan3,fan4,thrusta,thrustb;
 
-static-var  Static_Var_1, statechg_DesiredState, statechg_StateChanging;
+#define SIG_BUILD		4	
+piece  base, fan, doorl,doorr,platform,arm,nano,emit,thrust;
+
+static-var  statechg_DesiredState, statechg_StateChanging;
 
 
 activatescr()
 {
 	if( TRUE )
 	{
-		spin fan1 around y-axis speed <360> accelerate <10>;
-		spin fan2 around y-axis speed <360> accelerate <10>;
-		spin fan3 around y-axis speed <360> accelerate <10>;
-		spin fan4 around y-axis speed <360> accelerate <10>;
+
+		spin fan around y-axis speed <360> accelerate <10>;
+		sleep 998;
 	}
 	sleep 44;
+	return (0);
 }
 
 deactivatescr()
 {
 	if( TRUE )
 	{
-		
-		stop-spin fan1 around y-axis decelerate <20>;
-
+		turn arm to y-axis <0> speed <90>;
+		turn nano to x-axis <0> speed <90>;
+		move platform to y-axis [0] speed [90];
+		sleep 500;
+		move doorl to x-axis [0] speed [10];
+		move doorr to x-axis [0] speed [10];
+		stop-spin fan around y-axis decelerate <20>;
+		sleep 998;
 	}
+	sleep 44;
+	return (0);
 }
+
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
@@ -55,12 +65,14 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 		}
 		sleep sleeptime;
 	}
+	return (0);
 }
 
 InitState()
 {
 	statechg_DesiredState = TRUE;
 	statechg_StateChanging = FALSE;
+	return (0);
 }
 
 RequestState(requestedstate, currentstate)
@@ -87,60 +99,65 @@ RequestState(requestedstate, currentstate)
 		}
 	}
 	statechg_StateChanging = FALSE;
+	return (0);
 }
 
 Create()
 {
-
-	Static_Var_1 = 0;
 	call-script InitState();
 	start-script SmokeUnit();
+	return (0);
 }
 
+Activate()
+{
+	start-script RequestState(0);
+	return (0);
+}
+
+Deactivate()
+{
+	start-script RequestState(1);
+	return (0);
+}
+
+
+StartBuilding(heading, pitch)
+{
+	
+	start-script RequestState(0);
+	signal SIG_BUILD;
+	move doorl to x-axis [-2.8] speed [10];
+	move doorr to x-axis [2.8] speed [10];
+	sleep 500;
+	move platform to y-axis [5] speed [10];
+	set INBUILDSTANCE to 1;
+}
+
+
+StopBuilding()
+{
+	signal SIG_BUILD;	
+	set-signal-mask SIG_BUILD;
+	sleep 6000;
+	set-signal-mask 0;
+	signal SIG_BUILD;	
+	start-script RequestState(1);
+
+	set INBUILDSTANCE to 0;
+	return (0);
+}
+
+QueryNanoPiece(piecenum)
+{
+	piecenum = emit;
+	return (0);
+}
 
 SweetSpot(piecenum)
 {
 	piecenum = base;
-}
-
-QueryTransport(Func_Var_1)
-{
-	Func_Var_1 = 1;
-}
-
-BeginTransport(Func_Var_1)
-{
-	move link to y-axis [0.000000] - Func_Var_1 now;
-	start-script RequestState(0);
-}
-
-EndTransport()
-{
-	start-script RequestState(1);
-}
-
-
-
-AimPrimary(heading,pitch)
-{
-	turn barrel to x-axis -1 * pitch speed <100>;
-	wait-for-turn barrel around x-axis;
-	return (1);
-}
-
-FirePrimary()
-{
-	sleep 100;
-}
-
-QueryPrimary(piecenum)
-{
-	piecenum = flare;
-}
-
-AimFromPrimary(piecenum)
-{
-	piecenum = flare;
+	return (0);
 }
 
 Killed(severity, corpsetype)
@@ -148,21 +165,23 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP4;
+		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP4;
+		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode base type SHATTER | BITMAP4;
+		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
-	explode base type SHATTER | BITMAP4;
+	explode base type BITMAPONLY | BITMAP2;
+	return (0);
 }
+

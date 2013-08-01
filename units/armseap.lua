@@ -27,11 +27,15 @@ return {
 		maxwaterdepth = 255,
 		name = "Albatross",
 		nochasecategory = "VTOL",
-		objectname = "ARMSEAP",
+		objectname = "ARMSEAP.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 455,
 		turnrate = 597,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",

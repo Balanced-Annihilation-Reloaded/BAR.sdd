@@ -160,6 +160,10 @@ local UnitEffects = {
   [UnitDefNames["armaca"].id] = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=8, length=30, piece="thrust", onActive=true}},
   },
+  [UnitDefNames["armcsa"].id] = {
+    {class='AirJet',options={color={0.1,0.4,0.6}, width=8, length=30, piece="thrusta", onActive=true}},
+    {class='AirJet',options={color={0.1,0.4,0.6}, width=6, length=20, piece="thrustb", onActive=true}},
+  },
   [UnitDefNames["armfig"].id] = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=6, length=45, piece="thrust", onActive=true}},
   },

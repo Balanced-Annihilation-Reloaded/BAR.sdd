@@ -28,11 +28,15 @@ return {
 		name = "Tsunami",
 		noautofire = true,
 		nochasecategory = "VTOL",
-		objectname = "ARMSB",
+		objectname = "ARMSB.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 455,
 		turnrate = 392,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",

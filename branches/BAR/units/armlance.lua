@@ -26,11 +26,15 @@ return {
 		maxwaterdepth = 255,
 		name = "Lancet",
 		nochasecategory = "VTOL",
-		objectname = "ARMLANCE",
+		objectname = "ARMLANCE.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 455,
 		turnrate = 462,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

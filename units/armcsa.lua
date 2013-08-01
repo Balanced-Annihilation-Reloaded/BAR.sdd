@@ -32,13 +32,17 @@ return {
 		metalmake = 0.20000000298023,
 		metalstorage = 75,
 		name = "Construction Seaplane",
-		objectname = "ARMCSA",
+		objectname = "ARMCSA.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT_AIR",
 		sightdistance = 364,
 		terraformspeed = 300,
 		turnrate = 148,
 		workertime = 60,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		buildoptions = {
 			[10] = "armplat",
 			[11] = "armsy",

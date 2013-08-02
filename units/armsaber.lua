@@ -28,11 +28,15 @@ return {
 		maxwaterdepth = 255,
 		name = "Sabre",
 		nochasecategory = "VTOL",
-		objectname = "ARMSABER",
+		objectname = "ARMSABER.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 595,
 		turnrate = 931,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",

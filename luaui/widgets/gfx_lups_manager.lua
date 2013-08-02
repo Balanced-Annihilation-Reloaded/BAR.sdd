@@ -168,7 +168,7 @@ local UnitEffects = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=6, length=45, piece="thrust", onActive=true}},
   },
   [UnitDefNames["armsfig"].id] = {
-    {class='AirJet',options={color={0.1,0.4,0.6}, width=6, length=45, piece="thrust", onActive=true}},
+    {class='AirJet',options={color={0.1,0.4,0.6}, width=4, length=25, piece="thrust", onActive=true}},
   },
   [UnitDefNames["armseap"].id] = {
     {class='AirJet',options={color={0.1,0.4,0.6}, width=6, length=45, piece="thrust", onActive=true}},

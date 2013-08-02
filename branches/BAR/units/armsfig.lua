@@ -24,11 +24,15 @@ return {
 		maxwaterdepth = 255,
 		name = "Tornado",
 		nochasecategory = "NOTAIR",
-		objectname = "ARMSFIG",
+		objectname = "ARMSFIG.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT_AIR",
 		sightdistance = 200,
 		turnrate = 1625,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",

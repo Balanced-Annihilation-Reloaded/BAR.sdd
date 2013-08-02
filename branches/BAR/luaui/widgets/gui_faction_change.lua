@@ -68,7 +68,7 @@ function widget:Initialize()
     end
 end
 
-function widget:DrawWorld()
+function widget:DrawWorldPreUnit()
     glColor(1, 1, 1, 0.5)
     glDepthTest(false)
     for i = 1, #teamList do
@@ -78,10 +78,10 @@ function widget:DrawWorld()
             local teamStartUnit = spGetTeamRulesParam(teamID, 'startUnit')
             if teamStartUnit == armcomDefID then
                 glTexture('LuaUI/Images/arm.png')
-                glBeginEnd(GL_QUADS, QuadVerts, tsx, spGetGroundHeight(tsx, tsz), tsz, 80)
+                glBeginEnd(GL_QUADS, QuadVerts, tsx, spGetGroundHeight(tsx, tsz)+5, tsz, 80)
             else
                 glTexture('LuaUI/Images/core.png')
-                glBeginEnd(GL_QUADS, QuadVerts, tsx, spGetGroundHeight(tsx, tsz), tsz, 64)
+                glBeginEnd(GL_QUADS, QuadVerts, tsx, spGetGroundHeight(tsx, tsz)+5, tsz, 64)
             end
         end
     end

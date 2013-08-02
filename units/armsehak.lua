@@ -26,13 +26,17 @@ return {
 		maxvelocity = 11.270000457764,
 		maxwaterdepth = 255,
 		name = "Seahawk",
-		objectname = "ARMSEHAK",
+		objectname = "ARMSEHAK.s3o",
 		radardistance = 2250,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 1100,
 		sonardistance = 900,
 		turnrate = 402,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",

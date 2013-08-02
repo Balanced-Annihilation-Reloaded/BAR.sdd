@@ -36,8 +36,8 @@ return {
 		upright = true,
 		workertime = 200,
 		customparams = {
-			--normalmaps = "yes",
-			--normaltex = "unittextures/Arm_normals.dds",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		sounds = {
 			build = "nanlath1",

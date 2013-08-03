@@ -29,6 +29,9 @@ end
 -----------------------------------
 local function getUnitTooltip(ID)
  local tooltip = spGetUnitTooltip(ID)
+ if tooltip==nil then
+  tooltip=""
+ end
  local metalMake, metalUse, energyMake, energyUse = spGetUnitResources(ID)
  
  local metal = ((metalMake or 0) - (MetalUse or 0))

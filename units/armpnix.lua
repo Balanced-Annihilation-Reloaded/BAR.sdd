@@ -27,11 +27,15 @@ return {
 		name = "Phoenix",
 		noautofire = true,
 		nochasecategory = "VTOL",
-		objectname = "ARMPNIX",
+		objectname = "ARMPNIX.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 260,
 		turnrate = 402,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

@@ -183,7 +183,8 @@ local UnitEffects = {
     {class='AirJet',options={color={0.3,0.1,0}, width=5, length=65, piece="thrustb", onActive=true}},
   },
   [UnitDefNames["armlance"].id] = {
-   {class='AirJet',options={color={0.1,0.4,0.6}, width=5, length=65, piece="thrust", onActive=true}},
+   {class='AirJet',options={color={0.1,0.4,0.6}, width=5, length=65, piece="thrust1", onActive=true}},
+   {class='AirJet',options={color={0.1,0.4,0.6}, width=5, length=65, piece="thrust2", onActive=true}},
   },
   [UnitDefNames["corveng"].id] = {
     {class='AirJet',options={color={0.3,0.1,0}, width=3, length=24, piece="thrust1", onActive=true}},

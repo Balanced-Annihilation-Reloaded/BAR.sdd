@@ -8,9 +8,10 @@ piece  base, lflare, rflare, lfin, rfin, rturret, lturret, thrusta, thrustb, eng
 // Signal definitions
 #define SIG_MOVE			2
 
-
+static-var gun_1;
 Create()
 {
+	gun_1=0;
 }
 
 RestoreAfterDelay()
@@ -68,7 +69,16 @@ AimFromPrimary(piecenum)
 
 QueryPrimary(piecenum)
 {
-	piecenum = base;
+	if (gun_1==0)
+	{
+		piecenum = lflare;
+		gun_1=1;
+	}
+	else 
+	{
+		piecenum=rflare;
+		gun_1=0;
+	}
 }
 
 FirePrimary()

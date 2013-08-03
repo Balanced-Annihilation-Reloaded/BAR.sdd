@@ -14,7 +14,7 @@ activatescr()
 	if( TRUE )
 	{
 		turn enginec to x-axis <90.021978> speed <62.000000>;
-		turn engines to x-axis <40> speed <30.000000>;
+		turn engines to x-axis <90> speed <30.000000>;
 		turn wingl to z-axis <-135> speed <90.000000>;
 		turn wingr to z-axis <135> speed <90.000000>;
 		sleep 1457;
@@ -30,7 +30,7 @@ deactivatescr()
 	{
 		turn enginec to x-axis <0> speed <62.000000>;
 		
-		turn engines to x-axis <40> speed <30.000000>;
+		turn engines to x-axis <0> speed <30.000000>;
 		turn wingl to z-axis <0> speed <90.000000>;
 		turn wingr to z-axis <0> speed <90.000000>;
 		sleep 1446;

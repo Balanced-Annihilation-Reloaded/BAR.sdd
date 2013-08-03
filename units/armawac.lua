@@ -25,13 +25,17 @@ return {
 		maxvelocity = 10.579999923706,
 		maxwaterdepth = 0,
 		name = "Eagle",
-		objectname = "ARMAWAC",
+		objectname = "ARMAWAC.s3o",
 		radardistance = 2500,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 1275,
 		sonardistance = 1200,
 		turnrate = 392,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

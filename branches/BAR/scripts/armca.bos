@@ -17,8 +17,8 @@ activatescr()
 	{
 		turn wingbr to x-axis <-90> speed <90>;
 		turn wingbl to x-axis <-90> speed <90>;
-		turn wingfr to x-axis <90> speed <90>;
-		turn wingfl to x-axis <-90> speed <90>;
+		turn wingfr to z-axis <-90> speed <90>;
+		turn wingfl to z-axis <90> speed <90>;
 		sleep 908;
 	}
 	sleep 40;
@@ -31,8 +31,8 @@ deactivatescr()
 	{
 		turn wingbr to x-axis <0> speed <90>;
 		turn wingbl to x-axis <0> speed <90>;
-		turn wingfr to x-axis <0> speed <90>;
-		turn wingfl to x-axis <0> speed <90>;
+		turn wingfr to z-axis <0> speed <90>;
+		turn wingfl to z-axis <0> speed <90>;
 		turn doorbl to z-axis <0> speed <270>;
 		turn doorbr to z-axis  <0> speed <270>;
 		turn arm1 to x-axis <0> speed <60>;

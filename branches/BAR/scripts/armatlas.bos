@@ -12,8 +12,8 @@ activatescr()
 {
 	if( TRUE )
 	{
-		move bodyl to x-axis [5] speed [5];
-		move bodyr to x-axis [-5] speed [5];
+		move bodyl to x-axis [-5] speed [5];
+		move bodyr to x-axis [5] speed [5];
 		turn arml1 to z-axis <-90> speed <90>;
 		turn arml2 to z-axis <-90> speed <90>;
 		turn armr1 to z-axis <90> speed <90>;

@@ -59,26 +59,7 @@ deactivatescr()
 	sleep 102;
 	return (0);
 }
-MoveRate0(){
 
-	get PRINT(0);
-
-}
-MoveRate1(){
-
-	get PRINT(1);
-
-}
-MoveRate2(){
-
-	get PRINT(2);
-
-}
-MoveRate3(){
-
-	get PRINT(3);
-
-}
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
 	while( get BUILD_PERCENT_LEFT )
@@ -145,7 +126,6 @@ RestoreAfterDelay()
 }
 Create()
 {
-	get PRINT(1, 5,9,10);
 	gun_1 = flare1;
 	call-script InitState();
 	start-script SmokeUnit();

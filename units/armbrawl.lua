@@ -27,11 +27,15 @@ return {
 		maxwaterdepth = 0,
 		name = "Brawler",
 		nochasecategory = "VTOL",
-		objectname = "ARMBRAWL",
+		objectname = "ARMBRAWL.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 550,
 		turnrate = 792,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

@@ -23,12 +23,16 @@ return {
 		maxwaterdepth = 0,
 		name = "Hawk",
 		nochasecategory = "NOTAIR",
-		objectname = "ARMHAWK",
+		objectname = "ARMHAWK.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT_AIR",
 		sightdistance = 200,
 		stealth = true,
 		turnrate = 1425,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

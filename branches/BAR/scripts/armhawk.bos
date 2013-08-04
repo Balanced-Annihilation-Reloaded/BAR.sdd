@@ -3,22 +3,25 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  flare1, flare2, base, rearthrust;
+piece  flare1, flare2, base, thrust, cowl, fan;
 
 static-var  Static_Var_1, statechg_DesiredState, statechg_StateChanging;
 
 
 activatescr()
 {
-
-	sleep 44;
+	spin fan around y-axis speed <200> accelerate <10>;
+	turn cowl to x-axis <90> speed <30>;
+	sleep 1000;
 	return (0);
 }
 
 deactivatescr()
 {
 
-	sleep 44;
+	stop-spin fan around y-axis decelerate <10>;
+	turn cowl to x-axis <0> speed <30>;
+	sleep 1000;
 	return (0);
 }
 
@@ -145,7 +148,7 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY | BITMAP1;
 		explode flare1 type BITMAPONLY | BITMAP2;
 		explode flare2 type BITMAPONLY | BITMAP3;
-		explode rearthrust type BITMAPONLY | BITMAP4;
+		explode thrust type BITMAPONLY | BITMAP4;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -154,7 +157,7 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY | BITMAP1;
 		explode flare1 type FALL | BITMAP2;
 		explode flare2 type FALL | BITMAP3;
-		explode rearthrust type FALL | BITMAP4;;
+		explode thrust type FALL | BITMAP4;;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -163,13 +166,13 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY | BITMAP1;
 		explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode rearthrust type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+		explode thrust type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
 	explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 	explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode rearthrust type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+	explode thrust type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 	return (0);
 }

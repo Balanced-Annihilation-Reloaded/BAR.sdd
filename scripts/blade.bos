@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, body, firep1, firep2, thrust1, thrust2, thrust3;
+piece  base, thrust, wingl, wingr, turretl, turretr, flarer, flarel, fan;
 
 static-var  gun_1, Static_Var_2, statechg_DesiredState, statechg_StateChanging;
 
@@ -13,12 +13,20 @@ static-var  gun_1, Static_Var_2, statechg_DesiredState, statechg_StateChanging;
 
 activatescr()
 {
+	turn wingl to y-axis <-90> speed <90>;
+	turn wingr to y-axis <90> speed <90>;
+	spin fan around y-axis speed <200> accelerate <10>;
+	sleep 1000;
 	return (0);
 	// Build by COBBLER Ver4.0 Copyright @1998 DIGITAL CONCEPT SOFTWARE (MANU@inext.fr) / http://www.annihilationcenter.com/DCS/  
 }
 
 deactivatescr()
 {
+	turn wingl to y-axis <0> speed <90>;
+	turn wingr to y-axis <0> speed <90>;
+	stop-spin fan around y-axis decelerate <10>;
+	sleep 1000;
 }
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
@@ -51,8 +59,8 @@ StopMoving()
 {
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
-	turn body to y-axis <0.000000> speed <150.000000>;
-	wait-for-turn body around y-axis;
+	turn base to y-axis <0.000000> speed <150.000000>;
+	wait-for-turn base around y-axis;
 	sleep 15;
 }
 
@@ -123,18 +131,18 @@ SweetSpot(piecenum)
 RestoreAfterDelay()
 {
 	sleep Static_Var_2;
-	turn body to y-axis <0.000000> speed <150.000000>;
+	turn base to y-axis <0.000000> speed <150.000000>;
 }
 
 QueryPrimary(piecenum)
 {
 	if( gun_1 == 0 )
 	{
-		piecenum = firep1;
+		piecenum = flarel;
 	}
 	if( gun_1 == 1 )
 	{
-		piecenum = firep2;
+		piecenum = flarer;
 	}
 }
 
@@ -142,15 +150,15 @@ AimPrimary(heading, pitch)
 {
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
-	turn body to y-axis heading speed <100.000000>;
-	wait-for-turn body around y-axis;
+	turn base to y-axis heading speed <100.000000>;
+	wait-for-turn base around y-axis;
 	start-script RestoreAfterDelay();
 	return (1);
 }
 
 AimFromPrimary(piecenum)
 {
-	piecenum = body;
+	piecenum = base;
 }
 
 Shot1()
@@ -164,14 +172,11 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
-		explode body type BITMAPONLY | BITMAP1;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode body type BITMAPONLY | BITMAP1;
 		explode base type BITMAPONLY | BITMAP1;
 		return (0);
 	}
@@ -179,12 +184,8 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
-		explode body type BITMAPONLY | BITMAP1;
-		explode base type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
-	explode body type BITMAPONLY | BITMAP1;
-	explode base type BITMAPONLY | BITMAP3;
 }

@@ -27,11 +27,15 @@ return {
 		maxwaterdepth = 0,
 		name = "Blade",
 		nochasecategory = "VTOL",
-		objectname = "BLADE",
+		objectname = "BLADE.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 624,
 		turnrate = 720,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

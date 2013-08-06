@@ -3,8 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  flare1, flare2, base, wing1, wing2, rearthrust, wingthrust1, wingthrust2,
-       thrust1, thrust2;
+piece  base, wingl, wingr, doorl,doorr, rails, bomba, drop, thrusta, thrustb;
 
 static-var  Static_Var_1, gun_1, statechg_DesiredState, statechg_StateChanging;
 
@@ -13,18 +12,10 @@ activatescr()
 {
 	if( TRUE )
 	{
-		move wing1 to x-axis [0.000000] now;
-		move wing1 to x-axis [-2.400000] speed [1.646088];
-		move wing1 to z-axis [0.000000] now;
-		move wing1 to z-axis [-0.500000] speed [0.342920];
-		move wing2 to x-axis [0.000000] now;
-		move wing2 to x-axis [2.449994] speed [1.680371];
-		move wing2 to z-axis [0.000000] now;
-		move wing2 to z-axis [-0.550000] speed [0.377228];
-		turn wing1 to z-axis <0.000000> now;
-		turn wing1 to z-axis <0.890110> speed <0.615385>;
-		turn wing2 to z-axis <0.000000> now;
-		turn wing2 to z-axis <-2.692308> speed <1.846154>;
+		turn wingl to x-axis <90.000000> now;
+		turn wingl to x-axis <0.0> speed <90>;
+		turn wingr to x-axis <90.000000> now;
+		turn wingr to x-axis <0> speed <90>;
 		sleep 1458;
 	}
 	sleep 66;
@@ -34,18 +25,8 @@ deactivatescr()
 {
 	if( TRUE )
 	{
-		move wing1 to x-axis [-2.400000] now;
-		move wing1 to x-axis [0.000000] speed [1.646088];
-		move wing1 to z-axis [-0.500000] now;
-		move wing1 to z-axis [0.000000] speed [0.342920];
-		move wing2 to x-axis [2.449994] now;
-		move wing2 to x-axis [0.000000] speed [1.680371];
-		move wing2 to z-axis [-0.550000] now;
-		move wing2 to z-axis [0.000000] speed [0.377228];
-		turn wing1 to z-axis <0.890110> now;
-		turn wing1 to z-axis <0.000000> speed <0.615385>;
-		turn wing2 to z-axis <-2.692308> now;
-		turn wing2 to z-axis <0.000000> speed <1.846154>;
+		turn wingl to x-axis <90> speed <90>;
+		turn wingr to x-axis <90> speed <90>;
 		sleep 1458;
 	}
 	sleep 66;
@@ -127,7 +108,6 @@ MoveRate2()
 Create()
 {
 	Static_Var_1 = 0;
-	gun_1 = flare1;
 	call-script InitState();
 	start-script SmokeUnit();
 }
@@ -141,15 +121,33 @@ Deactivate()
 {
 	start-script RequestState(1);
 }
-
+AimPrimary(pitch,heading){
+	show bomba;
+	move doorr to x-axis [5] speed [10];
+	move doorl to x-axis [-5] speed [10];
+	move rails to z-axis [-19] speed [19];
+	move bomba to z-axis [-19] speed [19];
+	sleep 998;
+	turn bomba to x-axis <-90.0> speed <180>;
+	sleep 500;
+	
+}
 FirePrimary()
 {
-	gun_1 = !gun_1;
+	hide bomba;
+	
+	move doorr to x-axis [0] speed [10];
+	move doorl to x-axis [0] speed [10];
+	move rails to z-axis [0] speed [19];
+	move bomba to z-axis [0] speed [19];
+	sleep 998;
+
+	
 }
 
 QueryPrimary(piecenum)
 {
-	piecenum = gun_1;
+	piecenum = drop;
 }
 
 SweetSpot(piecenum)
@@ -163,48 +161,20 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
-		explode flare1 type BITMAPONLY | BITMAP2;
-		explode flare2 type BITMAPONLY | BITMAP3;
-		explode rearthrust type BITMAPONLY | BITMAP4;
-		explode wing1 type BITMAPONLY | BITMAP5;
-		explode wingthrust1 type BITMAPONLY | BITMAP1;
-		explode wing2 type BITMAPONLY | BITMAP2;
-		explode wingthrust2 type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
-		explode flare1 type FALL | BITMAP2;
-		explode flare2 type FALL | BITMAP3;
-		explode rearthrust type FALL | BITMAP4;
-		explode wing1 type SHATTER | EXPLODE_ON_HIT | BITMAP5;
-		explode wingthrust1 type FALL | BITMAP1;
-		explode wing2 type BITMAPONLY | BITMAP2;
-		explode wingthrust2 type FALL | BITMAP3;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
-		explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode rearthrust type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode wing1 type SHATTER | BITMAP5;
-		explode wingthrust1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode wing2 type BITMAPONLY | BITMAP2;
-		explode wingthrust2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
-	explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode rearthrust type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode wing1 type SHATTER | EXPLODE_ON_HIT | BITMAP5;
-	explode wingthrust1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode wing2 type BITMAPONLY | BITMAP2;
-	explode wingthrust2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 }

@@ -74,7 +74,7 @@ return {
 				model = "cortorpedo.s3o",
 				name = "TorpedoLauncher",
 				noselfdamage = true,
-				range = 500,
+				range = 1100,
 				reloadtime = 8,
 				soundhit = "xplodep2",
 				soundstart = "bombrel",

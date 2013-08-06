@@ -121,7 +121,7 @@ local lights = {}
 -- parameters for each light:
 -- RGBA: strength in each color channel, radius in elmos.
 -- pos: xyz positions
-
+local verbose = false
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 local function GetLightsFromUnitDefs()
@@ -153,30 +153,30 @@ local function GetLightsFromUnitDefs()
 				--Spring.Echo(UnitDefs[u]['name']..'_'..WeaponDefs[weaponID]['name'])
 				--WeaponDefs[weaponID]['name'] returns: armcom_armcomlaser
 				if (WeaponDefs[weaponID]['type'] == 'Cannon') then
-					Spring.Echo('Cannon',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size'])
+					if verbose then Spring.Echo('Cannon',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					size=WeaponDefs[weaponID]['size']
 					plighttable[WeaponDefs[weaponID]['name']]={1,1,0.5,100*size}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'Dgun') then
-					Spring.Echo('Dgun',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size'])
+					if verbose then Spring.Echo('Dgun',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
 					plighttable[WeaponDefs[weaponID]['name']]={1,1,0.5,300}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'MissileLauncher') then
-					Spring.Echo('MissileLauncher',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size'])
+					if verbose then Spring.Echo('MissileLauncher',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					size=WeaponDefs[weaponID]['size']
 					plighttable[WeaponDefs[weaponID]['name']]={1,1,0.8,100* size}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'StarburstLauncher') then
-					Spring.Echo('StarburstLauncher',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size'])
+					if verbose then Spring.Echo('StarburstLauncher',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
 					plighttable[WeaponDefs[weaponID]['name']]={1,1,0.8,200}
 				elseif (WeaponDefs[weaponID]['type'] == 'LightningCannon') then
-					Spring.Echo('LightningCannon',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size'])
+					if verbose then Spring.Echo('LightningCannon',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
 					plighttable[WeaponDefs[weaponID]['name']]={0.2,0.2,1,100}
 				elseif (WeaponDefs[weaponID]['type'] == 'BeamLaser') then
-					Spring.Echo('BeamLaser',WeaponDefs[weaponID]['name'],'rgbcolor', WeaponDefs[weaponID]['visuals']['colorR'])
+					if verbose then Spring.Echo('BeamLaser',WeaponDefs[weaponID]['name'],'rgbcolor', WeaponDefs[weaponID]['visuals']['colorR']) end
 					--size=WeaponDefs[weaponID]['size']
 					plighttable[WeaponDefs[weaponID]['name']]={WeaponDefs[weaponID]['visuals']['colorR'],WeaponDefs[weaponID]['visuals']['colorG'],WeaponDefs[weaponID]['visuals']['colorB'],math.min(WeaponDefs[weaponID]['range'],600)}
 				end
@@ -288,9 +288,7 @@ local vertSrc = [[
     gl_Position    = gl_Vertex;
   }
 ]]
-local shadercode=io.open("shaders\deferred_lighting.glsl","r")
-local fragSrc = shadercode.read("*a")
-
+local fragSrc
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -300,6 +298,8 @@ function widget:Initialize()
 			spEcho("Shaders not found, reverting to non-GLSL widget")
 			GLSLRenderer = false
 		else
+			fragSrc = VFS.LoadFile("shaders\\deferred_lighting.glsl",VFS.ZIP)
+			--Spring.Echo('Shader code:',fragSrc)
 			depthShader = glCreateShader({
 				vertex = vertSrc,
 				fragment = fragSrc,

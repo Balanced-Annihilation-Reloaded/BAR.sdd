@@ -26,11 +26,15 @@ return {
 		name = "Liche",
 		noautofire = true,
 		nochasecategory = "VTOL",
-		objectname = "ARMCYBR",
+		objectname = "ARMCYBR.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIGUNITEX",
 		sightdistance = 455,
 		turnrate = 535,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

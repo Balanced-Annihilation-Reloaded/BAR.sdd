@@ -66,7 +66,7 @@ return {
 				craterboost = 0,
 				cratermult = 0,
 				edgeeffectiveness = 0.5,
-				explosiongenerator = "custom:FLASHSMALLBUILDINGEX",
+				explosionGenerator = [[custom:mininuke]],
 				firestarter = 100,
 				flighttime = 1.5,
 				impulseboost = 0.12300000339746,

@@ -20,7 +20,7 @@ end
 
 local rgbSpecMults = {0.25, 0.25, 0.25} -- specular RGB scales
 local copyLightDefs = {
-	["BA"] = {
+	["BARC"] = {
 		--Dgun
 		["armcom_arm_disintegrator"  ] = "arm_disintegrator",
 		["corcom_arm_disintegrator"  ] = "arm_disintegrator",
@@ -47,10 +47,14 @@ local copyLightDefs = {
 		--Juno
 		["ajuno_juno_pulse"          ] = "juno",
 		["cjuno_juno_pulse"          ] = "juno",
+		
+		--Temp
+		["armcybr_arm_pidr"          ] = "mini_nuke",
+
 	},
 }
 local dynLightDefs = {
-	["BA"] = {
+	["BARC"] = {
 		weaponLightDefs = {
 			-- Arm & Core Commander (dgun) projectiles
 			-- NOTE:
@@ -235,6 +239,18 @@ local dynLightDefs = {
 					ttl               = 2 * Game.gameSpeed,
 					decayFunctionType = {0.0, 0.0, 0.0},
 					altitudeOffset    = 150.0,
+				},
+			},
+			--Temp
+			["mini_nuke"] = {
+				explosionLightDef = {
+					diffuseColor      = {2.0,                   2.0,                   2.0                  },
+					specularColor     = {2.0 * rgbSpecMults[1], 2.0 * rgbSpecMults[2], 2.0 * rgbSpecMults[3]},
+					priority          = 20 * 10 + 1,
+					radius            = 640.0,
+					ttl               = 2.8 * Game.gameSpeed,
+					decayFunctionType = {0.0, 0.0, 0.0},
+					altitudeOffset    = 250.0,
 				},
 			},
 		},

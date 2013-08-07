@@ -26,12 +26,16 @@ return {
 		maxwaterdepth = 0,
 		name = "Stiletto",
 		nochasecategory = "VTOL",
-		objectname = "CORGRIPN",
+		objectname = "CORGRIPN.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT_AIR",
 		sightdistance = 390,
 		stealth = true,
 		turnrate = 396,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

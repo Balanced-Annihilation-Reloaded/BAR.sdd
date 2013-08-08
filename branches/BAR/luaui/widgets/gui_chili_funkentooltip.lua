@@ -4,9 +4,9 @@ function widget:GetInfo()
   desc      = 'v0.1 of a simple tooltip',
   author    = 'Funkencool',
   date      = '2013',
-  license     = 'public domain',
-  layer      = math.huge,
-  enabled    = true
+  license   = 'public domain',
+  layer     = math.huge,
+  enabled   = true,
  }
 end
 
@@ -19,14 +19,16 @@ local spTraceScreenRay          = Spring.TraceScreenRay
 local spGetMouseState           = Spring.GetMouseState
 local spGetUnitTooltip          = Spring.GetUnitTooltip
 local spGetUnitResources        = Spring.GetUnitResources
+local spGetFeatureResources     = Spring.GetFeatureResources
 local screenWidth, screenHeight = Spring.GetWindowGeometry()
-
 -----------------------------------
 local function initWindow()
  tipWindow = Chili.Window:New{parent = screen0, skin = 'Flat', width = 300, height = 75, padding = {5,0,0,0},minHeight=1}
  tip = Chili.TextBox:New{parent = tipWindow, x = 0, y = 0, right = 0, bottom = 0,margin = {0,0,0,0}}
+ tipWindow:Hide()
 end
 
+-----------------------------------
 local function formatresource(description, res)
 	color = ""
 	if res < 0 then color = '\255\255\127\0' end
@@ -54,17 +56,19 @@ local function getUnitTooltip(ID)
  return tooltip
 end
 -----------------------------------
-local function getFeatureTooltip()
- 
+local function getFeatureTooltip(ID)
+ local rMetal, mMetal, rEnergy, mEnergy, reclaimLeft = spGetFeatureResources(ID)
+ local tooltip = "Metal: "..rMetal..'\n'.."Energy: "..rEnergy
+ return tooltip
 end
 -----------------------------------
 local function getTooltip()
  mousePosX, mousePosY   = spGetMouseState()
  local typeOver, ID     = spTraceScreenRay(mousePosX, mousePosY)
- if screen0.currentTooltip then tooltip = screen0.currentTooltip
- elseif typeOver == 'unit' then tooltip = getUnitTooltip(ID)
+ if screen0.currentTooltip then    tooltip = screen0.currentTooltip
+ elseif typeOver == 'unit' then    tooltip = getUnitTooltip(ID)
  elseif typeOver == 'feature' then tooltip = getFeatureTooltip(ID)
- else                           tooltip = '' 
+ else                              tooltip = '' 
  end
 end
 -----------------------------------

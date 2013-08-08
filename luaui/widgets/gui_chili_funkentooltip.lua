@@ -26,6 +26,19 @@ local function initWindow()
  tipWindow = Chili.Window:New{parent = screen0, skin = 'Flat', width = 300, height = 75, padding = {5,0,0,0},minHeight=1}
  tip = Chili.TextBox:New{parent = tipWindow, x = 0, y = 0, right = 0, bottom = 0,margin = {0,0,0,0}}
 end
+
+local function formatresource(description, res)
+	color = ""
+	if res < 0 then color = '\255\255\127\0' end
+	if res > 0 then color = '\255\127\255\0' end
+	
+	if math.abs(res) > 20 then -- no decimals for small numbers
+		res = string.format("%d", res)
+	else
+		res = string.format("%.1f",res)
+	end
+	return color .. description .. res
+end
 -----------------------------------
 local function getUnitTooltip(ID)
  local tooltip = spGetUnitTooltip(ID)
@@ -36,14 +49,8 @@ local function getUnitTooltip(ID)
  
  local metal = ((metalMake or 0) - (MetalUse or 0))
  local energy = ((energyMake or 0) - (energyUse or 0))
- 
- if metal < 0 then metal = '\255\255\127\0 '..metal
- elseif metal > 0 then metal = '\255\127\255\0 +'..metal end
- 
- if energy < 0 then energy = '\255\255\127\0 '..energy
- elseif energy > 0 then energy = '\255\127\255\0 +'..energy end
- 
- tooltip = tooltip..'\nMetal: '..metal..'/s\b\nEnergy: '..energy..'/s'
+
+ tooltip = tooltip..'\n'..formatresource("Metal: ", metal)..'/s\b\n' .. formatresource("Energy: ", energy)..'/s'
  return tooltip
 end
 -----------------------------------
@@ -91,3 +98,4 @@ end
 function widget:Shutdown()
   tipWindow:Dispose()
 end
+

@@ -110,7 +110,7 @@ Create()
 
 RestoreAfterDelay()
 {
-	sleep 3000;
+	sleep 0;
 	set-signal-mask 0;
 	return (0);
 }
@@ -159,7 +159,7 @@ FirePrimary()
 		sleep 150;
 		hide flare1;
 		gun_1 = 1;
-		start-script RestoreAfterDelay();
+	//	start-script RestoreAfterDelay();
 		return (0);
 	}
 	if( gun_1 == 1 )
@@ -168,7 +168,7 @@ FirePrimary()
 		sleep 150;
 		hide flare2;
 		gun_1 = 0;
-		start-script RestoreAfterDelay();
+		//start-script RestoreAfterDelay();
 		return (0);
 	}
 }

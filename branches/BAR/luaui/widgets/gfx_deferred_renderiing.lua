@@ -112,6 +112,8 @@ local depthTexture
 local invrxloc = nil
 local invryloc = nil
 local lightposloc = nil
+local lightcolorloc = nil
+local lightparamsloc = nil
 local uniformEyePos
 local uniformViewPrjInv
 
@@ -121,6 +123,12 @@ local lights = {}
 -- parameters for each light:
 -- RGBA: strength in each color channel, radius in elmos.
 -- pos: xyz positions
+-- params: ABC: where A is constant, B is quadratic, C is linear
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--Light falloff functions: http://gamedev.stackexchange.com/questions/56897/glsl-light-attenuation-color-and-intensity-formula
+
 local verbose = false
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -155,30 +163,30 @@ local function GetLightsFromUnitDefs()
 				if (WeaponDefs[weaponID]['type'] == 'Cannon') then
 					if verbose then Spring.Echo('Cannon',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={1,1,0.5,100*size}
+					plighttable[WeaponDefs[weaponID]['name']]={0.5,0.5,0.25,100*size, 1,1,0}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'Dgun') then
 					if verbose then Spring.Echo('Dgun',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={1,1,0.5,300}
+					plighttable[WeaponDefs[weaponID]['name']]={1,1,0.5,300,1,1,0}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'MissileLauncher') then
 					if verbose then Spring.Echo('MissileLauncher',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={1,1,0.8,100* size}
+					plighttable[WeaponDefs[weaponID]['name']]={0.5,0.5,0.6,100* size, 1,1, 0}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'StarburstLauncher') then
 					if verbose then Spring.Echo('StarburstLauncher',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={1,1,0.8,200}
+					plighttable[WeaponDefs[weaponID]['name']]={0.5,0.5,0.4,200,1,1,0}
 				elseif (WeaponDefs[weaponID]['type'] == 'LightningCannon') then
 					if verbose then Spring.Echo('LightningCannon',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={0.2,0.2,1,100}
+					plighttable[WeaponDefs[weaponID]['name']]={0.2,0.2,1,100,1,1,0}
 				elseif (WeaponDefs[weaponID]['type'] == 'BeamLaser') then
 					if verbose then Spring.Echo('BeamLaser',WeaponDefs[weaponID]['name'],'rgbcolor', WeaponDefs[weaponID]['visuals']['colorR']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={WeaponDefs[weaponID]['visuals']['colorR'],WeaponDefs[weaponID]['visuals']['colorG'],WeaponDefs[weaponID]['visuals']['colorB'],math.min(WeaponDefs[weaponID]['range'],600)}
+					plighttable[WeaponDefs[weaponID]['name']]={WeaponDefs[weaponID]['visuals']['colorR'],WeaponDefs[weaponID]['visuals']['colorG'],WeaponDefs[weaponID]['visuals']['colorB'],math.min(WeaponDefs[weaponID]['range'],600),0.6,2,-1.3}
 				end
 			end
 		end
@@ -240,9 +248,6 @@ local function GetVisibleProjectiles()
 end
 
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
---Light falloff functions: http://gamedev.stackexchange.com/questions/56897/glsl-light-attenuation-color-and-intensity-formula
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -319,6 +324,7 @@ function widget:Initialize()
 				invryloc=glGetUniformLocation(depthShader, "inverseRY")
 				lightposloc=glGetUniformLocation(depthShader, "lightpos")
 				lightcolorloc=glGetUniformLocation(depthShader, "lightcolor")
+				lightparamsloc=glGetUniformLocation(depthShader, "lightparams")
 				uniformEyePos       = glGetUniformLocation(depthShader, 'eyePos')
 				uniformViewPrjInv   = glGetUniformLocation(depthShader, 'viewProjectionInv')
 			end
@@ -371,7 +377,7 @@ function widget:DrawWorld()
 			x,y,z=spGetProjectilePosition(pID)
 			local wep,piece=spGetProjectileType(pID)
 			if piece then
-				lightparams={1,1,0.5,0.3}
+				lightparams={0.5,0.5,0.25,100,1,1,0}
 			else
 				lightparams=projectileLightTypes[spGetProjectileName(pID)]
 			end
@@ -386,6 +392,7 @@ function widget:DrawWorld()
 				ratio=ratio*2
 				glUniform(lightposloc, x,y,z, lightparams[4]) --IN world space
 				glUniform(lightcolorloc, lightparams[1],lightparams[2],lightparams[3], 1) 
+				glUniform(lightparamsloc, lightparams[5],lightparams[6],lightparams[7], 1) 
 				--Spring.Echo('screenratio',ratio,sx,sy)
 				
 				gl.TexRect(

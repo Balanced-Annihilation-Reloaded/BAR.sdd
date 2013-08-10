@@ -7,6 +7,7 @@
   uniform vec3 eyePos;
   uniform vec4 lightpos;
   uniform vec4 lightcolor;
+  uniform vec4 lightparams;
   uniform mat4 viewProjectionInv;
   // uniform mat4 viewProjection;
 
@@ -31,9 +32,14 @@
 	herenormal4.xyz = -1.0*normalize(cross( up4.xyz - here4.xyz, right4.xyz - here4.xyz));
 	float dist_light_here = length(lightpos.xyz - here4.xyz);
 	float cosphi = max(0.0 , dot (herenormal4.xyz, lightpos.xyz - here4.xyz) / dist_light_here);
-	//float attentuation = 1.0 / ( 1.0 + 1.0*dist + 1.0 *dist*dist); // alternative attentuation function
-	//float attentuation =  saturate( ( 1.0 - (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w)) );
-	float attentuation =  max(0, ( 1.0 - (dist_light_here)/(lightpos.w)) );
+	//float attentuation =  max(0, ( 1.0 - (dist_light_here)/(lightpos.w)) ); // pretty good function, but its peak is too sharp, especially for lasers. https://www.desmos.com/calculator/vyc3ulbzj6
+	//float attentuation =  max( 0,( 1.0 - (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w)) );
+	float attentuation =  max( 0,( lightparams.r - lightparams.g * (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w) - lightparams.b*(dist_light_here)/(lightpos.w)) );
+	
+	//lightparams info:
+	// linear funcion is (1,0,1)
+	//quadratic function is (1,1,0)
+	// tits function (for lasers, to avoid hotspotting) (0.5, 2, -1.5)
 	attentuation *=attentuation;
 	
 	//gl_FragColor=vec4(normalize(herenormal4.xyz), cosphi*(lightpos.w/(dist_light_here*dist_light_here)));

@@ -59,8 +59,6 @@ StopMoving()
 {
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
-	turn base to y-axis <0.000000> speed <150.000000>;
-	wait-for-turn base around y-axis;
 	sleep 15;
 }
 
@@ -131,7 +129,6 @@ SweetSpot(piecenum)
 RestoreAfterDelay()
 {
 	sleep Static_Var_2;
-	turn base to y-axis <0.000000> speed <150.000000>;
 }
 
 QueryPrimary(piecenum)
@@ -150,8 +147,6 @@ AimPrimary(heading, pitch)
 {
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
-	turn base to y-axis heading speed <100.000000>;
-	wait-for-turn base around y-axis;
 	start-script RestoreAfterDelay();
 	return (1);
 }

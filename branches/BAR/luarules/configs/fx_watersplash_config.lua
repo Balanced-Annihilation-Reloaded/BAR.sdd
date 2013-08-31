@@ -8,6 +8,7 @@ local nonexplosiveWeapons = {
 }
 
 local BlackList = {
+     ["armcybr_arm_pidr"] = true,
 }
    
 return nonexplosiveWeapons, BlackList

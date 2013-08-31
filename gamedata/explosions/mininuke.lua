@@ -39,7 +39,6 @@ return {
       water              = true,
       properties = {
         airdrag            = 1,
-        alwaysvisible      = true,
         colormap           = [[1 1 1 0.9    1 1 1 0.9              0 0 0 0.01]],
         directional        = true,
         emitrot            = 0,
@@ -49,7 +48,7 @@ return {
         numparticles       = 1,
         particlelife       = 60,
         particlelifespread = 0,
-        particlesize       = 120,
+        particlesize       = 100,
         particlesizespread = 10,
         particlespeed      = 1,
         particlespeedspread = 0,

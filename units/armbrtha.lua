@@ -24,7 +24,7 @@ return {
 		maxslope = 12,
 		maxwaterdepth = 0,
 		name = "Big Bertha",
-		objectname = "ARMBRTHA",
+		objectname = "ARMBRTHA.s3o",
 		seismicsignature = 0,
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 273,
@@ -32,6 +32,8 @@ return {
 		usepiececollisionvolumes = 1,
 		yardmap = "oooooooooooooooo",
 		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 			canareaattack = 1,
 		},
 		featuredefs = {

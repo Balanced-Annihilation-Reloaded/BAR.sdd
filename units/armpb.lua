@@ -28,12 +28,17 @@ return {
 		mincloakdistance = 55,
 		name = "Pit Bull",
 		nochasecategory = "MOBILE",
-		objectname = "ARMPB",
+		objectname = "ARMPB.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 598,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
+		
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turret, dome, post, gun, barrel, flare;
+piece  base, turret, dome, gun, barrel, flare;
 
 static-var  OpenClosed, restore_delay, statechg_DesiredState, statechg_StateChanging;
 
@@ -16,12 +16,10 @@ Go()
 	set ARMORED to 0;
 	turn dome to x-axis <-135.032967> speed <550.000000>;
 	wait-for-turn dome around x-axis;
-	move post to y-axis [3.600000] speed [25.000000];
-	move barrel to z-axis [0.000000] speed [15.000000];
-	move gun to x-axis [1.500000] speed [5.000000];
-	wait-for-move post along y-axis;
+	move turret to y-axis [32] speed [25.000000];
+	move barrel to z-axis [6] speed [15.000000];
+	wait-for-move turret along y-axis;
 	wait-for-move barrel along z-axis;
-	wait-for-move gun along x-axis;
 	OpenClosed = 1;
 }
 
@@ -29,13 +27,12 @@ Stop()
 {
 	OpenClosed = 0;
 	turn gun to x-axis <0.000000> speed <90.000000>;
-	move barrel to z-axis [-5.500000] speed [15.000000];
-	move gun to x-axis [0.000000] speed [5.000000];
-	wait-for-move gun along x-axis;
+	move barrel to z-axis [0] speed [15.000000];
+
 	wait-for-turn gun around x-axis;
 	wait-for-move barrel along z-axis;
-	move post to y-axis [-17.600000] speed [25.000000];
-	wait-for-move post along y-axis;
+	move turret to y-axis [00000] speed [25.000000];
+	wait-for-move turret along y-axis;
 	turn dome to x-axis <0.000000> speed <550.000000>;
 	wait-for-turn dome around x-axis;
 	set ARMORED to 1;
@@ -108,12 +105,12 @@ Create()
 {
 	hide flare;
 	restore_delay = 2000;
-	OpenClosed = 1;
+	OpenClosed = 0;
 	statechg_DesiredState = FALSE;
 	statechg_StateChanging = FALSE;
 	start-script SmokeUnit();
-	turn dome to x-axis <-135.032967> now;
-	move gun to x-axis [1.500000] now;
+//	turn dome to x-axis <-135.032967> now;
+//	move gun to x-axis [1.500000] now;
 }
 
 /*
@@ -180,7 +177,6 @@ Killed(severity, corpsetype)
 		corpsetype = 1;
 		explode barrel type BITMAPONLY | BITMAP1;
 		explode base type BITMAPONLY | BITMAP3;
-		explode post type BITMAPONLY | BITMAP1;
 		explode gun type BITMAPONLY | BITMAP3;
 		explode dome type BITMAPONLY | BITMAP1;
 		explode turret type BITMAPONLY | BITMAP2;
@@ -190,7 +186,6 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 2;
 		explode barrel type FALL | BITMAP1;
-		explode post type BITMAPONLY | BITMAP3;
 		explode gun type BITMAPONLY | BITMAP3;
 		explode base type SHATTER | BITMAP1;
 		explode dome type BITMAPONLY | BITMAP3;
@@ -202,7 +197,6 @@ Killed(severity, corpsetype)
 		corpsetype = 3;
 		explode barrel type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		explode base type BITMAPONLY | BITMAP5;
-		explode post type BITMAPONLY | BITMAP3;
 		explode gun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 		explode dome type SHATTER | BITMAP1;
 		explode turret type BITMAPONLY | BITMAP2;
@@ -211,7 +205,6 @@ Killed(severity, corpsetype)
 	corpsetype = 3;
 	explode barrel type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 	explode base type BITMAPONLY | BITMAP5;
-	explode post type BITMAPONLY | BITMAP3;
 	explode gun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
 	explode dome type SHATTER | BITMAP1;
 	explode turret type BITMAPONLY | BITMAP2;

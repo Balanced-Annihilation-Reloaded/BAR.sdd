@@ -29,11 +29,15 @@ return {
 		movementclass = "HOVER3",
 		name = "Anaconda",
 		nochasecategory = "VTOL",
-		objectname = "ARMANAC",
+		objectname = "ARMANAC.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 509,
 		turnrate = 525,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

@@ -25,11 +25,15 @@ return {
 		movementclass = "HOVER3",
 		name = "Wombat",
 		nochasecategory = "VTOL",
-		objectname = "ARMMH",
+		objectname = "ARMMH.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 509,
 		turnrate = 470,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

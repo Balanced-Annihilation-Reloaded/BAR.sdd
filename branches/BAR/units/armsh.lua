@@ -29,11 +29,15 @@ return {
 		movementclass = "HOVER3",
 		name = "Skimmer",
 		nochasecategory = "VTOL",
-		objectname = "ARMSH",
+		objectname = "ARMSH.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 582,
 		turnrate = 640,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

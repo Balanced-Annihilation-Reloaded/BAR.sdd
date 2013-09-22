@@ -33,7 +33,7 @@ return {
 		metalstorage = 75,
 		movementclass = "HOVER3",
 		name = "Construction Hovercraft",
-		objectname = "ARMCH",
+		objectname = "ARMCH.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
@@ -41,6 +41,10 @@ return {
 		terraformspeed = 550,
 		turnrate = 425,
 		workertime = 110,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		buildoptions = {
 			[10] = "armlab",
 			[11] = "armvp",

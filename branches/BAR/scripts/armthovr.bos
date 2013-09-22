@@ -3,9 +3,8 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base2, turret1, wake1, wake2, wake3, wake4, wake5, wake6,
-       wake7, wake8, turret2, door3, door4, boom2, boom3, magnet2222,
-       boom1, boom4, link2222, boom5, boom6, boom7, boom8, boom9;
+piece  base, turret1, wake, weight, turret2, doorr, doorl, boom2, boom3,
+       boom1, boom4, link, boom5, boom6, boom7, boom8, boom9;
 
 static-var  Static_Var_1, Static_Var_2, Static_Var_3, Static_Var_4, Static_Var_5;
 
@@ -29,7 +28,7 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 			{
 				smoketype = 256 | 1;
 			}
-			emit-sfx smoketype from base2;
+			emit-sfx smoketype from base;
 		}
 		sleeptime = healthpercent * 50;
 		if( sleeptime < 200 )
@@ -53,22 +52,8 @@ StartMoving()
 	{
 		if( Static_Var_1 == 2 OR Static_Var_1 == 1 )
 		{
-			emit-sfx 5 from wake1;
-			emit-sfx 3 from wake2;
-			emit-sfx 5 from wake3;
-			emit-sfx 3 from wake4;
-			emit-sfx 5 from wake5;
-			emit-sfx 3 from wake6;
-			emit-sfx 3 from wake7;
-			emit-sfx 5 from wake8;
-			emit-sfx 3 from wake1;
-			emit-sfx 5 from wake2;
-			emit-sfx 3 from wake3;
-			emit-sfx 5 from wake4;
-			emit-sfx 3 from wake5;
-			emit-sfx 5 from wake6;
-			emit-sfx 5 from wake7;
-			emit-sfx 3 from wake8;
+			emit-sfx 5 from wake;
+			emit-sfx 3 from wake;
 		}
 		sleep 300;
 	}
@@ -86,34 +71,25 @@ setSFXoccupy(Func_Var_1)
 
 SweetSpot(piecenum)
 {
-	piecenum = base2;
+	piecenum = base;
 }
 
 StartDoorOpen()
 {
 	signal 4;
 	set-signal-mask 4;
-	move turret2 to y-axis [5.000000] speed [35.000000];
-	wait-for-move turret2 along y-axis;
-	turn door3 to z-axis <-90.000000> speed <100.000000>;
-	turn door4 to z-axis <90.000000> speed <100.000000>;
-	wait-for-turn door3 around z-axis;
-	wait-for-turn door4 around z-axis;
-	move door3 to y-axis [-9.000000] speed [25.000000];
-	move door4 to y-axis [-9.000000] speed [25.000000];
-	wait-for-move door3 along y-axis;
-	wait-for-move door4 along y-axis;
+	turn doorr to z-axis <-90.000000> speed <100.000000>;
+	turn doorl to z-axis <90.000000> speed <100.000000>;
+	wait-for-turn doorr around z-axis;
+	wait-for-turn doorl around z-axis;
+
 	sleep 5000;
-	move door3 to y-axis [0.000000] speed [25.000000];
-	move door4 to y-axis [0.000000] speed [25.000000];
-	wait-for-move boom2 along y-axis;
-	wait-for-move boom3 along y-axis;
-	turn door3 to z-axis <0.000000> speed <100.000000>;
-	turn door4 to z-axis <0.000000> speed <100.000000>;
-	wait-for-turn door3 around z-axis;
-	wait-for-turn door3 around z-axis;
-	move turret2 to y-axis [0.000000] speed [35.000000];
-	wait-for-move turret2 along y-axis;
+
+	turn doorr to z-axis <0.000000> speed <100.000000>;
+	turn doorl to z-axis <0.000000> speed <100.000000>;
+	wait-for-turn doorr around z-axis;
+	wait-for-turn doorr around z-axis;
+
 }
 
 BoomCalc(posxz, posy)
@@ -133,8 +109,9 @@ BoomExtend()
 	start-script StartDoorOpen();
 	turn turret1 to y-axis Static_Var_3 speed <200.000000>;
 	wait-for-turn turret1 around y-axis;
-	turn magnet2222 to x-axis Static_Var_4 speed <80.000000>;
-	turn boom1 to x-axis <0.000000> - Static_Var_4 speed <80.000000>;
+	turn turret2 to x-axis <0.000000> - Static_Var_4 speed <80.000000>;
+	turn weight to x-axis Static_Var_4 speed <80.000000>;
+	
 	move boom2 to z-axis Static_Var_2 / [0.000043] speed [60.000000];
 	move boom3 to z-axis Static_Var_2 / [0.000043] speed [60.000000];
 	move boom4 to z-axis Static_Var_2 / [0.000043] speed [60.000000];
@@ -143,7 +120,7 @@ BoomExtend()
 	move boom7 to z-axis Static_Var_2 / [0.000043] speed [60.000000];
 	move boom8 to z-axis Static_Var_2 / [0.000043] speed [60.000000];
 	move boom9 to z-axis Static_Var_2 / [0.000043] speed [60.000000];
-	wait-for-turn boom1 around x-axis;
+	wait-for-turn turret2 around x-axis;
 	wait-for-move boom2 along z-axis;
 	wait-for-move boom3 along z-axis;
 	wait-for-move boom4 along z-axis;
@@ -156,10 +133,11 @@ BoomExtend()
 
 BoomReset()
 {
-	turn magnet2222 to x-axis <0.000000> speed <60.000000>;
-	turn boom1 to x-axis <0.000000> speed <60.000000>;
-	wait-for-turn magnet2222 around x-axis;
-	wait-for-turn boom1 around x-axis;
+	turn turret2 to x-axis <0.000000> speed <60.000000>;
+	
+	turn weight to x-axis <0.000000> speed <60.000000>;
+
+	wait-for-turn turret2 around x-axis;
 	turn turret1 to y-axis <0.000000> speed <200.000000>;
 	move boom2 to z-axis [0.000000] speed [50.000000];
 	move boom3 to z-axis [0.000000] speed [50.000000];
@@ -183,9 +161,10 @@ BoomReset()
 BoomToPad()
 {
 	start-script StartDoorOpen();
-	turn magnet2222 to x-axis <0.000000> speed <60.000000>;
-	turn boom1 to x-axis <0.000000> speed <60.000000>;
-	wait-for-turn magnet2222 around x-axis;
+	turn turret2 to x-axis <0.000000> speed <60.000000>;
+	
+	turn weight to x-axis <0.000000> speed <60.000000>;
+
 	wait-for-turn boom1 around x-axis;
 	turn turret1 to y-axis <0.000000> speed <200.000000>;
 	move boom2 to z-axis [0.000000] speed [60.000000];
@@ -197,7 +176,7 @@ BoomToPad()
 	move boom8 to z-axis [0.000000] speed [60.000000];
 	move boom9 to z-axis [0.000000] speed [60.000000];
 	wait-for-turn turret1 around y-axis;
-	wait-for-turn boom1 around x-axis;
+	wait-for-turn turret2 around x-axis;
 	wait-for-move boom2 along z-axis;
 	wait-for-move boom3 along z-axis;
 	wait-for-move boom4 along z-axis;
@@ -206,9 +185,10 @@ BoomToPad()
 	wait-for-move boom7 along z-axis;
 	wait-for-move boom8 along z-axis;
 	wait-for-move boom9 along z-axis;
-	turn magnet2222 to x-axis <-30.000000> speed <60.000000>;
-	turn boom1 to x-axis <30.000000> speed <60.000000>;
-	wait-for-turn boom1 around x-axis;
+	turn turret2 to x-axis <30.000000> speed <60.000000>;
+	
+	turn weight to x-axis <-30.000000> speed <60.000000>;
+	wait-for-turn turret2 around x-axis;
 }
 
 TransportPickup(unitid)
@@ -218,8 +198,8 @@ TransportPickup(unitid)
 	{
 		set BUSY to 1;
 		call-script BoomExtend();
-		move link2222 to y-axis [0.000000] - get UNIT_HEIGHT(unitid) now;
-		attach-unit unitid to link2222;
+		move link to y-axis [0.000000] - get UNIT_HEIGHT(unitid) now;
+		attach-unit unitid to link;
 		call-script BoomToPad();
 		attach-unit unitid to 0 - 1;
 		call-script BoomReset();
@@ -234,8 +214,8 @@ TransportDrop(unitid, position)
 	{
 		set BUSY to 1;
 		call-script BoomToPad();
-		move link2222 to y-axis [0.000000] - get UNIT_HEIGHT(unitid) now;
-		attach-unit unitid to link2222;
+		move link to y-axis [0.000000] - get UNIT_HEIGHT(unitid) now;
+		attach-unit unitid to link;
 		call-script BoomExtend();
 		drop-unit unitid;
 		call-script BoomReset();
@@ -251,13 +231,9 @@ Killed(severity, corpsetype)
 		explode boom1 type BITMAPONLY | BITMAP1;
 		explode boom2 type BITMAPONLY | BITMAP2;
 		explode boom3 type BITMAPONLY | BITMAP5;
-		explode base2 type BITMAPONLY | BITMAP3;
-		explode door3 type BITMAPONLY | BITMAP4;
-		explode door4 type BITMAPONLY | BITMAP5;
-		explode link2222 type BITMAPONLY | BITMAP1;
-		explode turret1 type BITMAPONLY | BITMAP2;
-		explode wake1 type BITMAPONLY | BITMAP3;
-		explode wake2 type BITMAPONLY | BITMAP4;
+		explode base type BITMAPONLY | BITMAP3;
+		explode doorr type BITMAPONLY | BITMAP4;
+		explode doorl type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -266,13 +242,9 @@ Killed(severity, corpsetype)
 		explode boom1 type BITMAPONLY | BITMAP1;
 		explode boom2 type SHATTER | BITMAP2;
 		explode boom3 type SHATTER | BITMAP4;
-		explode base2 type BITMAPONLY | BITMAP3;
-		explode door3 type BITMAPONLY | BITMAP4;
-		explode door4 type BITMAPONLY | BITMAP5;
-		explode link2222 type FALL | BITMAP1;
-		explode turret1 type BITMAPONLY | BITMAP2;
-		explode wake1 type FALL | BITMAP3;
-		explode wake2 type FALL | BITMAP4;
+		explode base type BITMAPONLY | BITMAP3;
+		explode doorr type BITMAPONLY | BITMAP4;
+		explode doorl type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -281,24 +253,16 @@ Killed(severity, corpsetype)
 		explode boom1 type BITMAPONLY | BITMAP1;
 		explode boom2 type SHATTER | BITMAP2;
 		explode boom3 type SHATTER | BITMAP4;
-		explode base2 type BITMAPONLY | BITMAP3;
-		explode door3 type BITMAPONLY | BITMAP4;
-		explode door4 type BITMAPONLY | BITMAP5;
-		explode link2222 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode turret1 type BITMAPONLY | BITMAP2;
-		explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+		explode base type BITMAPONLY | BITMAP3;
+		explode doorr type BITMAPONLY | BITMAP4;
+		explode doorl type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	corpsetype = 3;
 	explode boom1 type BITMAPONLY | BITMAP1;
 	explode boom2 type SHATTER | EXPLODE_ON_HIT | BITMAP2;
 	explode boom3 type SHATTER | BITMAP4;
-	explode base2 type BITMAPONLY | BITMAP3;
-	explode door3 type BITMAPONLY | BITMAP4;
-	explode door4 type BITMAPONLY | BITMAP5;
-	explode link2222 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode turret1 type BITMAPONLY | BITMAP2;
-	explode wake1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode wake2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+	explode base type BITMAPONLY | BITMAP3;
+	explode doorr type BITMAPONLY | BITMAP4;
+	explode doorl type BITMAPONLY | BITMAP5;
 }

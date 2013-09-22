@@ -30,12 +30,16 @@ return {
 		movementclass = "HOVER3",
 		name = "Swatter",
 		nochasecategory = "ALL",
-		objectname = "ARMAH",
+		objectname = "ARMAH.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 509,
 		sonardistance = 350,
 		turnrate = 490,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

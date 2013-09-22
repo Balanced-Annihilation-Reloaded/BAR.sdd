@@ -31,7 +31,7 @@ return {
 		movementclass = "HOVER4",
 		name = "Bear",
 		nochasecategory = "ALL",
-		objectname = "ARMTHOVR",
+		objectname = "ARMTHOVR.s3o",
 		releaseheld = true,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
@@ -41,6 +41,10 @@ return {
 		transportunloadmethod = 0, 
 		turnrate = 395,
 		waterline = 4,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

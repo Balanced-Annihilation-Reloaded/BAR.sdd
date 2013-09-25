@@ -25,12 +25,16 @@ return {
 		maxslope = 20,
 		maxwaterdepth = 0,
 		name = "Mercury",
-		objectname = "MERCURY",
+		objectname = "MERCURY.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 350,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

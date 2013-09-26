@@ -29,12 +29,16 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Beamer",
-		objectname = "TAWF001",
+		objectname = "TAWF001.s3o",
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 475,
 		usebuildinggrounddecal = true,
 		yardmap = "oooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

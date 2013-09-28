@@ -30,7 +30,7 @@ return {
 		maxwaterdepth = 0,
 		metalstorage = 200,
 		name = "Hovercraft Platform",
-		objectname = "ARMHP",
+		objectname = "ARMHP.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
@@ -46,6 +46,10 @@ return {
 			[4] = "armah",
 			[5] = "armmh",
 			[6] = "armthovr",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

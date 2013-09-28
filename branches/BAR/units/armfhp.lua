@@ -24,13 +24,13 @@ return {
 		metalstorage = 200,
 		minwaterdepth = 30,
 		name = "Floating Hovercraft Platform",
-		objectname = "ARMFHP",
+		objectname = "ARMFHP.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 286,
 		terraformspeed = 1000,
-		waterline = 4,
+		waterline = 0,
 		workertime = 200,
 		yardmap = "wCCCCCCwwCCCCCCwwCCCCCCwwCCCCCCwwCCCCCCwwCCCCCCwwCCCCCCw",
 		buildoptions = {
@@ -40,6 +40,10 @@ return {
 			[4] = "armah",
 			[5] = "armmh",
 			[6] = "armthovr",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

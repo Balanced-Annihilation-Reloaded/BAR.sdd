@@ -1,12 +1,12 @@
 function widget:GetInfo()
 	return {
-		name		    = "BAR's resource bar",
-		desc		    = "v0.1 of the BAR resource bars",
+		name		    = "Funks resource bar",
+		desc		    = "Simple chili resource bars",
 		author		  = "Funkencool",
 		date		    = "2013",
-		license     = "public domain",
-		layer		    = math.huge,
-		enabled   	= true,
+		license   = "GPL v3",
+		layer		   = math.huge,
+		enabled   = true,
 	}
 end
 
@@ -49,8 +49,8 @@ local function setBar(res)
 		meter[res]:SetColor(1,0.5,0,.6)
 	end
 --	Spring.SetShareLevel(res, shareLevel[res].value/100)
-	meter[res]:SetCaption(currentLevel.."/"..storage)
 	meter[res]:SetValue(currentLevel/storage*100)
+	meter[res]:SetCaption(math.floor(currentLevel).."/"..storage)
 end
 
 function widget:GameFrame(n)

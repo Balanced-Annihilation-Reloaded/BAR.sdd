@@ -133,12 +133,15 @@ function widget:Initialize()  --loads .ogg files from the directories to table
 		caption  = "", 
 		children = {pauseIcon},
 		OnClick  = {
-		 function() 
+		 function(self) 
 		  self:ClearChildren()
+				Spring.PauseSoundStream()
 		  if self.paused then 
-		 		self:AddChild(playIcon)
-		 	else
+					self.paused = false
 		 	 self:AddChild(pauseIcon)
+		 	else
+				 self.paused = true
+		 		self:AddChild(playIcon)
 		 	end
 		 end
 		},

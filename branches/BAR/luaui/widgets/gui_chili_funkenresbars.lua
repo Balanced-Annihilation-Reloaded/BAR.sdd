@@ -49,6 +49,7 @@ local function setBar(res)
 		meter[res]:SetColor(1,0.5,0,.6)
 	end
 --	Spring.SetShareLevel(res, shareLevel[res].value/100)
+	meter[res]:SetCaption(currentLevel.."/"..storage)
 	meter[res]:SetValue(currentLevel/storage*100)
 end
 

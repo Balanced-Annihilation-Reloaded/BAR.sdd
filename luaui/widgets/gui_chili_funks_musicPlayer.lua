@@ -1,19 +1,15 @@
-
+-- WIP heavily based on LEDs music player and music players before that
 function widget:GetInfo()
 	return {
-		name      = "Funks Music Player",
-		desc      = "Plays music from according to the in-game action",
-		author    = "Funkencool",
-		date      = "Sep 2013",
-		license   = "GNU GPL v2",
-		layer     = 0,
-		enabled   = true
+		name    = 'Funks Music Player',
+		desc    = 'Plays music according to the in-game action',
+		author  = 'Funkencool',
+		date    = 'Sep 2013',
+		license = 'GNU GPL v2',
+		layer   = 0,
+		enabled = true
 	}
 end
-
-----------------------------------------------------------------------------------------
--- Spring accelerators --
-----------------------------------------------------------------------------------------            
 
 local spGetGameSpeed       = Spring.GetGameSpeed
 local spStopSoundStream    = Spring.StopSoundStream
@@ -34,57 +30,56 @@ local spGetUnitHealth      = Spring.GetUnitHealth
 local Echo                 = Spring.Echo
 local Chili
 
+-- Chili vars
 local musicControl, playButton, skipButton, songLabel, window0, pauseIcon, playIcon,volumeLbl, volume
 
-----------------------------------------------------------------------------------------
--- Dynamic Music --
-----------------------------------------------------------------------------------------
-local normalPEACE_VALUE 	= 0.0025 	-- below this, peace
-local normalWAR_VALUE		= 0.075 	-- above this, war
-local normalWAR_COOLDOWN	= .0005  -- rate at which metalDestroyedCounter goes down
-local PEACE_VALUE 	= 0.0025 
-local WAR_VALUE		= 0.045
-local WAR_COOLDOWN = 0.002
 
-local prevTrack = 1
-local musicVolume 		= Spring.GetConfigInt("snd_volmusic")
-local generalVolume = Spring.GetConfigInt("snd_volgeneral")
-local masterVolume		= Spring.GetConfigInt("snd_volmaster")
-local musicType 				= 0		-- 0 = peace, 1 = coldwar, 2 = war
-local metalDestroyedCounter	= 0	
+local normalPEACE_VALUE 	= 0.0025 	-- below this, peace
+local normalWAR_VALUE		  = 0.075 	-- above this, war
+local normalWAR_COOLDOWN	= .0005  -- rate at which metalDestroyedCounter goes down
+local PEACE_VALUE 	      = 0.0025 
+local WAR_VALUE		        = 0.045
+local WAR_COOLDOWN        = 0.002
+
+local prevTrack                 = 1
+local musicVolume 		          = Spring.GetConfigInt('snd_volmusic')
+local generalVolume             = Spring.GetConfigInt('snd_volgeneral')
+local masterVolume		          = Spring.GetConfigInt('snd_volmaster')
+local musicType 				        = 0		-- 0 = peace, 1 = coldwar, 2 = war
+local metalDestroyedCounter	    = 0	
 local teamMetalTotal 					  = 0
 local widgetTime = 0		-- Time elapsed since widget started, in seconds
 local lastupdate = 0		-- time at which last metal calculation occurred
-local ratioMetal = 1   -- how much the destroyed metal is above the war threshold, for dampening
--- added this so that it wouldn't play war music for too long if there was a long break in the fighting after a big battle
+local ratioMetal = 1    -- how much the destroyed metal is above the war threshold, for dampening
+                        -- added this so that it wouldn't play war music for too long if there was a long break in the fighting after a big battle
 local spec 										= false
 local debug 									= false
 local warTracks     	= {}
 local coldwarTracks 	= {}
 local peaceTracks   	= {}
 local CurrentTrack  	= nil
-local info          	= ""
+local info          	= ''
 local LastTimer     	= nil
 local LastPlayedTime	= 0
 local playNew       	= true
-local gameStarted 			= false
+local gameStarted 		= false
 
-local labelVar								 = 0
-local labelString						= ""
-local labelScrollSpeed	= 5
+local labelVar         = 0
+local labelString      = ''
+local labelScrollSpeed = 5
 ----------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------
 -- Intialize --
 ----------------------------------------------------------------------------------------
 
 function widget:Initialize()  --loads .ogg files from the directories to table
-	for _,track in ipairs(VFS.DirList('music/War/','*.ogg')) do
+	for _,track in ipairs(VFS.DirList('music/war/','*.ogg')) do
 		warTracks[#warTracks + 1] = track
 	end
-	for _,track in ipairs(VFS.DirList('music/Coldwar/','*.ogg')) do
+	for _,track in ipairs(VFS.DirList('music/coldwar/','*.ogg')) do
 		coldwarTracks[#coldwarTracks + 1] = track
 	end
-	for _,track in ipairs(VFS.DirList('music/Peace/','*.ogg')) do
+	for _,track in ipairs(VFS.DirList('music/peace/','*.ogg')) do
 		peaceTracks[#peaceTracks + 1] = track
 	end
 	
@@ -97,14 +92,14 @@ function widget:Initialize()  --loads .ogg files from the directories to table
 	Chili = WG.Chili
 	local screen0 = Chili.Screen0
 	
-	volumeLbl = Chili.Label:New{caption = "Volume:",bottom=13, right = 150}
+	volumeLbl = Chili.Label:New{caption = 'Volume:',bottom=13, right = 150}
 	volume = Chili.Trackbar:New{
 	 right = 85,
 		height = 15, 
 		bottom = 10, 
 		width=60, 
 		value=musicVolume,
-		OnChange = {function(self)	Spring.SendCommands("set snd_volmusic " .. self.value^2/100+1) end},
+		OnChange = {function(self)	Spring.SendCommands('set snd_volmusic ' .. self.value^2/100+1) end},
 	}
 	
 	playIcon = Chili.Image:New{
@@ -112,7 +107,7 @@ function widget:Initialize()  --loads .ogg files from the directories to table
   y      = 8, 
 	 right  = 4, 
 	 bottom = 0,
-	 file   = "luaUI/Images/playsong.png"
+	 file   = 'luaUI/Images/playsong.png'
 	}
 	
 	pauseIcon = Chili.Image:New{
@@ -120,7 +115,7 @@ function widget:Initialize()  --loads .ogg files from the directories to table
   y      = 8, 
 	 right  = 4, 
 	 bottom = 0, 
-	 file   = "luaUI/Images/pausesong.png"
+	 file   = 'luaUI/Images/pausesong.png'
 	}
 	
 	playButton = Chili.Button:New{
@@ -130,17 +125,17 @@ function widget:Initialize()  --loads .ogg files from the directories to table
 		width    = 40,
 		height   = 40,
 		padding 	= {8,8,8,8},
-		caption  = "", 
+		caption  = '', 
 		children = {pauseIcon},
 		OnClick  = {
 		 function(self) 
 		  self:ClearChildren()
 				Spring.PauseSoundStream()
 		  if self.paused then 
-					self.paused = false
-		 	 self:AddChild(pauseIcon)
+				self.paused = false
+				self:AddChild(pauseIcon)
 		 	else
-				 self.paused = true
+				self.paused = true
 		 		self:AddChild(playIcon)
 		 	end
 		 end
@@ -153,21 +148,21 @@ function widget:Initialize()  --loads .ogg files from the directories to table
 		width    = 40, 
 		height   = 40, 
 		padding 	= {8,8,8,8}, 
-		caption  = "", 
+		caption  = '', 
 		OnClick  = {function() playNew = true end},
 		children = {
-		 Chili.Image:New{
-	   x      = 4,
-    y      = 8, 
-	   right  = 4, 
-	   bottom = 0,
-				file   = "luaUI/Images/nextsong.png",
+			Chili.Image:New{
+				x      = 4,
+				y      = 8, 
+				right  = 4, 
+				bottom = 0,
+				file   = 'luaUI/Images/nextsong.png',
 			}
 		},
 	}
 	
 	musicControl = Chili.Control:New{
-	 parent   = screen0,
+		parent   = screen0,
 		right    = 0, 
 		y        = 35, 
 		height   = 40, 
@@ -175,10 +170,10 @@ function widget:Initialize()  --loads .ogg files from the directories to table
 		children = {skipButton,playButton,volume,volumeLbl},
 	}
 	
-	songLabel = Chili.Label:New{x = 0, caption = "No Song"}
+	songLabel = Chili.Label:New{x = 0, caption = 'No Song'}
 	
 	window0	= Chili.Window:New{
-	 parent    = screen0,
+		parent    = screen0,
 		minHeight = 0, 
 		right     = 0, 
 		y         = 20, 
@@ -190,16 +185,18 @@ function widget:Initialize()  --loads .ogg files from the directories to table
 end
 
 local function justTheName(text)
-	local EndIndex=(string.find(text,".",string.len(text)-4,true) or 1+string.len(text))-1
+	local EndIndex=(string.find(text,'.',string.len(text)-4,true) or 1+string.len(text))-1
 	local BeginIndex=1
 	repeat
-		local NewBeginIndex=string.find(text,"/",BeginIndex,true) or string.find(text,"\\",BeginIndex,true)
+		local NewBeginIndex=string.find(text,'/',BeginIndex,true) or string.find(text,'\\',BeginIndex,true)
 		BeginIndex=NewBeginIndex and NewBeginIndex+1 or BeginIndex
 	until not NewBeginIndex
-	return string.sub(text,BeginIndex,EndIndex).."       "
+	return string.sub(text,BeginIndex,EndIndex)..'       '
 end
 
 local function playNewTrack(trackList)
+	if not trackList then return end
+	
 	local betterRand = function() 
 	 local x,y=spGetMouseState()
 	 return x+y+math.floor(99*(os.clock()%99999)+(99*(os.time())%99999))
@@ -214,9 +211,9 @@ local function playNewTrack(trackList)
 
 	labelString = justTheName(track)
 	songLabel:SetCaption(labelString)
- spPlaySoundStream(track)
-	Spring.SendCommands("set snd_volmusic 0")
-	Spring.SendCommands("set snd_volmusic " .. volume.value^2/100+1)
+	spPlaySoundStream(track)
+	Spring.SendCommands('set snd_volmusic 0')
+	Spring.SendCommands('set snd_volmusic ' .. volume.value^2/100+1)
 end	
 	 
 function widget:Shutdown()

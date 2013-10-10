@@ -1,13 +1,14 @@
+-- WIP
 function widget:GetInfo()
  return {
-  name    = "BAR's Main Menu",
-  desc    = "v0.1 of Graphics, Interface, and Sound Options Menu (WIP)",
-  author  = "Funkencool",
-  date    = "2013",
-  license   = "GNU GPL, v2 or later",
-  layer    = -1000000,
-  handler  = true,
-  enabled   = true
+  name    = 'Funks Option Menu',
+  desc    = 'Graphics, Interface, and Sound Options Menu (WIP)',
+  author  = 'Funkencool',
+  date    = '2013',
+  license = 'GNU GPL v2',
+  layer   = -1000000,
+  handler = true,
+  enabled = true
  }
 end
 
@@ -30,7 +31,7 @@ local menuVisible = false
 local widgetList = {}
 local tabs = {}
 local changelog = VFS.LoadFile('changelog.txt')
-if changelog == '' then changelog = "changelog is blank, normally this would read the changelog.txt in the games base directory" end
+if changelog == '' then changelog = 'changelog is blank, normally this would read the changelog.txt in the games base directory' end
 
 local cursorNames = {
   'cursornormal','cursorareaattack','cursorattack','cursorattack',
@@ -43,22 +44,22 @@ local cursorNames = {
 }
 
 local wCategories = {
- {cat = "api"      , label = "For Developers", list = {}, },
- {cat = "camera"   , label = "Camera"        , list = {}, },
- {cat = "cmd"      , label = "Commands"      , list = {}, },
- {cat = "dbg"      , label = "For Developers", list = {}, },
- {cat = "gfx"      , label = "Effects"       , list = {}, },
- {cat = "gui"      , label = "GUI"           , list = {}, },
- {cat = "hook"     , label = "Commands"      , list = {}, },
- {cat = "ico"      , label = "GUI"           , list = {}, },
- {cat = "init"     , label = "Initialization", list = {}, },
- {cat = "map"      , label = "Map"           , list = {}, },
- {cat = "minimap"  , label = "Minimap"       , list = {}, },
- {cat = "mission"  , label = "Mission"       , list = {}, },
- {cat = "snd"      , label = "Sound"         , list = {}, },
- {cat = "test"     , label = "For Developers", list = {}, },
- {cat = "unit"     , label = "Units"         , list = {}, },
- {cat = "ungrouped", label = "Ungrouped"     , list = {}, }
+ {cat = 'api'      , label = 'For Developers', list = {}, },
+ {cat = 'camera'   , label = 'Camera'        , list = {}, },
+ {cat = 'cmd'      , label = 'Commands'      , list = {}, },
+ {cat = 'dbg'      , label = 'For Developers', list = {}, },
+ {cat = 'gfx'      , label = 'Effects'       , list = {}, },
+ {cat = 'gui'      , label = 'GUI'           , list = {}, },
+ {cat = 'hook'     , label = 'Commands'      , list = {}, },
+ {cat = 'ico'      , label = 'GUI'           , list = {}, },
+ {cat = 'init'     , label = 'Initialization', list = {}, },
+ {cat = 'map'      , label = 'Map'           , list = {}, },
+ {cat = 'minimap'  , label = 'Minimap'       , list = {}, },
+ {cat = 'mission'  , label = 'Mission'       , list = {}, },
+ {cat = 'snd'      , label = 'Sound'         , list = {}, },
+ {cat = 'test'     , label = 'For Developers', list = {}, },
+ {cat = 'unit'     , label = 'Units'         , list = {}, },
+ {cat = 'ungrouped', label = 'Ungrouped'     , list = {}, }
  }
 ---------------------------- 
                           --
@@ -66,7 +67,7 @@ local function setCursor(cursorSet)
  for i=1, #cursorNames do
   local topLeft = (cursorNames[i] == 'cursornormal' and cursorSet ~= 'k_haos_girl')
   if cursorSet == 'ba' then Spring.ReplaceMouseCursor(cursorNames[i], cursorNames[i], topLeft)
-  else Spring.ReplaceMouseCursor(cursorNames[i], cursorSet.."/"..cursorNames[i], topLeft) end
+  else Spring.ReplaceMouseCursor(cursorNames[i], cursorSet..'/'..cursorNames[i], topLeft) end
  end
 end
 ---------------------------- Toggles widgets enabled/disabled when clicked
@@ -85,7 +86,7 @@ end
 ---------------------------- 
                           -- 
 local function groupWidget(name,wData)
- local _, _, category = string.find(wData.basename, "([^_]*)")
+ local _, _, category = string.find(wData.basename, '([^_]*)')
  if category then
   for i=1,#wCategories do
    if category and category == wCategories[i].cat then wCategories[i].list[#wCategories[i].list+1] = {name = name,wData = wData} end
@@ -99,7 +100,7 @@ end
 ---------------------------- 
                           --
 local function sortWidgetList(filter)
- local filter = filter or ""
+ local filter = filter or ''
  for name,wData in pairs(widgetHandler.knownWidgets) do
   if ((barSettings.searchWidgetName and string.find(string.lower(name), string.lower(filter)))
   or (barSettings.searchWidgetDesc and string.find(string.lower(wData.desc), string.lower(filter)))
@@ -117,7 +118,7 @@ end
 local function makeWidgetList(filter)
  sortWidgetList(filter)
  local widgetNum = 0
- local scrollpanel = tabs["Interface"]:GetObjectByName("widgetList")
+ local scrollpanel = tabs['Interface']:GetObjectByName('widgetList')
  scrollpanel:ClearChildren()
  for a=1,#wCategories do
   local list = wCategories[a].list
@@ -134,7 +135,7 @@ local function makeWidgetList(filter)
      name      = list[b].name,
      caption   = list[b].name,
      parent    = scrollpanel,
-     tooltip   = 'Author: '..list[b].wData.author.. "\n"..list[b].wData.desc or '',
+     tooltip   = 'Author: '..list[b].wData.author.. '\n'..list[b].wData.desc or '',
      x         = 0,
      right     = 0,
      y         = widgetNum*20,
@@ -165,33 +166,29 @@ end
 ---------------------------- 
                           --
 local function addFilter()
- local editbox = tabs["Interface"]:GetObjectByName("widgetFilter")
+ local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
  makeWidgetList(editbox.text)
- editbox:SetText("")
+ editbox:SetText('')
 end
 ---------------------------- 
                           --
 local function loadMainMenu()
  mainMenu = Chili.Window:New{parent=Chili.Screen0,x = 400, y = 200, width = 500, height = 400,padding = {5,8,5,5}, draggable = true,
   children = {
-   Chili.Line:New{parent = mainMenu,y = 15,width = "100%"},
-   Chili.Line:New{parent = mainMenu,bottom = 20,width = "100%"},
-   Chili.Button:New{caption = "Resign and Spectate",height = 20,width = '25%',x = '15%',bottom=0,
-    OnMouseUp = {function() spSendCommands{"Spectator"};showHide() end }},
-   Chili.Button:New{caption = "Exit To Desktop",height = 20,width = '25%',right = '15%',bottom=0,
-     OnMouseUp = {function() spSendCommands{"quit","quitforce"} end }},
+   Chili.Line:New{parent = mainMenu,y = 15,width = '100%'},
+   Chili.Line:New{parent = mainMenu,bottom = 20,width = '100%'},
   }}
 
  menuTabs = Chili.TabBar:New{parent = mainMenu, x = 0, width = '100%', y = 0, height = 20, minItemWidth = 70,selected=barSettings.tabSelected or 'Info',
-  tabs = {"Info","Interface", "Graphics", "Sound", "Log"}, itemPadding = {1,0,1,0},OnChange = {sTab}}
+  tabs = {'Info','Interface', 'Graphics', 'Sound', 'Log'}, itemPadding = {1,0,1,0},OnChange = {sTab}}
 
  showHide()
 end
 ---------------------------- The always visible window beneath resbars
                           --    for access to menu, as well as time and FPS
 local function loadMinMenu()
- timeLbl = Chili.Label:New{caption = "10:30pm", x = 0}
- fpsLbl = Chili.Label:New{caption = "FPS: 65",x = 70}
+ timeLbl = Chili.Label:New{caption = '10:30pm', x = 0}
+ fpsLbl = Chili.Label:New{caption = 'FPS: 65',x = 70}
  menuBtn = Chili.Button:New{caption = 'Menu', right = 0, height = '100%', width = 50, Onclick = {showHide}}
  minMenu = Chili.Window:New{parent=Chili.Screen0,right = 210, y = 20, width = 180,minheight = 20, height = 20,padding = {5,0,0,0},children = {timeLbl,fpsLbl,menuBtn}}
 end
@@ -200,9 +197,9 @@ end
 local function applySetting(self)
  local editbox = self.parent.childrenByName['EditBox']
  local setting = (editbox.option or editbox.text)
- if self.parent.name == 'Skin' then Chili.theme.skin.general.skinName = setting; Spring.Echo("To see skin changes; \"/luaui reload\"")
+ if self.parent.name == 'Skin' then Chili.theme.skin.general.skinName = setting; Spring.Echo('To see skin changes; \'/luaui reload\'')
  elseif self.parent.name == 'Cursor' then setCursor(setting)
- else spSendCommands(self.parent.name.." "..setting) end
+ else spSendCommands(self.parent.name..' '..setting) end
  barSettings[self.parent.name] = setting
  self.font.color = {0.5,0.5,0.5,1}
  self:Invalidate()
@@ -278,29 +275,29 @@ local function Options()
    Chili.Line:New{right='40%',height='100%',style='vertical'},
    Chili.Line:New{x='50%',right=0,y=160},
    Chili.Label:New{x='55%',y=10,caption='Bloom Options'},
-   Chili.Checkbox:New{caption="Dilate Pass",x='80%',y=20,right=0,textalign="left",boxalign="right",checked=false, 
+   Chili.Checkbox:New{caption='Dilate Pass',x='80%',y=20,right=0,textalign='left',boxalign='right',checked=false, 
     OnChange = {function(self) if not self.checked then spSendCommands('luaui +dilatepass') else spSendCommands('luaui -dilatepass') end  end}}, 
-   Chili.Checkbox:New{caption="Debug Mode",x='80%',y=40,right=0,textalign="left",boxalign="right",checked=false, 
+   Chili.Checkbox:New{caption='Debug Mode',x='80%',y=40,right=0,textalign='left',boxalign='right',checked=false, 
     OnChange = {function(self) if not self.checked then spSendCommands('luaui +bloomdebug') else spSendCommands('luaui -bloomdebug') end  end}},
    }}
    
-   comboBox{parent='Graphics',name="Water",y=0,
-    labels={"Basic","Reflective","Dynamic","Refractive","Bump-Mapped"},
+   comboBox{parent='Graphics',name='Water',y=0,
+    labels={'Basic','Reflective','Dynamic','Refractive','Bump-Mapped'},
     options={0,1,2,3,4},}
-   comboBox{parent='Graphics',name="Shadows",y=40,
-    labels={"Off","Very Low","Low","Medium","High","Very High"},
-    options={"0","2 1024","2 2048","1 1024","1 2048","1 4096"},}   
-   comboBox{parent='Graphics',name="DistDraw",y=80,
-    labels={"Low","Medium","High","Very High"},
+   comboBox{parent='Graphics',name='Shadows',y=40,
+    labels={'Off','Very Low','Low','Medium','High','Very High'},
+    options={'0','2 1024','2 2048','1 1024','1 2048','1 4096'},}   
+   comboBox{parent='Graphics',name='DistDraw',y=80,
+    labels={'Low','Medium','High','Very High'},
     options={100,200,300,400},}
-   comboBox{parent='Graphics',name="DistIcon",y=120,
-    labels={"Low","Medium","High","Very High"},
+   comboBox{parent='Graphics',name='DistIcon',y=120,
+    labels={'Low','Medium','High','Very High'},
     options={100,200,300,400},}
-   comboBox{parent='Graphics',name="MaxNanoParticles",y=160,
-    labels={"Very Low","Low","Medium","High","Very High"},
+   comboBox{parent='Graphics',name='MaxNanoParticles',y=160,
+    labels={'Very Low','Low','Medium','High','Very High'},
     options={500,1000,2000,3000,5000},}
-   comboBox{parent='Graphics',name="MaxParticles",y=200,
-    labels={"Very Low","Low","Medium","High","Very High"},
+   comboBox{parent='Graphics',name='MaxParticles',y=200,
+    labels={'Very Low','Low','Medium','High','Very High'},
     options={500,1000,2000,3000,5000},}
    incDec{parent='Graphics',name='illumthres',y=60,label='Illumination Threshold'}
    incDec{parent='Graphics',name='glowamplif',y=85,label='Glow Amplifier'}
@@ -310,14 +307,14 @@ local function Options()
 -- Interface --
  tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', --Control attached to tab
   children = {
-   Chili.ScrollPanel:New{name="widgetList",x = '50%',y = 0,right = 0,bottom = 0},
-   Chili.EditBox:New{name="widgetFilter",x=0,y=0,width = '35%',text=' Enter filter -> Hit Return,  or -->',OnMouseDown = {function(obj) obj.text = '' end}},
+   Chili.ScrollPanel:New{name='widgetList',x = '50%',y = 0,right = 0,bottom = 0},
+   Chili.EditBox:New{name='widgetFilter',x=0,y=0,width = '35%',text=' Enter filter -> Hit Return,  or -->',OnMouseDown = {function(obj) obj.text = '' end}},
    Chili.Button:New{right='50%',y=0,height=20,width='15%',caption='Search',OnMouseUp={addFilter}},
-   Chili.Checkbox:New{caption="Search Widget Name",x=0,y=40,width='35%',textalign="left",boxalign="right",checked=barSettings.searchWidgetName,
+   Chili.Checkbox:New{caption='Search Widget Name',x=0,y=40,width='35%',textalign='left',boxalign='right',checked=barSettings.searchWidgetName,
     OnChange = {function() barSettings.searchWidgetName = not barSettings.searchWidgetName end}},
-   Chili.Checkbox:New{caption="Search Description",x=0,y=20,width='35%',textalign="left",boxalign="right",checked=barSettings.searchWidgetDesc,
+   Chili.Checkbox:New{caption='Search Description',x=0,y=20,width='35%',textalign='left',boxalign='right',checked=barSettings.searchWidgetDesc,
     OnChange = {function() barSettings.searchWidgetDesc = not barSettings.searchWidgetDesc end}},
-   Chili.Checkbox:New{caption="Search Author",x=0,y=60,width='35%',textalign="left",boxalign="right",checked=barSettings.searchWidgetAuth,
+   Chili.Checkbox:New{caption='Search Author',x=0,y=60,width='35%',textalign='left',boxalign='right',checked=barSettings.searchWidgetAuth,
     OnChange = {function() barSettings.searchWidgetAuth = not barSettings.searchWidgetAuth end}},
    Chili.Line:New{width='50%',y=80},
   }}
@@ -330,28 +327,32 @@ local function Options()
 -- Info --
  tabs.Info = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
   children = {
-   Chili.Label:New{caption="-- Recent Changes --",x='0%',width="70%",align = 'center'},
+   Chili.Label:New{caption='-- Recent Changes --',x='0%',width='70%',align = 'center'},
    Chili.ScrollPanel:New{width = '70%', x=0, y=20, bottom=0, children ={Chili.TextBox:New{width='100%',text=changelog}}},
+   Chili.Button:New{caption = 'Resign and Spectate',height = '8%',width = '28%',right = '1%', y = '40%',
+    OnMouseUp = {function() spSendCommands{'Spectator'};showHide() end }},
+   Chili.Button:New{caption = 'Exit To Desktop',height = '8%',width = '28%',right = '1%', y = '52%',
+     OnMouseUp = {function() spSendCommands{'quit','quitforce'} end }},
   }}
 
 -- Sound --
  tabs.Sound = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
   children = {
-   Chili.Label:New{caption = "Master Volume:",},
-   Chili.Trackbar:New{x = 120,height = 15,right = '50%',value = spGetConfigInt("snd_volmaster"),
-    OnChange = { function(self) spSendCommands{"set snd_volmaster " .. self.value} end },},
-   Chili.Label:New{caption = "General Volume:",y = 20},
-   Chili.Trackbar:New{x = 120,y = 20,height = 15,right = '50%',value = spGetConfigInt("snd_volgeneral"),
-    OnChange = { function(self) spSendCommands{"set snd_volgeneral " .. self.value} end },},
-   Chili.Label:New{caption = "Music Volume:",y = 40},
-   Chili.Trackbar:New{x = 120,y = 40,height = 15,right = '50%',value = spGetConfigInt("snd_volmusic"),
-    OnChange = { function(self) spSendCommands{"set snd_volmusic " .. self.value} end },},
+   Chili.Label:New{caption = 'Master Volume:',},
+   Chili.Trackbar:New{x = 120,height = 15,right = '50%',value = spGetConfigInt('snd_volmaster'),
+    OnChange = { function(self) spSendCommands{'set snd_volmaster ' .. self.value} end },},
+   Chili.Label:New{caption = 'General Volume:',y = 20},
+   Chili.Trackbar:New{x = 120,y = 20,height = 15,right = '50%',value = spGetConfigInt('snd_volgeneral'),
+    OnChange = { function(self) spSendCommands{'set snd_volgeneral ' .. self.value} end },},
+   Chili.Label:New{caption = 'Music Volume:',y = 40},
+   Chili.Trackbar:New{x = 120,y = 40,height = 15,right = '50%',value = spGetConfigInt('snd_volmusic'),
+    OnChange = { function(self) spSendCommands{'set snd_volmusic ' .. self.value} end },},
   }}
 
 -- Log --
  tabs.Log = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
   children = {
-   Chili.ScrollPanel:New{x=0,y=0,right=0,bottom=0,name="mLog",children = {Chili.TextBox:New{x=0,y=0,right=0,bottom=0,}}}
+   Chili.ScrollPanel:New{x=0,y=0,right=0,bottom=0,name='mLog',children = {Chili.TextBox:New{x=0,y=0,right=0,bottom=0,}}}
   }}
 
 end
@@ -370,7 +371,7 @@ end
 function widget:DrawScreen()
  local fps = 'FPS: '..'\255\255\127\0'..spgetFPS()
  fpsLbl:SetCaption(fps)
- local rTime = os.date("%I:%M %p")
+ local rTime = os.date('%I:%M %p')
  if oTime ~= rTime then
   oTime = rTime
   if string.find(rTime,'0')==1 then rTime = string.sub(rTime,2) end
@@ -379,10 +380,10 @@ function widget:DrawScreen()
 end
 
 function widget:KeyPress(key,mod)
- local editbox = tabs["Interface"]:GetObjectByName("widgetFilter")
+ local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
  if key==13 and editbox.state.focused then
   makeWidgetList(editbox.text)
-  editbox:SetText("")
+  editbox:SetText('')
   return true
  end
 end
@@ -408,23 +409,23 @@ function widget:Initialize()
  local openLog = function() showHide('Log') end
  local hideMenu = function() if mainMenu.visible then mainMenu:Hide() end end
  
- spSendCommands("unbindkeyset f11")
- spSendCommands("unbind S+esc quitmenu","unbind esc quitmessage")
- widgetHandler.actionHandler:AddAction(widget,"openMenu", openMenu, nil, "t")
- widgetHandler.actionHandler:AddAction(widget,"openWidgets", openWidgets, nil, "t")
- widgetHandler.actionHandler:AddAction(widget,"hideMenu", hideMenu, nil, "t")
- spSendCommands("bind S+esc openMenu")
- spSendCommands("bind f11 openWidgets")
- spSendCommands("bind esc hideMenu")
- -- widgetHandler.actionHandler:AddAction("openLog", openLog, nil, "t")
- -- spSendCommands("bind hotkey openLog")
+ spSendCommands('unbindkeyset f11')
+ spSendCommands('unbind S+esc quitmenu','unbind esc quitmessage')
+ widgetHandler.actionHandler:AddAction(widget,'openMenu', openMenu, nil, 't')
+ widgetHandler.actionHandler:AddAction(widget,'openWidgets', openWidgets, nil, 't')
+ widgetHandler.actionHandler:AddAction(widget,'hideMenu', hideMenu, nil, 't')
+ spSendCommands('bind S+esc openMenu')
+ spSendCommands('bind f11 openWidgets')
+ spSendCommands('bind esc hideMenu')
+ -- widgetHandler.actionHandler:AddAction('openLog', openLog, nil, 't')
+ -- spSendCommands('bind hotkey openLog')
 end
 -------------------------- 
                         --
 function widget:Shutdown()
- spSendCommands("unbind S+esc openMenu")
- spSendCommands("unbind f11 openWidgets")
- spSendCommands("unbind esc hideMenu")
+ spSendCommands('unbind S+esc openMenu')
+ spSendCommands('unbind f11 openWidgets')
+ spSendCommands('unbind esc hideMenu')
 end
 -------------------------- 
                         --
@@ -432,7 +433,7 @@ local mLogText = ''
 function widget:AddConsoleMessage(msg)
  if tabs.Log then
   mLogText = mLogText..msg.text..'\n'
-  local scrollpanel = tabs["Log"]:GetObjectByName("mLog")
+  local scrollpanel = tabs['Log']:GetObjectByName('mLog')
   local textbox = scrollpanel.children[1]
   textbox.text = mLogText
   textbox:UpdateLayout()

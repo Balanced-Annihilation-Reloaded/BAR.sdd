@@ -252,7 +252,7 @@ end
 local function queueHandler()
 	local unitID = Spring.GetSelectedUnits()
 	if unitID[1] then
-		local list = Spring.GetRealBuildQueue(unitID[1])
+		local list = Spring.GetRealBuildQueue(unitID[1]) or {}
 		for i=1, #list do
 			for defID, count in pairs(list[i]) do queue[defID] = count end
 		end

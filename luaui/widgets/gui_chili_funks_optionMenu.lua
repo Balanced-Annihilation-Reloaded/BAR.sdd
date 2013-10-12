@@ -131,11 +131,13 @@ local function makeWidgetList(filter)
     local fontColor
     if enabled then fontColor = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
     else fontColor = {color = {1,0.5,0,1}, outlineColor = {1,0.5,0,0.2}} end
+	local author = list[b].wData.author or ""
+	local desc = list[b].wData.desc or ""
     Chili.Checkbox:New{
      name      = list[b].name,
      caption   = list[b].name,
      parent    = scrollpanel,
-     tooltip   = 'Author: '..list[b].wData.author.. '\n'..list[b].wData.desc or '',
+     tooltip   = 'Author: '..author.. '\n'.. desc,
      x         = 0,
      right     = 0,
      y         = widgetNum*20,

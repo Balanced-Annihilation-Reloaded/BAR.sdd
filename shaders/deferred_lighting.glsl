@@ -1,5 +1,5 @@
 //This code copyright of Peter Sarkozy aka Beherith. Contact mysterme@gmail.com for licensing.
-//It may NOT be distributed outside of the Balanced Annihilation Reloaded game
+//License is CC-BY-ND 3.0
 
   uniform float inverseRX;
   uniform float inverseRY;

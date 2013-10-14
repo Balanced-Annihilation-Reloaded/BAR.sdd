@@ -151,7 +151,7 @@ local function showBasicUnitInfo(num, numTypes)
 		y      = 0,
 		right  = 0,
 		bottom = 0,
-		text   = " units: " .. num,
+		text   = " units: " .. num .. "\n unit types: " .. numTypes,
 	}
 	
 	unitInfo:AddChild(basicUnitInfo)
@@ -186,15 +186,8 @@ local function getInfo()
 		local sortedUnits = spGetSelectedUnitsSorted()
 		local unitDefIDCount = 0
 		local unitCount = 0
-			--see if sortedUnits has too many elements (believe it or not, this is the only way to count an arbitrary table...)
-			for unitDefID,unitIDs in pairs(sortedUnits) do
-				if unitDefID ~= 'n' then  --i don't know why but it always has an 'n' key with nil value in the table, wtf?
-					unitDefIDCount = unitDefIDCount + 1
-				end
-				if unitDefIDCount == 10 then break end
-			end
-			
-			if unitDefIDCount <= 9 then 
+			--see if sortedUnits has too many elements
+			if sortedUnits["n"] <= 9 then 
 				--pics & healthbars, grouped by UnitDefID, if it fits
 				for unitDefID, unitIDs in pairs(sortedUnits) do
 					if unitDefID ~= 'n' then 
@@ -205,7 +198,7 @@ local function getInfo()
 					end
 				end
 			else
-				showBasicUnitInfo(#units)
+				showBasicUnitInfo(#units, sortedUnits["n"])
 			end
 	end
 	

@@ -90,7 +90,7 @@ local GL_DEPTH_COMPONENT32 = 0x81A7
 
 
 local debugGfx  =false --or true
-
+local havemapnormals=true
 local GLSLRenderer = true
 
 
@@ -305,13 +305,17 @@ function widget:Initialize()
 		else
 			fragSrc = VFS.LoadFile("shaders\\deferred_lighting.glsl",VFS.ZIP)
 			--Spring.Echo('Shader code:',fragSrc)
+			if havemapnormals then fragSrc = "#define HAVE_NORMAL_BUFFER\n" .. fragSrc end
 			depthShader = glCreateShader({
 				vertex = vertSrc,
 				fragment = fragSrc,
 				uniformInt = {
 					tex0 = 0,
+					mapnormals = 1,
+					mapdepths = 2,
 					uniformFloat = {inverseRX},
 					uniformFloat = {inverseRY},
+					
 				},
 			})
 
@@ -369,6 +373,13 @@ function widget:DrawWorld()
 		glUniformMatrix(uniformViewPrjInv,  "viewprojectioninverse")
 		glTexture(0, depthTexture)
 		glTexture(0, false)
+		if havemapnormals then
+			--Spring.Echo("Binding map gbuffer normals")
+			glTexture(1, "$map_gbuffer_normtex")
+			glTexture(2, "$map_gbuffer_zvaltex")
+			--glTexture(1,false)
+			--glTexture(2,false)
+		end
 		--f= Spring.GetGameFrame()
 		--f=f/50
 		local lightparams

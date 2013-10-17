@@ -1,18 +1,22 @@
 //This code copyright of Peter Sarkozy aka Beherith. Contact mysterme@gmail.com for licensing.
 //License is CC-BY-ND 3.0
 
-  uniform float inverseRX;
-  uniform float inverseRY;
-  uniform sampler2D tex0;
-  uniform vec3 eyePos;
-  uniform vec4 lightpos;
-  #ifdef BAR_LIGHT
+uniform float inverseRX;
+uniform float inverseRY;
+uniform sampler2D tex0;
+#ifdef HAVE_NORMAL_BUFFER:
+	uniform sampler2D mapnormals;
+	uniform sampler2D mapdepths;
+#endif
+uniform vec3 eyePos;
+uniform vec4 lightpos;
+#ifdef BAR_LIGHT
 	uniform vec4 lightpos2;
-  #endif
-  uniform vec4 lightcolor;
-  uniform vec4 lightparams;
-  uniform mat4 viewProjectionInv;
-  // uniform mat4 viewProjection;
+#endif
+uniform vec4 lightcolor;
+uniform vec4 lightparams;
+uniform mat4 viewProjectionInv;
+// uniform mat4 viewProjection;
 
   void main(void)
   {
@@ -31,8 +35,20 @@
 	here4 = viewProjectionInv * here4;
 	here4.xyz = here4.xyz / here4.w;
 	
+	vec4 heremap4 =vec4(vec3(gl_TexCoord[0].st, texture2D( mapdepths,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
+	heremap4 = viewProjectionInv * heremap4;
+	heremap4.xyz = heremap4.xyz / heremap4.w;
+	
+	vec4 map_normals4= texture2D( mapnormals,gl_TexCoord[0].st ) *2.0 -1.0;
+	
 	vec4 herenormal4;
-	herenormal4.xyz = -1.0*normalize(cross( up4.xyz - here4.xyz, right4.xyz - here4.xyz));
+	if (length(heremap4.xyz-here4.xyz)> 1)
+		herenormal4.xyz = -1.0*normalize(cross( up4.xyz - here4.xyz, right4.xyz - here4.xyz));
+	else herenormal4=map_normals4;
+	gl_FragColor=vec4(herenormal4.xyz,1); //DEBUG NORMALS OUT
+	//gl_FragColor=vec4(map_normals4.xyz,1); //DEBUG NORMALS OUT
+	//gl_FragColor=vec4(-1.0*normalize(cross( up4.xyz - here4.xyz, right4.xyz - here4.xyz)),1); //DEBUG NORMALS OUT
+	//return;
 	#ifndef BAR_LIGHT
 	//gl_FragColor=vec4(1,0,0,0.5);
 	//return;

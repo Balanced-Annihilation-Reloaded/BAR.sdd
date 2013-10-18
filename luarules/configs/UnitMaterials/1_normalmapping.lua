@@ -11,6 +11,7 @@ local GetUnitTeam = Spring.GetUnitTeam
 
 
 local GADGET_DIR = "LuaRules/Configs/"
+
 local function DrawUnit(unitID, material)
   glUniform(material.frameLoc, 2* maximum(0,sine((unitID%10)+GetGameFrame()/((unitID%7)+6))))
   local  health,maxhealth=GetUnitHealth(unitID)
@@ -26,14 +27,22 @@ local function DrawUnit(unitID, material)
   --// engine should still draw it (we just set the uniforms for the shader)
   return false
 end
+
 local materials = {
-   normalMappedS3o = {
+   normalMappedS3O = {
        shaderDefinitions = {
-	"#define use_perspective_correct_shadows",
+         "#define use_perspective_correct_shadows",
          "#define use_normalmapping",
          --"#define flip_normalmap",
        },
+       deferredDefinitions = {
+         "#define use_perspective_correct_shadows",
+         "#define use_normalmapping",
+         --"#define flip_normalmap",
+       },
+
        shader    = include(GADGET_DIR .. "UnitMaterials/Shaders/default.lua"),
+       deferred  = include(GADGET_DIR .. "UnitMaterials/Shaders/default_deferred.lua"),
        usecamera = false,
        culling   = GL.BACK,
        texunits  = {
@@ -97,7 +106,7 @@ for i=1,#UnitDefs do
   local udef = UnitDefs[i]
 
   if (udef.customParams.normaltex and VFS.FileExists(udef.customParams.normaltex)) then
-    unitMaterials[udef.name] = {"normalMappedS3o", NORMALTEX = udef.customParams.normaltex}
+    unitMaterials[udef.name] = {"normalMappedS3O", NORMALTEX = udef.customParams.normaltex}
 
   elseif (udef.model.type == "s3o") then
     local modelpath = udef.model.path
@@ -121,7 +130,7 @@ for i=1,#UnitDefs do
 
       local normaltex = FindNormalmap(tex1,tex2)
       if (normaltex and not unitMaterials[udef.name]) then
-        unitMaterials[udef.name] = {"normalMappedS3o", NORMALTEX = normaltex}
+        unitMaterials[udef.name] = {"normalMappedS3O", NORMALTEX = normaltex}
       end
     end --if model
 
@@ -143,7 +152,7 @@ for i=1,#UnitDefs do
 
           local normaltex = FindNormalmap(tex1,tex2)
           if (normaltex and not unitMaterials[udef.name]) then
-            unitMaterials[udef.name] = {"normalMappedS3o", NORMALTEX = normaltex}
+            unitMaterials[udef.name] = {"normalMappedS3O", NORMALTEX = normaltex}
           end
         end
       end

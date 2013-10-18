@@ -179,6 +179,8 @@ end
 
 local function CompileMaterialShaders()
   for _,mat_src in pairs(materialDefs) do
+    -- do not let engine compile shaders for us
+    -- we do this ourselves and supply the ID's
     if (mat_src.shaderSource) then
       local GLSLshader = CompileShader(mat_src.shaderSource, mat_src.shaderDefinitions, mat_src.shaderPlugins)
 
@@ -186,6 +188,7 @@ local function CompileMaterialShaders()
         if (mat_src.shader) then
           gl.DeleteShader(mat_src.shader)
         end
+
         mat_src.shader          = GLSLshader
         mat_src.cameraLoc       = gl.GetUniformLocation(GLSLshader,"camera")
         mat_src.cameraInvLoc    = gl.GetUniformLocation(GLSLshader,"cameraInv")
@@ -195,8 +198,30 @@ local function CompileMaterialShaders()
         mat_src.sunLoc          = gl.GetUniformLocation(GLSLshader,"sunPos")
         mat_src.frameLoc        = gl.GetUniformLocation(GLSLshader,"frameLoc")
         mat_src.speedLoc        = gl.GetUniformLocation(GLSLshader,"speed")
-        mat_src.healthLoc        = gl.GetUniformLocation(GLSLshader,"healthLoc")
-        mat_src.trimColor        = gl.GetUniformLocation(GLSLshader,"trimColor")
+        mat_src.healthLoc       = gl.GetUniformLocation(GLSLshader,"healthLoc")
+        mat_src.trimColor       = gl.GetUniformLocation(GLSLshader,"trimColor")
+      end
+    end
+
+    if (mat_src.deferredSource) then
+      local GLSLshader = CompileShader(mat_src.deferredSource, mat_src.deferredDefinitions, mat_src.deferredPlugins)
+
+      if (GLSLshader) then
+        if (mat_src.deferred) then
+          gl.DeleteShader(mat_src.deferred)
+        end
+
+        mat_src.deferred        = GLSLshader
+        mat_src.cameraLoc       = gl.GetUniformLocation(GLSLshader,"camera")
+        mat_src.cameraInvLoc    = gl.GetUniformLocation(GLSLshader,"cameraInv")
+        mat_src.cameraPosLoc    = gl.GetUniformLocation(GLSLshader,"cameraPos")
+        mat_src.shadowMatrixLoc = gl.GetUniformLocation(GLSLshader,"shadowMatrix")
+        mat_src.shadowParamsLoc = gl.GetUniformLocation(GLSLshader,"shadowParams")
+        mat_src.sunLoc          = gl.GetUniformLocation(GLSLshader,"sunPos")
+        mat_src.frameLoc        = gl.GetUniformLocation(GLSLshader,"frameLoc")
+        mat_src.speedLoc        = gl.GetUniformLocation(GLSLshader,"speed")
+        mat_src.healthLoc       = gl.GetUniformLocation(GLSLshader,"healthLoc")
+        mat_src.trimColor       = gl.GetUniformLocation(GLSLshader,"trimColor")
       end
     end
   end
@@ -247,19 +272,20 @@ function GetUnitMaterial(unitDefID)
   end
 
   local luaMat = Spring.UnitRendering.GetMaterial("opaque",{
-                   shader          = mat.shader,
-                   cameraposloc    = mat.cameraPosLoc,
-                   cameraloc       = mat.cameraLoc,
-                   camerainvloc    = mat.cameraInvLoc,
-                   shadowloc       = mat.shadowMatrixLoc,
-                   shadowparamsloc = mat.shadowParamsLoc,
-                   usecamera       = mat.usecamera,
-                   culling         = mat.culling,
-                   texunits        = texUnits,
-                   prelist         = mat.predl,
-                   postlist        = mat.postdl,
-                   --frameLoc        = mat.frameLoc,
-                 })
+    shader          = mat.shader,
+    deferred        = mat.deferred,
+    cameraposloc    = mat.cameraPosLoc,
+    cameraloc       = mat.cameraLoc,
+    camerainvloc    = mat.cameraInvLoc,
+    shadowloc       = mat.shadowMatrixLoc,
+    shadowparamsloc = mat.shadowParamsLoc,
+    usecamera       = mat.usecamera,
+    culling         = mat.culling,
+    texunits        = texUnits,
+    prelist         = mat.predl,
+    postlist        = mat.postdl,
+    --frameLoc        = mat.frameLoc,
+  })
 
   bufMaterials[unitDefID] = luaMat
 
@@ -452,8 +478,10 @@ function gadget:Initialize()
     local files = VFS.DirList(MATERIALS_DIR)
     table.sort(files)
 
+    -- files = {0_flags, 1_normalmapping, etc}
     for i=1,#files do
       local mats, unitMats = VFS.Include(files[i])
+
       tmerge(materialDefs, mats)
       tmerge(unitMaterialDefs, unitMats)
     end
@@ -462,11 +490,16 @@ function gadget:Initialize()
   --// process the materials (compile shaders, load textures, ...)
   do
     for _,mat_src in pairs(materialDefs) do
-      if (mat_src.shader)and
-         (mat_src.shader ~= "3do")and(mat_src.shader ~= "s3o")
-      then
+      -- check if we have custom shaders for this material
+      -- if so, copy their sources (so we can insert crap)
+      --
+      if (mat_src.shader) and (mat_src.shader ~= "3do") and (mat_src.shader ~= "s3o") then
         mat_src.shaderSource = mat_src.shader
         mat_src.shader = nil
+      end
+      if (mat_src.deferred) and (mat_src.deferred ~= "3do") and (mat_src.deferred ~= "s3o") then
+        mat_src.deferredSource = mat_src.deferred
+        mat_src.deferred = nil
       end
     end
 
@@ -524,8 +557,7 @@ function to_string(data, indent)
                 str = str .. ("	"):rep(indent) .. i .. ":\n"
                 str = str .. to_string(v, indent + 2)
             else
-                str = str .. ("	"):rep(indent) .. i .. ": " ..
-to_string(v, 0)
+                str = str .. ("	"):rep(indent) .. i .. ": " .. to_string(v, 0)
             end
         end
     elseif (data ==nil) then

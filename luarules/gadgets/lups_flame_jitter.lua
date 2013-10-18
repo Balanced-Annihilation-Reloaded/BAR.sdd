@@ -78,7 +78,7 @@ else
     end
     lastShoot[unitID] = n
 
-    local posx,posy,posz, dirx,diry,dirz = Spring.GetUnitWeaponVectors(unitID,weapon-1)
+    local posx,posy,posz, dirx,diry,dirz = Spring.GetUnitWeaponVectors(unitID,weapon)
     local wd  = WeaponDefs[UnitDefs[unitDefID].weapons[weapon].weaponDef]
     local weaponRange = wd.range*wd.duration
     local weaponVelocity = wd.projectilespeed * 30 -- * gamespeed

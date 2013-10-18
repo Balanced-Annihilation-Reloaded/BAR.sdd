@@ -79,6 +79,9 @@ gadgetHandler = {
   xViewSizeOld = 1,
   yViewSizeOld = 1,
 
+  -- dbg_profiler depends on this
+  actionHandler = actionHandler,
+
   mouseOwner = nil,
 }
 

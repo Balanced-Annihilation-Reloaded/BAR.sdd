@@ -133,7 +133,9 @@ return {
       vec3 light = a * sunDiffuse + sunAmbient;
        //vec3 light = a * sunDiffuse + sunAmbient;
 
-       vec4 extraColor  = texture2D(textureS3o2, gl_TexCoord[0].st);
+       vec4 diffuseIn  = texture2D(textureS3o1, gl_TexCoord[0].st);
+       vec4 diffuseOut = diffuseIn;
+       vec4 extraColor = texture2D(textureS3o2, gl_TexCoord[0].st);
        vec3 reflectDir = reflect(cameraDir, normal);
        vec3 specular   = textureCube(specularTex, reflectDir).rgb * extraColor.g * 8.0;
        vec3 reflection = textureCube(reflectTex,  reflectDir).rgb;
@@ -152,18 +154,17 @@ return {
        reflection  = mix(light, reflection, extraColor.g); // reflection
        reflection += extraColor.rrr*frameLoc; // self-illum
 
-       gl_FragColor     = texture2D(textureS3o1, gl_TexCoord[0].st);
-       gl_FragColor.rgb = mix(gl_FragColor.rgb, teamColor.rgb, gl_FragColor.a - extraColor.b*trimColor.a); // teamcolor
-       gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.0,0.0,0.0), extraColor.b * trimColor.a); // trimcolor
-       gl_FragColor.rgb = mix(gl_FragColor.rgb, trimColor.rgb, (extraColor.b/255.0) * trimColor.a); // trimcolor
-       gl_FragColor.rgb = gl_FragColor.rgb * reflection + specular;
-       gl_FragColor.a   = extraColor.a;
-	   gl_FragColor.rgb = gl_FragColor.rgb +gl_FragColor.rgb * (normaltex.a-0.5) * healthLoc;
+       diffuseOut.rgb = mix(diffuseOut.rgb, teamColor.rgb, diffuseOut.a - extraColor.b*trimColor.a); // teamcolor
+       diffuseOut.rgb = mix(diffuseOut.rgb, vec3(0.0,0.0,0.0), extraColor.b * trimColor.a); // trimcolor
+       diffuseOut.rgb = mix(diffuseOut.rgb, trimColor.rgb, (extraColor.b/255.0) * trimColor.a); // trimcolor
 
-       //gl_FragColor.rgb = mix(gl_Fog.color.rgb, gl_FragColor.rgb, fogFactor); // fog
-       //gl_FragColor.a = teamColor.a; // far fading
-       //gl_FragColor.rgb = normal;
-       //gl_FragColor.g=frameLoc;
+       diffuseOut.rgb = diffuseOut.rgb * reflection + specular;
+       diffuseOut.a   = extraColor.a;
+	   diffuseOut.rgb = diffuseOut.rgb + diffuseOut.rgb * (normaltex.a-0.5) * healthLoc;
+
+       gl_FragData[0] = vec4(normal, 1.0);
+       gl_FragData[1] = diffuseOut;
+       gl_FragData[2] = vec4(specular, 1.0);
 
        %%FRAGMENT_POST_SHADING%%
     }

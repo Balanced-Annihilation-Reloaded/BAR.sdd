@@ -129,8 +129,8 @@ return {
        vec3 normal = normalize(normalv);
     #endif
        float a    = max( dot(normal, sunPos), 0.0);
-      //vec3 light = a * sunDiffuse ;//+ 0.5*sunAmbient;
-      vec3 light = a * sunDiffuse + sunAmbient;
+       //vec3 light = a * sunDiffuse ;//+ 0.5*sunAmbient;
+       vec3 light = a * sunDiffuse + sunAmbient;
        //vec3 light = a * sunDiffuse + sunAmbient;
 
        vec4 diffuseIn  = texture2D(textureS3o1, gl_TexCoord[0].st);
@@ -165,6 +165,7 @@ return {
        gl_FragData[0] = vec4(normal, 1.0);
        gl_FragData[1] = diffuseOut;
        gl_FragData[2] = vec4(specular, 1.0);
+       gl_FragData[3] = vec4(extraColor.r * frameLoc, extraColor.r * frameLoc, extraColor.r * frameLoc, 1.0);
 
        %%FRAGMENT_POST_SHADING%%
     }

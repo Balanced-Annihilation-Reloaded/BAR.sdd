@@ -158,7 +158,7 @@ return {
        gl_FragColor.rgb = mix(gl_FragColor.rgb, trimColor.rgb, (extraColor.b/255.0) * trimColor.a); // trimcolor
        gl_FragColor.rgb = gl_FragColor.rgb * reflection + specular;
        gl_FragColor.a   = extraColor.a;
-	   gl_FragColor.rgb = gl_FragColor.rgb +gl_FragColor.rgb * (normaltex.a-0.5) * healthLoc;
+       gl_FragColor.rgb = gl_FragColor.rgb +gl_FragColor.rgb * (normaltex.a-0.5) * healthLoc;
 
        //gl_FragColor.rgb = mix(gl_Fog.color.rgb, gl_FragColor.rgb, fogFactor); // fog
        //gl_FragColor.a = teamColor.a; // far fading

@@ -29,7 +29,7 @@ return {
 		maxwaterdepth = 0,
 		name = "Annihilator",
 		nochasecategory = "MOBILE",
-		objectname = "ARMANNI",
+		objectname = "ARMANNI.s3o",
 		onoffable = true,
 		radardistance = 1500,
 		radaremitheight = 72,
@@ -38,6 +38,10 @@ return {
 		sightdistance = 780,
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

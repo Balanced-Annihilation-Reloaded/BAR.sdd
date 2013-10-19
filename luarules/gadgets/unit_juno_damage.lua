@@ -81,10 +81,14 @@ local junoWeapons = {
     [WeaponDefNames.cjuno_juno_pulse.id] = true,
 }
 
-function gadget:UnitDamaged(uID, uDefID, uTeam, damage, paralyzer, weaponID, aID, aDefID, aTeam)
+function gadget:UnitDamaged(uID, uDefID, uTeam, damage, paralyzer, weaponID, projID, aID, aDefID, aTeam)
     if junoWeapons[weaponID] and tokillUnits[uDefID] then
 		if uID and SpValidUnitID(uID) then
-			SpDestroyUnit(uID, false, false, aID)
+			if aID and SpValidUnitID(aID) then
+				SpDestroyUnit(uID, false, false, aID)
+			else
+				SpDestroyUnit(uID, false, false)
+			end
 		end
 	end
 end
@@ -161,8 +165,8 @@ function gadget:GameFrame(frame)
 		end
 	end
 	
-	if ((#centers ~= 0) and (curtime - lastupdate > 1)) then --slow update (to make y re-match ground in unsync)
-		udpate = true
+	if ((#centers ~= 0) and (curtime - lastupdate > 1)) then --slow update (to re-match ground in unsync)
+		update = true
 	end
 	
 	if ((update==true) and (curtime - lastupdate > updategrain)) then 

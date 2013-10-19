@@ -24,6 +24,7 @@ return {
 		idletime = 1800,
 		mass = 200000,
 		maxdamage = 133700,
+		pushResistant = true,
 		maxslope = 17,
 		maxvelocity = 1.1200000047684,
 		maxwaterdepth = 12,
@@ -161,6 +162,7 @@ return {
 				turret = true,
 				weapontype = "BeamLaser",
 				weaponvelocity = 1500,
+				camerashake = 0.1,
 				damage = {
 					commanders = 1200,
 					default = 5500,

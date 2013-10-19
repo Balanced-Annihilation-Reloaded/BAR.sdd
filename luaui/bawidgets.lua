@@ -121,14 +121,14 @@ widgetHandler = {
   autoModWidgets = false,
 
   actionHandler = include("actions.lua"),
-  
+
   WG = {}, -- shared table for widgets
 
   globals = {}, -- global vars/funcs
 
   mouseOwner = nil,
   ownedButton = 0,
-  
+
   tweakMode = false,
 }
 
@@ -463,9 +463,13 @@ function widgetHandler:LoadConfigData()
 
     local tmp = {}
     setfenv(chunk, tmp)
-    self.configData = chunk()
+    self.orderList = chunk().order
+    self.configData = chunk().data
+    if (not self.orderList) then
+		self.orderList = {} -- safety
+    end
     if (not self.configData) then
-      self.configData = {} -- safety
+		self.configData = {} -- safety
     end
 	if (self.configData.version or 0) < DATA_VERSION then 
 		self.configData = {}
@@ -518,6 +522,16 @@ function widgetHandler:Initialize()
 
   local unsortedWidgets = {}
 
+  -- stuff the raw widgets into unsortedWidgets
+  local widgetFiles = VFS.DirList(WIDGET_DIRNAME, "*.lua", VFS.RAW_ONLY)
+  for k,wf in ipairs(widgetFiles) do
+    GetWidgetInfo(wf, VFS.RAW_ONLY)
+    local widget = self:LoadWidget(wf, false)
+    if (widget) then
+      table.insert(unsortedWidgets, widget)
+    end
+  end
+
   -- stuff the widgets into unsortedWidgets
   local widgetFiles = VFS.DirList(WIDGET_DIRNAME, "*.lua", VFSMODE)
   for k,wf in ipairs(widgetFiles) do
@@ -526,8 +540,8 @@ function widgetHandler:Initialize()
       table.insert(unsortedWidgets, widget)
     end
   end
-  
-  -- sort the widgets  
+
+  -- sort the widgets
   table.sort(unsortedWidgets, function(w1, w2)
     local l1 = w1.whInfo.layer
     local l2 = w2.whInfo.layer
@@ -587,7 +601,7 @@ function widgetHandler:LoadWidget(filename, _VFSMODE)
     Spring.Log(HANDLER_BASENAME, LOG.ERROR, 'Failed to load: ' .. basename .. '  (' .. err .. ')')
     return nil
   end
-  
+
   local widget = widgetHandler:NewWidget()
   setfenv(chunk, widget)
   local success, err = pcall(chunk)
@@ -685,12 +699,12 @@ function widgetHandler:LoadWidget(filename, _VFSMODE)
     return nil
   end
 
-  -- load the config data  
+  -- load the config data
   local config = self.configData[name]
   if (widget.SetConfigData and config) then
     widget:SetConfigData(config)
   end
-    
+
   return widget
 end
 
@@ -1301,7 +1315,7 @@ function widgetHandler:Shutdown()
 end
 
 function widgetHandler:Update()
-  local deltaTime = Spring.GetLastUpdateSeconds()  
+  local deltaTime = Spring.GetLastUpdateSeconds()
   -- update the hour timer
   hourTimer = (hourTimer + deltaTime)%3600
   for _,w in ipairs(self.UpdateList) do
@@ -1426,7 +1440,7 @@ end
 function widgetHandler:ViewResize(viewGeometry)
   local vsx = viewGeometry.viewSizeX
   local vsy = viewGeometry.viewSizeY
-    
+
   for _,w in ipairs(self.ViewResizeList) do
     w:ViewResize(vsx, vsy, viewGeometry)
   end
@@ -1958,18 +1972,18 @@ end
 
 
 function widgetHandler:UnitCommand(unitID, unitDefID, unitTeam,
-                                   cmdId, cmdOpts, cmdParams)
+                                   cmdId, cmdOpts, cmdParams, cmdTag)
   for _,w in ipairs(self.UnitCommandList) do
     w:UnitCommand(unitID, unitDefID, unitTeam,
-                  cmdId, cmdOpts, cmdParams)
+                  cmdId, cmdOpts, cmdParams, cmdTag)
   end
   return
 end
 
 
-function widgetHandler:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag)
+function widgetHandler:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag, cmdParams, cmdOpts)
   for _,w in ipairs(self.UnitCmdDoneList) do
-    w:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag)
+    w:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag, cmdParams, cmdOpts)
   end
   return
 end

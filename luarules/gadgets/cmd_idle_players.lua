@@ -10,55 +10,95 @@ function gadget:GetInfo()
 	}
 end
 
+local maxIdleTreshold = 60 --in seconds
+local maxPing = 30 -- in seconds
+local finishedResumingPing = 2 --in seconds
+local maxInitialQueueSlack = 120 -- in seconds
+local takeCommand = "take2"
+local minTimeToTake = 10 -- in seconds
+--in chose ingame startpostype, players must place beforehand, so take an action, grace period can be shorter
+minTimeToTake = Spring.GetModOptions().startpostype == 2 and 1 or minTimeToTake
+
+local AFKMessage = 'idleplayers '
+local AFKMessageSize = #AFKMessage
 if ( not gadgetHandler:IsSyncedCode()) then
 -- UNSYNCED code
-	local maxIdleTreshold = 150*30 -- in frames (30 game frames per sec)
 
-	local GetGameFrame = Spring.GetGameFrame
+	local GetLastUpdateSeconds = Spring.GetLastUpdateSeconds
 	local SendLuaRulesMsg = Spring.SendLuaRulesMsg
 	local GetMouseState = Spring.GetMouseState
 
-	local lastGameFrame = nil -- start with nil so first frame ( 0 ) is not skipped
-	local lastActionFrame = 0
-	local IsIdle = false
+	local min = math.min
+	local max = math.max
+
+	local nameEnclosingPatterns = {{""," added point"},{"<","> "},{"> <","> "},{"[","] "}}
+	local myPlayerName = Spring.GetPlayerInfo(Spring.GetMyPlayerID())
+	local lastActionTime = 0
+	local timer = 0
+	local updateTimer = 0
+	local isIdle = true
+	local updateRefreshTime = 1 --in seconds
+	local initialQueueTime
 
 	local mx,my = GetMouseState()
 
+	function gadget:Initialize()
+		gadgetHandler:AddSyncAction("onGameStart", onGameStart)
+		gadgetHandler:AddChatAction("initialQueueTime",onInitialQueueTime)
+	end
+
+	function gadget:Shutdown()
+		gadgetHandler:RemoveChatAction('initialQueueTime')
+		gadgetHandler:RemoveSyncAction("onGameStart")
+	end
+
+	function onInitialQueueTime(_,_,words)
+		initialQueueTime = tonumber(words[1])
+		if initialQueueTime then
+			initialQueueTime = min(initialQueueTime,maxInitialQueueSlack)
+		end
+	end
+
+	function onGameStart()
+		if initialQueueTime then
+			NotIdle()
+			-- allow the user to slack while initial queue is unrolling
+			lastActionTime = timer + initialQueueTime
+		end
+	end
+
 	function WentIdle()
-		if not IsIdle then
-			IsIdle = true
-			SendLuaRulesMsg("idleplayers 1" )
+		if not isIdle then
+			SendLuaRulesMsg(AFKMessage .. "1")
+			isIdle = true
 		end
 	end
 
 	function NotIdle()
-		lastActionFrame = GetGameFrame()
-		if IsIdle then
-			SendLuaRulesMsg("idleplayers 0")
-			IsIdle = false
+		lastActionTime = max(timer,lastActionTime)
+		if isIdle then
+			SendLuaRulesMsg(AFKMessage .. "0")
+			isIdle = false
 		end
 	end
 
-	-- apparently gadget:GameFrame doesn't get called in unsynced context??!
-	function gadget:DrawScreen()
-		local gameFrame = GetGameFrame()
-		if lastGameFrame == gameFrame then -- only once per gameFrame
+	function gadget:Update()
+		local dt = GetLastUpdateSeconds()
+		timer = timer+dt
+		updateTimer = updateTimer + dt
+		if updateTimer < updateRefreshTime then
 			return
 		end
-		lastGameFrame = gameFrame
-		if gameFrame%16 == 0 then
-			return
-		end
-
+		updateTimer = 0
 		-- ugly code to check if the mouse moved since the call-in doesn't work
 		local x,y = GetMouseState()
-		if ( (mx ~= x) or (my ~= y) ) then
+		if mx ~= x or my ~= y then
 			NotIdle()
 		end
 		my = y
 		mx = x
 
-		if gameFrame-lastActionFrame > maxIdleTreshold then
+		if timer-lastActionTime > maxIdleTreshold then
 			WentIdle()
 		end
 	end
@@ -80,22 +120,47 @@ if ( not gadgetHandler:IsSyncedCode()) then
 		NotIdle()
 	end
 
+	-- extract a player name from a text message
+	function getPlayerName(playerMessage)
+		local pos
+		local retVal = ""
+		for index,pattern in pairs(nameEnclosingPatterns) do
+			local prefix = pattern[1]
+			local suffix = pattern[2]
+			local prefixstart,prefixend
+			local suffixstart,suffixend
+			if prefix ~= "" then
+				prefixstart,prefixend = playerMessage:find(prefix,1,true)
+			end
+			prefixend = (prefixend or 0 ) + 1
+			if suffix ~= "" then
+				suffixstart,suffixend = playerMessage:find(suffix,prefixend,true)
+			end
+			if suffixstart then
+				suffixstart = suffixstart - 1
+				return playerMessage:sub(prefixend,suffixstart)
+			end
+		end
+		return ""
+	end
+
+	--this callin has never been implemented!
+	--[[
+	function gadget:AddConsoleLine(line)
+		if line:len() == 0 then
+			return
+		end
+		if getPlayerName(line) == myPlayerName then
+			NotIdle()
+		end
+	end
+	]]--
+
 else
 
 -- SYNCED code
-
-	-- "autoshare" to use resource autoshare to all team, "takeall" to use AllowResourceTransfer
-	local blockResourceTransferMode = Spring.GetModOptions().restakemode or "autoshare"
-
-	local maxPing = 30000 -- in milliseconds
-
 	local playerInfoTable = {}
-	local TeamToRemainingPlayers = {}
-	local playerList = {}
-	local shareBarLevelMetal = {}
-	local shareBarLevelEnergy = {}
-
-	local AFKRegex = 'idleplayers (%d+)$'
+	local currentGameFrame = 0
 
 	local TransferUnit = Spring.TransferUnit
 	local GetPlayerList = Spring.GetPlayerList
@@ -103,12 +168,24 @@ else
 	local GetTeamResources = Spring.GetTeamResources
 	local GetPlayerInfo = Spring.GetPlayerInfo
 	local GetTeamList = Spring.GetTeamList
+	local GetTeamLuaAI = Spring.GetTeamLuaAI
+	local GetAIInfo = Spring.GetAIInfo
 	local SetTeamRulesParam = Spring.SetTeamRulesParam
 	local GetTeamRulesParam = Spring.GetTeamRulesParam
 	local GetTeamUnits = Spring.GetTeamUnits
 	local SetTeamShareLevel = Spring.SetTeamShareLevel
 	local GetTeamInfo = Spring.GetTeamInfo
 	local GetTeamList = Spring.GetTeamList
+	local SendMessageToPlayer = Spring.SendMessageToPlayer
+	local SendMessageToAllyTeam = Spring.SendMessageToAllyTeam
+	local Echo = Spring.Echo
+
+	local resourceList = {"metal","energy"}
+	local gaiaTeamID = Spring.GetGaiaTeamID()
+	local gameSpeed = Game.gameSpeed
+
+	local min = math.min
+	local max = math.max
 
 	local function CheckPlayerState(playerID)
 		local newval = playerInfoTable[playerID]
@@ -123,138 +200,160 @@ else
 		return ok
 	end
 
-	function gadget:PlayerChanged()
-		playerList = GetPlayerList()
-		UpdatePlayerInfos()
-	end
-
 	local function UpdatePlayerInfos()
-		local inactiveTeamCopy = TeamToRemainingPlayers
-		TeamToRemainingPlayers = {} -- reset active teams table
-		local teamList = GetTeamList()
-		for _,teamID in ipairs(teamList) do -- sum all AI first
+		local TeamToRemainingPlayers = {}
+		local aiOwners = {}
+		for _,teamID in ipairs(GetTeamList()) do --initialize team count
 			local _, _, _, isAI = GetTeamInfo(teamID)
 			if isAI then
+				--store who hosts that engine ai, team will be controlled if player is present
+				local aiHost = select(3,GetAIInfo(teamID))
+				local hostedAis = aiOwners[aiHost] or {}
+				hostedAis[#hostedAis+1] = teamID
+				aiOwners[aiHost] = hostedAis
+			end
+			--is luaai or is gaia
+			if GetTeamLuaAI(teamID) ~= "" or teamID == gaiaTeamID then
+				--luaai and gaia are always controlled
 				TeamToRemainingPlayers[teamID] = 1
 			else
 				TeamToRemainingPlayers[teamID] = 0
 			end
 		end
-		for _,playerID in ipairs(playerList) do -- update player infos
+		for _,playerID in ipairs(GetPlayerList()) do -- update player infos
 			local _,active,spectator,teamID,allyTeamID,ping = GetPlayerInfo(playerID)
-			local playerInfoTableEntry = playerInfoTable[playerID]
-			if not playerInfoTableEntry then
-				playerInfoTableEntry = {}
-			end
+			local playerInfoTableEntry = playerInfoTable[playerID] or {}
 			playerInfoTableEntry.connected = active
 			playerInfoTableEntry.player = not spectator
-			playerInfoTableEntry.pingOK = ping < maxPing
+			local pingTreshold = maxPing
+			local oldPingOk = playerInfoTableEntry.pingOK
+			if oldPingOk == false then
+				pingTreshold = finishedResumingPing --use smaller threshold to determine finished resuming
+			end
+			playerInfoTableEntry.pingOK = ping < pingTreshold
+			if not spectator then
+				if oldPingOk and not playerInfoTableEntry.pingOK then
+					Echo("Player " .. GetPlayerInfo(playerID) .. " is lagging behind")
+				elseif oldPingOk == false and playerInfoTableEntry.pingOK then
+					Echo("Player " .. GetPlayerInfo(playerID) .. " has finished resuming")
+				end
+			end
 			if playerInfoTableEntry.present == nil then
-				playerInfoTableEntry.present = true -- initialize to not afk
+				playerInfoTableEntry.present = false -- initialize to afk
 			end
 			playerInfoTable[playerID] = playerInfoTableEntry
 
-			local ok = CheckPlayerState(playerID)
-
-			local teamplayersok = TeamToRemainingPlayers[teamID]
-			if ok then -- bump amount of active players in a team
-				teamplayersok = teamplayersok + 1
-			end
-			TeamToRemainingPlayers[teamID] = teamplayersok
-		end
-
-		for teamID,teamCount in ipairs(TeamToRemainingPlayers) do
-			-- set to a public readble value that there's nobody controlling the team
-			SetTeamRulesParam(teamID, "numActivePlayers", teamCount )
-		end
-
-		if blockResourceTransferMode == "autoshare" then
-			for teamID,oldcount in ipairs(inactiveTeamCopy) do
-				newcount = TeamToRemainingPlayers[teamID]
-				if ( oldcount == nil or oldcount == 0 ) and ( newcount ~= nil and newcount ~= 0 ) then
-					-- team become active again, un-set share slider
-					if shareBarLevelMetal[teamID] then
-						SetTeamShareLevel(teamID,"metal",shareBarLevelMetal[teamID])
-						shareBarLevelMetal[teamID] = nil
-					end
-					if shareBarLevelEnergy[teamID] then
-						SetTeamShareLevel(teamID,"energy",shareBarLevelEnergy[teamID])
-						shareBarLevelEnergy[teamID] = nil
+			--mark hosted ais as controlled
+			local hostedAis = aiOwners[aiHost]
+			if hostedAis then
+				--a player only needs to be connected and low enough ping to host an ai
+				if playerInfoTableEntry.connected  and playerInfoTableEntry.pingOK then
+					for _,aiTeamID in ipairs(hostedAis) do
+						TeamToRemainingPlayers[teamID] = TeamToRemainingPlayers[teamID] +1
 					end
 				end
 			end
+
+			if CheckPlayerState(playerID) then -- bump amount of active players in a team
+				TeamToRemainingPlayers[teamID] = TeamToRemainingPlayers[teamID] + 1
+			end
+		end
+
+		for teamID,teamCount in ipairs(TeamToRemainingPlayers) do
+			-- set to a public readable value that there's nobody controlling the team
+			SetTeamRulesParam(teamID, "numActivePlayers", teamCount )
 		end
 	end
 
 	function gadget:Initialize()
-		playerList = GetPlayerList()
-  		gadgetHandler:AddChatAction("take2", TakeTeam, "Take control of units and resouces from inactive players")
+  		gadgetHandler:AddChatAction(takeCommand, TakeTeam, "Take control of units and resouces from inactive players")
+  		UpdatePlayerInfos()
 	end
 
 	function gadget:Shutdown()
-		gadgetHandler:RemoveChatAction('take2')
+		gadgetHandler:RemoveChatAction(takeCommand)
 	end
 
-	function gadget:GameStart()
-		UpdatePlayerInfos()
-	end
 
 	function gadget:GameFrame(currentFrame)
-		if currentFrame%16 == 0 then
+		currentGameFrame = currentFrame
+		if currentFrame == 10 then
+			SendToUnsynced("onGameStart")
+		end
+		if currentFrame%16 ~= 0 then
 			return
 		end
 		UpdatePlayerInfos()
 	end
 
 	function gadget:RecvLuaMsg(msg, playerID)
-		local afk = tonumber(msg:match(AFKRegex))
-		if not afk then --invalid message
+		if msg:sub(1,AFKMessageSize) ~= AFKMessage then --invalid message
 			return
 		end
-		local playerInfoTableEntry = playerInfoTable[playerID]
-		if not playerInfoTableEntry then
-			playerInfoTableEntry = {}
-		end
+		local afk = tonumber(msg:sub(AFKMessageSize+1))
+		local playerInfoTableEntry = playerInfoTable[playerID] or {}
+		local previousPresent = playerInfoTableEntry.present
 		playerInfoTableEntry.present = afk == 0
 		playerInfoTable[playerID] = playerInfoTableEntry
+		local _,active,spectator,teamID,allyTeamID,ping = GetPlayerInfo(playerID)
+		if not spectator then
+			if currentGameFrame > minTimeToTake*gameSpeed then
+				if previousPresent and not playerInfoTableEntry.present then
+					SendMessageToAllyTeam(allyTeamID,"Player " .. GetPlayerInfo(playerID) .. " went AFK")
+				elseif not previousPresent and playerInfoTableEntry.present then
+					SendMessageToAllyTeam(allyTeamID,"Player " .. GetPlayerInfo(playerID) .. " came back")
+				end
+			end
+		end
 	end
 
-	function gadget:AllowResourceTransfer(teamID, restype, level)
-		if blockResourceTransferMode ~= "takeall" then
-			return true
-		end
+	function gadget:AllowResourceTransfer(fromTeamID, toTeamID, restype, level)
 		-- prevent resources to leak to uncontrolled teams
-		return GetTeamRulesParam(teamID,"numActivePlayers") ~= 0
+		return GetTeamRulesParam(toTeamID,"numActivePlayers") ~= 0
+	end
+
+	function gadget:AllowUnitTransfer(unitID, unitDefID, fromTeamID, toTeamID, capture)
+		-- prevent units to be shared to uncontrolled teams
+		return capture or GetTeamRulesParam(toTeamID,"numActivePlayers") ~= 0
 	end
 
 
 	function TakeTeam(cmd, line, words, playerID)
 		if not CheckPlayerState(playerID) then
+			SendMessageToPlayer(playerID,"Cannot share to afk players")
 			return -- exclude taking rights from lagged players, etc
 		end
+		local targetTeam = tonumber(words[1])
 		local _,_,_,takerID,allyTeamID = GetPlayerInfo(playerID)
 		local teamList = GetTeamList(allyTeamID)
-		for teamID in ipairs(teamList) do
+		if targetTeam then
+			local _,_,_,_,_,targetAllyTeamID = GetTeamInfo(targetTeam)
+			if targetAllyTeamID ~= allyTeamID then
+				--don't let enemies take
+				SendMessageToPlayer(playerID,"Cannot take enemy players")
+				return
+			end
+			teamList = {targetTeam}
+		end
+		local numToTake = 0
+		for _,teamID in ipairs(teamList) do
 			if GetTeamRulesParam(teamID,"numActivePlayers") == 0 then
+				numToTake = numToTake + 1
 				-- transfer all units
-				local unitList = GetTeamUnits(teamID)
-				for _,unitID in ipairs(unitList) do
+				for _,unitID in ipairs(GetTeamUnits(teamID)) do
 					TransferUnit(unitID,takerID)
 				end
-				if blockResourceTransferMode == "autoshare" then
-					-- set share bars to 0 and save old value
-					_,_,_,_,_,shareBarLevelMetal[teamID] = GetTeamResources(teamID, "metal")
-					_,_,_,_,_,shareBarLevelEnergy[teamID] = GetTeamResources(teamID, "energy")
-					SetTeamShareLevel(teamID,"metal",0)
-					SetTeamShareLevel(teamID,"energy",0)
-				elseif blockResourceTransferMode == "takeall" then
-					--send all resources en-block to the taker
-					local shareAmount = GetTeamResources( teamID, "metal" )
-					ShareTeamResource( teamID, takerID, "metal", shareAmount )
-					shareAmount = GetTeamResources( teamID, "energy" )
-					ShareTeamResource( teamID, takerID, "energy", shareAmount )
+				--send all resources en-block to the taker
+				for _,resourceName in ipairs(resourceList) do
+					local shareAmount = GetTeamResources( teamID, resourceName)
+					local current,storage,_,_,_,shareSlider = GetTeamResources(takerID,resourceName)
+					shareAmount = min(shareAmount,shareSlider*storage-current)
+					ShareTeamResource( teamID, takerID, resourceName, shareAmount )
 				end
 			end
+		end
+		if numToTake == 0 then
+			SendMessageToPlayer(playerID,"Nothing to take")
 		end
 	end
 end

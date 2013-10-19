@@ -9,9 +9,6 @@ static-var  Static_Var_1, gun_1, last_fire, firstaim;
 
 // Signal definitions
 #define SIG_AIM				2
-#define CHANGE_TARGET       98
-#define DELAY_UNIT_VAR 1024
-#define GAME_FRAME 134
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {

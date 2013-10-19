@@ -62,9 +62,11 @@ function gadget:Initialize()
   Spring.AddUnitIcon("m-up.user", "LuaUI/Icons/m-up.png")
   Spring.AddUnitIcon("m.user", "LuaUI/Icons/m.png")
   Spring.AddUnitIcon("nuke.user", "LuaUI/Icons/nuke.png",1.25)
-  Spring.AddUnitIcon("sphere.user", "LuaUI/Icons/sphere.png",1.1)
-  Spring.AddUnitIcon("sphere2.user", "LuaUI/Icons/sphere.png",1.35)
-  Spring.AddUnitIcon("sphere3.user", "LuaUI/Icons/sphere.png",1.7)
+  Spring.AddUnitIcon("slash.user", "LuaUI/Icons/slash.png") 
+  Spring.AddUnitIcon("sphere.user", "LuaUI/Icons/ba_sphere.png",1.1)
+  Spring.AddUnitIcon("sphere2.user", "LuaUI/Icons/ba_sphere.png",1.35)
+  Spring.AddUnitIcon("sphere3.user", "LuaUI/Icons/ba_sphere.png",1.7)
+  Spring.AddUnitIcon("tiny-sphere.user", "LuaUI/Icons/ba_sphere.png",0.55)
   Spring.AddUnitIcon("square.user", "LuaUI/Icons/square.png")
   Spring.AddUnitIcon("square_+.user", "LuaUI/Icons/square_+.png")
   Spring.AddUnitIcon("square_x.user", "LuaUI/Icons/square_x.png")
@@ -109,8 +111,8 @@ function gadget:Initialize()
         else
           Spring.SetUnitDefIcon(udid, "square_+.user")  -- immobile
         end
-      elseif (ud.stockpileWeaponDef ~= nil) then
-      	-- nuke / antinuke ( stockpile weapon anyway )
+      elseif (ud.stockpileWeaponDef ~= nil) and (not ud.weapons[1].onlyTargets["vtol"]) then
+      	-- nuke / antinuke ( stockpile weapon, but not mercury/screamer )
       	Spring.SetUnitDefIcon(udid, "nuke.user")
       elseif (ud.canFly) then
         -- aircraft
@@ -127,7 +129,7 @@ function gadget:Initialize()
       elseif (ud.isTransport) then
         -- transports
         Spring.SetUnitDefIcon(udid, "diamond.user")
-      elseif ((ud.minWaterDepth > 0) and (ud.speed > 0) and (ud.waterline > 10)) then
+      elseif ((ud.minWaterDepth > 0) and (ud.speed > 0) and (ud.waterline > 12)) then
         -- submarines
         Spring.SetUnitDefIcon(udid, "tri-down.user")
       elseif ((ud.minWaterDepth > 0) and (ud.speed > 0)) then
@@ -147,7 +149,11 @@ function gadget:Initialize()
         if (#ud.weapons <= 0) then
           Spring.SetUnitDefIcon(udid, "square.user")
         else
-          Spring.SetUnitDefIcon(udid, "x.user")
+		  if ud.weapons[1].onlyTargets["vtol"] then
+			Spring.SetUnitDefIcon(udid, "slash.user")		  
+		  else
+			Spring.SetUnitDefIcon(udid, "x.user")
+		  end
         end
       else
         if (ud.techLevel == 4) then
@@ -160,8 +166,15 @@ function gadget:Initialize()
       end
     end
   end
+  
+  -- Shrink scouts
+  Spring.SetUnitDefIcon(UnitDefNames["corfav"].id, "tiny-sphere.user")
+  Spring.SetUnitDefIcon(UnitDefNames["armfav"].id, "tiny-sphere.user")
+  Spring.SetUnitDefIcon(UnitDefNames["corak"].id, "tiny-sphere.user")
+  Spring.SetUnitDefIcon(UnitDefNames["armpw"].id, "tiny-sphere.user")
+  Spring.SetUnitDefIcon(UnitDefNames["armflea"].id, "tiny-sphere.user")
+  
 end
-
 
 --------------------------------------------------------------------------------
 

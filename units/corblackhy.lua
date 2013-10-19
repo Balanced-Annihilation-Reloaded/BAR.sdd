@@ -20,6 +20,7 @@ return {
 		energystorage = 1000,
 		energyuse = 190,
 		explodeas = "ATOMIC_BLAST",
+		pushResistant = true,
 		floater = true,
 		footprintx = 6,
 		footprintz = 6,
@@ -40,7 +41,7 @@ return {
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 650,
 		turnrate = 260,
-		waterline = 12,
+		waterline = 5,
 		windgenerator = 0.0010000000474975,
 		customparams = {
 			normalmaps = "yes",

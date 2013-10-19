@@ -103,6 +103,7 @@ return {
 				craterboost = 0,
 				cratermult = 0,
 				explosiongenerator = "custom:FLASH4",
+				firesubmersed = true,
 				firestarter = 100,
 				flighttime = 10,
 				impulseboost = 0.12300000339746,

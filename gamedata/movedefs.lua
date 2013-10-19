@@ -44,7 +44,7 @@ local moveDatas = {
 		footprintz = 4,
 		minwaterdepth = 10,
 	},
-	--[[
+	--[[ 
 	DBOAT3 = {
 		crushstrength = 30,
 		footprintx = 3,
@@ -196,8 +196,8 @@ local moveDatas = {
 	
 	-- Subs
 	UBOAT3 = {
-		footprintx = 3,
-		footprintz = 3,
+		footprintx = 2,
+		footprintz = 2,
 		minwaterdepth = 15,
 		crushstrength = 5,
 		subMarine = 1,

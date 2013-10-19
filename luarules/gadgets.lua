@@ -83,8 +83,129 @@ gadgetHandler = {
   actionHandler = actionHandler,
 
   mouseOwner = nil,
+
+  actionHandler = actionHandler, --not in basecontent, this makes the gadget profiler work!
 }
 
+---- for backwards compat with 94 only, not wanted after 95.0
+if Game.version:find('94') and not Game.version:find('94.1.1') then
+CALLIN_LIST = {}
+CALLIN_MAP = {}
+
+local engineVersion = Game.version
+Spring.Echo("Using deprecated handling for luarules callins, please update your engine to 95.0 or later! (" .. engineVersion .. ")")
+
+local callInLists = {
+  'Shutdown',
+
+  'GamePreload',
+  'GameStart',
+  'GameOver',
+  'TeamDied',
+  'PlayerChanged',
+
+  'GameFrame',
+
+  'ViewResize',  -- FIXME ?
+
+  'TextCommand',  -- FIXME ?
+  'GotChatMsg',
+  'RecvLuaMsg',
+
+  -- Unit CallIns
+  'UnitCreated',
+  'UnitFinished',
+  'UnitFromFactory',
+  'UnitDestroyed',
+  'UnitExperience',
+  'UnitIdle',
+  'UnitCmdDone',
+  'UnitPreDamaged',
+  'UnitDamaged',
+  'UnitTaken',
+  'UnitGiven',
+  'UnitEnteredRadar',
+  'UnitEnteredLos',
+  'UnitLeftRadar',
+  'UnitLeftLos',
+  'UnitSeismicPing',
+  'UnitLoaded',
+  'UnitUnloaded',
+  'UnitCloaked',
+  'UnitDecloaked',
+  'StockpileChanged',
+  'ShieldPreDamaged',
+
+  -- Feature CallIns
+  'FeatureCreated',
+  'FeatureDestroyed',
+
+  -- Projectile CallIns
+  'ProjectileCreated',
+  'ProjectileDestroyed',
+
+  -- Misc Synced CallIns
+  'Explosion',
+
+  -- LuaRules CallIns
+  'CommandFallback',
+  'AllowCommand',
+  'AllowUnitCreation',
+  'AllowUnitTransfer',
+  'AllowUnitBuildStep',
+  'AllowFeatureCreation',
+  'AllowFeatureBuildStep',
+  'AllowResourceLevel',
+  'AllowResourceTransfer',
+  'AllowStartPosition',
+  'AllowDirectUnitControl',
+  'MoveCtrlNotify',
+  'TerraformComplete',
+  -- unsynced
+  'DrawUnit',
+  'AICallIn',
+
+  -- COB CallIn  (FIXME?)
+  'CobCallback',
+
+  -- Unsynced CallIns
+  'Update',
+  'DefaultCommand',
+  'DrawGenesis',
+  'DrawWorld',
+  'DrawWorldPreUnit',
+  'DrawWorldShadow',
+  'DrawWorldReflection',
+  'DrawWorldRefraction',
+  'DrawScreenEffects',
+  'DrawScreen',
+  'DrawInMiniMap',
+  'RecvFromSynced',
+
+  -- moved from LuaUI
+  'KeyPress',
+  'KeyRelease',
+  'MousePress',
+  'MouseRelease',
+  'MouseMove',
+  'MouseWheel',
+  'IsAbove',
+  'GetTooltip',
+  'CommandNotify',
+
+  -- FIXME -- not implemented  (more of these?)
+  'WorldTooltip',
+  'MapDrawCmd',
+  'GameSetup',
+  'DefaultCommand',
+}
+
+for _,val in ipairs(callInLists) do
+	table.insert(CALLIN_LIST,val)
+end
+
+end
+---- end of 94 compat section
 
 -- initialize the call-in lists
 do
@@ -181,7 +302,7 @@ function gadgetHandler:Initialize()
   for _,g in ipairs(unsortedGadgets) do
     gadgetHandler:InsertGadget(g)
 
-    local gtype = ((syncedHandler and "SYNCED") or "UNSYNCED")
+    local gtype = ((syncedHandler and "synced") or "unsynced")
     local gname = g.ghInfo.name
     local gbasename = g.ghInfo.basename
 
@@ -721,11 +842,12 @@ end
 --
 
 function gadgetHandler:RegisterGlobal(owner, name, value)
-  if (name == nil) then return false end
-  if (_G[name] ~= nil) then return false end
-  if (self.globals[name] ~= nil) then return false end
-  if (CALLIN_MAP[name] ~= nil) then return false end
-
+  if ((name == nil)        or
+      (_G[name])           or
+      (self.globals[name]) or
+      (CALLIN_MAP[name])) then
+    return false
+  end
   _G[name] = value
   self.globals[name] = owner
   return true
@@ -1018,7 +1140,7 @@ end
 
 function gadgetHandler:DrawProjectile(projectileID, drawMode)
   for _,g in ipairs(self.DrawProjectileList) do
-    if (g:DrawProjectile(projectileID, drawMode)) then
+    if (g:DrawProjectile(projectile, drawMode)) then
       return true
     end
   end
@@ -1059,18 +1181,19 @@ function gadgetHandler:AllowCommand(unitID, unitDefID, unitTeam,
   return true
 end
 
-function gadgetHandler:AllowStartPosition(cx, cy, cz, playerID, readyState, rx, ry, rz)
-  for _,g in ipairs(self.AllowStartPositionList) do
-    if (not g:AllowStartPosition(cx, cy, cz, playerID, readyState, rx, ry, rz)) then
+
+function gadgetHandler:AllowUnitCreation(unitDefID, builderID, builderTeam, x, y, z, facing)
+  for _,g in ipairs(self.AllowUnitCreationList) do
+    if (not g:AllowUnitCreation(unitDefID, builderID, builderTeam, x, y, z, facing)) then
       return false
     end
   end
   return true
 end
 
-function gadgetHandler:AllowUnitCreation(unitDefID, builderID, builderTeam, x, y, z, facing)
-  for _,g in ipairs(self.AllowUnitCreationList) do
-    if (not g:AllowUnitCreation(unitDefID, builderID, builderTeam, x, y, z, facing)) then
+function gadgetHandler:AllowStartPosition(cx, cy, cz, playerID, readyState, x, y, z)
+  for _,g in ipairs(self.AllowStartPositionList) do
+    if (not g:AllowStartPosition(cx, cy, cz, playerID, readyState, x, y, z	)) then
       return false
     end
   end
@@ -1266,9 +1389,9 @@ function gadgetHandler:UnitIdle(unitID, unitDefID, unitTeam)
 end
 
 
-function gadgetHandler:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag)
+function gadgetHandler:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag, cmdParams, cmdOpts)
   for _,g in ipairs(self.UnitCmdDoneList) do
-    g:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag)
+    g:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag, cmdParams, cmdOpts)
   end
   return
 end
@@ -1291,7 +1414,7 @@ function gadgetHandler:UnitPreDamaged(
 
   for _,g in ipairs(self.UnitPreDamagedList) do
     dmg, imp = g:UnitPreDamaged(unitID, unitDefID, unitTeam,
-                  damage, paralyzer, weaponDefID, projectileID,
+                  retDamage, paralyzer, weaponDefID, projectileID,
                   attackerID, attackerDefID, attackerTeam)
 
     if (dmg ~= nil) then retDamage = dmg end
@@ -1465,15 +1588,14 @@ function gadgetHandler:FeatureDamaged(
   featureTeam,
   damage,
   weaponDefID,
-  projectileID,
   attackerID,
   attackerDefID,
   attackerTeam
 )
   for _,g in ipairs(self.FeatureDamagedList) do
     g:FeatureDamaged(featureID, featureDefID, featureTeam,
-                    damage, weaponDefID, projectileID,
-                    attackerID, attackerDefID, attackerTeam)
+                  damage, weaponDefID,
+                  attackerID, attackerDefID, attackerTeam)
   end
 end
 
@@ -1493,7 +1615,7 @@ function gadgetHandler:FeaturePreDamaged(
 
   for _,g in ipairs(self.FeaturePreDamagedList) do
     dmg, imp = g:FeaturePreDamaged(featureID, featureDefID, featureTeam,
-                  damage, weaponDefID, projectileID,
+                  retDamage, weaponDefID, projectileID,
                   attackerID, attackerDefID, attackerTeam)
 
     if (dmg ~= nil) then retDamage = dmg end
@@ -1745,24 +1867,23 @@ function gadgetHandler:GetTooltip(x, y)
   return ''
 end
 
-function gadgetHandler:CommandNotify(id, params, options)
-  for _,g in ipairs(self.CommandNotifyList) do
-    if (g:CommandNotify(id, params, options)) then
-      return true
-    end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+function gadgetHandler:Save(zip)
+  for _,g in ipairs(self.SaveList) do
+    g:Save(zip)
   end
-  return false
+  return
 end
 
-function gadgetHandler:MapDrawCmd(playerID, cmdType, px, py, pz, ...)
-  local retval = false
-  for _,g in ipairs(self.MapDrawCmdList) do
-    local takeEvent = g:MapDrawCmd(playerID, cmdType, px, py, pz, ...)
-    if (takeEvent) then
-      retval = true
-    end
+
+function gadgetHandler:Load(zip)
+  for _,g in ipairs(self.LoadList) do
+    g:Load(zip)
   end
-  return retval
+  return
 end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

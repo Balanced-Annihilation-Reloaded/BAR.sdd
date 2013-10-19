@@ -510,7 +510,7 @@ function widget:DrawWorld()
 			if piece then
 				local explosionflags = spGetPieceProjectileParams(pID)
 				if explosionflags and (explosionflags%32)>15  then --only stuff with the FIRE explode tag gets a light
-					Spring.Echo('explosionflag=',explosionflags)
+					--Spring.Echo('explosionflag=',explosionflags)
 					table.insert(pointlightprojectiles,{0.5,0.5,0.25,100,1,1,0,false,x,y,z,0,0,0})
 					--lightparams={0.5,0.5,0.25,100,1,1,0}
 				--else

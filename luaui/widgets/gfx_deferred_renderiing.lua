@@ -70,6 +70,8 @@ local spGetProjectilePosition       = Spring.GetProjectilePosition
 local spGetProjectileType       = Spring.GetProjectileType
 local spGetProjectileName       = Spring.GetProjectileName
 local spGetCameraPosition       = Spring.GetCameraPosition
+local spGetPieceProjectileParams  =Spring.GetPieceProjectileParams 
+local spGetProjectileVelocity  =Spring.GetProjectileVelocity 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
@@ -106,18 +108,35 @@ local vsx, vsy
 local ivsx = 1.0 
 local ivsy = 1.0 
 
-local depthShader
+local depthPointShader
+local depthBeamShader
 local depthTexture
 
-local invrxloc = nil
-local invryloc = nil
-local lightposloc = nil
-local lightcolorloc = nil
-local lightparamsloc = nil
-local uniformEyePos
-local uniformViewPrjInv
+local invrxlocPoint = nil
+local invrylocPoint = nil
+local lightposlocPoint = nil
+local lightcolorlocPoint = nil
+local lightparamslocPoint = nil
+local uniformEyePosPoint
+local uniformViewPrjInvPoint
+local invrxlocBeam = nil
+local invrylocBeam  = nil
+local lightposlocBeam  = nil
+local lightpos2locBeam  = nil
+local lightcolorlocBeam  = nil
+local lightparamslocBeam  = nil
+local uniformEyePosBeam 
+local uniformViewPrjInvBeam 
 
 local projectileLightTypes = {}
+	--[1] red
+	--[2] green
+	--[3] blue
+	--[4] radius
+	--[5] constant 
+	--[6] squared
+	--[7] linear
+	--[8] BEAMTYPE, true if BEAM
 local lights = {}
 
 -- parameters for each light:
@@ -163,30 +182,30 @@ local function GetLightsFromUnitDefs()
 				if (WeaponDefs[weaponID]['type'] == 'Cannon') then
 					if verbose then Spring.Echo('Cannon',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={0.5,0.5,0.25,100*size, 1,1,0}
+					plighttable[WeaponDefs[weaponID]['name']]={0.5,0.5,0.25,100*size, 1,1,0,false}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'Dgun') then
 					if verbose then Spring.Echo('Dgun',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={1,1,0.5,300,1,1,0}
+					plighttable[WeaponDefs[weaponID]['name']]={1,1,0.5,300,1,1,0,false}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'MissileLauncher') then
 					if verbose then Spring.Echo('MissileLauncher',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={0.5,0.5,0.6,100* size, 1,1, 0}
+					plighttable[WeaponDefs[weaponID]['name']]={0.5,0.5,0.6,100* size, 1,1, 0,false}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'StarburstLauncher') then
 					if verbose then Spring.Echo('StarburstLauncher',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={0.5,0.5,0.4,200,1,1,0}
+					plighttable[WeaponDefs[weaponID]['name']]={0.5,0.5,0.4,200,1,1,0,false}
 				elseif (WeaponDefs[weaponID]['type'] == 'LightningCannon') then
 					if verbose then Spring.Echo('LightningCannon',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={0.2,0.2,1,100,1,1,0}
+					plighttable[WeaponDefs[weaponID]['name']]={0.2,0.2,1,100,1,1,0,true}
 				elseif (WeaponDefs[weaponID]['type'] == 'BeamLaser') then
 					if verbose then Spring.Echo('BeamLaser',WeaponDefs[weaponID]['name'],'rgbcolor', WeaponDefs[weaponID]['visuals']['colorR']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={WeaponDefs[weaponID]['visuals']['colorR'],WeaponDefs[weaponID]['visuals']['colorG'],WeaponDefs[weaponID]['visuals']['colorB'],math.min(WeaponDefs[weaponID]['range'],600),0.6,2,-1.3}
+					plighttable[WeaponDefs[weaponID]['name']]={WeaponDefs[weaponID]['visuals']['colorR'],WeaponDefs[weaponID]['visuals']['colorG'],WeaponDefs[weaponID]['visuals']['colorB'],math.min(WeaponDefs[weaponID]['range'],600),1,1,0,true}
 				end
 			end
 		end
@@ -306,7 +325,7 @@ function widget:Initialize()
 			fragSrc = VFS.LoadFile("shaders\\deferred_lighting.glsl",VFS.ZIP)
 			--Spring.Echo('Shader code:',fragSrc)
 			if havemapnormals then fragSrc = "#define HAVE_NORMAL_BUFFER\n" .. fragSrc end
-			depthShader = glCreateShader({
+			depthPointShader = glCreateShader({
 				vertex = vertSrc,
 				fragment = fragSrc,
 				uniformInt = {
@@ -319,18 +338,46 @@ function widget:Initialize()
 				},
 			})
 
-			if (not depthShader) then
+			if (not depthPointShader) then
 				spEcho(glGetShaderLog())
-				spEcho("Bad shader, reverting to non-GLSL widget.")
+				spEcho("Bad depth point shader, reverting to non-GLSL widget.")
 				GLSLRenderer = false
 			else
-				invrxloc=glGetUniformLocation(depthShader, "inverseRX")
-				invryloc=glGetUniformLocation(depthShader, "inverseRY")
-				lightposloc=glGetUniformLocation(depthShader, "lightpos")
-				lightcolorloc=glGetUniformLocation(depthShader, "lightcolor")
-				lightparamsloc=glGetUniformLocation(depthShader, "lightparams")
-				uniformEyePos       = glGetUniformLocation(depthShader, 'eyePos')
-				uniformViewPrjInv   = glGetUniformLocation(depthShader, 'viewProjectionInv')
+				invrxlocPoint=glGetUniformLocation(depthPointShader, "inverseRX")
+				invrylocPoint=glGetUniformLocation(depthPointShader, "inverseRY")
+				lightposlocPoint=glGetUniformLocation(depthPointShader, "lightpos")
+				lightcolorlocPoint=glGetUniformLocation(depthPointShader, "lightcolor")
+				lightparamslocPoint=glGetUniformLocation(depthPointShader, "lightparams")
+				uniformEyePosPoint       = glGetUniformLocation(depthPointShader, 'eyePos')
+				uniformViewPrjInvPoint   = glGetUniformLocation(depthPointShader, 'viewProjectionInv')
+			end
+			fragSrc="#define BEAM_LIGHT \n".. fragSrc
+			depthBeamShader = glCreateShader({
+				vertex = vertSrc,
+				fragment = fragSrc,
+				uniformInt = {
+					tex0 = 0,
+					mapnormals = 1,
+					mapdepths = 2,
+					uniformFloat = {inverseRX},
+					uniformFloat = {inverseRY},
+					
+				},
+			})
+
+			if (not depthBeamShader) then
+				spEcho(glGetShaderLog())
+				spEcho("Bad depthBeamShader, reverting to non-GLSL widget.")
+				GLSLRenderer = false
+			else
+				invrxlocBeam=glGetUniformLocation(depthBeamShader, "inverseRX")
+				invrylocBeam=glGetUniformLocation(depthBeamShader, "inverseRY")
+				lightposlocBeam=glGetUniformLocation(depthBeamShader, "lightpos")
+				lightpos2locBeam=glGetUniformLocation(depthBeamShader, "lightpos2")
+				lightcolorlocBeam=glGetUniformLocation(depthBeamShader, "lightcolor")
+				lightparamslocBeam=glGetUniformLocation(depthBeamShader, "lightparams")
+				uniformEyePosBeam       = glGetUniformLocation(depthBeamShader, 'eyePos')
+				uniformViewPrjInvBeam   = glGetUniformLocation(depthBeamShader, 'viewProjectionInv')
 			end
 		end
 		projectileLightTypes=GetLightsFromUnitDefs()
@@ -344,7 +391,8 @@ function widget:Shutdown()
   if (GLSLRenderer) then
     glDeleteTexture(depthTexture)
     if (glDeleteShader) then
-      glDeleteShader(depthShader)
+      glDeleteShader(depthPointShader)
+      glDeleteShader(depthBeamShader)
     end
   end
 end
@@ -352,75 +400,153 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+local function TableConcat(t1,t2)
+	tnew={}
+	for i=1,#t1 do
+		tnew[i]=t1[i]
+	end
+    for i=1,#t2 do
+        tnew[#t1+i] = t2[i]
+    end
+    return tnew
+end
+local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
+	--Spring.Echo('Camera FOV=',Spring.GetCameraFOV()) -- default TA cam fov = 45
+	-- set uniforms
+	local cpx, cpy, cpz = spGetCameraPosition()
+	if lighttype==0 then --point
+		glUseShader(depthPointShader)
+		glUniform(uniformEyePosPoint, cpx, cpy, cpz)
+		glUniform(invrxlocPoint, ivsx)
+		glUniform(invrylocPoint, ivsy)
+		glUniformMatrix(uniformViewPrjInvPoint,  "viewprojectioninverse")
+	else --beam
+		 glUseShader(depthBeamShader)
+		glUniform(uniformEyePosBeam, cpx, cpy, cpz)
+		glUniform(invrxlocBeam, ivsx)
+		glUniform(invrylocBeam, ivsy)
+		glUniformMatrix(uniformViewPrjInvBeam,  "viewprojectioninverse")
+	end
+	glTexture(0, depthTexture)
+	glTexture(0, false)
+	if havemapnormals then
+		--Spring.Echo("Binding map gbuffer normals")
+		glTexture(1, "$map_gbuffer_normtex")
+		glTexture(2, "$map_gbuffer_zvaltex")
+		--glTexture(1,false)
+		--glTexture(2,false)
+	end
+	--f= Spring.GetGameFrame()
+	--f=f/50
+	for i=1, #lights do
+		local light=lights[i]
+		local inview=false
+		local lightradius=0
+		--Spring.Echo(light)
+		local px=light[9]+light[12]*0.5
+		local py=light[10]+light[13]*0.5
+		local pz=light[11]+light[14]*0.5
+		if lighttype==0 then 
+			lightradius=light[4]
+			inview=spIsSphereInView(light[9],light[10],light[11],light[4])
+		end
+		if lighttype==1 then 
+			lightradius=light[4]+math.sqrt(light[12]^2+light[13]^2+light[14]^2)*0.5
+			inview=spIsSphereInView(light[9]+light[12]*0.5,light[10]+light[13]*0.5,light[11]+light[14]*0.5,lightradius)
+		end
+		if (inview) then
+			--Spring.Echo("Drawlighttype position=",light[9],light[10],light[11])
+			local sx,sy,sz = spWorldToScreenCoords(light[9]+light[12]*0.5,light[10]+light[13]*0.5,light[11]+light[14]*0.5) -- returns x,y,z, where x and y are screen pixels, and z is z buffer depth.
+			--Spring.Echo('screencoords',sx,sy,sz)
+			sx = sx/vsx
+			sy = sy/vsy --since FOV is static in the Y direction, the Y ratio is the correct one
+			local screenratio=vsy/vsx --so we dont overdraw and only always draw a square
+			
+			local cx,cy,cz = spGetCameraPosition()
+			local dist_sq = (px-cx)^2 + (py-cy)^2 + (pz-cz)^2
+			local ratio= lightradius / math.sqrt(dist_sq)
+			ratio=ratio*2
+			if lighttype==0 then
+				glUniform(lightposlocPoint, light[9],light[10],light[11], light[4]) --IN world space
+				glUniform(lightcolorlocPoint, light[1],light[2],light[3], 1) 
+				glUniform(lightparamslocPoint, light[5],light[6],light[7], 1) 
+			end
+			if lighttype==1 then
+				
+				glUniform(lightposlocBeam, light[9],light[10],light[11], light[4]) --IN world space
+				glUniform(lightpos2locBeam, light[9]+light[12],light[10]+light[13]+24,light[11]+light[14], light[4]) --IN world space,the magic constant of +24 in the Y pos is needed because of our beam distance calculator function in GLSL
+				glUniform(lightcolorlocBeam, light[1],light[2],light[3], 1) 
+				glUniform(lightparamslocBeam, light[5],light[6],light[7], 1) 
+			end
+			
+			--Spring.Echo('screenratio',ratio,sx,sy)
+			
+			gl.TexRect(
+				math.max(-1 , (sx-0.5)*2-ratio*screenratio), 
+				math.max(-1 , (sy-0.5)*2-ratio), 
+				math.min( 1 , (sx-0.5)*2+ratio*screenratio), 
+				math.min( 1 , (sy-0.5)*2+ratio), 
+				math.max( 0 , sx - 0.5*ratio*screenratio), 
+				math.max( 0 , sy - 0.5*ratio), 
+				math.min( 1 , sx + 0.5*ratio*screenratio),
+				math.min( 1 , sy + 0.5*ratio)) -- screen size goes from -1,-1 to 1,1; uvs go from 0,0 to 1,1
+			--gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1) -- screen size goes from -1,-1 to 1,1; uvs go from 0,0 to 1,1
+		end
+	end
+	--gl.TexRect(0.5,0.5, 1, 1, 0.5, 0.5, 1, 1)
 
+	glUseShader(0)
+end
 function widget:DrawWorld()
 	if (GLSLRenderer) then
 		local projectiles=GetVisibleProjectiles()
 		if #projectiles == 0 then return end
-		--//FIXME handle dualscreen correctly!
-		-- copy the depth buffer
-		glCopyToTexture(depthTexture, 0, 0, 0, 0, vsx, vsy ) --FIXME scale down?
-		
-		-- setup the shader and its uniform values
-		glBlending("alpha_add")
-		glUseShader(depthShader)
-		--Spring.Echo('Camera FOV=',Spring.GetCameraFOV()) -- default TA cam fov = 45
-		-- set uniforms
-		local cpx, cpy, cpz = spGetCameraPosition()
-		glUniform(uniformEyePos, cpx, cpy, cpz)
-		glUniform(invrxloc, ivsx)
-		glUniform(invryloc, ivsy)
-		glUniformMatrix(uniformViewPrjInv,  "viewprojectioninverse")
-		glTexture(0, depthTexture)
-		glTexture(0, false)
-		if havemapnormals then
-			--Spring.Echo("Binding map gbuffer normals")
-			glTexture(1, "$map_gbuffer_normtex")
-			glTexture(2, "$map_gbuffer_zvaltex")
-			--glTexture(1,false)
-			--glTexture(2,false)
-		end
-		--f= Spring.GetGameFrame()
-		--f=f/50
-		local lightparams
-		for i=1, #projectiles do
-			local pID=projectiles[i]
-			x,y,z=spGetProjectilePosition(pID)
+		local beamlightprojectiles={}
+		local pointlightprojectiles={}
+		for i, pID in ipairs(projectiles) do
+			local x,y,z=spGetProjectilePosition(pID)
+			--Spring.Echo("projectilepos=",x,y,z)
 			local wep,piece=spGetProjectileType(pID)
 			if piece then
-				lightparams={0.5,0.5,0.25,100,1,1,0}
+				local explosionflags = spGetPieceProjectileParams(pID)
+				if explosionflags and (explosionflags%32)>15  then --only stuff with the FIRE explode tag gets a light
+					Spring.Echo('explosionflag=',explosionflags)
+					table.insert(pointlightprojectiles,{0.5,0.5,0.25,100,1,1,0,false,x,y,z,0,0,0})
+					--lightparams={0.5,0.5,0.25,100,1,1,0}
+				--else
+				--	lightparams=nil
+				end
 			else
 				lightparams=projectileLightTypes[spGetProjectileName(pID)]
+				if lightparams[8] then --BEAM type
+					local dx,dy,dz=spGetProjectileVelocity(pID)
+					--Spring.Echo({x,y,z,dx,dy,dz})
+					table.insert(beamlightprojectiles,TableConcat(lightparams,{x,y,z,dx,dy,dz}))
+					--Spring.Echo('GetFeatureVelocity=',dx,dy,dz)
+				else --point type
+					table.insert(pointlightprojectiles,TableConcat(lightparams,{x,y,z,0,0,0}))
+					
+				end
 			end
-			if (lightparams and spIsSphereInView(x,y,z,lightparams[4])) then
-				local sx,sy,sz = spWorldToScreenCoords(x,y,z) -- returns x,y,z, where x and y are screen pixels, and z is z buffer depth.
-				--Spring.Echo('screencoords',sx,sy,sz)
-				sx = sx/vsx
-				sy = sy/vsy 
-				local cx,cy,cz = spGetCameraPosition()
-				local dist_sq = (x-cx)^2 + (y-cy)^2 + (z-cz)^2
-				local ratio= lightparams[4] / math.sqrt(dist_sq)
-				ratio=ratio*2
-				glUniform(lightposloc, x,y,z, lightparams[4]) --IN world space
-				glUniform(lightcolorloc, lightparams[1],lightparams[2],lightparams[3], 1) 
-				glUniform(lightparamsloc, lightparams[5],lightparams[6],lightparams[7], 1) 
-				--Spring.Echo('screenratio',ratio,sx,sy)
-				
-				gl.TexRect(
-					math.max(-1 , (sx-0.5)*2-ratio), 
-					math.max(-1 , (sy-0.5)*2-ratio), 
-					math.min( 1 , (sx-0.5)*2+ratio), 
-					math.min( 1 , (sy-0.5)*2+ratio), 
-					math.max( 0 , sx - 0.5*ratio), 
-					math.max( 0 , sy - 0.5*ratio), 
-					math.min( 1 , sx + 0.5*ratio),
-					math.min( 1 , sy + 0.5*ratio)) -- screen size goes from -1,-1 to 1,1; uvs go from 0,0 to 1,1
-				--gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1) -- screen size goes from -1,-1 to 1,1; uvs go from 0,0 to 1,1
-			end
+			
+		end 
+		
+		
+		--//FIXME handle dualscreen correctly!
+		-- copy the depth buffer
+		glCopyToTexture(depthTexture, 0, 0, 0, 0, vsx, vsy )
+		
+		-- setup the shader and its uniform values
+		if havemapnormals then
+			glBlending(GL.DST_COLOR,GL.ONE) 
+			--glBlending(GL.SRC_ALPHA,GL.SRC_COLOR) 
+			--http://www.andersriggelsen.dk/glblendfunc.php
+			--glBlending(GL.ONE,GL.DST_COLOR) --http://www.andersriggelsen.dk/glblendfunc.php
+		else
+			glBlending("alpha_add")
 		end
-		--gl.TexRect(0.5,0.5, 1, 1, 0.5, 0.5, 1, 1)
-
-		glUseShader(0)
+		if #beamlightprojectiles>0 then DrawLightType(beamlightprojectiles, 1) end
+		if #pointlightprojectiles>0 then DrawLightType(pointlightprojectiles, 0) end
 		glBlending(false)
 	else
 		Spring.Echo('Removing deferred rendering widget: failed to use GLSL shader')

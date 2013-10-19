@@ -10,7 +10,7 @@ uniform sampler2D tex0;
 #endif
 uniform vec3 eyePos;
 uniform vec4 lightpos;
-#ifdef BAR_LIGHT
+#ifdef BEAM_LIGHT
 	uniform vec4 lightpos2;
 #endif
 uniform vec4 lightcolor;
@@ -49,7 +49,7 @@ uniform mat4 viewProjectionInv;
 	//gl_FragColor=vec4(map_normals4.xyz,1); //DEBUG NORMALS OUT
 	//gl_FragColor=vec4(-1.0*normalize(cross( up4.xyz - here4.xyz, right4.xyz - here4.xyz)),1); //DEBUG NORMALS OUT
 	//return;
-	#ifndef BAR_LIGHT
+	#ifndef BEAM_LIGHT
 	//gl_FragColor=vec4(1,0,0,0.5);
 	//return;
 		float dist_light_here = length(lightpos.xyz - here4.xyz);
@@ -58,9 +58,9 @@ uniform mat4 viewProjectionInv;
 		//float attentuation =  max( 0,( 1.0 - (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w)) );
 		float attentuation =  max( 0,( lightparams.r - lightparams.g * (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w) - lightparams.b*(dist_light_here)/(lightpos.w)) );
 	#endif
-	#ifdef BAR_LIGHT
+	#ifdef BEAM_LIGHT
 	gl_FragColor=vec4(1,0,1,0.5);
-	return;
+	//return;
 		//def dist(x1,y1, x2,y2, x3,y3): # x3,y3 is the point
 		/*distance( Point P,  Segment P0:P1 ) // http://geomalgorithms.com/a02-_lines.html
 		{
@@ -112,7 +112,22 @@ uniform mat4 viewProjectionInv;
 	//else gl_FragColor(0,1,0,1);
 	// gl_FragColor=vec4(1,1,0,0.5);
 	// return;
-	gl_FragColor=vec4(lightcolor.rgb, cosphi*attentuation);
+	
+	//OK, our blending func is the following: Rr=Lr*La+Lr*Dr, in order to get both lighting components, but we must take care to return >1 values in Lrgb or else we will darken the output texture a bit. (which may not be undesired...)
+	//float sepfactor=.5;//this factor defines how much of the light should be purely additive, and how much should be multiplicative of the original underlying pixel's color (a quasi material value), higher values mean more purely additive
+	#ifndef HAVE_NORMAL_BUFFER
+		gl_FragColor=vec4(lightcolor.rgb, cosphi*attentuation);
+	#endif
+	#ifdef HAVE_NORMAL_BUFFER
+		// gl_FragColor=vec4(lightcolor.rgb*(cosphi*attentuation)*sepfactor,1.0+(1.0-sepfactor)*cosphi*attentuation);
+		float lightalpha=cosphi*attentuation;
+		vec3 lc=lightcolor.rgb*lightalpha +1.0;
+		float la=dot((lc-1.0)/lc,vec3(0.33,0.33,0.33));
+		//gl_FragColor=vec4(lightcolor.rgb, cosphi*attentuation);
+		gl_FragColor=vec4(lightcolor.rgb*lightalpha,la);
+	#endif
+	
+	
 	return;
   }
   

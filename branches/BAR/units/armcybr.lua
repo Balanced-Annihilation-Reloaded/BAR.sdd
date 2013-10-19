@@ -28,7 +28,7 @@ return {
 		nochasecategory = "VTOL",
 		objectname = "ARMCYBR.s3o",
 		seismicsignature = 0,
-		selfdestructas = "BIGUNITEX",
+		selfdestructas = "BIG_UNITEX",
 		sightdistance = 455,
 		turnrate = 535,
 		customparams = {

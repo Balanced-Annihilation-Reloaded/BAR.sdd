@@ -36,7 +36,6 @@ local unitlist={--- Human friendly list. Automatically converted to unitdef IDs 
 {'armllt','armtl'},
 {'corllt','cortl'},
 
-
 -- XTA - arm
 
 {'arm_solar_collector', 'arm_underwater_tidal_generator', 'arm_tidal_generator'},

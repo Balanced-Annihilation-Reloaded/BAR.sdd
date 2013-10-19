@@ -4,7 +4,7 @@ function widget:GetInfo()
 		name      = "Initial Queue",
 		desc      = "Allows you to queue buildings before game start",
 		author    = "Niobium",
-		version   = "1.4",
+		version   = "1.5",
 		date      = "7 April 2010",
 		license   = "GNU GPL, v2 or later",
 		layer     = -1, -- Puts it above minimap_startboxes with layer 0
@@ -14,6 +14,7 @@ function widget:GetInfo()
 end
 -- 12 jun 2012: "uDef.isMetalExtractor" was replaced by "uDef.extractsMetal > 0" to fix "metal" mode map switching (by [teh]decay, thx to vbs and Beherith)
 -- 20 march 2013: added keyboard support with BA keybinds (Bluestone)
+-- august 2013: send queue length to cmd_idle_players (BrainDamage)
 
 ------------------------------------------------------------
 -- Config
@@ -61,6 +62,8 @@ local startUnitParamName = 'startUnit'
 
 local myTeamID = Spring.GetMyTeamID()
 local myPlayerID = Spring.GetMyPlayerID()
+
+local totalTime
 
 ------------------------------------------------------------
 -- Local functions
@@ -325,7 +328,9 @@ function widget:DrawScreen()
 		gl.CallList(panelList)
 		if #buildQueue > 0 then
 			local mCost, eCost, bCost = GetQueueCosts()
-			gl.Text(string.format(queueTimeFormat, mCost, eCost, bCost / sDef.buildSpeed), 0, 0, fontSize, 'do')
+			local buildTime = bCost / sDef.buildSpeed
+			totalTime = buildTime
+			gl.Text(string.format(queueTimeFormat, mCost, eCost, buildTime), 0, 0, fontSize, 'do')
 		end
 	gl.PopMatrix()
 end
@@ -407,7 +412,7 @@ function widget:GameFrame(n)
 		widgetHandler:RemoveWidget(self)
 		return
 	end
-
+	
 	-- Don't run if we didn't queue anything
 	if (#buildQueue == 0) then
 		widgetHandler:RemoveWidget(self)
@@ -415,26 +420,37 @@ function widget:GameFrame(n)
 	end
 
 	if (n < 2) then return end -- Give the unit frames 0 and 1 to spawn
+	
+	--inform gadget how long is our queue
+	local buildTime = GetQueueBuildTime()
+	Spring.SendCommands("luarules initialQueueTime " .. buildTime)
+	
 	if (n > 10) then
 		--Spring.Echo("> Starting unit never spawned !")
 		widgetHandler:RemoveWidget(self)
 		return
 	end
 
+	local tasker
 	-- Search for our starting unit
 	local units = Spring.GetTeamUnits(Spring.GetMyTeamID())
 	for u = 1, #units do
 		local uID = units[u]
 		if GetUnitCanCompleteQueue(uID) then --Spring.GetUnitDefID(uID) == sDefID then
-			--Spring.Echo("sending queue to unit")
-			for b = 1, #buildQueue do
-				local buildData = buildQueue[b]
-				Spring.GiveOrderToUnit(uID, -buildData[1], {buildData[2], buildData[3], buildData[4], buildData[5]}, {"shift"})
+			tasker = uID
+			if Spring.GetUnitRulesParam(uID,"startingOwner") == Spring.GetMyPlayerID() then
+				--we found our com even if cooping, assing queue to this particular unit
+				break
 			end
-
-			widgetHandler:RemoveWidget(self)
-			return
 		end
+	end
+	if tasker then
+		--Spring.Echo("sending queue to unit")
+		for b = 1, #buildQueue do
+			local buildData = buildQueue[b]
+			Spring.GiveOrderToUnit(tasker, -buildData[1], {buildData[2], buildData[3], buildData[4], buildData[5]}, {"shift"})
+		end
+		widgetHandler:RemoveWidget(self)
 	end
 end
 
@@ -450,11 +466,43 @@ function widget:GetTooltip(mx, my)
 	local bDef = UnitDefs[bDefID]
 	return string.format(tooltipFormat, bDef.humanName, bDef.tooltip, bDef.metalCost, bDef.energyCost, bDef.buildTime / sDef.buildSpeed)
 end
+
+function SetBuildFacing()
+	local wx,wy,_,_ = Spring.GetScreenGeometry()
+	local _, pos = Spring.TraceScreenRay(wx/2, wy/2, true)
+	if not pos then return end
+	local x = pos[1]
+	local z = pos[3]
+	
+    if math.abs(Game.mapSizeX - 2*x) > math.abs(Game.mapSizeZ - 2*z) then
+      if (2*x>Game.mapSizeX) then
+        facing=3
+      else
+        facing=1
+      end
+    else
+      if (2*z>Game.mapSizeZ) then
+        facing=2
+      else
+        facing=0
+      end
+    end
+	Spring.SetBuildFacing(facing)
+	
+end
+
+needBuildFacing = true
+
 function widget:MousePress(mx, my, mButton)
+
 
 	local tracedDefID = TraceDefID(mx, my)
 	if tracedDefID then
 		if mButton == 1 then
+		if needBuildFacing then
+			SetBuildFacing()
+			needBuildFacing = false
+		end
 			SetSelDefID(tracedDefID)
 			return true
 		elseif mButton == 3 then

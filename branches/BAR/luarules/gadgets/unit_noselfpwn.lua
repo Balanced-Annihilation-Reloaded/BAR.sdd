@@ -22,7 +22,6 @@ end
 
 local GetUnitHealth = Spring.GetUnitHealth
 local SetUnitHealth = Spring.SetUnitHealth
-local newSpring = false
 
 local PWN_UNITS = {}
 PWN_UNITS[UnitDefNames["corpyro"].id] = true
@@ -34,6 +33,8 @@ PWN_UNITS[UnitDefNames["corfav"].id] = true
 PWN_UNITS[UnitDefNames["corak"].id] = true
 PWN_UNITS[UnitDefNames["corpt"].id] = true
 PWN_UNITS[UnitDefNames["armpt"].id] = true
+PWN_UNITS[UnitDefNames["decade"].id] = true
+PWN_UNITS[UnitDefNames["coresupp"].id] = true
 
 function gadget:UnitPreDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, 
                             weaponID, projectileID, attackerID, attackerDefID, attackerTeam)

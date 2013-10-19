@@ -72,7 +72,7 @@ local function UnitHasPatrolOrder(unitID)
 end
 local function MustStop(unitID, unitDefID)
 	local ud=UnitDefs[unitDefID]
-	if ud and ud.canFly and (ud.weaponCount==0 or (not ud.isFighterAirUnit) or (ud.humanName=="Liche") or ud.noAutoFire) and UnitHasPatrolOrder(unitID) then
+	if ud and ud.canFly and (ud.weaponCount==0 or (not (ud.isFighterAirUnit or ud.isFighter)) or (ud.humanName=="Liche") or ud.noAutoFire) and UnitHasPatrolOrder(unitID) then --isFighter kept for 94 compat only, remove after
 		if (not opts.stop_builders)and ud and ud.isBuilder then
 			return false
 		end

@@ -525,7 +525,7 @@ function widgetHandler:Initialize()
   -- stuff the raw widgets into unsortedWidgets
   local widgetFiles = VFS.DirList(WIDGET_DIRNAME, "*.lua", VFS.RAW_ONLY)
   for k,wf in ipairs(widgetFiles) do
-    GetWidgetInfo(wf, VFS.RAW_ONLY)
+    -- GetWidgetInfo(wf, VFS.RAW_ONLY)
     local widget = self:LoadWidget(wf, false)
     if (widget) then
       table.insert(unsortedWidgets, widget)

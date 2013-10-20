@@ -24,13 +24,17 @@ return {
 		maxslope = 13,
 		maxwaterdepth = 0,
 		name = "Vulcan",
-		objectname = "ARMVULC",
+		objectname = "ARMVULC.s3o",
 		seismicsignature = 0,
 		selfdestructas = "RLRPC_DEATH",
 		sightdistance = 700,
 		usebuildinggrounddecal = true,
 		usepiececollisionvolumes = 1,
 		yardmap = "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

@@ -34,15 +34,17 @@ local materials = {
          "#define use_perspective_correct_shadows",
          "#define use_normalmapping",
          --"#define flip_normalmap",
+         "#define deferred_mode 0",
        },
        deferredDefinitions = {
          "#define use_perspective_correct_shadows",
          "#define use_normalmapping",
          --"#define flip_normalmap",
+         "#define deferred_mode 1",
        },
 
        shader    = include(GADGET_DIR .. "UnitMaterials/Shaders/default.lua"),
-       deferred  = include(GADGET_DIR .. "UnitMaterials/Shaders/default_deferred.lua"),
+       deferred  = include(GADGET_DIR .. "UnitMaterials/Shaders/default.lua"),
        usecamera = false,
        culling   = GL.BACK,
        texunits  = {

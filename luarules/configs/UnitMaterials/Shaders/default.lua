@@ -128,12 +128,11 @@ return {
     #else
        vec3 normal = normalize(normalv);
     #endif
-       float a    = max( dot(normal, sunPos), 0.0);
-      //vec3 light = a * sunDiffuse ;//+ 0.5*sunAmbient;
-      vec3 light = a * sunDiffuse + sunAmbient;
-       //vec3 light = a * sunDiffuse + sunAmbient;
+       vec3 light = max(dot(normal, sunPos), 0.0) * sunDiffuse + sunAmbient;
 
-       vec4 extraColor  = texture2D(textureS3o2, gl_TexCoord[0].st);
+       vec4 diffuseIn  = texture2D(textureS3o1, gl_TexCoord[0].st);
+       vec4 outColor   = diffuseIn;
+       vec4 extraColor = texture2D(textureS3o2, gl_TexCoord[0].st);
        vec3 reflectDir = reflect(cameraDir, normal);
        vec3 specular   = textureCube(specularTex, reflectDir).rgb * extraColor.g * 8.0;
        vec3 reflection = textureCube(reflectTex,  reflectDir).rgb;
@@ -150,20 +149,35 @@ return {
     #endif
 
        reflection  = mix(light, reflection, extraColor.g); // reflection
-       reflection += extraColor.rrr*frameLoc; // self-illum
+       reflection += (extraColor.rrr * frameLoc); // self-illum
 
-       gl_FragColor     = texture2D(textureS3o1, gl_TexCoord[0].st);
-       gl_FragColor.rgb = mix(gl_FragColor.rgb, teamColor.rgb, gl_FragColor.a - extraColor.b*trimColor.a); // teamcolor
-       gl_FragColor.rgb = mix(gl_FragColor.rgb, vec3(0.0,0.0,0.0), extraColor.b * trimColor.a); // trimcolor
-       gl_FragColor.rgb = mix(gl_FragColor.rgb, trimColor.rgb, (extraColor.b/255.0) * trimColor.a); // trimcolor
-       gl_FragColor.rgb = gl_FragColor.rgb * reflection + specular;
-       gl_FragColor.a   = extraColor.a;
-       gl_FragColor.rgb = gl_FragColor.rgb +gl_FragColor.rgb * (normaltex.a-0.5) * healthLoc;
+       outColor.rgb = mix(outColor.rgb, teamColor.rgb,        outColor.a -  extraColor.b          * trimColor.a); // teamcolor
+       outColor.rgb = mix(outColor.rgb, vec3(0.0, 0.0, 0.0),                extraColor.b          * trimColor.a); // trimcolor
+       outColor.rgb = mix(outColor.rgb, trimColor.rgb,                     (extraColor.b / 255.0) * trimColor.a); // trimcolor
 
-       //gl_FragColor.rgb = mix(gl_Fog.color.rgb, gl_FragColor.rgb, fogFactor); // fog
-       //gl_FragColor.a = teamColor.a; // far fading
-       //gl_FragColor.rgb = normal;
-       //gl_FragColor.g=frameLoc;
+       #if (deferred_mode == 0)
+       // diffuse + specular + envcube lighting
+       // (reflection contains the NdotL term!)
+       outColor.rgb = outColor.rgb * reflection + specular;
+       #endif
+
+       outColor.a   = extraColor.a;
+       outColor.rgb = outColor.rgb + outColor.rgb * (normaltex.a - 0.5) * healthLoc;
+
+       // other custom stuff
+       // outColor.rgb = mix(gl_Fog.color.rgb, outColor.rgb, fogFactor); // fog
+       // outColor.a   = teamColor.a; // far fading
+       // outColor.rgb = normal;
+       // outColor.g   = frameLoc;
+
+       #if (deferred_mode == 0)
+       gl_FragColor = outColor;
+       #else
+       gl_FragData[0] = vec4(normal, 1.0);
+       gl_FragData[1] = outColor;
+       gl_FragData[2] = vec4(specular, 1.0);
+       gl_FragData[3] = vec4(extraColor.rrr * frameLoc, 1.0);
+       #endif
 
        %%FRAGMENT_POST_SHADING%%
     }

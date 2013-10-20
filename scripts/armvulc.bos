@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, flare, turret, shell, barrel01, barrel02, barrel03, barrel04,
+piece  base, flare, turret, barrel01, barrel02, barrel03, barrel04,
        housing01, housing02, housing03, housing04, spindle, neck;
 
 static-var  gun_1;
@@ -42,8 +42,6 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 Create()
 {
 	hide flare;
-	hide shell;
-	dont-shade shell;
 	dont-cache flare;
 	dont-cache barrel01;
 	dont-cache barrel02;
@@ -75,7 +73,6 @@ AimPrimary(heading, pitch)
 FirePrimary()
 {
 	emit-sfx 1024 + 0 from flare;
-	explode shell type FALL | 128;
 	
 	if( gun_1 == 1 )
 	{

@@ -50,7 +50,7 @@ function widget:Initialize()
 	
 	local buffer = Spring.GetConsoleBuffer(200)
 	for i=1,#buffer do
-		widget:AddConsoleMessage(buffer[i])
+		widget:AddConsoleLine(buffer[i].text,buffer[i].priority)
 	end
 	
 	Spring.SendCommands('console 0')
@@ -65,9 +65,9 @@ function widget:GameFrame(n)
 	end
 end
 
-function widget:AddConsoleMessage(msg)
+function widget:AddConsoleLine(text,priority)
 	messages[#messages+1] = {}
-	messages[#messages]=msg
+	messages[#messages] = {text=text, priority=priority}
 	updateMsgWindow()
 	if numShowMsg < 6 then numShowMsg = numShowMsg+1 end
 end

@@ -401,7 +401,7 @@ function widget:Initialize()
  loadMinMenu()
  local buffer = Spring.GetConsoleBuffer()
  for i=1,#buffer do
-  widget:AddConsoleMessage(buffer[i])
+  widget:AddConsoleLine(buffer[i].text,buffer[i].priority)
  end
  
  -------------------------- 
@@ -432,9 +432,9 @@ end
 -------------------------- 
                         --
 local mLogText = ''
-function widget:AddConsoleMessage(msg)
+function widget:AddConsoleLine(text,priority)
  if tabs.Log then
-  mLogText = mLogText..msg.text..'\n'
+  mLogText = mLogText..text..'\n'
   local scrollpanel = tabs['Log']:GetObjectByName('mLog')
   local textbox = scrollpanel.children[1]
   textbox.text = mLogText

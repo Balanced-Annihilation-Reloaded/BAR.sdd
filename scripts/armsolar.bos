@@ -70,8 +70,8 @@ Go()
 	}
 	//call-script CloseYard();
 	turn dish1 to x-axis <-90.016484> speed <60.000000>;
-	turn dish2 to x-axis <90.016484> speed <60.000000>;
-	turn dish3 to z-axis <-90.016484> speed <60.000000>;
+	turn dish3 to x-axis <90.016484> speed <60.000000>;
+	turn dish2 to z-axis <-90.016484> speed <60.000000>;
 	turn dish4 to z-axis <90.016484> speed <60.000000>;
 	wait-for-turn dish1 around x-axis;
 	wait-for-turn dish2 around x-axis;
@@ -85,8 +85,8 @@ Stop()
 {
 	//call-script OpenYard();
 	turn dish1 to x-axis <0.000000> speed <120.000000>;
-	turn dish2 to x-axis <0.000000> speed <120.000000>;
-	turn dish3 to z-axis <0.000000> speed <120.000000>;
+	turn dish3 to x-axis <0.000000> speed <120.000000>;
+	turn dish2 to z-axis <0.000000> speed <120.000000>;
 	turn dish4 to z-axis <0.000000> speed <120.000000>;
 	wait-for-turn dish1 around x-axis;
 	wait-for-turn dish2 around x-axis;

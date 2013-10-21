@@ -57,7 +57,7 @@ local spWarpMouse        = Spring.WarpMouse
 --  1. The GetCameraState() table is supposed to be opaque.
 --
 
-local blockModeSwitching = true
+local blockModeSwitching = false
 
 
 local vsx, vsy = widgetHandler:GetViewSizes()
@@ -68,7 +68,7 @@ end
 
 
 local decayFactor = 1
-local speedFactor = 25
+local speedFactor = 1
 
 local mx, my
 local active = false
@@ -230,18 +230,18 @@ function widget:DrawScreen()
   if (active) then
     local x, y = spGetMouseState()
 
-    DrawPoint(mx, my, black, 14)
-    DrawPoint(mx, my, white, 11)
-    DrawPoint(mx, my, black,  8)
-    DrawPoint(mx, my, red,    5)
+    -- DrawPoint(mx, my, black, 14)
+    -- DrawPoint(mx, my, white, 11)
+    -- DrawPoint(mx, my, black,  8)
+    -- DrawPoint(mx, my, red,    5)
 
-    glLineWidth(2)
-    glBeginEnd(GL_LINES, DrawLine, x, y, green, mx, my, red)
-    glLineWidth(1)
+    -- glLineWidth(2)
+    -- glBeginEnd(GL_LINES, DrawLine, x, y, green, mx, my, red)
+    -- glLineWidth(1)
 
-    DrawPoint(x, y, { 0, 1, 0 },  5)
+    -- DrawPoint(x, y, { 0, 1, 0 },  5)
 
-    glPointSize(1)
+    -- glPointSize(1)
   end
 end
 

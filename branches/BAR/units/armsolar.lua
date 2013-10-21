@@ -30,13 +30,17 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Solar Collector",
-		objectname = "ARMSOLAR",
+		objectname = "ARMSOLAR.s3o",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 273,
 		usebuildinggrounddecal = true,
 		yardmap = "yyoyy yoooy ooooo yoooy yyoyy",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

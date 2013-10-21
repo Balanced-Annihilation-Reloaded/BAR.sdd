@@ -1140,7 +1140,7 @@ end
 
 function gadgetHandler:DrawProjectile(projectileID, drawMode)
   for _,g in ipairs(self.DrawProjectileList) do
-    if (g:DrawProjectile(projectile, drawMode)) then
+    if (g:DrawProjectile(projectileID, drawMode)) then
       return true
     end
   end
@@ -1866,6 +1866,26 @@ function gadgetHandler:GetTooltip(x, y)
   end
   return ''
 end
+
+function gadgetHandler:CommandNotify(id, params, options) 
+  for _,g in ipairs(self.CommandNotifyList) do 
+    if (g:CommandNotify(id, params, options)) then 
+	  return true 
+	end 
+  end 
+  return false 
+end 
+	 	 
+function gadgetHandler:MapDrawCmd(playerID, cmdType, px, py, pz, labelText) 
+  local retval = false 
+  for _,g in ipairs(self.MapDrawCmdList) do 
+	local takeEvent = g:MapDrawCmd(playerID, cmdType, px, py, pz, labelText) 
+	if (takeEvent) then 
+   	  retval = true 
+    end 
+  end 
+  return retval 
+end 
 
 
 --------------------------------------------------------------------------------

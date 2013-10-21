@@ -1,4 +1,4 @@
--- $Id: cawidgets.lua 4261 2009-03-31 16:34:36Z licho $
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
@@ -18,8 +18,8 @@
 local isStable = false
 local resetWidgetDetailLevel = false -- has widget detail level changed
 
-local ORDER_VERSION = 8 --- change this to reset enabled/disabled widgets
-local DATA_VERSION = 9 -- change this to reset widget settings
+local ORDER_VERSION = 1 --- change this to reset enabled/disabled widgets
+local DATA_VERSION = 1 -- change this to reset widget settings
 
 function includeZIPFirst(filename, envTable)
   if (string.find(filename, '.h.lua', 1, true)) then
@@ -43,13 +43,6 @@ local WIDGET_DIRNAME     = LUAUI_DIRNAME .. 'Widgets/'
 local HANDLER_BASENAME = "bawidgets.lua"
 local SELECTOR_BASENAME = 'selector.lua'
 
-if not VFS.FileExists(ORDER_FILENAME) then
-  --// someone was as smart to create CA_order.lua instead of using Game.modShortName
-  --// Game.modShortName is 'ca' and 'ca_order.lua' conflicts with 'CA_order.lua' on win plattforms
-  --// so just use this correct spelling for new created files
-  ORDER_FILENAME     = LUAUI_DIRNAME .. 'Config/' .. Game.modShortName .. '_order.lua'
-  CONFIG_FILENAME    = LUAUI_DIRNAME .. 'Config/' .. Game.modShortName .. '_data.lua'
-end
 
 local SAFEWRAP = 1
 -- 0: disabled
@@ -62,16 +55,16 @@ local glPushAttrib = gl.PushAttrib
 local pairs = pairs
 local ipairs = ipairs
 
--- read local widgets config
+-- read local widgets config?
 local localWidgetsFirst = false
-local localWidgets = false
+local localWidgets = true
 
 if VFS.FileExists(CONFIG_FILENAME) then
-  local cadata = VFS.Include(CONFIG_FILENAME)
-  if cadata then
-	if cadata["Local Widgets Config"] then
-      localWidgetsFirst = cadata["Local Widgets Config"].localWidgetsFirst
-      localWidgets = cadata["Local Widgets Config"].localWidgets
+  local configData = VFS.Include(CONFIG_FILENAME)
+  if configData then
+	if configData["Local Widgets Config"] then
+      localWidgetsFirst = configData["Local Widgets Config"].localWidgetsFirst
+      localWidgets = configData["Local Widgets Config"].localWidgets
 	end
   end
 end
@@ -264,145 +257,6 @@ local function ripairs(t)
   return rev_iter, t, (1 + #t)
 end
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
--- helper functions
-
-local myName = Spring.GetPlayerInfo(Spring.GetMyPlayerID())
-local transmitMagic = "> ["..myName.."]!transmit" -- Lobby is sending to LuaUI
-local voiceMagic = "> ["..myName.."]!transmit voice" -- Lobby is sending a voice command to LuaUI
-local transmitLobbyMagic = "!transmitlobby" -- LuaUI is sending to lobby
-
-function StringStarts(s, start)
-   return string.sub(s, 1, string.len(start)) == start
-end
-
-local function Deserialize(text)
-  local f, err = loadstring(text)
-  if not f then
-    Spring.Log(HANDLER_BASENAME, LOG.ERROR, "Error while deserializing  table (compiling): "..tostring(err))
-    return
-  end
-  setfenv(f, {}) -- sandbox
-  local success, arg = pcall(f)
-  if not success then
-    Spring.Log(HANDLER_BASENAME, LOG.ERROR, "Error while deserializing table (calling): "..tostring(arg))
-    return
-  end
-  return arg
-end
-
-
-local MessageProcessor = {}
-
-local PLAYERNAME_PATTERN = '([%w%[%]_]+)' -- to make message patterns easier to read/update
-
--- message definitions
---[[
-pattern syntax:
-	see http://www.lua.org/manual/5.1/manual.html#5.4.1
-	pattern must contain at least 1 capture group; its content will end up in msg.argument after parseMessage()
-	PLAYERNAME will match anything that looks like a playername (see code for definition of PLAYERNAME_PATTERN); it is a capture group
-	if message does not contain a PLAYERNAME, add 'noplayername = true' to definition
-	it should be possible to add definitions to help debug widgets or whatever... (no guarantee)
---]]
-MessageProcessor.MESSAGE_DEFINITIONS = {
-	{ msgtype = 'player_to_allies', pattern = '^<PLAYERNAME> Allies: (.*)' },
-	{ msgtype = 'player_to_player_received', pattern = '^<PLAYERNAME> Private: (.*)' }, -- TODO test!
-	{ msgtype = 'player_to_player_sent', pattern = '^You whispered PLAYERNAME: (.*)' }, -- TODO test!
-	{ msgtype = 'player_to_specs', pattern = '^<PLAYERNAME> Spectators: (.*)' },
-	{ msgtype = 'player_to_everyone', pattern = '^<PLAYERNAME> (.*)' },
-
-	{ msgtype = 'spec_to_specs', pattern = '^%[PLAYERNAME%] Spectators: (.*)' },
-	{ msgtype = 'spec_to_allies', pattern = '^%[PLAYERNAME%] Allies: (.*)' }, -- TODO is there a reason to differentiate spec_to_specs and spec_to_allies??
-	{ msgtype = 'spec_to_everyone', pattern = '^%[PLAYERNAME%] (.*)' },
-
-	-- shameful copy-paste -- TODO rewrite pattern matcher to remove this duplication
-	{ msgtype = 'replay_spec_to_specs', pattern = '^%[PLAYERNAME %(replay%)%] Spectators: (.*)' },
-	{ msgtype = 'replay_spec_to_allies', pattern = '^%[PLAYERNAME %(replay%)%] Allies: (.*)' }, -- TODO is there a reason to differentiate spec_to_specs and spec_to_allies??
-	{ msgtype = 'replay_spec_to_everyone', pattern = '^%[PLAYERNAME %(replay%)%] (.*)'},
-
-	{ msgtype = 'label', pattern = '^PLAYERNAME added point: (.+)', discard = true }, -- NOTE : these messages are discarded -- points and labels are provided through MapDrawCmd() callin
-	{ msgtype = 'point', pattern = '^PLAYERNAME added point: ', discard = true },
-	{ msgtype = 'autohost', pattern = '^> (.+)', noplayername = true },
-	{ msgtype = 'other' } -- no pattern... will match anything else
-}
-
-local function escapePatternReplacementChars(s)
-  return string.gsub(s, "%%", "%%%%")
-end
-
-function MessageProcessor:Initialize()
-	local escapedPlayernamePattern = escapePatternReplacementChars(PLAYERNAME_PATTERN)
-	for _,def in ipairs(self.MESSAGE_DEFINITIONS) do
-		if def.pattern then
-			def.pattern = def.pattern:gsub('PLAYERNAME', escapedPlayernamePattern) -- patch definition pattern so it is an actual lua pattern string
-		end
-	end
-end
-
-local players = {}
-
-local function SetupPlayers()
-	local playerroster = Spring.GetPlayerList()
-	
-	for i, id in ipairs(playerroster) do
-		local name, _, spec, teamId, allyTeamId, _,_,_,_,customkeys = Spring.GetPlayerInfo(id)
-		players[name] = { id = id, spec = spec, allyTeamId = allyTeamId, muted = (customkeys and customkeys.muted == 1) }
-	end
-end
-
-local function getSource(spec, allyTeamId)
-	return (spec and 'spec')
-		or ((Spring.GetMyTeamID() == allyTeamId) and 'ally')
-		or 'enemy'
-end
-
--- update msg members msgtype, argument, source and playername (when relevant)
-function MessageProcessor:ParseMessage(msg)
-  for _, candidate in ipairs(self.MESSAGE_DEFINITIONS) do
-    if candidate.pattern == nil then -- for fallback/other messages
-      msg.msgtype = candidate.msgtype
-      msg.argument = msg.text
-	  msg.source = 'other'
-      return
-    end
-    local capture1, capture2 = msg.text:match(candidate.pattern)
-    if capture1 then
-      msg.msgtype = candidate.msgtype
-      if candidate.noplayername then
-        msg.argument = capture1
-	msg.source = 'other'
-	return
-      else
-        local playername = capture1
-        if players[playername] then
-	local player = players[playername]
-	  msg.player = player
-	  msg.source = getSource(player.spec, player.allyTeamId)
-	  msg.playername = playername
-	  msg.argument = capture2
-	  return
-        end
-      end
-    end
-  end
-end
-
-function MessageProcessor:ProcessConsoleLine(msg)
-	self:ParseMessage(msg)
-end
-
-function MessageProcessor:ProcessConsoleBuffer(count)
-	local bufferMessages = Spring.GetConsoleBuffer(count)
-	for i = 1,#bufferMessages do
-		self:ProcessConsoleLine(bufferMessages[i])
-	end
-	return bufferMessages
-end
-
-SetupPlayers()
-MessageProcessor:Initialize()
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -1104,7 +958,8 @@ function widgetHandler:DisableWidget(name)
     Spring.Echo('Removed:  '..ki.filename)
     self:RemoveWidget(w)     -- deactivate
     self.orderList[name] = 0 -- disable
-    self:SaveOrderList()
+    self:SaveOrderList()	
+	self:SaveConfigData()
   end
   return true
 end
@@ -1124,6 +979,7 @@ function widgetHandler:ToggleWidget(name)
     -- the widget is not active, but enabled; disable it
     self.orderList[name] = 0
     self:SaveOrderList()
+	self:SaveConfigData()
   end
   return true
 end
@@ -1377,38 +1233,12 @@ function widgetHandler:CommandNotify(id, params, options)
 end
   
 function widgetHandler:AddConsoleLine(msg, priority)
-  if StringStarts(msg, transmitLobbyMagic) then -- sending to the lobby
-    return -- ignore
-  elseif StringStarts(msg, transmitMagic) then -- receiving from the lobby
-    if StringStarts(msg, voiceMagic) then
-      local tableString = string.sub(msg, string.len(voiceMagic) + 1) -- strip the magic string
-      local voiceCommandParams = Deserialize("return "..tableString) -- deserialize voice command parameters in table form      
-      for _,w in ipairs(self.VoiceCommandList) do
-        w:VoiceCommand(voiceCommandParams.commandName, voiceCommandParams)
-      end
-      return
-    else
-      for _,w in ipairs(self.AddTransmitLineList) do
-        w:AddTransmitLine(msg, priority)
-      end
-      return
-    end
-  else
-    for _,w in ipairs(self.AddConsoleLineList) do
-      w:AddConsoleLine(msg, priority)
-    end
-    
-    msg = { text = msg, priority = priority }
-    MessageProcessor:ProcessConsoleLine(msg)
-    if msg.msgtype == 'point' or msg.msgtype == 'label' then
-      -- ignore all console messages about points... those come in through the MapDrawCmd callin
-      return
-    end    
-    for _,w in ipairs(self.AddConsoleMessageList) do
-      w:AddConsoleMessage(msg)
-    end
+  for _,w in ipairs(self.AddConsoleLineList) do
+    w:AddConsoleLine(msg, priority)
   end
+  return
 end
+
 
 
 function widgetHandler:GroupChanged(groupID)
@@ -1420,7 +1250,6 @@ end
 
 
 function widgetHandler:CommandsChanged()
-  widgetHandler:UpdateSelection() -- for selectionchanged
   self.inCommandsChanged = true
   self.customCommands = {}
   for _,w in ipairs(self.CommandsChangedList) do
@@ -1760,28 +1589,14 @@ function widgetHandler:GamePreload()
   return
 end
 
+
 function widgetHandler:GameStart()
   for _,w in ipairs(self.GameStartList) do
     w:GameStart()
   end
-
-	local plist = ""
-	gaiaTeam = Spring.GetGaiaTeamID()
-	for _, teamID in ipairs(Spring.GetTeamList()) do
-		local teamLuaAI = Spring.GetTeamLuaAI(teamID)
-		if ((teamLuaAI == nil or teamLuaAI == "") and teamID ~= gaiaTeam) then
-			local _,_,_,ai,side,ally = Spring.GetTeamInfo(teamID)
-			if (not ai) then 
-				for _, pid in ipairs(Spring.GetPlayerList(teamID)) do
-					local name, active, spec = Spring.GetPlayerInfo(pid)
-					if active and not spec then plist = plist .. "," .. name end
-				end
-			end	
-		end
-	end
-	Spring.SendCommands("wbynum 255 SPRINGIE:stats,plist".. plist)
   return
 end
+
 
 function widgetHandler:GameOver()
   for _,w in ipairs(self.GameOverList) do
@@ -1860,11 +1675,6 @@ end
 
 
 function widgetHandler:MapDrawCmd(playerID, cmdType, px, py, pz, ...)
-  local customkeys = select(10, Spring.GetPlayerInfo(playerID))
-  if customkeys and customkeys.muted then
-    return true
-  end
-  
   local retval = false
   for _,w in ipairs(self.MapDrawCmdList) do
     local takeEvent = w:MapDrawCmd(playerID, cmdType, px, py, pz, ...)
@@ -2135,46 +1945,13 @@ function widgetHandler:StockpileChanged(unitID, unitDefID, unitTeam,
 end
 
 
--- local helper (not a real call-in)
-local oldSelection = {}
-function widgetHandler:UpdateSelection()
-  local changed
-  local newSelection = Spring.GetSelectedUnits()
-  if (#newSelection == #oldSelection) then
-    for i=1, #newSelection do
-      if (newSelection[i] ~= oldSelection[i]) then -- it seems the order stays
-        changed = true
-        break
-      end                                          
-    end
-  else
-    changed = true
-  end
-  if (changed) then
-    widgetHandler:SelectionChanged(newSelection)
-  end
-  oldSelection = newSelection
-end
-
-
-function widgetHandler:SelectionChanged(selectedUnits)
-  for _,w in ipairs(self.SelectionChangedList) do
-    local unitArray = w:SelectionChanged(selectedUnits)
-    if (unitArray) then
-      Spring.SelectUnitArray(unitArray)
-      break
-    end
-  end
-  return
-end
-
-
 function widgetHandler:GameProgress(frame)
   for _,w in ipairs(self.GameProgressList) do
     w:GameProgress(frame)
   end
   return
 end
+
 
 function widgetHandler:UnsyncedHeightMapUpdate(x1,z1,x2,z2)
   for _,w in ipairs(self.UnsyncedHeightMapUpdateList) do

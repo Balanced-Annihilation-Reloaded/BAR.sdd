@@ -317,8 +317,7 @@ function widgetHandler:LoadConfigData()
 
     local tmp = {}
     setfenv(chunk, tmp)
-    self.orderList = chunk().order
-    self.configData = chunk().data
+    self.configData = chunk()
     if (not self.orderList) then
 		self.orderList = {} -- safety
     end
@@ -375,16 +374,6 @@ function widgetHandler:Initialize()
   Spring.CreateDir(LUAUI_DIRNAME .. 'Config')
 
   local unsortedWidgets = {}
-
-  -- stuff the raw widgets into unsortedWidgets
-  local widgetFiles = VFS.DirList(WIDGET_DIRNAME, "*.lua", VFS.RAW_ONLY)
-  for k,wf in ipairs(widgetFiles) do
-    -- GetWidgetInfo(wf, VFS.RAW_ONLY)
-    local widget = self:LoadWidget(wf, false)
-    if (widget) then
-      table.insert(unsortedWidgets, widget)
-    end
-  end
 
   -- stuff the widgets into unsortedWidgets
   local widgetFiles = VFS.DirList(WIDGET_DIRNAME, "*.lua", VFSMODE)

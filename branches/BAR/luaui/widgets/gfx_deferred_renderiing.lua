@@ -518,15 +518,16 @@ function widget:DrawWorld()
 				end
 			else
 				lightparams=projectileLightTypes[spGetProjectileName(pID)]
-				
-				if lightparams and lightparams[8] then --BEAM type
-					local dx,dy,dz=spGetProjectileVelocity(pID)
-					--Spring.Echo({x,y,z,dx,dy,dz})
-					table.insert(beamlightprojectiles,TableConcat(lightparams,{x,y,z,dx,dy,dz}))
-					--Spring.Echo('GetFeatureVelocity=',dx,dy,dz)
-				else --point type
-					table.insert(pointlightprojectiles,TableConcat(lightparams,{x,y,z,0,0,0}))
-					
+				if lightparams then
+					if lightparams[8] then --BEAM type
+						local dx,dy,dz=spGetProjectileVelocity(pID)
+						--Spring.Echo({x,y,z,dx,dy,dz})
+						table.insert(beamlightprojectiles,TableConcat(lightparams,{x,y,z,dx,dy,dz}))
+						--Spring.Echo('GetFeatureVelocity=',dx,dy,dz)
+					else --point type
+						table.insert(pointlightprojectiles,TableConcat(lightparams,{x,y,z,0,0,0}))
+						
+					end
 				end
 			end
 			

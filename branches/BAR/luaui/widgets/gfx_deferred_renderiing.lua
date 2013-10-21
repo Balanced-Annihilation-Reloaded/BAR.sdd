@@ -518,7 +518,8 @@ function widget:DrawWorld()
 				end
 			else
 				lightparams=projectileLightTypes[spGetProjectileName(pID)]
-				if lightparams[8] then --BEAM type
+				
+				if lightparams and lightparams[8] then --BEAM type
 					local dx,dy,dz=spGetProjectileVelocity(pID)
 					--Spring.Echo({x,y,z,dx,dy,dz})
 					table.insert(beamlightprojectiles,TableConcat(lightparams,{x,y,z,dx,dy,dz}))

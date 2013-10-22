@@ -28,7 +28,7 @@ return {
 		metalstorage = 50,
 		movementclass = "ATANK3",
 		name = "Beaver",
-		objectname = "ARMBEAVER",
+		objectname = "ARMBEAVER.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 266,
@@ -38,6 +38,10 @@ return {
 		trackwidth = 31,
 		turnrate = 311,
 		workertime = 80,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		buildoptions = {
 			[10] = "armlab",
 			[11] = "armvp",

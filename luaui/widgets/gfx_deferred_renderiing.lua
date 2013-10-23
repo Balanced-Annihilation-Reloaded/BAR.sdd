@@ -110,15 +110,12 @@ local ivsy = 1.0
 local depthPointShader
 local depthBeamShader
 
-local invrxlocPoint = nil
-local invrylocPoint = nil
 local lightposlocPoint = nil
 local lightcolorlocPoint = nil
 local lightparamslocPoint = nil
 local uniformEyePosPoint
 local uniformViewPrjInvPoint
-local invrxlocBeam = nil
-local invrylocBeam  = nil
+
 local lightposlocBeam  = nil
 local lightpos2locBeam  = nil
 local lightcolorlocBeam  = nil
@@ -199,7 +196,7 @@ local function GetLightsFromUnitDefs()
 				elseif (WeaponDefs[weaponID]['type'] == 'LightningCannon') then
 					if verbose then Spring.Echo('LightningCannon',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={0.2,0.2,1,100,1,1,0,true}
+					plighttable[WeaponDefs[weaponID]['name']]={0.3,0.3,1.5,100,1,1,0,true}
 				elseif (WeaponDefs[weaponID]['type'] == 'BeamLaser') then
 					if verbose then Spring.Echo('BeamLaser',WeaponDefs[weaponID]['name'],'rgbcolor', WeaponDefs[weaponID]['visuals']['colorR']) end
 					--size=WeaponDefs[weaponID]['size']
@@ -317,8 +314,6 @@ function widget:Initialize()
 					modeldepths = 1,
 					mapnormals = 2,
 					mapdepths = 3,
-					uniformFloat = {inverseRX},
-					uniformFloat = {inverseRY},
 					
 				},
 			})
@@ -328,8 +323,6 @@ function widget:Initialize()
 				spEcho("Bad depth point shader, reverting to non-GLSL widget.")
 				GLSLRenderer = false
 			else
-				invrxlocPoint=glGetUniformLocation(depthPointShader, "inverseRX")
-				invrylocPoint=glGetUniformLocation(depthPointShader, "inverseRY")
 				lightposlocPoint=glGetUniformLocation(depthPointShader, "lightpos")
 				lightcolorlocPoint=glGetUniformLocation(depthPointShader, "lightcolor")
 				lightparamslocPoint=glGetUniformLocation(depthPointShader, "lightparams")
@@ -345,8 +338,6 @@ function widget:Initialize()
 					modeldepths = 1,
 					mapnormals = 2,
 					mapdepths = 3,
-					uniformFloat = {inverseRX},
-					uniformFloat = {inverseRY},
 					
 				},
 			})
@@ -356,8 +347,6 @@ function widget:Initialize()
 				spEcho("Bad depthBeamShader, reverting to non-GLSL widget.")
 				GLSLRenderer = false
 			else
-				invrxlocBeam=glGetUniformLocation(depthBeamShader, "inverseRX")
-				invrylocBeam=glGetUniformLocation(depthBeamShader, "inverseRY")
 				lightposlocBeam=glGetUniformLocation(depthBeamShader, "lightpos")
 				lightpos2locBeam=glGetUniformLocation(depthBeamShader, "lightpos2")
 				lightcolorlocBeam=glGetUniformLocation(depthBeamShader, "lightcolor")
@@ -402,14 +391,10 @@ local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
 	if lighttype==0 then --point
 		glUseShader(depthPointShader)
 		glUniform(uniformEyePosPoint, cpx, cpy, cpz)
-		glUniform(invrxlocPoint, ivsx)
-		glUniform(invrylocPoint, ivsy)
 		glUniformMatrix(uniformViewPrjInvPoint,  "viewprojectioninverse")
 	else --beam
 		 glUseShader(depthBeamShader)
 		glUniform(uniformEyePosBeam, cpx, cpy, cpz)
-		glUniform(invrxlocBeam, ivsx)
-		glUniform(invrylocBeam, ivsy)
 		glUniformMatrix(uniformViewPrjInvBeam,  "viewprojectioninverse")
 	end
 

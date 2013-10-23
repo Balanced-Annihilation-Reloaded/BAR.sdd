@@ -516,7 +516,7 @@ function widget:DrawWorld()
 		glBlending(false)
 	else
 		Spring.Echo('Removing deferred rendering widget: failed to use GLSL shader')
-		widgetHandler:Removewidget()
+		widgetHandler:RemoveWidget()
 	end
 end
 

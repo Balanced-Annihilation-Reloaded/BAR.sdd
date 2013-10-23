@@ -4,7 +4,7 @@
 #include "exptype.h"
 
 piece  torso, ruparm, luparm, rfire, lfire, rloarm, lloarm, pelvis,
-       rthigh, lthigh, lleg, rleg, rfoot, lfoot, ground;
+       rthigh, lthigh, lleg, rleg, rfoot, lfoot;
 
 static-var  bMoving, bAiming, Static_Var_3, gun_1, restore_delay, moveSpeed, currentSpeed;
 
@@ -503,7 +503,6 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode ground type BITMAPONLY | BITMAP1;
 		explode lfire type BITMAPONLY | BITMAP2;
 		explode lfoot type BITMAPONLY | BITMAP3;
 		explode lleg type BITMAPONLY | BITMAP4;
@@ -523,7 +522,6 @@ Killed(severity, corpsetype)
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode ground type FALL | BITMAP1;
 		explode lfire type FALL | BITMAP2;
 		explode lloarm type FALL | BITMAP5;
 		explode lthigh type FALL | BITMAP1;
@@ -533,13 +531,12 @@ Killed(severity, corpsetype)
 		explode rloarm type FALL | BITMAP2;
 		explode rthigh type FALL | BITMAP3;
 		explode ruparm type FALL | BITMAP4;
-		explode torso type SHATTER | BITMAP5;
+		explode torso type FALL | BITMAP5;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode ground type FALL | SMOKE | FIRE | BITMAP1;
 		explode lfoot type FALL | SMOKE | FIRE | BITMAP3;
 		explode lleg type FALL | SMOKE | FIRE | BITMAP4;
 		explode lloarm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
@@ -551,11 +548,10 @@ Killed(severity, corpsetype)
 		explode rloarm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		explode rthigh type FALL | SMOKE | FIRE | BITMAP3;
 		explode ruparm type FALL | SMOKE | FIRE | BITMAP4;
-		explode torso type SHATTER | BITMAP5;
+		explode torso type FALL | BITMAP5;
 		return (0);
 	}
 	corpsetype = 3;
-	explode ground type FALL | SMOKE | FIRE | BITMAP1;
 	explode lfoot type FALL | SMOKE | FIRE | BITMAP3;
 	explode lleg type FALL | SMOKE | FIRE | BITMAP4;
 	explode lloarm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
@@ -567,6 +563,6 @@ Killed(severity, corpsetype)
 	explode rloarm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 	explode rthigh type FALL | SMOKE | FIRE | BITMAP3;
 	explode ruparm type FALL | SMOKE | FIRE | BITMAP4;
-	explode torso type SHATTER | BITMAP5;
-	explode torso type SHATTER | EXPLODE_ON_HIT | BITMAP5;
+	explode torso type FALL | BITMAP5;
+	explode torso type FALL | EXPLODE_ON_HIT | BITMAP5;
 }

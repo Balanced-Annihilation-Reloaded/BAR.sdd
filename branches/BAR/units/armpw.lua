@@ -24,12 +24,16 @@ return {
 		movementclass = "KBOT2",
 		name = "Peewee",
 		nochasecategory = "VTOL",
-		objectname = "ARMPW",
+		objectname = "ARMPW.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 429,
 		turnrate = 1056,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

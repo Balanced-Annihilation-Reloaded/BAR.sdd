@@ -28,13 +28,13 @@ return {
 		metalstorage = 125,
 		minwaterdepth = 30,
 		name = "Shipyard",
-		objectname = "ARMSY",
+		objectname = "ARMSY.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 340,
 		terraformspeed = 500,
-		waterline = 26,
+		waterline = 0,
 		workertime = 220,
 		yardmap = "oyyyyyyoyccccccyyccccccyyccccccyyccccccyyccccccyyccccccyoyyyyyyo",
 		buildoptions = {
@@ -45,6 +45,10 @@ return {
 			[5] = "armtship",
 			[6] = "armsub",
 			[7] = "armrecl",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

@@ -1,13 +1,14 @@
 //This code copyright of Peter Sarkozy aka Beherith. Contact mysterme@gmail.com for licensing.
 //License is CC-BY-ND 3.0
-
+// old version with calced normals is 67 fps for 10 beamers full screen at 1440p
+// new version with buffered normals is 88 fps for 10 beamers full screen at 1440p
 uniform float inverseRX;
 uniform float inverseRY;
-uniform sampler2D tex0;
-#ifdef HAVE_NORMAL_BUFFER:
-	uniform sampler2D mapnormals;
-	uniform sampler2D mapdepths;
-#endif
+uniform sampler2D modelnormals;
+uniform sampler2D modeldepths;
+uniform sampler2D mapnormals;
+uniform sampler2D mapdepths;
+
 uniform vec3 eyePos;
 uniform vec4 lightpos;
 #ifdef BEAM_LIGHT
@@ -21,45 +22,40 @@ uniform mat4 viewProjectionInv;
   void main(void)
   {
     //http://stackoverflow.com/questions/5281261/generating-a-normal-map-from-a-height-map
-	vec2 up2	= gl_TexCoord[0].st + vec2(0 , inverseRY);
-	vec4 up4	= vec4(vec3(up2.xy, texture2D( tex0,up2 ).x) * 2.0 - 1.0 ,1.0);
-	up4 = viewProjectionInv * up4;
-	up4.xyz = up4.xyz / up4.w;
 	
-	vec2 right2	= gl_TexCoord[0].st + vec2(inverseRY , 0);
-	vec4 right4	= vec4(vec3(right2.xy, texture2D( tex0,right2 ).x) * 2.0 - 1.0 ,1.0);
-	right4 = viewProjectionInv * right4;
-	right4.xyz = right4.xyz / right4.w;
+	vec4 mappos4 =vec4(vec3(gl_TexCoord[0].st, texture2D( mapdepths,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
+	//mappos4 = viewProjectionInv * mappos4;
+	//mappos4.xyz = mappos4.xyz / mappos4.w;
 	
-	vec4 here4	= vec4(vec3(gl_TexCoord[0].st, texture2D( tex0,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
-	here4 = viewProjectionInv * here4;
-	here4.xyz = here4.xyz / here4.w;
-	
-	vec4 heremap4 =vec4(vec3(gl_TexCoord[0].st, texture2D( mapdepths,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
-	heremap4 = viewProjectionInv * heremap4;
-	heremap4.xyz = heremap4.xyz / heremap4.w;
+	vec4 modelpos4 =vec4(vec3(gl_TexCoord[0].st, texture2D( modeldepths,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
+	//modelpos4 = viewProjectionInv * modelpos4;
+	//modelpos4.xyz = modelpos4.xyz / modelpos4.w;
 	
 	vec4 map_normals4= texture2D( mapnormals,gl_TexCoord[0].st ) *2.0 -1.0;
+	vec4 model_normals4= texture2D( modelnormals,gl_TexCoord[0].st ) *2.0 -1.0;
 	
-	vec4 herenormal4;
-	if (length(heremap4.xyz-here4.xyz)> 1)
-		herenormal4.xyz = -1.0*normalize(cross( up4.xyz - here4.xyz, right4.xyz - here4.xyz));
-	else herenormal4=map_normals4;
-	gl_FragColor=vec4(herenormal4.xyz,1); //DEBUG NORMALS OUT
-	//gl_FragColor=vec4(map_normals4.xyz,1); //DEBUG NORMALS OUT
-	//gl_FragColor=vec4(-1.0*normalize(cross( up4.xyz - here4.xyz, right4.xyz - here4.xyz)),1); //DEBUG NORMALS OUT
+	
+	//gl_FragColor=vec4(fract(modelpos4.z*0.01),sign(mappos4.z-modelpos4.z),0,1);
+	
 	//return;
+	float model_lighting_multiplier=1;
+	if ((mappos4.z-modelpos4.z)> 0) { // this means we are processing a model fragment, not a map fragment
+		map_normals4 = model_normals4;
+		mappos4 = modelpos4;
+		model_lighting_multiplier=1.5;
+	}
+	mappos4 = viewProjectionInv * mappos4;
+	mappos4.xyz = mappos4.xyz / mappos4.w;
+	
 	#ifndef BEAM_LIGHT
-	//gl_FragColor=vec4(1,0,0,0.5);
-	//return;
-		float dist_light_here = length(lightpos.xyz - here4.xyz);
-		float cosphi = max(0.0 , dot (herenormal4.xyz, lightpos.xyz - here4.xyz) / dist_light_here);
+		float dist_light_here = length(lightpos.xyz - mappos4.xyz);
+		float cosphi = max(0.0 , dot (map_normals4.xyz, lightpos.xyz - mappos4.xyz) / dist_light_here);
 		//float attentuation =  max(0, ( 1.0 - (dist_light_here)/(lightpos.w)) ); // pretty good function, but its peak is too sharp, especially for lasers. https://www.desmos.com/calculator/vyc3ulbzj6
 		//float attentuation =  max( 0,( 1.0 - (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w)) );
 		float attentuation =  max( 0,( lightparams.r - lightparams.g * (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w) - lightparams.b*(dist_light_here)/(lightpos.w)) );
 	#endif
 	#ifdef BEAM_LIGHT
-	gl_FragColor=vec4(1,0,1,0.5);
+	//gl_FragColor=vec4(1,0,1,0.5);
 	//return;
 		//def dist(x1,y1, x2,y2, x3,y3): # x3,y3 is the point
 		/*distance( Point P,  Segment P0:P1 ) // http://geomalgorithms.com/a02-_lines.html
@@ -79,21 +75,21 @@ uniform mat4 viewProjectionInv;
 		*/
 
 		vec3 v=lightpos2.xyz-lightpos.xyz;
-		vec3 w=here4.xyz-lightpos.xyz;
+		vec3 w=mappos4.xyz-lightpos.xyz;
 		float c1=dot(v,w);
 		float c2=dot(v,v);
 		if (c1<=0.0){
-			v=here4.xyz;
+			v=mappos4.xyz;
 			w=lightpos.xyz;
 		}else if (c2<c1){
-			v=here4.xyz;
+			v=mappos4.xyz;
 			w=lightpos2.xyz;
 		}else{
 			w=lightpos.xyz+(c1/c2)*v;
-			v=here4.xyz;
+			v=mappos4.xyz;
 		}
 		float dist_light_here = length(v-w);
-		float cosphi = max(0.0 , dot (herenormal4.xyz, w.xyz - here4.xyz) / dist_light_here);
+		float cosphi = max(0.0 , dot (map_normals4.xyz, w.xyz - mappos4.xyz) / dist_light_here);
 		float attentuation =  max( 0,( lightparams.r - lightparams.g * (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w) - lightparams.b*(dist_light_here)/(lightpos.w)) );
 	#endif
 
@@ -115,17 +111,13 @@ uniform mat4 viewProjectionInv;
 	
 	//OK, our blending func is the following: Rr=Lr*La+Lr*Dr, in order to get both lighting components, but we must take care to return >1 values in Lrgb or else we will darken the output texture a bit. (which may not be undesired...)
 	//float sepfactor=.5;//this factor defines how much of the light should be purely additive, and how much should be multiplicative of the original underlying pixel's color (a quasi material value), higher values mean more purely additive
-	#ifndef HAVE_NORMAL_BUFFER
-		gl_FragColor=vec4(lightcolor.rgb, cosphi*attentuation);
-	#endif
-	#ifdef HAVE_NORMAL_BUFFER
 		// gl_FragColor=vec4(lightcolor.rgb*(cosphi*attentuation)*sepfactor,1.0+(1.0-sepfactor)*cosphi*attentuation);
-		float lightalpha=cosphi*attentuation;
-		vec3 lc=lightcolor.rgb*lightalpha +1.0;
-		float la=dot((lc-1.0)/lc,vec3(0.33,0.33,0.33));
-		//gl_FragColor=vec4(lightcolor.rgb, cosphi*attentuation);
-		gl_FragColor=vec4(lightcolor.rgb*lightalpha,la);
-	#endif
+	float lightalpha=cosphi*attentuation;
+	vec3 lc=lightcolor.rgb*lightalpha*model_lighting_multiplier +1.0;
+	float la=dot((lc-1.0)/lc,vec3(0.33,0.33,0.33));
+	//gl_FragColor=vec4(lightcolor.rgb, cosphi*attentuation);
+	gl_FragColor=vec4(lightcolor.rgb*lightalpha*model_lighting_multiplier,la);
+
 	
 	
 	return;

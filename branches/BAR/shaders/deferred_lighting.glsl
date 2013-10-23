@@ -2,8 +2,6 @@
 //License is CC-BY-ND 3.0
 // old version with calced normals is 67 fps for 10 beamers full screen at 1440p
 // new version with buffered normals is 88 fps for 10 beamers full screen at 1440p
-uniform float inverseRX;
-uniform float inverseRY;
 uniform sampler2D modelnormals;
 uniform sampler2D modeldepths;
 uniform sampler2D mapnormals;
@@ -21,22 +19,13 @@ uniform mat4 viewProjectionInv;
 
   void main(void)
   {
-    //http://stackoverflow.com/questions/5281261/generating-a-normal-map-from-a-height-map
-	
 	vec4 mappos4 =vec4(vec3(gl_TexCoord[0].st, texture2D( mapdepths,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
-	//mappos4 = viewProjectionInv * mappos4;
-	//mappos4.xyz = mappos4.xyz / mappos4.w;
-	
 	vec4 modelpos4 =vec4(vec3(gl_TexCoord[0].st, texture2D( modeldepths,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
-	//modelpos4 = viewProjectionInv * modelpos4;
-	//modelpos4.xyz = modelpos4.xyz / modelpos4.w;
-	
 	vec4 map_normals4= texture2D( mapnormals,gl_TexCoord[0].st ) *2.0 -1.0;
 	vec4 model_normals4= texture2D( modelnormals,gl_TexCoord[0].st ) *2.0 -1.0;
 	
 	
 	//gl_FragColor=vec4(fract(modelpos4.z*0.01),sign(mappos4.z-modelpos4.z),0,1);
-	
 	//return;
 	float model_lighting_multiplier=1;
 	if ((mappos4.z-modelpos4.z)> 0) { // this means we are processing a model fragment, not a map fragment
@@ -50,13 +39,9 @@ uniform mat4 viewProjectionInv;
 	#ifndef BEAM_LIGHT
 		float dist_light_here = length(lightpos.xyz - mappos4.xyz);
 		float cosphi = max(0.0 , dot (map_normals4.xyz, lightpos.xyz - mappos4.xyz) / dist_light_here);
-		//float attentuation =  max(0, ( 1.0 - (dist_light_here)/(lightpos.w)) ); // pretty good function, but its peak is too sharp, especially for lasers. https://www.desmos.com/calculator/vyc3ulbzj6
-		//float attentuation =  max( 0,( 1.0 - (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w)) );
 		float attentuation =  max( 0,( lightparams.r - lightparams.g * (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w) - lightparams.b*(dist_light_here)/(lightpos.w)) );
 	#endif
 	#ifdef BEAM_LIGHT
-	//gl_FragColor=vec4(1,0,1,0.5);
-	//return;
 		//def dist(x1,y1, x2,y2, x3,y3): # x3,y3 is the point
 		/*distance( Point P,  Segment P0:P1 ) // http://geomalgorithms.com/a02-_lines.html
 		{
@@ -109,14 +94,10 @@ uniform mat4 viewProjectionInv;
 	// gl_FragColor=vec4(1,1,0,0.5);
 	// return;
 	
-	//OK, our blending func is the following: Rr=Lr*La+Lr*Dr, in order to get both lighting components, but we must take care to return >1 values in Lrgb or else we will darken the output texture a bit. (which may not be undesired...)
-	//float sepfactor=.5;//this factor defines how much of the light should be purely additive, and how much should be multiplicative of the original underlying pixel's color (a quasi material value), higher values mean more purely additive
-		// gl_FragColor=vec4(lightcolor.rgb*(cosphi*attentuation)*sepfactor,1.0+(1.0-sepfactor)*cosphi*attentuation);
+	//OK, our blending func is the following: Rr=Lr*Dr+1*Dr, 
 	float lightalpha=cosphi*attentuation;
 	vec3 lc=lightcolor.rgb*lightalpha*model_lighting_multiplier +1.0;
-	float la=dot((lc-1.0)/lc,vec3(0.33,0.33,0.33));
-	//gl_FragColor=vec4(lightcolor.rgb, cosphi*attentuation);
-	gl_FragColor=vec4(lightcolor.rgb*lightalpha*model_lighting_multiplier,la);
+	gl_FragColor=vec4(lightcolor.rgb*lightalpha*model_lighting_multiplier,1);
 
 	
 	

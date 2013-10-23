@@ -28,13 +28,13 @@ return {
 		metalstorage = 200,
 		minwaterdepth = 30,
 		name = "Advanced Shipyard",
-		objectname = "ARMASY",
+		objectname = "ARMASY.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 299,
 		terraformspeed = 1000,
-		waterline = 26,
+		waterline = 0,
 		workertime = 400,
 		yardmap = "wCCCCCCCCCCwCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCwCCCCCCCCCCw",
 		buildoptions = {
@@ -49,6 +49,10 @@ return {
 			[6] = "armcrus",
 			[7] = "armbats",
 			[8] = "armmship",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

@@ -23,13 +23,13 @@ return {
 		metalstorage = 200,
 		minwaterdepth = 30,
 		name = "Seaplane Platform",
-		objectname = "ARMPLAT",
+		objectname = "ARMPLAT.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 169,
 		terraformspeed = 1000,
-		waterline = 53,
+		waterline = 37,
 		workertime = 200,
 		yardmap = "wwwwwwwwCCCCCwwCCCCCwwCCCCCwwCCCCCwwCCCCCwwwwwwww",
 		buildoptions = {
@@ -39,6 +39,10 @@ return {
 			[4] = "armseap",
 			[5] = "armsfig",
 			[6] = "armsehak",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

@@ -92,7 +92,6 @@ local GL_DEPTH_COMPONENT32 = 0x81A7
 
 
 local debugGfx  =false --or true
-local havemapnormals=true
 local GLSLRenderer = true
 
 
@@ -110,7 +109,6 @@ local ivsy = 1.0
 
 local depthPointShader
 local depthBeamShader
-local depthTexture
 
 local invrxlocPoint = nil
 local invrylocPoint = nil
@@ -282,20 +280,7 @@ function widget:ViewResize()
 		vsx=vsx/2
 	end
 
-	if (depthTexture) then
-		glDeleteTexture(depthTexture)
-	end
 
-	depthTexture = glCreateTexture(vsx, vsy, {
-		format = GL_DEPTH_COMPONENT24,
-		min_filter = GL_NEAREST,
-		mag_filter = GL_NEAREST,
-	})
-
-	if (depthTexture == nil) then
-		spEcho("Removing Deferred rendering widget, bad depth texture")
-		widgetHandler:Removewidget()
-	end
 end
 
 widget:ViewResize()
@@ -324,14 +309,14 @@ function widget:Initialize()
 		else
 			fragSrc = VFS.LoadFile("shaders\\deferred_lighting.glsl",VFS.ZIP)
 			--Spring.Echo('Shader code:',fragSrc)
-			if havemapnormals then fragSrc = "#define HAVE_NORMAL_BUFFER\n" .. fragSrc end
 			depthPointShader = glCreateShader({
 				vertex = vertSrc,
 				fragment = fragSrc,
 				uniformInt = {
-					tex0 = 0,
-					mapnormals = 1,
-					mapdepths = 2,
+					modelnormals = 0,
+					modeldepths = 1,
+					mapnormals = 2,
+					mapdepths = 3,
 					uniformFloat = {inverseRX},
 					uniformFloat = {inverseRY},
 					
@@ -356,9 +341,10 @@ function widget:Initialize()
 				vertex = vertSrc,
 				fragment = fragSrc,
 				uniformInt = {
-					tex0 = 0,
-					mapnormals = 1,
-					mapdepths = 2,
+					modelnormals = 0,
+					modeldepths = 1,
+					mapnormals = 2,
+					mapdepths = 3,
 					uniformFloat = {inverseRX},
 					uniformFloat = {inverseRY},
 					
@@ -389,7 +375,6 @@ end
 
 function widget:Shutdown()
   if (GLSLRenderer) then
-    glDeleteTexture(depthTexture)
     if (glDeleteShader) then
       glDeleteShader(depthPointShader)
       glDeleteShader(depthBeamShader)
@@ -427,15 +412,12 @@ local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
 		glUniform(invrylocBeam, ivsy)
 		glUniformMatrix(uniformViewPrjInvBeam,  "viewprojectioninverse")
 	end
-	glTexture(0, depthTexture)
-	glTexture(0, false)
-	if havemapnormals then
-		--Spring.Echo("Binding map gbuffer normals")
-		glTexture(1, "$map_gbuffer_normtex")
-		glTexture(2, "$map_gbuffer_zvaltex")
-		--glTexture(1,false)
-		--glTexture(2,false)
-	end
+
+	glTexture(0, "$model_gbuffer_normtex")
+	glTexture(1, "$model_gbuffer_zvaltex")
+	glTexture(2, "$map_gbuffer_normtex")
+	glTexture(3, "$map_gbuffer_zvaltex")
+	
 	--f= Spring.GetGameFrame()
 	--f=f/50
 	for i=1, #lights do
@@ -491,6 +473,7 @@ local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
 				math.min( 1 , sx + 0.5*ratio*screenratio),
 				math.min( 1 , sy + 0.5*ratio)) -- screen size goes from -1,-1 to 1,1; uvs go from 0,0 to 1,1
 			--gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1) -- screen size goes from -1,-1 to 1,1; uvs go from 0,0 to 1,1
+			
 		end
 	end
 	--gl.TexRect(0.5,0.5, 1, 1, 0.5, 0.5, 1, 1)
@@ -536,17 +519,13 @@ function widget:DrawWorld()
 		
 		--//FIXME handle dualscreen correctly!
 		-- copy the depth buffer
-		glCopyToTexture(depthTexture, 0, 0, 0, 0, vsx, vsy )
 		
 		-- setup the shader and its uniform values
-		if havemapnormals then
-			glBlending(GL.DST_COLOR,GL.ONE) 
+		glBlending(GL.DST_COLOR,GL.ONE) -- ResultR=LightR*DestinationR+1*DestinationR
 			--glBlending(GL.SRC_ALPHA,GL.SRC_COLOR) 
 			--http://www.andersriggelsen.dk/glblendfunc.php
 			--glBlending(GL.ONE,GL.DST_COLOR) --http://www.andersriggelsen.dk/glblendfunc.php
-		else
-			glBlending("alpha_add")
-		end
+		--glBlending(GL.ONE,GL.ZERO)
 		if #beamlightprojectiles>0 then DrawLightType(beamlightprojectiles, 1) end
 		if #pointlightprojectiles>0 then DrawLightType(pointlightprojectiles, 0) end
 		glBlending(false)

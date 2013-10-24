@@ -32,7 +32,7 @@ return {
 		metalstorage = 150,
 		minwaterdepth = 25,
 		name = "Amphibious Complex",
-		objectname = "ASUBPEN",
+		objectname = "ASUBPEN.s3o",
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 234,
@@ -49,6 +49,10 @@ return {
 			[6] = "armdecom",
 			[7] = "armsub",
 			[8] = "armrecl",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

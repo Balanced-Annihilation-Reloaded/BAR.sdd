@@ -489,7 +489,15 @@ local commandColour = {1, 0.75, 0, 0.7}
 local drawAllTargets = {}
 local drawTarget = {}
 local unitTargets = {}
+local noTargets = true
 
+function IsTarget()
+	if next(unitTargets) == nil then
+		noTargets = true
+	else
+		noTargets = false
+	end
+end
 
 function gadget:Initialize()
 	gadgetHandler:AddChatAction("targetdrawteam", handleTargetDrawEvent,"toggles drawing targets for units, params: teamID doDraw")
@@ -510,12 +518,14 @@ end
 
 function handleUnitTargetDrawEvent(_,_,params)
 	drawTarget[tonumber(params[1])] = true
+	IsTarget()
 end
 
 function handleTargetDrawEvent(_,_,params)
 	local teamID = tonumber(params[1])
 	local doDraw = tonumber(params[2]) ~= 0
 	drawAllTargets[teamID] = doDraw
+	IsTarget()
 end
 
 function handleTargetChangeEvent(_,unitID,dataA,dataB,dataC)
@@ -526,6 +536,7 @@ function handleTargetChangeEvent(_,unitID,dataA,dataB,dataC)
 		--3d coordinates format
 		unitTargets[unitID] = {dataA,dataB,dataC}
 	end
+	IsTarget()
 end
 
 local function pos2func(u2)
@@ -552,9 +563,8 @@ local function terrainDraw(u, x, y, z)
 	glVertex(x,y,z)
 end
 
-
 function gadget:DrawWorld()
-	if #unitTargets==0 then return end
+	if noTargets then return end
 	local alt,ctrl,meta,shift = spGetModKeyState()
 	local spectator = spGetSpectatingState()
 	glPushAttrib(GL.LINE_BITS)

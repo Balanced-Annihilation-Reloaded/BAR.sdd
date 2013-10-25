@@ -554,6 +554,7 @@ end
 
 
 function gadget:DrawWorld()
+	if #unitTargets==0 then return end
 	local alt,ctrl,meta,shift = spGetModKeyState()
 	local spectator = spGetSpectatingState()
 	glPushAttrib(GL.LINE_BITS)

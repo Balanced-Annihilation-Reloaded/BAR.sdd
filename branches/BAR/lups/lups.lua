@@ -424,7 +424,7 @@ function AddParticles(Class,Options   ,__id)
     end
     particles[ newParticles.id ] = newParticles
 
-    local space = ((not newParticles.worldspace) and newParticles.unit) or (-1)
+    local space = ((not newParticles.worldspace) and newParticles.unit) or (-1) -- if the particle is not in world space and is attached to a real unit, then return the unitid, else return -1
     local fxTable = CreateSubTables(RenderSequence,{newParticles.layer,particleClass,space})
     newParticles.fxTable = fxTable
     fxTable[#fxTable+1] = newParticles

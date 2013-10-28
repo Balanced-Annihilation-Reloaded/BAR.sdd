@@ -404,6 +404,7 @@ local function UnitEnteredLos(_,unitID)
   if (effects) then
 	for _,fx in ipairs(effects) do
 	  if (fx.options.onActive == true) and (spGetUnitIsActive(unitID) == nil) then
+		--rewrite this part to allow onactive effect for enemy units
 		break
 	  else
 		if (fx.class=="GroundFlash") then
@@ -411,6 +412,7 @@ local function UnitEnteredLos(_,unitID)
 		end
 		fx.options.unit = unitID
 		fx.options.under_construction = spGetUnitRulesParam(unitID, "under_construction")
+		--can a unit that is under construction be active? 
 		AddFxs( unitID,LupsAddFX(fx.class,fx.options) )
 		fx.options.unit = nil
 	  end

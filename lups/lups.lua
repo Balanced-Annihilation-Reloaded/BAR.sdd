@@ -76,6 +76,7 @@ local spGetUnitViewPosition  = Spring.GetUnitViewPosition
 local spGetUnitDirection     = Spring.GetUnitDirection
 local spGetHeadingFromVector = Spring.GetHeadingFromVector
 local spGetUnitIsActive      = Spring.GetUnitIsActive
+local spGetUnitVelocity      = Spring.GetUnitVelocity
 local spGetGameFrame         = Spring.GetGameFrame
 local spGetFrameTimeOffset   = Spring.GetFrameTimeOffset
 local spGetUnitPieceList     = Spring.GetUnitPieceList
@@ -818,6 +819,13 @@ local function CreateVisibleFxList()
 
 				if (fx.onActive and (unitActive == -1)) then
 				  unitActive = spGetUnitIsActive(unitID)
+				  if (unitActive == nil) then --because unitactive returns nil for enemy units, and onActive types are all airjets, we get the unit's velocity, and use that as an approximation to 'active' state --HACKY
+					local vx, vy, vz = spGetUnitVelocity(unitID)
+					--Spring.Echo('lupsdbgvel',vx,vy,vz)
+					if (vx~= nil and (vx~= 0  or vz~=0)) then 
+						unitActive=true
+					end
+				  end
 				end
 				
 				if (fx.under_construction == 1) then

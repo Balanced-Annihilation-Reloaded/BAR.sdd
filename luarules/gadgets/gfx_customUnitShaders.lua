@@ -421,12 +421,22 @@ function gadget:UnitDestroyed(unitID,unitDefID)
   end
 end
 
-
-function gadget:DrawUnit(unitID)
+---------------------------
+-- DrawUnit(unitID,DrawMode)
+-- With enum DrawMode {
+-- notDrawing = 0,
+-- normalDraw = 1,
+-- shadowDraw = 2,
+-- reflectionDraw = 3,
+-- refractionDraw = 4
+-- }; 
+-----------------
+function gadget:DrawUnit(unitID, drawMode)
+	--if unitID%100==0 then  Spring.Echo('drawmode',drawMode) end
   local mat = drawUnitList[unitID]
   if (mat) then
     --gl.Uniform(mat.frameLoc, math.random()) --nope
-    return mat.DrawUnit(unitID, mat)
+    return mat.DrawUnit(unitID, mat,drawMode)
   end
 end
 

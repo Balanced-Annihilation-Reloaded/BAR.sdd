@@ -87,8 +87,7 @@ return {
     uniform vec3 sunPos; // is sunDir!
     uniform vec3 sunDiffuse;
     uniform vec3 sunAmbient;
-	uniform float frameLoc;
-	uniform float healthLoc;
+	uniform vec3 etcLoc;
 	uniform vec4 trimColor;
 
   #ifdef use_shadows
@@ -149,7 +148,7 @@ return {
     #endif
 
        reflection  = mix(light, reflection, extraColor.g); // reflection
-       reflection += (extraColor.rrr * frameLoc); // self-illum
+       reflection += (extraColor.rrr * etcLoc.r); // self-illum
 
        outColor.rgb = mix(outColor.rgb, teamColor.rgb,        outColor.a -  extraColor.b          * trimColor.a); // teamcolor
        outColor.rgb = mix(outColor.rgb, vec3(0.0, 0.0, 0.0),                extraColor.b          * trimColor.a); // trimcolor
@@ -162,13 +161,13 @@ return {
        #endif
 
        outColor.a   = extraColor.a;
-       outColor.rgb = outColor.rgb + outColor.rgb * (normaltex.a - 0.5) * healthLoc;
+       outColor.rgb = outColor.rgb + outColor.rgb * (normaltex.a - 0.5) * etcLoc.g;
 
        // other custom stuff
        // outColor.rgb = mix(gl_Fog.color.rgb, outColor.rgb, fogFactor); // fog
        // outColor.a   = teamColor.a; // far fading
        // outColor.rgb = normal;
-       // outColor.g   = frameLoc;
+       // outColor.g   = etcLoc.r;
 
        #if (deferred_mode == 0)
        gl_FragColor = outColor;
@@ -176,7 +175,7 @@ return {
        gl_FragData[0] = vec4(normal, 1.0);
        gl_FragData[1] = outColor;
        gl_FragData[2] = vec4(specular, 1.0);
-       gl_FragData[3] = vec4(extraColor.rrr * frameLoc, 1.0);
+       gl_FragData[3] = vec4(extraColor.rrr * etcLoc.r, 1.0);
        #endif
 
        %%FRAGMENT_POST_SHADING%%
@@ -198,8 +197,6 @@ return {
     sunDiffuse = {gl.GetSun("diffuse" ,"unit")},
     shadowDensity = {gl.GetSun("shadowDensity" ,"unit")},
     shadowParams  = {gl.GetShadowMapParams()},
-   -- frameLoc  = {math.random()}, --!bingo!
-    frameLoc  = {math.sin(Spring.GetGameFrame()/3.0)},
   },
   uniformMatrix = {
     shadowMatrix = {gl.GetMatrixData("shadow")},

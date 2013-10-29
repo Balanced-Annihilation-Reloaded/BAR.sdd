@@ -14,7 +14,7 @@ local GADGET_DIR = "LuaRules/Configs/"
 
 local function DrawUnit(unitID, material,drawMode)
 	--if unitID%100==0 then  Spring.Echo('drawmode',drawMode) end
-	if (drawmode ==1)then -- we can skip setting the uniforms as they only affect fragment color, not fragment alpha or vertex positions, so they dont have an effect on shadows, and drawmode 2 is shadows, 1 is normal mode.
+	if (drawMode ==1)then -- we can skip setting the uniforms as they only affect fragment color, not fragment alpha or vertex positions, so they dont have an effect on shadows, and drawmode 2 is shadows, 1 is normal mode.
 	  --Spring.Echo('drawing',UnitDefs[Spring.GetUnitDefID(unitID)].name,GetGameFrame())
 
 	  glUniform(material.frameLoc, 2* maximum(0,sine((unitID%10)+GetGameFrame()/((unitID%7)+6))))

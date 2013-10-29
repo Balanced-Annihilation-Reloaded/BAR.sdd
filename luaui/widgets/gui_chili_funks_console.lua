@@ -32,7 +32,7 @@ local function updateMsgWindow()
 			if string.find(msg.text, 'Local') then text=text..'\b' end
 		end
 	end
-	box = Chili.TextBox:New{name='console',width=300,text=text}
+	box = Chili.TextBox:New{name='console',width=300,text=text}  --inefficient to make a new one of these every time TODO: don't clear child and update text
 	local wText = box.font:WrapText(text, 300, 500)
 	_,_,box.lines = box.font:GetTextHeight(wText)
 	conOut:Resize(300,(box.lines-1)*15)
@@ -42,7 +42,7 @@ end
 function widget:Initialize()
 	Chili = WG.Chili
 	local screen = Chili.Screen0
-	-- control0 = Chili.Control:New{parent=screen,right=500,y=20,height=30,width=300,padding={0,0,0,0}}
+	--control0 = Chili.Control:New{parent=screen,right=500,y=20,height=30,width=300,padding={0,0,0,0}}
 	window0 = Chili.Window:New{parent=screen,right=500,y=20,minHeight=20,height=30,width=300,padding={0,0,0,0}}
 	editbox0 = Chili.EditBox:New{parent=window0,right=0,x=0,y=0,right=0,bottom=0,text='  --Takes over Enter/Return when entering text--',
 	OnMouseDown = {function(obj) obj.text = '' end}}

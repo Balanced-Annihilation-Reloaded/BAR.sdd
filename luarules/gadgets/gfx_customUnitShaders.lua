@@ -196,9 +196,8 @@ local function CompileMaterialShaders()
         mat_src.shadowMatrixLoc = gl.GetUniformLocation(GLSLshader,"shadowMatrix")
         mat_src.shadowParamsLoc = gl.GetUniformLocation(GLSLshader,"shadowParams")
         mat_src.sunLoc          = gl.GetUniformLocation(GLSLshader,"sunPos")
-        mat_src.frameLoc        = gl.GetUniformLocation(GLSLshader,"frameLoc")
+        mat_src.etcLoc        = gl.GetUniformLocation(GLSLshader,"etcLoc")
         mat_src.speedLoc        = gl.GetUniformLocation(GLSLshader,"speed")
-        mat_src.healthLoc       = gl.GetUniformLocation(GLSLshader,"healthLoc")
         mat_src.trimColor       = gl.GetUniformLocation(GLSLshader,"trimColor")
       end
     end
@@ -218,9 +217,8 @@ local function CompileMaterialShaders()
         mat_src.shadowMatrixLoc = gl.GetUniformLocation(GLSLshader,"shadowMatrix")
         mat_src.shadowParamsLoc = gl.GetUniformLocation(GLSLshader,"shadowParams")
         mat_src.sunLoc          = gl.GetUniformLocation(GLSLshader,"sunPos")
-        mat_src.frameLoc        = gl.GetUniformLocation(GLSLshader,"frameLoc")
+        mat_src.etcLoc        = gl.GetUniformLocation(GLSLshader,"etcLoc")
         mat_src.speedLoc        = gl.GetUniformLocation(GLSLshader,"speed")
-        mat_src.healthLoc       = gl.GetUniformLocation(GLSLshader,"healthLoc")
         mat_src.trimColor       = gl.GetUniformLocation(GLSLshader,"trimColor")
       end
     end
@@ -284,7 +282,6 @@ function GetUnitMaterial(unitDefID)
     texunits        = texUnits,
     prelist         = mat.predl,
     postlist        = mat.postdl,
-    --frameLoc        = mat.frameLoc,
   })
 
   bufMaterials[unitDefID] = luaMat

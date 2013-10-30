@@ -13,13 +13,15 @@ end
 --INFO: 
 --with default params, FPS halves, and memory controller load doubles. That is 2 blur passes and 1 dilate pass.
 
+-- default perf (1766): 116 fps, 4.5% cpu
+-- new perf (1766+) with different order.
+
 -- config params
 local dbgDraw = 0					-- draw only the bloom-mask? [0 | 1]
 local glowAmplifier = 1.2			-- intensity multiplier when filtering a glow source fragment [1, n]
 local blurAmplifier = 1.1		-- intensity multiplier when applying a blur pass [1, n] (should be set close to 1)
 local illumThreshold = 1			-- how bright does a fragment need to be before being considered a glow source? [0, 1]
 local blurPasses = 3				-- how many iterations of (7x7) Gaussian blur should be applied to the glow sources?
-local dilatePass = 0				-- dilate the glow sources after blurring? [0 | 1]
 
 -- non-editables
 local vsx = 1						-- current viewport width
@@ -36,8 +38,6 @@ local quality  = 2
 -- shader and texture handles
 local blurShaderH71 = nil
 local blurShaderV71 = nil
-local dilateShaderH51 = nil
-local dilateShaderV51 = nil
 
 local brightShader = nil
 local brightTexture1 = nil
@@ -112,11 +112,6 @@ local blurShaderH71FragLoc = nil
 local blurShaderV71Text0Loc = nil
 local blurShaderV71InvRYLoc = nil
 local blurShaderV71FragLoc = nil
-
-local dilateShaderH51Text0Loc = nil
-local dilateShaderH51InvRXLoc = nil
-local dilateShaderV51Text0Loc = nil
-local dilateShaderV51InvRYLoc = nil
 
 local combineShaderDebgDrawLoc = nil
 local combineShaderTexture0Loc = nil
@@ -215,6 +210,15 @@ function widget:Initialize()
 			}
 		]],
 
+		--while this vertex shader seems to do nothing, it actually does the very important world space to screen space mapping for gl.TexRect!
+		vertex = [[
+
+			void main(void)
+			{
+				gl_TexCoord[0] = gl_MultiTexCoord0;
+				gl_Position    = gl_Vertex;
+			}
+		]],
 		uniformInt = { texture0 = 0, texture1 = 1, debugDraw = 0}
 	})
 
@@ -294,74 +298,6 @@ function widget:Initialize()
 
 
 
-	dilateShaderH51 = glCreateShader({
-		fragment = [[
-			uniform sampler2D texture0;
-			uniform float inverseRX;
-
-			void main(void) {
-				vec2 texCoors = vec2(gl_TexCoord[0]);
-				vec4 samples[5];
-				vec4 maxSample;
-
-				samples[ 0] = texture2D(texture0, texCoors + vec2(-2 * inverseRX, 0));
-				samples[ 1] = texture2D(texture0, texCoors + vec2(-1 * inverseRX, 0));
-				samples[ 2] = texture2D(texture0, texCoors + vec2( 0            , 0));
-				samples[ 3] = texture2D(texture0, texCoors + vec2( 1 * inverseRX, 0));
-				samples[ 4] = texture2D(texture0, texCoors + vec2( 2 * inverseRX, 0));
-
-				maxSample = max(samples[0], samples[1]);
-				maxSample = max(maxSample,  samples[2]);
-				maxSample = max(maxSample,  samples[3]);
-				maxSample = max(maxSample,  samples[4]);
-
-				gl_FragColor = maxSample;
-			}
-		]],
-
-		uniformInt = { texture0 = 0 },
-		uniformFloat = { inverseRX }
-	})
-
-	if (dilateShaderH51 == nil) then
-		RemoveMe("[BloomShader::Initialize] dilateShaderH51 compilation failed"); print(glGetShaderLog()); return
-	end
-
-	dilateShaderV51 = glCreateShader({
-		vertex= [[
-			varying vec3 position;
-			varying vec3 normal;
-			 
-			void main(void) {
-				gl_FrontColor  = gl_Color;
-				gl_Position    = gl_ModelViewProjectionMatrix * gl_Vertex;
-				gl_TexCoord[0] = gl_MultiTexCoord0;
-			 
-				position = vec3(gl_ModelViewMatrix * gl_Vertex);
-				normal = normalize(gl_NormalMatrix * gl_Normal);
-			}
-			]],
-		fragment = [[
-					#version 120
-			 
-			varying vec3 position;
-			varying vec3 normal;
-			 
-			void main(void) {
-				gl_FragData[0] = gl_Color;
-				gl_FragData[1] = vec4(normal, 1.0);
-				gl_FragData[2] = gl_Color;
-			}
-		]],
-
-		uniformInt = { texture0 = 0 },
-		uniformFloat = { inverseRY }
-	})
-
-	if (dilateShaderV51 == nil) then
-		RemoveMe("[BloomShader::Initialize] dilateShaderV51 compilation failed"); print(glGetShaderLog()); return
-	end
-
 
 
 	brightShader = glCreateShader({
@@ -410,11 +346,6 @@ function widget:Initialize()
 	blurShaderV71InvRYLoc = glGetUniformLocation(blurShaderV71, "inverseRY")
 	blurShaderV71FragLoc = glGetUniformLocation(blurShaderV71, "fragBlurAmplifier")
 
-	dilateShaderH51Text0Loc = glGetUniformLocation(dilateShaderH51, "texture0")
-	dilateShaderH51InvRXLoc = glGetUniformLocation(dilateShaderH51, "inverseRX")
-	dilateShaderV51Text0Loc = glGetUniformLocation(dilateShaderV51, "texture0")
-	dilateShaderV51InvRYLoc = glGetUniformLocation(dilateShaderV51, "inverseRY")
-
 	combineShaderDebgDrawLoc = glGetUniformLocation(combineShader, "debugDraw")
 	combineShaderTexture0Loc = glGetUniformLocation(combineShader, "texture0")
 	combineShaderTexture1Loc = glGetUniformLocation(combineShader, "texture1")
@@ -431,8 +362,6 @@ function widget:Shutdown()
 		glDeleteShader(brightShader or 0)
 		glDeleteShader(blurShaderH71 or 0)
 		glDeleteShader(blurShaderV71 or 0)
-		glDeleteShader(dilateShaderH51 or 0)
-		glDeleteShader(dilateShaderV51 or 0)
 		glDeleteShader(combineShader or 0)
 	end
 end
@@ -466,15 +395,15 @@ local function mglActiveTexture(texUnit, tex, w, h, flipS, flipT)
 end
 
 
-local function renderToTextureFunc(tex, s, t)
-	glTexture(tex)
-	glTexRect(-1 * s, -1 * t,1 * s, 1 * t) --the viewport coords are (-1,-1) to (1,1), and boy are they not linear!
-	glTexture(false)
-end
+-- local function renderToTextureFunc(tex, s, t)
+	-- glTexture(tex)
+	-- glTexRect(-1 * s, -1 * t,1 * s, 1 * t) --the viewport coords are (-1,-1) to (1,1), and boy are they not linear!
+	-- glTexture(false)
+-- end
 
-local function mglRenderToTexture(FBOTex, tex, s, t)  --target, source, coords
-	glRenderToTexture(FBOTex, renderToTextureFunc, tex, s, t)
-end
+-- local function mglRenderToTexture(FBOTex, tex, s, t)  --target, source, coords
+	-- glRenderToTexture(FBOTex, renderToTextureFunc, tex, s, t)
+-- end
 
 
 
@@ -552,31 +481,30 @@ local function Bloom()
 	end
 
 
-	if (dilatePass == 1) then
-		glUseShader(dilateShaderH51)
-			glUniformInt(dilateShaderH51Text0Loc, 0)
-			glUniform(   dilateShaderH51InvRXLoc, ivsx)
-			mglRenderToTexture(brightTexture2, brightTexture1, k,l)
-		glUseShader(0)
-		glUseShader(dilateShaderV51)
-			glUniformInt(dilateShaderV51Text0Loc, 0)
-			glUniform(   dilateShaderV51InvRYLoc, ivsy)
-			mglRenderToTexture(brightTexture1, brightTexture2,k,l)
-		glUseShader(0)
-	end
-
 
 	glUseShader(combineShader)
 		glUniformInt(combineShaderDebgDrawLoc, dbgDraw)
 		glUniformInt(combineShaderTexture0Loc, 0)
 		glUniformInt(combineShaderTexture1Loc, 1)
-		mglActiveTexture(0, screenTexture, vsx, vsy, false, true)
-		mglActiveTexture(1, brightTexture1, vsx, vsy, false, true)
+		--mglActiveTexture(0, screenTexture, vsx, vsy, false, true)
+		glTexture(0, screenTexture)
+		--glTexRect(0, 0, vsx, vsy, false, true)
+		
+			gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1)
+		glTexture(0, false)
+		--mglActiveTexture(1, brightTexture1, vsx, vsy, false, true)
+		glTexture(1, brightTexture1)
+		--glTexRect(0, 0, vsx, vsy, false, true)
+		
+			gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1)
+		glTexture(1, false)
 	glUseShader(0)
 	--gl.Finish()
 end
 
-function widget:DrawScreenEffects() Bloom() end
+
+--function widget:DrawScreenEffects() Bloom() end --drawworld draws in world space, would need a diff draw matrix...
+function widget:DrawWorld() Bloom() end --drawworld draws in world space, would need a diff draw matrix...
 
 
 
@@ -594,8 +522,6 @@ function widget:TextCommand(command)
 	if (string.find(command, "+blurpasses") == 1) then blurPasses = blurPasses + 1; mycommand=true  end
 	if (string.find(command, "-blurpasses") == 1) then blurPasses = blurPasses - 1 ; mycommand=true end
 
-	if (string.find(command, "+dilatepass") == 1) then dilatePass = 1 ; mycommand=true end
-	if (string.find(command, "-dilatepass") == 1) then dilatePass = 0 ; mycommand=true end
 
 	if (string.find(command, "+bloomdebug") == 1) then dbgDraw = 1; mycommand=true  end
 	if (string.find(command, "-bloomdebug") == 1) then dbgDraw = 0 ; mycommand=true end
@@ -608,6 +534,5 @@ function widget:TextCommand(command)
 		Spring.Echo("   glowAmplifier:  " .. glowAmplifier)
 		Spring.Echo("   blurAmplifier:  " .. blurAmplifier)
 		Spring.Echo("   blurPasses:     " .. blurPasses)
-		Spring.Echo("   dilatePass:     " .. dilatePass)
 	end
 end

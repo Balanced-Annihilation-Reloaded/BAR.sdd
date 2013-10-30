@@ -241,19 +241,20 @@ function widget:Initialize()
 		
 		vec3 info = texture2D(infotex, vec2(mappos4.x*mapxmul, mappos4.z*mapzmul));
 		vec3 color= texture2D(colortex,gl_TexCoord[0].st);
-		gl_FragColor=vec4(dbg, info.r,info.g,0.9);//infotex debugging
+		gl_FragColor=vec4( info.r,info.g,info.b,0.9);//infotex debugging
 		//gl_FragColor = vec4(fract(mappos4.x/50),fract(mappos4.y/50),fract(mappos4.z/50), 1.0);
-		return;
+		//return;
 		float rnd= 2*rand(gl_TexCoord[0].st);
 		float desat=dot(vec3(0.28,0.48,0.24),color)*0.33333;
 		float noisefactor=clamp((1-info.g+info.b),0,1);
 		float desatfactor=clamp((0.5-info.r)*2,0,1);
-		float darkenfactor=clamp((1-info.r),0,1);
+		float darkenfactor=clamp((1-info.r)*0.5,0,1);
 		
-		vec3 newcolor= color*(rnd*noisefactor);
-		newcolor = mix(color, vec3(desat,desat,desat),desatfactor);
-		newcolor = mix(color, color*darkenfactor,desatfactor);
+		vec3 newcolor= mix(color, color*rnd,noisefactor);
+		newcolor = mix(newcolor, vec3(desat,desat,desat),desatfactor*0.9);
+		newcolor = newcolor*(1-darkenfactor);
 		gl_FragColor=vec4(newcolor.rgb,1);
+		//gl_FragColor=vec4(noisefactor,desatfactor,darkenfactor,1);
 		
 		
 	#ifdef DEBUG_GFX // world position debugging
@@ -622,7 +623,7 @@ local function DrawLOS()
 
 
 	-- render a full screen quad
-	glTexture(0, "$info")
+	glTexture(0, "$info_losmap")
 	--glTexture(0, false)
 	glTexture(1 , screenTexture)
 	glTexture(2 , "$model_gbuffer_zvaltex")
@@ -636,7 +637,7 @@ local function DrawLOS()
 	glTexture(1,false)
 	glTexture(2,false)
 	glTexture(3,false)
-	Spring.Echo('shaded')
+	--Spring.Echo('shaded')
 	glUseShader(0)
 
 end
@@ -659,7 +660,7 @@ function widget:DrawWorld()
 		if status==false then  -- losshader just got turned on
 		status=true
 		Spring.Echo('Turning on LOS mode')
-		Spring.SetLosViewColors (	{0,1,0,0}, --R number always, number LOS, number radar, number jam 
+		Spring.SetLosViewColors (	{0,255.0/256.0,0,0}, --R number always, number LOS, number radar, number jam 
 									{0,0,1,0}, --G number always, number LOS, number radar, number jam 
 									{0,0,0,1}) --B number always, number LOS, number radar, number jam 
 		else --we were already on

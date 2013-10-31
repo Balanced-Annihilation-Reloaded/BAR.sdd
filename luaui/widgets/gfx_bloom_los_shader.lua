@@ -126,6 +126,7 @@ local losShaderInfoTexLoc = nil
 local losShaderColorTexLoc = nil
 local losShaderModelDepthTexLoc = nil 
 local losShaderMapDepthTexLoc = nil
+local losShaderGameFrameLoc = nil
 	
 
 
@@ -222,8 +223,9 @@ function widget:Initialize()
 	uniform sampler2D modeldepthtex;
 	uniform sampler2D mapdepthtex;
 	uniform mat4 viewProjectionInv;
-	float rand(vec2 co){
-		return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+	uniform float gameframe;
+	float rand(vec2 co, float gf){
+		return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453+gf*0.01);
 	}
 	void main(void)
 	{
@@ -244,14 +246,14 @@ function widget:Initialize()
 		gl_FragColor=vec4( info.r,info.g,info.b,0.9);//infotex debugging
 		//gl_FragColor = vec4(fract(mappos4.x/50),fract(mappos4.y/50),fract(mappos4.z/50), 1.0);
 		//return;
-		float rnd= 2*rand(gl_TexCoord[0].st);
-		float desat=dot(vec3(0.28,0.48,0.24),color)*0.33333;
+		float rnd= 2*rand(gl_TexCoord[0].st,gameframe);
 		float noisefactor=clamp((1-info.g+info.b),0,1);
 		float desatfactor=clamp((0.5-info.r)*2,0,1);
-		float darkenfactor=clamp((1-info.r)*0.5,0,1);
+		float darkenfactor=clamp((1-info.r)*0.25,0,1);
 		
-		vec3 newcolor= mix(color, color*rnd,noisefactor);
-		newcolor = mix(newcolor, vec3(desat,desat,desat),desatfactor*0.9);
+		vec3 newcolor= mix(color, color*(0.95+0.1*rnd),noisefactor);
+		float desat=dot(vec3(0.2,0.7,0.1),newcolor);
+		newcolor = mix(newcolor, vec3(desat,desat,desat),desatfactor);
 		newcolor = newcolor*(1-darkenfactor);
 		gl_FragColor=vec4(newcolor.rgb,1);
 		//gl_FragColor=vec4(noisefactor,desatfactor,darkenfactor,1);
@@ -277,7 +279,8 @@ function widget:Initialize()
 				gl_Position    = gl_Vertex;
 			}
 		]],
-		uniformInt = { infotex = 0,colortex = 1,modeldepthtex = 2, mapdepthtex = 3}
+		uniformInt = { infotex = 0,colortex = 1,modeldepthtex = 2, mapdepthtex = 3},
+		uniformfloat = { gameframe=0}
 	})
 
 	if (losShader == nil) then
@@ -448,6 +451,7 @@ function widget:Initialize()
 	losShaderColorTexLoc =glGetUniformLocation(losShader, 'colortex')
 	losShaderModelDepthTexLoc =glGetUniformLocation(losShader, 'modeldepthtex')
 	losShaderMapDepthTexLoc =glGetUniformLocation(losShader, 'mapdepthtex')
+	losShaderGameFrameLoc =glGetUniformLocation(losShader, 'gameframe')
 	
 
 end
@@ -611,6 +615,8 @@ end
 
 
 
+local spGetGameFrame = Spring.GetGameFrame
+local cnt=0
 local function DrawLOS()
 	gl.Color(1,1,1,1)
 	glCopyToTexture(screenTexture, 0, 0, 0, 0, vsx, vsy, nil,0)
@@ -619,7 +625,10 @@ local function DrawLOS()
 	glUseShader(losShader)
 
 	-- set uniforms
+	cnt=cnt+1
+	-- Spring.Echo(cnt)
 	glUniformMatrix(losShaderViewPrjInvLoc,  "viewprojectioninverse")
+	glUniform(losShaderGameFrameLoc,  cnt)
 
 
 	-- render a full screen quad

@@ -137,7 +137,8 @@ local minimapbrightness=nil
 local mx =math.pow(2, math.ceil(math.log(Game.mapSizeX)/math.log(2)))-- Game.mapSizeX
 local mz =math.pow(2, math.ceil(math.log(Game.mapSizeZ)/math.log(2)))-- Game.mapSizeZ
 local gnd_min, gnd_max = Spring.GetGroundExtremes()
-gnd_min=gnd_min-100 --just in case we blow a massive hole in the map.
+gnd_min=gnd_min --just in case we blow a massive hole in the map.
+
 
 local function SetIllumThreshold()
 	local ra, ga, ba = glGetSun("ambient")
@@ -203,7 +204,9 @@ end
 
 widget:ViewResize(widgetHandler:GetViewSizes())
 
-
+--- default uikeys, unbind!
+--//  bind              Any+l  togglelos
+--//  bind              Any+;  toggleradarandjammer
 
 
 function widget:Initialize()
@@ -212,12 +215,19 @@ function widget:Initialize()
 		return
 	end
 
+	Spring.SendCommands("unbind Any+l togglelos")
+	Spring.SendCommands("bind Any+l luaui los")
 	SetIllumThreshold()
 
 	
 	losFragSrc=([[
 	const float mapxmul= 1.0 / %f;
 	const float mapzmul= 1.0 / %f;
+	const float mapxmax = %f ;
+	const float mapzmax = %f ;
+	const float mapymin = %f ;
+	const float mapymax = %f ;
+	
 	uniform sampler2D infotex; // r=los, g= radar, b=jammer
 	uniform sampler2D colortex;
 	uniform sampler2D modeldepthtex;
@@ -232,10 +242,10 @@ function widget:Initialize()
 
 		vec4 mappos4 =vec4(vec3(gl_TexCoord[0].st, texture2D( mapdepthtex,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
 		vec4 modelpos4 =vec4(vec3(gl_TexCoord[0].st, texture2D( modeldepthtex,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
-		float dbg=1;
-		if ((mappos4.z-modelpos4.z)> 0) { // this means we are processing a model fragment, not a map fragment
+		float mapfragment=1.0;
+		if ((mappos4.z-modelpos4.z)> 0.0) { // this means we are processing a model fragment, not a map fragment
 			mappos4 = modelpos4;
-			dbg=0;
+			mapfragment=0.0;
 		}
 		mappos4 = viewProjectionInv * mappos4;
 		mappos4.xyz = mappos4.xyz / mappos4.w;
@@ -247,16 +257,18 @@ function widget:Initialize()
 		//gl_FragColor = vec4(fract(mappos4.x/50),fract(mappos4.y/50),fract(mappos4.z/50), 1.0);
 		//return;
 		float rnd= 2*rand(gl_TexCoord[0].st,gameframe);
-		float noisefactor=clamp((1-info.g+info.b),0,1); //noise is applied to non-radar or jammed areas
-		float desatfactor=clamp((0.5-info.r)*2,0,1);  //desaturation is be applied to areas outside of airlos 
-		float darkenfactor=clamp((1-info.r)*0.4,0,1); //darkening is applied to areas outside of normal los
-		
-		vec3 newcolor= mix(color, color*(0.95+0.1*rnd),(noisefactor*dbg)*(darkenfactor*1.5+0.5));
+		float noisefactor=clamp((1.0-info.g+info.b),0.0,1.0); //noise is applied to non-radar or jammed areas
+		float desatfactor=clamp((0.5-info.r)*2,0.0,1.0);  //desaturation is be applied to areas outside of airlos 
+		float darkenfactor=clamp((1.0-info.r)*0.4,0.0,1.0); //darkening is applied to areas outside of normal los
+		float gamestartfactor=min(1.0, gameframe);
+		if (mappos.z>mapxmax || mappos.z<0.0 || mappos.x>mapxmaz || mappos.x<0.0 || mappos.y>mapymax || mappos.y<mapymin) gamestartfactor=0; / i hope to god that this isnt expensive, Ill have to check disassembly.
+		vec3 newcolor= mix(color, color*(0.95+0.1*rnd),(noisefactor*mapfragment)*(darkenfactor*1.5+0.5));
 		float desat=dot(vec3(0.2,0.7,0.1),newcolor);
 		newcolor = mix(newcolor, vec3(desat,desat,desat),desatfactor);
-		newcolor = newcolor*(1-darkenfactor);
-		gl_FragColor=vec4(newcolor.rgb,1);
-		//gl_FragColor=vec4(noisefactor,desatfactor,darkenfactor,1);
+		newcolor = newcolor*(1.0-darkenfactor);
+		newcolor=mix(color,newcolor, gamestartfactor);
+		gl_FragColor=vec4(newcolor.rgb,1.0);
+		//gl_FragColor=vec4(noisefactor,desatfactor,darkenfactor,1.0);
 		
 		
 	#ifdef DEBUG_GFX // world position debugging
@@ -265,7 +277,7 @@ function widget:Initialize()
 		gl_FragColor = vec4(fract(worldPos.x/50),fract(worldPos.y/50),fract(worldPos.z/50), 1.0);
 		return; // BAIL
 	#endif
-	} ]]):format(mx,mz)
+	} ]]):format(mx,mz, Game.mapSizeX, Game.mapSizeZ, gnd_min -100, gnd_max+1000)
 	
 	losShader = glCreateShader({
 		fragment = losFragSrc,
@@ -457,6 +469,8 @@ function widget:Initialize()
 end
 
 function widget:Shutdown()
+	Spring.SendCommands("unbind Any+l luaui los")
+	Spring.SendCommands("bind Any+l togglelos")
 	glDeleteTexture(brightTexture1 or "")
 	glDeleteTexture(brightTexture2 or "")
 	glDeleteTexture(screenTexture or "")
@@ -628,7 +642,7 @@ local function DrawLOS()
 	cnt=cnt+1
 	-- Spring.Echo(cnt)
 	glUniformMatrix(losShaderViewPrjInvLoc,  "viewprojectioninverse")
-	glUniform(losShaderGameFrameLoc,  cnt)
+	glUniform(losShaderGameFrameLoc,  (spGetGameFrame)/150.0)
 
 
 	-- render a full screen quad
@@ -662,8 +676,6 @@ local spUpdateInfoTexture = Spring.UpdateInfoTexture
 local spGetMapDrawMode = Spring.GetMapDrawMode
 
 function widget:DrawWorld()
-	gf=spGetGameFrame()
-	spUpdateInfoTexture(1) --update info tex, normally a 1% load with extratextureupdaterate set to 45
 
 	if useLOS then 
 		if status==false then  -- losshader just got turned on
@@ -674,9 +686,15 @@ function widget:DrawWorld()
 									{0,0,0,1}) --B number always, number LOS, number radar, number jam 
 		else --we were already on
 		end
+	else 
+		status=false
 	end
 	
 	if status then
+		gf=spGetGameFrame()
+		if gf%13==0 then
+			spUpdateInfoTexture(1) --update info tex, normally a 1% load with extratextureupdaterate set to 45, now its an unknown amount of load :(
+		end
 		DrawLOS()
 	end
 	

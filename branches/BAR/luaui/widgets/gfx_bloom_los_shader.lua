@@ -232,10 +232,10 @@ function widget:Initialize()
 
 		vec4 mappos4 =vec4(vec3(gl_TexCoord[0].st, texture2D( mapdepthtex,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
 		vec4 modelpos4 =vec4(vec3(gl_TexCoord[0].st, texture2D( modeldepthtex,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
-		float dbg=0;
+		float dbg=1;
 		if ((mappos4.z-modelpos4.z)> 0) { // this means we are processing a model fragment, not a map fragment
 			mappos4 = modelpos4;
-			dbg=1;
+			dbg=0;
 		}
 		mappos4 = viewProjectionInv * mappos4;
 		mappos4.xyz = mappos4.xyz / mappos4.w;
@@ -247,11 +247,11 @@ function widget:Initialize()
 		//gl_FragColor = vec4(fract(mappos4.x/50),fract(mappos4.y/50),fract(mappos4.z/50), 1.0);
 		//return;
 		float rnd= 2*rand(gl_TexCoord[0].st,gameframe);
-		float noisefactor=clamp((1-info.g+info.b),0,1);
-		float desatfactor=clamp((0.5-info.r)*2,0,1);
-		float darkenfactor=clamp((1-info.r)*0.25,0,1);
+		float noisefactor=clamp((1-info.g+info.b),0,1); //noise is applied to non-radar or jammed areas
+		float desatfactor=clamp((0.5-info.r)*2,0,1);  //desaturation is be applied to areas outside of airlos 
+		float darkenfactor=clamp((1-info.r)*0.4,0,1); //darkening is applied to areas outside of normal los
 		
-		vec3 newcolor= mix(color, color*(0.95+0.1*rnd),noisefactor);
+		vec3 newcolor= mix(color, color*(0.95+0.1*rnd),(noisefactor*dbg)*(darkenfactor*1.5+0.5));
 		float desat=dot(vec3(0.2,0.7,0.1),newcolor);
 		newcolor = mix(newcolor, vec3(desat,desat,desat),desatfactor);
 		newcolor = newcolor*(1-darkenfactor);

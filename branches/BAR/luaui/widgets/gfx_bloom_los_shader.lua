@@ -235,7 +235,7 @@ function widget:Initialize()
 	uniform mat4 viewProjectionInv;
 	uniform float gameframe;
 	float rand(vec2 co, float gf){
-		return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453+gf*0.01);
+		return fract(sin(dot(co.xy ,vec2(12.9898,78.233)) +gf) * 43758.5453);
 	}
 	void main(void)
 	{
@@ -261,7 +261,7 @@ function widget:Initialize()
 		float desatfactor=clamp((0.5-info.r)*2,0.0,1.0);  //desaturation is be applied to areas outside of airlos 
 		float darkenfactor=clamp((1.0-info.r)*0.4,0.0,1.0); //darkening is applied to areas outside of normal los
 		float gamestartfactor=min(1.0, gameframe);
-		if (mappos.z>mapxmax || mappos.z<0.0 || mappos.x>mapxmaz || mappos.x<0.0 || mappos.y>mapymax || mappos.y<mapymin) gamestartfactor=0; / i hope to god that this isnt expensive, Ill have to check disassembly.
+		if (mappos4.z>mapxmax || mappos4.z<0.0 || mappos4.x>mapxmax || mappos4.x<0.0 || mappos4.y>mapymax || mappos4.y<mapymin) gamestartfactor=0; // i hope to god that this isnt expensive, Ill have to check disassembly.
 		vec3 newcolor= mix(color, color*(0.95+0.1*rnd),(noisefactor*mapfragment)*(darkenfactor*1.5+0.5));
 		float desat=dot(vec3(0.2,0.7,0.1),newcolor);
 		newcolor = mix(newcolor, vec3(desat,desat,desat),desatfactor);
@@ -642,7 +642,7 @@ local function DrawLOS()
 	cnt=cnt+1
 	-- Spring.Echo(cnt)
 	glUniformMatrix(losShaderViewPrjInvLoc,  "viewprojectioninverse")
-	glUniform(losShaderGameFrameLoc,  (spGetGameFrame)/150.0)
+	glUniform(losShaderGameFrameLoc,  (spGetGameFrame())/150.0)
 
 
 	-- render a full screen quad
@@ -692,9 +692,9 @@ function widget:DrawWorld()
 	
 	if status then
 		gf=spGetGameFrame()
-		if gf%13==0 then
+		--if gf%13==0 then
 			spUpdateInfoTexture(1) --update info tex, normally a 1% load with extratextureupdaterate set to 45, now its an unknown amount of load :(
-		end
+		--end
 		DrawLOS()
 	end
 	

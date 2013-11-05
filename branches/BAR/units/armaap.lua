@@ -5,10 +5,6 @@ return {
 		buildcostenergy = 26986,
 		buildcostmetal = 3006,
 		builder = true,
-		buildinggrounddecaldecayspeed = 30,
-		buildinggrounddecalsizex = 9,
-		buildinggrounddecalsizey = 7,
-		buildinggrounddecaltype = "armaap_aoplane.dds",
 		buildpic = "ARMAAP.DDS",
 		buildtime = 20851,
 		canmove = true,
@@ -36,7 +32,7 @@ return {
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 312,
 		terraformspeed = 1000,
-		usebuildinggrounddecal = true,
+
 		workertime = 200,
 		yardmap = "oooooooooooooooooooooooooooooooooooooooooooooooo",
 		customparams = {
@@ -117,5 +113,9 @@ return {
 				[1] = "pairactv",
 			},
 		},
-	},
+		buildingGroundDecalDecaySpeed=30,
+	buildingGroundDecalSizeX=9,
+	buildingGroundDecalSizeY=7,
+	useBuildingGroundDecal = true,
+	buildingGroundDecalType=[[armaap_aoplane.dds]],},
 }

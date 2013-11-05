@@ -4,10 +4,10 @@ return {
 		brakerate = 0,
 		buildcostenergy = 12896,
 		buildcostmetal = 638,
-		buildinggrounddecaldecayspeed = 30,
-		buildinggrounddecalsizex = 5,
-		buildinggrounddecalsizey = 5,
-		buildinggrounddecaltype = "armpb_aoplane.dds",
+
+
+
+
 		buildpic = "ARMPB.DDS",
 		buildtime = 14961,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -32,7 +32,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 598,
-		usebuildinggrounddecal = true,
+
 		yardmap = "ooooooooo",
 		
 		customparams = {
@@ -138,5 +138,9 @@ return {
 				onlytargetcategory = "SURFACE",
 			},
 		},
-	},
+		buildingGroundDecalDecaySpeed=30,
+	buildingGroundDecalSizeX=5,
+	buildingGroundDecalSizeY=5,
+	useBuildingGroundDecal = true,
+	buildingGroundDecalType=[[armpb_aoplane.dds]],},
 }

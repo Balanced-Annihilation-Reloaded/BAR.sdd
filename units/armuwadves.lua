@@ -3,10 +3,10 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 10094,
 		buildcostmetal = 773,
-		buildinggrounddecaldecayspeed = 30,
-		buildinggrounddecalsizex = 6,
-		buildinggrounddecalsizey = 6,
-		buildinggrounddecaltype = "armuwadves_aoplane.dds",
+
+
+
+
 		buildpic = "ARMUWADVES.DDS",
 		buildtime = 20302,
 		category = "ALL NOTSUB NOWEAPON NOTAIR NOTHOVER SURFACE",
@@ -31,7 +31,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "MINE_NUKE",
 		sightdistance = 169,
-		usebuildinggrounddecal = true,
+
 		yardmap = "oooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -91,5 +91,9 @@ return {
 				[1] = "storngy1",
 			},
 		},
-	},
+		buildingGroundDecalDecaySpeed=30,
+	buildingGroundDecalSizeX=6,
+	buildingGroundDecalSizeY=6,
+	useBuildingGroundDecal = true,
+	buildingGroundDecalType=[[armuwadves_aoplane.dds]],},
 }

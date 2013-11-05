@@ -4,10 +4,10 @@ return {
 		brakerate = 0,
 		buildcostenergy = 16581,
 		buildcostmetal = 597,
-		buildinggrounddecaldecayspeed = 30,
-		buildinggrounddecalsizex = 6,
-		buildinggrounddecalsizey = 6,
-		buildinggrounddecaltype = "ajuno_aoplane.dds",
+
+
+
+
 		buildpic = "AJUNO.DDS",
 		buildtime = 21833,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -32,7 +32,7 @@ return {
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 494,
 		stealth = true,
-		usebuildinggrounddecal = true,
+
 		yardmap = "oooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -155,5 +155,9 @@ return {
 				onlytargetcategory = "NOTSUB",
 			},
 		},
-	},
+		buildingGroundDecalDecaySpeed=30,
+	buildingGroundDecalSizeX=6,
+	buildingGroundDecalSizeY=6,
+	useBuildingGroundDecal = true,
+	buildingGroundDecalType=[[ajuno_aoplane.dds]],},
 }

@@ -27,13 +27,17 @@ return {
 		metalstorage = 50,
 		minwaterdepth = 15,
 		name = "Underwater Metal Extractor",
-		objectname = "ARMUWMEX",
+		objectname = "ARMUWMEX.s3o",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructcountdown = 1,
 		sightdistance = 182,
 		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

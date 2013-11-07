@@ -100,24 +100,25 @@ end
 --------------------------- Adds icons/commands to the menu panels accordingly
 --
 local function createMenus()
-	
+	local cat = cat
 	local menuCat
 	local cmdList = spGetActiveCmdDescs()
 	
-	
+	-- Parses through each active cmd and gives it its own button
 	for i = 1, #cmdList do
 		local cmd = cmdList[i]
 		if cmd.name ~= '' and not (ignoreCMDs[cmd.name] or ignoreCMDs[cmd.action]) then
 			
-			--decides which category a unit is in
+			-- decides which category a unit is in
 			for i=1, #catNames do
-				if cat[catNames[i]][cmd.name] then
+				local category = cat[catNames[i]]
+				if category[cmd.name] then
 					menuCat = i
 					buildMenu.active = true
 					break
 				end
 			end
-			
+		
 			local button = Chili.Button:New{
 				caption = '',
 				cmdName   = cmd.name,
@@ -130,7 +131,8 @@ local function createMenus()
 			}
 			
 			-- for units
-			if menuCat then
+			if menuCat and #buildArray[menuCat] < 14 then
+				
 				local caption = queue[-cmd.id] or ''
 				
 				local image = Chili.Image:New{
@@ -158,7 +160,7 @@ local function createMenus()
 				stateMenu:AddChild(button)
 				
 			-- For commands
-			else
+			elseif cmd.id > 0 then
 				local oNum = #orderMenu.children
 				
 				local image = Chili.Image:New{

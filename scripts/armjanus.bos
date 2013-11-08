@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  hole1, hole2, turret, launcher, base;
+piece  flarel,flarer, barrelr,barrell,turret, base;
 
 static-var  restore_delay, gun_2;
 
@@ -53,9 +53,8 @@ HitByWeapon(Func_Var_1, Func_Var_2)
 
 Create()
 {
-	hide hole1;
-	hide hole2;
-	gun_2 = hole1;
+
+	gun_2 = flarel;
 	restore_delay = 3000;
 	start-script SmokeUnit();
 }
@@ -69,7 +68,8 @@ RestoreAfterDelay()
 {
 	sleep restore_delay;
 	turn turret to y-axis <0.000000> speed <80.000000>;
-	turn launcher to x-axis <0.000000> speed <50.000000>;
+	turn barrell to x-axis <0.000000> speed <50.000000>;
+	turn barrelr to x-axis <0.000000> speed <50.000000>;
 }
 
 AimPrimary(heading, pitch)
@@ -77,18 +77,16 @@ AimPrimary(heading, pitch)
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
 	turn turret to y-axis heading speed <80.000000>;
-	turn launcher to x-axis <0.000000> - pitch speed <50.000000>;
+	turn barrell to x-axis <0.000000> - pitch speed <50.000000>;
 	wait-for-turn turret around y-axis;
-	wait-for-turn launcher around x-axis;
+	wait-for-turn barrell around x-axis;
 	start-script RestoreAfterDelay();
 	return (1);
 }
 
 FirePrimary()
 {
-	show hole1;
 	sleep 150;
-	hide hole1;
 	gun_2 = !gun_2;
 }
 
@@ -99,7 +97,7 @@ AimFromPrimary(piecenum)
 
 QueryPrimary(piecenum)
 {
-	piecenum = hole1;
+	piecenum = flarel;
 }
 
 AimSecondary(heading, pitch)
@@ -107,18 +105,16 @@ AimSecondary(heading, pitch)
 	signal SIG_AIM_2;
 	set-signal-mask SIG_AIM_2;
 	turn turret to y-axis heading speed <80.000000>;
-	turn launcher to x-axis <0.000000> - pitch speed <50.000000>;
+	turn barrelr to x-axis <0.000000> - pitch speed <50.000000>;
 	wait-for-turn turret around y-axis;
-	wait-for-turn launcher around x-axis;
+	wait-for-turn barrelr around x-axis;
 	start-script RestoreAfterDelay();
 	return (1);
 }
 
 FireSecondary()
 {
-	show hole2;
 	sleep 150;
-	hide hole2;
 	gun_2 = !gun_2;
 }
 
@@ -129,7 +125,7 @@ AimFromSecondary(piecenum)
 
 QuerySecondary(piecenum)
 {
-	piecenum = hole2;
+	piecenum = flarer;
 }
 
 SweetSpot(piecenum)
@@ -139,42 +135,24 @@ SweetSpot(piecenum)
 
 Killed(severity, corpsetype)
 {
-	hide hole1;
-	hide hole2;
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP2;
-		explode hole1 type BITMAPONLY | BITMAP3;
-		explode hole2 type BITMAPONLY | BITMAP3;
-		explode launcher type BITMAPONLY | BITMAP4;
-		explode turret type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP2;
-		explode hole1 type FALL | BITMAP3;
-		explode hole2 type FALL | BITMAP3;
-		explode launcher type SHATTER | BITMAP4;
-		explode turret type FALL | BITMAP3;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP2;
-		explode hole1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode hole2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode launcher type SHATTER | BITMAP4;
-		explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP2;
-	explode hole1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode hole2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode launcher type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-	explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
 }

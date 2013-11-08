@@ -25,7 +25,7 @@ return {
 		movementclass = "TANK2",
 		name = "Janus",
 		nochasecategory = "VTOL",
-		objectname = "ARMJANUS",
+		objectname = "ARMJANUS.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 325,
@@ -34,6 +34,10 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 24,
 		turnrate = 338.79998779297,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

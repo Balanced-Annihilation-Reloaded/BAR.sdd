@@ -277,7 +277,10 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 local status = false
+
 function widget:DrawWorld()
+	gf=Spring.GetGameFrame()
+	Spring.UpdateInfoTexture(2) --update info tex, normally a 1% load with extratextureupdaterate set to 45
 	if Spring.GetMapDrawMode() == "los" then
 		if status==false then -- losshader just got turned on
 			status=true
@@ -288,16 +291,16 @@ function widget:DrawWorld()
 			
 		else --we were already on
 		end
-	else --not in los mode
-		if status == true then --we must turn off shader
-			status= false
+	--else --not in los mode
+		--if status == true then --we must turn off shader
+		--	status= false
 			
-			Spring.Echo('Turning off LOS mode')
-			Spring.SetLosViewColors (	{0.25, 0.15, 0.05, 0.25}, --number always, number LOS, number radar, number jam 
-										{0.25, 0.05, 0.15, 0.00},
-										{0.25, 0.40, -0.2, 0.00})
-		else -- already off
-		end
+			--Spring.Echo('Turning off LOS mode')
+			--Spring.SetLosViewColors (	{0.25, 0.15, 0.05, 0.25}, --number always, number LOS, number radar, number jam 
+								--		{0.25, 0.05, 0.15, 0.00},
+								--		{0.25, 0.40, -0.2, 0.00})
+		--else -- already off
+		--end
 	end
 	if status then
 		if (GLSLRenderer) then

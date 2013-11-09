@@ -27,7 +27,7 @@ walk()
 		turn lleg to x-axis <53.489011> speed <456.501042> *  currentSpeed / 100;
 		turn rleg to x-axis <53.489011> speed <456.501042> *  currentSpeed / 100;
 		turn rfoot to x-axis <-37.846154> speed <322.997349> *  currentSpeed / 100;
-		sleep 6800 / currentSpeed;
+		sleep 2300 / currentSpeed;
 	}
 	if( bMoving )
 	{
@@ -345,7 +345,7 @@ MotionControl(moving, aiming, justmoved)
 				}
 				justmoved = FALSE;
 			}
-			sleep 100;
+			sleep 20;
 		}
 	}
 }
@@ -397,7 +397,7 @@ Create()
 	bAiming = FALSE;
 	Static_Var_3 = 1;
 	gun_1 = 0;
-	moveSpeed = get MAX_SPEED;
+	moveSpeed = get (MAX_SPEED*135)/100;
 	currentSpeed = 100;
 	restore_delay = 3000;
 	start-script SmokeUnit();

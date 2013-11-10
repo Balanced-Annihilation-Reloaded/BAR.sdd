@@ -27,7 +27,7 @@ return {
 		maxwaterdepth = 22,
 		movementclass = "KBOT2",
 		name = "Rector",
-		objectname = "ARMRECTR",
+		objectname = "ARMRECTR.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
@@ -37,6 +37,10 @@ return {
 		turnrate = 1122,
 		upright = true,
 		workertime = 200,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

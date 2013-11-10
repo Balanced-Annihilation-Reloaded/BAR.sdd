@@ -25,12 +25,16 @@ return {
 		movementclass = "KBOT2",
 		name = "Hammer",
 		nochasecategory = "VTOL",
-		objectname = "ARMHAM",
+		objectname = "ARMHAM.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 380,
 		turnrate = 1094,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

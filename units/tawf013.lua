@@ -26,7 +26,7 @@ return {
 		movementclass = "TANK3",
 		name = "Shellshocker",
 		nochasecategory = "VTOL",
-		objectname = "TAWF013",
+		objectname = "TAWF013.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 364,
@@ -37,6 +37,8 @@ return {
 		turnrate = 393.79998779297,
 		customparams = {
 			canareaattack = 1,
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

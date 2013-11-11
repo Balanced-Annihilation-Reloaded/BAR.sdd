@@ -17,9 +17,9 @@ activatescr()
 	if( TRUE )
 	{
 		move doorl to x-axis [0.0] now;
-		move doorl to x-axis [-24.0] speed [24];
+		move doorl to x-axis [-27.0] speed [27];
 		move doorr to x-axis [0.0] now;
-		move doorr to x-axis [24.0] speed [24];
+		move doorr to x-axis [27.0] speed [27];
 		wait-for-move doorl along x-axis;
 		sleep 1000;
 	}

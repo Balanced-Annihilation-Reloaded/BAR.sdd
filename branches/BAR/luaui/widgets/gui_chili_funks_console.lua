@@ -17,7 +17,6 @@ local box
 local numShowMsg = 1
 local windowHeight = 1
 
-
 local function updateMsgWindow()
 	conOut:ClearChildren()
 	local text = ''
@@ -34,8 +33,8 @@ local function updateMsgWindow()
 	end
 	box = Chili.TextBox:New{name='console',width=300,text=text}  --inefficient to make a new one of these every time TODO: don't clear child and update text
 	local wText = box.font:WrapText(text, 300, 500)
-	_,_,box.lines = box.font:GetTextHeight(wText)
-	conOut:Resize(300,(box.lines-1)*15)
+	_,_,box.lines = box.font:GetTextHeight(wText) 
+	conOut:Resize(300,math.max(0,(box.lines-1))*15)
 	conOut:AddChild(box)
 end
 
@@ -58,16 +57,25 @@ function widget:Initialize()
 	..(1 - (window0.y + window0.height) / Chili.Screen0.height + 0.003)..' 0.02 '..(window0.width / Chili.Screen0.width))
 end
 
+
 function widget:GameFrame(n)
-	if n%60<1 and numShowMsg > 1 then
-		numShowMsg = numShowMsg-1
+	local numClearMsg=0
+	for i=1, numShowMsg do
+		local msg = messages[#messages-numShowMsg+i]
+		if msg.t + 300 < n then
+			numClearMsg = numClearMsg+1
+		end
+	end
+	numShowMsg= math.max(0,numShowMsg-numClearMsg)
+	if numClearMsg>0 or numShowMsg>0 then
 		updateMsgWindow()
 	end
 end
 
 function widget:AddConsoleLine(text,priority)
+	local msgtime=Spring.GetGameFrame()
 	messages[#messages+1] = {}
-	messages[#messages] = {text=text, priority=priority}
+	messages[#messages] = {text=text, priority=priority, t=msgtime}
 	updateMsgWindow()
 	if numShowMsg < 6 then numShowMsg = numShowMsg+1 end
 end

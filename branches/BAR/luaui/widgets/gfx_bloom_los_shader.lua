@@ -207,9 +207,13 @@ widget:ViewResize(widgetHandler:GetViewSizes())
 --- default uikeys, unbind!
 --//  bind              Any+l  togglelos
 --//  bind              Any+;  toggleradarandjammer
-
+local updaterate=45
 
 function widget:Initialize()
+	params=Spring.GetConfigParams()
+	for i,v in ipairs(params) do
+		Spring.Echo(i,v,v.name)
+	end
 	if (glCreateShader == nil) then
 		RemoveMe("[BloomShader::Initialize] removing widget, no shader support")
 		return
@@ -674,7 +678,7 @@ local status =false
 local spGetGameFrame = Spring.GetGameFrame
 local spUpdateInfoTexture = Spring.UpdateInfoTexture
 local spGetMapDrawMode = Spring.GetMapDrawMode
-
+local lastupdate=0
 function widget:DrawWorld()
 
 	if useLOS then 
@@ -690,11 +694,13 @@ function widget:DrawWorld()
 		status=false
 	end
 	
-	if status then
+	if status and spGetMapDrawMode() and spGetMapDrawMode()=="normal" then
 		gf=spGetGameFrame()
+		if gf>lastupdate then
+			lastupdate=gf
 		--if gf%13==0 then
 			spUpdateInfoTexture(1) --update info tex, normally a 1% load with extratextureupdaterate set to 45, now its an unknown amount of load :(
-		--end
+		end
 		DrawLOS()
 	end
 	

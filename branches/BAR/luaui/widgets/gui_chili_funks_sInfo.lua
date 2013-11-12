@@ -284,7 +284,7 @@ end
 
 function widget:GameFrame(n)
 	if n % 2 ~= 0 then return end
-	
+	if curTip== nil then return end
 	if curTip == -3 then --ground
 		local mx, my = spGetMouseState()
 		local focus,map = spTraceScreenRay(mx,my)

@@ -120,7 +120,7 @@ function widget:Initialize()
 end
 
 -- Adds dissappearing text
-function widget:DrawScreen()
+function widget:Update()
 	timer = getTimer()
 	if diffTimers(timer, oldTimer) > msgTime and curMsgNum > 0 then
 		curMsgNum = curMsgNum - 1

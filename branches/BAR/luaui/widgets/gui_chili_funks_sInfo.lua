@@ -312,7 +312,7 @@ end
 --   -2 for so many unitDefIDs that we just give text info (doesn't require updating)
 --   -1 for multiple unitDefIDs that fit with pics (<=9)
 --   >=0 for a single unit & is the unitID
-function widget:DrawScreen(n)
+function widget:Update()
 	
 	if curTip == nil then return end
 	

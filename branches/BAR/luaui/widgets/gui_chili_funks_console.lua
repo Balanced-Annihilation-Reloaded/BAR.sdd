@@ -66,8 +66,8 @@ function widget:Initialize()
 	
 	window0 = Chili.Window:New{
 		parent   = screen,
-		right    = 500,
-		y        = 20,
+		right    = 450,
+		y        = 30,
 		minHeight= 20,
 		height   = 30,
 		width    = 300,
@@ -90,7 +90,7 @@ function widget:Initialize()
 		padding   = {5,5,2,5},
 		minHeight = 15,
 		right     = 450,
-		y         = 50,
+		y         = 60,
 		width     = msgWidth
 	}
 	

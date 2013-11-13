@@ -164,7 +164,7 @@ function widget:Initialize()  --loads .ogg files from the directories to table
 	musicControl = Chili.Control:New{
 		parent   = screen0,
 		right    = 0, 
-		y        = 35, 
+		y        = 45, 
 		height   = 40, 
 		width    = 300, 
 		children = {skipButton,playButton,volume,volumeLbl},
@@ -176,7 +176,7 @@ function widget:Initialize()  --loads .ogg files from the directories to table
 		parent    = screen0,
 		minHeight = 0, 
 		right     = 0, 
-		y         = 20, 
+		y         = 30, 
 		height    = 20,
 		width     = 200,
 		padding   = {5,2,5,0},
@@ -211,9 +211,9 @@ local function playNewTrack(trackList)
 
 	labelString = justTheName(track)
 	songLabel:SetCaption(labelString)
-	spPlaySoundStream(track)
 	Spring.SendCommands('set snd_volmusic 0')
 	Spring.SendCommands('set snd_volmusic ' .. volume.value^2/100+1)
+	spPlaySoundStream(track)
 end	
 	 
 function widget:Shutdown()

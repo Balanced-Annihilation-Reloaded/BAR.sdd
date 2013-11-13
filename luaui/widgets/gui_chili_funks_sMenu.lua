@@ -378,7 +378,7 @@ function widget:CommandsChanged()
 end
 --------------------------- If update is required this Loads the panel and queue for the new unit or hides them if none exists
 --  There is an offset to prevent the panel dissappearing right after a command has changed (for fast clicking)
-function widget:DrawScreen()
+function widget:Update()
 	local timer = spGetTimer()
 	local update = updateRequired and (spDiffTimers(timer, oldTimer) > 0.1)
 	if update then

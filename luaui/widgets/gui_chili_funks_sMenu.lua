@@ -31,6 +31,8 @@ local updateRequired = true
 local updateTab = true
 local selectedUnits = {}
 
+local spGetTimer          = Spring.GetTimer
+local spDiffTimers        = Spring.DiffTimers
 local spGetActiveCmdDesc  = Spring.GetActiveCmdDesc
 local spGetActiveCmdDescs = Spring.GetActiveCmdDescs
 local spGetActiveCommand  = Spring.GetActiveCommand
@@ -42,6 +44,8 @@ local spSetActiveCommand  = Spring.SetActiveCommand
 
 local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
+
+local oldTimer = spGetTimer()
 
 ---------------------------
 --
@@ -374,14 +378,17 @@ function widget:CommandsChanged()
 end
 --------------------------- If update is required this Loads the panel and queue for the new unit or hides them if none exists
 --  There is an offset to prevent the panel dissappearing right after a command has changed (for fast clicking)
-function widget:GameFrame(n)
-	if updateRequired == true and ((n % 4) < 1) then
+function widget:DrawScreen()
+	local timer = spGetTimer()
+	local update = updateRequired and (spDiffTimers(timer, oldTimer) > 0.1)
+	if update then
 		updateRequired = false
 		queue = {}
 		queueHandler()
 		loadPanels()
 		if not buildMenu.active and buildMenu.visible then buildMenu:Hide()
 		elseif buildMenu.active and buildMenu.hidden then buildMenu:Show() end
+		olderTimer = timer
 	end
 end
 ---------------------------

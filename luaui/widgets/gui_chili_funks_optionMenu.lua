@@ -192,7 +192,7 @@ local function loadMinMenu()
  timeLbl = Chili.Label:New{caption = '10:30pm', x = 0}
  fpsLbl = Chili.Label:New{caption = 'FPS: 65',x = 70}
  menuBtn = Chili.Button:New{caption = 'Menu', right = 0, height = '100%', width = 50, Onclick = {showHide}}
- minMenu = Chili.Window:New{parent=Chili.Screen0,right = 210, y = 20, width = 180,minheight = 20, height = 20,padding = {5,0,0,0},children = {timeLbl,fpsLbl,menuBtn}}
+ minMenu = Chili.Window:New{parent=Chili.Screen0,right = 210, y = 30, width = 180,minheight = 20, height = 20,padding = {5,0,0,0},children = {timeLbl,fpsLbl,menuBtn}}
 end
 ---------------------------- 
                           -- 

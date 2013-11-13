@@ -11,13 +11,20 @@ function widget:GetInfo()
 		handler   = true,
 	}
 end
--- Includes
+-- Includes --
 local cat, ignoreCMDs = include('Configs/buildMenu.lua') --categories
 local catNames = {'ECONOMY', 'DEFENSE', 'INTEL', 'FACTORIES', 'BUILD'} -- Must be the same as cat indexes
 local imageDir = 'luaui/images/buildIcons/'
--- Chili vars
+--------------
+
+-- Config --
+local nCol, nRow = 7, 3
+
+------------
+
+
+-- Chili vars --
 local Chili
-local nCol, nRow = 7,2
 local panH, panW, winW, winH, winX, winB, tabH, minMapH, minMapW
 local buildMenu, menuTabs, panel0, stateWindow, scroll0, idx
 local menuTab, buildQueue, screen0, buildMenu, stateMenu, orderMenu
@@ -27,10 +34,8 @@ local orderArray = {}
 local stateArray = {}
 local queue = {}
 ----------------
-local updateRequired = true
-local updateTab = true
-local selectedUnits = {}
 
+-- Spring Functions --
 local spGetTimer          = Spring.GetTimer
 local spDiffTimers        = Spring.DiffTimers
 local spGetActiveCmdDesc  = Spring.GetActiveCmdDesc
@@ -41,11 +46,19 @@ local spGetFullBuildQueue = Spring.GetFullBuildQueue
 local spGetSelectedUnits  = Spring.GetSelectedUnits
 local spSendCommands      = Spring.SendCommands
 local spSetActiveCommand  = Spring.SetActiveCommand
+----------------------
 
+
+-- Local vars --
+local updateRequired = true
+local updateTab = true
+local selectedUnits = {}
+local oldTimer = spGetTimer()
 local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
+----------------
 
-local oldTimer = spGetTimer()
+
 
 ---------------------------
 --
@@ -58,6 +71,7 @@ function LayoutHandler(xIcons, yIcons, cmdCount, commands)
 	
 	return '', xIcons, yIcons, {}, customCmds, {}, {}, {}, {}, reParamsCmds, {[1337]=9001}
 end
+
 ---------------------------
 --
 local function cmdAction(chiliButton, x, y, button, mods)
@@ -69,8 +83,9 @@ local function cmdAction(chiliButton, x, y, button, mods)
 		spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)
 	end
 end
---------------------------- Selects tab when tab is clicked or scrolled
---
+
+--------------------------- 
+-- Selects tab when tab is clicked or scrolled
 local function selectTab(self,x,y,up,value,mods)
 	menuTab[buildMenu.choice]:SetCaption('\255\127\127\127'.. catNames[buildMenu.choice])
 	if buildGrids[buildMenu.choice] then
@@ -101,8 +116,9 @@ local function selectTab(self,x,y,up,value,mods)
 	buildGrids[buildMenu.choice]:ToggleVisibility()
 	return true --prevents zoom function when mouse scrolled over menu
 end
---------------------------- Adds icons/commands to the menu panels accordingly
---
+
+--------------------------- 
+-- Adds icons/commands to the menu panels accordingly
 local function createMenus()
 	local cat = cat
 	local menuCat
@@ -203,8 +219,9 @@ local function createMenus()
 	end
 	
 end
---------------------------- Creates a tab for each menu Panel with a command
---
+
+--------------------------- 
+-- Creates a tab for each menu Panel with a command
 local function makeMenuTabs()
 	menuTabs:ClearChildren()
 	menuTab = {}
@@ -234,8 +251,8 @@ local function makeMenuTabs()
 	end
 end
 
---------------------------- Loads/reloads the icon panels for commands
---
+--------------------------- 
+-- Loads/reloads the icon panels for commands
 local function loadPanels()
 	
 	buildMenu:ClearChildren()
@@ -253,7 +270,9 @@ local function loadPanels()
 	createMenus()
 	makeMenuTabs()
 end
---------------------------- Adds icons to queue panel depending on build commands in queue
+
+--------------------------- 
+-- Adds icons to queue panel depending on build commands in queue
 --  or hides it if there are none
 local function queueHandler()
 	local unitID = Spring.GetSelectedUnits()
@@ -264,7 +283,9 @@ local function queueHandler()
 		end
 	end
 end
---------------------------- Iniatilizes main/permanent chili controls
+
+--------------------------- 
+-- Iniatilizes main/permanent chili controls
 --  These are then shown/hidden when needed
 function widget:Initialize()
 	widgetHandler:ConfigLayoutHandler(LayoutHandler)
@@ -278,9 +299,15 @@ function widget:Initialize()
 	
 	Chili = WG.Chili
 	screen0 = Chili.Screen0
-	local vertical = true --config
-	local minMapBottom = true --config
 	
+	-- WIP to customize layout
+	-- config --
+	local vertical = true 
+	local minMapBottom = true 
+	------------
+	
+	-- these numbers are used by numerous chili widgets
+	--  and should be an include or global object
 	local scrH = screen0.height
 	local tabB = 0
 	local ordH = scrH * 0.07
@@ -300,19 +327,21 @@ function widget:Initialize()
 	end
 	
 	if vertical then
-		nCol, nRow = 2, 7
-		winH       = scrH * 0.5
-		winW       = winH * nCol / nRow
-		tabH       = winW
-		winX       = 0
-		winB       = selH
-		tabB       = winB + selH
+		local tempRow = nRow
+		nRow = nCol
+		nCol = tempRow
+		winH = scrH * 0.5
+		winW = winH * nCol / nRow
+		tabH = winH/3
+		winX = 0
+		winB = selH
+		tabB = winB + selH
 	else
-		winH      = scrH * 0.15
-		winW      = winH * nCol / nRow
-		tabH      = winH
-		winX      = selW
-		winB      = 0
+		winH = scrH * 0.15
+		winW = winH * nCol / nRow
+		tabH = winH
+		winX = selW
+		winB = 0
 	end
 	
 	
@@ -320,7 +349,6 @@ function widget:Initialize()
 	buildMenu = Chili.Window:New{
 		parent       = screen0,
 		name         = 'buildMenu',
-		-- skinName     = 'Flat',
 		choice       = 1,
 		active       = false,
 		x            = winX,

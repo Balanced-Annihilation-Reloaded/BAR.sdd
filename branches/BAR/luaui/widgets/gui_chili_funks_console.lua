@@ -51,9 +51,11 @@ local function updateMsgWindow()
 		if msg then text = text..msg.text..'\n' end
 	end
 	
+	local font = textBox.font
+	local wText, lines = font:WrapText(text, msgWidth, 500)	
+	msgWindow:Resize(msgWidth, font.size * (lines-1) + 10) 
+	
 	textBox:SetText(text)
-	local wText, lines = textBox.font:WrapText(text, msgWidth, 500)
-	msgWindow:Resize(msgWidth, 14 * (lines-1) + 10)
 end
 
 function widget:Initialize()
@@ -91,6 +93,7 @@ function widget:Initialize()
 		y         = 50,
 		width     = msgWidth
 	}
+	
 	textBox = Chili.TextBox:New{
 		parent = msgWindow,
 		width  = msgWidth,

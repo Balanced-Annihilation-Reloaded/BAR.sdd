@@ -16,23 +16,30 @@ local imageDir = 'luaui/images/buildIcons/'
 
 local Chili ,infoWindow, unitInfo, unitName, unitIcon, selectionGrid, unitHealthText, unitHealth, groundInfo 
 local healthBars = {}
+local updateNow  = false
 
-local updateNow = false
-local curTip --[[ current tooltip type: -3 for ground info
-									    -2 for so many unitDefIDs that we just give text info 
-										-1 for multiple unitDefIDs that fit with pics (<=9)
-										>=0 for a single unit & is the unitID  ]]
+local curTip --[[ current tooltip type: 
+                  -3 for ground info
+                  -2 for so many unitDefIDs that we just give text info 
+                  -1 for multiple unitDefIDs that fit with pics (<=9)
+                  >=0 for a single unit & is the unitID  ]]
 
+local spGetTimer                = Spring.GetTimer
+local spDiffTimers              = Spring.DiffTimers
 local spGetUnitDefID            = Spring.GetUnitDefID
 local spGetUnitTooltip          = Spring.GetUnitTooltip
 local spGetSelectedUnits        = Spring.GetSelectedUnits
 local spGetUnitHealth           = Spring.GetUnitHealth
 local spGetSelectedUnitsSorted  = Spring.GetSelectedUnitsSorted
-local spGetMouseState			= Spring.GetMouseState
-local spTraceScreenRay			= Spring.TraceScreenRay
+local spGetMouseState           = Spring.GetMouseState
+local spTraceScreenRay          = Spring.TraceScreenRay
 
 local r,g,b     = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
+
+local timer = spGetTimer()
+local healthTimer = timer
+local groundTimer = timer
 
 ----------------------------------
 -- add unitDefID (curTip = -1)
@@ -129,33 +136,20 @@ local function showUnitInfo(texture, overlay, description, humanName, health, ma
 	
 end
 ----------------------------------
--- ground info (curTip = -3)
-local function showGroundInfo(text)
-	
-	groundText = Chili.TextBox:New{
-		x      = 0,
-		y      = 0,
-		right  = 0,
-		bottom = 0,
-		text   = text,
-	}
-	
-	unitInfo:AddChild(groundText)
-end
-----------------------------------
 -- text unit info only (curTip = -2)
-local function showBasicUnitInfo(num, numTypes)
+local function showBasicSelectionInfo(num, numTypes)
 	
 	basicUnitInfo = Chili.TextBox:New{
 		x      = 0,
 		y      = 0,
 		right  = 0,
 		bottom = 0,
-		text   = " units: " .. num .. "\n unit types: " .. numTypes,
+		text   = " Units selected: " .. num .. "\n Number of unit types: " .. numTypes,
 	}
 	
 	unitInfo:AddChild(basicUnitInfo)
 end
+
 ----------------------------------
 local function getInfo()
 	
@@ -164,8 +158,6 @@ local function getInfo()
 	if #units == 0 then
 		--info about point on map corresponding to cursor (updated every other gameframe)
 		curTip = -3
-		showGroundInfo("")
-
 	elseif #units == 1 then
 		--detailed info about a single unit
 		local unitID      = units[1]
@@ -177,7 +169,7 @@ local function getInfo()
 		local overlay     = imageDir..'Overlays/' .. name .. '.png'
 		local humanName   = UnitDefs[defID].humanName
 		local curHealth, maxHealth = spGetUnitHealth(unitID)
-	
+
 		showUnitInfo(texture, overlay, description, humanName, curHealth, maxHealth)
 		
 	else
@@ -198,13 +190,53 @@ local function getInfo()
 					end
 				end
 			else
-				showBasicUnitInfo(#units, sortedUnits["n"])
+				showBasicSelectionInfo(#units, sortedUnits["n"])
 			end
 	end
-	
 end
 
 ----------------------------------
+-- ground info (curTip = -3)
+local function updateGroundInfo()
+	
+	local mx, my    = spGetMouseState()
+	local focus,map = spTraceScreenRay(mx,my)
+	if focus == "ground" and map[1] then
+		local px,py,pz = math.floor(map[1]),math.floor(map[2]),math.floor(map[3])
+		groundText:SetText(" Position: " .. px ..  ", " .. pz .. "\n" .. " Height: " .. py)
+		groundText:Invalidate()
+	end
+end
+
+----------------------------------
+local function updateHealthBars()
+	
+	--single unit	
+	if curTip >= 0 then 
+		local health, maxHealth = spGetUnitHealth(curTip)
+		unitHealthText:SetText(math.floor(health) ..' / '.. math.floor(maxHealth)) 
+		unitHealthText:Invalidate() --not sure why this is needed here but it is
+		unitHealth.max = maxHealth
+		unitHealth:SetValue(health)
+		
+	--multiple units, but not so many we cant fit pics
+	elseif curTip == -1 then 
+		for a = 1, #healthBars do
+			local value, max = 0, 0
+			for b = 1, #healthBars[a].unitIDs do
+				local health, maxhealth = spGetUnitHealth(healthBars[a].unitIDs[b])
+				max   = max + maxhealth
+				value = value + health
+			end
+			healthBars[a].max = max
+			healthBars[a]:SetValue(value)
+		end
+
+	end
+	
+	updateNow = false
+end
+
 ----------------------------------
 function widget:Initialize()
 	
@@ -221,10 +253,10 @@ function widget:Initialize()
 	
 	--Main window, ancestor of everything
 	infoWindow = Chili.Window:New{
-		padding = {0,0,0,0},
+		padding = {5,5,5,5},
 		parent  = Chili.Screen0,
 		x       = 0,
-		y  = 1,
+		y       = 1,
 		width   = winSize,
 		height  = winSize,
 	}
@@ -251,28 +283,50 @@ function widget:Initialize()
 		margin  = {0,0,0,0},
 	}
 	
-	groundInfo = Chili.Control:New{
-		parent  = infoWindow,
-		x       = 0,
-		y       = 0,
-		height  = '100%',
-		width   = '100%',
-		padding = {0,0,0,0},
-		margin  = {0,0,0,0},
+	groundText = Chili.TextBox:New{
+		parent = infoWindow,
+		x      = 0,
+		y      = 0,
+		right  = 0,
+		bottom = 0,
+		text   = 'test',
 	}
 	
 	Spring.SetDrawSelectionInfo(false)
-
+	widget:CommandsChanged()
 end
 
 ----------------------------------
 function widget:CommandsChanged()
 	curTip = nil
 	healthBars = {}
+	groundText:SetText('')
 	selectionGrid:ClearChildren()
 	unitInfo:ClearChildren()
 	getInfo()
 	updateNow = true
+end
+
+-- Updates health bars or ground info depending on curtip
+--   -3 for ground info
+--   -2 for so many unitDefIDs that we just give text info (doesn't require updating)
+--   -1 for multiple unitDefIDs that fit with pics (<=9)
+--   >=0 for a single unit & is the unitID
+function widget:DrawScreen(n)
+	
+	if curTip == nil then return end
+	
+	local timer = spGetTimer()
+	local updateGround = curTip == -3 and spDiffTimers(timer, groundTimer) > 0.1 
+	local updateHealth = curTip >= -1 and (spDiffTimers(timer, healthTimer) > 1 or updateNow)
+	
+	if updateGround then
+		updateGroundInfo()
+		groundTimer = timer
+	elseif updateHealth then
+		updateHealthBars()
+		healthTimer = timer
+	end
 end
 
 ----------------------------------
@@ -280,52 +334,4 @@ function widget:Shutdown()
 	infoWindow:Dispose()
 	Spring.SetDrawSelectionInfo(true)
 end
-
-
-function widget:GameFrame(n)
-	if n % 2 ~= 0 then return end
-	if curTip== nil then return end
-	if curTip == -3 then --ground
-		local mx, my = spGetMouseState()
-		local focus,map = spTraceScreenRay(mx,my)
-		if focus == "ground" and map[1] then
-			local px,py,pz = math.floor(map[1]),math.floor(map[2]),math.floor(map[3])
-			groundText:SetText(" pos: " .. px ..  ", " .. pz .. "\n" .. " height: " .. py)
-		end
-		return
-	end
-	
-	if not updateNow and n % 12 ~= 0 then return end
-	
-	if curTip >= 0 then --single unit
-		local health, maxHealth = spGetUnitHealth(curTip)
-		unitHealthText:SetText(math.floor(health) ..' / '.. math.floor(maxHealth)) 
-		unitHealthText:Invalidate() --not sure why this is needed here but it is
-		unitHealth:SetMinMax(0,maxHealth)
-		unitHealth:SetValue(health)
-		updateNow = false
-		return		
-	end
-			
-	if curTip == -1 then --multiple units, but not so many we cant fit pics
-		for a=1, #healthBars do
-			local value, max = 0, 0
-			for b=1, #healthBars[a].unitIDs do
-				local health, maxhealth = spGetUnitHealth(healthBars[a].unitIDs[b])
-				max   = max + maxhealth
-				value = value + health
-			end
-			healthBars[a].max = max
-			healthBars[a]:SetValue(value)
-		end		
-		updateNow = false
-	end
-	
-	--no need to update anything for curTip = -2
-end
-
-
-
-
-
 

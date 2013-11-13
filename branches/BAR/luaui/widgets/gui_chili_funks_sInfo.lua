@@ -33,6 +33,7 @@ local spGetUnitHealth           = Spring.GetUnitHealth
 local spGetSelectedUnitsSorted  = Spring.GetSelectedUnitsSorted
 local spGetMouseState           = Spring.GetMouseState
 local spTraceScreenRay          = Spring.TraceScreenRay
+local spGetGroundHeight         = Spring.GetGroundHeight
 
 local r,g,b     = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
@@ -202,7 +203,8 @@ local function updateGroundInfo()
 	local mx, my    = spGetMouseState()
 	local focus,map = spTraceScreenRay(mx,my)
 	if focus == "ground" and map[1] then
-		local px,py,pz = math.floor(map[1]),math.floor(map[2]),math.floor(map[3])
+		local px,pz = math.floor(map[1]),math.floor(map[3])
+		local py = math.floor(spGetGroundHeight(px,pz))
 		groundText:SetText(" Position: " .. px ..  ", " .. pz .. "\n" .. " Height: " .. py)
 		groundText:Invalidate()
 	end

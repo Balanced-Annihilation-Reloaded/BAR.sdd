@@ -52,12 +52,11 @@ local function updateMsgWindow()
 	end
 	
 	local font = textBox.font
-	local wText, lines = font:WrapText(text, msgWidth, 500)	
-	msgWindow:Resize(msgWidth, font.size * (lines-1) + 10) 
-	
-	textBox:SetText(text)
-end
+	local wText, lines = font:WrapText(text, msgWidth, 500)
 
+	textBox:SetText(text)
+	msgWindow:Resize(msgWidth, font.size * (lines-1) + 10) 
+end
 function widget:Initialize()
 	
 	Chili = WG.Chili

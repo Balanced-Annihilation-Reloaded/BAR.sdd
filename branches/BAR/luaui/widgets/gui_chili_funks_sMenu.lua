@@ -199,7 +199,7 @@ local function createMenus()
 	
 	
 	
-	--Creates a container for each category and adds equivelant array as child.
+	--Creates a container for each category and adds equivalent array as child.
 	for i=1,#catNames do
 		buildGrids[i] = Chili.Grid:New{
 			name     = catNames[i],
@@ -214,7 +214,11 @@ local function createMenus()
 			margin   = {0,0,0,0},
 			children = buildArray[i],
 		}
-		if updateTab and (#buildArray[i] > 0) then buildMenu.choice = i; updateTab = false end
+		
+		if updateTab and (#buildArray[i] > 0) then 
+			buildMenu.choice = i 
+			updateTab = false 
+		end
 		if buildMenu.choice ~= i then buildGrids[i]:Hide() end
 	end
 	
@@ -254,11 +258,18 @@ end
 --------------------------- 
 -- Loads/reloads the icon panels for commands
 local function loadPanels()
-	
-	buildMenu:ClearChildren()
 	orderMenu:ClearChildren()
 	stateMenu:ClearChildren()
-	for i=1,#catNames do buildArray[i] = {} end
+
+	for i=1,#catNames do
+		if buildGrids[i] and buildMenu.choice ~= i then -- trying to show already visible objects gives an error
+			buildGrids[i]:Show() -- non visible objects do not succesfully get cleared?
+		end
+	buildArray[i] = {}
+	end
+
+	buildMenu:ClearChildren()
+
 	orderArray = {}
 	stateArray = {}
 	

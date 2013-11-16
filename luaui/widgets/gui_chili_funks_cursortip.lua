@@ -88,15 +88,24 @@ local function getTooltip()
 	end
 end
 -----------------------------------
+
 local function MakeToolTip()
-	
+	   
 	local tooltip               = tooltip
 	local x,y                   = mousePosX,mousePosY
 	local textwidth             = tip.font:GetTextWidth(tooltip)
 	local textheight,_,numLines = tip.font:GetTextHeight(tooltip)
-	
+
+	-- Making sure the tooltip is within the boundaries of the screen
+	if (x + 20 + textwidth + 10) > screenWidth then
+		x = screenWidth - 20 - textwidth - 10
+	end
+	if (y - 20 - (14 * numLines + 2)) < 0 then
+		y = 14 * numLines + 2 + 20
+	end
+
 	tipWindow:SetPos(x + 20, screenHeight - y + 20, textwidth + 10, 14 * numLines + 2)
-	
+   
 	if tipWindow.hidden then tipWindow:Show() end
 	tipWindow:BringToFront()
 end

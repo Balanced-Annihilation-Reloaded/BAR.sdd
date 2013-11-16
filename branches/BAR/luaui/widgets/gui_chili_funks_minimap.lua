@@ -61,6 +61,10 @@ function widget:KeyRelease(key, mods, label, unicode)
 	end
 end
 
+function widget:ViewResize(vsx, vsy)
+	MakeMinimapWindow()
+end
+
 function widget:Initialize()
 	
 	if (Spring.GetMiniMapDualScreen()) then

@@ -44,6 +44,11 @@ local function initWindow()
 	tipWindow:Hide()
 end
 
+function widget:ViewResize(vsx, vsy)
+	screenWidth = vsx
+	screenHeight = vsy
+end
+
 -----------------------------------
 local function formatresource(description, res)
 	color = ""

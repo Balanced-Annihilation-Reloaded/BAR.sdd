@@ -25,7 +25,7 @@ return {
 		movementclass = "TANK2",
 		name = "Jeffy",
 		nochasecategory = "VTOL",
-		objectname = "ARMFAV",
+		objectname = "ARMFAV.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 585,
@@ -34,6 +34,10 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 25,
 		turnrate = 1144,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

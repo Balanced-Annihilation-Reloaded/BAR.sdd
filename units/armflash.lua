@@ -25,7 +25,7 @@ return {
 		movementclass = "TANK2",
 		name = "Flash",
 		nochasecategory = "VTOL",
-		objectname = "ARMFLASH",
+		objectname = "ARMFLASH.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 299,
@@ -34,6 +34,10 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 22,
 		turnrate = 592,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

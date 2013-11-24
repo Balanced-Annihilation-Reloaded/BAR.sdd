@@ -260,6 +260,7 @@ function UnitJitter:CreateParticle()
 end
 
 function UnitJitter:Visible()
+	--Spring.Echo(self.unit, 'is now visible and being jittered')
   local x,y,z    = Spring.GetUnitPosition(self.unit)
   if (x==nil) then return false end
   local _,inLos  = Spring.GetPositionLosState(x,y,z, LocalAllyTeamID)
@@ -274,7 +275,7 @@ end
 -----------------------------------------------------------------------------------------------------------------
 
 function UnitJitter.Create(Options)
-  SetUnitLuaDraw(Options.unit,true)
+  --SetUnitLuaDraw(Options.unit,true)
 
   local newObject = MergeTable(Options, UnitJitter.Default)
   setmetatable(newObject,UnitJitter)  -- make handle lookup
@@ -283,7 +284,7 @@ function UnitJitter.Create(Options)
 end
 
 function UnitJitter:Destroy()
-  SetUnitLuaDraw(self.unit,false)
+  --SetUnitLuaDraw(self.unit,false)
 end
 
 -----------------------------------------------------------------------------------------------------------------

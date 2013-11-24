@@ -1171,6 +1171,10 @@ function DrawRanges()
 end
 
 function widget:DrawWorld()
+
+	if spIsGUIHidden() then
+		return
+	end
 	DrawRanges()
 	
 	ResetGl()

@@ -40,6 +40,10 @@ return {
 		sightdistance = 83.199996948242,
 		stealth = true,
 		yardmap = "y",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

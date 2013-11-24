@@ -31,6 +31,10 @@ return {
 		stealth = true,
 		waterline = 5,
 		yardmap = "o",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dragonseyes_dead = {
 				blocking = false,

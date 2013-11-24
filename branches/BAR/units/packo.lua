@@ -33,7 +33,6 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 375,
-
 		yardmap = "ooooooooo",
 		customparams = {
 			normalmaps = "yes",

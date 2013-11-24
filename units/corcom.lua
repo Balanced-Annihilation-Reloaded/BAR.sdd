@@ -91,6 +91,8 @@ return {
 		customparams = {
 			iscommander = true,
 			paralyzemultiplier = 0.025000000372529,
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		featuredefs = {
 			dead = {

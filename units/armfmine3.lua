@@ -40,6 +40,10 @@ return {
 		stealth = true,
 		waterline = 1,
 		yardmap = "w",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

@@ -34,6 +34,10 @@ return {
 		selfdestructas = "MINE_NUKE",
 		sightdistance = 273,
 		yardmap = "oooooooooooooooooooo",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

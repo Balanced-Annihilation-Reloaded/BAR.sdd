@@ -10,7 +10,7 @@ function widget:GetInfo()
 		author    = "very_bad_soldier",
 		date      = "October 21, 2007",
 		license   = "GNU GPL v2",
-		layer     = 0,
+		layer     = -10000000,
 		enabled   = true
 	}
 end
@@ -502,6 +502,35 @@ local DrawRanges
 --------------------------------------------------------------------------------
 
 
+function widget:TextCommand(command)
+	--Spring.Echo("DEFRANGE", command, mycommand)
+	local mycommand=false --buttonConfig["enabled"]["enemy"][tag] 
+
+	if (string.find(command, "defrange")) then 
+		mycommand=true
+		local ally='ally'
+		local rangetype='ground'
+		local enabled=false		
+		if (string.find(command, "enemy")) then 
+			ally='enemy'
+		end
+		if (string.find(command, "air")) then 
+			rangetype='air'
+		elseif  (string.find(command, "nuke")) then 
+			rangetype='nuke'
+		end
+		if (string.find(command, "+")) then 
+			enabled=true
+		end
+		buttonConfig["enabled"][ally][rangetype]=enabled
+		Spring.Echo("Range visibility of "..ally.." "..rangetype.." defenses set to",enabled)
+		return true
+	end
+	
+	return false
+end
+
+
 function widget:Initialize()
 	state["myPlayerID"] = spGetLocalTeamID()
 	
@@ -767,7 +796,7 @@ function widget:DrawScreen()
     	enabled = true
     end
 
-    DrawButtonGL(data[2], coords[1][1], coords[1][2], coords[2][1], coords[2][2], doHighLight, enemy, enabled)
+    --DrawButtonGL(data[2], coords[1][1], coords[1][2], coords[2][1], coords[2][2], doHighLight, enemy, enabled)
   end
   	
 	ResetGl()
@@ -1087,6 +1116,8 @@ function CheckDrawTodo( def, weaponIdx )
 			return true
 		elseif ( def["allyState"] == false and buttonConfig["enabled"]["ally"]["ground"] ) then
 			return true
+		else
+			return false
 		end	
 	end
 			
@@ -1095,7 +1126,9 @@ function CheckDrawTodo( def, weaponIdx )
 			return true
 		elseif ( def["allyState"] == false and buttonConfig["enabled"]["ally"]["air"] ) then
 			return true
-		end	
+		else
+			return false
+		end
 	end
 			
 	if ( def.weapons[weaponIdx]["type"] == 3 ) then
@@ -1127,11 +1160,16 @@ function DrawRanges()
 	
 		for i, weapon in pairs(def["weapons"]) do
 			local execDraw = false
+			if (false) then --3.9 % cpu, 45 fps
+				if ( spIsSphereInView( def["pos"][1], def["pos"][2], def["pos"][3], weapon["range"] ) ) then
+					execDraw = CheckDrawTodo( def, i )			
+				end
+			else--faster: 3.0% cpu, 46fps
 			
-			if ( spIsSphereInView( def["pos"][1], def["pos"][2], def["pos"][3], weapon["range"] ) ) then
-				execDraw = CheckDrawTodo( def, i )			
+				if (  CheckDrawTodo( def, i )) then 
+					execDraw =spIsSphereInView( def["pos"][1], def["pos"][2], def["pos"][3], weapon["range"] )
+				end
 			end
-			
 			if ( execDraw ) then
 				color = weapon["color1"]
 				range = weapon["range"]
@@ -1216,6 +1254,7 @@ function printDebug( value )
 		end
 	end
 end
+
 
 
 --SAVE / LOAD CONFIG FILE

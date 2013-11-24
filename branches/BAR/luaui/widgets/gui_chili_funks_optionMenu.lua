@@ -281,6 +281,26 @@ local function Options()
     OnChange = {function(self) if not self.checked then spSendCommands('luaui +dilatepass') else spSendCommands('luaui -dilatepass') end  end}}, 
    Chili.Checkbox:New{caption='Debug Mode',x='80%',y=40,right=0,textalign='left',boxalign='right',checked=false, 
     OnChange = {function(self) if not self.checked then spSendCommands('luaui +bloomdebug') else spSendCommands('luaui -bloomdebug') end  end}},
+   
+   Chili.Label:New{x='55%',y=165,caption='Draw Defense Ranges'},
+   Chili.Label:New{x='55%',y=180,caption='Ground Defense'},
+   Chili.Checkbox:New{caption='Ally:',x='78%',y=180,right=65,textalign='left',boxalign='right',checked=false, 
+    OnChange = {function(self) if not self.checked then spSendCommands('luaui +defrange_ground_ally') else spSendCommands('luaui -defrange_ground_ally') end  end}},
+   Chili.Checkbox:New{caption='Enemy:',x='89%',y=180,right=0,textalign='left',boxalign='right',checked=false, 
+    OnChange = {function(self) if not self.checked then spSendCommands('luaui +defrange_ground_enemy') else spSendCommands('luaui -defrange_ground_enemy') end  end}},
+   Chili.Label:New{x='55%',y=195,caption='Air Defense'},
+   Chili.Checkbox:New{caption='Ally:',x='78%',y=195,right=65,textalign='left',boxalign='right',checked=false, 
+    OnChange = {function(self) if not self.checked then spSendCommands('luaui +defrange_air_ally') else spSendCommands('luaui -defrange_air_ally') end  end}},
+   Chili.Checkbox:New{caption='Enemy:',x='89%',y=195,right=0,textalign='left',boxalign='right',checked=false, 
+    OnChange = {function(self) if not self.checked then spSendCommands('luaui +defrange_air_enemy') else spSendCommands('luaui -defrange_air_enemy') end  end}},
+   Chili.Label:New{x='55%',y=210,caption='Nuclear Defense'},
+   Chili.Checkbox:New{caption='Ally:',x='78%',y=210,right=65,textalign='left',boxalign='right',checked=false, 
+    OnChange = {function(self) if not self.checked then spSendCommands('luaui +defrange_nuke_ally') else spSendCommands('luaui -defrange_nuke_ally') end  end}},
+   Chili.Checkbox:New{caption='Enemy:',x='89%',y=210,right=0,textalign='left',boxalign='right',checked=false, 
+    OnChange = {function(self) if not self.checked then spSendCommands('luaui +defrange_nuke_enemy') else spSendCommands('luaui -defrange_nuke_enemy') end  end}},
+  Chili.Line:New{x='50%',right=0,y=225},
+   
+   
    }}
    
    comboBox{parent='Graphics',name='Water',y=0,
@@ -371,6 +391,7 @@ function widget:SetConfigData(data)
 end
 
 function widget:DrawScreen()
+	--Spring.Echo('optionmenu widget:drawscreen')
  local fps = 'FPS: '..'\255\255\127\0'..spgetFPS()
  fpsLbl:SetCaption(fps)
  local rTime = os.date('%I:%M %p')
@@ -434,10 +455,10 @@ end
 local mLogText = ''
 function widget:AddConsoleLine(text,priority)
  if tabs.Log then
-  mLogText = mLogText..text..'\n'
+  mLogText = mLogText..text..'\n' --THIS IS EXTREMELY EXPENSIVE! http://www.lua.org/pil/11.6.html
   local scrollpanel = tabs['Log']:GetObjectByName('mLog')
   local textbox = scrollpanel.children[1]
-  textbox.text = mLogText
+  textbox.text = mLogText --Dont update the text if the widget isnt even visible!
   textbox:UpdateLayout()
  end
 end

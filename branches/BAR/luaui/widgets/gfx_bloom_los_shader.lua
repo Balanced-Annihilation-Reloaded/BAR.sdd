@@ -739,5 +739,8 @@ function widget:TextCommand(command)
 		Spring.Echo("   glowAmplifier:  " .. glowAmplifier)
 		Spring.Echo("   blurAmplifier:  " .. blurAmplifier)
 		Spring.Echo("   blurPasses:     " .. blurPasses)
+		return true
+	else
+		return false
 	end
 end

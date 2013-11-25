@@ -509,7 +509,7 @@ function widget:DrawWorld() Bloom() end --drawworld draws in world space, would 
 
 
 function widget:TextCommand(command)
-	Spring.Echo(command)
+	--Spring.Echo(command)
 	local mycommand=false
 	if (string.find(command, "+illumthres") == 1) then illumThreshold = illumThreshold + 0.02 ; mycommand=true end
 	if (string.find(command, "-illumthres") == 1) then illumThreshold = illumThreshold - 0.02 ; mycommand=true end

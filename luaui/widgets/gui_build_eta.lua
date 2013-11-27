@@ -220,6 +220,7 @@ function widget:DrawWorld()
 		end
 	  end
 
+	  gl.Color(1, 1, 1,1)
 	  gl.DepthTest(false)
 	end
 end

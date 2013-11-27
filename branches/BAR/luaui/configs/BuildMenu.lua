@@ -425,14 +425,14 @@ local ignore = {
 	squadwait	   = '',
 	gatherwait	  = '',
 	restore      = '',
-	coruwms      = '',
-	coruwes      = '',
-	coruwadves   = '',
-	coruwadvms   = '',
-	coruwfus     = '',
-	coruwmex     = '',
-	coruwmme     = '',
-	coruwmmm     = '',
+	--coruwms      = '',
+	--coruwes      = '',
+	--coruwadves   = '',
+	--coruwadvms   = '',
+	--coruwfus     = '',
+	--coruwmex     = '',
+	--coruwmme     = '',
+	--coruwmmm     = '',
 }
 return categories, ignore
 

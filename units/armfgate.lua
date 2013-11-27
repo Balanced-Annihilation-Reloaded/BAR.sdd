@@ -10,7 +10,7 @@ return {
     footprintx=4,
     footprintz=4,
     maxdamage=3500,
-    objectname="armfgate",
+    objectname="armfgate.s3o",
     side="ARM",
     tedclass="SPECIAL",
     brakerate=0,
@@ -45,6 +45,10 @@ return {
     collisionVolumeType = [[cyly]],
     collisionVolumeOffsets = [[0 -30 0]],
     collisionVolumeScales = [[53 65 53]],
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
     sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

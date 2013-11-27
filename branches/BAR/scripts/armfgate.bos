@@ -3,8 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, test8, test2, test3, test6, test4, gun, base1,
-       turret, firepoint;
+piece  base, emit;
 
 static-var  Static_Var_1, statechg_DesiredState, statechg_StateChanging;
 
@@ -36,12 +35,12 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	}
 }
 
-ShieldOn()
+emitOn()
 {
 	Static_Var_1 = 1;
 }
 
-ShieldOff()
+emitOff()
 {
 	Static_Var_1 = 0;
 }
@@ -66,12 +65,12 @@ RequestState(requestedstate, currentstate)
 	{
 		if( statechg_DesiredState == 0 )
 		{
-			call-script ShieldOn();
+			call-script emitOn();
 			currentstate = 0;
 		}
 		if( statechg_DesiredState == 1 )
 		{
-			call-script ShieldOff();
+			call-script emitOff();
 			currentstate = 1;
 		}
 	}
@@ -80,6 +79,7 @@ RequestState(requestedstate, currentstate)
 
 Create()
 {
+
 	Static_Var_1 = 1;
 	start-script SmokeUnit();
 	call-script InitState();
@@ -103,18 +103,17 @@ AimPrimary(heading, pitch)
 
 FirePrimary()
 {
-	explode gun type FALL | BITMAP3;
 	sleep 100;
 }
 
 QueryPrimary(piecenum)
 {
-	piecenum = firepoint;
+	piecenum = emit;
 }
 
 AimFromPrimary(piecenum)
 {
-	piecenum = firepoint;
+	piecenum = base;
 }
 
 AimSecondary(heading, pitch)
@@ -125,7 +124,6 @@ AimSecondary(heading, pitch)
 
 FireSecondary()
 {
-	explode gun type FALL | BITMAP3;
 	sleep 100;
 }
 
@@ -150,48 +148,23 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP2;
-		explode test6 type BITMAPONLY | BITMAP3;
-		explode test8 type BITMAPONLY | BITMAP5;
-		explode test2 type BITMAPONLY | BITMAP1;
-		explode test3 type BITMAPONLY | BITMAP2;
-		explode gun type BITMAPONLY | BITMAP3;
-		explode base1 type BITMAPONLY | BITMAP4;
-		explode turret type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
+
 		explode base type BITMAPONLY | BITMAP2;
-		explode test6 type BITMAPONLY | BITMAP3;
-		explode test8 type FALL | BITMAP5;
-		explode test2 type FALL | BITMAP1;
-		explode test3 type FALL | BITMAP2;
-		explode gun type FALL | BITMAP3;
-		explode base1 type FALL | BITMAP4;
-		explode turret type SHATTER | BITMAP5;
+
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP2;
-		explode test6 type BITMAPONLY | BITMAP3;
-		explode test8 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode test2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode test3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode gun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode base1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode turret type SHATTER | BITMAP5;
+
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP2;
-	explode test6 type BITMAPONLY | BITMAP3;
-	explode test8 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode test2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode test3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode gun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode base1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode turret type SHATTER | EXPLODE_ON_HIT | BITMAP5;
 }

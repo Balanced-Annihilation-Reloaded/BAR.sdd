@@ -569,7 +569,12 @@ function UnitDetected( unitID, allyTeam, teamId )
 		--printDebug("Unit ignored: weaponCount is 0")
 		return
 	end
-
+	--SINCE THIS DOESNT EVEN FUCKING PICK UP MOBILE ANTI's, WHY IS NOT BAILING EARLY ON MOBILE UNITS?
+	if udef.speed and udef.speed  > 0.0001 then 
+		--Spring.Echo('Defense range bailing on unit with no acceleration',udef.name)
+		return
+	end
+	
 	printDebug( udef.name )
 	local foundWeapons = {}
 			
@@ -584,7 +589,7 @@ function UnitDetected( unitID, allyTeam, teamId )
 			--printDebug("Weapon #" .. i .. " Range: " .. range .. " Type: " .. weaponDef.type )
 
 			type = currentModConfig["unitList"][udef.name]["weapons"][i]
-								
+							
 			local dam = weaponDef.damages
 			local dps
 			local damage
@@ -1156,8 +1161,8 @@ function DrawRanges()
 
 	local color
 	local range
-	for _, def in pairs(defences) do
-	
+	for test, def in pairs(defences) do
+		--Spring.Echo('defrangre drawrranges test',test, #def["weapons"])
 		for i, weapon in pairs(def["weapons"]) do
 			local execDraw = false
 			if (false) then --3.9 % cpu, 45 fps

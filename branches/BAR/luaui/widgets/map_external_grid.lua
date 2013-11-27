@@ -30,10 +30,13 @@ local glTexCoord = gl.TexCoord
 local glColor = gl.Color
 local glCreateList = gl.CreateList
 local glTexRect = gl.TexRect
+local spTraceScreenRay = Spring.TraceScreenRay
 ----------------------
 
 local heights = {}
 local island = false
+local vsx, vsy
+
 
 --[[
 local maxHillSize = 800/res
@@ -266,18 +269,45 @@ local function DrawTiles()
         glColor(1,1,1,1)
         gl.PopAttrib()
 end
+function widget:ViewResize()
+	vsx, vsy = gl.GetViewSizes()
+end
+
+local function CheckVRGridVisible()
+	local at, p = spTraceScreenRay(0,0,true,false,false)
+	if at == nil then
+		return true
+	else
+		at, p = spTraceScreenRay(0,vsy-1,true,false,false)
+		if at == nil then
+			return true
+		else
+			at, p = spTraceScreenRay(vsx-1,0,true,false,false)
+			if at == nil then
+				return true
+			else
+				at, p = spTraceScreenRay(vsx-1,vsy-1,true,false,false)
+				if at == nil then
+					return true
+				end
+			end
+		end
+	end
+	return false
+end
 
 function widget:DrawWorld()
-        if (not island) or options.drawForIslands.value then
+        if ((not island) or options.drawForIslands.value )and CheckVRGridVisible() then
                 gl.CallList(DspLst)-- Or maybe you want to keep it cached but not draw it everytime.
                 -- Maybe you want Spring.SetDrawGround(false) somewhere
         end     
 end
 
 function widget:Initialize()
-        island = IsIsland()
-        InitGroundHeights()
-        DspLst = glCreateList(DrawTiles)
+	vsx, vsy = gl.GetViewSizes()
+	island = IsIsland()
+	InitGroundHeights()
+	DspLst = glCreateList(DrawTiles)
 end
 
 function widget:Shutdown()

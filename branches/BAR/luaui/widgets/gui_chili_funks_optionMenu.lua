@@ -449,6 +449,7 @@ function widget:Shutdown()
  spSendCommands('unbind S+esc openMenu')
  spSendCommands('unbind f11 openWidgets')
  spSendCommands('unbind esc hideMenu')
+ spSendCommands('bind f11 luaui selector') -- if the default one is removed or crashes, then have the backup one take over.
 end
 -------------------------- 
                         --

@@ -27,13 +27,17 @@ return {
 		movementclass = "AKBOTBOMB2",
 		name = "Invader",
 		nochasecategory = "VTOL",
-		objectname = "ARMVADER",
+		objectname = "ARMVADER.s3o",
 		seismicsignature = 0,
 		selfdestructas = "CRAWL_BLAST",
 		selfdestructcountdown = 0,
 		sightdistance = 273,
 		turninplace = 0,
 		turnrate = 1540,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			corpse = {
 				blocking = true,

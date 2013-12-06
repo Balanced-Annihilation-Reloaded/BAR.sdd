@@ -210,10 +210,10 @@ widget:ViewResize(widgetHandler:GetViewSizes())
 local updaterate=45
 
 function widget:Initialize()
-	params=Spring.GetConfigParams()
-	for i,v in ipairs(params) do
-		Spring.Echo(i,v,v.name)
-	end
+	-- params=Spring.GetConfigParams()
+	-- for i,v in ipairs(params) do
+		-- Spring.Echo(i,v,v.name)
+	-- end
 	if (glCreateShader == nil) then
 		RemoveMe("[BloomShader::Initialize] removing widget, no shader support")
 		return

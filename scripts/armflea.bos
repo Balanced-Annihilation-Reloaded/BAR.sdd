@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turret, flare, barrel, lfupleg, lrupleg, rrupleg,
+piece  base, turret, flare, lfupleg, lrupleg, rrupleg,
        rfupleg, rrleg, rfleg, lrleg, lfleg;
 
 static-var  bMoving, bAiming, Static_Var_3, restore_delay;

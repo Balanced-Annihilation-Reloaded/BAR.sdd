@@ -377,7 +377,7 @@ local function UnitFinished(_,unitID,unitDefID)
   if (effects) then
     for _,fx in ipairs(effects) do
       if (not fx.options) then
-        Spring.Echo("LUPS DEBUG ", UnitDefs[unitDefID].name, fx and fx.class)
+        --Spring.Echo("LUPS DEBUG ", UnitDefs[unitDefID].name, fx and fx.class)
         return
       end
 

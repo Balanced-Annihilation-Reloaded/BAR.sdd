@@ -25,11 +25,15 @@ return {
 		movementclass = "KBOT1",
 		name = "Flea",
 		nochasecategory = "VTOL",
-		objectname = "ARMFLEA",
+		objectname = "ARMFLEA.s3o",
 		seismicsignature = 0,
 		selfdestructas = "FLEA_EX",
 		sightdistance = 550,
 		turnrate = 1672,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

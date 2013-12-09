@@ -4,7 +4,7 @@ function widget:GetInfo()
 		desc      = "Sets Spring In Bloom",
 		author    = "Kloot,Beherith",
 		date      = "28-5-2008",
-		license   = "",
+		license   = "Losshader: cc-by-nd",
 		layer     = -10000,
 		enabled   = true,
 	}
@@ -171,6 +171,7 @@ function widget:ViewResize(viewSizeX, viewSizeY)
 	glDeleteTexture(brightTexture1 or "")
 	glDeleteTexture(brightTexture2 or "")
 	glDeleteTexture(screenTexture or "")
+	glDeleteTexture(losTexture or "")
 
 	brightTexture1 = glCreateTexture(qvsx, qvsy, {
 		fbo = true, 
@@ -225,6 +226,9 @@ function widget:Initialize()
 
 	
 	losFragSrc=([[
+	//--------------------------------------------------------------------
+	//SHADER LICENSE: Copyright Beherith, this shader may not be distributed outside of BAR. All rights reserved.
+	//--------------------------------------------------------------------
 	const float mapxmul= 1.0 / %f;
 	const float mapzmul= 1.0 / %f;
 	const float mapxmax = %f ;

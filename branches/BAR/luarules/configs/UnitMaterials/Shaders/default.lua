@@ -11,7 +11,11 @@ return {
     uniform vec3 sunPos;
     uniform vec3 sunDiffuse;
     uniform vec3 sunAmbient;
+	uniform vec3 etcLoc;
 	//uniform float frameLoc;
+	#ifdef use_treadoffset
+		uniform float treadOffset;
+	#endif
   #ifdef use_shadows
     uniform mat4 shadowMatrix;
     varying vec4 shadowpos;
@@ -60,9 +64,17 @@ return {
         shadowpos.st = shadowpos.st * (inversesqrt(abs(shadowpos.st) + shadowParams.z) + shadowParams.w) + shadowParams.xy;
       #endif
     #endif
-
-      gl_TexCoord[0].st = gl_MultiTexCoord0.st;
-      teamColor = gl_TextureEnvColor[0].rgb;
+	#ifdef use_treadoffset
+		gl_TexCoord[0].st = gl_MultiTexCoord0.st;
+		if (gl_MultiTexCoord0.s<0.5 and gl_MultiTexCoord0.s>0.0 and gl_MultiTexCoord0.t <0.5 and gl_MultiTexCoord0 >0.0){
+			gl_TexCoord[0].s = gl_MultiTexCoord0.s + treadOffest;
+		}
+	#endif
+	#ifndef use_treadoffset
+		gl_TexCoord[0].st = gl_MultiTexCoord0.st;
+    #endif
+	  
+	  teamColor = gl_TextureEnvColor[0].rgb;
 
       //float fogCoord = length(gl_Position.xyz);
       //fogFactor = (gl_Fog.end - fogCoord) * gl_Fog.scale; //gl_Fog.scale := 1.0 / (gl_Fog.end - gl_Fog.start)

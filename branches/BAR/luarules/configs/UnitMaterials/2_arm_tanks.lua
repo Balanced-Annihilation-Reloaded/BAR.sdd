@@ -18,7 +18,7 @@ local function DrawUnit(unitID, material,drawMode)
 	  --Spring.Echo('drawing',UnitDefs[Spring.GetUnitDefID(unitID)].name,GetGameFrame())
 	local  health,maxhealth=GetUnitHealth(unitID)
 	health= 2*maximum(0, (-2*health)/(maxhealth)+1) --inverse of health, 0 if health is 100%-50%, goes to 1 by 0 health
-	  glUniform(material.etcLoc, 2* maximum(0,sine((unitID%10)+GetGameFrame()/((unitID%7)+6))), health,0 )
+	  glUniform(material.etcLoc, 2* maximum(0,sine((unitID%10)+GetGameFrame()/((unitID%7)+6))), health,sine(GetGameFrame()/30) ) --etcloc.z is the track offset pos.
 	  
 	 -- glUniform(material.healthLoc, 2*maximum(0, (-2*health)/(maxhealth)+1) )--inverse of health, 0 if health is 100%-50%, goes to 1 by 0 health
 	  local trimC=trimColors[GetUnitTeam(unitID) ]
@@ -36,12 +36,13 @@ local function DrawUnit(unitID, material,drawMode)
 end
 
 local materials = {
-   normalMappedS3O = {
+   normalMappedS3O_arm_tank = {
        shaderDefinitions = {
          "#define use_perspective_correct_shadows",
          "#define use_normalmapping",
          --"#define flip_normalmap",
          "#define deferred_mode 0",
+		 "#define use_treadoffset"
        },
        deferredDefinitions = {
          "#define use_perspective_correct_shadows",
@@ -114,9 +115,9 @@ end
 for i=1,#UnitDefs do
   local udef = UnitDefs[i]
 
-  if ((udef.customParams.arm_tank ~= nil )udef.customParams.normaltex and VFS.FileExists(udef.customParams.normaltex)) then
-    unitMaterials[udef.name] = {"normalMappedS3O", NORMALTEX = udef.customParams.normaltex}
-  end --elseif
+  if (udef.customParams.arm_tank and udef.customParams.normaltex and VFS.FileExists(udef.customParams.normaltex)) then
+    unitMaterials[udef.name] = {"normalMappedS3O_arm_tank", NORMALTEX = udef.customParams.normaltex}
+  end
 end --for
 
 --------------------------------------------------------------------------------

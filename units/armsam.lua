@@ -25,7 +25,7 @@ return {
 		maxwaterdepth = 12,
 		movementclass = "TANK3",
 		name = "Samson",
-		objectname = "ARMSAM",
+		objectname = "ARMSAM.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 620,
@@ -34,6 +34,10 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 32,
 		turnrate = 370,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

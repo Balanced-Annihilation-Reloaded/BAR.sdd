@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  flare1, flare2, base, launcher, turret, exhaust;
+piece  flare1, flare2, base, turret, exhaust,lwheel,rwheel;
 
 static-var  restore_delay, gun_1;
 
@@ -65,7 +65,6 @@ RestoreAfterDelay()
 {
 	sleep restore_delay;
 	turn turret to y-axis <0.000000> speed <90.021978>;
-	turn launcher to x-axis <0.000000> speed <50.010989>;
 }
 
 AimPrimary(heading, pitch)
@@ -73,9 +72,7 @@ AimPrimary(heading, pitch)
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
 	turn turret to y-axis heading speed <250.060440>;
-	turn launcher to x-axis <0.000000> - pitch speed <150.032967>;
 	wait-for-turn turret around y-axis;
-	wait-for-turn launcher around x-axis;
 	start-script RestoreAfterDelay();
 	return (1);
 }
@@ -102,7 +99,7 @@ FirePrimary()
 
 AimFromPrimary(piecenum)
 {
-	piecenum = launcher;
+	piecenum = turret;
 }
 
 QueryPrimary(piecenum)
@@ -114,7 +111,18 @@ SweetSpot(piecenum)
 {
 	piecenum = base;
 }
+StartMoving()
+{
+	spin lwheel around x-axis speed <90> accelerate <10>;
+	spin rwheel around x-axis speed <90> accelerate <10>;
 
+}
+StopMoving()
+{
+	stop-spin rwheel around x-axis;
+	stop-spin lwheel around x-axis;
+	
+}
 Killed(severity, corpsetype)
 {
 	hide flare1;
@@ -125,7 +133,6 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY | BITMAP1;
 		explode flare1 type BITMAPONLY | BITMAP2;
 		explode flare2 type BITMAPONLY | BITMAP3;
-		explode launcher type BITMAPONLY | BITMAP4;
 		explode turret type BITMAPONLY | BITMAP5;
 		return (0);
 	}
@@ -135,7 +142,6 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY | BITMAP1;
 		explode flare1 type FALL | BITMAP2;
 		explode flare2 type FALL | BITMAP3;
-		explode launcher type SHATTER | BITMAP4;
 		explode turret type FALL | BITMAP5;
 		return (0);
 	}
@@ -145,7 +151,6 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY | BITMAP1;
 		explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 		explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode launcher type SHATTER | BITMAP4;
 		explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 		return (0);
 	}
@@ -153,6 +158,5 @@ Killed(severity, corpsetype)
 	explode base type BITMAPONLY | BITMAP1;
 	explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 	explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode launcher type SHATTER | EXPLODE_ON_HIT | BITMAP4;
 	explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
 }

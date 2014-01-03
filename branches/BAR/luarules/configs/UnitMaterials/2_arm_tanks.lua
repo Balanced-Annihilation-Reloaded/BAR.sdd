@@ -8,7 +8,7 @@ local glUniform=gl.Uniform
 local sine =math.sin
 local maximum=math.max
 local GetUnitTeam = Spring.GetUnitTeam
-
+local trackpos=0
 
 local GADGET_DIR = "LuaRules/Configs/"
 
@@ -18,8 +18,11 @@ local function DrawUnit(unitID, material,drawMode)
 	  --Spring.Echo('drawing',UnitDefs[Spring.GetUnitDefID(unitID)].name,GetGameFrame())
 	local  health,maxhealth=GetUnitHealth(unitID)
 	health= 2*maximum(0, (-2*health)/(maxhealth)+1) --inverse of health, 0 if health is 100%-50%, goes to 1 by 0 health
-	  glUniform(material.etcLoc, 2* maximum(0,sine((unitID%10)+GetGameFrame()/((unitID%7)+6))), health,sine(GetGameFrame()/30) ) --etcloc.z is the track offset pos.
-	  
+	local _ , _ , _ , speed = Spring.GetUnitVelocity(unitID)
+	if speed >0.01 then speed =1 end
+		local offset= (((GetGameFrame())%9) * (2.0/4096.0))*speed 
+	  glUniform(material.etcLoc, 2* maximum(0,sine((unitID%10)+GetGameFrame()/((unitID%7)+6))), health,offset) --etcloc.z is the track offset pos.
+	 -- Spring.Echo(speed,offset  )
 	 -- glUniform(material.healthLoc, 2*maximum(0, (-2*health)/(maxhealth)+1) )--inverse of health, 0 if health is 100%-50%, goes to 1 by 0 health
 	  local trimC=trimColors[GetUnitTeam(unitID) ]
 	 
@@ -117,6 +120,7 @@ for i=1,#UnitDefs do
 
   if (udef.customParams.arm_tank and udef.customParams.normaltex and VFS.FileExists(udef.customParams.normaltex)) then
     unitMaterials[udef.name] = {"normalMappedS3O_arm_tank", NORMALTEX = udef.customParams.normaltex}
+	--Spring.Echo('armtank',udef.name)
   end
 end --for
 

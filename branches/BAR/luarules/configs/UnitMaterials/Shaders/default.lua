@@ -66,8 +66,8 @@ return {
     #endif
 	#ifdef use_treadoffset
 		gl_TexCoord[0].st = gl_MultiTexCoord0.st;
-		if (gl_MultiTexCoord0.s<0.5 and gl_MultiTexCoord0.s>0.0 and gl_MultiTexCoord0.t <0.5 and gl_MultiTexCoord0 >0.0){
-			gl_TexCoord[0].s = gl_MultiTexCoord0.s + treadOffest;
+		if (gl_MultiTexCoord0.s < 0.74951171875 && gl_MultiTexCoord0.s > 0.6279296875 && gl_MultiTexCoord0.t > 0.5702890625 && gl_MultiTexCoord0.t <0.6220703125){
+			gl_TexCoord[0].s = gl_MultiTexCoord0.s + etcLoc.z;
 		}
 	#endif
 	#ifndef use_treadoffset

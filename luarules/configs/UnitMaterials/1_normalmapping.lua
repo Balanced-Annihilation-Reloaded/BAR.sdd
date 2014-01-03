@@ -114,8 +114,9 @@ end
 for i=1,#UnitDefs do
   local udef = UnitDefs[i]
 
-  if ((udef.customParams.arm_tank ~= nil )udef.customParams.normaltex and VFS.FileExists(udef.customParams.normaltex)) then
+  if ((udef.customParams.arm_tank == nil ) and udef.customParams.normaltex and VFS.FileExists(udef.customParams.normaltex)) then
     unitMaterials[udef.name] = {"normalMappedS3O", NORMALTEX = udef.customParams.normaltex}
+	--Spring.Echo('normalmapped',udef.name)
   end --elseif
 end --for
 

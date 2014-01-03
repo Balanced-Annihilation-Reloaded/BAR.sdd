@@ -17,7 +17,6 @@ return {
 		footprintz = 2,
 		idleautoheal = 5,
 		idletime = 1800,
-		leavetracks = true,
 		maxdamage = 95,
 		maxslope = 26,
 		maxvelocity = 4.8899998664856,
@@ -29,10 +28,6 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 535,
-		trackoffset = 5,
-		trackstrength = 3,
-		tracktype = "corwidetracks",
-		trackwidth = 22,
 		turnrate = 1097,
 		customparams = {
 			normalmaps = "yes",

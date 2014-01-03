@@ -35,7 +35,7 @@ return {
 		movementclass = "TANK2",
 		name = "Podger",
 		nochasecategory = "ALL",
-		objectname = "ARMMLV",
+		objectname = "ARMMLV.s3o",
 		radardistancejam = 64,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
@@ -53,6 +53,10 @@ return {
 			[2] = "armmine3",
 			[3] = "armdrag",
 			[4] = "armeyes",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

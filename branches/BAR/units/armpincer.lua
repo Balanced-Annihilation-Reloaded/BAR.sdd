@@ -25,7 +25,7 @@ return {
 		movementclass = "ATANK3",
 		name = "Pincer",
 		nochasecategory = "VTOL",
-		objectname = "ARMPINCER",
+		objectname = "ARMPINCER.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 240,
@@ -34,6 +34,10 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 30,
 		turnrate = 398,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

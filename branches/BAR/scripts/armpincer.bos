@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turret, barrel, emit, treads;
+piece  base, turret, barrel, flare, sleeve;
 
 static-var  restore_delay;
 
@@ -74,7 +74,7 @@ RestoreAfterDelay()
 {
 	sleep restore_delay;
 	turn turret to y-axis <0.000000> speed <60.000000>;
-	turn barrel to x-axis <0.000000> speed <55.000000>;
+	turn sleeve to x-axis <0.000000> speed <55.000000>;
 }
 
 AimPrimary(heading, pitch)
@@ -82,9 +82,9 @@ AimPrimary(heading, pitch)
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
 	turn turret to y-axis heading speed <75.000000>;
-	turn barrel to x-axis <0.000000> - pitch speed <64.000000>;
+	turn sleeve to x-axis <0.000000> - pitch speed <64.000000>;
 	wait-for-turn turret around y-axis;
-	wait-for-turn barrel around x-axis;
+	wait-for-turn sleeve around x-axis;
 	start-script RestoreAfterDelay();
 	return (1);
 }
@@ -98,7 +98,7 @@ FirePrimary()
 
 QueryPrimary(piecenum)
 {
-	piecenum = emit;
+	piecenum = flare;
 }
 
 AimFromPrimary(piecenum)
@@ -119,7 +119,7 @@ Killed(severity, corpsetype)
 		explode barrel type FALL | EXPLODE_ON_HIT | BITMAP1;
 		explode base type BITMAPONLY | BITMAP3;
 		explode turret type BITMAPONLY | BITMAP2;
-		explode treads type BITMAPONLY | BITMAP3;
+		explode sleeve type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -128,7 +128,7 @@ Killed(severity, corpsetype)
 		explode barrel type FALL | EXPLODE_ON_HIT | BITMAP1;
 		explode base type BITMAPONLY | BITMAP3;
 		explode turret type FALL | EXPLODE_ON_HIT | BITMAP2;
-		explode treads type BITMAPONLY | BITMAP2;
+		explode sleeve type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -137,12 +137,12 @@ Killed(severity, corpsetype)
 		explode barrel type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 		explode base type BITMAPONLY | BITMAP3;
 		explode turret type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode treads type BITMAPONLY | BITMAP2;
+		explode sleeve type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	corpsetype = 3;
 	explode barrel type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 	explode base type BITMAPONLY | BITMAP3;
 	explode turret type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode treads type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode sleeve type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
 }

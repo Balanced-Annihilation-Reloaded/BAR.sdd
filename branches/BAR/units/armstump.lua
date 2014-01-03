@@ -26,7 +26,7 @@ return {
 		movementclass = "TANK2",
 		name = "Stumpy",
 		nochasecategory = "VTOL",
-		objectname = "ARMSTUMP",
+		objectname = "ARMSTUMP.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 325,
@@ -35,6 +35,10 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 24,
 		turnrate = 484,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

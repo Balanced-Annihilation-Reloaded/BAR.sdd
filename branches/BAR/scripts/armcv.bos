@@ -29,7 +29,7 @@ deactivatescr()
 	wait-for-turn turret around y-axis;
 
 	move turret to y-axis [0] speed [6.041132];
-	sleep 40;
+	sleep 120;
 	
 	turn doorl to z-axis <0> speed <182.126374>;
 	turn doorr to z-axis <0> speed <182.126374>;

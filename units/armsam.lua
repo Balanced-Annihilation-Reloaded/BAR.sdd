@@ -35,6 +35,7 @@ return {
 		trackwidth = 32,
 		turnrate = 370,
 		customparams = {
+			arm_tank = "1",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

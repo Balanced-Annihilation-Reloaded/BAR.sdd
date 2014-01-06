@@ -19,7 +19,7 @@ function widget:GetInfo()
 		author  = 'Funkencool',
 		date    = '2013',
 		license = 'GNU GPL v2',
-		layer   = math.huge,
+		layer   = 0,
 		enabled = true
 	}
 end
@@ -49,12 +49,15 @@ local engineStats = {
 	--{'unitsOutCaptured', ''},
 }
 
-local gameOver    = false
-local isDelta     = false
-local curGraph    = {}
+local gameOver = Spring.IsGameOver() or Spring.GetSpectatingState()
+local isDelta  = false
+local curGraph = {}
+local button = {}
 
--- CHILI CONTROLS
-local Chili, window0, graphPanel, graphSelect, graphLabel, graphTime
+-- Chili vars
+local Chili, control0, graphPanel, graphSelect, graphLabel, graphTime
+-------------
+
 ------------------------------------
 --formats final stat to fit in label
 local function numFormat(label)
@@ -139,9 +142,9 @@ local function drawGraphPanel(teamStatArray, graphMax, teamID)
 	end
 	
 	-- Adds value to end of graph
-	local label1 = Chili.Button:New{
+	Chili.Button:New{
 		parent  = lineLabels,
-		bottom  = teamStatArray[#teamStatArray]/graphMax * 70 .. '%',
+		bottom  = teamStatArray[#teamStatArray]/graphMax * 90 .. '%',
 		width   = '100%',
 		caption = lineLabel,
 		font    = {
@@ -151,7 +154,7 @@ local function drawGraphPanel(teamStatArray, graphMax, teamID)
 	}
 	
 	-- Adds player to Legend
-	local label2 = Chili.Label:New{
+	Chili.Label:New{
 		parent  = graphPanel,
 		x       = 55,
 		y       = (teamID)*20 + 5,
@@ -242,13 +245,13 @@ local function replaceGraph(obj)
 	lineLabels:ClearChildren()
 	
 	local graphLength = Spring.GetTeamStatsHistory(0) - 1
-	local time        = Spring.GetTeamStatsHistory(0, 0, graphLength)
-	local time        = time[graphLength]['time']
+	local gameTime    = Spring.GetTeamStatsHistory(0, 0, graphLength)
+	local gameTime    = gameTime[graphLength]['time']
 	
 	-- Applies label of the selected graph at bottom of window
 	graphLabel:SetCaption(obj.caption)
-	graphTime:SetCaption('Total Time: ' .. formatTime(time))
-	curGraph.caption = labelCaption
+	graphTime:SetCaption('Total Time: ' .. formatTime(gameTime))
+	curGraph.caption = obj.caption
 	curGraph.name    = obj.name
 	
 	getEngineArrays(curGraph.name, graphLength)
@@ -256,13 +259,6 @@ local function replaceGraph(obj)
 	fixLabelAlignment()
 end
 
-local function minimizeWindow(obj)
-	if obj.minimized then
-		Spring.Echo('minning')
-	else
-		obj.minimized = true
-	end
-end
 -----------------------------------------------------------------------
 -- Starting point: Draws all the main elements which are later tailored
 function loadWindow()
@@ -270,56 +266,60 @@ function loadWindow()
 	Chili = WG.Chili
 	local screen0 = Chili.Screen0
 	local selW  = 150
-	window0   = Chili.Window:New{
-		parent  = screen0, 
-		x       = '20%',
-		y       = '20%', 
-		right   = '20%', 
-		bottom  = '20%',
+	
+	control0 = Chili.Control:New{
+		x       = 0,
+		y       = 0, 
+		right   = 0, 
+		bottom  = 0,
 		padding = {5,5,5,5},
 	}
 
 	graphSelect = Chili.StackPanel:New{
-		parent    = window0,
+		parent    = control0,
 		width     = selW,
 		minHeight = 70,
 		x         = 0,
-		y         = 0,
+		y         = '10%',
 		bottom    = 0,
 	}
-	graphPanel  = Chili.Window:New{
-		parent  = window0,
-		x       = selW, 
-		y       = 0,
-		right   = 0,
+	
+	graphPanel = Chili.Control:New{
+		parent  = control0,
+		x       = selW,
+		height  = '90%',
+		right   = 40,
 		bottom  = 0,
 	}	
-	lineLabels  = Chili.Control:New{
-		parent  = screen0,
-		x       = '80%',
+	
+	lineLabels = Chili.Control:New{
+		parent  = control0,
+		right   = 0,
 		width   = 40,
 		y       = 0,
-		bottom  = '20%',
+		bottom  = 0,
 		padding = {0,0,0,0},
 	}
-	graphLabel  = Chili.Label:New{
-		parent   = screen0,
-		x        = '20%',
-		bottom   = '80%',
+	
+	graphLabel = Chili.Label:New{
+		parent   = control0,
+		x        = 0,
+		y        = 0,
 		caption  = '',
 		font     = {size = 30,},
 	}
-	graphTime  = Chili.Button:New{
-		parent  = screen0,
+	
+	graphTime = Chili.Button:New{
+		parent  = control0,
 		caption = '',
-		y       = '80%',
-		right   = '20%',
+		y       = 0,
+		right   = 0,
 		height  = 20,
 		width   = 200,
 	}
 	
 	for a=1, #engineStats do
-		local engineButton = Chili.Button:New{
+		button[a] = Chili.Button:New{
 			parent    = graphSelect,
 			name      = engineStats[a][1],
 			caption   = engineStats[a][2],
@@ -328,36 +328,13 @@ function loadWindow()
 		}
 	end
 	
-	Chili.Button:New{
-		name    = 'exit',
-		caption = 'Exit Game',
-		bottom  = '80%',
-		right   = '20%',
-		height  = 30,
-		width   = 80,
-		parent  = screen0,
-		OnClick = {function() Spring.SendCommands('quit');end},
-	}
-	
-	Chili.Button:New{
-		name      = 'minimize',
-		caption   = 'Minimize',
-		minimized = false,
-		bottom    = '80%',
-		right     = '28%',
-		height    = 30,
-		width     = 90,
-		parent    = screen0,
-		OnClick   = {minimizeWindow},
-	}
-	
 	Chili.Checkbox:New{
 		caption  = 'Delta',
-		y        = 0, 
-		right    = 190,
+		y        = 10, 
+		x        = 250,
 		height   = 30, 
 		width    = 50,
-		parent   = window0,
+		parent   = control0,
 		checked  = false,
 		OnChange = {
 			function()
@@ -369,6 +346,9 @@ function loadWindow()
 		},
 	}
 	
+	replaceGraph(button[1])
+	WG.BarMenu.AddControl('Graph', control0)
+	WG.BarMenu.ShowHide('Graph')
 end
 
 --to do: possible to run from start when playing as spec
@@ -379,10 +359,10 @@ function widget:Initialize()
 end
 
 function widget:Shutdown()
-	
 	Spring.SendCommands('endgraph 1')
 end
 
 function widget:GameOver()
+	loadWindow()
 	gameOver = true
 end

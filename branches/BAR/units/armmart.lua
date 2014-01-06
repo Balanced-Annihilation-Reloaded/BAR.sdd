@@ -29,7 +29,7 @@ return {
 		movementclass = "TANK3",
 		name = "Luger",
 		nochasecategory = "NOTLAND VTOL",
-		objectname = "ARMMART",
+		objectname = "ARMMART.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 286,
@@ -38,7 +38,11 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 35,
 		turnrate = 402,
+		
 		customparams = {
+			arm_tank = "1",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 			canareaattack = 1,
 		},
 		featuredefs = {

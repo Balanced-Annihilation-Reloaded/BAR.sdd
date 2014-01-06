@@ -29,7 +29,7 @@ return {
 		movementclass = "TANK3",
 		name = "Penetrator",
 		nochasecategory = "VTOL",
-		objectname = "ARMMANNI",
+		objectname = "ARMMANNI.s3o",
 		seismicsignature = 0,
 		selfdestructas = "ESTOR_BUILDING",
 		sightdistance = 650,
@@ -38,6 +38,12 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 37,
 		turnrate = 151,
+		
+		customparams = {
+			arm_tank = "1",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

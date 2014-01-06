@@ -57,6 +57,7 @@ local function updateMsgWindow()
 	textBox:SetText(text)
 	msgWindow:Resize(msgWidth, font.size * (lines-1) + 10) 
 end
+
 function widget:Initialize()
 	
 	Chili = WG.Chili
@@ -98,10 +99,11 @@ function widget:Initialize()
 		width  = msgWidth,
 		text   = ''
 	}
-	local buffer = getConsoleBuffer(200)
 	
+	local buffer = getConsoleBuffer(maxMsgNum)
 	for i=1,#buffer do
-		widget:AddConsoleLine(buffer[i].text,buffer[i].priority)
+		local line = buffer[i]
+		widget:AddConsoleLine(line.text,line.priority)
 	end
 	
 	-- Disable engine console

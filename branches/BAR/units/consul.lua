@@ -33,7 +33,7 @@ return {
 		metalstorage = 100,
 		movementclass = "TANK3",
 		name = "Consul",
-		objectname = "CONSUL",
+		objectname = "CONSUL.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 500,
@@ -68,6 +68,11 @@ return {
 			[7] = "armfort",
 			[8] = "armarad",
 			[9] = "armmine2",
+		},
+		customparams = {
+			arm_tank = "1",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

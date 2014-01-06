@@ -650,7 +650,7 @@ local function DrawLOS()
 	cnt=cnt+1
 	-- Spring.Echo(cnt)
 	glUniformMatrix(losShaderViewPrjInvLoc,  "viewprojectioninverse")
-	glUniform(losShaderGameFrameLoc,  (spGetGameFrame())/150.0)
+	glUniform(losShaderGameFrameLoc,  (math.max((spGetGameFrame()-60),0))/150.0)
 
 
 	-- render a full screen quad
@@ -683,6 +683,9 @@ local spGetGameFrame = Spring.GetGameFrame
 local spUpdateInfoTexture = Spring.UpdateInfoTexture
 local spGetMapDrawMode = Spring.GetMapDrawMode
 local lastupdate=0
+local GetSpectatingState = Spring.GetSpectatingState
+
+
 function widget:DrawWorld()
 
 	if useLOS then 
@@ -697,6 +700,8 @@ function widget:DrawWorld()
 	else 
 		status=false
 	end
+	local spectating,fullView,fullSelect = GetSpectatingState()
+	if spectating and fullView then return end
 	
 	if status and spGetMapDrawMode() and spGetMapDrawMode()=="normal" then
 		gf=spGetGameFrame()

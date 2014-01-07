@@ -1,7 +1,7 @@
 -- WIP
 function widget:GetInfo()
 	return {
-		name    = 'Funks Option Menu',
+		name    = 'Funks Main Menu',
 		desc    = 'Graphics, Interface, and Sound Options Menu (WIP)',
 		author  = 'Funkencool',
 		date    = '2013',
@@ -110,7 +110,9 @@ local function groupWidget(name,wData)
 	local _, _, category = string.find(wData.basename, '([^_]*)')
 	if category then
 		for i=1,#wCategories do
-			if category == wCategories[i].cat then wCategories[i].list[#wCategories[i].list+1] = {name = name,wData = wData} end
+			if category == wCategories[i].cat then 
+				wCategories[i].list[#wCategories[i].list+1] = {name = name,wData = wData} 
+			end
 		end
 	else
 		local list = wCategories[#wCategories].list
@@ -179,8 +181,20 @@ end
 ---------------------------- 
 --
 local function showHide(tab)
-	if tab then menuTabs:Select(tab) end
-	if not mainMenu.visible and tab then mainMenu:ToggleVisibility()  end
+	local oTab = barSettings.tabSelected
+	
+	if tab then 
+		menuTabs:Select(tab)
+	else
+		mainMenu:ToggleVisibility()
+		return
+	end
+	
+	if mainMenu.visible and oTab == tab then
+		mainMenu:Hide()
+	elseif mainMenu.hidden then
+		mainMenu:Show()
+	end
 end
 
 ---------------------------- 

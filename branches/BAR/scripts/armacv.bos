@@ -5,63 +5,40 @@
 
 #define SIG_BUILD		4	
 
-piece  base, beam, door1, door2, plate, arm, nano, turret;
 
-static-var  statechg_DesiredState, statechg_StateChanging, notBuilding;
+piece  base, ldoor, rdoor, lturret, rturret, lplate, rplate, lnano, rnano;
+
+static-var  statechg_DesiredState, statechg_StateChanging, notBuilding, nano;
 
 
 activatescr()
 {
-	turn door1 to z-axis <0.000000> now;
-	turn door1 to z-axis <-65.714286> speed <154.258242>;
-	turn door2 to z-axis <0.000000> now;
-	turn door2 to z-axis <65.258242> speed <153.203297>;
-	sleep 40;
-
-	move door1 to y-axis [-3.099994] speed [7.242981];
-	move door2 to y-axis [-3.050000] speed [7.126172];
-	sleep 40;
-
-	move plate to y-axis [3.800000] speed [8.878510];
-	sleep 40;
-
-	turn arm to x-axis <85.967033> speed <200.390110>;
-	turn nano to x-axis <-69.758242> speed <162.626374>;
-	sleep 40;
+	turn ldoor to z-axis <90> speed <180>;
+	turn rdoor to z-axis <-90> speed <180>;
+	move lplate to x-axis [7.5] speed [15];
+	move rplate to x-axis [-7.5] speed [15;
+	sleep 400;
 }
 
 deactivatescr()
 {
-	move plate to y-axis [3.800000] now;
-	move door1 to y-axis [-3.099994] now;
-	move door2 to y-axis [-3.050000] now;
-	turn door1 to z-axis <-65.714286> now;
-	turn door2 to z-axis <65.258242> now;
-	turn arm to x-axis <85.967033> now;
-	turn arm to x-axis <0.000000> speed <221.571429>;
-	turn nano to x-axis <-69.758242> now;
-	turn nano to x-axis <0.000000> speed <179.802198>;
-	sleep 40;
-
-	move plate to y-axis [0.000000] speed [9.768640];
-	sleep 40;
-
-	move door1 to y-axis [0.000000] speed [7.969147];
-	move door2 to y-axis [0.000000] speed [7.840619];
-	sleep 40;
-
-	turn door1 to z-axis <0.000000> speed <168.500000>;
-	turn door2 to z-axis <0.000000> speed <167.346154>;
-	sleep 40;
-
 	set INBUILDSTANCE to 0;
-	turn turret to y-axis <0.000000> speed <160.038462>;
-	wait-for-turn turret around y-axis;
+
+	turn rturret to x-axis <0> speed <160.038462>;
+	turn lturret to x-axis <0> speed <160.038462>;
+	wait-for-turn lturret around y-axis;
+	wait-for-turn rturret around y-axis;
+	sleep 300;
+	turn ldoor to z-axis <0> speed <180>;
+	turn rdoor to z-axis <0> speed <180>;
+	move lplate to x-axis [0] speed [15];
+	move rplate to x-axis [0] speed [15;
+	sleep 400;
+
 }
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
-	var Func_Var_4;
 	while( get BUILD_PERCENT_LEFT )
 	{
 		sleep 500;
@@ -76,15 +53,7 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 			{
 				smoketype = 257;
 			}
-			Func_Var_4 = Rand( 1, 2 );
-			if( Func_Var_4 == 1 )
-			{
-				emit-sfx smoketype from door1;
-			}
-			if( Func_Var_4 == 2 )
-			{
-				emit-sfx smoketype from door2;
-			}
+			emit-sfx smoketype from base;
 		}
 		sleeptime = healthpercent * 50;
 		if( sleeptime < 200 )
@@ -94,18 +63,6 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 		sleep sleeptime;
 	}
 }
-
-/*
-Go()
-{
-	call-script activatescr();
-}
-
-Stop()
-{
-	call-script deactivatescr();
-}
-*/
 
 RequestState(requestedstate, currentstate)
 {
@@ -153,20 +110,14 @@ Deactivate()
 	start-script RequestState(1);
 }
 
-/*
-TargetHeading(Func_Var_1)
-{
-	Static_Var_1 = 0 - Func_Var_1;
-}
-*/
-
 StartBuilding(heading, pitch)
 {
 	start-script RequestState(0);
 	while( notBuilding ) sleep 100;
 	signal SIG_BUILD;
-	turn turret to y-axis heading speed <160.038462>;
-	wait-for-turn turret around y-axis;
+	turn rturret to x-axis heading speed <160.038462>;
+	turn lturret to x-axis <0> - heading speed <160.038462>;
+	wait-for-turn rturret around y-axis;
 	set INBUILDSTANCE to 1;
 }
 
@@ -182,8 +133,15 @@ StopBuilding()
 
 QueryNanoPiece(piecenum)
 {
-	piecenum = beam;
+	if (nano==1){
+		piecenum = lnano;
+	}
+	else{
+		piecenum = rnano;
+	}
+	nano= !nano;
 }
+
 
 SweetSpot(piecenum)
 {
@@ -195,49 +153,23 @@ Killed(severity, corpsetype)
 	if( severity <= 25 )
 	{
 		corpsetype = 1;
-		explode arm type BITMAPONLY | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
-		explode nano type BITMAPONLY | BITMAP3;
-		explode beam type BITMAPONLY | BITMAP4;
-		explode door1 type BITMAPONLY | BITMAP5;
-		explode door2 type BITMAPONLY | BITMAP1;
-		explode turret type BITMAPONLY | BITMAP2;
-		explode plate type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
-		explode arm type FALL | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
-		explode nano type FALL | BITMAP3;
-		explode beam type FALL | BITMAP4;
-		explode door1 type BITMAPONLY | BITMAP5;
-		explode door2 type BITMAPONLY | BITMAP1;
-		explode turret type SHATTER | BITMAP2;
-		explode plate type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
-		explode arm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 		explode base type BITMAPONLY | BITMAP2;
-		explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode beam type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode door1 type BITMAPONLY | BITMAP5;
-		explode door2 type BITMAPONLY | BITMAP1;
-		explode turret type SHATTER | BITMAP2;
-		explode plate type BITMAPONLY | BITMAP3;
+
 		return (0);
 	}
 	corpsetype = 3;
-	explode arm type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode base type BITMAPONLY | BITMAP2;
-	explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode beam type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode door1 type BITMAPONLY | BITMAP5;
-	explode door2 type BITMAPONLY | BITMAP1;
-	explode turret type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode plate type BITMAPONLY | BITMAP3;
+	explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+
 }

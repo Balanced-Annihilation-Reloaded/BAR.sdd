@@ -33,7 +33,7 @@ return {
 		metalstorage = 100,
 		movementclass = "TANK3",
 		name = "Advanced Construction Vehicle",
-		objectname = "ARMACV",
+		objectname = "ARMACV.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
@@ -74,6 +74,12 @@ return {
 			[7] = "armmmkr",
 			[8] = "armuwadves",
 			[9] = "armuwadvms",
+		},
+		
+		customparams = {
+			arm_tank = "1",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

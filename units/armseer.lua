@@ -30,7 +30,7 @@ return {
 		maxwaterdepth = 0,
 		movementclass = "TANK3",
 		name = "Seer",
-		objectname = "ARMSEER",
+		objectname = "ARMSEER.s3o",
 		onoffable = true,
 		radardistance = 2300,
 		seismicsignature = 0,
@@ -41,6 +41,11 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 25,
 		turnrate = 605,
+		customparams = {
+			arm_tank = "1",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

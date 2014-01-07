@@ -59,9 +59,12 @@ Go()
 		sleep 60;
 		turn larm1 to x-axis <-90> speed <360>;
 		turn rarm1 to x-axis <-90> speed <360>;
-		turn lturret to x-axis <-90> speed <360>;
-		turn rturret to x-axis <-90> speed <360>;
-		sleep 250;
+		turn lturret to x-axis <-90> - Static_Var_2 speed <360>;
+		turn rturret to x-axis <-90> + Static_Var_2 speed <360>;
+		sleep 100;
+		turn larm2 to y-axis <0> speed <180>;
+		turn rarm2 to y-axis <0> speed <180>;
+		sleep 150;
 
 	}
 	set INBUILDSTANCE to 1;
@@ -78,6 +81,9 @@ Stop()
 		turn rarm1 to x-axis <0> speed <360>;
 		turn lturret to x-axis <0> speed <360>;
 		turn rturret to x-axis <0> speed <360>;
+		
+		turn larm2 to y-axis <45> speed <180>;
+		turn rarm2 to y-axis <-45> speed <180>;
 		sleep 250;
 		turn larm2 to y-axis <0> speed <180>;
 		turn rarm2 to y-axis <0> speed <180>;

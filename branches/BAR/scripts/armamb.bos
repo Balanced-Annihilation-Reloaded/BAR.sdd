@@ -159,6 +159,8 @@ RequestState(requestedstate, currentstate)
 
 RestoreAfterDelay()
 {
+	signal 8;
+	set-signal-mask 8;
 	sleep restore_delay;
 	set-signal-mask 0;
 	start-script RequestState(1);

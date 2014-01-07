@@ -1,10 +1,7 @@
-#define TA			// This is a TA script
-
 #include "sfxtype.h"
 #include "exptype.h"
 
-#define SIG_BUILD		4	
-
+#define SIG_BUILD 4	
 
 piece  base, ldoor, rdoor, lturret, rturret, lplate, rplate, lnano, rnano;
 
@@ -16,7 +13,7 @@ activatescr()
 	turn ldoor to z-axis <90> speed <180>;
 	turn rdoor to z-axis <-90> speed <180>;
 	move lplate to x-axis [7.5] speed [15];
-	move rplate to x-axis [-7.5] speed [15;
+	move rplate to x-axis [-7.5] speed [15];
 	sleep 400;
 }
 
@@ -26,13 +23,13 @@ deactivatescr()
 
 	turn rturret to x-axis <0> speed <160.038462>;
 	turn lturret to x-axis <0> speed <160.038462>;
-	wait-for-turn lturret around y-axis;
-	wait-for-turn rturret around y-axis;
+	wait-for-turn lturret around x-axis;
+	wait-for-turn rturret around x-axis;
 	sleep 300;
 	turn ldoor to z-axis <0> speed <180>;
 	turn rdoor to z-axis <0> speed <180>;
 	move lplate to x-axis [0] speed [15];
-	move rplate to x-axis [0] speed [15;
+	move rplate to x-axis [0] speed [15];
 	sleep 400;
 
 }
@@ -117,8 +114,8 @@ StartBuilding(heading, pitch)
 	signal SIG_BUILD;
 	turn rturret to x-axis heading speed <160.038462>;
 	turn lturret to x-axis <0> - heading speed <160.038462>;
-	wait-for-turn rturret around y-axis;
 	set INBUILDSTANCE to 1;
+	wait-for-turn rturret around x-axis;
 }
 
 StopBuilding()
@@ -133,10 +130,12 @@ StopBuilding()
 
 QueryNanoPiece(piecenum)
 {
-	if (nano==1){
+	if (nano == 1)
+	{
 		piecenum = lnano;
 	}
-	else{
+	else
+	{
 		piecenum = rnano;
 	}
 	nano= !nano;

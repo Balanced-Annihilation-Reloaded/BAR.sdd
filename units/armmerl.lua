@@ -29,7 +29,7 @@ return {
 		movementclass = "TANK3",
 		name = "Merl",
 		nochasecategory = "VTOL",
-		objectname = "ARMMERL",
+		objectname = "ARMMERL.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 247,
@@ -38,6 +38,11 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 38,
 		turnrate = 520.29998779297,
+		customparams = {
+			arm_tank = "1",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

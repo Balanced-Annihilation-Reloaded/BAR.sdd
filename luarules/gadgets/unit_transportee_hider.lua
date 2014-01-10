@@ -10,14 +10,14 @@ function gadget:GetInfo()
   }
 end
 
--- Unsynced Ctrl
 local SetUnitNoDraw			= Spring.SetUnitNoDraw
--- Synced Read
+local SetUnitNeutral		= Spring.SetUnitNeutral
+local SetUnitStealth		= Spring.SetUnitStealth
+local SetUnitSonarStealth	= Spring.SetUnitSonarStealth
 local GetUnitDefID			= Spring.GetUnitDefID
 local GetUnitPosition 		= Spring.GetUnitPosition
 local GetUnitTransporter 	= Spring.GetUnitTransporter
 local GetUnitsInCylinder 	= Spring.GetUnitsInCylinder
--- Synced Ctrl
 local GiveOrderToUnit		= Spring.GiveOrderToUnit
 
 -- Constants
@@ -73,6 +73,8 @@ function gadget:UnitLoaded(unitID, unitDefID, unitTeam, transportID, transportTe
 	end
 	if (not transportDef.springCategories.vtol) then 
 		SetUnitNoDraw(unitID, true)
+		SetUnitStealth(unitID, true)
+		SetUnitSonarStealth(unitID, true)
 	end
 end
 
@@ -85,6 +87,8 @@ function gadget:UnitUnloaded(unitID, unitDefID, teamID, transportID)
 	massLeft[transportID] = massLeft[transportID] + unitDef.mass
 	if (not transportDef.springCategories.vtol) then 
 		SetUnitNoDraw(unitID, false)
+		SetUnitStealth(unitID, false)
+		SetUnitSonarStealth(unitID, false)
 	end
 end
 

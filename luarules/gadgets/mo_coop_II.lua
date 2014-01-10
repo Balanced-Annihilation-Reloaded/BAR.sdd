@@ -6,7 +6,7 @@ function gadget:GetInfo()
 		author	= 'Niobium',
 		date	= 'May 2011',
 		license	= 'GNU GPL, v2 or later',
-		layer	= 1,
+		layer	= 1, --should run after game_initial_spawn
 		enabled	= true
 	}
 end
@@ -21,17 +21,17 @@ if gadgetHandler:IsSyncedCode() then
 	----------------------------------------------------------------
 	-- Synced Var
 	----------------------------------------------------------------
-	local coopStartPoints = {} -- coopStartPoints[playerID] = {x,y,z} -- Also acts as is-player-a-coop-player
+	local coopStartPoints = {} -- coopStartPoints[playerID] = {x,y,z}, also acts as is-player-a-coop-player
+	GG.coopStartPoints = coopStartPoints -- Share to other gadgets
 	
-	GG.coopStartPoints = coopStartPoints -- Share it to other gadgets
+	local armcomDefID = UnitDefNames.armcom.id
+	local corcomDefID = UnitDefNames.corcom.id
 	
 	----------------------------------------------------------------
-	-- Synced Callins
+	-- Setting up
 	----------------------------------------------------------------
 	
-	-- Commented out Initialize due to set of GG.coopMode and layer of 1
-	-- Previously layer was -1 (and so initialize ran first), however this made the unsynced drawing code draw UNDER the green startbox
-	-- Could have a separate :GetInfo in both synced and unsynced sections, but that is asking for trouble
+	-- for debug echos
    	local function to_string(data, indent)
 		local str = ""
 
@@ -80,7 +80,6 @@ if gadgetHandler:IsSyncedCode() then
 		SendToUnsynced("CoopStartPoint", playerID, x, y, z)
 	end
 	
-	--function gadget:Initialize()
 	do
 		local coopHasEffect = false
 		local teamHasPlayers = {}
@@ -100,13 +99,17 @@ if gadgetHandler:IsSyncedCode() then
 		
 		if coopHasEffect then
 			GG.coopMode = true -- Inform other gadgets that coop needs to be taken into account
-		--else
-		-- Could remove the gadget here, but spring does not like gadgets removing themselves on initialize.
-		-- Get the same problem with trying to remove the unsynced side (It won't be drawing anything though, so it's not too bad)
 		end
 	end
+
+
+	----------------------------------------------------------------
+	-- Synced Callins
+	----------------------------------------------------------------
+	
 	
 	function gadget:AllowStartPosition(x, y, z, playerID)
+		
 		--Spring.Echo('allowstart',x,z,playerID)
 		for otherplayerID, startPos in pairs(coopStartPoints) do
 			if startPos[1]==x and startPos[3]==z then
@@ -116,45 +119,110 @@ if gadgetHandler:IsSyncedCode() then
 		end
 		if coopStartPoints[playerID] then
 			-- Spring sometimes(?) has each player re-place their start position on their current team start position pre-gamestart
-			-- To catch this, we don't recognise a coop start position if it is identical to their teams spring start position
+			-- To catch this, we don't recognise a coop start position if it is identical to their teams 'normal' start position
 			-- This has the side-effect that a coop player cannot intentionally start directly on their teammate, but this is OK
 			
-			--Since spring is a bitch, and if the host (the guy who places the real start point) readies up first, and the client second, then the host will have his start point overwritten by the client
-			-- this can be prevented by not allowing the host to place on client either.
+			-- Since spring is a bitch, and if the first player (the guy who places the real start point) readies up first, and 
+			-- his coop buddy readies up after, then the first will have his start point overwritten by the second.
+			-- This can be prevented by not allowing the first to place on second, either.
+			
 			local _, _, _, teamID, allyID = Spring.GetPlayerInfo(playerID)
 			local osx, _, osz = Spring.GetTeamStartPosition(teamID)
 			if x ~= osx or z ~= osz then
-				local bx1, bz1, bx2, bz2 = Spring.GetAllyTeamStartBox(allyID)
-				x = math.min(math.max(x, bx1), bx2)
-				z = math.min(math.max(z, bz1), bz2)
-				SetCoopStartPoint(playerID, x, Spring.GetGroundHeight(x, z), z)
-			end
-			--Spring.Echo('allowstart false',x,z,playerID)
-			return false
+				local xmin, zmin, xmax, zmax = Spring.GetAllyTeamStartBox(allyID)
+				x = math.min(math.max(x, xmin), xmax)
+				z = math.min(math.max(z, zmin), zmax)
+				
+				--NewbiePlacer
+				local _,_,_,teamID = Spring.GetPlayerInfo(playerID)
+				if (Spring.GetTeamRulesParam(teamID, 'isNewbie') == 1) then 
+					Spring.SendMessageToPlayer(playerID,"In this match, teams containing newbies (rank 0) will have factions and startpoints chosen for them!")
+					coopStartPoints[playerID] = {-1,-1,-1} --record an invalid coop startpoint, to be picked up and assigned properly later; don't display anything
+					return true --because if we don't the cooped players won't appear readied (even though they are) 
+				else
+					SetCoopStartPoint(playerID, x, Spring.GetGroundHeight(x, z), z) --record coop start point, display it
+					return false
+				end
+			end		
 		end
 		---Spring.Echo('allowstart true',x,z,playerID)
 		   
 	   return true
 	end
 	
+	function IsSteep(x,z)
+		--check if the position (x,z) is too step to start a commander on or not
+		local mtta = math.acos(1.0 - 0.41221) - 0.02 --http://springrts.com/wiki/Movedefs.lua#How_slope_is_determined & the -0.02 is for safety 
+		local a1,a2,a3,a4 = 0,0,0,0
+		local d = 5
+		local y = Spring.GetGroundHeight(x,z)
+		local y1 = Spring.GetGroundHeight(x+d,z)
+		if math.abs(y1 - y) > 0.1 then a1 = math.atan((y1-y)/d) end
+		local y2 = Spring.GetGroundHeight(x,z+d)
+		if math.abs(y2 - y) > 0.1 then a2 = math.atan((y2-y)/d) end
+		local y3 = Spring.GetGroundHeight(x-d,z)
+		if math.abs(y3 - y) > 0.1 then a3 = math.atan((y3-y)/d) end
+		local y4 = Spring.GetGroundHeight(x,z+d)
+		if math.abs(y4 - y) > 0.1 then a4 = math.atan((y4-y)/d) end
+		if math.abs(a1) > mtta or math.abs(a2) > mtta or math.abs(a3) > mtta or math.abs(a4) > mtta then 
+			return true --too steep
+		else
+			return false --ok
+		end	
+	end
+	
 	local function SpawnTeamStartUnit(playerID,teamID, allyID, x, z)
-		local startUnit = Spring.GetTeamRulesParam(teamID, 'startUnit')
+		local startUnit = Spring.GetTeamRulesParam(teamID, 'startUnit') 
 		if GG.playerStartingUnits then --use that player specific start unit if available
 			startUnit = GG.playerStartingUnits[playerID] or startUnit
-		end 
-		if x <= 0 or z <= 0 then
-			local xmin, zmin, xmax, zmax = Spring.GetAllyTeamStartBox(allyID)
-			x = 0.5 * (xmin + xmax)
-			z = 0.5 * (zmin + zmax)
 		end
+
+		--Newbie Placer chooses random faction for newbies
+		if Spring.GetTeamRulesParam(teamID, 'isNewbie') == 1 or (startUnit==nil) then
+			if math.random() > 0.5 then
+				startUnit = corcomDefID
+			else
+				startUnit = armcomDefID
+			end
+		end
+		
+		--Newbie Placer chooses a start point for newbies (the coop teams start point will have already been set in initial_spawn, just place close to that)
+		if (Spring.GetTeamRulesParam(teamID, 'isNewbie') == 1) or x <= 0 or z <= 0 then --TODO: improve this
+			local xmin, zmin, xmax, zmax = Spring.GetAllyTeamStartBox(allyID)
+			local tx,tz
+			if GG.teamStartPoints then
+				tx = GG.teamStartPoints[teamID][1]
+				tz = GG.teamStartPoints[teamID][3]
+			else
+				tx = (xmin+xmax)/2
+				tz = (zmin+zmax)/2
+			end
+			local thetaStart = math.random(15)-1
+			for theta = thetaStart,15+thetaStart do
+				local sx = tx + 45*math.cos((math.pi/8)*theta)
+				local sz = tz + 45*math.sin((math.pi/8)*theta)
+				if not IsSteep(sx,sz) then
+					x = math.max(xmin,math.min(sx,xmax))
+					z = math.max(zmin,math.min(sz,zmax))
+					break
+				else --fallback
+					x=tx
+					z=tz
+				end
+			end
+		end
+	
+		--create
 		local unitID = Spring.CreateUnit(startUnit, x, Spring.GetGroundHeight(x, z), z, 0, teamID)
+		coopStartPoints[playerID] = {x,z}
+		GG.playerStartingUnits[playerID] = startUnit
 		--we set unit rule to mark who belongs to, so initial queue knows which com unitID belongs to which player's initial queue
 		Spring.SetUnitRulesParam(unitID, "startingOwner", playerID )
 	end
 	
-	function gadget:GameFrame(n)
-		
-		if GG.coopMode then
+	function gadget:GameFrame(n)		
+		--spawn cooped coms
+		if n==0 and GG.coopMode then
 			--Spring.Echo('coop dbg7',to_string(coopStartPoints))
 			for playerID, startPos in pairs(coopStartPoints) do
 				local _, _, _, teamID, allyID = Spring.GetPlayerInfo(playerID)
@@ -307,6 +375,7 @@ else
 		end
 	end
 	
+	-- for debug echos
 	function to_string(data, indent)
 		local str = ""
 
@@ -348,15 +417,3 @@ else
 	end
 end
 
-
--- [f=0000000] coop dbg6, 1, 1868, 144.53125, 619, 1:
-  -- 1: 1868
-  -- 2: 144.53125
-  -- 3: 619
-
--- [f=0000000] coop dbg5, CoopStartPoint, 1, 1868, 144.53125, 
--- [f=0000000] coop dbg3, 1, CoopStartPoint, klj
--- , CoopStartPoint:
-  -- 1: 1
-  -- 2: 1868
-  -- 3: 144.53125

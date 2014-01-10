@@ -49,7 +49,7 @@ local econUnitDefIDs = { --better to hardcode these since its complicated to pic
 
 
 function gadget:GameStart()
-	--make table of teams eligable for awards
+	--make table of teams eligible for awards
 	local allyTeamIDs = Spring.GetAllyTeamList()
 	local gaiaTeamID = Spring.GetGaiaTeamID()
 	for i=1,#allyTeamIDs do
@@ -59,12 +59,24 @@ function gadget:GameStart()
 			local isLuaAI = (Spring.GetTeamLuaAI(teamIDs[j]) ~= "")
 			local isGaiaTeam = (teamIDs[j] == gaiaTeamID)
 			if ((not isAiTeam) and (not isLuaAi) and (not isGaiaTeam)) then
-				local playerIDs = Spring.GetPlayerList(teamIDs[j])	
-				present[teamIDs[j] ] = true
-				teamInfo[teamIDs[j] ] = {ecoDmg=0, fightDmg=0, otherDmg=0, dmgDealt=0, ecoUsed=0, dmgRatio=0, ecoProd=0, lastKill=0, dmgRec=0, sleepTime=0, present=true,}
-				coopInfo[teamIDs[j] ] = {players=#playerIDs,}
+				local playerIDs = Spring.GetPlayerList(teamIDs[j])
+				local numPlayers = 0
+				for _,playerID in pairs(playerIDs) do
+					local _,_,isSpec = Spring.GetPlayerInfo(playerID) 
+					if not isSpec then 
+						numPlayers = numPlayers + 1
+					end
+				end
+				
+				if numPlayers > 0 then
+					present[teamIDs[j]] = true
+					teamInfo[teamIDs[j]] = {ecoDmg=0, fightDmg=0, otherDmg=0, dmgDealt=0, ecoUsed=0, dmgRatio=0, ecoProd=0, lastKill=0, dmgRec=0, sleepTime=0, present=true,}
+					coopInfo[teamIDs[j]] = {players=numPlayers,}
+				else
+					present[teamIDs[j]] = false
+				end
 			else
-				present[teamIDs[j] ] = false
+				present[teamIDs[j]] = false
 			end
 		end
 	end
@@ -83,6 +95,7 @@ end
 function gadget:UnitDestroyed(unitID, unitDefID, teamID, attackerID, attackerDefID, attackerTeamID)
 	-- add destroyed unitID cost to stats for attackerTeamID
 	if not attackerTeamID then return end
+	if attackerTeamID == gaiaTeamID then return end
 	if not present[attackerTeamID] then return end
 	if (not unitDefID) or (not teamID) then return end
 	if SpAreTeamsAllied(teamID, attackerTeamID) then return end
@@ -118,15 +131,26 @@ function gadget:UnitTaken(unitID, unitDefID, unitTeam, newTeam)
 end
 
 
-function gadget:GameOver()
-	--get stuff from engine stats
+function gadget:GameOver(winningAllyTeams)
+	--calculate average damage dealt
+	local avgTeamDmg = 0 
+	local numTeams = 0
+	for teamID,_ in pairs(teamInfo) do
+		local cur_max = Spring.GetTeamStatsHistory(teamID)
+		local stats = Spring.GetTeamStatsHistory(teamID, 0, cur_max)
+		avgTeamDmg = avgTeamDmg + stats[cur_max].damageDealt / coopInfo[teamID].players
+		numTeams = numTeams + 1
+	end
+	avgTeamDmg = avgTeamDmg / (math.max(1,numTeams))
+	
+	--get other stuff from engine stats
 	for teamID,_ in pairs(teamInfo) do
 		local cur_max = Spring.GetTeamStatsHistory(teamID)
 		local stats = Spring.GetTeamStatsHistory(teamID, 0, cur_max)
 		teamInfo[teamID].dmgDealt = teamInfo[teamID].dmgDealt + stats[cur_max].damageDealt	
 		teamInfo[teamID].ecoUsed = teamInfo[teamID].ecoUsed + stats[cur_max].energyUsed + 60 * stats[cur_max].metalUsed
-		if teamInfo[teamID].ecoUsed > 5000 then
-			teamInfo[teamID].dmgRatio = teamInfo[teamID].dmgDealt / teamInfo[teamID].ecoUsed * 100
+		if true then --teamInfo[teamID].ecoUsed > 5000 and teamInfo[teamID].dmgDealt > 12000  and ((numTeams <= 4) or teamInfo[teamID].dmgDealt > avgTeamDmg) then
+			teamInfo[teamID].dmgRatio = teamInfo[teamID].dmgDealt / math.max(1,teamInfo[teamID].ecoUsed) * 100
 		else
 			teamInfo[teamID].dmgRatio = 0
 		end
@@ -136,14 +160,15 @@ function gadget:GameOver()
 
 	--take account of coop
 	for teamID,_ in pairs(teamInfo) do
-		if coopInfo[teamID].players == 0 then coopInfo[teamID].players = 1 end --should never happen
 		teamInfo[teamID].ecoDmg = teamInfo[teamID].ecoDmg / coopInfo[teamID].players
 		teamInfo[teamID].fightDmg = teamInfo[teamID].fightDmg / coopInfo[teamID].players
 		teamInfo[teamID].otherDmg = teamInfo[teamID].otherDmg / coopInfo[teamID].players
 		teamInfo[teamID].dmgRec = teamInfo[teamID].dmgRec / coopInfo[teamID].players 
-		--no need to divide dmgRatio since it's a ratio
+		teamInfo[teamID].dmgRatio = teamInfo[teamID].dmgRatio / coopInfo[teamID].players
 	end
-		
+	
+
+	
 	--award awards
 	local ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKillScore, ecoKillScoreSec, ecoKillScoreThi = -1,-1,-1,0,0,0
 	local fightKillAward, fightKillAwardSec, fightKillAwardThi, fightKillScore, fightKillScoreSec, fightKillScoreThi = -1,-1,-1,0,0,0
@@ -153,7 +178,6 @@ function gadget:GameOver()
 	local sleepAward, sleepScore = -1,0
 	for teamID,_ in pairs(teamInfo) do	
 		--deal with sleep times
-		--TODO check time is alive?
 		local curTime = Spring.GetGameSeconds()
 		if (curTime - teamInfo[teamID].lastKill > teamInfo[teamID].sleepTime) then
 			teamInfo[teamID].sleepTime = curTime - teamInfo[teamID].lastKill
@@ -221,11 +245,27 @@ function gadget:GameOver()
 			dmgRecAward = teamID		
 		end
 		--longest sleeper award
-		if sleepScore < teamInfo[teamID].sleepTime then
+		if sleepScore < teamInfo[teamID].sleepTime and teamInfo[teamID].sleepTime > 12*60 then
 			sleepScore = teamInfo[teamID].sleepTime
 			sleepAward = teamID		
 		end
 	end	
+	
+	--is the cow awarded?
+	local cowAward = -1
+	if ecoKillAward ~= -1 and (ecoKillAward == fightKillAward) and (fightKillAward == effKillAward) and ecoKillAward ~= -1 then --check if some team got all the awards
+		if winningAllyTeams and winningAllyTeams[1] then
+			local won = false
+			local _,_,_,_,_,cowAllyTeamID = Spring.GetTeamInfo(ecoKillAward)
+			for _,allyTeamID in pairs(winningAllyTeams) do
+				if cowAllyTeamID == allyTeamID then --check if this team won the game
+					cowAward = ecoKillAward 
+					break
+				end
+			end
+		end
+	end
+
 	
 	--tell unsynced
 	SendToUnsynced("RecieveAwards", ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKillScore, ecoKillScoreSec, ecoKillScoreThi, 
@@ -233,7 +273,9 @@ function gadget:GameOver()
 									effKillAward, effKillAwardSec, effKillAwardThi, effKillScore, effKillScoreSec, effKillScoreThi, 
 									ecoAward, ecoScore, 
 									dmgRecAward, dmgRecScore, 
-									sleepAward, sleepScore)
+									sleepAward, sleepScore,
+									cowAward)
+	
 end
 
 
@@ -267,12 +309,11 @@ local bx,by --coords for top left hand corner of box
 local w = 800 
 local h = 500
 
-local cow = false
 local Background
 local FirstAward
 local SecondAward
 local ThirdAward
-local CowAwards
+local CowAward
 local OtherAwards
 
 local red = "\255"..string.char(171)..string.char(51)..string.char(51)
@@ -284,6 +325,7 @@ local quitColour
 local graphColour
 
 local playerListByTeam = {} --does not contain specs
+local myPlayerID = Spring.GetMyPlayerID()
 
 
 function gadget:Initialize()
@@ -319,7 +361,8 @@ function ProcessAwards(_,ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKill
 						effKillAward, effKillAwardSec, effKillAwardThi, effKillScore, effKillScoreSec, effKillScoreThi, 
 						ecoAward, ecoScore, 
 						dmgRecAward, dmgRecScore, 
-						sleepAward, sleepScore)
+						sleepAward, sleepScore,
+						cowAward)
 
 	--fix geometry
 	local vsx,vsy = Spring.GetViewGeometry()
@@ -333,8 +376,7 @@ function ProcessAwards(_,ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKill
 	FirstAward = CreateAward('fuscup',0,'Destroying enemy resource production', white, ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKillScore, ecoKillScoreSec, ecoKillScoreThi, 100) 
 	SecondAward = CreateAward('bullcup',0,'Destroying enemy units and defences',white, fightKillAward, fightKillAwardSec, fightKillAwardThi, fightKillScore, fightKillScoreSec, fightKillScoreThi, 200) 
 	ThirdAward = CreateAward('comwreath',0,'Effective use of resources',white,effKillAward, effKillAwardSec, effKillAwardThi, effKillScore, effKillScoreSec, effKillScoreThi, 300) 
-	if (ecoKillAward == fightKillAward) and (fightKillAward == effKillAward) and ecoKillAward ~= -1 then
-		cow = true
+	if cowAward ~= -1 then
 		CowAward = CreateAward('cow',1,'Doing everything',white, ecoKillAward, 1,1,1,1,1, 400) 	
 	else
 		OtherAwards = CreateAward('',2,'',white, ecoAward, dmgRecAward, sleepAward, ecoScore, dmgRecScore, sleepScore, 400)		
@@ -342,12 +384,18 @@ function ProcessAwards(_,ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKill
 	drawAwards = true
 	
 	--don't show graph
-	Spring.SendCommands('endgraph 0')		
+	Spring.SendCommands('endgraph 0')	
 
+	--record who won which awards in chat message (for demo parsing by replays.springrts.com)
+	--make all values positive, as unsigned ints are easier to parse
+	local ecoKillLine    = '\161' .. tostring(1+ecoKillAward) .. ':' .. tostring(ecoKillScore) .. '\161' .. tostring(1+ecoKillAwardSec) .. ':' .. tostring(ecoKillScoreSec) .. '\161' .. tostring(1+ecoKillAwardThi) .. ':' .. tostring(ecoKillScoreThi)  
+	local fightKillLine  = '\162' .. tostring(1+fightKillAward) .. ':' .. tostring(fightKillScore) .. '\162' .. tostring(1+fightKillAwardSec) .. ':' .. tostring(fightKillScireSec) .. '\162' .. tostring(1+fightKillAwardThi) .. ':' .. tostring(fightKillScoreThi)
+	local effKillLine    = '\163' .. tostring(1+effKillAward) ..  ':' .. tostring(effKillScore) .. '\163' .. tostring(1+effKillAwardSec) .. ':' .. tostring(effKillScoreSec) .. '\163' .. tostring(1+effKillAwardThi) .. ':' .. tostring(effKillScoreThi)
+	local otherLine      = '\164' .. tostring(1+cowAward) .. '\165' ..  tostring(1+ecoAward) .. ':' .. tostring(ecoScore).. '\166' .. tostring(1+dmgRecAward) .. ':' .. tostring(dmgRecScore) ..'\167' .. tostring(1+sleepAward) .. ':' .. tostring(sleepScore)
+	local awardsMsg = ecoKillLine .. fightKillLine .. effKillLine .. otherLine
+	Spring.SendLuaRulesMsg(awardsMsg)
 end
 
-function ProcessOtherAwards(a,b,c,d,e,f,g)
-end
 
 function CreateBackground()	
 	if Background then
@@ -418,6 +466,8 @@ end
 function CreateAward(pic, award, note, noteColour, winnerID, secondID, thirdID, winnerScore, secondScore, thirdScore, offset)
 	local winnerName, secondName, thirdName
 	
+	--award is: 0 for a normal award, 1 for the cow award, 2 for the no-cow awards
+	
 	if winnerID >= 0 then
 		winnerName = FindPlayerName(winnerID)
 	else
@@ -457,14 +507,13 @@ function CreateAward(pic, award, note, noteColour, winnerID, secondID, thirdID, 
 				glText(colourNames(secondID) .. secondName .. white .. ' took the most damage (' .. math.floor(secondScore) .. ').', bx + 70, by + h - offset - 10 - heightoffset, 14, "o")
 				heightoffset = heightoffset + 17
 			end
-			if thirdID >= 0  and thirdScore >= 12*60 then
+			if thirdID >= 0 then
 				glText(colourNames(thirdID) .. thirdName .. white .. ' slept longest, for ' .. math.floor(thirdScore/60) .. ' minutes.', bx + 70, by + h - offset - 10 - heightoffset, 14, "o")
 			end
 		end
 		
 		--scores
-		if award == 0 then --normal awards	
-			
+		if award == 0 then --normal awards			
 			if winnerID >= 0 then
 				if pic == 'comwreath' then winnerScore = round(winnerScore, 2) else winnerScore = math.floor(winnerScore) end 
 				glText(colourNames(winnerID) .. winnerScore, bx + w/2 + 275, by + h - offset - 5, 14, "o")
@@ -528,7 +577,7 @@ function DrawScreen()
 		glCallList(ThirdAward)
 	end
 	
-	if cow and CowAward then
+	if CowAward then
 		glCallList(CowAward)
 	elseif OtherAwards then
 		glCallList(OtherAwards)

@@ -27,6 +27,7 @@ return {
 		name = "Wolverine",
 		nochasecategory = "VTOL",
 		objectname = "CORWOLV.s3o",
+		pushResistant = true,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 299,

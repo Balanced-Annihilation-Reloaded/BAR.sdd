@@ -12,7 +12,7 @@
 
 --DestroyUnit(ID, true, true) will trigger self d explosion, won't leave a wreck but won't cause an explosion either
 --DestroyUnit(ID, true, false) won't leave a wreck but won't cause the self d explosion either
---AddUnitDamage (ID, math.huge) makes a normal death explo but leaves wreck. Calling this for the transportee on the same framce as the trans dies results in a crash.
+--AddUnitDamage (ID, math.huge) makes a normal death explo but leaves wreck. Calling this for the transportee on the same frame as the trans dies results in a crash.
 
 
 function gadget:GetInfo()
@@ -48,6 +48,9 @@ function gadget:UnitUnloaded(unitID, unitDefID, teamID, transportID)
 		if (not fromtrans[currentFrame+1]) then fromtrans[currentFrame+1] = {} end
 		fromtrans[currentFrame+1][unitID] = transportID
 		--Spring.Echo("added killing request for " .. unitID .. " on frame " .. currentFrame+1 .. " from transport " .. transportID )
+	else
+		--commandos are given a move order to the location of the ground below where the transport died; remove it
+		Spring.GiveOrderToUnit(unitID, CMD.STOP, {}, {})
 	end
 end
 

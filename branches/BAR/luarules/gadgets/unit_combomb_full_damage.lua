@@ -1,11 +1,11 @@
 --all we care about is how high the commander is when the COM_BLAST happens
 --this is much simper than checking if the com has just been unloaded from a trans or not, with essentially the same gameplay; coms don't levitate/bounce much
---if the com is more than 10 off the ground, the combaslt damage is reduced. consequence is that COM_BLAST should not be used for anything else 
+--if the com is more than 10 off the ground, the comblast damage is reduced. consequence is that COM_BLAST should not be used for anything else 
 
 function gadget:GetInfo()
   return {
-    name      = "mo_combomb_full_damage",
-    desc      = "Flying Combombs Can Do Less Damage",
+    name      = "unit_combomb_full_damage",
+    desc      = "Flying Combombs Do Less Damage",
     author    = "TheFatController, Bluestone",
     date      = "Dec 2012",
     license   = "GNU GPL, v2 or later",
@@ -16,11 +16,6 @@ end
 
 
 if (not gadgetHandler:IsSyncedCode()) then
-	return false
-end
-
-local enabled = tonumber(Spring.GetModOptions().mo_combomb_full_damage) or 0
-if (enabled == 1) then 
 	return false
 end
 

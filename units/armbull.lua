@@ -29,7 +29,7 @@ return {
 		movementclass = "HTANK3",
 		name = "Bulldog",
 		nochasecategory = "VTOL",
-		objectname = "ARMBULL",
+		objectname = "ARMBULL.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 494,
@@ -38,6 +38,11 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 40,
 		turnrate = 415,
+		customparams = {
+			arm_tank = "1",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

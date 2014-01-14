@@ -147,6 +147,16 @@ local resources = {
 			GenericSmokeCloud1='GenericSmokeCloud1.tga',
 			smokeorange='gpl/smoke_orange.png',
 			fire1='fire1.tga',
+			--Chicken Defense effects
+			uglynovaexplo='CC/uglynovaexplo.tga',
+			orangesmoke3='GPL/smoke_orange.png',
+			sporetrail='GPL/sporetrail.tga',
+			blooddrop='PD/blooddrop.tga',
+			bloodblast='PD/bloodblast.tga',
+			bloodsplat='PD/bloodsplat.tga',
+			blooddropwhite='PD/blooddropwhite.tga',
+			bloodblastwhite='PD/bloodblastwhite.tga',
+			null='PD/null.tga',
 		},
 	},
 }

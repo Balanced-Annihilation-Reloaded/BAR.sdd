@@ -28,7 +28,7 @@ return {
 		movementclass = "TANK2",
 		name = "Gremlin",
 		nochasecategory = "VTOL",
-		objectname = "ARMST",
+		objectname = "ARMST.s3o",
 		seismicsignature = 4,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 494,
@@ -37,6 +37,11 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 29,
 		turnrate = 701.79998779297,
+		customparams = {
+			arm_tank = "1",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

@@ -293,7 +293,7 @@ local function loadMinMenu()
 		right   = 0,
 		height  = '100%', 
 		width   = 50,
-		Onclick = {showHide},
+		Onclick = {function() showHide() end},
 	}
 	
 	minMenu = Chili.Window:New{
@@ -542,7 +542,7 @@ local function Options()
 			Chili.Button:New{caption = 'Resign and Spectate',height = '8%',width = '28%',right = '1%', y = '40%',
 				OnMouseUp = {function() spSendCommands{'Spectator'};showHide('Graph') end }},
 			Chili.Button:New{caption = 'Exit To Desktop',height = '8%',width = '28%',right = '1%', y = '52%',
-				OnMouseUp = {function() spSendCommands{'quit','quitforce'} end }},
+				OnMouseUp = {function() spSendCommands{'quit'} end }},
 		}
 	}
 

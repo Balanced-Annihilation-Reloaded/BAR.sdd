@@ -14,9 +14,12 @@ end
 
 local imageDir = 'luaui/images/buildIcons/'
 
-local Chili ,infoWindow, unitInfo, unitName, unitIcon, selectionGrid, unitHealthText, unitHealth, groundInfo 
+local Chili ,infoWindow, unitInfo, unitName, unitIcon, selectionGrid, unitHealth, groundInfo 
 local healthBars = {}
 local updateNow  = false
+
+local green = {0,0.8,0,1}
+
 
 local curTip --[[ current tooltip type: 
                   -3 for ground info
@@ -34,6 +37,7 @@ local spGetSelectedUnitsSorted  = Spring.GetSelectedUnitsSorted
 local spGetMouseState           = Spring.GetMouseState
 local spTraceScreenRay          = Spring.TraceScreenRay
 local spGetGroundHeight         = Spring.GetGroundHeight
+local spSelectUnitArray         = Spring.SelectUnitArray
 
 local r,g,b     = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
@@ -42,6 +46,13 @@ local timer = spGetTimer()
 local healthTimer = timer
 local groundTimer = timer
 
+
+local function selectGroup(obj)
+	-- TODO:
+	--  add key functionality
+	--  for example if shift is pressed, group is removed
+	spSelectUnitArray(obj.unitIDs)
+end
 ----------------------------------
 -- add unitDefID (curTip = -1)
 local function addUnitGroup(name,texture,overlay,unitIDs)
@@ -61,7 +72,7 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
 		x       = 0,
 		width   = '100%',
 		height  = 6,
-		color   = {0.5,1,0,1},
+		color   = green,
 	}
 	
 	local unitIcon = Chili.Image:New{
@@ -80,10 +91,12 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
 	}
 	
 	local button = Chili.Button:New{
+		unitIDs  = unitIDs,
 		caption  = '',
 		margin   = {1,1,1,1},
 		padding  = {0,0,0,0},
 		children = {unitIcon, healthBars[#healthBars]},
+		OnClick  = {selectGroup},
 	}
 	
 	selectionGrid:AddChild(button)
@@ -100,20 +113,15 @@ local function showUnitInfo(texture, overlay, description, humanName, health, ma
 		bottom = 0,
 		text   = " " .. humanName..'\n'.. " " .. description,
 	}
-	
-	unitHealthText = Chili.TextBox:New{
-		x      = 5,
-		bottom = 21,
-		text   = math.floor(health) ..' / '.. math.floor(maxHealth),
-	}
-	
+
 	unitHealth = Chili.Progressbar:New{
+		caption = math.floor(health) ..' / '.. math.floor(maxHealth),
 		value   = 0,
 		bottom  = 5,
 		x       = 0,
-		width   = '50%',
-		height  = 10,
-		color   = {0.5,1,0,1},
+		width   = '100%',
+		height  = 25,
+		color   = green,
 	}
 	
 	unitIcon = Chili.Image:New{
@@ -127,7 +135,7 @@ local function showUnitInfo(texture, overlay, description, humanName, health, ma
 				height   = '100%',
 				width    = '100%',
 				file     = overlay,
-				children = {unitName, unitHealthText, unitHealth},
+				children = {unitName, unitHealth},
 			}
 		}
 	}
@@ -216,22 +224,21 @@ local function updateHealthBars()
 	--single unit	
 	if curTip >= 0 then 
 		local health, maxHealth = spGetUnitHealth(curTip)
-		unitHealthText:SetText(math.floor(health) ..' / '.. math.floor(maxHealth)) 
-		unitHealthText:Invalidate() --not sure why this is needed here but it is
+		unitHealth:SetCaption(math.floor(health) ..' / '.. math.floor(maxHealth))
 		unitHealth.max = maxHealth
 		unitHealth:SetValue(health)
 		
 	--multiple units, but not so many we cant fit pics
 	elseif curTip == -1 then 
-		for a = 1, #healthBars do
+		for unitGroup = 1, #healthBars do
 			local value, max = 0, 0
-			for b = 1, #healthBars[a].unitIDs do
-				local health, maxhealth = spGetUnitHealth(healthBars[a].unitIDs[b])
+			for id = 1, #healthBars[unitGroup].unitIDs do
+				local health, maxhealth = spGetUnitHealth(healthBars[unitGroup].unitIDs[id])
 				max   = max + maxhealth
 				value = value + health
 			end
-			healthBars[a].max = max
-			healthBars[a]:SetValue(value)
+			healthBars[unitGroup].max = max
+			healthBars[unitGroup]:SetValue(value)
 		end
 
 	end

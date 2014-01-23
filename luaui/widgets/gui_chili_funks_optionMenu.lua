@@ -21,8 +21,8 @@ local spGetTimer     = Spring.GetTimer
 
 local Chili, mainMenu, menuTabs,timeLbl,fpsLbl ,menuBtn,minMenu,oTime
 barSettings = {}
--- Defaults --- for fresh installs
-barSettings['Skin']             = 'Flat'
+-- Defaults --- ignored unless fresh install
+barSettings['Skin']             = 'Robocracy'
 barSettings['Cursor']           = 'Default'
 barSettings['CursorName']       = 'ba'
 barSettings['Water']            = 'Reflective'
@@ -139,7 +139,8 @@ local function sortWidgetList(filter)
 end
 
 ---------------------------- 
---
+-- Creates widget list for interface tab
+--  needs serious clean up? 
 local function makeWidgetList(filter)
 	sortWidgetList(filter)
 	local widgetNum = 0
@@ -149,7 +150,15 @@ local function makeWidgetList(filter)
 		local list = wCategories[a].list
 		if #list>0 then
 			widgetNum = widgetNum + 1
-			Chili.Label:New{parent = scrollpanel,caption = '- '..wCategories[a].label..' -', y = widgetNum*20-10, align = 'center',x=0,width = '100%',autosize=false}
+			Chili.Label:New{
+				parent   = scrollpanel,
+				x        = 0,  
+				y        = widgetNum * 20 - 10,
+				caption  = '- '..wCategories[a].label..' -',
+				align    = 'center',
+				width    = '100%',
+				autosize = false,
+			}
 			widgetNum = widgetNum + 1
 			for b=1,#list do
 				local enabled = (widgetHandler.orderList[list[b].name] or 0)>0
@@ -245,10 +254,21 @@ local function loadMainMenu()
 		children  = {
 			Chili.Line:New{parent = mainMenu,y = 15,width = '100%'},
 			Chili.Line:New{parent = mainMenu,bottom = 15,width = '100%'},
-		}}
+		}
+	}
 		
-		menuTabs = Chili.TabBar:New{parent = mainMenu, x = 0, width = '100%', y = 0, height = 20, minItemWidth = 70,selected=barSettings.tabSelected or 'Info',
-			tabs = {'Info','Interface', 'Graphics', 'Log'}, itemPadding = {1,0,1,0},OnChange = {sTab}}
+		menuTabs = Chili.TabBar:New{
+			parent       = mainMenu,
+			x            = 0, 
+			y            = 0, 
+			width        = '100%', 
+			height       = 20, 
+			minItemWidth = 70,
+			selected     = barSettings.tabSelected or 'Info',
+			tabs         = {'Info','Interface', 'Graphics', 'Log'},
+			itemPadding  = {1,0,1,0},
+			OnChange     = {sTab}
+		}
 		
 		showHide()
 end
@@ -257,10 +277,35 @@ end
 -- The always visible window beneath resbars
 --  for access to menu, as well as time and FPS
 local function loadMinMenu()
-	timeLbl = Chili.Label:New{caption = '10:30pm', x = 0}
-	fpsLbl = Chili.Label:New{caption = 'FPS: 65',x = 70}
-	menuBtn = Chili.Button:New{caption = 'Menu', right = 0, height = '100%', width = 50, Onclick = {showHide}}
-	minMenu = Chili.Window:New{parent=Chili.Screen0,right = 210, y = 30, width = 180,minheight = 20, height = 20,padding = {5,0,0,0},children = {timeLbl,fpsLbl,menuBtn}}
+	
+	timeLbl = Chili.Label:New{
+		caption = '10:30pm',
+		x       = 0
+	}
+	
+	fpsLbl = Chili.Label:New{
+		caption = 'FPS: 65',
+		x       = 70
+	}
+	
+	menuBtn = Chili.Button:New{
+		caption = 'Menu', 
+		right   = 0,
+		height  = '100%', 
+		width   = 50,
+		Onclick = {showHide},
+	}
+	
+	minMenu = Chili.Window:New{
+		parent    = Chili.Screen0,
+		right     = 210, 
+		y         = 30, 
+		width     = 180,
+		minheight = 20, 
+		height    = 20,
+		padding   = {5,0,0,0},
+		children  = {timeLbl,fpsLbl,menuBtn}
+	}
 end
 
 ---------------------------- 
@@ -286,7 +331,7 @@ end
 
 ---------------------------- 
 -- Creates a combobox style control
---  Allows custom (unlisted) options to be typed and selected through editbox
+-- 
 local comboBox = function(obj)
 	local obj = obj
 	local comboBox = Chili.Control:New{
@@ -377,7 +422,8 @@ end
 
 ---------------------------- 
 -- Temporary control to work exclusively for default bloom options
---  The same interface could be added to other widgets although it would probably be easier to come up with a better sytem and add that to the bloom widget.
+--  The same interface could be added to other widgets 
+--  although it would probably be easier to come up with a better sytem and add that to the bloom widget.
 local incDec = function(obj)
 	local incDec = Chili.Control:New{name=obj.name,parent=tabs[obj.parent],y=obj.y,width='50%',height=30,right=0,padding={0,0,0,0}}
 	local decOption = function(self)
@@ -611,8 +657,6 @@ function widget:Initialize()
 	spSendCommands('bind S+esc openMenu')
 	spSendCommands('bind f11 openWidgets')
 	spSendCommands('bind esc hideMenu')
-	-- widgetHandler.actionHandler:AddAction('openLog', openLog, nil, 't')
-	-- spSendCommands('bind hotkey openLog')
 end
 -------------------------- 
 --
@@ -622,20 +666,8 @@ function widget:Shutdown()
 	spSendCommands('unbind esc hideMenu')
 	spSendCommands('bind f11 luaui selector') -- if the default one is removed or crashes, then have the backup one take over.
 end
--------------------------- 
---
--- local mLogText = ''
--- function widget:AddConsoleLine(text,priority)
--- 	if tabs.Log then
--- 		mLogText = mLogText..text..'\n' --THIS IS EXTREMELY EXPENSIVE! http://www.lua.org/pil/11.6.html
--- 		local scrollpanel = tabs['Log']:GetObjectByName('mLog')
--- 		local textbox = scrollpanel.children[1]
--- 		textbox.text = mLogText --Dont update the text if the widget isnt even visible!
--- 		textbox:UpdateLayout()
--- 	end
--- end
 
--- Better?
+
 function widget:AddConsoleLine(text,priority)
 	if tabs.Log then
 		local scrollpanel = tabs['Log']:GetObjectByName('mLog')

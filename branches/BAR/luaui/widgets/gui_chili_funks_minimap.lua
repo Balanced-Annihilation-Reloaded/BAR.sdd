@@ -1,8 +1,8 @@
 function widget:GetInfo()
   return {
     name      = "BAR's Minimap",
-    desc      = "v0.884 Chili Minimap",
-    author    = "Licho, CarRepairer",
+    desc      = "Chili Minimap",
+    author    = "Licho, CarRepairer, Funkencool",
     date      = "@2010",
     license   = "GNU GPL, v2 or later",
     layer     = -99,
@@ -11,14 +11,22 @@ function widget:GetInfo()
 end
 
 
-local minimap
 local Chili
-local glDrawMiniMap = gl.DrawMiniMap
-local glResetState = gl.ResetState
-local glResetMatrices = gl.ResetMatrices
+local minimap
 
-
-local tabbedMode = false
+-- Localize
+local glGetViewSizes  = gl.GetViewSizes
+local glConfigMiniMap = gl.ConfigMiniMap
+local glDrawMiniMap   = gl.DrawMiniMap
+local glPushAttrib    = gl.PushAttrib
+local glPopAttrib     = gl.PopAttrib
+local glMatrixMode    = gl.MatrixMode
+local glPushMatrix    = gl.PushMatrix
+local glPopMatrix     = gl.PopMatrix
+local GL_ALL_ATTRIB_BITS = GL.ALL_ATTRIB_BITS
+local GL_PROJECTION      = GL.PROJECTION
+local GL_MODELVIEW       = GL.MODELVIEW
+--
 
 local function MakeMinimapWindow()
 	
@@ -30,7 +38,7 @@ local function MakeMinimapWindow()
 	local h = Chili.Screen0.height * 0.3
 	local w = h * aspect
 	
-	if (aspect > 1) then
+	if aspect > 1 then
 		w = h * aspect^0.5
 		h = w / aspect
 	end
@@ -39,24 +47,22 @@ local function MakeMinimapWindow()
 		name    = "Minimap", 
 		parent  = Chili.Screen0,
 		width   = w, 
-		height  = h, 
-		x       = 0, 
+		height  = h,
+		x       = 0,
 		bottom  = 0,
-		padding = {5,5,5,5},
-		margin  = {0,0,0,0},
+		padding = {6,6,5,6},
 	}
+	
 end
 
 function widget:KeyRelease(key, mods, label, unicode)
-	if key == 0x009 then --// "0x009" is equal to "tab". Reference: uikeys.txt
+	-- "0x009" = "tab". Reference: uikeys.txt
+	if key == 0x009 then
 		local mode = Spring.GetCameraState()["mode"]
-		if mode == 7 and not tabbedMode then
-			Chili.Screen0:RemoveChild(minimap)
-			tabbedMode = true
-		end
-		if mode ~= 7 and tabbedMode then
-			Chili.Screen0:AddChild(minimap)
-			tabbedMode = false
+		if mode == 7 and minimap.visible then
+			minimap:Hide()
+		elseif mode ~= 7 and minimap.hidden then
+			minimap:Show()
 		end
 	end
 end
@@ -67,13 +73,13 @@ end
 
 function widget:Initialize()
 	
-	if (Spring.GetMiniMapDualScreen()) then
+	if Spring.GetMiniMapDualScreen() then
 		Spring.Echo("ChiliMinimap: auto disabled (DualScreen is enabled).")
 		widgetHandler:RemoveWidget()
 		return
 	end
 
-	if (not WG.Chili) then
+	if not WG.Chili then
 		widgetHandler:RemoveWidget()
 		return
 	end
@@ -86,57 +92,42 @@ function widget:Initialize()
 end
 
 function widget:Shutdown()
-	--// reset engine default minimap rendering
+	-- reset engine default minimap rendering
 	gl.SlaveMiniMap(false)
 	Spring.SendCommands("minimap geo " .. Spring.GetConfigString("MiniMapGeometry"))
 
-	--// free the chili window
-	if (minimap) then
+	-- free the chili window
+	if minimap then
 		minimap:Dispose()
 	end
 end 
 
-
-local lx, ly, lw, lh
-
 function widget:DrawScreen() 
 	
-	if (minimap.hidden) then 
-		gl.ConfigMiniMap(0,0,0,0) --// a phantom map still clickable if this is not present.
-		lx = 0
-		ly = 0
-		lh = 0
-		lw = 0
+	if minimap.hidden then
+		-- a phantom map is still clickable if this is not present.
+		glConfigMiniMap(0,0,0,0)
 		return 
-	end
-	
-	if (lw ~= minimap.width or lh ~= minimap.height or lx ~= minimap.x or ly ~= minimap.y) then 
+	else
+		local vsx,vsy = glGetViewSizes()
 		local cx,cy,cw,ch = Chili.unpack4(minimap.clientArea)
-		cx = cx + 2
-		cy = cy + 2
-		cw = cw - 4
-		ch = ch - 4
 		cx,cy = minimap:LocalToScreen(cx,cy)
-		local vsx,vsy = gl.GetViewSizes()
-		gl.ConfigMiniMap(cx,vsy-ch-cy,cw,ch)
-		lx = minimap.x
-		ly = minimap.y
-		lh = minimap.height
-		lw = minimap.width
+		glConfigMiniMap(cx,vsy-ch-cy,cw,ch)		
 	end
 
-	gl.PushAttrib(GL.ALL_ATTRIB_BITS)
-	gl.MatrixMode(GL.PROJECTION)
-	gl.PushMatrix()
-	gl.MatrixMode(GL.MODELVIEW)
-	gl.PushMatrix()
 
+	glPushAttrib(GL_ALL_ATTRIB_BITS)
+	glMatrixMode(GL_PROJECTION)
+	glPushMatrix()
+	glMatrixMode(GL_MODELVIEW)
+	glPushMatrix()
+	
 	glDrawMiniMap()
-
-	gl.MatrixMode(GL.PROJECTION)
-	gl.PopMatrix()
-	gl.MatrixMode(GL.MODELVIEW)
-	gl.PopMatrix()
-	gl.PopAttrib()
+	
+	glMatrixMode(GL_PROJECTION)
+	glPopMatrix()
+	glMatrixMode(GL_MODELVIEW)
+	glPopMatrix()
+	glPopAttrib()
 end 
 

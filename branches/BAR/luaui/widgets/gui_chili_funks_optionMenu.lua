@@ -547,9 +547,16 @@ local function Options()
 	}
 
 	-- Log --
+	-- Put log code in console?
 	tabs.Log = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
 		children = {
-			Chili.ScrollPanel:New{x=0,y=0,right=0,bottom=0,name='mLog',yStep=0,}
+			Chili.ScrollPanel:New{x=0,y=0,right=0,bottom=0,
+				children={
+					Chili.StackPanel:New{
+						name='mLog',x=0,y=0,width='100%',resizeItems=false,autosize=true,preserveChildrenOrder=true,itemPadding={1,1,1,1},itemMargin={1,1,1,1},
+					}
+				}
+			}
 		}
 	}
 	
@@ -670,9 +677,15 @@ end
 
 function widget:AddConsoleLine(text,priority)
 	if tabs.Log then
-		local scrollpanel = tabs['Log']:GetObjectByName('mLog')
-		local textbox = Chili.TextBox:New{text=text,width=1000,y=scrollpanel.yStep}
-		scrollpanel:AddChild(textbox)
-		scrollpanel.yStep = scrollpanel.yStep + 15
+		local stackpanel = tabs['Log']:GetObjectByName('mLog')
+		local textbox = Chili.TextBox:New{
+			text        = text,
+			width       = '100%',
+			align       = "left",
+			valign      = "ascender",
+			padding     = {0, 0, 0, 0},
+			lineSpacing = 0,
+		}
+		stackpanel:AddChild(textbox)
 	end
 end

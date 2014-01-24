@@ -10,13 +10,36 @@ function widget:GetInfo()
 		enabled = true,
 	}
 end
-
-local Chili, window0, control0, metalShare, energyMeter, energyShare
-local meter = {}
-local incomeLabel = {}
-local shareLevel = {}
+-------------------------------------------
+-- Chili vars
+-------------------------------------------
+local Chili, window0
+-------------------------------------------
+-- Local vars
+-------------------------------------------
 local spGetTeamResources = Spring.GetTeamResources
-local myTeamID = Spring.GetMyTeamID()
+local spGetMyTeamID      = Spring.GetMyTeamID
+
+local image = {
+	metal  = 'luaui/images/resourcebars/Ibeam.png',
+	energy = 'luaui/images/resourcebars/lightning.png',
+	}
+local meter        = {}
+local incomeLabel  = {}
+local expenseLabel = {}
+local netLabel     = {}
+local shareLevel   = {}
+local myTeamID = spGetMyTeamID()
+-- Colors
+local green        = {0.2, 1.0, 0.2, 1.0}
+local red          = {1.0, 0.2, 0.2, 1.0}
+local greenOutline = {0.2, 1.0, 0.2, 0.2}
+local redOutline   = {1.0, 0.2, 0.2, 0.2}
+--
+
+-------------------------------------------
+-- Auxiliary functions
+-------------------------------------------
 local function readable(num)
 	local s=''
 	if num < 0 then
@@ -34,69 +57,126 @@ local function readable(num)
 	end
 	return s
 end
-
+-------------------------------------------
+-- Main
+-------------------------------------------
 local function initWindow()
 	local screen0 = Chili.Screen0
-	local _,_,_,_,_,mShare = spGetTeamResources(myTeamID, 'metal')
-	local _,_,_,_,_,eShare = spGetTeamResources(myTeamID, 'energy')
 	
-	window0 = Chili.Window:New{parent = screen0, right = 0, y = 0, width = 840, height = 30, minHeight = 20, padding = {0,0,0,0}}
-	
-	meter['metal'] = Chili.Progressbar:New{parent = window0, x = 110, height = 20, bottom = 5, right = 415}
-	meter['energy'] = Chili.Progressbar:New{parent = window0, x = 540, height = 20, bottom = 5, right = 0}
-	-- shareLevel['metal'] = Chili.Trackbar:New{parent = window0, x = 90, height = 10, bottom = 5, width = 300, value = mShare*100}
-	-- shareLevel['energy'] = Chili.Trackbar:New{parent = window0, x = 500, height = 10, bottom = 5, width = 300, value = eShare*100}
-	incomeLabel['metal'] = Chili.Label:New{caption = '', right = 760, bottom = 7, parent = window0, align = 'right'}
-	
-	incomeLabel['metalin'] = Chili.Label:New{caption = '+0.0', right = 730, bottom = 11, parent = window0, align = 'right',fontSize=13}
-	incomeLabel['metalin'].font.color={0.2,1,0.2,1}
-	incomeLabel['metalout'] = Chili.Label:New{caption = '-0.0', right = 730, y=14, parent = window0, align = 'right',fontSize=13}
-	incomeLabel['metalout'].font.color={1,0.2,0.2,1}
-	
-	incomeLabel['energy'] = Chili.Label:New{caption = '', right = 330, bottom = 7, parent = window0, align = 'right'}
-	
-	incomeLabel['energyin'] = Chili.Label:New{caption = '+0.0', right = 300, bottom = 11, parent = window0, align = 'right', fontSize=13}
-	incomeLabel['energyin'].font.color={0.2,1,0.2,1}
-	incomeLabel['energyout'] = Chili.Label:New{caption = '+0.0', right = 300, y=14 , parent = window0, align = 'right', fontSize=13}
-	incomeLabel['energyout'].font.color={1,0.2,0.2,1}
-	
-	Chili.Label:New{caption = 'Metal:', x = 5, y = 6, parent = window0}
-	Chili.Label:New{caption = 'Energy:', x = 435, y = 6, parent = window0}
+	window0 = Chili.Control:New{
+		parent    = screen0,
+		right     = 0, 
+		y         = 0, 
+		width     = 840, 
+		height    = 30, 
+		minHeight = 20, 
+		padding   = {0,0,0,0}
+	}
+
 end
 
+local function makeBar(res, barX, barY)
+	
+	local control = Chili.Window:New{
+		parent    = window0,
+		name      = res,
+		x         = barX,
+		y         = barY,
+		height    = 30,
+		minHeight = 20, 
+		width     = 420,
+		padding   = {0,0,0,0},
+	}
+	
+	meter[res] = Chili.Progressbar:New{
+		parent = control, 
+		x      = 110, 
+		height = 20, 
+		bottom = 5, 
+		right  = 0,
+	}
+	
+	Chili.Image:New{
+		file   = image[res],
+		height = 24,
+		width  = 24,
+		x      = 86, 
+		y      = 3, 
+		parent = control
+	}
+	
+	netLabel[res] = Chili.Label:New{
+		caption = '',
+		x       = 5,
+		bottom  = 7,
+		parent  = control,
+	}
+	
+	incomeLabel[res] = Chili.Label:New{
+		caption  = '+0.0',
+		right    = 334, 
+		y        = 0,
+		parent   = control,
+		align    = 'right',
+		font     = {
+			size         = 13,
+			color        = green,
+			outlineColor = greenOutline,
+		},
+	}
+
+	expenseLabel[res] = Chili.Label:New{
+		caption  = '-0.0',
+		right    = 334,
+		bottom   = 0,
+		parent   = control,
+		align    = 'right',
+		font     = {
+			size         = 13,
+			color        = red,
+			outlineColor = redOutline,
+		},
+	}
+	
+end
+
+-- Updates 
 local function setBar(res)
 	local currentLevel, storage, pull, income, expense, share = spGetTeamResources(myTeamID, res)
-	if res == 'metal' then 
-		incomeLabel['metalin']:SetCaption(readable(income))
-		incomeLabel['metalout']:SetCaption(readable(-pull))
-	else
-		incomeLabel['energyin']:SetCaption(readable(income))
-		incomeLabel['energyout']:SetCaption(readable(-pull))
-	end
-	if income-expense > 0 then
-		incomeLabel[res].font.color = {0.5,1,0.0,1}
-		incomeLabel[res].font.outlineColor = {0.5,1,0.0,0.2}
-		incomeLabel[res]:SetCaption(readable(income-expense))
+	local net = income-expense
+	
+	-- if there is a net gain
+	if net > 0 then
+		netLabel[res].font.color = green
+		netLabel[res].font.outlineColor = greenOutline
+		
 		if res == 'metal' then 
 			meter[res]:SetColor(0.6,0.6,0.8,.8)
 		else
 			meter[res]:SetColor(1,1,0.3,.6)
 		end
+	-- if there is a net loss
 	else
-		incomeLabel[res].font.color = {1,0.5,0,1}
-		incomeLabel[res].font.outlineColor = {1,0.5,0,0.2}
-		incomeLabel[res]:SetCaption(readable(income-expense))
+		netLabel[res].font.color = red
+		netLabel[res].font.outlineColor = redOutline
+		
 		if res == 'metal' then 
 			meter[res]:SetColor(0.6,0.6,0.4,.6)
 		else
 			meter[res]:SetColor(1,0.3,0.3,.6)
 		end
 	end
---	Spring.SetShareLevel(res, shareLevel[res].value/100)
+	
+	netLabel[res]:SetCaption(readable(net))
+	incomeLabel[res]:SetCaption(readable(income))
+	expenseLabel[res]:SetCaption(readable(-pull))
+	
 	meter[res]:SetValue(currentLevel/storage*100)
 	meter[res]:SetCaption(math.floor(currentLevel)..'/'..storage)
 end
-
+-------------------------------------------
+-- Callins
+-------------------------------------------
 function widget:GameFrame(n)
 	if n%10 == 0 then
 		setBar('metal')
@@ -104,8 +184,18 @@ function widget:GameFrame(n)
 	end
 end
 
+function widget:CommandsChanged()
+	myTeamID = spGetMyTeamID()
+end
+
 function widget:Initialize()
 	Spring.SendCommands('resbar 0')
 	Chili = WG.Chili
 	initWindow()
+	makeBar('metal',0,0)
+	makeBar('energy',420,0)
+end
+
+function widget:Shutdown()
+	Spring.SendCommands('resbar 1')
 end

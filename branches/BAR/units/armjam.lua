@@ -31,7 +31,7 @@ return {
 		movementclass = "TANK3",
 		name = "Jammer",
 		nochasecategory = "MOBILE",
-		objectname = "ARMJAM",
+		objectname = "ARMJAM.s3o",
 		onoffable = true,
 		radardistance = 0,
 		radardistancejam = 450,
@@ -42,6 +42,10 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 22,
 		turnrate = 505,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

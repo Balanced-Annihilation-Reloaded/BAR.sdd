@@ -29,7 +29,7 @@ return {
 		movementclass = "ATANK3",
 		name = "Triton",
 		nochasecategory = "VTOL",
-		objectname = "ARMCROC",
+		objectname = "ARMCROC.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 372,
@@ -38,6 +38,10 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 42,
 		turnrate = 433,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

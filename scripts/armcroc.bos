@@ -65,10 +65,10 @@ SetMaxReloadTime(Func_Var_1)
 
 RestoreAfterDelay()
 {
+	sleep restore_delay;
 	turn turret to y-axis <0.000000> speed <60.000000>;
 	turn sleeve to x-axis <0.000000> speed <30.000000>;
 	move turret to y-axis [0] speed [8];
-	sleep restore_delay;
 }
 
 StartMoving()

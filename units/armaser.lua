@@ -26,13 +26,17 @@ return {
 		movementclass = "KBOT2",
 		name = "Eraser",
 		nochasecategory = "MOBILE",
-		objectname = "ARMASER",
+		objectname = "ARMASER.s3o",
 		onoffable = true,
 		radardistancejam = 450,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 260,
 		turnrate = 1045,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

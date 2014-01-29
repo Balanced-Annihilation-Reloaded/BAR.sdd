@@ -30,7 +30,7 @@ return {
 		movementclass = "TANK3",
 		name = "Phalanx",
 		nochasecategory = "ALL",
-		objectname = "ARMYORK",
+		objectname = "ARMYORK.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 390,
@@ -39,6 +39,11 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 27,
 		turnrate = 618.20001220703,
+		customparams = {
+			arm_tank = "1",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

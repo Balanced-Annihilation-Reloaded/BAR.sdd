@@ -28,7 +28,7 @@ return {
 		metalstorage = 50,
 		movementclass = "KBOT2",
 		name = "Construction Kbot",
-		objectname = "ARMCK",
+		objectname = "ARMCK.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 305,
@@ -36,6 +36,10 @@ return {
 		turnrate = 1100,
 		upright = true,
 		workertime = 90,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		buildoptions = {
 			[10] = "armalab",
 			[11] = "armlab",

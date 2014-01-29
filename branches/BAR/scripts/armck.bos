@@ -255,8 +255,8 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 Go()
 {
-	turn lcover to z-axis <-28> speed <60>;
-	turn rcover to z-axis <28> speed <60>;
+	turn lcover to z-axis <28> speed <60>;
+	turn rcover to z-axis <-28> speed <60>;
 	wait-for-turn lcover around z-axis;
 	
 }

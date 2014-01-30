@@ -454,6 +454,19 @@ function loadWindow()
 	end
 end
 
+function widget:Initialize()
+	if Spring.GetGameFrame() < 30 then
+		return -- not started, wait for callin
+	end
+	Spring.SendCommands('endgraph 0')
+	Chili = WG.Chili
+	getTeamInfo()
+	
+	if WG.BarMenu and speccing then
+		loadWindow()
+	end
+end
+
 function widget:GameStart()
 	Spring.SendCommands('endgraph 0')
 	Chili = WG.Chili

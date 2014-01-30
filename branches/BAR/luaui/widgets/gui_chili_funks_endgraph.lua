@@ -67,27 +67,54 @@ local function numFormat(label)
 	return string
 end
 
-local function formatTime(seconds)
+local function formatTime(seconds, short)
+	local seconds = math.floor(seconds)
 	local minutes = math.floor(seconds/60)
-	local seconds = seconds % 60
-	return '\255\255\127\0'..minutes..'\bmin, '..'\255\255\127\0'..seconds..'\bsec'
+	seconds = seconds % 60
+	if short then
+		if seconds < 10 then
+			seconds = '0' .. seconds
+		end
+		-- if minutes < 10 then
+			-- minutes = '0' .. minutes
+		-- end
+		return minutes..':'..seconds
+	else
+		return '\255\255\127\0'..minutes..'\bmin, '..'\255\255\127\0'..seconds..'\bsec'
+	end
 end
 
-local function drawIntervals(graphMax)
+local function drawIntervals(graphMax, gameTime)
 	for i=1, 4 do
-		local line = Chili.Line:New{
+		-- Stat
+		Chili.Line:New{
 			parent = graphPanel,
 			x      = 0,
 			bottom = (i)/5*100 .. '%', 
 			width  = '100%',
 		}
-		local label = Chili.Label:New{
+		Chili.Label:New{
 			parent  = graphPanel,
 			x       = 0, 
-			bottom  = (i)/5*100+2 .. '%', 
-			width   = '100%',
+			bottom  = (i)/5*100+2 .. '%',
 			caption = numFormat(graphMax*i/5),
 		}
+		-- Time
+		Chili.Line:New{
+			parent = graphPanel,
+			x      = (i)/5*100 .. '%',
+			y      = 0,
+			width  = 1,
+			height = '100%',
+			style  = 'vertical',
+		}
+		Chili.Label:New{
+			parent  = graphPanel,
+			x       = (i)/5*100+2 .. '%', 
+			y       = 0,
+			caption = formatTime(gameTime*i/5, true),
+		}
+		--------
 	end
 end
 
@@ -186,7 +213,6 @@ local function getArrays(statName, graphLength)
 			
 			-- subtract one from graphlength to correct for delta (should do it a better way)
 			for i=1, graphLength - 1 do
-				-- 
 				array[i] = stats[i][statName]
 				
 				-- Gets difference between current index and the next
@@ -203,13 +229,8 @@ local function getArrays(statName, graphLength)
 			team[teamID].array = array
 		end
 	end
-	
-	-- draws 5 lines across graph for reference
-	if graphMax > 5 then drawIntervals(graphMax) end
 
 	return graphMax
-	
--- TODO: check to see if team has any stats. If not, don't show	
 end
 
 ------------------------
@@ -224,7 +245,7 @@ local function drawGraph(obj)
 	
 	local graphLength = Spring.GetTeamStatsHistory(0) - 1 -- last index isn't complete
 	
-	if graphLength < 2 then
+	if graphLength < 4 then
 		Spring.Echo("End game Stats is still collecting data")
 		return false
 	end
@@ -242,6 +263,9 @@ local function drawGraph(obj)
 	curGraph.name    = obj.name
 	
 	local graphMax = getArrays(curGraph.name, graphLength)
+	
+	-- draws 5 lines across graph for reference
+	if graphMax > 5 then drawIntervals(graphMax, gameTime) end
 	
 	-- Draws each teams relevant line
 	for teamID = 1, #team do
@@ -455,23 +479,21 @@ function loadWindow()
 end
 
 function widget:Initialize()
+	Spring.SendCommands('endgraph 0')
+	Chili = WG.Chili
+	
 	if Spring.GetGameFrame() < 30 then
 		return -- not started, wait for callin
 	end
-	Spring.SendCommands('endgraph 0')
-	Chili = WG.Chili
-	getTeamInfo()
 	
+	getTeamInfo()
 	if WG.BarMenu and speccing then
 		loadWindow()
 	end
 end
 
 function widget:GameStart()
-	Spring.SendCommands('endgraph 0')
-	Chili = WG.Chili
 	getTeamInfo()
-	
 	if WG.BarMenu and speccing then
 		loadWindow()
 	end

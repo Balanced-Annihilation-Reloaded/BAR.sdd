@@ -20,7 +20,7 @@ skin.general = {
 	draggable = false,
 
   font = {
-    font    = "luaUI/fonts/UASQUARE.TTF",
+    -- font    = "luaUI/fonts/UASQUARE.TTF",
     color        = {1,1,1,1},
     outlineColor = {0.05,0.05,0.05,0.9},
     outline = false,
@@ -37,16 +37,16 @@ skin.icons = {
 }
 
 skin.button = {
-  TileImageBK = ":cl:glassbk.png",
-  TileImageFG = ":cl:glassfg.png",
-  tiles = {0, 0, 0, 0}, --// tile widths: left,top,right,bottom
-  padding = {5, 5, 5, 5},
-  focusColor = {r, g, b, 0.5},
+  TileImageBK     = ":cl:glassbk.png",
+  TileImageFG     = ":cl:glassfg.png",
+  tiles = {3, 3, 3, 3}, --// tile widths: left,top,right,bottom
+  padding         = {4, 4, 4, 4},
+  focusColor      = {r, g, b, 0.5},
 
   backgroundColor = {0,0,0,0.5},
-  borderColor = {1,1,1,0},
+  borderColor     = {1,1,1,0},
 
-  DrawControl = DrawButton,
+  DrawControl     = DrawButton,
 }
 
 skin.combobox = {
@@ -65,7 +65,7 @@ skin.combobox = {
 skin.combobox_window = {
 	clone     = "window";
 	TileImage = ":cl:glassbk.png";
-	tiles     = {10, 10, 10, 10};
+	tiles     = {8, 8, 8, 8};
 	backgroundColor = {1, 1, 1, 0.7},
 	padding   = {4, 3, 3, 4};
 }
@@ -122,22 +122,11 @@ skin.imagelistview = {
 
   DrawItemBackground = DrawItemBkGnd,
 }
---[[
-skin.imagelistviewitem = {
-  imageFG = ":cl:glassFG.png",
-  imageBK = ":cl:glassBK.png",
-  tiles = {17,15,17,20},
-
-  padding = {12, 12, 12, 12},
-
-  DrawSelectionItemBkGnd = DrawSelectionItemBkGnd,
-}
---]]
 
 skin.panel = {
   TileImageBK = ":cl:glassbk.png",
 	TileImageFG = ":cl:glassfg.png",
-  tiles = {22, 22, 22, 22},
+  tiles = {3, 3, 3, 3},
 
   DrawControl = DrawPanel,
 }
@@ -166,12 +155,12 @@ skin.scrollpanel = {
   TileImage = ":cl:glassbk.png",
   tiles     = {7,7,7,7},
   KnobTileImage = ":cl:glassfg.png",
-  KnobTiles     = {6,8,6,8},
+  KnobTiles     = {3, 3, 3, 3},
 	
   HTileImage = ":cl:glassbk.png",
-  htiles     = {7,7,7,7},
+  htiles     = {3, 3, 3, 3},
   HKnobTileImage = ":cl:glassfg.png",
-  HKnobTiles     = {6,8,6,8},
+  HKnobTiles     = {3, 3, 3, 3},
 	KnobColor      = {r,g,b,0.5},
   KnobColorSelected = {r,g,b,0.8},
 
@@ -209,12 +198,12 @@ skin.treeview = {
 
 skin.window = {
   TileImage = ":cl:glassbk.png",
-  tiles = {62, 62, 62, 62}, --// tile widths: left,top,right,bottom
-  padding = {13, 13, 13, 13},
+  tiles = {3, 3, 3, 3}, --// tile widths: left,top,right,bottom
+  padding = {8, 8, 8, 8},
   hitpadding = {4, 4, 4, 4},
 	resizable = false,
   captionColor = {1, 1, 1, 0.45},
-  color = {0, 0, 0, .6},
+  color = {1, 1, 1, .8},
 
   boxes = {
     resize = {-21, -21, -10, -10},
@@ -245,8 +234,8 @@ skin.tabbar = {
 skin.tabbaritem = {
   TileImageBK = ":cl:glassbk.png",
   TileImageFG = ":cl:glassfg.png",
-  tiles = {0, 0, 0, 0}, --// tile widths: left,top,right,bottom
-  padding = {5, 3, 3, 2},
+  tiles = {3, 3, 3, 3}, --// tile widths: left,top,right,bottom
+  padding = {4, 3, 3, 3},
 	borderColor = {0, 0, 0, 0.8},
   focusColor = {r, g, b, 0.5},
 

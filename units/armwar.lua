@@ -24,12 +24,16 @@ return {
 		movementclass = "KBOT2",
 		name = "Warrior",
 		nochasecategory = "VTOL",
-		objectname = "ARMWAR",
+		objectname = "ARMWAR.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 350,
 		turnrate = 770,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

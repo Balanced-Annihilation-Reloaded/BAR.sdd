@@ -24,12 +24,16 @@ return {
 		movementclass = "AKBOT2",
 		name = "Jethro",
 		nochasecategory = "ALL",
-		objectname = "ARMJETH",
+		objectname = "ARMJETH.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 377,
 		turnrate = 1118,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

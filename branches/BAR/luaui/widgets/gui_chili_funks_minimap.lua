@@ -44,13 +44,14 @@ local function MakeMinimapWindow()
 	end
 	
 	minimap = Chili.Window:New{
-		name    = "Minimap", 
-		parent  = Chili.Screen0,
-		width   = w, 
-		height  = h,
-		x       = 0,
-		bottom  = 0,
-		padding = {6,6,5,6},
+		name      = "Minimap", 
+		parent    = Chili.Screen0,
+		draggable = false,
+		width     = w, 
+		height    = h,
+		x         = 0,
+		bottom    = 0,
+		padding   = {6,6,5,6},
 	}
 	
 end

@@ -1,0 +1,82 @@
+#define TA			// This is a TA script
+
+#include "sfxtype.h"
+#include "exptype.h"
+
+piece  base, doorr, doorl, flare, prop;
+
+
+// Signal definitions
+#define SIG_MOVE			2
+
+
+Create()
+{
+	return (0);
+}
+
+StartMoving()
+{
+	signal SIG_MOVE;
+	set-signal-mask SIG_MOVE;
+	spin prop around z-axis speed <100>;
+	while( TRUE )
+	{
+		emit-sfx 256 | 3 from prop;
+		sleep 250;
+	}
+	return (0);
+}
+
+StopMoving()
+{
+	stop-spin prop around z-axis;
+	signal SIG_MOVE;
+	return (0);
+}
+
+FirePrimary()
+{
+	return (0);
+}
+
+QueryPrimary(piecenum)
+{
+	piecenum = flare;
+	return (0);
+}
+
+SweetSpot(piecenum)
+{
+	piecenum = base;
+	return (0);
+}
+
+Killed(severity, corpsetype)
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1;
+		explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+
+		return (0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2;
+		explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+
+		return (0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3;
+		explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+
+		return (0);
+	}
+	corpsetype = 3;
+	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+
+	return (0);
+}

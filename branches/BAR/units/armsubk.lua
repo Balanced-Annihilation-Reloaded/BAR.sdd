@@ -29,7 +29,7 @@ return {
 		movementclass = "UBOAT3",
 		name = "Piranha",
 		nochasecategory = "VTOL",
-		objectname = "ARMSUBK",
+		objectname = "ARMSUBK.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 390,
@@ -37,6 +37,10 @@ return {
 		turnrate = 298,
 		upright = true,
 		waterline = 30,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

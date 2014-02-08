@@ -111,7 +111,7 @@ return {
 				explosiongenerator = "custom:FLASH2",
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
-				model = "torpedo",
+				model = "torpedo.s3o",
 				name = "AdvancedTorpedo",
 				noselfdamage = true,
 				range = 600,

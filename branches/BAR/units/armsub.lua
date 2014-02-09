@@ -28,7 +28,7 @@ return {
 		movementclass = "UBOAT3",
 		name = "Lurker",
 		nochasecategory = "VTOL",
-		objectname = "ARMSUB",
+		objectname = "ARMSUB.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 400,
@@ -36,6 +36,10 @@ return {
 		turnrate = 520,
 		upright = true,
 		waterline = 30,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

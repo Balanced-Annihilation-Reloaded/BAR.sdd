@@ -1,0 +1,109 @@
+#define TA			// This is a TA script
+
+#include "sfxtype.h"
+#include "exptype.h"
+
+piece  flare, base, doorr, doorl, prop;
+
+static-var  restore_delay;
+// Signal definitions
+#define SIG_AIM				2
+#define SIG_MOVE			2
+
+
+Create()
+{
+	hide flare;
+	restore_delay = 3000;
+	return (0);
+}
+
+StartMoving()
+{
+	spin prop around z-axis speed <100>;
+	signal SIG_MOVE;
+	set-signal-mask SIG_MOVE;
+	while( TRUE )
+	{
+		emit-sfx 256 | 3 from base;
+		sleep 250;
+	}
+	return (0);
+}
+
+StopMoving()
+{
+
+	stop-spin prop around z-axis;
+	signal SIG_MOVE;
+	return (0);
+}
+
+FirePrimary()
+{
+	return (0);
+}
+
+QueryPrimary(piecenum)
+{
+	piecenum = flare;
+	return (0);
+}
+
+SweetSpot(piecenum)
+{
+	piecenum = base;
+	return (0);
+}
+
+
+RestoreAfterDelay()
+{
+	sleep restore_delay;
+	move doorr to x-axis [0] speed [10];
+	move doorl to x-axis [0] speed [10];
+	
+	wait-for-move doorr along x-axis;
+}
+
+AimFromPrimary(piecenum)
+{
+	piecenum = flare;
+}
+
+AimPrimary(heading, pitch)
+{
+	signal SIG_AIM;
+	set-signal-mask SIG_AIM;
+	move doorr to x-axis [-2] speed [10];
+	move doorl to x-axis [2] speed [10];
+	
+	wait-for-move doorr along x-axis;
+	start-script RestoreAfterDelay();
+	return (1);
+}
+
+Killed(severity, corpsetype)
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1;
+		explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+		return (0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2;
+		explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+		return (0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3;
+		explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+		return (0);
+	}
+	corpsetype = 3;
+	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+	return (0);
+}

@@ -6,6 +6,9 @@ local skin = {
     name    = "Flat",
     version = "v1",
     author  = "Funkencool",
+		depend = {
+      "Robocracy",
+    },
   }
 }
 

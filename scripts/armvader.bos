@@ -89,12 +89,13 @@ StopMoving()
 
 	stop-spin base around x-axis;
 	turn base to x-axis <0> speed <270>;
+	wait-for-turn base around x-axis;	
 	move leg1 to y-axis [-6] speed [18];
 	move leg2 to y-axis [-6] speed [18];
 	move leg4 to y-axis [-6] speed [18];
 	move leg3 to y-axis [-6] speed [18];
 	move base to y-axis [6] speed [18];
-	wait-for-turn base around x-axis;
+
 	
 	bMoving = FALSE;
 }

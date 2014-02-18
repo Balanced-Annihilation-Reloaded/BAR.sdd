@@ -430,12 +430,14 @@ function widget:Initialize()
 
 
 end
---------------------------- When Available Commands change this is called
+--------------------------- 
+-- When Available Commands change this is called
 --  sets Updaterequired to true
 function widget:CommandsChanged()
 	updateRequired = true
 end
---------------------------- If update is required this Loads the panel and queue for the new unit or hides them if none exists
+--------------------------- 
+-- If update is required this Loads the panel and queue for the new unit or hides them if none exists
 --  There is an offset to prevent the panel dissappearing right after a command has changed (for fast clicking)
 function widget:Update()
 	if updateRequired then

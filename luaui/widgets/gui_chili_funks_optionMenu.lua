@@ -46,7 +46,7 @@ barSettings['UIwidget']         = {}
 ------------------------------------
 local widgetList = {}
 local tabs = {}
-local changelog = VFS.LoadFile('changelog.txt')
+local changelog = '' -- VFS.LoadFile('changelog.txt')
 if changelog == '' then changelog = 'changelog is blank, normally this would read the changelog.txt in the games base directory' end
 
 

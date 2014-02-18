@@ -31,7 +31,7 @@ return {
 		mincloakdistance = 75,
 		movementclass = "KBOT2",
 		name = "Infiltrator",
-		objectname = "ARMSPY",
+		objectname = "ARMSPY.s3o",
 		onoffable = true,
 		seismicsignature = 2,
 		selfdestructas = "SPYBOMBX",

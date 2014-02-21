@@ -676,6 +676,9 @@ end
 
 
 function widget:AddConsoleLine(text,priority)
+	
+	if true then return end --disable log because it eats performance
+	
 	if tabs.Log then
 		local stackpanel = tabs['Log']:GetObjectByName('mLog')
 		local textbox = Chili.TextBox:New{

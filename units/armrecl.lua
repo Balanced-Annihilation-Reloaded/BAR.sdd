@@ -30,7 +30,7 @@ return {
 		minwaterdepth = 15,
 		movementclass = "UBOAT3",
 		name = "Grim Reaper",
-		objectname = "ARMRECL",
+		objectname = "ARMRECL.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 430,
@@ -40,6 +40,10 @@ return {
 		waterline = 17,
 		workertime = 450,
 		repairspeed = 250,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		sounds = {
 			build = "nanlath1",
 			canceldestruct = "cancel2",

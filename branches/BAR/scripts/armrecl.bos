@@ -3,91 +3,68 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, flare, exhaust, door1, door2, boom, neck, gun;
+piece  base, flare, barrel, ldoor, rdoor, lfin, rfin, screw;
 
 static-var  Static_Var_1, statechg_DesiredState, statechg_StateChanging;
 
 // Signal definitions
-#define SIG_MOVE			2
 
 
 activatescr()
 {
 	if( TRUE )
 	{
-		move exhaust to y-axis [-0.403192] now;
-		move exhaust to z-axis [3.775989] now;
-		move flare to y-axis [0.172803] now;
-		move flare to z-axis [-1.375995] now;
-		turn door1 to z-axis <0.000000> now;
-		turn door1 to z-axis <-227.868132> speed <209.241758>;
-		turn door2 to z-axis <0.000000> now;
-		turn door2 to z-axis <227.516484> speed <208.917582>;
-		sleep 300;
+		move barrel to z-axis [5] speed [5];
+		sleep 200;
 	}
 	if( TRUE )
 	{
-		turn boom to x-axis <39.384615> speed <42.994505>;
-		turn neck to x-axis <-39.027473> speed <42.609890>;
-		sleep 150;
+		move ldoor to x-axis [-3] speed [5];
+		move rdoor to x-axis [3] speed [5];
+		sleep 300;
 	}
-	sleep 16;
 }
 
 deactivatescr()
 {
 	if( TRUE )
 	{
-		move exhaust to y-axis [-0.403192] now;
-		move exhaust to z-axis [3.775989] now;
-		move flare to y-axis [0.172803] now;
-		move flare to z-axis [-1.375995] now;
-		turn boom to x-axis <39.384615> now;
-		turn boom to x-axis <0.000000> speed <51.818681>;
-		turn door1 to z-axis <-227.868132> now;
-		turn door2 to z-axis <227.516484> now;
-		turn neck to x-axis <-39.027473> now;
-		turn neck to x-axis <0.000000> speed <51.357143>;
-		sleep 400;
+		move ldoor to x-axis [0] speed [5];
+		move rdoor to x-axis [0] speed [5];
+		sleep 300;
 	}
 	if( TRUE )
 	{
-		turn door1 to z-axis <0.000000> speed <185.258242>;
-		turn door2 to z-axis <0.000000> speed <184.972527>;
-		sleep 600;
+		move barrel to z-axis [0] speed [5];
+		sleep 200;
 	}
-	sleep 12;
 }
 
 StartMoving()
 {
-	signal SIG_MOVE;
-	set-signal-mask SIG_MOVE;
-	while( TRUE )
-	{
-		emit-sfx 256 | 3 from exhaust;
-		sleep 250;
-	}
+	spin screw around z-axis speed <360>;
+	move lfin to x-axis [-10] speed [10];
+	move rfin to x-axis [10] speed [10];
+	sleep 1000;
 }
 
 StopMoving()
-{
-	signal SIG_MOVE;
+{	
+	stop-spin screw around z-axis;
+	move lfin to x-axis [0] speed [10];
+	move rfin to x-axis [0] speed [10];
+	sleep 1000;
 }
 
 Go()
 {
 	call-script activatescr();
-	turn neck to y-axis Static_Var_1 speed <240.038462>;
-	wait-for-turn neck around y-axis;
 	set INBUILDSTANCE to 1;
 }
 
 Stop()
 {
 	set INBUILDSTANCE to 0;
-	turn neck to y-axis <0.000000> speed <240.038462>;
-	wait-for-turn neck around y-axis;
 	call-script deactivatescr();
 }
 
@@ -171,48 +148,20 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 1;
 		explode base type BITMAPONLY | BITMAP1;
-		explode boom type BITMAPONLY | BITMAP2;
-		explode door1 type BITMAPONLY | BITMAP3;
-		explode door2 type BITMAPONLY | BITMAP4;
-		explode exhaust type BITMAPONLY | BITMAP5;
-		explode flare type BITMAPONLY | BITMAP1;
-		explode gun type BITMAPONLY | BITMAP2;
-		explode neck type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
-		explode boom type FALL | BITMAP2;
-		explode door1 type BITMAPONLY | BITMAP3;
-		explode door2 type BITMAPONLY | BITMAP4;
-		explode exhaust type FALL | BITMAP5;
-		explode flare type FALL | BITMAP1;
-		explode gun type FALL | BITMAP2;
-		explode neck type FALL | BITMAP3;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
-		explode boom type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
-		explode door1 type BITMAPONLY | BITMAP3;
-		explode door2 type BITMAPONLY | BITMAP4;
-		explode exhaust type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP5;
-		explode flare type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP1;
-		explode gun type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
-		explode neck type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP3;
 		return (0);
 	}
 	corpsetype = 3;
 	explode base type BITMAPONLY | BITMAP1;
-	explode boom type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
-	explode door1 type BITMAPONLY | BITMAP3;
-	explode door2 type BITMAPONLY | BITMAP4;
-	explode exhaust type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP5;
-	explode flare type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP1;
-	explode gun type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
-	explode neck type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP3;
 }

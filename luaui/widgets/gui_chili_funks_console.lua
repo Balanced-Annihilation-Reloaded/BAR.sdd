@@ -29,7 +29,8 @@ local slen			   = string.len
 -- Config --
 local maxMsgNum = 6
 local msgTime   = 4 -- time to display message in seconds
-local msgWidth  = 300
+local msgWidth  = 450
+local msgRight  = 400
 ------------
 
 -- Chili elements --
@@ -89,11 +90,11 @@ function widget:Initialize()
 	
 	window0 = Chili.Window:New{
 		parent   = screen,
-		right    = 450,
+		right    = msgRight,
 		y        = 30,
 		minHeight= 20,
 		height   = 30,
-		width    = 300,
+		width    = msgWidth,
 		padding  = {0,0,0,0}
 	}
 	
@@ -112,7 +113,7 @@ function widget:Initialize()
 		parent    = screen,
 		padding   = {5,5,2,5},
 		minHeight = 15,
-		right     = 450,
+		right     = msgRight,
 		y         = 60,
 		width     = msgWidth
 	}

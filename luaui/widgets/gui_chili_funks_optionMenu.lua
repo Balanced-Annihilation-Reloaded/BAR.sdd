@@ -285,7 +285,7 @@ local function loadMinMenu()
 	
 	fpsLbl = Chili.Label:New{
 		caption = 'FPS: 65',
-		x       = 70
+		x       = 65
 	}
 	
 	menuBtn = Chili.Button:New{

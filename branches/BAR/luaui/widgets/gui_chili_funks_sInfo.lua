@@ -108,7 +108,7 @@ local function showUnitInfo(texture, overlay, description, humanName, health, ma
 	
 	unitName = Chili.TextBox:New{
 		x      = 0,
-		y      = 0,
+		y      = 5,
 		right  = 0,
 		bottom = 0,
 		text   = " " .. humanName..'\n'.. " " .. description,
@@ -150,7 +150,7 @@ local function showBasicSelectionInfo(num, numTypes)
 	
 	basicUnitInfo = Chili.TextBox:New{
 		x      = 0,
-		y      = 0,
+		y      = 5,
 		right  = 0,
 		bottom = 0,
 		text   = " Units selected: " .. num .. "\n Number of unit types: " .. numTypes,
@@ -295,7 +295,7 @@ function widget:Initialize()
 	groundText = Chili.TextBox:New{
 		parent = infoWindow,
 		x      = 0,
-		y      = 0,
+		y      = 5,
 		right  = 0,
 		bottom = 0,
 		text   = 'test',

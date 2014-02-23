@@ -153,7 +153,7 @@ local function showBasicSelectionInfo(num, numTypes)
 		y      = 5,
 		right  = 0,
 		bottom = 0,
-		text   = " Units selected: " .. num .. "\n Number of unit types: " .. numTypes,
+		text   = " Units selected: " .. num .. "\n Unit types: " .. numTypes,
 	}
 	
 	unitInfo:AddChild(basicUnitInfo)

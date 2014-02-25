@@ -148,7 +148,7 @@ local function loadOptions()
 end
 
 local function getInline(color)
-	retun schar(255, (color[1]*255), (color[2]*255), (color[3]*255))
+	return schar(255, (color[1]*255), (color[2]*255), (color[3]*255))
 end
 
 local function getPlayers()

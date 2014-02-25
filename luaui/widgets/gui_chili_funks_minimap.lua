@@ -1,9 +1,9 @@
 function widget:GetInfo()
   return {
-    name      = "BAR's Minimap",
-    desc      = "Chili Minimap",
-    author    = "Licho, CarRepairer, Funkencool",
-    date      = "@2010",
+    name      = "Funks Minimap",
+    desc      = "Minimap",
+    author    = "Funkencool",
+    date      = "2014",
     license   = "GNU GPL, v2 or later",
     layer     = -99,
     enabled   = true,
@@ -35,7 +35,8 @@ local function MakeMinimapWindow()
 	end
 
 	local aspect = Game.mapX/Game.mapY
-	local h = Chili.Screen0.height * 0.3
+	local screenH = Chili.Screen0.height
+	local h = screenH * 0.3
 	local w = h * aspect
 	
 	if aspect > 1 then
@@ -51,21 +52,9 @@ local function MakeMinimapWindow()
 		height    = h,
 		x         = 0,
 		bottom    = 0,
-		padding   = {6,6,5,6},
+		padding   = {6,6,6,6},
 	}
 	
-end
-
-function widget:KeyRelease(key, mods, label, unicode)
-	-- "0x009" = "tab". Reference: uikeys.txt
-	if key == 0x009 then
-		local mode = Spring.GetCameraState()["mode"]
-		if mode == 7 and minimap.visible then
-			minimap:Hide()
-		elseif mode ~= 7 and minimap.hidden then
-			minimap:Show()
-		end
-	end
 end
 
 function widget:ViewResize(vsx, vsy)
@@ -96,11 +85,6 @@ function widget:Shutdown()
 	-- reset engine default minimap rendering
 	gl.SlaveMiniMap(false)
 	Spring.SendCommands("minimap geo " .. Spring.GetConfigString("MiniMapGeometry"))
-
-	-- free the chili window
-	if minimap then
-		minimap:Dispose()
-	end
 end 
 
 function widget:DrawScreen() 

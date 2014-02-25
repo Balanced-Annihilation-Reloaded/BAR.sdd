@@ -14,12 +14,11 @@ end
 
 local imageDir = 'luaui/images/buildIcons/'
 
-local Chili ,infoWindow, unitInfo, unitName, unitIcon, selectionGrid, unitHealth, groundInfo 
+local Chili ,infoWindow, groundInfo, groundText
+local unitInfo, unitName, unitIcon, selectionGrid, unitHealthText, unitHealth
+local screenH, screenW, winSize
 local healthBars = {}
 local updateNow  = false
-
-local green = {0,0.8,0,1}
-
 
 local curTip --[[ current tooltip type: 
                   -3 for ground info
@@ -37,7 +36,6 @@ local spGetSelectedUnitsSorted  = Spring.GetSelectedUnitsSorted
 local spGetMouseState           = Spring.GetMouseState
 local spTraceScreenRay          = Spring.TraceScreenRay
 local spGetGroundHeight         = Spring.GetGroundHeight
-local spSelectUnitArray         = Spring.SelectUnitArray
 
 local r,g,b     = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
@@ -46,13 +44,6 @@ local timer = spGetTimer()
 local healthTimer = timer
 local groundTimer = timer
 
-
-local function selectGroup(obj)
-	-- TODO:
-	--  add key functionality
-	--  for example if shift is pressed, group is removed
-	spSelectUnitArray(obj.unitIDs)
-end
 ----------------------------------
 -- add unitDefID (curTip = -1)
 local function addUnitGroup(name,texture,overlay,unitIDs)
@@ -72,7 +63,7 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
 		x       = 0,
 		width   = '100%',
 		height  = 6,
-		color   = green,
+		color   = {0.5,1,0,1},
 	}
 	
 	local unitIcon = Chili.Image:New{
@@ -91,12 +82,10 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
 	}
 	
 	local button = Chili.Button:New{
-		unitIDs  = unitIDs,
 		caption  = '',
 		margin   = {1,1,1,1},
 		padding  = {0,0,0,0},
 		children = {unitIcon, healthBars[#healthBars]},
-		OnClick  = {selectGroup},
 	}
 	
 	selectionGrid:AddChild(button)
@@ -108,20 +97,25 @@ local function showUnitInfo(texture, overlay, description, humanName, health, ma
 	
 	unitName = Chili.TextBox:New{
 		x      = 0,
-		y      = 5,
+		y      = 0,
 		right  = 0,
 		bottom = 0,
 		text   = " " .. humanName..'\n'.. " " .. description,
 	}
-
+	
+	unitHealthText = Chili.TextBox:New{
+		x      = 5,
+		bottom = 21,
+		text   = math.floor(health) ..' / '.. math.floor(maxHealth),
+	}
+	
 	unitHealth = Chili.Progressbar:New{
-		caption = math.floor(health) ..' / '.. math.floor(maxHealth),
 		value   = 0,
 		bottom  = 5,
 		x       = 0,
-		width   = '100%',
-		height  = 25,
-		color   = green,
+		width   = '50%',
+		height  = 10,
+		color   = {0.5,1,0,1},
 	}
 	
 	unitIcon = Chili.Image:New{
@@ -135,7 +129,7 @@ local function showUnitInfo(texture, overlay, description, humanName, health, ma
 				height   = '100%',
 				width    = '100%',
 				file     = overlay,
-				children = {unitName, unitHealth},
+				children = {unitName, unitHealthText, unitHealth},
 			}
 		}
 	}
@@ -150,7 +144,7 @@ local function showBasicSelectionInfo(num, numTypes)
 	
 	basicUnitInfo = Chili.TextBox:New{
 		x      = 0,
-		y      = 5,
+		y      = 0,
 		right  = 0,
 		bottom = 0,
 		text   = " Units selected: " .. num .. "\n Unit types: " .. numTypes,
@@ -213,7 +207,12 @@ local function updateGroundInfo()
 	if focus == "ground" and map[1] then
 		local px,pz = math.floor(map[1]),math.floor(map[3])
 		local py = math.floor(spGetGroundHeight(px,pz))
-		groundText:SetText(" Position: " .. px ..  ", " .. pz .. "\n" .. " Height: " .. py)
+		groundText:SetText(
+			"Map Coordinates"..
+			"\n Height: " .. py ..
+			"\n X: ".. px ..
+			"\n Z: ".. pz
+		)
 		groundText:Invalidate()
 	end
 end
@@ -224,21 +223,22 @@ local function updateHealthBars()
 	--single unit	
 	if curTip >= 0 then 
 		local health, maxHealth = spGetUnitHealth(curTip)
-		unitHealth:SetCaption(math.floor(health) ..' / '.. math.floor(maxHealth))
+		unitHealthText:SetText(math.floor(health) ..' / '.. math.floor(maxHealth)) 
+		unitHealthText:Invalidate() --not sure why this is needed here but it is
 		unitHealth.max = maxHealth
 		unitHealth:SetValue(health)
 		
 	--multiple units, but not so many we cant fit pics
 	elseif curTip == -1 then 
-		for unitGroup = 1, #healthBars do
+		for a = 1, #healthBars do
 			local value, max = 0, 0
-			for id = 1, #healthBars[unitGroup].unitIDs do
-				local health, maxhealth = spGetUnitHealth(healthBars[unitGroup].unitIDs[id])
+			for b = 1, #healthBars[a].unitIDs do
+				local health, maxhealth = spGetUnitHealth(healthBars[a].unitIDs[b])
 				max   = max + maxhealth
 				value = value + health
 			end
-			healthBars[unitGroup].max = max
-			healthBars[unitGroup]:SetValue(value)
+			healthBars[a].max = max
+			healthBars[a]:SetValue(value)
 		end
 
 	end
@@ -257,18 +257,29 @@ function widget:Initialize()
 	end
 	
 	Chili   = WG.Chili
-	screen0 = Chili.Screen0
-	winSize = screen0.height * 0.2
+	local screen = Chili.Screen0
+	screenH = screen.height
+	screenW = screen.width
+	winSize = screenH * 0.2
 	
 	--Main window, ancestor of everything
 	infoWindow = Chili.Window:New{
-		padding = {5,5,5,5},
-		parent  = Chili.Screen0,
+		padding = {6,6,6,6},
+		parent  = screen,
 		x       = 0,
-		y       = 1,
+		y       = 0,
 		width   = winSize,
 		height  = winSize,
 	}
+	
+	groundInfo = Chili.Window:New{
+		padding = {6,6,6,6},
+		parent  = screen,
+		x       = 0,
+		y       = 0,
+		width   = 150,
+		height  = 70,
+	}	
 	
 	selectionGrid = Chili.Grid:New{
 		parent  = infoWindow,
@@ -293,9 +304,9 @@ function widget:Initialize()
 	}
 	
 	groundText = Chili.TextBox:New{
-		parent = infoWindow,
+		parent = groundInfo,
 		x      = 0,
-		y      = 5,
+		y      = 0,
 		right  = 0,
 		bottom = 0,
 		text   = 'test',
@@ -309,7 +320,6 @@ end
 function widget:CommandsChanged()
 	curTip = nil
 	healthBars = {}
-	groundText:SetText('')
 	selectionGrid:ClearChildren()
 	unitInfo:ClearChildren()
 	getInfo()
@@ -324,6 +334,14 @@ end
 function widget:Update()
 	
 	if curTip == nil then return end
+	
+	if curTip == -3 then
+		if infoWindow.visible then infoWindow:Hide() end
+		if groundInfo.hidden then groundInfo:Show() end
+	else
+		if infoWindow.hidden then infoWindow:Show() end
+		if groundInfo.visible then groundInfo:Hide() end
+	end
 	
 	local timer = spGetTimer()
 	local updateGround = curTip == -3 and spDiffTimers(timer, groundTimer) > 0.1 

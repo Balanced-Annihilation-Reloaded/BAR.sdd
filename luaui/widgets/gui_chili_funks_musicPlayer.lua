@@ -34,7 +34,7 @@ local generalVolume = Spring.GetConfigInt('snd_volgeneral')
 local masterVolume	= Spring.GetConfigInt('snd_volmaster')
 
 
-local tracks = VFS.Include('Music/music.lua')
+local tracks = VFS.Include('Music/music.lua') or false
 local myTeamID  = Spring.GetMyTeamID()
 local isSpec 	  = false
 local playNew   = true
@@ -61,32 +61,17 @@ local labelScrollSpeed = 10
 ----------------------------------------------------------------------------------------
 -- Intialize --
 ----------------------------------------------------------------------------------------
-local function getTracks()
-	local isTracks
-	
-	for group,_ in pairs(tracks) do
-		for _,track in ipairs(VFS.DirList('music/'..group..'/','*.ogg')) do
-			if track then
-				tracks[group][#tracks[group] + 1] = track
-				isTracks = true
-			end
-		end
-	end
-
-	return isTracks
-end
-
 local function createUI()
 	
 	local screen0 = Chili.Screen0
 	
-	volumeLbl = Chili.Label:New{caption = 'Volume:',bottom=13, right = 150}
+	volumeLbl = Chili.Label:New{caption = 'Vol:',bottom=10, right = 150}
 	volume = Chili.Trackbar:New{
-		right = 85,
-		height = 15, 
-		bottom = 10, 
-		width=60, 
-		value=musicVolume,
+		right    = 85,
+		height   = 15, 
+		bottom   = 10, 
+		width    = 60, 
+		value    = musicVolume,
 		OnChange = {function(self)	Spring.SendCommands('set snd_volmusic ' .. self.value^2/100+1) end},
 	}
 	
@@ -153,7 +138,7 @@ local function createUI()
 	musicControl = Chili.Control:New{
 		parent   = screen0,
 		right    = 0, 
-		y        = 45, 
+		y        = 75, 
 		height   = 40, 
 		width    = 300, 
 		children = {skipButton,playButton,volume,volumeLbl},
@@ -165,7 +150,7 @@ local function createUI()
 		parent    = screen0,
 		minHeight = 0, 
 		right     = 0, 
-		y         = 30, 
+		y         = 60, 
 		height    = 20,
 		width     = 200,
 		padding   = {5,2,5,0},
@@ -266,6 +251,9 @@ function widget:GameFrame(n)
 end
 
 function widget:Initialize()
+	if not tracks then
+		return 
+	end
 	isSpec = Spring.GetSpectatingState()
 	Chili = WG.Chili
 	createUI()

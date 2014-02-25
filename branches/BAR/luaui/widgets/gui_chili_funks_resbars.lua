@@ -63,12 +63,12 @@ end
 local function initWindow()
 	local screen0 = Chili.Screen0
 	
-	window0 = Chili.Control:New{
+	window0 = Chili.Window:New{
 		parent    = screen0,
 		right     = 0, 
 		y         = 0, 
-		width     = 840, 
-		height    = 30, 
+		width     = 450, 
+		height    = 60, 
 		minHeight = 20, 
 		padding   = {0,0,0,0}
 	}
@@ -77,7 +77,7 @@ end
 
 local function makeBar(res, barX, barY)
 	
-	local control = Chili.Window:New{
+	local control = Chili.Control:New{
 		parent    = window0,
 		name      = res,
 		x         = barX,
@@ -193,7 +193,7 @@ function widget:Initialize()
 	Chili = WG.Chili
 	initWindow()
 	makeBar('metal',0,0)
-	makeBar('energy',420,0)
+	makeBar('energy',30,30)
 end
 
 function widget:Shutdown()

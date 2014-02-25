@@ -56,8 +56,8 @@ skin.combobox = {
 	TileImageBK = ":cl:glassbk.png",
 	TileImageFG = ":cl:glassfg.png",
 	TileImageArrow = ":cl:combobox_ctrl_arrow.png",
-	tiles   = {22, 22, 48, 22},
-	padding = {5, 5, 5, 5},
+	tiles   = {3, 3, 3, 3},
+	padding = {5, 5, 24, 5},
 	backgroundColor = {1, 1, 1, 0.7},
 	borderColor = {1,1,1,0},
 
@@ -68,7 +68,7 @@ skin.combobox = {
 skin.combobox_window = {
 	clone     = "window";
 	TileImage = ":cl:glassbk.png";
-	tiles     = {8, 8, 8, 8};
+	tiles     = {3, 3, 3, 3};
 	backgroundColor = {1, 1, 1, 0.7},
 	padding   = {4, 3, 3, 4};
 }

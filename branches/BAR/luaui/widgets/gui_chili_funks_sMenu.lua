@@ -295,7 +295,7 @@ function widget:Initialize()
 	------------
 
 	-- these numbers are used by numerous chili widgets
-	--  and should be an include or global object
+	--  TODO should be an include or global object
 	local scrH = screen0.height
 	local tabB = 0
 	local ordH = scrH * 0.07

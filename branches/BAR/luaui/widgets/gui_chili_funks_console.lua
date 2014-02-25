@@ -1,4 +1,5 @@
 -- WIP
+-- TODO add color to text
 function widget:GetInfo()
 	return {
 		name    = 'Funks Chat Console',
@@ -6,19 +7,20 @@ function widget:GetInfo()
 		author  = 'Funkencool',
 		date    = '2013',
 		license = 'GNU GPL v2',
-		layer   = 0,
+		layer   = 50,
 		enabled = true
 	}
 end
 
 -- Spring Functions --
+include("keysym.h.lua")
 local getTimer         = Spring.GetTimer
 local diffTimers       = Spring.DiffTimers
 local sendCommands     = Spring.SendCommands
 local setConfigString  = Spring.SetConfigString
 local getConsoleBuffer = Spring.GetConsoleBuffer
-local spGetTeamColor   = Spring.GetTeamColor
-local spGetPlayerRoster= Spring.GetPlayerRoster
+local getPlayerRoster  = Spring.GetPlayerRoster
+local getTeamColor     = Spring.GetTeamColor
 local sfind 		   = string.find 
 local ssub			   = string.sub
 local schar			   = string.char
@@ -28,26 +30,29 @@ local slen			   = string.len
 
 -- Config --
 local maxMsgNum = 6
-local msgTime   = 4 -- time to display message in seconds
-local msgWidth  = 450
-local msgRight  = 400
+local msgTime   = 6 -- time to display messages in seconds
+local msgWidth  = 420
+local settings = {
+	autohide = true,
+	}
 ------------
 
 -- Chili elements --
 local Chili
+local screen
+local window
 local msgWindow
-local editbox0
-local whosListening
-local control0
-local window0
-local textBox
+local log
 --------------------
 
 -- Local Variables --
 local messages = {}
 local curMsgNum = 1
+local enteringText = false
 local timer = getTimer()
 local oldTimer = timer
+local myID = Spring.GetMyPlayerID()
+local players = {}
 local myAllyTeamID = Spring.GetMyAllyTeamID()
 ---------------------
 
@@ -65,68 +70,118 @@ cfg = {
 local function ConvertColor(r,g,b)
 	return schar(255, (r*255), (g*255), (b*255))
 end
----------------------
 
-local function updateMsgWindow()
-	local text = ''
+local function loadWindow()
+		
+	window = Chili.Window:New{
+		parent  = screen,
+		width   = msgWidth,
+		color   = {0,0,0,0},
+		height  = 100,
+		padding = {0,0,0,0},
+		right   = 450,
+		y       = 0,
+	}
 	
-	for i=1, curMsgNum do
-		local msg = messages[#messages-curMsgNum+i]
-		if msg then text = text..msg.text..'\n' end
+	Chili.Window:New{
+		parent = window,
+		minHeight = 10,
+		width  = msgWidth,
+		height = 30,
+		y      = 0,
+		x      = 0,
+	}
+	
+	msgWindow = Chili.ScrollPanel:New{
+		parent      = window,
+		x           = 0,
+		y           = 30,
+		right       = 0,
+		bottom      = 0,
+		padding     = {0,0,0,0},
+		borderColor = {0,0,0,0},
+		verticalSmartScroll = true,
+	}
+
+	log = Chili.StackPanel:New{
+		parent      = msgWindow,
+		x           = 0,
+		y           = 0,
+		height      = 0,
+		width       = '100%',
+		autosize    = true,
+		resizeItems = false,
+		padding     = {0,0,0,0},
+		itemPadding = {1,1,1,1},
+		itemMargin  = {1,1,1,1},
+		preserveChildrenOrder = true,
+	}
+
+end
+
+local function loadOptions()
+	for setting,_ in pairs(settings) do
+		settings[setting] = Menu.Load(setting) or settings[setting]
 	end
 	
-	local font = textBox.font
-	local wText, lines = font:WrapText(text, msgWidth, 500)
+	local function toggle(obj)
+		local setting = obj.setting
+		settings[setting] = not settings[setting]
+		Menu.Save(setting, settings[setting])
+	end
+	
+	local options = Chili.Control:New{
+		x        = 0,
+		width    = '100%',
+		height   = 70,
+		padding  = {0,0,0,0},
+		children = {
+			Chili.Label:New{caption='Chat',x=0,y=0},
+			Chili.Checkbox:New{caption='Auto-Hide Chat',width=200,y=15,right=0,checked=false,
+				setting='autohide',OnChange = {toggle}},
+			Chili.Line:New{y=30,width='100%'}
+		}
+	}
+	
+	
+	Menu.AddToStack('Interface', options)
+end
 
-	textBox:SetText(text)
-	msgWindow:Resize(msgWidth, font.size * (lines-1) + 10) 
+local function getInline(color)
+	retun schar(255, (color[1]*255), (color[2]*255), (color[3]*255))
+end
+
+local function getPlayers()
+	local IDs = getPlayerRoster()
+	Spring.Echo("Number of players = "..#IDs)
+	for i = 1, #IDs do
+		local player = IDs[i]
+		local name = player[1]
+		Spring.Echo(player)
+		local r,g,b = getTeamColor(player[3])
+		players[name] = {}
+		players[name].id    = player[2]
+		players[name].team  = player[3]
+		players[name].ally  = player[4]
+		players[name].spec  = player[5]
+		players[name].color = {r,g,b,0.7}
+	end
 end
 
 function widget:Initialize()
 	
-	Chili = WG.Chili
+	Chili  = WG.Chili
+	screen = Chili.Screen0
+	Menu   = WG.MainMenu
+	if Menu then 
+		loadOptions() 
+	end
+	loadWindow()
 	
-	local screen = Chili.Screen0
-	
-	window0 = Chili.Window:New{
-		parent   = screen,
-		right    = msgRight,
-		y        = 30,
-		minHeight= 20,
-		height   = 30,
-		width    = msgWidth,
-		padding  = {0,0,0,0}
-	}
-	
-	editbox0 = Chili.EditBox:New{
-		parent      = window0,
-		right       = 0,
-		x           = 0,
-		y           = 0,
-		right       = 0,
-		bottom      = 0,
-		text        = '  --Takes over Enter/Return when entering text--',
-		OnMouseDown =  {function(obj) obj.text = '' end}
-	}
-	
-	msgWindow = Chili.Window:New{
-		parent    = screen,
-		padding   = {5,5,2,5},
-		minHeight = 15,
-		right     = msgRight,
-		y         = 60,
-		width     = msgWidth
-	}
-	
-	textBox = Chili.TextBox:New{
-		parent = msgWindow,
-		width  = msgWidth,
-		text   = ''
-	}
-	
-	local buffer = getConsoleBuffer(maxMsgNum)
+	--~ getPlayers()
+	local buffer = getConsoleBuffer(40)
 	for i=1,#buffer do
-		local line = buffer[i]
+		line = buffer[i]
 		widget:AddConsoleLine(line.text,line.priority)
 	end
 	
@@ -135,63 +190,31 @@ function widget:Initialize()
 	
 	-- Move input to line up with new console
 	sendCommands('inputtextgeo '
-		-- ..(window0.x/Chili.Screen0.width-0.035)..' '
-		..(window0.x/Chili.Screen0.width)..' '
-		-- ..(1 - (window0.y + window0.height) / Chili.Screen0.height + 0.003)
-		..(1 - (window0.y + window0.height) / Chili.Screen0.height)
+		..(window.x/screen.width)..' '
+		..(1 - (window.y + 30) / screen.height)
 		..' 0.1 '
-		..(window0.width / Chili.Screen0.width) )
+		..(window.width / screen.width) )
 		
 end
 
--- Adds disappearing text
+-- Adds dissappearing text
 function widget:Update()
 	timer = getTimer()
-	if diffTimers(timer, oldTimer) > msgTime and curMsgNum > 0 then
-		curMsgNum = curMsgNum - 1
+	if diffTimers(timer, oldTimer) > msgTime
+	 and not enteringText
+	 and settings.autohide then
 		oldTimer = timer
-		updateMsgWindow()
+		if msgWindow.visible then msgWindow:Hide() end
 	end
 end
 
-function widget:AddConsoleLine(text,priority)
-	local messageText, ignoreThisMessage = processLine(text)
-	if not ignoreThisMessage then 
-		messages[#messages+1] = {}
-		messages[#messages] = {text=messageText, priority=priority}
-		if curMsgNum < maxMsgNum then curMsgNum = curMsgNum+1 end
-		oldTimer = getTimer()
-		updateMsgWindow()
-	end
-end
-
-function widget:KeyPress(key)
-	if key==13 then
-		if editbox0.state.focused then
-			if string.find(editbox0.text,'/')==1 then
-				sendCommands(string.sub(editbox0.text,2))
-			else
-				sendCommands('Say '..editbox0.text)
-			end
-			return true
-		end
-		editbox0.text = ''
-		editbox0:Invalidate()
-	end
-end
-
-function widget:Shutdown()
-	sendCommands({'console 1', 'inputtextgeo default'})
-	setConfigString('InputTextGeo', '0.26 0.73 0.02 0.028')
-end
-
-function processLine(line)
+local function processLine(line)
 
 	local ignoreThisMessage = false
 	local lineType = 0
 	
 	-- get data from player roster
-	local roster = spGetPlayerRoster()
+	local roster = getPlayerRoster()
 	local names = {}
 	for i=1,#roster do
 		names[roster[i][1]] = {roster[i][4],roster[i][5],roster[i][3]} --{allyTeamID, spectator, teamID}
@@ -253,7 +276,7 @@ function processLine(line)
 		end
 		
 		textColor = ConvertColor(c[1],c[2],c[3])
-		local r,g,b,a = spGetTeamColor(names[name][3])
+		local r,g,b,a = getTeamColor(names[name][3])
 		local nameColor = ConvertColor(r,g,b)
 		
 		line = nameColor..name..miscColor..": "..textColor..text
@@ -319,4 +342,33 @@ function processLine(line)
 	
 	return line,ignoreThisMessage
 
+end
+
+function widget:AddConsoleLine(msg)
+	local text, ignore = processLine(msg)
+	if ignore then return end
+	Chili.TextBox:New{
+		parent      = log,
+		text        = text,
+		width       = '100%',
+		align       = "left",
+		valign      = "ascender",
+		padding     = {0,0,0,0},
+		duplicates  = 0,
+		lineSpacing = 0,
+	}
+	if msgWindow.hidden then msgWindow:Show() end
+	oldTimer = getTimer()
+end
+
+function widget:KeyPress(key, modifier, isRepeat)
+	if (key == KEYSYMS.RETURN) then
+		if msgWindow.hidden then msgWindow:Show() end
+		enteringText = true
+	end 
+end
+
+function widget:Shutdown()
+	sendCommands({'console 1', 'inputtextgeo default'})
+	setConfigString('InputTextGeo', '0.26 0.73 0.02 0.028')
 end

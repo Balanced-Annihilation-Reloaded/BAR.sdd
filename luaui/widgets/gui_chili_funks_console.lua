@@ -312,7 +312,7 @@ local function processLine(line)
 		if (spectator) then
             name = "(s) "..name
 		else
-            local r,g,b,a = sGetTeamColor(names[name][3])
+            local r,g,b,a = spGetTeamColor(names[name][3])
             nameColor =  ConvertColor(r,g,b)
 		end
 		

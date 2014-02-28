@@ -22,10 +22,6 @@ local getConsoleBuffer = Spring.GetConsoleBuffer
 local getPlayerRoster  = Spring.GetPlayerRoster
 local getTeamColor     = Spring.GetTeamColor
 local getMouseState    = Spring.GetMouseState
-local sfind 		   = string.find 
-local ssub			   = string.sub
-local schar			   = string.char
-local slen			   = string.len
 ----------------------
 
 
@@ -147,9 +143,9 @@ end
 
 local function getInline(r,g,b)
 	if type(r) == 'table' then
-		return schar(255, (r[1]*255), (r[2]*255), (r[3]*255))
+		return string.char(255, (r[1]*255), (r[2]*255), (r[3]*255))
 	else
-		return schar(255, (r*255), (g*255), (b*255))
+		return string.char(255, (r*255), (g*255), (b*255))
 	end
 end
 
@@ -223,21 +219,28 @@ local function processLine(line)
 	end
 
 	local name = ''
+	-- Player Message
 	if line:find('<.->') then
 		name = line:match('<(.-)>')
 		text = line:gsub('<.->', '')
+	-- Spec Message
 	elseif line:find('%[.-%]') then
 		name = line:match('%[(.-)%]')
 		text = line:gsub('%[.-%]', '')
+	-- Point added
 	elseif line:find('added point:') then
 		name = line:match('(.-)%sadded point: ')
 		text = line:gsub('.-%sadded point: ', '')
+	-- Game Message
 	elseif line:sub(1,1) == ">" then
 		return color.game .. line
+	-- Filter messages
+	elseif line:find('-> Version') or line:find('ClientReadNet') or line:find('Address') then 
+		return _, true --ignore
 	else
-		return color.misc .. line
+		return color.misc .. line, ignore
 	end
-
+	
 	name = name:gsub('%s%(replay%)','')
 	name = name:gsub('%s%(spec%)','')
 
@@ -266,12 +269,11 @@ local function processLine(line)
 		line = nameColor .. name .. ': ' .. textColor .. text
 	end
 
-	
-	return color.misc .. line
+	return color.misc .. line, ignore
 end
 
 function widget:AddConsoleLine(msg)
-	local text = processLine(msg)
+	local text, ignore = processLine(msg)
 	if ignore then return end
 	Chili.TextBox:New{
 		parent      = log,

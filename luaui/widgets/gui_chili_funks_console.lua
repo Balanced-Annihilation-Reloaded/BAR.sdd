@@ -21,6 +21,7 @@ local setConfigString  = Spring.SetConfigString
 local getConsoleBuffer = Spring.GetConsoleBuffer
 local getPlayerRoster  = Spring.GetPlayerRoster
 local getTeamColor     = Spring.GetTeamColor
+local getMouseState    = Spring.GetMouseState
 local sfind 		   = string.find 
 local ssub			   = string.sub
 local schar			   = string.char
@@ -41,6 +42,7 @@ local settings = {
 local Chili
 local screen
 local window
+local input
 local msgWindow
 local log
 --------------------
@@ -48,28 +50,22 @@ local log
 -- Local Variables --
 local messages = {}
 local curMsgNum = 1
-local enteringText = false
+local mouseOverText = false
 local timer = getTimer()
 local oldTimer = timer
 local myID = Spring.GetMyPlayerID()
-local players = {}
-local myAllyTeamID = Spring.GetMyAllyTeamID()
+local myAllyID = Spring.GetMyAllyTeamID()
 ---------------------
 
 -- Text Colour Config --
-cfg = {
-	cothertext = {1,1,1,1}, --normal chat color
-	callytext = {0,1,0,1}, --ally chat
-	cspectext = {1,1,0,1}, --spectator chat
-	
-	cotherallytext = {1,0.5,0.5,1}, --enemy ally messages (seen only when spectating)
-	cmisctext = {0.78,0.78,0.78,1}, --everything else
-	cgametext = {0.4,1,1,1}, --server (autohost) chat
+local color = {
+	oAlly = '\255\255\128\128', --enemy ally messages (seen only when spectating)
+	misc  = '\255\200\200\200', --everything else
+	game  = '\255\102\255\255', --server (autohost) chat
+	other = '\255\255\255\255', --normal chat color
+	ally  = '\255\001\255\001', --ally chat
+	spec  = '\255\255\255\001', --spectator chat
 }
-
-local function ConvertColor(r,g,b)
-	return schar(255, (r*255), (g*255), (b*255))
-end
 
 local function loadWindow()
 		
@@ -83,16 +79,17 @@ local function loadWindow()
 		y       = 0,
 	}
 	
-	Chili.Window:New{
-		parent = window,
+	input = Chili.Window:New{
+		parent    = window,
 		minHeight = 10,
-		width  = msgWidth,
-		height = 30,
-		y      = 0,
-		x      = 0,
+		width     = msgWidth,
+		height    = 30,
+		y         = 0,
+		x         = 0,
 	}
 	
 	msgWindow = Chili.ScrollPanel:New{
+		verticalSmartScroll = true,
 		parent      = window,
 		x           = 0,
 		y           = 30,
@@ -100,7 +97,8 @@ local function loadWindow()
 		bottom      = 0,
 		padding     = {0,0,0,0},
 		borderColor = {0,0,0,0},
-		verticalSmartScroll = true,
+		--~ OnMouseOver = {function() mouseOverText = true end},
+		--~ OnMouseOut  = {function() mouseOverText = false end},
 	}
 
 	log = Chili.StackPanel:New{
@@ -137,8 +135,8 @@ local function loadOptions()
 		padding  = {0,0,0,0},
 		children = {
 			Chili.Label:New{caption='Chat',x=0,y=0},
-			Chili.Checkbox:New{caption='Auto-Hide Chat',width=200,y=15,right=0,checked=false,
-				setting='autohide',OnChange = {toggle}},
+			Chili.Checkbox:New{caption='Auto-Hide Chat',width=200,y=15,right=0,
+				checked=settings.autohide,setting='autohide',OnChange={toggle}},
 			Chili.Line:New{y=30,width='100%'}
 		}
 	}
@@ -147,24 +145,24 @@ local function loadOptions()
 	Menu.AddToStack('Interface', options)
 end
 
-local function getInline(color)
-	return schar(255, (color[1]*255), (color[2]*255), (color[3]*255))
+local function getInline(r,g,b)
+	if type(r) == 'table' then
+		return schar(255, (r[1]*255), (r[2]*255), (r[3]*255))
+	else
+		return schar(255, (r*255), (g*255), (b*255))
+	end
 end
 
-local function getPlayers()
-	local IDs = getPlayerRoster()
-	Spring.Echo("Number of players = "..#IDs)
-	for i = 1, #IDs do
-		local player = IDs[i]
-		local name = player[1]
-		Spring.Echo(player)
-		local r,g,b = getTeamColor(player[3])
-		players[name] = {}
-		players[name].id    = player[2]
-		players[name].team  = player[3]
-		players[name].ally  = player[4]
-		players[name].spec  = player[5]
-		players[name].color = {r,g,b,0.7}
+local function showChat()
+	oldTimer = getTimer()
+	if msgWindow.hidden then
+		msgWindow:Show()
+	end
+end
+
+local function hideChat()
+	if msgWindow.visible then
+		msgWindow:Hide()
 	end
 end
 
@@ -194,158 +192,86 @@ function widget:Initialize()
 		..(1 - (window.y + 30) / screen.height)
 		..' 0.1 '
 		..(window.width / screen.width) )
-		
+	
 end
 
 -- Adds dissappearing text
 function widget:Update()
 	timer = getTimer()
-	if diffTimers(timer, oldTimer) > msgTime
-	 and not enteringText
-	 and settings.autohide then
+	if diffTimers(timer, oldTimer) > msgTime 
+	 and settings.autohide
+	 and not mouseOverText then
 		oldTimer = timer
-		if msgWindow.visible then msgWindow:Hide() end
+		hideChat()
 	end
 end
 
 local function processLine(line)
 
-	local ignoreThisMessage = false
-	local lineType = 0
-	
 	-- get data from player roster
 	local roster = getPlayerRoster()
-	local names = {}
+	local players = {}
+	
 	for i=1,#roster do
-		names[roster[i][1]] = {roster[i][4],roster[i][5],roster[i][3]} --{allyTeamID, spectator, teamID}
+		players[roster[i][1]] = {
+			ID     = roster[i][2],
+			allyID = roster[i][4],
+			spec   = roster[i][5],
+			teamID = roster[i][3],
+			color  = getInline(getTeamColor(roster[i][3])),
+		}
 	end
-	
-	-- assess line type
-	if (names[ssub(line,2,(sfind(line,"> ") or 1)-1)] ~= nil) then
-		lineType = 1 --player talking
-		name = ssub(line,2,sfind(line,"> ")-1)
-		text = ssub(line,slen(name)+4)
-	elseif (names[ssub(line,2,(sfind(line,"] ") or 1)-1)] ~= nil) then
-		lineType = 2 --spectator talking
-		name = ssub(line,2,sfind(line,"] ")-1)
-		text = ssub(line,slen(name)+4)
-	elseif (names[ssub(line,2,(sfind(line,"(replay)") or 3)-3)] ~= nil) then
-		lineType = 2 --spectator talking (replay)
-		name = ssub(line,2,sfind(line,"(replay)")-3)
-		text = ssub(line,slen(name)+13)
-	elseif (names[ssub(line,1,(sfind(line," added point: ") or 1)-1)] ~= nil) then
-		lineType = 3 --player point
-		name = ssub(line,1,sfind(line," added point: ")-1)
-		text = ssub(line,slen(name.." added point: ")+1)
-	elseif (ssub(line,1,1) == ">") then
-		lineType = 4 --game message
-		text = ssub(line,3)
-	end	
 
-	-- filter out some engine messages; 
-	if lineType==0 then 		
-		-- 2 lines (instead of 4) appears when player connects
-		if sfind(line,'-> Version') or sfind(line,'ClientReadNet') or sfind(line,'Address') then
-			ignoreThisMessage = true
-		end
-		
-		-- 'left the game' messages after game is over
-		if gameOver then
-			if sfind(line,'left the game') then
-				ignoreThisMessage = true
-			end
-		end
-	end	
+	local name = ''
+	if line:find('<.->') then
+		name = line:match('<(.-)>')
+		text = line:gsub('<.->', '')
+	elseif line:find('%[.-%]') then
+		name = line:match('%[(.-)%]')
+		text = line:gsub('%[.-%]', '')
+	elseif line:find('added point:') then
+		name = line:match('(.-)%sadded point: ')
+		text = line:gsub('.-%sadded point: ', '')
+	elseif line:sub(1,1) == ">" then
+		return color.game .. line
+	else
+		return color.misc .. line
+	end
 
-	-- add colour
-	local textColor = ""
-	
-	if (lineType==1) then --player message
-		local c = cfg.cothertext
-		local miscColor = ConvertColor(c[1],c[2],c[3])
-		if (sfind(text,"Allies: ") == 1) then
-			text = ssub(text,9)
-			if (names[name][1] == MyAllyTeamID) then
-				c = cfg.callytext
-			else
-				c = cfg.cotherallytext
-			end
-		elseif (sfind(text,"Spectators: ") == 1) then
-			text = ssub(text,13)
-			c = cfg.cspectext
-		end
+	name = name:gsub('%s%(replay%)','')
+	name = name:gsub('%s%(spec%)','')
+
+	if players[name] then
+		local player = players[name]
+		local textColor = color.other
+		local nameColor = color.other
 		
-		textColor = ConvertColor(c[1],c[2],c[3])
-		local r,g,b,a = getTeamColor(names[name][3])
-		local nameColor = ConvertColor(r,g,b)
-		
-		line = nameColor..name..miscColor..": "..textColor..text
-        
-        playSound = true
-		
-	elseif (lineType==2) then --spectator message
-		local c = cfg.cothertext
-		local miscColor = ConvertColor(c[1],c[2],c[3])
-		if (sfind(text,"Allies: ") == 1) then
-			text = ssub(text,9)
-			c = cfg.cspectext
-		elseif (sfind(text,"Spectators: ") == 1) then
-			text = ssub(text,13)
-			c = cfg.cspectext
-		end
-		textcolor = ConvertColor(c[1],c[2],c[3])
-		c = cfg.cspectext
-		local nameColor = ConvertColor(c[1],c[2],c[3])
-		
-		line = nameColor.."(s) "..name..miscColor..": "..textColor..text
-		
-        playSound = true
-        
-	elseif (lineType==3) then --player point
-		local c = cfg.cspectext
-		local nameColor = ConvertColor(c[1],c[2],c[3])
-		
-		local spectator = true
-		if (names[name] ~= nil) then
-			spectator = names[name][2]
-		end
-		if (spectator) then
-            name = "(s) "..name
+		if player.spec then
+			name = '(S)'.. name
+			textColor = color.spec
 		else
-            local r,g,b,a = getTeamColor(names[name][3])
-            nameColor =  ConvertColor(r,g,b)
+			nameColor = player.color
+			if text:find('Allies: ') then
+				if player.allyID == myAllyID then
+					textColor = color.ally
+				else
+					textColor = color.oAlly
+				end
+			elseif text:find('Spectators: ') then
+				textColor = color.spec
+			end
 		end
-		
-		c = cfg.cotherallytext
-		if (spectator) then
-			c = cfg.cspectext
-		elseif (names[name][1] == MyAllyTeamID) then
-			c = cfg.callytext
-		end
-		textColor = ConvertColor(c[1],c[2],c[3])
-		c = cfg.cothertext
-		local miscColor = ConvertColor(c[1],c[2],c[3])
-		
-		line = nameColor..name..miscColor.." * "..textColor..text
-		
-	elseif (lineType==4) then --game message
-		local c = cfg.cgametext
-		textColor = ConvertColor(c[1],c[2],c[3])
-		
-		line = textColor.."> "..text
-	else --every other message
-		local c = cfg.cmisctext
-		textColor = ConvertColor(c[1],c[2],c[3])
-		
-		line = textColor..line
+		text = text:gsub('Allies: ','')
+		text = text:gsub('Spectators: ','')
+		line = nameColor .. name .. ': ' .. textColor .. text
 	end
-	
-	return line,ignoreThisMessage
 
+	
+	return color.misc .. line
 end
 
 function widget:AddConsoleLine(msg)
-	local text, ignore = processLine(msg)
+	local text = processLine(msg)
 	if ignore then return end
 	Chili.TextBox:New{
 		parent      = log,
@@ -356,15 +282,20 @@ function widget:AddConsoleLine(msg)
 		padding     = {0,0,0,0},
 		duplicates  = 0,
 		lineSpacing = 0,
+		font        = {
+			outline          = true,
+			outlineColor     = {0,0,0,1},
+			autoOutlineColor = false,
+			outlineWidth     = 4,
+			outlineWeight    = 3,
+		},
 	}
-	if msgWindow.hidden then msgWindow:Show() end
-	oldTimer = getTimer()
+	showChat()
 end
 
 function widget:KeyPress(key, modifier, isRepeat)
 	if (key == KEYSYMS.RETURN) then
-		if msgWindow.hidden then msgWindow:Show() end
-		enteringText = true
+		showChat()
 	end 
 end
 

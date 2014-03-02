@@ -12,7 +12,7 @@ function widget:GetInfo()
 	}
 end
 -- Includes --
-local cat, ignoreCMDs = include('Configs/buildMenu.lua') --categories
+local cat, ignoreCMDs, orderColors = include('Configs/buildMenu.lua') --categories
 local catNames = {'ECONOMY', 'DEFENSE', 'INTEL', 'FACTORIES', 'BUILD'} -- Must be the same as cat indexes
 local imageDir = 'luaui/images/buildIcons/'
 --------------
@@ -152,7 +152,8 @@ local function addOrder(cmd)
 				bottom  = 5,
 				y       = 5,
 				right   = 5,
-				file    = imageDir..'Commands/Bold/'..cmd.name..'.png',
+				color   = orderColors[cmd.action] or {1,1,1,1},
+				file    = imageDir..'Commands/'..cmd.action..'.png',
 			}
 		}
 	}

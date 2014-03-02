@@ -302,13 +302,25 @@ function widget:AddConsoleLine(msg)
 	showChat()
 end
 
-function widget:KeyPress(key, modifier, isRepeat)
+function widget:KeyPress(key, mods, isRepeat)
+	
+	-- show the console when we send a message
 	if (key == KEYSYMS.RETURN) then
 		showChat()
 	end 
+	
+	-- if control is pressed and the mouse is hovering over the text input box, show the console 
+	if mods.ctrl then
+		local x,y = Spring.GetMouseState()
+		y = screen.height - y -- chili has y axis with 0 at top!
+		if x > window.x and x < window.x + window.width and y > 0 and y < input.height then
+			showChat()
+		end
+	end
+
 end
 
 function widget:Shutdown()
 	sendCommands({'console 1', 'inputtextgeo default'})
-	setConfigString('InputTextGeo', '0.26 0.73 0.02 0.028')
+	setConfigString('InputTextGeo', '0.26 0.73 0.02 0.028') 
 end

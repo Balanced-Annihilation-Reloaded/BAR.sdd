@@ -158,8 +158,15 @@ local function showChat()
 end
 
 local function hideChat()
+	-- hide the chat, unless the mouse is hovering over the chat window
 	if msgWindow.visible then
-		msgWindow:Hide()
+		local x,y = Spring.GetMouseState()
+		y = screen.height - y -- chili has y axis with 0 at top!
+		if not (x > window.x and x < window.x + window.width and y > 0 and y < window.height) then
+			msgWindow:Hide()
+		else
+			oldTimer = getTimer() 
+		end
 	end
 end
 
@@ -192,8 +199,8 @@ function widget:Initialize()
 	
 end
 
--- Adds dissappearing text
 function widget:Update()
+	-- if console has been visible for longer than msgTime since last event, see if its not needed anymore
 	timer = getTimer()
 	if diffTimers(timer, oldTimer) > msgTime 
 	 and settings.autohide

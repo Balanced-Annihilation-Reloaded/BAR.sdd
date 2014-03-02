@@ -51,6 +51,7 @@ local timer = getTimer()
 local oldTimer = timer
 local myID = Spring.GetMyPlayerID()
 local myAllyID = Spring.GetMyAllyTeamID()
+local gameOver = false
 ---------------------
 
 -- Text Colour Config --
@@ -202,6 +203,10 @@ function widget:Update()
 	end
 end
 
+function widget:GameOver()
+	gameOver = true
+end
+
 local function processLine(line)
 
 	-- get data from player roster
@@ -235,8 +240,10 @@ local function processLine(line)
 	elseif line:sub(1,1) == ">" then
 		return color.game .. line
 	-- Filter messages
-	elseif line:find('-> Version') or line:find('ClientReadNet') or line:find('Address') then 
+	elseif line:find('-> Version') or line:find('ClientReadNet') or line:find('Address') then --surplus info when user connects
 		return _, true --ignore
+	elseif gameOver and line:find('left the game') then --'user left' messages after game is over
+		return _, true --ignore	
 	else
 		return color.misc .. line, ignore
 	end

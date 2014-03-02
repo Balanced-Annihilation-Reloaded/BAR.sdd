@@ -26,9 +26,8 @@ local getMouseState    = Spring.GetMouseState
 
 
 -- Config --
-local maxMsgNum = 6
 local msgTime   = 6 -- time to display messages in seconds
-local msgWidth  = 420
+local msgWidth  = 420 --width of the console
 local settings = {
 	autohide = true,
 	}
@@ -45,13 +44,11 @@ local log
 
 -- Local Variables --
 local messages = {}
-local curMsgNum = 1
-local mouseOverText = false
-local timer = getTimer()
-local oldTimer = timer
+local timer = getTimer() 
+local oldTimer = timer --time of last message (or last time at which we checked to hide the console and then didn't)
 local myID = Spring.GetMyPlayerID()
 local myAllyID = Spring.GetMyAllyTeamID()
-local gameOver = false
+local gameOver = false --is the game over?
 ---------------------
 
 -- Text Colour Config --
@@ -65,7 +62,8 @@ local color = {
 }
 
 local function loadWindow()
-		
+	
+	-- parent
 	window = Chili.Window:New{
 		parent  = screen,
 		width   = msgWidth,
@@ -76,6 +74,7 @@ local function loadWindow()
 		y       = 0,
 	}
 	
+	-- input text box
 	input = Chili.Window:New{
 		parent    = window,
 		minHeight = 10,
@@ -85,6 +84,7 @@ local function loadWindow()
 		x         = 0,
 	}
 	
+	-- chat box
 	msgWindow = Chili.ScrollPanel:New{
 		verticalSmartScroll = true,
 		parent      = window,
@@ -94,8 +94,6 @@ local function loadWindow()
 		bottom      = 0,
 		padding     = {0,0,0,0},
 		borderColor = {0,0,0,0},
-		--~ OnMouseOver = {function() mouseOverText = true end},
-		--~ OnMouseOut  = {function() mouseOverText = false end},
 	}
 
 	log = Chili.StackPanel:New{
@@ -138,7 +136,6 @@ local function loadOptions()
 		}
 	}
 	
-	
 	Menu.AddToStack('Interface', options)
 end
 
@@ -151,6 +148,7 @@ local function getInline(r,g,b)
 end
 
 local function showChat()
+	-- show chat
 	oldTimer = getTimer()
 	if msgWindow.hidden then
 		msgWindow:Show()
@@ -159,7 +157,7 @@ end
 
 local function hideChat()
 	-- hide the chat, unless the mouse is hovering over the chat window
-	if msgWindow.visible then
+	if msgWindow.visible and settings.autohide then
 		local x,y = Spring.GetMouseState()
 		y = screen.height - y -- chili has y axis with 0 at top!
 		if not (x > window.x and x < window.x + window.width and y > 0 and y < window.height) then
@@ -180,17 +178,17 @@ function widget:Initialize()
 	end
 	loadWindow()
 	
-	--~ getPlayers()
+	-- load from console buffer
 	local buffer = getConsoleBuffer(40)
 	for i=1,#buffer do
 		line = buffer[i]
 		widget:AddConsoleLine(line.text,line.priority)
 	end
 	
-	-- Disable engine console
+	-- disable engine console
 	sendCommands('console 0')
 	
-	-- Move input to line up with new console
+	-- move input to line up with new console
 	sendCommands('inputtextgeo '
 		..(window.x/screen.width)..' '
 		..(1 - (window.y + 30) / screen.height)
@@ -202,9 +200,7 @@ end
 function widget:Update()
 	-- if console has been visible for longer than msgTime since last event, see if its not needed anymore
 	timer = getTimer()
-	if diffTimers(timer, oldTimer) > msgTime 
-	 and settings.autohide
-	 and not mouseOverText then
+	if diffTimers(timer, oldTimer) > msgTime then
 		oldTimer = timer
 		hideChat()
 	end
@@ -216,7 +212,7 @@ end
 
 local function processLine(line)
 
-	-- get data from player roster
+	-- get data from player roster 
 	local roster = getPlayerRoster()
 	local players = {}
 	
@@ -287,6 +283,7 @@ local function processLine(line)
 end
 
 function widget:AddConsoleLine(msg)
+	-- update chat with new line
 	local text, ignore = processLine(msg)
 	if ignore then return end
 	Chili.TextBox:New{
@@ -311,7 +308,7 @@ end
 
 function widget:KeyPress(key, mods, isRepeat)
 	
-	-- show the console when we send a message
+	-- show the chat window when we send a message
 	if (key == KEYSYMS.RETURN) then
 		showChat()
 	end 

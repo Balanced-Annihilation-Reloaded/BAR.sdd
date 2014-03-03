@@ -149,8 +149,8 @@ end
 
 local function mouseIsOverChat()
 	local x,y = Spring.GetMouseState()
-	y = screen.height - y -- chili has y axis with 0 at top!
-	if x > window.x and x < window.x + window.width and y > 0 and y < window.height then
+	y = screen.height - y -- chili has y axis with 0 at top!	
+	if x > window.x and x < window.x + window.width and y > 0 and ((msgWindow.visible and y < window.height) or (msgWindow.hidden and y < input.height)) then
 		return true
 	else
 		return false

@@ -62,6 +62,7 @@ local teamColor = {r,g,b}
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
 	local index = spGetCmdDescIndex(obj.cmdId)
+	Spring.Echo(obj.name)
 	if (index) then
 		local left, right = (button == 1), (button == 3)
 		local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
@@ -161,7 +162,6 @@ local function addOrder(cmd)
 end
 
 local function parseCmds()
-	local cat = cat
 	local menuCat
 	local cmdList = spGetActiveCmdDescs()
 
@@ -169,19 +169,34 @@ local function parseCmds()
 	for i = 1, #cmdList do
 		local cmd = cmdList[i]
 		if cmd.name ~= '' and not (ignoreCMDs[cmd.name] or ignoreCMDs[cmd.action]) then
-
-			-- decides which category a unit is in
-			for i=1, #catNames do
-				local category = cat[catNames[i]]
-				if category[cmd.name] then
-					menuCat = i
-					buildMenu.active = true
-					grid[i].active = true
-					break
+			
+			-- Is it a unit and if so what kind?
+			if UnitDefNames[cmd.name] then
+				local ud = UnitDefNames[cmd.name]
+				
+				if ud.speed > 0 and ud.canMove then
+					-- Mobile Units
+					menuCat = 5
+				elseif ud.isFactory then
+					-- Factories
+					menuCat = 4
+				elseif (ud.radarRadius > 1 or ud.sonarRadius > 1 or 
+				        ud.jammerRadius > 1 or ud.sonarJamRadius > 1 or
+				        ud.seismicRadius > 1 or ud.name=='coreyes') and #ud.weapons<=0 then
+					-- Intel
+					menuCat = 3
+				elseif #ud.weapons > 0 or ud.shieldWeaponDef or ud.isFeature then
+					-- Defense
+					menuCat = 2
+				else
+					-- Economy
+					menuCat = 1
 				end
 			end
 
 			if menuCat and #grid[menuCat].children < (nRow*nCol) then
+				buildMenu.active     = true
+				grid[menuCat].active = true
 				addBuild(cmd,menuCat)
 			elseif #cmd.params > 1 then
 				addState(cmd)

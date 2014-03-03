@@ -19,7 +19,7 @@ local catNames = {'ECONOMY', 'DEFENSE', 'INTEL', 'FACTORIES', 'BUILD'} -- order 
 local imageDir = 'luaui/images/buildIcons/'
 
 -- Not sure if these are wanted? plus they need icons
---  Will probably ignore redundant units here (e.g. floating AA, umex, etc..)
+--  Will probably ignore redundant units here (e.g. floating AA, umex, etc. which are interchangeable)
 local ignoreCMDs = {
 	settarget 	 = '',
 	canceltarget = '',
@@ -100,7 +100,6 @@ local teamColor = {r,g,b}
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
 	local index = spGetCmdDescIndex(obj.cmdId)
-	Spring.Echo(obj.name)
 	if (index) then
 		local left, right = (button == 1), (button == 3)
 		local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift

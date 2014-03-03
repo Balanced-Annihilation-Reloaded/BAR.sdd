@@ -147,6 +147,16 @@ local function getInline(r,g,b)
 	end
 end
 
+local function mouseIsOverChat()
+	local x,y = Spring.GetMouseState()
+	y = screen.height - y -- chili has y axis with 0 at top!
+	if x > window.x and x < window.x + window.width and y > 0 and y < window.height then
+		return true
+	else
+		return false
+	end
+end
+
 local function showChat()
 	-- show chat
 	oldTimer = getTimer()
@@ -157,14 +167,8 @@ end
 
 local function hideChat()
 	-- hide the chat, unless the mouse is hovering over the chat window
-	if msgWindow.visible and settings.autohide then
-		local x,y = Spring.GetMouseState()
-		y = screen.height - y -- chili has y axis with 0 at top!
-		if not (x > window.x and x < window.x + window.width and y > 0 and y < window.height) then
-			msgWindow:Hide()
-		else
-			oldTimer = getTimer() 
-		end
+	if msgWindow.visible and settings.autohide and not mouseIsOverChat() then
+		msgWindow:Hide()
 	end
 end
 
@@ -225,32 +229,41 @@ local function processLine(line)
 			color  = getInline(getTeamColor(roster[i][3])),
 		}
 	end
-
+	-------------------------------
+	
 	local name = ''
+	
 	-- Player Message
 	if line:find('<.->') then
 		name = line:match('<(.-)>')
 		text = line:gsub('<.->', '')
+		
 	-- Spec Message
 	elseif line:find('%[.-%]') then
 		name = line:match('%[(.-)%]')
 		text = line:gsub('%[.-%]', '')
+		
 	-- Point added
 	elseif line:find('added point:') then
 		name = line:match('(.-)%sadded point: ')
 		text = line:gsub('.-%sadded point: ', '')
+		
 	-- Game Message
 	elseif line:sub(1,1) == ">" then
 		return color.game .. line
+		
 	-- Filter messages
 	elseif line:find('-> Version') or line:find('ClientReadNet') or line:find('Address') then --surplus info when user connects
 		return _, true --ignore
 	elseif gameOver and line:find('left the game') then --'user left' messages after game is over
-		return _, true --ignore	
+		return _, true --ignore
+		
+	-- Everything else
 	else
-		return color.misc .. line, ignore
+		return color.misc .. line
 	end
 	
+	-- Get rid of any (now) unneeded info in the name
 	name = name:gsub('%s%(replay%)','')
 	name = name:gsub('%s%(spec%)','')
 
@@ -274,12 +287,13 @@ local function processLine(line)
 				textColor = color.spec
 			end
 		end
+		-- Get rid of any (now) unneeded info in the text
 		text = text:gsub('Allies: ','')
 		text = text:gsub('Spectators: ','')
 		line = nameColor .. name .. ': ' .. textColor .. text
 	end
 
-	return color.misc .. line, ignore
+	return color.misc .. line
 end
 
 function widget:AddConsoleLine(msg)
@@ -307,19 +321,15 @@ function widget:AddConsoleLine(msg)
 end
 
 function widget:KeyPress(key, mods, isRepeat)
-	
+
 	-- show the chat window when we send a message
 	if (key == KEYSYMS.RETURN) then
 		showChat()
 	end 
-	
+
 	-- if control is pressed and the mouse is hovering over the text input box, show the console 
-	if mods.ctrl then
-		local x,y = Spring.GetMouseState()
-		y = screen.height - y -- chili has y axis with 0 at top!
-		if x > window.x and x < window.x + window.width and y > 0 and y < input.height then
-			showChat()
-		end
+	if mods.ctrl and mouseIsOverChat() then
+		showChat()
 	end
 
 end

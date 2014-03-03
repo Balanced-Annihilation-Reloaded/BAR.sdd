@@ -11,15 +11,53 @@ function widget:GetInfo()
 		handler   = true,
 	}
 end
--- Includes --
-local cat, ignoreCMDs, orderColors = include('Configs/buildMenu.lua') --categories
-local catNames = {'ECONOMY', 'DEFENSE', 'INTEL', 'FACTORIES', 'BUILD'} -- Must be the same as cat indexes
-local imageDir = 'luaui/images/buildIcons/'
 --------------
 
 -- Config --
 local nCol, nRow = 8, 3
+local catNames = {'ECONOMY', 'DEFENSE', 'INTEL', 'FACTORIES', 'BUILD'} -- order matters
+local imageDir = 'luaui/images/buildIcons/'
 
+-- Not sure if these are wanted? plus they need icons
+--  Will probably ignore redundant units here (e.g. floating AA, umex, etc..)
+local ignoreCMDs = {
+	settarget 	 = '',
+	canceltarget = '',
+	selfd 	     = '',
+	loadonto 	   = '',
+	timewait 	   = '',
+	deathwait    = '',
+	squadwait	   = '',
+	gatherwait	 = '',
+	restore      = '',
+	--coruwms      = '',
+	--coruwes      = '',
+	--coruwadves   = '',
+	--coruwadvms   = '',
+	--coruwfus     = '',
+	--coruwmex     = '',
+	--coruwmme     = '',
+	--coruwmmm     = '',
+}
+
+local orderColors = {
+	wait        = {0.8, 0.8, 0.8 ,1.0},
+	attack      = {1.0, 0.0, 0.0, 1.0},
+	fight       = {1.0, 0.3, 0.0, 1.0},
+	areaattack  = {0.8, 0.0, 0.0, 1.0},
+	manualfire  = {0.8, 0.4, 0.0, 1.0},
+	move        = {0.2, 1.0, 0.0, 1.0},
+	reclaim     = {0.2, 0.6, 0.0, 1.0},
+	patrol      = {0.4, 0.4, 1.0, 1.0},
+	guard       = {0.0, 0.0, 1.0, 1.0},
+	repair      = {0.2, 0.2, 0.8, 1.0},
+	loadunits   = {1.0, 1.0, 1.0, 1.0},
+	unloadunits = {1.0, 1.0, 1.0, 1.0},
+	stockpile   = {1.0, 1.0, 1.0, 1.0},
+	upgrademex  = {0.6, 0.6, 0.6, 1.0},
+	capture     = {0.6, 0.0, 0.8, 1.0},
+	resurrect   = {0.0, 0.0, 1.0, 1.0},
+}
 ------------
 
 

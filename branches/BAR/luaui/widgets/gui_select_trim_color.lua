@@ -7,7 +7,7 @@ function widget:GetInfo()
 		date      = 'April 2012',
 		license   = 'GNU GPL v2',
 		layer     = -100,
-		enabled   = true,
+		enabled   = false,
 	}
 end
 
@@ -40,7 +40,7 @@ local colorBarHeight = 15
 local colorBarSegWidth = 28
 local colorBarMarkerWidth = 5
 local satBrightMarkerWidth = 4
-local captionText = "Choose Trim Color"
+local captionText = "Select Trim Color"
 
 local fontSize = 12
 local fontBoxHeight = 20
@@ -193,7 +193,7 @@ end
 function widget:Initialize()
     if spGetSpectatingState() or
        Spring.GetGameFrame() > 0 then
-        --widgetHandler:RemoveWidget(self)
+        widgetHandler:RemoveWidget(self)
     end
 	
 	myTeamId = Spring.GetMyTeamID()

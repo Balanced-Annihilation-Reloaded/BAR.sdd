@@ -467,6 +467,10 @@ Shutdown.func = function()
   for i=1,#loadedTextures do
     gl.DeleteTexture(loadedTextures[i])
   end
+  local units = Spring.GetAllUnits()
+  for _,unitID in pairs(units) do
+      Spring.UnitRendering.DeactivateMaterial(unitID,3)
+  end
 end
 
 

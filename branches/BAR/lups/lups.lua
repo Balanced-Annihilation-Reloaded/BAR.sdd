@@ -301,7 +301,7 @@ end
 --------------------------------------------------------------------------------
 
 --// some global vars (so the effects can use them)
-vsx, vsy        = 0,0
+vsx, vsy        = 1,1-- to fix bug where it attempts to create sizes of 0
 vpx, vpy        = 0,0  --// view pos (only unequal zero, if dualscreen+minimapOnTheLeft)
 LocalAllyTeamID = 0
 thisGameFrame   = 0

@@ -22,12 +22,16 @@ return {
 		movementclass = "AKBOT2",
 		name = "Archangel",
 		nochasecategory = "ALL",
-		objectname = "ARMAAK",
+		objectname = "ARMAAK.s3o",
 		seismicsignature = 1,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 400,
 		turnrate = 1021,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

@@ -176,18 +176,19 @@ RestoreAfterDelay()
 Create()
 /*   1e2:*/{
 /*   1f8:*/	hide flare;
+			statechg_DesiredState=1;
 /*   1fc:*/	Static_Var_1 = 0;
 /*   200:*/	Static_Var_5 = 0;
 /*   204:*/	restore_delay = 3000;
 /*   206:*/	call-script InitState();
 /*   209:*/	start-script SmokeUnit();
-/*   20e:*/	start-script RequestState(0);
+/*   20e:*/	start-script RequestState(1);
 /*   213:*/	set-signal-mask 2;
 /*   217:*/	while( get BUILD_PERCENT_LEFT )
 /*   219:*/	{
 /*   21b:*/		sleep 1000;
 /*   21e:*/	}
-			call-script Go();
+			//call-script Go();
 /*   21e:*/	start-script RestoreAfterDelay();
 /*   223:*/	return (0);
 /*   224:*/}

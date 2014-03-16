@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, doorl, doorr, post, turret, sleeve, barrel, dish, flare, antenna, light;
+piece  base, doorl, door, post, turret, sleeve, barrel, dish, flare, antenna, light;
 
 static-var  Static_Var_1, restore_delay, statechg_DesiredState, statechg_StateChanging, shooting;
 
@@ -16,7 +16,7 @@ activatescr()
 	if( TRUE )
 	{
 		turn doorl to z-axis <0> speed <90>;
-		turn doorr to z-axis <0> speed <90>;
+		turn door to z-axis <0> speed <90>;
 		sleep 1000;
 	}
 	if( TRUE )
@@ -58,7 +58,7 @@ deactivatescr()
 	if( TRUE )
 	{
 		turn doorl to z-axis <-90> speed <90>;
-		turn doorr to z-axis <90> speed <90>;
+		turn door to z-axis <90> speed <90>;
 		sleep 1000;
 	}
 	sleep 33;

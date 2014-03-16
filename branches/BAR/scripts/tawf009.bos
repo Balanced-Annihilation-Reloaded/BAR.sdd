@@ -3,26 +3,31 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  tube1, tube2, base, wake, wake2;
+piece  lturret, rturret, base, lprop, rprop, bprop;
 
 static-var  gun_1;
 
 // Signal definitions
 #define SIG_MOVE			2
 
+#define SIG_AIM				4
 Create()
 {
-	gun_1 = tube1;
+	gun_1 = lturret;
 }
 
 StartMoving()
 {
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
+	spin lprop around z-axis speed <200>;
+	spin rprop around z-axis speed <-200>;
+	spin bprop around z-axis speed <200>;
 	while( TRUE )
 	{
-		emit-sfx 256 | 3 from wake;
-		emit-sfx 256 | 3 from wake2;
+		emit-sfx 256 | 3 from lprop;
+		emit-sfx 256 | 3 from rprop;
+		emit-sfx 256 | 3 from bprop;
 		sleep 250;
 	}
 }
@@ -30,6 +35,10 @@ StartMoving()
 StopMoving()
 {
 	signal SIG_MOVE;
+	
+	stop-spin lprop around z-axis ;
+	stop-spin rprop around z-axis ;
+	stop-spin bprop around z-axis ;
 }
 
 FirePrimary()
@@ -47,11 +56,31 @@ SweetSpot(piecenum)
 	piecenum = base;
 }
 
-AimPrimary(heading,pitch)
+RestoreAfterDelay()
 {
+	sleep 5000;
+	move rturret to x-axis [0] speed [10];
+	move lturret to x-axis [0] speed [10];
+	
+	wait-for-move rturret along x-axis;
+}
+
+AimPrimary(heading, pitch)
+{
+	signal SIG_AIM;
+	set-signal-mask SIG_AIM;
+	move rturret to x-axis [9] speed [30];
+	move lturret to x-axis [-9] speed [30];
+	
+	wait-for-move rturret along x-axis;
+	start-script RestoreAfterDelay();
 	return (1);
 }
 
+AimFromPrimary(piecenum)
+{
+	piecenum = lturret;
+}
 Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
@@ -64,19 +93,13 @@ Killed(severity, corpsetype)
 	{
 		corpsetype = 2;
 		explode base type BITMAPONLY | BITMAP1;
-		explode tube1 type BITMAPONLY | BITMAP2;
 		return (0);
 	}
 	if( severity <= 99 )
 	{
 		corpsetype = 3;
 		explode base type BITMAPONLY | BITMAP1;
-		explode tube1 type BITMAPONLY | BITMAP2;
-		explode tube2 type BITMAPONLY | BITMAP3;
 		return (0);
 	}
 	corpsetype = 3;
-	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
-	explode tube1 type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode tube2 type SHATTER | EXPLODE_ON_HIT | BITMAP3;
 }

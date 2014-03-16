@@ -24,7 +24,7 @@ local Chili, mainMenu, menuTabs, menuBtn
 local Settings = {}
 -- Defaults --- ignored unless fresh install
 -- TODO Get defaults from Spring.GetConfig
-Settings['Skin']             = 'Robocracy'
+Settings['Skin']             = 'Flat'
 Settings['Cursor']           = 'Default'
 Settings['CursorName']       = 'ba'
 Settings['Water']            = 'Reflective'

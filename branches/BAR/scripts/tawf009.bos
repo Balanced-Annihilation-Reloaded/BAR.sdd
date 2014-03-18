@@ -35,6 +35,7 @@ StartMoving()
 StopMoving()
 {
 	signal SIG_MOVE;
+	set-s-mask SIG_MOVE
 	
 	stop-spin lprop around z-axis ;
 	stop-spin rprop around z-axis ;

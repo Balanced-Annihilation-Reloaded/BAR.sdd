@@ -25,13 +25,17 @@ return {
 		maxwaterdepth = 0,
 		movementclass = "KBOT2",
 		name = "Marky",
-		objectname = "ARMMARK",
+		objectname = "ARMMARK.s3o",
 		onoffable = true,
 		radardistance = 2200,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 900,
 		sonardistance = 0,
 		turnrate = 505,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

@@ -29,7 +29,7 @@ return {
 		metalstorage = 25,
 		movementclass = "KBOT2",
 		name = "Fark",
-		objectname = "ARMFARK",
+		objectname = "ARMFARK.s3o",
 		radardistance = 50,
 		repairspeed = 150,
 		seismicsignature = 0,
@@ -39,6 +39,10 @@ return {
 		turnrate = 1100,
 		upright = true,
 		workertime = 120,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		buildoptions = {
 			[1] = "armsolar",
 			[2] = "armwin",

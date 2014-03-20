@@ -29,7 +29,7 @@ return {
 		movementclass = "TANK2",
 		name = "Panther",
 		nochasecategory = "VTOL",
-		objectname = "ARMLATNK",
+		objectname = "ARMLATNK.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 390,
@@ -38,6 +38,11 @@ return {
 		tracktype = "StdTank",
 		trackwidth = 30,
 		turnrate = 550,
+		customparams = {
+			arm_tank = "1",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

@@ -57,12 +57,12 @@ if  (gadgetHandler:IsSyncedCode()) then
 					--Echo('tree dying...',featureID)
 					local dx, dy ,dz= GetFeatureDirection( featureID)
 					-- Echo(featureID,'direction:', dx, dy, dz)
+					SetFeatureBlocking(featureID, false,false,false,false,false,false,false) --doesnt block anything
 					if (weaponDefID==-7) then --weapon is crush
 						--Echo('tree crushed... ',featureID)
 						--crushed features cannot be saved by returning 0 damage. Must create new one!
 						featureID=CreateFeature(featureDefID,fx,fy,fz)
 						SetFeatureDirection(featureID,dx, dy ,dz)
-						SetFeatureBlocking(featureID, false,false,false,false,false,false,false) --doesnt block anything
 						
 						-- Echo('tree created... ',featureID)
 					else

@@ -615,6 +615,7 @@ do
     ci = customInfo[featureDefID]
 
     health,maxHealth,resurrect = GetFeatureHealth(featureID)
+	if (health == nil or health<1) then  return end
     _,_,_,_,reclaimLeft        = GetFeatureResources(featureID)
     if (not resurrect)   then resurrect=0 end
     if (not reclaimLeft) then reclaimLeft=1 end

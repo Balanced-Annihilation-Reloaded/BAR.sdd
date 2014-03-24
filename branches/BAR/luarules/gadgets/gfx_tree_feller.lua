@@ -37,6 +37,10 @@ if  (gadgetHandler:IsSyncedCode()) then
 		return
 	end  
 	function gadget:FeaturePreDamaged(featureID, featureDefID, featureTeam, Damage, weaponDefID, projectileID, attackerID, attackerDefID, attackerTeam)
+		if (FeatureDefs[featureDefID]["name"]:find('treetype')~= nil) then 
+			--Echo('not killing engine tree')
+			return Damage
+		end
 		if treesdying[featureID] then --dying trees dont take more damage, and will be removed later
 			--Echo('damage removed',Damage,featureID)
 			return 0.0

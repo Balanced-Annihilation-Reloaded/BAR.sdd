@@ -215,6 +215,11 @@ function widget:Initialize()
 	-- for i,v in ipairs(params) do
 		-- Spring.Echo(i,v,v.name)
 	-- end
+	if  (Spring.GetConfigString("AllowDeferredMapRendering") == '0' or Spring.GetConfigString("AllowDeferredModelRendering")=='0') then
+		RemoveMe('LOS shader requires  AllowDeferredMapRendering and AllowDeferredModelRendering to be enabled in springsettings.cfg!') 
+		return
+	end
+	
 	if (glCreateShader == nil) then
 		RemoveMe("[BloomShader::Initialize] removing widget, no shader support")
 		return

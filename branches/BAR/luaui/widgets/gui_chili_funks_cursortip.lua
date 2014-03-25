@@ -11,11 +11,15 @@ function widget:GetInfo()
 	}
 end
 
-local Chili, screen0, tipWindow, tip
+local Chili, screen, tipWindow, tip
 local mousePosX, mousePosY
-local showFrame
+local oldTime
+local tipType = 'none'
 local tooltip = ''
+local ID
 
+local spGetTimer                = Spring.GetTimer
+local spDiffTimers              = Spring.DiffTimers
 local spTraceScreenRay          = Spring.TraceScreenRay
 local spGetMouseState           = Spring.GetMouseState
 local spGetUnitTooltip          = Spring.GetUnitTooltip
@@ -25,7 +29,7 @@ local screenWidth, screenHeight = Spring.GetWindowGeometry()
 -----------------------------------
 local function initWindow()
 	tipWindow = Chili.Window:New{
-		parent    = screen0, 
+		parent    = screen, 
 		skin      = 'Flat', 
 		width     = 75,
 		height    = 75,
@@ -41,6 +45,7 @@ local function initWindow()
 		margin = {0,0,0,0},
 	}
 	
+	oldTime = spGetTimer()
 	tipWindow:Hide()
 end
 
@@ -85,16 +90,16 @@ end
 -----------------------------------
 local function getTooltip()
 	mousePosX, mousePosY   = spGetMouseState()
-	local typeOver, ID     = spTraceScreenRay(mousePosX, mousePosY)
-	if screen0.currentTooltip    then tooltip = screen0.currentTooltip
-	elseif typeOver == 'unit'    then tooltip = getUnitTooltip(ID)
-	elseif typeOver == 'feature' then tooltip = getFeatureTooltip(ID)
-	else                              tooltip = ''
+	tipType, ID     = spTraceScreenRay(mousePosX, mousePosY)
+	if screen.currentTooltip    then tooltip = screen.currentTooltip
+	elseif tipType == 'unit'    then tooltip = getUnitTooltip(ID)
+	elseif tipType == 'feature' then tooltip = getFeatureTooltip(ID)
+	else                             tooltip = ''
 	end
 end
 -----------------------------------
 
-local function MakeToolTip()
+local function setTooltip()
 	   
 	local tooltip               = tooltip
 	local x,y                   = mousePosX,mousePosY
@@ -115,21 +120,25 @@ local function MakeToolTip()
 	tipWindow:BringToFront()
 end
 -----------------------------------
-function widget:GameFrame(frame)
+function widget:Update()
+	local showTip = tipType ~= 'unit' and tipType ~= 'feature' and tooltip ~= ''
+	local curTime = spGetTimer()
 	getTooltip()
 	if tip.text ~= tooltip then
-		showFrame = frame + 20
 		tip:SetText(tooltip)
-		if tipWindow.visible then tipWindow:Hide() end
-	elseif showFrame < frame and tooltip ~= '' then
-		MakeToolTip()
+		oldTime = spGetTimer()
+		if tipWindow.visible then 
+			tipWindow:Hide()
+		end
+	elseif (spDiffTimers(curTime, oldTime) > 1 and tooltip ~= '') or showTip then
+		setTooltip()
 	end
 end
 -----------------------------------
 function widget:Initialize()
 	if not WG.Chili then return end
 	Chili = WG.Chili
-	screen0 = Chili.Screen0
+	screen = Chili.Screen0
 	initWindow()
 end
 

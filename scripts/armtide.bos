@@ -5,8 +5,28 @@
 
 piece  base, wheel;
 
-static-var  statechg_DesiredState, statechg_StateChanging;
+static-var  statechg_DesiredState, statechg_StateChanging, Static_Var_3;
 
+RockOnWaves()
+{
+	var rockDir, rockAng, rockSpeed;
+	rockDir = <-0.1>;
+	rockAng = <-0.1>;
+	while( TRUE )
+	{
+		while( get ABS(rockAng) < <1.31> )
+		{
+			rockSpeed = <1.45> - get ABS(rockAng);
+			turn base to x-axis rockAng speed rockSpeed*5;
+			turn base to z-axis rockAng speed rockSpeed*5;
+			wait-for-turn base around x-axis;
+			wait-for-turn base around z-axis;
+			rockAng = rockAng + rockDir;
+		}
+		rockDir = 0 - rockDir;
+		rockAng = rockAng + rockDir + rockDir;
+	}
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
@@ -14,6 +34,7 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	{
 		sleep 400;
 	}
+	start-script RockOnWaves();
 	while( TRUE )
 	{
 		healthpercent = get HEALTH;
@@ -33,28 +54,24 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 		}
 		sleep sleeptime;
 	}
-	return (0);
 }
 
 Go()
 {
 	dont-cache wheel;
 	spin wheel around z-axis speed <35.005495>;
-	return (0);
 }
 
 Stop()
 {
 	spin wheel around z-axis speed <0.000000>;
 	cache wheel;
-	return (0);
 }
 
 InitState()
 {
 	statechg_DesiredState = TRUE;
 	statechg_StateChanging = FALSE;
-	return (0);
 }
 
 RequestState(requestedstate, currentstate)
@@ -81,7 +98,6 @@ RequestState(requestedstate, currentstate)
 		}
 	}
 	statechg_StateChanging = FALSE;
-	return (0);
 }
 
 Create()
@@ -89,25 +105,21 @@ Create()
 	dont-shade wheel;
 	call-script InitState();
 	start-script SmokeUnit();
-	return (0);
 }
 
 Activate()
 {
 	start-script RequestState(0);
-	return (0);
 }
 
 Deactivate()
 {
 	start-script RequestState(1);
-	return (0);
 }
 
 SweetSpot(piecenum)
 {
 	piecenum = base;
-	return (0);
 }
 
 Killed(severity, corpsetype)
@@ -136,5 +148,4 @@ Killed(severity, corpsetype)
 	corpsetype = 3;
 	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
 	explode wheel type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	return (0);
 }

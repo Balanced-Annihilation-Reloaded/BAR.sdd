@@ -1,137 +1,133 @@
-//            * Header Info *
-// VersionSignature                     4
-// NumberOfScripts                     10
-// NumberOfPieces                      8
-// LengthOfScripts                     304
-// NumberOfStaticVars                  2
-// UKZero                              0
-// OffsetToScriptCodeIndexArray        c3c
-// OffsetToScriptNameOffsetArray       c64
-// OffsetToPieceNameOffsetArray        c8c
-// OffsetToScriptCode                  2c
-// OffsetToNameArray                   cac
-
-// OffsetToFirstName                   cac
-
 #define TA			// This is a TA script
 
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece base;
+piece  base;
+
 
 static-var  statechg_DesiredState, statechg_StateChanging;
 
-
-
+RockOnWaves()
+{
+	var rockDir, rockAng, rockSpeed;
+	rockDir = <-0.1>;
+	rockAng = <-0.1>;
+	while( TRUE )
+	{
+		while( get ABS(rockAng) < <1.31> )
+		{
+			rockSpeed = <1.45> - get ABS(rockAng);
+			turn base to x-axis rockAng speed rockSpeed*5;
+			turn base to z-axis rockAng speed rockSpeed*5;
+			wait-for-turn base around x-axis;
+			wait-for-turn base around z-axis;
+			rockAng = rockAng + rockDir;
+		}
+		rockDir = 0 - rockDir;
+		rockAng = rockAng + rockDir + rockDir;
+	}
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
-/*    f7:*/{
-/*    fa:*/	while( get BUILD_PERCENT_LEFT )
-/*    fc:*/	{
-/*    fe:*/		sleep 400;
-/*   101:*/	}
-/*   103:*/	while( TRUE )
-/*   105:*/	{
-/*   108:*/		healthpercent = get HEALTH;
-/*   10f:*/		if( healthpercent < 66 )
-/*   111:*/		{
-/*   116:*/			smoketype = 256 | 2;
-/*   120:*/			if( Rand( 1, 66 ) < healthpercent )
-/*   122:*/			{
-/*   127:*/				smoketype = 256 | 1;
-/*   129:*/			}
-/*   12b:*/			emit-sfx smoketype from base;
-/*   12d:*/		}
-/*   132:*/		sleeptime = healthpercent * 50;
-/*   139:*/		if( sleeptime < 200 )
-/*   13b:*/		{
-/*   13d:*/			sleeptime = 200;
-/*   13f:*/		}
-/*   141:*/		sleep sleeptime;
-/*   144:*/	}
-/*   146:*/	return (0);
-/*   147:*/}
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	start-script RockOnWaves();
+	while( TRUE )
+	{
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
+	}
+}
 
 InitState()
-/*   147:*/{
-/*   149:*/	statechg_DesiredState = TRUE;
-/*   14d:*/	statechg_StateChanging = FALSE;
-/*   151:*/	return (0);
-/*   152:*/}
+{
+	statechg_DesiredState = TRUE;
+	statechg_StateChanging = FALSE;
+}
 
 RequestState(requestedstate, currentstate)
-/*   154:*/{
-/*   156:*/	if( statechg_StateChanging )
-/*   158:*/	{
-/*   15a:*/		statechg_DesiredState = requestedstate;
-/*   15e:*/		return (0);
-/*   15f:*/	}
-/*   161:*/	statechg_StateChanging = TRUE;
-/*   165:*/	currentstate = statechg_DesiredState;
-/*   169:*/	statechg_DesiredState = requestedstate;
-/*   170:*/	while( statechg_DesiredState != currentstate )
-/*   172:*/	{
-/*   177:*/		if( statechg_DesiredState == 0 )
-/*   179:*/		{
-/*   17e:*/			currentstate = 0;
-/*   180:*/		}
-/*   185:*/		if( statechg_DesiredState == 1 )
-/*   187:*/		{
-/*   18c:*/			currentstate = 1;
-/*   18e:*/		}
-/*   190:*/	}
-/*   192:*/	statechg_StateChanging = FALSE;
-/*   196:*/	return (0);
-/*   197:*/}
+{
+	if( statechg_StateChanging )
+	{
+		statechg_DesiredState = requestedstate;
+		return (0);
+	}
+	statechg_StateChanging = TRUE;
+	currentstate = statechg_DesiredState;
+	statechg_DesiredState = requestedstate;
+	while( statechg_DesiredState != currentstate )
+	{
+		if( statechg_DesiredState == 0 )
+		{
+			currentstate = 0;
+		}
+		if( statechg_DesiredState == 1 )
+		{
+			currentstate = 1;
+		}
+	}
+	statechg_StateChanging = FALSE;
+}
 
 Create()
-/*   197:*/{
-/*   197:*/	call-script InitState();
-/*   19a:*/	start-script SmokeUnit();
-/*   19f:*/	return (0);
-/*   1a0:*/}
+{
+	call-script InitState();
+	start-script SmokeUnit();
+}
 
 Activate()
-/*   1a0:*/{
-/*   1a2:*/	start-script RequestState(0);
-/*   1a7:*/	return (0);
-/*   1a8:*/}
+{
+	start-script RequestState(0);
+}
 
 Deactivate()
-/*   1a8:*/{
-/*   1aa:*/	start-script RequestState(1);
-/*   1af:*/	return (0);
-/*   1b0:*/}
+{
+	start-script RequestState(1);
+}
 
 SweetSpot(piecenum)
-/*   1b1:*/{
-/*   1b3:*/	piecenum = base;
-/*   1b7:*/	return (0);
-/*   1b8:*/}
+{
+	piecenum = base;
+}
 
 Killed(severity, corpsetype)
-/*   1ba:*/{
-/*   1bf:*/	if( severity <= 25 )
-/*   1c1:*/	{
-/*   1c3:*/		corpsetype = 1;
-/*   1df:*/		explode base type BITMAPONLY | BITMAP5;
-
-/*   1ff:*/		return (0);
-/*   200:*/	}
-/*   205:*/	if( severity <= 50 )
-/*   207:*/	{
-/*   209:*/		corpsetype = 2;
-/*   225:*/		explode base type BITMAPONLY | BITMAP5;
-/*   245:*/		return (0);
-/*   246:*/	}
-/*   24b:*/	if( severity <= 99 )
-/*   24d:*/	{
-/*   24f:*/		corpsetype = 3;
-/*   26b:*/		explode base type BITMAPONLY | BITMAP5;
-/*   2a6:*/		return (0);
-/*   2a7:*/	}
-/*   2a9:*/	corpsetype = 3;
-/*   2c5:*/	explode base type BITMAPONLY | BITMAP5;
-/*   303:*/	return (0);
-/*   304:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1;
+		explode base type BITMAPONLY | BITMAP5;
+		return (0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2;
+		explode base type BITMAPONLY | BITMAP5;
+		return (0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3;
+		explode base type BITMAPONLY | BITMAP5;
+		return (0);
+	}
+	corpsetype = 3;
+	explode base type BITMAPONLY | BITMAP5;
+}

@@ -21,7 +21,9 @@ RockOnWaves()
 		{
 			rockSpeed = <1.45> - get ABS(rockAng);
 			turn base to x-axis rockAng speed rockSpeed*5;
+			turn base to z-axis rockAng speed rockSpeed*5;
 			wait-for-turn base around x-axis;
+			wait-for-turn base around z-axis;
 			rockAng = rockAng + rockDir;
 		}
 		rockDir = 0 - rockDir;

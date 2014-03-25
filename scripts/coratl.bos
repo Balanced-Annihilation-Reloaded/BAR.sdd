@@ -1,76 +1,80 @@
-//            * Header Info *
-// VersionSignature                     4
-// NumberOfScripts                     9
-// NumberOfPieces                      8
-// LengthOfScripts                     25c
-// NumberOfStaticVars                  0
-// UKZero                              0
-// OffsetToScriptCodeIndexArray        99c
-// OffsetToScriptNameOffsetArray       9c0
-// OffsetToPieceNameOffsetArray        9e4
-// OffsetToScriptCode                  2c
-// OffsetToNameArray                   a04
-
-// OffsetToFirstName                   a04
-
 #define TA			// This is a TA script
 
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  flare1,flare2,base, bubbles1,bubbles2,turret;
+piece  flare1, flare2, base, bubbles1, bubbles2, turret;
 
 static-var  gun_1;
+
 // Signal definitions
 #define SIG_AIM				2
 
-
+RockOnWaves()
+{
+	var rockDir, rockAng, rockSpeed;
+	rockDir = <-0.1>;
+	rockAng = <-0.1>;
+	while( TRUE )
+	{
+		while( get ABS(rockAng) < <1.31> )
+		{
+			rockSpeed = <1.45> - get ABS(rockAng);
+			turn base to x-axis rockAng speed rockSpeed*5;
+			turn base to z-axis rockAng speed rockSpeed*5;
+			wait-for-turn base around x-axis;
+			wait-for-turn base around z-axis;
+			rockAng = rockAng + rockDir;
+		}
+		rockDir = 0 - rockDir;
+		rockAng = rockAng + rockDir + rockDir;
+	}
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
-/*    63:*/{
-/*    66:*/	while( get BUILD_PERCENT_LEFT )
-/*    68:*/	{
-/*    6a:*/		sleep 400;
-/*    6d:*/	}
-/*    6f:*/	while( TRUE )
-/*    71:*/	{
-/*    74:*/		healthpercent = get HEALTH;
-/*    7b:*/		if( healthpercent < 66 )
-/*    7d:*/		{
-/*    82:*/			smoketype = 256 | 2;
-/*    8c:*/			if( Rand( 1, 66 ) < healthpercent )
-/*    8e:*/			{
-/*    93:*/				smoketype = 256 | 1;
-/*    95:*/			}
-/*    97:*/			emit-sfx smoketype from base;
-/*    99:*/		}
-/*    9e:*/		sleeptime = healthpercent * 50;
-/*    a5:*/		if( sleeptime < 200 )
-/*    a7:*/		{
-/*    a9:*/			sleeptime = 200;
-/*    ab:*/		}
-/*    ad:*/		sleep sleeptime;
-/*    b0:*/	}
-/*    b2:*/	return (0);
-/*    b3:*/}
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	start-script RockOnWaves();
+	while( TRUE )
+	{
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
+	}
+}
 
 Create()
-/*    b3:*/{
-/*    b3:*/	start-script SmokeUnit();
-/*    b8:*/	return (0);
-/*    b9:*/}
+{
+	start-script SmokeUnit();
+}
 
 AimPrimary(heading, pitch)
-/*    bb:*/{
-/*    bd:*/	signal SIG_AIM;
-/*    c0:*/	set-signal-mask SIG_AIM;
-/*    c5:*/	turn turret to y-axis heading speed <80.016484>;
-/*    c8:*/	wait-for-turn turret around y-axis;
-/*    cd:*/	return (1);
-/*    ce:*/}
+{
+	signal SIG_AIM;
+	set-signal-mask SIG_AIM;
+	turn turret to y-axis heading speed <80.016484>;
+	wait-for-turn turret around y-axis;
+	return (1);
+}
 
 FirePrimary()
-/*    ce:*/{
+{
 	if( gun_1 == 0 )
 	{
 		emit-sfx 259 from bubbles2;
@@ -80,78 +84,73 @@ FirePrimary()
 	if( gun_1 == 1 )
 	{
 		emit-sfx 259 from bubbles1;
-		
 		gun_1 = flare1;
-		return(0);
+		return (0);
 	}
-/*    d4:*/}
+}
 
 AimFromPrimary(piecenum)
-/*    d5:*/{
-/*    d7:*/	piecenum = turret;
-/*    db:*/	return (0);
-/*    dc:*/}
+{
+	piecenum = turret;
+}
 
 QueryPrimary(piecenum)
-/*    dd:*/{
-			if( gun_1 == 0 )
-			{
-				piecenum = flare1;
-			}
-			if( gun_1 != 0 )
-			{
-				piecenum = flare2;
-			}
-/*    e4:*/}
+{
+	if( gun_1 == 0 )
+	{
+		piecenum = flare1;
+	}
+	if( gun_1 != 0 )
+	{
+		piecenum = flare2;
+	}
+}
 
 SweetSpot(piecenum)
-/*    e5:*/{
-/*    e7:*/	piecenum = base;
-/*    eb:*/	return (0);
-/*    ec:*/}
+{
+	piecenum = base;
+}
 
 Killed(severity, corpsetype)
-/*    ee:*/{
-/*    f3:*/	if( severity <= 25 )
-/*    f5:*/	{
-/*    f7:*/		corpsetype = 1;
-/*    fe:*/		explode base type BITMAPONLY | BITMAP1;
-/*   105:*/		explode turret type BITMAPONLY | BITMAP2;
-/*   10c:*/		explode bubbles1 type BITMAPONLY | BITMAP2;
-/*   113:*/		explode bubbles2 type BITMAPONLY | BITMAP2;
-/*   113:*/		explode flare1 type BITMAPONLY | BITMAP2;
-/*   11a:*/		explode flare2 type BITMAPONLY | BITMAP2;
-
-/*   133:*/		return (0);
-/*   134:*/	}
-/*   139:*/	if( severity <= 50 )
-/*   13b:*/	{
-/*   13d:*/		corpsetype = 2;
-/*    fe:*/		explode base type BITMAPONLY | BITMAP1;
-/*   105:*/		explode turret type BITMAPONLY | BITMAP2;
-/*   10c:*/		explode bubbles1 type BITMAPONLY | BITMAP2;
-/*   113:*/		explode bubbles2 type BITMAPONLY | BITMAP2;
-/*   113:*/		explode flare1 type BITMAPONLY | BITMAP2;
-/*   11a:*/		explode flare2 type BITMAPONLY | BITMAP2;
-/*   179:*/		return (0);
-/*   17a:*/	}
-/*   17f:*/	if( severity <= 99 )
-/*   181:*/	{
-/*   183:*/		corpsetype = 3;
-/*    fe:*/		explode base type BITMAPONLY | BITMAP1;
-/*   105:*/		explode turret type BITMAPONLY | BITMAP2;
-/*   10c:*/		explode bubbles1 type BITMAPONLY | BITMAP2;
-/*   113:*/		explode bubbles2 type BITMAPONLY | BITMAP2;
-/*   113:*/		explode flare1 type BITMAPONLY | BITMAP2;
-/*   11a:*/		explode flare2 type BITMAPONLY | BITMAP2;
-/*   1ec:*/		return (0);
-/*   1ed:*/	}
-/*   1ef:*/	corpsetype = 3;
-/*    fe:*/		explode base type BITMAPONLY | BITMAP1;
-/*   105:*/		explode turret type BITMAPONLY | BITMAP2;
-/*   10c:*/		explode bubbles1 type BITMAPONLY | BITMAP2;
-/*   113:*/		explode bubbles2 type BITMAPONLY | BITMAP2;
-/*   113:*/		explode flare1 type BITMAPONLY | BITMAP2;
-/*   11a:*/		explode flare2 type BITMAPONLY | BITMAP2;
-/*   25b:*/	return (0);
-/*   25c:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1;
+		explode base type BITMAPONLY | BITMAP1;
+		explode turret type BITMAPONLY | BITMAP2;
+		explode bubbles1 type BITMAPONLY | BITMAP2;
+		explode bubbles2 type BITMAPONLY | BITMAP2;
+		explode flare1 type BITMAPONLY | BITMAP2;
+		explode flare2 type BITMAPONLY | BITMAP2;
+		return (0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2;
+		explode base type BITMAPONLY | BITMAP1;
+		explode turret type BITMAPONLY | BITMAP2;
+		explode bubbles1 type BITMAPONLY | BITMAP2;
+		explode bubbles2 type BITMAPONLY | BITMAP2;
+		explode flare1 type BITMAPONLY | BITMAP2;
+		explode flare2 type BITMAPONLY | BITMAP2;
+		return (0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3;
+		explode base type BITMAPONLY | BITMAP1;
+		explode turret type BITMAPONLY | BITMAP2;
+		explode bubbles1 type BITMAPONLY | BITMAP2;
+		explode bubbles2 type BITMAPONLY | BITMAP2;
+		explode flare1 type BITMAPONLY | BITMAP2;
+		explode flare2 type BITMAPONLY | BITMAP2;
+		return (0);
+	}
+	corpsetype = 3;
+	explode base type BITMAPONLY | BITMAP1;
+	explode turret type BITMAPONLY | BITMAP2;
+	explode bubbles1 type BITMAPONLY | BITMAP2;
+	explode bubbles2 type BITMAPONLY | BITMAP2;
+	explode flare1 type BITMAPONLY | BITMAP2;
+	explode flare2 type BITMAPONLY | BITMAP2;
+}

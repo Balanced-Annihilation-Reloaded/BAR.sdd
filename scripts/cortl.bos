@@ -1,18 +1,3 @@
-//            * Header Info *
-// VersionSignature                     4
-// NumberOfScripts                     7
-// NumberOfPieces                      4
-// LengthOfScripts                     158
-// NumberOfStaticVars                  0
-// UKZero                              0
-// OffsetToScriptCodeIndexArray        58c
-// OffsetToScriptNameOffsetArray       5a8
-// OffsetToPieceNameOffsetArray        5c4
-// OffsetToScriptCode                  2c
-// OffsetToNameArray                   5d4
-
-// OffsetToFirstName                   5d4
-
 #define TA			// This is a TA script
 
 #include "sfxtype.h"
@@ -23,97 +8,112 @@ piece  base, flare, gun;
 // Signal definitions
 #define SIG_AIM				2
 
+RockOnWaves()
+{
+	var rockDir, rockAng, rockSpeed;
+	rockDir = <-0.1>;
+	rockAng = <-0.1>;
+	while( TRUE )
+	{
+		while( get ABS(rockAng) < <1.31> )
+		{
+			rockSpeed = <1.45> - get ABS(rockAng);
+			turn base to x-axis rockAng speed rockSpeed*5;
+			turn base to z-axis rockAng speed rockSpeed*5;
+			wait-for-turn base around x-axis;
+			wait-for-turn base around z-axis;
+			rockAng = rockAng + rockDir;
+		}
+		rockDir = 0 - rockDir;
+		rockAng = rockAng + rockDir + rockDir;
+	}
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
-/*     3:*/{
-/*     6:*/	while( get BUILD_PERCENT_LEFT )
-/*     8:*/	{
-/*     a:*/		sleep 400;
-/*     d:*/	}
-/*     f:*/	while( TRUE )
-/*    11:*/	{
-/*    14:*/		healthpercent = get HEALTH;
-/*    1b:*/		if( healthpercent < 66 )
-/*    1d:*/		{
-/*    22:*/			smoketype = 256 | 2;
-/*    2c:*/			if( Rand( 1, 66 ) < healthpercent )
-/*    2e:*/			{
-/*    33:*/				smoketype = 256 | 1;
-/*    35:*/			}
-/*    37:*/			emit-sfx smoketype from base;
-/*    39:*/		}
-/*    3e:*/		sleeptime = healthpercent * 50;
-/*    45:*/		if( sleeptime < 200 )
-/*    47:*/		{
-/*    49:*/			sleeptime = 200;
-/*    4b:*/		}
-/*    4d:*/		sleep sleeptime;
-/*    50:*/	}
-/*    52:*/	return (0);
-/*    53:*/}
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	start-script RockOnWaves();
+	while( TRUE )
+	{
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
+	}
+}
 
 Create()
-/*    53:*/{
-/*    5b:*/	start-script SmokeUnit();
-/*    60:*/	return (0);
-/*    61:*/}
+{
+	start-script SmokeUnit();
+}
 
 AimPrimary(heading, pitch)
-/*    63:*/{
-/*    65:*/	signal SIG_AIM;
-/*    68:*/	set-signal-mask SIG_AIM;
-/*    6d:*/	turn gun to y-axis heading speed <120.000000>;
-/*    70:*/	wait-for-turn gun around y-axis;
-/*    75:*/	return (1);
-/*    76:*/}
+{
+	signal SIG_AIM;
+	set-signal-mask SIG_AIM;
+	turn gun to y-axis heading speed <120.000000>;
+	wait-for-turn gun around y-axis;
+	return (1);
+}
 
 AimFromPrimary(piecenum)
-/*    77:*/{
-/*    79:*/	piecenum = base;
-/*    7d:*/	return (0);
-/*    7e:*/}
+{
+	piecenum = base;
+}
 
 QueryPrimary(piecenum)
-/*    7f:*/{
-/*    81:*/	piecenum = flare;
-/*    85:*/	return (0);
-/*    86:*/}
+{
+	piecenum = flare;
+}
 
 SweetSpot(piecenum)
-/*    87:*/{
-/*    89:*/	piecenum = base;
-/*    8d:*/	return (0);
-/*    8e:*/}
+{
+	piecenum = base;
+}
 
 Killed(severity, corpsetype)
-/*    90:*/{
-/*    95:*/	if( severity <= 25 )
-/*    97:*/	{
-/*    99:*/		corpsetype = 1;
-/*    a0:*/		explode base type BITMAPONLY | BITMAP1;
-/*    a7:*/		explode flare type BITMAPONLY | BITMAP2;
-/*    ae:*/		explode gun type BITMAPONLY | BITMAP3;
-/*    b9:*/		return (0);
-/*    ba:*/	}
-/*    bf:*/	if( severity <= 50 )
-/*    c1:*/	{
-/*    c3:*/		corpsetype = 2;
-/*    ca:*/		explode base type BITMAPONLY | BITMAP1;
-/*    d1:*/		explode flare type FALL | BITMAP2;
-/*    d8:*/		explode gun type SHATTER | BITMAP3;
-/*    e3:*/		return (0);
-/*    e4:*/	}
-/*    e9:*/	if( severity <= 99 )
-/*    eb:*/	{
-/*    ed:*/		corpsetype = 3;
-/*    f4:*/		explode base type BITMAPONLY | BITMAP1;
-/*   104:*/		explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-/*   10b:*/		explode gun type SHATTER | BITMAP3;
-/*   11f:*/		return (0);
-/*   120:*/	}
-/*   122:*/	corpsetype = 3;
-/*   129:*/	explode base type BITMAPONLY | BITMAP1;
-/*   139:*/	explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-/*   143:*/	explode gun type SHATTER | EXPLODE_ON_HIT | BITMAP3;
-/*   157:*/	return (0);
-/*   158:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1;
+		explode base type BITMAPONLY | BITMAP1;
+		explode flare type BITMAPONLY | BITMAP2;
+		explode gun type BITMAPONLY | BITMAP3;
+		return (0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2;
+		explode base type BITMAPONLY | BITMAP1;
+		explode flare type FALL | BITMAP2;
+		explode gun type SHATTER | BITMAP3;
+		return (0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3;
+		explode base type BITMAPONLY | BITMAP1;
+		explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode gun type SHATTER | BITMAP3;
+		return (0);
+	}
+	corpsetype = 3;
+	explode base type BITMAPONLY | BITMAP1;
+	explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode gun type SHATTER | EXPLODE_ON_HIT | BITMAP3;
+}

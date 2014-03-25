@@ -95,7 +95,13 @@ local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
 ----------------
 
-
+local function getInline(r,g,b)
+	if type(r) == 'table' then
+		return string.char(255, (r[1]*255), (r[2]*255), (r[3]*255))
+	else
+		return string.char(255, (r*255), (g*255), (b*255))
+	end
+end
 
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
@@ -452,10 +458,13 @@ function widget:Initialize()
 
 	-- Creates a cache of buttons.
 	for name, data in pairs(UnitDefNames) do
+		local tooltip = data.humanName..' - '..data.tooltip..
+			            '\nCost: '..getInline{0.6,0.6,0.8}..data.metalCost..'\b Metal, '..getInline{1,1,0.3}..data.energyCost..'\b Energy'..
+			            '\nBuild Time: '..data.buildTime
 		unit[name] = Chili.Button:New{
 			name      = name,
 			cmdId     = -data.id,
-			tooltip   = data.tooltip,
+			tooltip   = tooltip,
 			caption   = '',
 			padding   = {0,0,0,0},
 			margin    = {0,0,0,0},

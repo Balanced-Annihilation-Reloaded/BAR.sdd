@@ -38,6 +38,7 @@ local tracks = {
 		{title = "Professor Kliq - I'll Go Rhythm"   , filename = "ProfessorKliq-IllGoRhythm.ogg"},
 		{title = "THA - Materializing Cats in Space" , filename = "THA-materializingcatsinspace.ogg"},
 		{title = "THA - The Collapse"                , filename = "THA-thecollapse.ogg"},
+		{title = "Scattle - Knock Knock"             , filename = "Knock.ogg"},
 	},
 }
 

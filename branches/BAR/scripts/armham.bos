@@ -355,11 +355,10 @@ Go()
 		{
 			sleep 75;
 		}
-		move lvent to x-axis [-3] speed [6];
-		move lvent to z-axis [-1] speed [2];
-		move rvent to x-axis [3] speed [6];
-		move rvent to z-axis [-1] speed [2];
-		
+		move lvent to x-axis [-1.200000] speed [2.400000];
+		move lvent to z-axis [-0.400000] speed [0.800000];
+		move rvent to x-axis [1.200000] speed [2.400000];
+		move rvent to z-axis [-0.400000] speed [0.800000];
 		sleep 300;
 		Static_Var_4 = 1;
 	}
@@ -370,11 +369,10 @@ Stop()
 	if( Static_Var_4 )
 	{
 		Static_Var_4 = 0;
-		move lvent to x-axis [0] speed [6];
-		move lvent to z-axis [0] speed [2];
-		move rvent to x-axis [0] speed [6];
-		move rvent to z-axis [0] speed [2];
-		
+		move lvent to x-axis [0.000000] speed [2.400000];
+		move lvent to z-axis [0.000000] speed [0.800000];
+		move rvent to x-axis [0.000000] speed [2.400000];
+		move rvent to z-axis [0.000000] speed [0.800000];
 		sleep 300;
 	}
 	Static_Var_2 = 0;
@@ -566,15 +564,19 @@ FirePrimary()
 {
 	if( gun_1 )
 	{
+		show rflare;
 		move rbarrel to z-axis [-1.500000] speed [25.000000];
 		sleep 100;
+		hide rflare;
 		move rbarrel to z-axis [0.000000] speed [4.000000];
 	}
 	else
 	{
+		show lflare;
 		move lbarrel to z-axis [-1.500000] speed [25.000000];
 		sleep 100;
-		move lbarrel to z-axis [0.000000] speed [4.000000];
+		hide lflare;
+		move lbarrel to z-axis [0.000000] speed [1.600000];
 	}
 	gun_1 = !gun_1;
 }

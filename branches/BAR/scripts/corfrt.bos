@@ -1,18 +1,3 @@
-//            * Header Info *
-// VersionSignature                     4
-// NumberOfScripts                     9
-// NumberOfPieces                      8
-// LengthOfScripts                     2c9
-// NumberOfStaticVars                  1
-// UKZero                              0
-// OffsetToScriptCodeIndexArray        b50
-// OffsetToScriptNameOffsetArray       b74
-// OffsetToPieceNameOffsetArray        b98
-// OffsetToScriptCode                  2c
-// OffsetToNameArray                   bb8
-
-// OffsetToFirstName                   bb8
-
 #define TA			// This is a TA script
 
 #include "sfxtype.h"
@@ -25,149 +10,161 @@ static-var  gun_1;
 // Signal definitions
 #define SIG_AIM				2
 
+RockOnWaves()
+{
+	var rockDir, rockAng, rockSpeed;
+	rockDir = <-0.1>;
+	rockAng = <-0.1>;
+	while( TRUE )
+	{
+		while( get ABS(rockAng) < <1.31> )
+		{
+			rockSpeed = <1.45> - get ABS(rockAng);
+			turn base to x-axis rockAng speed rockSpeed*5;
+			turn base to z-axis rockAng speed rockSpeed*5;
+			wait-for-turn base around x-axis;
+			wait-for-turn base around z-axis;
+			rockAng = rockAng + rockDir;
+		}
+		rockDir = 0 - rockDir;
+		rockAng = rockAng + rockDir + rockDir;
+	}
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
-/*     3:*/{
-/*     6:*/	while( get BUILD_PERCENT_LEFT )
-/*     8:*/	{
-/*     a:*/		sleep 400;
-/*     d:*/	}
-/*     f:*/	while( TRUE )
-/*    11:*/	{
-/*    14:*/		healthpercent = get HEALTH;
-/*    1b:*/		if( healthpercent < 66 )
-/*    1d:*/		{
-/*    22:*/			smoketype = 256 | 2;
-/*    2c:*/			if( Rand( 1, 66 ) < healthpercent )
-/*    2e:*/			{
-/*    33:*/				smoketype = 256 | 1;
-/*    35:*/			}
-/*    37:*/			emit-sfx smoketype from base;
-/*    39:*/		}
-/*    3e:*/		sleeptime = healthpercent * 50;
-/*    45:*/		if( sleeptime < 200 )
-/*    47:*/		{
-/*    49:*/			sleeptime = 200;
-/*    4b:*/		}
-/*    4d:*/		sleep sleeptime;
-/*    50:*/	}
-/*    52:*/	return (0);
-/*    53:*/	// Build by COBBLER Ver4.0 Copyright @1998 DIGITAL CONCEPT SOFTWARE (MANU@inext.fr) / http://www.annihilationcenter.com/DCS/  
-/*    80:*/}
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	start-script RockOnWaves();
+	while( TRUE )
+	{
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
+	}
+}
 
 RockUnit(anglex, anglez)
-/*    7a:*/{
-/*    7e:*/	turn base to x-axis anglex speed <15.000000>;
-/*    85:*/	turn base to z-axis anglez speed <15.000000>;
-/*    88:*/	wait-for-turn base around z-axis;
-/*    8b:*/	wait-for-turn base around x-axis;
-/*    95:*/	turn base to x-axis <0.000000> - anglex speed <12.000000>;
-/*    9f:*/	turn base to z-axis <0.000000> - anglez speed <12.000000>;
-/*    a2:*/	wait-for-turn base around z-axis;
-/*    a5:*/	wait-for-turn base around x-axis;
-/*    af:*/	turn base to x-axis anglex / <0.010989> speed <9.000000>;
-/*    b9:*/	turn base to z-axis anglez / <0.010989> speed <9.000000>;
-/*    bc:*/	wait-for-turn base around z-axis;
-/*    bf:*/	wait-for-turn base around x-axis;
-/*    c6:*/	turn base to x-axis <0.000000> speed <3.000000>;
-/*    cd:*/	turn base to z-axis <0.000000> speed <3.000000>;
-/*    d2:*/	return (0);
-/*    d3:*/}
+{
+	turn base to x-axis anglex speed <15.000000>;
+	turn base to z-axis anglez speed <15.000000>;
+	wait-for-turn base around z-axis;
+	wait-for-turn base around x-axis;
+	turn base to x-axis <0.000000> - anglex speed <12.000000>;
+	turn base to z-axis <0.000000> - anglez speed <12.000000>;
+	wait-for-turn base around z-axis;
+	wait-for-turn base around x-axis;
+	turn base to x-axis anglex / <0.005495> speed <9.000000>;
+	turn base to z-axis anglez / <0.005495> speed <9.000000>;
+	wait-for-turn base around z-axis;
+	wait-for-turn base around x-axis;
+	turn base to x-axis <0.000000> speed <3.000000>;
+	turn base to z-axis <0.000000> speed <3.000000>;
+}
 
 Create()
-/*    d3:*/{
-/*    e5:*/	gun_1 = flare2;
-/*    e7:*/	start-script SmokeUnit();
-/*    ec:*/	return (0);
-/*    ed:*/}
+{
+	gun_1 = flare2;
+	start-script SmokeUnit();
+}
 
 AimPrimary(heading, pitch)
-/*    ef:*/{
-/*    f1:*/	signal SIG_AIM;
-/*    f4:*/	set-signal-mask SIG_AIM;
-/*    f9:*/	turn turret to y-axis heading speed <450.000000>;
-/*   103:*/	turn turret to x-axis <0.000000> - pitch speed <450.000000>;
-/*   106:*/	wait-for-turn turret around y-axis;
-/*   109:*/	wait-for-turn turret around x-axis;
-/*   10e:*/	return (1);
-/*   10f:*/}
+{
+	signal SIG_AIM;
+	set-signal-mask SIG_AIM;
+	turn turret to y-axis heading speed <450.000000>;
+	turn turret to x-axis <0.000000> - pitch speed <450.000000>;
+	wait-for-turn turret around y-axis;
+	wait-for-turn turret around x-axis;
+	return (1);
+}
 
 FirePrimary()
-/*   10f:*/{
-/*   114:*/	++gun_1;
-/*   11b:*/	if( gun_1 == 4 )
-/*   11d:*/	{
-/*   11f:*/		gun_1 = flare2;
-/*   121:*/	}
-/*   123:*/	return (0);
-/*   124:*/}
+{
+	++gun_1;
+	if( gun_1 == 4 )
+	{
+		gun_1 = flare2;
+	}
+}
 
 AimFromPrimary(piecenum)
-/*   125:*/{
-/*   127:*/	piecenum = turret;
-/*   12b:*/	return (0);
-/*   12c:*/}
+{
+	piecenum = turret;
+}
 
 QueryPrimary(piecenum)
-/*   12d:*/{
-/*   132:*/	if( gun_1 == 1 )
-/*   134:*/	{
-/*   136:*/		piecenum = flare1;
-/*   138:*/	}
-/*   13d:*/	if( gun_1 == 2 )
-/*   13f:*/	{
-/*   141:*/		piecenum = flare2;
-/*   143:*/	}
-/*   148:*/	if( gun_1 == 3 )
-/*   14a:*/	{
-/*   14c:*/		piecenum = flare3;
-/*   14e:*/	}
-/*   150:*/	return (0);
-/*   151:*/}
+{
+	if( gun_1 == 1 )
+	{
+		piecenum = flare1;
+	}
+	if( gun_1 == 2 )
+	{
+		piecenum = flare2;
+	}
+	if( gun_1 == 3 )
+	{
+		piecenum = flare3;
+	}
+}
 
 SweetSpot(piecenum)
-/*   152:*/{
-/*   154:*/	piecenum = base;
-/*   158:*/	return (0);
-/*   159:*/}
+{
+	piecenum = base;
+}
 
 Killed(severity, corpsetype)
-/*   15b:*/{
-/*   160:*/	if( severity <= 25 )
-/*   162:*/	{
-/*   164:*/		corpsetype = 1;
-/*   16b:*/		explode base type BITMAPONLY | BITMAP1;
-/*   187:*/		explode flare1 type BITMAPONLY | BITMAP5;
-/*   18e:*/		explode flare2 type BITMAPONLY | BITMAP1;
-/*   195:*/		explode flare3 type BITMAPONLY | BITMAP2;
-/*   19c:*/		explode turret type BITMAPONLY | BITMAP3;
-/*   1a0:*/		return (0);
-/*   1a1:*/	}
-/*   1a6:*/	if( severity <= 50 )
-/*   1a8:*/	{
-/*   1aa:*/		corpsetype = 2;
-/*   1b1:*/		explode base type BITMAPONLY | BITMAP1;
-/*   1cd:*/		explode flare1 type FALL | BITMAP5;
-/*   1d4:*/		explode flare2 type FALL | BITMAP1;
-/*   1db:*/		explode flare3 type FALL | BITMAP2;
-/*   1e2:*/		explode turret type BITMAPONLY | BITMAP3;
-/*   1e6:*/		return (0);
-/*   1e7:*/	}
-/*   1ec:*/	if( severity <= 99 )
-/*   1ee:*/	{
-/*   1f0:*/		corpsetype = 3;
-/*   1f7:*/		explode base type BITMAPONLY | BITMAP1;
-/*   22e:*/		explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-/*   23e:*/		explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-/*   24e:*/		explode flare3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-/*   255:*/		explode turret type BITMAPONLY | BITMAP3;
-/*   259:*/		return (0);
-/*   25a:*/	}
-/*   25c:*/	corpsetype = 3;
-/*   263:*/	explode base type BITMAPONLY | BITMAP1;
-/*   29d:*/	explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-/*   2ad:*/	explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-/*   2bd:*/	explode flare3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-/*   2c4:*/	explode turret type BITMAPONLY | BITMAP3;
-/*   2c8:*/	return (0);
-/*   2c9:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1;
+		explode base type BITMAPONLY | BITMAP1;
+		explode flare1 type BITMAPONLY | BITMAP5;
+		explode flare2 type BITMAPONLY | BITMAP1;
+		explode flare3 type BITMAPONLY | BITMAP2;
+		explode turret type BITMAPONLY | BITMAP3;
+		return (0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2;
+		explode base type BITMAPONLY | BITMAP1;
+		explode flare1 type FALL | BITMAP5;
+		explode flare2 type FALL | BITMAP1;
+		explode flare3 type FALL | BITMAP2;
+		explode turret type BITMAPONLY | BITMAP3;
+		return (0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3;
+		explode base type BITMAPONLY | BITMAP1;
+		explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+		explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+		explode flare3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+		explode turret type BITMAPONLY | BITMAP3;
+		return (0);
+	}
+	corpsetype = 3;
+	explode base type BITMAPONLY | BITMAP1;
+	explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+	explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
+	explode flare3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	explode turret type BITMAPONLY | BITMAP3;
+}

@@ -1,18 +1,3 @@
-//            * Header Info *
-// VersionSignature                     4
-// NumberOfScripts                     10
-// NumberOfPieces                      3
-// LengthOfScripts                     193
-// NumberOfStaticVars                  2
-// UKZero                              0
-// OffsetToScriptCodeIndexArray        678
-// OffsetToScriptNameOffsetArray       6a0
-// OffsetToPieceNameOffsetArray        6c8
-// OffsetToScriptCode                  2c
-// OffsetToNameArray                   6d4
-
-// OffsetToFirstName                   6d4
-
 #define TA			// This is a TA script
 
 #include "sfxtype.h"
@@ -22,132 +7,142 @@ piece  base, dish;
 
 static-var  statechg_DesiredState, statechg_StateChanging;
 
+RockOnWaves()
+{
+	var rockDir, rockAng, rockSpeed;
+	rockDir = <-0.1>;
+	rockAng = <-0.1>;
+	while( TRUE )
+	{
+		while( get ABS(rockAng) < <1.31> )
+		{
+			rockSpeed = <1.45> - get ABS(rockAng);
+			turn base to x-axis rockAng speed rockSpeed*5;
+			turn base to z-axis rockAng speed rockSpeed*5;
+			wait-for-turn base around x-axis;
+			wait-for-turn base around z-axis;
+			rockAng = rockAng + rockDir;
+		}
+		rockDir = 0 - rockDir;
+		rockAng = rockAng + rockDir + rockDir;
+	}
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
-/*     3:*/{
-/*     6:*/	while( get BUILD_PERCENT_LEFT )
-/*     8:*/	{
-/*     a:*/		sleep 400;
-/*     d:*/	}
-/*     f:*/	while( TRUE )
-/*    11:*/	{
-/*    14:*/		healthpercent = get HEALTH;
-/*    1b:*/		if( healthpercent < 66 )
-/*    1d:*/		{
-/*    22:*/			smoketype = 256 | 2;
-/*    2c:*/			if( Rand( 1, 66 ) < healthpercent )
-/*    2e:*/			{
-/*    33:*/				smoketype = 256 | 1;
-/*    35:*/			}
-/*    37:*/			emit-sfx smoketype from base;
-/*    39:*/		}
-/*    3e:*/		sleeptime = healthpercent * 50;
-/*    45:*/		if( sleeptime < 200 )
-/*    47:*/		{
-/*    49:*/			sleeptime = 200;
-/*    4b:*/		}
-/*    4d:*/		sleep sleeptime;
-/*    50:*/	}
-/*    52:*/	return (0);
-/*    53:*/	// Build by COBBLER Ver4.0 Copyright @1998 DIGITAL CONCEPT SOFTWARE (MANU@inext.fr) / http://www.annihilationcenter.com/DCS/  
-/*    80:*/}
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	start-script RockOnWaves();
+	while( TRUE )
+	{
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
+	}
+}
 
 Go()
-/*    78:*/{
-/*    7c:*/	spin dish around y-axis speed <60.010989>;
-/*    81:*/	return (0);
-/*    82:*/}
+{
+	spin dish around y-axis speed <60.005495>;
+}
 
 Stop()
-/*    82:*/{
-/*    86:*/	spin dish around y-axis speed <0.000000>;
-/*    8b:*/	return (0);
-/*    8c:*/}
+{
+	spin dish around y-axis speed <0.000000>;
+}
 
 InitState()
-/*    8c:*/{
-/*    8e:*/	statechg_DesiredState = TRUE;
-/*    92:*/	statechg_StateChanging = FALSE;
-/*    96:*/	return (0);
-/*    97:*/}
+{
+	statechg_DesiredState = TRUE;
+	statechg_StateChanging = FALSE;
+}
 
 RequestState(requestedstate, currentstate)
-/*    99:*/{
-/*    9b:*/	if( statechg_StateChanging )
-/*    9d:*/	{
-/*    9f:*/		statechg_DesiredState = requestedstate;
-/*    a3:*/		return (0);
-/*    a4:*/	}
-/*    a6:*/	statechg_StateChanging = TRUE;
-/*    aa:*/	currentstate = statechg_DesiredState;
-/*    ae:*/	statechg_DesiredState = requestedstate;
-/*    b5:*/	while( statechg_DesiredState != currentstate )
-/*    b7:*/	{
-/*    bc:*/		if( statechg_DesiredState == 0 )
-/*    be:*/		{
-/*    be:*/			call-script Go();
-/*    c3:*/			currentstate = 0;
-/*    c5:*/		}
-/*    ca:*/		if( statechg_DesiredState == 1 )
-/*    cc:*/		{
-/*    cc:*/			call-script Stop();
-/*    d1:*/			currentstate = 1;
-/*    d3:*/		}
-/*    d5:*/	}
-/*    d7:*/	statechg_StateChanging = FALSE;
-/*    db:*/	return (0);
-/*    dc:*/}
+{
+	if( statechg_StateChanging )
+	{
+		statechg_DesiredState = requestedstate;
+		return (0);
+	}
+	statechg_StateChanging = TRUE;
+	currentstate = statechg_DesiredState;
+	statechg_DesiredState = requestedstate;
+	while( statechg_DesiredState != currentstate )
+	{
+		if( statechg_DesiredState == 0 )
+		{
+			call-script Go();
+			currentstate = 0;
+		}
+		if( statechg_DesiredState == 1 )
+		{
+			call-script Stop();
+			currentstate = 1;
+		}
+	}
+	statechg_StateChanging = FALSE;
+}
 
 Create()
-/*    dc:*/{
-/*    e8:*/	call-script InitState();
-/*    eb:*/	start-script SmokeUnit();
-/*    f0:*/	return (0);
-/*    f1:*/}
+{
+	call-script InitState();
+	start-script SmokeUnit();
+}
 
 Activate()
-/*    f1:*/{
-/*    f3:*/	start-script RequestState(0);
-/*    f8:*/	return (0);
-/*    f9:*/}
+{
+	start-script RequestState(0);
+}
 
 Deactivate()
-/*    f9:*/{
-/*    fb:*/	start-script RequestState(1);
-/*   100:*/	return (0);
-/*   101:*/}
+{
+	start-script RequestState(1);
+}
 
 SweetSpot(piecenum)
-/*   102:*/{
-/*   104:*/	piecenum = base;
-/*   108:*/	return (0);
-/*   109:*/}
+{
+	piecenum = base;
+}
 
 Killed(severity, corpsetype)
-/*   10b:*/{
-/*   110:*/	if( severity <= 25 )
-/*   112:*/	{
-/*   114:*/		corpsetype = 1;
-/*   11b:*/		explode base type BITMAPONLY | BITMAP1;
-/*   129:*/		explode dish type BITMAPONLY | BITMAP2;
-/*   12d:*/		return (0);
-/*   12e:*/	}
-/*   133:*/	if( severity <= 50 )
-/*   135:*/	{
-/*   137:*/		corpsetype = 2;
-/*   13e:*/		explode base type BITMAPONLY | BITMAP1;
-/*   14c:*/		explode dish type SHATTER | BITMAP2;
-/*   150:*/		return (0);
-/*   151:*/	}
-/*   156:*/	if( severity <= 99 )
-/*   158:*/	{
-/*   15a:*/		corpsetype = 3;
-/*   161:*/		explode base type BITMAPONLY | BITMAP1;
-/*   16f:*/		explode dish type SHATTER | BITMAP2;
-/*   173:*/		return (0);
-/*   174:*/	}
-/*   176:*/	corpsetype = 3;
-/*   17d:*/	explode base type BITMAPONLY | BITMAP1;
-/*   18e:*/	explode dish type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-/*   192:*/	return (0);
-/*   193:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1;
+		explode base type BITMAPONLY | BITMAP1;
+		explode dish type BITMAPONLY | BITMAP2;
+		return (0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2;
+		explode base type BITMAPONLY | BITMAP1;
+		explode dish type SHATTER | BITMAP2;
+		return (0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3;
+		explode base type BITMAPONLY | BITMAP1;
+		explode dish type SHATTER | BITMAP2;
+		return (0);
+	}
+	corpsetype = 3;
+	explode base type BITMAPONLY | BITMAP1;
+	explode dish type SHATTER | EXPLODE_ON_HIT | BITMAP2;
+}

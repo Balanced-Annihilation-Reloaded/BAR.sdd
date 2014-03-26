@@ -98,8 +98,10 @@ AimPrimary(heading, pitch)
 
 FirePrimary()
 {
+	show flare;
 	move barrel to y-axis [-2.500000] now;
 	sleep 155;
+	hide flare;
 	move barrel to y-axis [0.000000] speed [7.500000];
 	return (0);
 }

@@ -1105,6 +1105,18 @@ AimPrimary(heading, pitch)
 
 FirePrimary()
 {
+		if( gun_1 )
+	{
+		show lflare;
+		sleep 150;
+		hide lflare;
+	}
+	else
+	{
+		show rflare;
+		sleep 150;
+		hide rflare;
+	}
 	gun_1 = !gun_1;
 }
 

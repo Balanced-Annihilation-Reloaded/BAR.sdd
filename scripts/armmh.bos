@@ -10,7 +10,7 @@ static-var  Static_Var_1, Static_Var_2, restore_delay, statechg_DesiredState, st
 // Signal definitions
 #define SIG_AIM				2
 #define SIG_MOVE			4
-
+#define SIG_RESTORE			8
 
 activatescr()
 {
@@ -217,6 +217,8 @@ SetMaxReloadTime(Func_Var_1)
 
 RestoreAfterDelay()
 {
+	signal SIG_RESTORE;
+	set-signal-mask SIG_RESTORE;
 	sleep restore_delay;
 	set-signal-mask 0;
 	start-script RequestState(1);

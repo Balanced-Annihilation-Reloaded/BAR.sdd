@@ -7,7 +7,7 @@ piece  flare1, flare2, flare3, flare4, flare5, flare6, base, turret,
        barrel1, barrel2, barrel3, barrel4, barrel5, barrel6, sleeve1, sleeve2,
        sleeve3, sleeve4, sleeve5, sleeve6, spindle;
 
-static-var  gun_1;
+static-var  gun_1, hasfired;
 
 // Signal definitions
 #define SIG_AIM				2
@@ -48,7 +48,8 @@ Create()
 	hide flare4;
 	hide flare5;
 	hide flare6;
-	gun_1 = flare1;
+	gun_1 = 0;
+	hasfired = 1;
 	start-script SmokeUnit();
 }
 
@@ -56,10 +57,16 @@ AimPrimary(heading, pitch)
 {
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
+	while( !hasfired )
+	{
+		sleep 250;
+	}
 	turn turret to y-axis heading speed <15.000000>;
 	turn spindle to x-axis <60.005495> * gun_1 - pitch speed <200.038462>;
+	//get PRINT(gun_1,gun_1*60)
 	wait-for-turn turret around y-axis;
 	wait-for-turn spindle around x-axis;
+	hasfired = 0;
 	return (1);
 }
 
@@ -67,7 +74,7 @@ FirePrimary()
 {
 	if( gun_1 == 0 )
 	{
-	//	turn flare1 to x-axis <-60.005495> * gun_1 now;
+//		turn flare1 to x-axis <-60.005495> * gun_1 now;
 		move barrel1 to z-axis [-6.000000] now;
 		emit-sfx 1024 + 0 from flare1;
 		sleep 100;
@@ -75,7 +82,7 @@ FirePrimary()
 	}
 	if( gun_1 == 1 )
 	{
-	//	turn flare2 to x-axis <-60.005495> * gun_1 now;
+//		turn flare2 to x-axis <-60.005495> * gun_1 now;
 		move barrel2 to y-axis [-5.000000] now;
 		move barrel2 to z-axis [-3.000000] now;
 		emit-sfx 1024 + 0 from flare2;
@@ -85,7 +92,7 @@ FirePrimary()
 	}
 	if( gun_1 == 2 )
 	{
-	//	turn flare3 to x-axis <-60.005495> * gun_1 now;
+//		turn flare3 to x-axis <-60.005495> * gun_1 now;
 		move barrel3 to y-axis [-5.000000] now;
 		move barrel3 to z-axis [3.000000] now;
 		emit-sfx 1024 + 0 from flare3;
@@ -95,7 +102,7 @@ FirePrimary()
 	}
 	if( gun_1 == 3 )
 	{
-	//	turn flare4 to x-axis <-60.005495> * gun_1 now;
+//		turn flare4 to x-axis <-60.005495> * gun_1 now;
 		move barrel4 to z-axis [6.000000] now;
 		emit-sfx 1024 + 0 from flare4;
 		sleep 100;
@@ -103,7 +110,7 @@ FirePrimary()
 	}
 	if( gun_1 == 4 )
 	{
-	//	turn flare5 to x-axis <-60.005495> * gun_1 now;
+//		turn flare5 to x-axis <-60.005495> * gun_1 now;
 		move barrel5 to y-axis [5.000000] now;
 		move barrel5 to z-axis [3.000000] now;
 		emit-sfx 1024 + 0 from flare5;
@@ -113,7 +120,7 @@ FirePrimary()
 	}
 	if( gun_1 == 5 )
 	{
-	//	turn flare6 to x-axis <-60.005495> * gun_1 now;
+//		turn flare6 to x-axis <-60.005495> * gun_1 now;
 		move barrel6 to y-axis [5.000000] now;
 		move barrel6 to z-axis [-3.000000] now;
 		emit-sfx 1024 + 0 from flare6;
@@ -121,11 +128,13 @@ FirePrimary()
 		move barrel6 to y-axis [0.000000] speed [5.000000];
 		move barrel6 to z-axis [0.000000] speed [3.000000];
 	}
-	++gun_1;
+	gun_1 = gun_1 + 1;
 	if( gun_1 == 6 )
 	{
-		gun_1 = flare1;
+		gun_1 = 0;
 	}
+	hasfired = 1;
+
 }
 
 TargetCleared(Func_Var_1)
@@ -139,7 +148,30 @@ TargetCleared(Func_Var_1)
 
 QueryPrimary(piecenum)
 {
-	piecenum = gun_1;
+	if( gun_1 == 0 )
+	{
+		piecenum = flare1;
+	}
+	if( gun_1 == 1 )
+	{
+		piecenum = flare2;
+	}
+	if( gun_1 == 2 )
+	{
+		piecenum = flare3;
+	}
+	if( gun_1 == 3 )
+	{
+		piecenum = flare4;
+	}
+	if( gun_1 == 4 )
+	{
+		piecenum = flare5;
+	}
+	if( gun_1 == 5 )
+	{
+		piecenum = flare6;
+	}
 }
 
 AimFromPrimary(piecenum)

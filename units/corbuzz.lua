@@ -29,6 +29,7 @@ return {
 		maxwaterdepth = 0,
 		name = "Buzzsaw",
 		objectname = "CORBUZZ.s3o",
+		script = "corbuzz.lua",
 		seismicsignature = 0,
 		selfdestructas = "RLRPC_DEATH",
 		sightdistance = 700,

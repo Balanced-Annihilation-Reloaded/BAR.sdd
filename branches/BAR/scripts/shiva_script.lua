@@ -328,6 +328,7 @@ local function RestoreAfterDelay(unitID)
    	WaitForMove(rrecoil, x_axis)
 	
 	-- repack rocket laucher
+	rlaucher_activated = false
 	Turn(rdoor, z_axis, math.rad(90), 1)
 	Turn(ldoor, z_axis, math.rad(-90), 1)
     WaitForTurn(ldoor, z_axis)
@@ -335,7 +336,6 @@ local function RestoreAfterDelay(unitID)
 	Turn(ldoor, z_axis, math.rad(0), 1)
 	Move(rlauncher, y_axis, 0, 3)
 	WaitForMove(rlauncher, y_axis)
-	rlaucher_activated = false
 end
 
 -- Shooting Animation
@@ -349,6 +349,7 @@ local function ready_rlaucher()
 	Move(rlauncher, y_axis, 3, 3)
 	WaitForMove(rlauncher, y_axis)
 	Signal( SIG_open )
+	rlaucher_activated = true
 end
 
 local function fire1()
@@ -443,10 +444,11 @@ function script.AimWeapon3()
 	SetSignalMask( SIG_aim3 )
 	if (rlaucher_activated == false) then
 		StartThread( ready_rlaucher )
-	    rlaucher_activated = true
 	end
-	StartThread( RestoreAfterDelay )
-	return true
+	if (rlaucher_activated == true) then
+		StartThread( RestoreAfterDelay )
+		return true
+	end
 end
 
 function script.QueryWeapon3() return rocketflare end

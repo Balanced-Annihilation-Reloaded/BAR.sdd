@@ -299,6 +299,11 @@ local fragSrc
 --------------------------------------------------------------------------------
 
 function widget:Initialize()
+	if  (Spring.GetConfigString("AllowDeferredMapRendering") == '0' or Spring.GetConfigString("AllowDeferredModelRendering")=='0') then
+		Spring.Echo('Deferred Rendering (gfx_deferred_rendering.lua) requires  AllowDeferredMapRendering and AllowDeferredModelRendering to be enabled in springsettings.cfg!') 
+		widgetHandler:RemoveWidget()
+		return
+	end
 	if ((not forceNonGLSL) and Spring.GetMiniMapDualScreen()~='left') then --FIXME dualscreen
 		if (not glCreateShader) then
 			spEcho("Shaders not found, reverting to non-GLSL widget")

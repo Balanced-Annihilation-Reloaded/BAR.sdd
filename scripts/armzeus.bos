@@ -539,7 +539,7 @@ QueryPrimary(piecenum)
 
 FirePrimary()
 {
-	sleep 100;
+	emit-sfx 1024 + 0 from flare;
 }
 
 Killed(severity, corpsetype)

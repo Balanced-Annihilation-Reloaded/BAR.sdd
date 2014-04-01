@@ -23,12 +23,16 @@ return {
 		movementclass = "KBOT2",
 		name = "Zeus",
 		nochasecategory = "VTOL",
-		objectname = "ARMZEUS",
+		objectname = "ARMZEUS.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 331.5,
 		turnrate = 1056,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

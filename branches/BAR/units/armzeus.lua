@@ -73,6 +73,11 @@ return {
 				world = "All Worlds",
 			},
 		},
+		sfxtypes = {
+			explosiongenerators = {
+				[1] = [[custom:zeus_muzzle_glow]],
+			},
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -101,7 +106,7 @@ return {
 				cratermult = 0,
 				duration = 10,
 				energypershot = 35,
-				explosiongenerator = "custom:ZEUS_FLASH",
+				explosionGenerator = [[custom:zeus_explosion]],
 				firestarter = 50,
 				impactonly = 1,
 				impulseboost = 0.12300000339746,

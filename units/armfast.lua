@@ -23,12 +23,16 @@ return {
 		movementclass = "KBOT2",
 		name = "Zipper",
 		nochasecategory = "VTOL",
-		objectname = "ARMFAST",
+		objectname = "ARMFAST.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 351,
 		turnrate = 1430,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

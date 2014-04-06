@@ -28,7 +28,7 @@ return {
 		metalstorage = 100,
 		movementclass = "KBOT2",
 		name = "Advanced Construction Kbot",
-		objectname = "ARMACK",
+		objectname = "ARMACK.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
@@ -67,6 +67,10 @@ return {
 			[7] = "armmmkr",
 			[8] = "armuwadves",
 			[9] = "armuwadvms",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

@@ -32,7 +32,7 @@ return {
 		minwaterdepth = 20,
 		movementclass = "UBOAT3",
 		name = "Advanced Construction Sub",
-		objectname = "ARMACSUB",
+		objectname = "ARMACSUB.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "SMALL_UNIT",
@@ -41,6 +41,10 @@ return {
 		turnrate = 382,
 		waterline = 35,
 		workertime = 300,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		buildoptions = {
 			[10] = "asubpen",
 			[11] = "armason",

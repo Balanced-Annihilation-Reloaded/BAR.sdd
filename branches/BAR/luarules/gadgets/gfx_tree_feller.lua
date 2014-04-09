@@ -42,18 +42,19 @@ if  (gadgetHandler:IsSyncedCode()) then
 			return Damage
 		end
 		if treesdying[featureID] then --dying trees dont take more damage, and will be removed later
-			--Echo('damage removed',Damage,featureID)
+			Echo('damage removed',Damage,featureID)
 			return 0.0
 		end
 		local fx,fy,fz=GetFeaturePosition(featureID)
 	
 
-		-- Echo("gadget:FeatureDamaged(featureID, featureDefID, featureTeam,Damage, weaponDefID,projectileID,     attackerID, attackerDefID, attackerTeam)")
-		-- Echo(featureID, featureDefID, featureTeam,Damage, weaponDefID,   projectileID,  attackerID, attackerDefID, attackerTeam)
+		--Echo("gadget:FeatureDamaged(featureID, featureDefID, featureTeam,Damage, weaponDefID,projectileID,     attackerID, attackerDefID, attackerTeam)")
+		--Echo(featureID, featureDefID, featureTeam,Damage, weaponDefID,   projectileID,  attackerID, attackerDefID, attackerTeam)
 		--Echo('weaponDefID',WeaponDefs[weaponDefID])
 		
 		if (fx ~= nil) then
 			local health, maxhealth, _=GetFeatureHealth(featureID)		
+			--Echo('health=',health,' fx=',fx)
 			if (Damage > health) then 
 				local remainingMetal, maxMetal, remainingEnergy, maxEnergy, reclaimLeft= GetFeatureResources(featureID)
 				if (health ~= nil and maxMetal==0 and maxEnergy > 0 and (health < Damage or weaponDefID==-7)) then -- weaponDefID == -7 is the weapon that crushes features
@@ -67,17 +68,21 @@ if  (gadgetHandler:IsSyncedCode()) then
 						--crushed features cannot be saved by returning 0 damage. Must create new one!
 						featureID=CreateFeature(featureDefID,fx,fy,fz)
 						SetFeatureDirection(featureID,dx, dy ,dz)
-						
-						-- Echo('tree created... ',featureID)
+						SetFeatureBlocking(featureID, false,false,false,false,false,false,false) 
+						--Echo('tree created... ',featureID)
 					else
 						Damage=0.0 -- so it doesnt take multiple frames for tree to get killed.
 					end
 					
 					treesdying[featureID]={ frame = GetGameFrame(), posx=fx, posy=fy, posz=fz,fDefID=featureDefID, dirx=dx, diry=dy, dirz=dz,}
+				else
+					--Echo("feature not a dying tree")
 				end
+			else
+				--Echo("Feature has more health than damage dealt")
 			end
 		end
-		
+		--Echo("passthrough damage=",Damage)
 		return Damage
 	end
 	function gadget:GameFrame(gf)

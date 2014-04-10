@@ -23,11 +23,15 @@ return {
 		movementclass = "TKBOT3",
 		name = "Recluse",
 		nochasecategory = "VTOL",
-		objectname = "ARMSPTK",
+		objectname = "ARMSPTK.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 440,
 		turnrate = 1122,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

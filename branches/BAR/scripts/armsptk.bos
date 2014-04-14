@@ -6,12 +6,12 @@
 
 // One sixth of the full cycle duration, in millisecond
 // The larger this value the slower the walk animation
-#define WALK_PERIOD 100
+//#define WALK_PERIOD 100
 
 
 piece	flare1,flare2,flare3 ,base,turret, leg1a,leg1b,leg1c,leg2a,leg2b,leg2c,leg3a,leg3b,leg3c,leg4a,leg4b,leg4c,leg5a,leg5b,leg5c,leg6a,leg6b,leg6c;
 
-static-var fire_count,firing,open,maxreloadtime,moving,restore_delay;
+static-var fire_count,firing,open,maxreloadtime,moving,restore_delay,moveSpeed, currentSpeed,WALK_PERIOD;
 
 #define SIG_AIM 2
 #define SIG_FIRE1 4
@@ -240,6 +240,21 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	}
 }
 
+UnitSpeed()
+{
+	while(TRUE)
+	{
+		if (moving)
+		{
+			currentSpeed = (moveSpeed * 80)/(get CURRENT_SPEED);
+			//if (currentSpeed>300) currentSpeed=300;
+			WALK_PERIOD=currentSpeed;
+			//get PRINT(1,WALK_PERIOD,moveSpeed);
+			WALK_PERIOD=80;
+		}
+		sleep 142;
+	}
+}
 //LEG X Y Z is:
 //x: 1=right 2=left
 //y: 1=front, 2=middle, 3=back
@@ -272,6 +287,10 @@ Create()
 	}
 	start-script SmokeUnit();
 	start-script DoTheWalking();
+	
+	moveSpeed = (get MAX_SPEED);
+	WALK_PERIOD=100;
+	start-script UnitSpeed();
 	restore_delay=2000;
 }
 

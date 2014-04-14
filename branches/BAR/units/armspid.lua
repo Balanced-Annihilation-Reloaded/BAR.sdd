@@ -23,11 +23,15 @@ return {
 		movementclass = "TKBOT2",
 		name = "Spider",
 		nochasecategory = "ALL",
-		objectname = "ARMSPID",
+		objectname = "ARMSPID.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 550,
 		turnrate = 1122,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

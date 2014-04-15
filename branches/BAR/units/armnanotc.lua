@@ -9,6 +9,7 @@ return {
 		buildpic = "ARMNANOTC.DDS",
 		buildtime = 5312,
 		category = "ALL NOTSUB CONSTR NOWEAPON NOTAIR NOTHOVER SURFACE",
+		cantbetransported = false,
 		collisionvolumeoffsets = "0 -11 0",
 		collisionvolumescales = "31 70 31",
 		collisionvolumetest = 1,

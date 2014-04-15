@@ -1,7 +1,7 @@
 return {
 	armca = {
 		acceleration = 0.071999996900558,
-		brakerate = 4.275,
+		brakerate = 0.4275,
 		buildcostenergy = 4320,
 		buildcostmetal = 105,
 		builddistance = 136,
@@ -10,7 +10,7 @@ return {
 		buildtime = 8844,
 		canfly = true,
 		canmove = true,
-		category = "ALL MOBILE NOTLAND NOTSUB ANTIFLAME ANTIGATOR ANTIEMG ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
+		category = "ALL MOBILE NOTLAND NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 70,
 		description = "Tech Level 1",
@@ -36,6 +36,7 @@ return {
 		selfdestructas = "SMALL_UNIT_AIR",
 		sightdistance = 390,
 		terraformspeed = 225,
+		turninplaceanglelimit = 360,
 		turnrate = 110,
 		workertime = 45,
 		customparams = {

@@ -1,14 +1,14 @@
 return {
 	corvalk = {
 		acceleration = 0.090000003576279,
-		brakerate = 7.5,
+		brakerate = 0.75,
 		buildcostenergy = 1347,
 		buildcostmetal = 69,
 		buildpic = "CORVALK.DDS",
 		buildtime = 4122,
 		canfly = true,
 		canmove = true,
-		category = "ALL MOBILE WEAPON NOTLAND ANTIGATOR VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
+		category = "ALL MOBILE WEAPON NOTLAND VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 70,
 		description = "Air Transport",
@@ -34,6 +34,7 @@ return {
 		transportcapacity = 1,
 		transportmass = 5000,
 		transportsize = 3,
+		turninplaceanglelimit = 360,
 		turnrate = 550,
 		customparams = {
 			normalmaps = "yes",

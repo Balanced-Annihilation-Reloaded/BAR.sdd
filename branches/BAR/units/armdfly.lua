@@ -1,7 +1,7 @@
 return {
 	armdfly = {
 		acceleration = 0.20000000298023,
-		brakerate = 6.25,
+		brakerate = 0.625,
 		buildcostenergy = 6250,
 		buildcostmetal = 298,
 		buildpic = "ARMDFLY.DDS",
@@ -35,6 +35,7 @@ return {
 		stealth = true,
 		transportcapacity = 30,
 		transportsize = 15,
+		turninplaceanglelimit = 360,
 		turnrate = 420,
 		customparams = {
 			normalmaps = "yes",

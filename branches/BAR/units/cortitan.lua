@@ -1,14 +1,14 @@
 return {
 	cortitan = {
-		acceleration = 0.18000000715256,
-		brakerate = 7.25,
+		acceleration = 0.06,
+		brakerate = 0.0725,
 		buildcostenergy = 6788,
 		buildcostmetal = 318,
 		buildpic = "CORTITAN.DDS",
 		buildtime = 14722,
 		canfly = true,
 		canmove = true,
-		category = "ALL NOTLAND MOBILE WEAPON ANTIGATOR VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
+		category = "ALL NOTLAND MOBILE WEAPON VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 120,
 		description = "Torpedo Bomber",

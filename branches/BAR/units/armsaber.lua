@@ -1,7 +1,7 @@
 return {
 	armsaber = {
 		acceleration = 0.28799998760223,
-		brakerate = 4.6129999160767,
+		brakerate = 0.46,
 		buildcostenergy = 5984,
 		buildcostmetal = 192,
 		buildpic = "ARMSABER.DDS",
@@ -9,7 +9,7 @@ return {
 		canfly = true,
 		canmove = true,
 		cansubmerge = true,
-		category = "ALL NOTLAND MOBILE WEAPON ANTIGATOR NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOTSHIP NOTHOVER",
+		category = "ALL NOTLAND MOBILE WEAPON NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 100,
 		description = "Seaplane Gunship",
@@ -32,6 +32,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 595,
+		turninplaceanglelimit = 360,
 		turnrate = 931,
 		customparams = {
 			normalmaps = "yes",

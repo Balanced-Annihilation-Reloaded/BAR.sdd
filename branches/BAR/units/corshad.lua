@@ -1,14 +1,14 @@
 return {
 	corshad = {
-		acceleration = 0.083999998867512,
-		brakerate = 5.5,
+		acceleration = 0.028,
+		brakerate = 0.055,
 		buildcostenergy = 4595,
 		buildcostmetal = 146,
 		buildpic = "CORSHAD.DDS",
 		buildtime = 5054,
 		canfly = true,
 		canmove = true,
-		category = "ALL MOBILE WEAPON NOTLAND ANTIGATOR VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
+		category = "ALL MOBILE WEAPON NOTLAND VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 165,
 		description = "Bomber",

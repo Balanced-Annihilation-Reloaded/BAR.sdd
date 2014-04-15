@@ -1,3 +1,4 @@
+--see engineoptions.lua for explanantion
 local options={
 	{
 	   key    = "StartingResources",
@@ -25,15 +26,15 @@ local options={
 		def="com",
 		section="ba_modes",
 		items={
-			{key="killall", name="Kill Everything", desc="Every last unit must be eliminated, no exceptions!"},
-			{key="com", name="Kill all enemy Commanders", desc="When a team has no Commanders left it loses"},
-			{key="comcontrol", name="No Commander, No Control", desc="A player without a Commander cannot issue orders"},
+			{key="neverend", name="None", desc="Teams are never eliminated"},
+			{key="com", name="Kill all enemy Commanders", desc="When a team has no Commanders left, it loses"},
+			{key="killall", name="Kill everything", desc="Every last unit must be eliminated, no exceptions!"},
 		}
 	},
     {
         key    = 'mo_armageddontime',
         name   = 'Armageddon time (minutes)',
-        desc   = 'At armageddon every immobile unit is destroyed and you fight to the death with what\'s left!',
+        desc   = 'At armageddon every immobile unit is destroyed and you fight to the death with what\'s left! (0=off)',
         type   = 'number',
         def    = true,
         section= 'ba_modes',
@@ -45,7 +46,7 @@ local options={
     {
 		key    = "mo_noowner",
 		name   = "FFA Mode",
-		desc   = "Units with no player control are instantly removed/destroyed",
+		desc   = "Units with no player control are removed/destroyed \nUse FFA spawning mode",
 		type   = "bool",
 		def    = false,
 		section= "ba_modes",
@@ -53,9 +54,9 @@ local options={
     {
         key    = 'mo_coop',
         name   = 'Cooperative mode',
-        desc   = 'Adds extra commanders to idsharing teams, to 1 per player',
+        desc   = 'Adds extra commanders to id-sharing teams, 1 com per player',
         type   = 'bool',
-        def    = true,
+        def    = false,
         section= 'ba_modes',
     },
     {
@@ -89,14 +90,6 @@ local options={
 		type   = "bool",
 		def    = false,
 		section= "ba_ooptions",
-    },
-    {
-		key    = "mo_enemywrecks",
-		name   = "Show Enemy Wrecks",
-		desc   = "Gives you LOS of enemy wreckage",
-		type   = "bool",
-		def    = true,
-		section= "ba_options",
     },
 	{
 		key    = "mo_nowrecks",
@@ -142,47 +135,35 @@ local options={
        step   = 1,  -- quantization is aligned to the def value
                     -- (step <= 0) means that there is no quantization
 	},  
-	{
-      key="teamdeathmode",
-      name="Team Game End Mode",
-      desc="What it takes to eliminate a Team",
-      type="list",
-	  section= 'ba_modes',
-      def="allyzerounits",
-      items={
-         {key="none", name="Never Die", desc="All Teams will stay alive regardless of what happends, gameover will never arrive."},
-         {key="teamzerounits", name="Team Death on Zero Units", desc="The Team will die when it has 0 units."},
-         {key="allyzerounits", name="AllyTeam Death on Zero units", desc="The Team will die when every Team in his AllyTeam have 0 units."},
-      }
-   },
-  {
-      key     = "pathfinder",
-      name    = "Pathfinder",
-      desc    = "Switch Pathfinding System",
-      type    = "list",
-      def     = "normal",
-      section = "ba_options",
-	  items={
-		  {key="normal", name="Normal", desc="Spring vanilla pathfinder"},
-		  {key="qtpfs", name="QuadTree", desc="Experimental quadtree based pathfinder"},
-	  },
-  },
-  {
+    {
 		key    = "mo_no_close_spawns",
 		name   = "No close spawns",
 		desc   = "Prevents players startpoints being placed close together (on large enough maps)",
 		type   = "bool",
 		def    = true,
 		section= "ba_options",
-  },
-  {
+    },
+    {
 		key    = "mo_newbie_placer",
 		name   = "Newbie Placer",
 		desc   = "Chooses a startpoint and a random faction for all rank 1 accounts (online only)",
 		type   = "bool",
 		def    = false,
 		section= "ba_options",
-  },
+    },
+    {
+		key    = 'LimitDgun',
+		name   = 'Limit D-Gun range',
+		desc   = "The commander's D-Gun weapon cannot be used near enemy start points",
+		type   = 'list',
+		def    = false,
+		section= "ba_options",
+		items={
+			{key="off", name="Off", desc="D-Gun works everywhere"},
+			{key="startpoints", name="Start Points", desc="D-Gun cannot be used near enemy startpoints"},
+			{key="startboxes", name="Start Boxes", desc="D-Gun cannot be used inside enemy startboxes"},
+		}
+    },
      {
 		key="mo_chickengame",
 		name="Enables Chicken AI",

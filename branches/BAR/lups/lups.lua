@@ -76,7 +76,6 @@ local spGetUnitViewPosition  = Spring.GetUnitViewPosition
 local spGetUnitDirection     = Spring.GetUnitDirection
 local spGetHeadingFromVector = Spring.GetHeadingFromVector
 local spGetUnitIsActive      = Spring.GetUnitIsActive
-local spGetUnitVelocity      = Spring.GetUnitVelocity
 local spGetGameFrame         = Spring.GetGameFrame
 local spGetFrameTimeOffset   = Spring.GetFrameTimeOffset
 local spGetUnitPieceList     = Spring.GetUnitPieceList
@@ -105,48 +104,6 @@ local GL_ONE     = GL.ONE
 local GL_SRC_ALPHA = GL.SRC_ALPHA
 local GL_ONE_MINUS_SRC_ALPHA = GL.ONE_MINUS_SRC_ALPHA
 
-
----------------------------------------
-    local function to_string(data, indent)
-		local str = ""
-
-		if(indent == nil) then
-			indent = 0
-		end
-
-		-- Check the type
-		if(type(data) == "string") then
-			str = str .. (" "):rep(indent) .. data .. "\n"
-		elseif(type(data) == "number") then
-			str = str .. (" "):rep(indent) .. data .. "\n"
-		elseif(type(data) == "boolean") then
-			if(data == true) then
-				str = str .. "true\n"
-			else
-				str = str .. "false\n"
-			end
-		elseif(type(data) == "table") then
-			local i, v
-			for i, v in pairs(data) do
-				-- Check for a table in a table
-				if(type(v) == "table") then
-					str = str .. (" "):rep(indent) .. i .. ":\n"
-					str = str .. to_string(v, indent + 2)
-				else
-			str = str .. (" "):rep(indent) .. i .. ": " ..to_string(v, 0)
-			end
-			end
-		elseif (data ==nil) then
-			str=str..'nil'
-		else
-		   -- print_debug(1, "Error: unknown data type: %s", type(data))
-			--str=str.. "Error: unknown data type:" .. type(data)
-			Spring.Echo(type(data) .. 'X data type')
-		end
-
-		return str
-	end
-------------------------------------------
 
 --// spring 76b1 compa
 
@@ -301,8 +258,7 @@ end
 --------------------------------------------------------------------------------
 
 --// some global vars (so the effects can use them)
-vsx, vsy        = 1,1-- to fix bug where it attempts to create sizes of 0
-vpx, vpy        = 0,0  --// view pos (only unequal zero, if dualscreen+minimapOnTheLeft)
+vsx, vsy, vpx, vpy = Spring.GetViewGeometry() --// screen pos & view pos (view pos only unequal zero if dualscreen+minimapOnTheLeft)
 LocalAllyTeamID = 0
 thisGameFrame   = 0
 frameOffset     = 0
@@ -467,7 +423,7 @@ function AddParticles(Class,Options   ,__id)
     end
     particles[ newParticles.id ] = newParticles
 
-    local space = ((not newParticles.worldspace) and newParticles.unit) or (-1) -- if the particle is not in world space and is attached to a real unit, then return the unitid, else return -1
+    local space = ((not newParticles.worldspace) and newParticles.unit) or (-1)
     local fxTable = CreateSubTables(RenderSequence,{newParticles.layer,particleClass,space})
     newParticles.fxTable = fxTable
     fxTable[#fxTable+1] = newParticles
@@ -706,7 +662,7 @@ local function DrawParticlesOpaque()
   vsx, vsy, vpx, vpy = Spring.GetViewGeometry()
   if (vsx~=oldVsx)or(vsy~=oldVsy) then
     for _,partClass in pairs(fxClasses) do
-      if partClass.ViewResize then partClass.ViewResize(viewSizeX, viewSizeY) end
+      if partClass.ViewResize then partClass.ViewResize(vsx, vsy) end
     end
     oldVsx, oldVsy = vsx, vsy
   end
@@ -781,7 +737,6 @@ local DrawWorldRefractionVisibleFx
 local DrawWorldShadowVisibleFx
 local DrawScreenEffectsVisibleFx
 local DrawInMiniMapVisibleFx
-local spIsUnitIcon = Spring.IsUnitIcon
 
 local function IsPosInLos(x,y,z)
   local inLos  = Spring.IsPosInLos(x,y,z, LocalAllyTeamID)
@@ -796,71 +751,55 @@ local function CreateVisibleFxList()
   for layerID,layer in pairs(RenderSequence) do
     for partClass,Units in pairs(layer) do
       for unitID,UnitEffects in pairs(Units) do
-		-- Spring.Echo('lups_dbg:',unitID, partClass.pi.name)
-		for i=1,#UnitEffects do
-            local fx2 = UnitEffects[i]
-			--Spring.Echo('lupsdbg visible:',fx2.visible,'unitid=',unitID,'partclass=', partClass.pi.name)
-		end
         if (unitID>-1) then
-				local isIcon= spIsUnitIcon(unitID)
-				--Spring.Echo(unitID, 'is not an icon')
-			  local x,y,z      = spGetUnitViewPosition(unitID)
+          local x,y,z      = spGetUnitViewPosition(unitID)
 
-			  local unitActive = -1
-			  local underConstruction = nil
-			  
-			  local unitRadius = 0
-			  local maxVisibleRadius = -1
-			  local minNotVisibleRadius = 1e9
-			  
-			  --// check effects
-			  for i=1,#UnitEffects do
-				local fx = UnitEffects[i]
+          local unitActive = -1
+          local underConstruction = nil
+          
+          local unitRadius = 0
+          local maxVisibleRadius = -1
+          local minNotVisibleRadius = 1e9
+          
+          --// check effects
+          for i=1,#UnitEffects do
+            local fx = UnitEffects[i]
 
-				if (fx.onActive and (unitActive == -1)) then
-				  unitActive = spGetUnitIsActive(unitID)
-				  if (unitActive == nil) then --because unitactive returns nil for enemy units, and onActive types are all airjets, we get the unit's velocity, and use that as an approximation to 'active' state --HACKY
-					local vx, vy, vz = spGetUnitVelocity(unitID)
-					--Spring.Echo('lupsdbgvel',vx,vy,vz)
-					if (vx~= nil and (vx~= 0  or vz~=0)) then 
-						unitActive=true
-					end
-				  end
-				end
-				
-				if (fx.under_construction == 1) then
-				  underConstruction = spGetUnitRulesParam(unitID, "under_construction")
-				end
+            if (fx.onActive and (unitActive == -1)) then
+              unitActive = spGetUnitIsActive(unitID)
+            end
+            
+            if (fx.under_construction == 1) then
+              underConstruction = spGetUnitRulesParam(unitID, "under_construction")
+            end
 
-				if ((not fx.onActive)or(unitActive)) and (underConstruction ~= 1) then
-					if (isIcon ==true) then
-					fx.visible=false
-				  elseif (fx.Visible) then
-					fx.visible = fx:Visible()
-				  elseif (z) then
-					unitRadius = unitRadius or (spGetUnitRadius(unitID) + 40)
+            if ((not fx.onActive)or(unitActive)) and (underConstruction ~= 1) then
+              if (fx.Visible) then
+                fx.visible = fx:Visible()
+              elseif (z) then
+                unitRadius = unitRadius or (spGetUnitRadius(unitID) + 40)
 
-					local r = fx.radius or 0
-					if (r > maxVisibleRadius)and(r < minNotVisibleRadius) then
-					  if spIsSphereInView(x,y,z,unitRadius + r) then
-						maxVisibleRadius = r
-					  else
-						minNotVisibleRadius = r
-					  end
-					end
+                local r = fx.radius or 0
+                if (r > maxVisibleRadius)and(r < minNotVisibleRadius) then
+                  if spIsSphereInView(x,y,z,unitRadius + r) then
+                    maxVisibleRadius = r
+                  else
+                    minNotVisibleRadius = r
+                  end
+                end
 
-					fx.visible = (r <= maxVisibleRadius)
-				  end
+                fx.visible = (r <= maxVisibleRadius)
+              end
 
-				  if (fx.visible) then
-					if (not anyFXVisible) then anyFXVisible = true end
-					anyDistortionsVisible = anyDistortionsVisible or partClass.pi.distortion
-				  end
-				else
-				  fx.visible = false
-				end
-			  end
-			
+              if (fx.visible) then
+                if (not anyFXVisible) then anyFXVisible = true end
+                anyDistortionsVisible = anyDistortionsVisible or partClass.pi.distortion
+              end
+            else
+              fx.visible = false
+            end
+          end
+
         else
 
           for i=1,#UnitEffects do
@@ -1195,4 +1134,3 @@ if gadget then
   this.DrawUnit = DrawUnit
   --this.GameFrame  = GameFrame; // doesn't work for unsynced parts >yet<
 end
-

@@ -1,14 +1,14 @@
 return {
 	armawac = {
-		acceleration = 0.1140000000596,
-		brakerate = 5,
+		acceleration = 0.114,
+		brakerate = 0.05,
 		buildcostenergy = 8062,
 		buildcostmetal = 165,
 		buildpic = "ARMAWAC.DDS",
 		buildtime = 12819,
 		canfly = true,
 		canmove = true,
-		category = "ALL ANTIEMG NOTLAND MOBILE NOTSUB ANTIFLAME ANTIGATOR ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
+		category = "ALL ANTIEMG NOTLAND MOBILE NOTSUB ANTIFLAME ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 160,
 		description = "Radar/Sonar Plane",

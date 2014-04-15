@@ -1,15 +1,15 @@
 return {
 	armfig = {
-		acceleration = 2.5,
+		acceleration = 0.83,
 		airsightdistance = 700,
-		brakerate = 7.5,
+		brakerate = 0.075,
 		buildcostenergy = 2687,
 		buildcostmetal = 68,
 		buildpic = "ARMFIG.DDS",
 		buildtime = 3465,
 		canfly = true,
 		canmove = true,
-		category = "ALL MOBILE WEAPON ANTIGATOR NOTSUB ANTIFLAME ANTIEMG ANTILASER NOTLAND VTOL NOTSHIP NOTHOVER",
+		category = "ALL MOBILE WEAPON NOTSUB ANTIFLAME ANTIEMG ANTILASER NOTLAND VTOL NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 110,
 		description = "Fighter",

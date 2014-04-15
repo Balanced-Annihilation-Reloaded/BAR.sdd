@@ -1,7 +1,7 @@
 return {
 	coraca = {
 		acceleration = 0.065999999642372,
-		brakerate = 4.275,
+		brakerate = 0.4275,
 		buildcostenergy = 8824,
 		buildcostmetal = 231,
 		builddistance = 136,
@@ -10,7 +10,7 @@ return {
 		buildtime = 18001,
 		canfly = true,
 		canmove = true,
-		category = "ALL NOTLAND MOBILE ANTIGATOR NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
+		category = "ALL NOTLAND MOBILE NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 70,
 		description = "Tech Level 2",
@@ -37,6 +37,7 @@ return {
 		selfdestructas = "SMALL_UNIT_AIR",
 		sightdistance = 383.5,
 		terraformspeed = 650,
+		turninplaceanglelimit = 360,
 		turnrate = 121,
 		workertime = 170,
 		buildoptions = {

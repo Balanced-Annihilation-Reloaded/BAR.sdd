@@ -1,14 +1,14 @@
 return {
 	corawac = {
-		acceleration = 0.096000000834465,
-		brakerate = 3.75,
+		acceleration = 0.114,
+		brakerate = 0.0375,
 		buildcostenergy = 7824,
 		buildcostmetal = 169,
 		buildpic = "CORAWAC.DDS",
 		buildtime = 13264,
 		canfly = true,
 		canmove = true,
-		category = "ALL ANTIEMG NOTLAND MOBILE ANTIGATOR NOTSUB ANTIFLAME ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
+		category = "ALL ANTIEMG NOTLAND MOBILE NOTSUB ANTIFLAME ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 110,
 		description = "Radar/Sonar Plane",

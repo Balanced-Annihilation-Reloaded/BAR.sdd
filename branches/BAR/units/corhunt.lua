@@ -1,7 +1,7 @@
 return {
 	corhunt = {
-		acceleration = 0.059999998658895,
-		brakerate = 3.75,
+		acceleration = 0.06,
+		brakerate = 0.0375,
 		buildcostenergy = 6421,
 		buildcostmetal = 122,
 		buildpic = "CORHUNT.DDS",
@@ -9,7 +9,7 @@ return {
 		canfly = true,
 		canmove = true,
 		cansubmerge = true,
-		category = "ALL ANTIEMG NOTLAND MOBILE ANTIGATOR NOTSUB ANTIFLAME ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
+		category = "ALL ANTIEMG NOTLAND MOBILE NOTSUB ANTIFLAME ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 190,
 		description = "Advanced Radar/Sonar Plane",

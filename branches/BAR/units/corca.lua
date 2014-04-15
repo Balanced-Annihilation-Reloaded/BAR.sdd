@@ -1,7 +1,7 @@
 return {
 	corca = {
 		acceleration = 0.059999998658895,
-		brakerate = 4.275,
+		brakerate = 0.4275,
 		buildcostenergy = 4580,
 		buildcostmetal = 110,
 		builddistance = 136,
@@ -10,7 +10,7 @@ return {
 		buildtime = 9286,
 		canfly = true,
 		canmove = true,
-		category = "ALL MOBILE NOTLAND ANTIGATOR NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
+		category = "ALL MOBILE NOTLAND NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 75,
 		description = "Tech Level 1",
@@ -37,6 +37,7 @@ return {
 		selfdestructas = "SMALL_UNIT_AIR",
 		sightdistance = 351,
 		terraformspeed = 225,
+		turninplaceanglelimit = 360,
 		turnrate = 94,
 		workertime = 45,
 		buildoptions = {

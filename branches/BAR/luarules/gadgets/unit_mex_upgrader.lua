@@ -72,7 +72,7 @@ local autoMexCmdDesc = {
 local upgradeMexCmdDesc = { 
   id      = CMD_UPGRADEMEX, 
   type    = CMDTYPE.ICON_UNIT_OR_AREA, 
-  name    = 'Upgrade Mex', 
+  name    = ' Upgrade \n      Mex', 
   cursor  = 'Attack', 
   action  = 'upgrademex', 
   tooltip = 'Upgrade Mex', 
@@ -518,7 +518,7 @@ end
 function gadget:CommandFallback(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions) 
   --Echo("CF " .. cmdID)  
 
-  if cmdID ~= CMD_UPGRADEMEX then 
+  if cmdID ~= CMD_UPGRADEMEX or not unitID or not unitDefID then 
     return false 
   end 
   

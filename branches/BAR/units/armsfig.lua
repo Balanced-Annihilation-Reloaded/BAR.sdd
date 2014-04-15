@@ -1,8 +1,8 @@
 return {
 	armsfig = {
-		acceleration = 0.47999998927116,
+		acceleration = 0.16,
 		airsightdistance = 700,
-		brakerate = 10,
+		brakerate = 0.1,
 		buildcostenergy = 4274,
 		buildcostmetal = 72,
 		buildpic = "ARMSFIG.DDS",
@@ -10,7 +10,7 @@ return {
 		canfly = true,
 		canmove = true,
 		cansubmerge = true,
-		category = "ALL NOTLAND MOBILE WEAPON ANTIGATOR NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOTSHIP NOTHOVER",
+		category = "ALL NOTLAND MOBILE WEAPON NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 80,
 		description = "Seaplane Swarmer",

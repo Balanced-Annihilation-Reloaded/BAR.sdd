@@ -263,12 +263,14 @@ local function makeMenuTabs()
 			tabCount = tabCount + 1
 			menuTab[tabCount] = Chili.Button:New{
 				tabNum  = i,
+				tooltip = 'You can scroll through the different categories with your mouse wheel!',
 				parent  = menuTabs,
 				width   = '100%',
-				y       = (tabCount - 1) * 100 / #catNames + 1,
-				height  = 100/#catNames-1,
+				y       = (tabCount - 1) * 150 / #catNames + 1,
+				height  = 150/#catNames-1,
 				caption = catNames[i],
 				OnClick = {selectTab},
+				OnMouseWheel = {scrollMenus},
 				font    = {
 					color = {.5, .5, .5, 1}
 				},
@@ -372,8 +374,8 @@ function widget:Initialize()
 		parent  = screen0,
 		choice  = 1,
 		x       = winW,
-		y       = winY,
-		height  = 100,
+		y       = winY+20,
+		height  = 150,
 		width   = 100,
 		padding = {0,0,0,0},
 		margin  = {0,0,0,0}
@@ -468,7 +470,7 @@ function widget:ViewResize(_,scrH)
 	local minMapW = minMapH * aspect
 	
 	buildMenu:SetPos(0, winY, winW, winH)
-	menuTabs:SetPos(winW,winY)
+	menuTabs:SetPos(winW,winY+20)
 	orderMenu:SetPos(minMapW,ordY,ordH*21,ordH)
 	stateMenu:SetPos(winY,0,100,winY)
 	updateRequired = true

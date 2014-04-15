@@ -114,23 +114,29 @@ local function DrawRingCircle(parts, ringSize, ringInnerSize, ringOuterSize, rRi
 		local a1 = (i * radstep)
 		local a2 = ((i+1) * radstep)
 		
+		local a1Sin = math.sin(a1)
+		local a2Sin = math.sin(a2)
+		
+		local a1Cos = math.cos(a1)
+		local a2Cos = math.cos(a2)
+		
 		--(fadefrom)
 		gl.Color(rRing,gRing,bRing,0)
-		gl.Vertex(math.sin(a2)*ringInnerSize, 0, math.cos(a2)*ringInnerSize)
-		gl.Vertex(math.sin(a1)*ringInnerSize, 0, math.cos(a1)*ringInnerSize)
+		gl.Vertex(a2Sin*ringInnerSize, 0, a2Cos*ringInnerSize)
+		gl.Vertex(a1Sin*ringInnerSize, 0, a1Cos*ringInnerSize)
 		--(fadeto)
 		gl.Color(rRing,gRing,bRing,aRing)
-		gl.Vertex(math.sin(a1)*ringSize, 0, math.cos(a1)*ringSize)
-		gl.Vertex(math.sin(a2)*ringSize, 0, math.cos(a2)*ringSize)
+		gl.Vertex(a1Sin*ringSize, 0, a1Cos*ringSize)
+		gl.Vertex(a2Sin*ringSize, 0, a2Cos*ringSize)
 		
 		--(fadefrom)
 		gl.Color(rRing,gRing,bRing,aRing)
-		gl.Vertex(math.sin(a1)*ringSize, 0, math.cos(a1)*ringSize)
-		gl.Vertex(math.sin(a2)*ringSize, 0, math.cos(a2)*ringSize)
+		gl.Vertex(a1Sin*ringSize, 0, a1Cos*ringSize)
+		gl.Vertex(a2Sin*ringSize, 0, a2Cos*ringSize)
 		--(fadeto)
 		gl.Color(rRing,gRing,bRing,0)
-		gl.Vertex(math.sin(a2)*ringOuterSize, 0, math.cos(a2)*ringOuterSize)
-		gl.Vertex(math.sin(a1)*ringOuterSize, 0, math.cos(a1)*ringOuterSize)
+		gl.Vertex(a2Sin*ringOuterSize, 0, a2Cos*ringOuterSize)
+		gl.Vertex(a1Sin*ringOuterSize, 0, a1Cos*ringOuterSize)
 	end
 end
 

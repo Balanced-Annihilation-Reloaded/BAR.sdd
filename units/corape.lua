@@ -1,14 +1,14 @@
 return {
 	corape = {
 		acceleration = 0.15199999511242,
-		brakerate = 3.5629999637604,
+		brakerate = 0.356,
 		buildcostenergy = 6467,
 		buildcostmetal = 345,
 		buildpic = "CORAPE.DDS",
 		buildtime = 14500,
 		canfly = true,
 		canmove = true,
-		category = "ALL MOBILE WEAPON NOTLAND ANTIGATOR VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
+		category = "ALL MOBILE WEAPON NOTLAND VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 100,
 		description = "Gunship",
@@ -31,6 +31,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 550,
+		turninplaceanglelimit = 360,
 		turnrate = 594,
 		customparams = {
 			normalmaps = "yes",

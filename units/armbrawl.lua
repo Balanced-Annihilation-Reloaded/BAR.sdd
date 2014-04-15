@@ -1,14 +1,14 @@
 return {
 	armbrawl = {
 		acceleration = 0.23999999463558,
-		brakerate = 4.4099998474121,
+		brakerate = 0.44,
 		buildcostenergy = 5778,
 		buildcostmetal = 294,
 		buildpic = "ARMBRAWL.DDS",
 		buildtime = 13294,
 		canfly = true,
 		canmove = true,
-		category = "ALL NOTLAND MOBILE WEAPON ANTIGATOR NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOTSHIP NOTHOVER",
+		category = "ALL NOTLAND MOBILE WEAPON NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 100,
 		description = "Gunship",
@@ -31,6 +31,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 550,
+		turninplaceanglelimit = 360,
 		turnrate = 792,
 		customparams = {
 			normalmaps = "yes",

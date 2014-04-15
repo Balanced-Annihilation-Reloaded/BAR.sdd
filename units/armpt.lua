@@ -176,11 +176,12 @@ return {
 		},
 		weapons = {
 			[1] = {
-				badtargetcategory = "ANTIGATOR",
+				badtargetcategory = "LIGHTAIRSCOUT",
 				def = "ARMPT_LASER",
 				onlytargetcategory = "NOTSUB",
 			},
 			[3] = {
+				badtargetcategory = "LIGHTAIRSCOUT",
 				def = "ARMPT_MISSILE",
 				onlytargetcategory = "VTOL",
 			},

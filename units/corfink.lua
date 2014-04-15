@@ -1,14 +1,14 @@
 return {
 	corfink = {
-		acceleration = 0.47999998927116,
-		brakerate = 12.5,
+		acceleration = 0.16,
+		brakerate = 0.0125,
 		buildcostenergy = 1369,
 		buildcostmetal = 26,
 		buildpic = "CORFINK.DDS",
 		buildtime = 2156,
 		canfly = true,
 		canmove = true,
-		category = "ALL MOBILE NOTLAND ANTIGATOR NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
+		category = "ALL MOBILE NOTLAND NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER LIGHTAIRSCOUT",
 		collide = false,
 		cruisealt = 110,
 		description = "Scout Plane",

@@ -1,14 +1,14 @@
 return {
 	armatlas = {
 		acceleration = 0.090000003576279,
-		brakerate = 7.5,
+		brakerate = 0.75,
 		buildcostenergy = 1239,
 		buildcostmetal = 64,
 		buildpic = "ARMATLAS.DDS",
 		buildtime = 3850,
 		canfly = true,
 		canmove = true,
-		category = "ALL MOBILE WEAPON NOTLAND ANTIGATOR NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOTSHIP NOTHOVER",
+		category = "ALL MOBILE WEAPON NOTLAND NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 70,
 		description = "Air Transport",
@@ -34,6 +34,7 @@ return {
 		transportcapacity = 1,
 		transportmass = 5000,
 		transportsize = 3,
+		turninplaceanglelimit = 360,
 		turnrate = 550,
 		customparams = {
 			normalmaps = "yes",

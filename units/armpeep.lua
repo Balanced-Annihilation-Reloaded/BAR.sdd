@@ -1,14 +1,14 @@
 return {
 	armpeep = {
-		acceleration = 0.60000002384186,
-		brakerate = 11.25,
+		acceleration = 0.2,
+		brakerate = 0.01125,
 		buildcostenergy = 1475,
 		buildcostmetal = 30,
 		buildpic = "ARMPEEP.DDS",
 		buildtime = 2585,
 		canfly = true,
 		canmove = true,
-		category = "ALL MOBILE NOTLAND NOTSUB ANTIFLAME ANTIGATOR ANTIEMG ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
+		category = "ALL MOBILE NOTLAND NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER LIGHTAIRSCOUT",
 		collide = false,
 		cruisealt = 180,
 		description = "Scout Plane",

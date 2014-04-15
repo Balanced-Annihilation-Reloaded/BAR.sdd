@@ -1,15 +1,15 @@
 return {
 	corveng = {
-		acceleration = 2.5,
+		acceleration = 0.83,
 		airsightdistance = 700,
-		brakerate = 6.5,
+		brakerate = 0.065,
 		buildcostenergy = 2636,
 		buildcostmetal = 68,
 		buildpic = "CORVENG.DDS",
 		buildtime = 3333,
 		canfly = true,
 		canmove = true,
-		category = "ALL MOBILE WEAPON ANTIGATOR VTOL ANTIFLAME ANTIEMG ANTILASER NOTLAND NOTSUB NOTSHIP NOTHOVER",
+		category = "ALL MOBILE WEAPON VTOL ANTIFLAME ANTIEMG ANTILASER NOTLAND NOTSUB NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 110,
 		description = "Fighter",

@@ -12,7 +12,7 @@ return {
 		buildinggrounddecaltype = "corexp_aoplane.dds",
 		buildpic = "COREXP.DDS",
 		buildtime = 2724,
-		category = "ALL NOTLAND ANTIGATOR NOTSUB ANTIEMG NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
+		category = "ALL NOTLAND NOTSUB ANTIEMG NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
 		description = "Armed Metal Extractor",
 		explodeas = "MEDIUM_BUILDINGEX",

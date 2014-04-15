@@ -1,7 +1,7 @@
 return {
 	corsb = {
-		acceleration = 0.083999998867512,
-		brakerate = 1.5,
+		acceleration = 0.0276,
+		brakerate = 0.015,
 		buildcostenergy = 7936,
 		buildcostmetal = 182,
 		buildpic = "CORSB.DDS",
@@ -9,7 +9,7 @@ return {
 		canfly = true,
 		canmove = true,
 		cansubmerge = true,
-		category = "ALL NOTLAND MOBILE WEAPON ANTIGATOR VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
+		category = "ALL NOTLAND MOBILE WEAPON VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 110,
 		description = "Seaplane Bomber",

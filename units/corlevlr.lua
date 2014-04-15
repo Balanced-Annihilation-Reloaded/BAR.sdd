@@ -7,7 +7,7 @@ return {
 		buildpic = "CORLEVLR.DDS",
 		buildtime = 3009,
 		canmove = true,
-		category = "ALL TANK MOBILE WEAPON ANTIGATOR ANTIEMG NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
+		category = "ALL TANK MOBILE WEAPON ANTIEMG NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
 		description = "Riot Tank",
 		energymake = 0.30000001192093,
@@ -119,7 +119,7 @@ return {
 				weaponvelocity = 550,
 				damage = {
 					bombers = 27,
-					default = 220,
+					default = 190,
 					fighters = 27,
 					subs = 5,
 					vtol = 27,

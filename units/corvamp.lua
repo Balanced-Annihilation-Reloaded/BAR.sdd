@@ -1,15 +1,15 @@
 return {
 	corvamp = {
-		acceleration = 0.49200001358986,
+		acceleration = 0.166,
 		airsightdistance = 800,
-		brakerate = 8.75,
+		brakerate = 0.0875,
 		buildcostenergy = 3448,
 		buildcostmetal = 98,
 		buildpic = "CORVAMP.DDS",
 		buildtime = 6554,
 		canfly = true,
 		canmove = true,
-		category = "ALL NOTLAND MOBILE WEAPON ANTIGATOR VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
+		category = "ALL NOTLAND MOBILE WEAPON VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 160,
 		description = "Stealth Fighter",

@@ -1,7 +1,7 @@
 return {
 	corseap = {
-		acceleration = 0.3120000064373,
-		brakerate = 4.75,
+		acceleration = 0.104,
+		brakerate = 0.0475,
 		buildcostenergy = 6785,
 		buildcostmetal = 234,
 		buildpic = "CORSEAP.DDS",
@@ -9,7 +9,7 @@ return {
 		canfly = true,
 		canmove = true,
 		cansubmerge = true,
-		category = "ALL NOTLAND MOBILE WEAPON ANTIGATOR VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
+		category = "ALL NOTLAND MOBILE WEAPON VTOL ANTIFLAME ANTIEMG ANTILASER NOTSUB NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 100,
 		description = "Torpedo Seaplane",

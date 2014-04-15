@@ -19,7 +19,7 @@ end
 
 local enabled = tonumber(Spring.GetModOptions().mo_noowner) or 0
 
-if (enabled == 0) then 
+if (enabled == 0) then
 	return false
 end
 
@@ -30,28 +30,35 @@ local GetTeamUnits = Spring.GetTeamUnits
 local DestroyUnit = Spring.DestroyUnit
 local GetUnitTransporter = Spring.GetUnitTransporter
 local spGetAIInfo = Spring.GetAIInfo
+local GetGameFrame = Spring.GetGameFrame
+local Echo = Spring.Echo
 local deadTeam = {}
 local droppedTeam = {}
 deadTeam[Spring.GetGaiaTeamID()] = true
 
-function GetTeamIsTakeable(team)
-	local players = GetPlayerList(true)
-	for _, player in ipairs(players) do
-		local _, _, _, playerTeam = GetPlayerInfo(player)
-		if (playerTeam == team) then
-			return false
-		end
+function GetTeamIsTakeable(teamID)
+	local players = GetPlayerList(teamID)
+	local allResigned = true
+	local noneControlling = true
+	for _, playerID in pairs(players) do
+		local name, active, spec = GetPlayerInfo(playerID)
+		allResigned = allResigned and spec
+		noneControlling = noneControlling and not active and spec
 	end
-	return true
+	return noneControlling, allResigned
 end
 
 function gadget:TeamDied(teamID)
 	deadTeam[teamID] = true
 end
 
-local function destroyTeam(team, nowrecks)
-	local teamUnits = GetTeamUnits(team)
-	frame=Spring.GetGameFrame()
+local function destroyTeam(teamID)
+	local teamUnits = GetTeamUnits(teamID)
+	local frame = GetGameFrame()
+	local nowrecks = false
+	if frame < 30*120 then
+		nowrecks=true
+	end
 	for _, unitID in pairs(teamUnits) do
 		if not GetUnitTransporter(unitID) then
 			if nowrecks then --teams dying before 2 minutes dont leave wrecks
@@ -62,54 +69,53 @@ local function destroyTeam(team, nowrecks)
 		end
 	end
 	if nowrecks then
-		Spring.Echo("No Owner Mode: Removing Team " .. team)
+		Spring.Echo("No Owner Mode: Removing Team " .. teamID)
 	else
-		Spring.Echo("No Owner Mode: Destroying Team " .. team)
+		Spring.Echo("No Owner Mode: Destroying Team " .. teamID)
 	end
-	deadTeam[team] = true
+	deadTeam[teamID] = true
 end
 
 function gadget:GameFrame(n)
 	if ((n % 30) < 1) then
-		for _, team in ipairs(GetTeamList()) do
-			if (not deadTeam[team]) and GetTeamIsTakeable(team) and (not spGetAIInfo(team)) then
-				if (not droppedTeam[team]) then
-					if n<30*120 then
-						Spring.Echo("No Owner Mode: Team " .. team .. " has 1 minute to reconnect")
-					else 
-						Spring.Echo("No Owner Mode: Team " .. team .. " has 3 minutes to reconnect")
+		for _, teamID in pairs(GetTeamList()) do
+			local noneControlling, allResigned = GetTeamIsTakeable(teamID)
+			if not deadTeam[teamID] and noneControlling and not spGetAIInfo(teamID) then
+				if not droppedTeam[teamID] then
+					if allResigned then
+						destroyTeam(teamID) -- destroy the team immediately if all players in it resigned
+					elseif n<30*120 then
+						Echo("No Owner Mode: Team " .. teamID .. " has 1 minute to reconnect")
+					else
+						Echo("No Owner Mode: Team " .. teamID .. " has 3 minutes to reconnect")
 					end
-					droppedTeam[team] = n
+					droppedTeam[teamID] = n
 				end
-			elseif droppedTeam[team] then
-				Spring.Echo("No Owner Mode: Team " .. team .. " reconnected")
-				droppedTeam[team] = nil
+			elseif droppedTeam[teamID] then
+				Echo("No Owner Mode: Team " .. teamID .. " reconnected")
+				droppedTeam[teamID] = nil
 			end
 		end
-		for team,time in pairs(droppedTeam) do
+		for teamID,time in pairs(droppedTeam) do
 			local graceperiod = 5400 --3 minute grace period
 			if time < 30*120 then
 				graceperiod = 1800 --1 minute grace period for early droppers
 			end
-			if (n - time) > graceperiod then  
-				if time < 30*120 then 
-					destroyTeam(team,true) --nowrecks=true
-				else
-					destroyTeam(team,false) --nowrecks=false
-				end
-				droppedTeam[team] = nil
+			if (n - time) > graceperiod then
+				destroyTeam(teamID)
+				droppedTeam[teamID] = nil
 			end
 		end
 	end
 end
 
 function gadget:AllowUnitTransfer(unitID, unitDefID, oldTeam, newTeam, capture)
-	if deadTeam[newTeam] then
-		return false
-	else
-		return true
-	end
+	return not deadTeam[newTeam]
 end
- 
+
+function gadget:GameOver()
+	gadgetHandler:RemoveGadget()
+end
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

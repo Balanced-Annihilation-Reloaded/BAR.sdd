@@ -1,14 +1,14 @@
 return {
 	armthund = {
-		acceleration = 0.096000000834465,
-		brakerate = 5.0,
+		acceleration = 0.032,
+		brakerate = 0.05,
 		buildcostenergy = 4075,
 		buildcostmetal = 145,
 		buildpic = "ARMTHUND.DDS",
 		buildtime = 4778,
 		canfly = true,
 		canmove = true,
-		category = "ALL MOBILE WEAPON NOTLAND ANTIGATOR NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOTSHIP NOTHOVER",
+		category = "ALL MOBILE WEAPON NOTLAND NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 165,
 		description = "Bomber",

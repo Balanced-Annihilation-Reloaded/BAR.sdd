@@ -13,9 +13,9 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local commandHistory			= {}
-local commandHistoryCoords		= {}
-local commandCoordsRendered		= {}
+local commandHistory			= {}	
+local commandHistoryCoords		= {}	-- this table is used to count cmd´s with same coordinates
+local commandCoordsRendered		= {}	-- this table is used to skip cmd´s that have the same coordinates
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ local OPTIONS = {
 	ringWidth				= 2,
 	ringStartSize			= 4,
 	ringScale				= 0.75,
-	reduceOverlapEffect		= 0.15,		-- when spotters have the same coordinates: reduce the opacity: 1 is no reducing while 0 is no adding
+	reduceOverlapEffect		= 0.08,		-- when spotters have the same coordinates: reduce the opacity: 1 is no reducing while 0 is no adding
 	types = {
 		leftclick = {
 			size			= 0.55,
@@ -117,26 +117,26 @@ local function DrawRingCircle(parts, ringSize, ringInnerSize, ringOuterSize, rRi
 		local a1Sin = math.sin(a1)
 		local a2Sin = math.sin(a2)
 		
-		local a1Cos = math.cos(a1)
-		local a2Cos = math.cos(a2)
+		a1 = math.cos(a1)
+		a2 = math.cos(a2)
 		
 		--(fadefrom)
 		gl.Color(rRing,gRing,bRing,0)
-		gl.Vertex(a2Sin*ringInnerSize, 0, a2Cos*ringInnerSize)
-		gl.Vertex(a1Sin*ringInnerSize, 0, a1Cos*ringInnerSize)
+		gl.Vertex(a2Sin*ringInnerSize, 0, a2*ringInnerSize)
+		gl.Vertex(a1Sin*ringInnerSize, 0, a1*ringInnerSize)
 		--(fadeto)
 		gl.Color(rRing,gRing,bRing,aRing)
-		gl.Vertex(a1Sin*ringSize, 0, a1Cos*ringSize)
-		gl.Vertex(a2Sin*ringSize, 0, a2Cos*ringSize)
+		gl.Vertex(a1Sin*ringSize, 0, a1*ringSize)
+		gl.Vertex(a2Sin*ringSize, 0, a2*ringSize)
 		
 		--(fadefrom)
 		gl.Color(rRing,gRing,bRing,aRing)
-		gl.Vertex(a1Sin*ringSize, 0, a1Cos*ringSize)
-		gl.Vertex(a2Sin*ringSize, 0, a2Cos*ringSize)
+		gl.Vertex(a1Sin*ringSize, 0, a1*ringSize)
+		gl.Vertex(a2Sin*ringSize, 0, a2*ringSize)
 		--(fadeto)
 		gl.Color(rRing,gRing,bRing,0)
-		gl.Vertex(a2Sin*ringOuterSize, 0, a2Cos*ringOuterSize)
-		gl.Vertex(a1Sin*ringOuterSize, 0, a1Cos*ringOuterSize)
+		gl.Vertex(a2Sin*ringOuterSize, 0, a2*ringOuterSize)
+		gl.Vertex(a1Sin*ringOuterSize, 0, a1*ringOuterSize)
 	end
 end
 
@@ -206,8 +206,7 @@ function widget:DrawWorldPreUnit()
 		elseif  OPTIONS.types[cmdType].color[4] > 0  or  OPTIONS.types[cmdType].ringColor[4] > 0  then
 			if commandCoordsRendered[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] == nil then
 				commandCoordsRendered[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] = true
-				local alphaMultiplier = 1
-				--local alphaMultiplier = 1 + (commandHistoryCoords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] - 1) * OPTIONS.reduceOverlapEffect
+				local alphaMultiplier = 1 + (OPTIONS.reduceOverlapEffect * (commandHistoryCoords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] - 1))	 -- add a bit to the multiplier for each cmd issued on the same coords
 				
 				local size	= OPTIONS.size * OPTIONS.types[cmdType].size
 				local a		= (1 - ((osClock - clickOsClock) / OPTIONS.duration)) * OPTIONS.opacity * alphaMultiplier

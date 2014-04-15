@@ -7,13 +7,15 @@ piece  pelvis, torso, lleg, lfoot, rleg, rfoot, head,
        rflare , lflare , lancher,tflare ,lthigh,rthigh;
 
 static-var  bMoving, bAiming, Static_Var_3, restore_delay, Static_Var_5,
-            gun_1, Static_Var_7, Static_Var_8;
+            gun_1, Static_Var_7, Static_Var_8, Unit_Depth;
 
 // Signal definitions
 #define SIG_AIM				2
 #define SIG_AIM_3			8
 #define SIG_MOVE			16
 
+#define LASER_DEPTH			-1364387
+#define TORP_DEPTH			-945887
 
 walk()
 {
@@ -662,8 +664,10 @@ RestoreAfterDelay()
 
 AimTertiary(heading, pitch)
 {
-    if ( get IN_WATER(0) == 0 )
-    {
+	Unit_Depth = get GROUND_WATER_HEIGHT(get UNIT_XZ);
+	//get PRINT( Unit_Depth );
+    if ( Unit_Depth > TORP_DEPTH )
+    {									  
      return (0);
     }
 	signal SIG_AIM_3;
@@ -692,7 +696,9 @@ QueryTertiary(piecenum)
 
 AimPrimary(heading, pitch)
 {
-    if ( get IN_WATER(0) == 1 )
+	Unit_Depth = get GROUND_WATER_HEIGHT(get UNIT_XZ);
+	//get PRINT( Unit_Depth );
+    if ( Unit_Depth < LASER_DEPTH )
     {
      return (0);
     }

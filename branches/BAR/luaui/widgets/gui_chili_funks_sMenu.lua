@@ -14,7 +14,7 @@ end
 --------------
 
 -- Config --
-local nCol, nRow = 8, 3
+local nCol, nRow = 3, 8
 local catNames = {'ECONOMY', 'DEFENSE', 'INTEL', 'FACTORIES', 'BUILD'} -- order matters
 local imageDir = 'luaui/images/buildIcons/'
 
@@ -265,8 +265,8 @@ local function makeMenuTabs()
 				tabNum  = i,
 				parent  = menuTabs,
 				width   = '100%',
-				y       = (tabCount - 1) * tabH / #catNames + 1,
-				height  = tabH/#catNames-1,
+				y       = (tabCount - 1) * 100 / #catNames + 1,
+				height  = 100/#catNames-1,
 				caption = catNames[i],
 				OnClick = {selectTab},
 				font    = {
@@ -346,59 +346,22 @@ function widget:Initialize()
 
 	Chili = WG.Chili
 	screen0 = Chili.Screen0
-
-	-- WIP to customize layout
-	-- config --
-	local vertical = true
-	local minMapBottom = true
-	------------
-
-	-- these numbers are used by numerous chili widgets
-	--  TODO should be an include or global object
+	
 	local scrH = screen0.height
-	local tabB = 0
-	local ordH = scrH * 0.07
-	local selH = scrH * 0.2
-	local selW = selH
-	minMapH = scrH * 0.3
-	minMapW = minMapH * Game.mapX/Game.mapY
-
-	if (Game.mapX/Game.mapY > 1) then
-		minMapW = minMapH*(Game.mapX/Game.mapY)^0.5
-		minMapH = minMapW * Game.mapY/Game.mapX
-	end
-
-	if minMapBottom then
-		selW = minMapW
-		selH = minMapH
-	end
-
-	if vertical then
-		local tempRow = nRow
-		nRow = nCol
-		nCol = tempRow
-		winH = scrH * 0.5
-		winW = winH * nCol / nRow
-		tabH = winH/3
-		winX = 0
-		winB = selH
-		tabB = winB + selH
-	else
-		winH = scrH * 0.15
-		winW = winH * nCol / nRow
-		tabH = winH
-		winX = selW
-		winB = 0
-	end
-
-
+	local ordH = scrH * 0.05
+	local winY = scrH * 0.2
+	local winH = scrH * 0.5
+	local winW = winH * nCol / nRow
+	local aspect = Game.mapX/Game.mapY
+	local minMapH = scrH * 0.3
+	local minMapW = minMapH * aspect
 
 	buildMenu = Chili.Window:New{
 		parent       = screen0,
 		name         = 'buildMenu',
 		active       = false,
-		x            = winX,
-		bottom       = winB,
+		x            = 0,
+		y            = winY,
 		width        = winW,
 		height       = winH,
 		padding      = {0,0,0,0},
@@ -408,10 +371,10 @@ function widget:Initialize()
 	menuTabs = Chili.Control:New{
 		parent  = screen0,
 		choice  = 1,
-		x       = winX + winW,
-		bottom  = tabB,
+		x       = winW,
+		y       = winY,
+		height  = 100,
 		width   = 100,
-		height  = tabH,
 		padding = {0,0,0,0},
 		margin  = {0,0,0,0}
 	}
@@ -420,8 +383,8 @@ function widget:Initialize()
 		parent      = screen0,
 		columns     = 21,
 		rows        = 1,
-		bottom      = 0,
-		x           = selW,
+		y           = scrH - ordH,
+		x           = minMapW,
 		height      = ordH,
 		width       = ordH*21,
 		padding     = {0,0,0,0},
@@ -434,7 +397,7 @@ function widget:Initialize()
 		y       = 1,
 		x       = scrH * 0.2,
 		height  = scrH * 0.2,
-		width   = scrH * 0.1,
+		width   = 100,
 		padding = {0,0,0,0},
 	}
 
@@ -493,8 +456,26 @@ function widget:Initialize()
 
 end
 --------------------------- 
+-- quick and dirty fix for resizing (needs clean up, repeating code etc..)
+function widget:ViewResize(_,scrH)
+	local ordH = scrH * 0.05
+	local ordY = scrH - ordH
+	local winY = scrH * 0.2
+	local winH = scrH * 0.5
+	local winW = winH * nCol / nRow
+	local aspect = Game.mapX/Game.mapY
+	local minMapH = scrH * 0.3
+	local minMapW = minMapH * aspect
+	
+	buildMenu:SetPos(0, winY, winW, winH)
+	menuTabs:SetPos(winW,winY)
+	orderMenu:SetPos(minMapW,ordY,ordH*21,ordH)
+	stateMenu:SetPos(winY,0,100,winY)
+	updateRequired = true
+end
+--------------------------- 
 -- When Available Commands change this is called
---  sets Updaterequired to true
+--  sets Updaterequired to true (checked in widget:Update)
 function widget:CommandsChanged()
 	updateRequired = true
 end

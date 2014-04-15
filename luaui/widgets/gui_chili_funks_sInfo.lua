@@ -14,9 +14,8 @@ end
 
 local imageDir = 'luaui/images/buildIcons/'
 
-local Chili ,infoWindow, groundInfo, groundText
+local Chili, screen, infoWindow, groundInfo, groundText
 local unitInfo, unitName, unitIcon, selectionGrid, unitHealthText, unitHealth
-local screenH, screenW, winSize
 local healthBars = {}
 local updateNow  = false
 
@@ -257,10 +256,8 @@ function widget:Initialize()
 	end
 	
 	Chili   = WG.Chili
-	local screen = Chili.Screen0
-	screenH = screen.height
-	screenW = screen.width
-	winSize = screenH * 0.2
+	screen = Chili.Screen0
+	local winSize = screen.height * 0.2
 	
 	--Main window, ancestor of everything
 	infoWindow = Chili.Window:New{
@@ -339,8 +336,8 @@ function widget:Update()
 		if infoWindow.visible then infoWindow:Hide() end
 		if groundInfo.hidden then groundInfo:Show() end
 	else
-		if infoWindow.hidden then infoWindow:Show() end
 		if groundInfo.visible then groundInfo:Hide() end
+		if infoWindow.hidden then infoWindow:Show() end
 	end
 	
 	local timer = spGetTimer()
@@ -355,7 +352,10 @@ function widget:Update()
 		healthTimer = timer
 	end
 end
-
+----------------------------------
+function widget:ViewResize(_,scrH)
+	infoWindow:Resize(scrH*0.2,scrH*0.2)
+end
 ----------------------------------
 function widget:Shutdown()
 	infoWindow:Dispose()

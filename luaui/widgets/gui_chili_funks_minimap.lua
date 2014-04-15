@@ -28,21 +28,20 @@ local GL_PROJECTION      = GL.PROJECTION
 local GL_MODELVIEW       = GL.MODELVIEW
 --
 
-local function MakeMinimapWindow()
+local function MakeMinimapWindow(screenH)
 	
 	if (minimap) then
 		minimap:Dispose()
 	end
 
 	local aspect = Game.mapX/Game.mapY
-	local screenH = Chili.Screen0.height
 	local h = screenH * 0.3
 	local w = h * aspect
 	
-	if aspect > 1 then
-		w = h * aspect^0.5
-		h = w / aspect
-	end
+	--~ if aspect > 1 then
+		--~ w = h * aspect^0.5
+		--~ h = w / aspect
+	--~ end
 	
 	minimap = Chili.Window:New{
 		name      = "Minimap", 
@@ -57,8 +56,8 @@ local function MakeMinimapWindow()
 	
 end
 
-function widget:ViewResize(vsx, vsy)
-	MakeMinimapWindow()
+function widget:ViewResize(_, vsy)
+	MakeMinimapWindow(vsy)
 end
 
 function widget:Initialize()
@@ -76,7 +75,7 @@ function widget:Initialize()
 	
 	Chili = WG.Chili
 	
-	MakeMinimapWindow()
+	MakeMinimapWindow(Chili.Screen0.height)
 	
 	gl.SlaveMiniMap(true)
 end

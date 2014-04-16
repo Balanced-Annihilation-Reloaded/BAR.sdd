@@ -731,6 +731,16 @@ local function DrawFilledCircleOutFading(pos, size, cornerCount)
 			glVertex(sin(t) * size, 0, cos(t) * size)
 		end
 	end)
+	-- draw extra glow as base
+	glBeginEnd(GL.TRIANGLE_FAN, function()
+		SetColor(usingCmd, 1/15)
+		glVertex(0,0,0)
+		SetColor(usingCmd, 0)
+		local baseSize = size * 2.8
+		for t = 0, pi2, pi2 / 8 do
+			glVertex(sin(t) * baseSize, 0, cos(t) * baseSize)
+		end
+	end)
 	glPopMatrix()
 end
 
@@ -738,10 +748,10 @@ local function DrawFormationDots(vertFunction, zoomY, unitCount)
 	local currentLength = 0
 	local lengthPerUnit = lineLength / (unitCount-1)
 	local lengthUnitNext = lengthPerUnit
-	local dotSize = sqrt(zoomY*0.1)
+	local dotSize = sqrt(zoomY*0.075)
 	if (#fNodes > 1) and (unitCount > 1) then
 		SetColor(usingCmd, 0.6)
-		DrawFilledCircleOutFading(fNodes[1], dotSize, 8)
+		DrawFilledCircleOutFading(fNodes[1], dotSize, 11)
 		if (#fNodes > 2) then
 			for i=1, #fNodes-1 do
 				local x = fNodes[i][1]
@@ -757,13 +767,13 @@ local function DrawFormationDots(vertFunction, zoomY, unitCount)
 						{fNodes[i][1] + ((fNodes[i+1][1] - fNodes[i][1]) * factor),
 						fNodes[i][2] + ((fNodes[i+1][2] - fNodes[i][2]) * factor),
 						fNodes[i][3] + ((fNodes[i+1][3] - fNodes[i][3]) * factor)}
-					DrawFilledCircleOutFading(factorPos, dotSize, 8)
+					DrawFilledCircleOutFading(factorPos, dotSize, 11)
 					lengthUnitNext = lengthUnitNext + lengthPerUnit
 				end
 				currentLength = currentLength + length
 			end
 		end
-		DrawFilledCircleOutFading(fNodes[#fNodes], dotSize, 8)
+		DrawFilledCircleOutFading(fNodes[#fNodes], dotSize, 11)
 	end
 end
 

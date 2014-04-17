@@ -44,7 +44,7 @@ return {
 		movementclass = "AKBOT2",
 		name = "Commander",
 		nochasecategory = "ALL",
-		objectname = "ARMCOM",
+		objectname = "ARMCOM.s3o",
 		radardistance = 700,
 		radaremitheight = 40,
 		reclaimable = false,
@@ -89,6 +89,8 @@ return {
 		customparams = {
 			iscommander = true,
 			paralyzemultiplier = 0.025000000372529,
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

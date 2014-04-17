@@ -530,11 +530,12 @@ QuerySecondary(piecenum)
 }
 
 AimSecondary(heading, pitch)
-{
-    //if ( get PIECE_Y(head) > -7 ) // What was this even supposed to do?
-    //{
-    // 	return (0);
-    //}
+{	
+	get PRINT(get PIECE_Y(dish))
+    if ( get PIECE_Y(dish) > -4 ) // Check Depth of Unit Part (Dish) Before Firing
+    {
+     	return (0);
+    }
 	if( Static_Var_4 == 1 )
 	{
 		return (0);

@@ -115,10 +115,10 @@ function widget:Initialize()
 	window0 = Chili.Window:New{
 		name = "wnd_profiler",
 		caption = "Profiler";
-		x = 200,
-		y = 450,
-		width  = 400,
-		height = 400,
+		x = 400,
+		y = 250,
+		width  = 500,
+		height = 500,
 		parent = Chili.Screen0,
 		layer = 1,
 

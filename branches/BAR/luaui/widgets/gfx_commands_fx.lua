@@ -1,7 +1,7 @@
 function widget:GetInfo()
    return {
-      name      = "Unit Command FX",
-      desc      = "Renders a little glow-pulse wherever commands are queued",
+      name      = "Commands FX",
+      desc      = "Adds glow-pulses wherever commands are queued. Including mapmarks",
       author    = "Floris",
       date      = "14.04.2014",
       license   = "GNU GPL, v2 or later",
@@ -13,24 +13,42 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+-- NOTE:  STILL IN DEVELOPMENT!
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
 local commandHistory			= {}	
 local commandHistoryCoords		= {}	-- this table is used to count cmd´s with same coordinates
 local commandCoordsRendered		= {}	-- this table is used to skip cmd´s that have the same coordinates
+local mapNicknameTime			= {}	-- this table is used to filter out previous map drawing nicknames if user has drawn something new
+local ownPlayerID				= Spring.GetMyPlayerID()
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 local OPTIONS = {
-	size 					= 28,
-	opacity 				= 1,
-	leftClickSize 			= 0.63,
-	duration				= 0.7,
-	baseParts				= 14,		-- (note that if camera is distant the number of parts will be reduced, up to 6 as minimum)
-	ringParts				= 24,		-- (note that if camera is distant the number of parts will be reduced, up to 6 as minimum)
-	ringWidth				= 2,
-	ringStartSize			= 4,
-	ringScale				= 0.75,
-	reduceOverlapEffect		= 0.08,		-- when spotters have the same coordinates: reduce the opacity: 1 is no reducing while 0 is no adding
+	showMapmarkFx 				= true,
+	showMapmarkSpecNames		= true,
+	nicknameOpacityMultiplier	= 6,		-- multiplier applied to the given color opacity of the type: 'map_draw'
+	size 						= 28,
+	
+	--cameraScalingAmount		= 0,		-- 0: is no scaling, 1: fully scale up according to camera distance.
+	
+	opacity 					= 1,
+	leftClickSize 				= 0.63,
+	duration					= 0.7,
+	baseParts					= 14,		-- (note that if camera is distant the number of parts will be reduced, up to 6 as minimum)
+	ringParts					= 24,		-- (note that if camera is distant the number of parts will be reduced, up to 6 as minimum)
+	ringWidth					= 2,
+	ringStartSize				= 4,
+	ringScale					= 0.75,
+	reduceOverlapEffect			= 0.08,		-- when spotters have the same coordinates: reduce the opacity: 1 is no reducing while 0 is no adding
+	
+	drawLine					= false,
+	linePartWidth				= 15,
+	linePartLength				= 20,
+	
 	types = {
 		leftclick = {
 			size			= 0.55,
@@ -61,6 +79,21 @@ local OPTIONS = {
 			size			= 1,
 			color 			= {0.00 ,0.00 ,1.00 ,0.25},
 			ringColor		= {0.00 ,0.00 ,1.00 ,0.25}
+		},
+		map_mark = {
+			size			= 3,
+			color 			= {1.00 ,1.00 ,1.00 ,0.50},
+			ringColor		= {1.00 ,1.00 ,1.00 ,0.70}
+		},
+		map_draw = {
+			size			= 0.63,
+			color 			= {1.00 ,1.00 ,1.00 ,0.15},
+			ringColor		= {1.00 ,1.00 ,1.00 ,0.00}
+		},
+		map_erase = {
+			size			= 2.7,
+			color 			= {1.00 ,1.00 ,1.00 ,0.12},
+			ringColor		= {1.00 ,1.00 ,1.00 ,0.00}
 		}
 	}
 }
@@ -69,9 +102,12 @@ local OPTIONS = {
 --------------------------------------------------------------------------------
 
 
-local function AddCommandSpotter(cmdType, x, y, z, osClock, unitID)
+local function AddCommandSpotter(cmdType, x, y, z, osClock, unitID, playerID)
 	if not unitID then
 		unitID = 0
+	end
+	if not playerID then
+		playerID = false
 	end
 	local uniqueNumber = unitID..'_'..osClock
 	commandHistory[uniqueNumber] = {
@@ -80,7 +116,8 @@ local function AddCommandSpotter(cmdType, x, y, z, osClock, unitID)
 		y			= y,
 		z			= z,
 		osClock		= osClock,
-		unitID		= unitID
+		unitID		= unitID,
+		playerID	= playerID
 	}
 	if commandHistoryCoords[cmdType..x..y..z] then
 		commandHistoryCoords[cmdType..x..y..z] = commandHistoryCoords[cmdType..x..y..z] + 1
@@ -141,9 +178,85 @@ local function DrawRingCircle(parts, ringSize, ringInnerSize, ringOuterSize, rRi
 end
 
 
+local function DrawLine(x1,y1,z1, x2,y2,z2, width, partLength)
+	local xDifference		= x2 - x1
+	local yDifference		= y2 - y1
+	local zDifference		= z2 - z1
+	local halfWidth			= width / 2
+	local thetaInRadians	= math.atan2(yDifference, xDifference)
+	local theta				= thetaInRadians * 180 / math.pi
+	local perpendicular		= theta + 90;
+	if (perpendicular > 360) then
+		perpendicular = perpendicular - 360
+	elseif (perpendicular < 0) then
+		perpendicular = perpendicular + 360
+	end
+	local perpendicularInRadians = perpendicular * math.pi / 180
+
+	local yOffset = math.sin(perpendicularInRadians) * halfWidth
+	local xOffset = math.cos(perpendicularInRadians) * halfWidth
+	
+	--Spring.Echo(yOffset .. '   ' .. xOffset)
+	
+	gl.Vertex(0+xOffset, 0+yOffset, 0)
+	gl.Vertex(0-xOffset, 0-yOffset, 0)
+	
+	gl.Vertex((x2-x1)-xOffset, (y2-y1)-yOffset, z2-z1)
+	gl.Vertex((x2-x1)+xOffset, (y2-y1)+yOffset, z2-z1)
+	
+	
+	if 1 == 2 then
+		local distance = math.sqrt(xDifference*xDifference + yDifference*yDifference + zDifference*zDifference)
+		local parts = Round(distance / partLength)
+		local partDistance = distance / parts
+		local partSpacing = 0.8
+		for i = 1, parts do
+			
+			
+			
+		end
+	end
+end
+
+
+local function SetupCommandColors(state)
+	local alpha = state and 1 or 0
+	--Spring.LoadCmdColorsConfig('move  0.5 1.0 0.5 ' .. alpha)
+end
+
+
 ------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------
 
+--	Engine Triggers
+
+------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+
+
+function widget:Initialize()
+	SetupCommandColors(false)
+end
+
+
+function widget:Shutdown()
+	SetupCommandColors(true)
+end
+
+
+function widget:MapDrawCmd(playerID, cmdType, x, y, z, a, b, c)
+	local osClock = os.clock()
+	if OPTIONS.showMapmarkFx then
+		if cmdType == 'point' then
+			AddCommandSpotter('map_mark', x, y, z, osClock, false, playerID)
+		elseif cmdType == 'line' then
+			mapNicknameTime[playerID] = osClock
+			AddCommandSpotter('map_draw', x, y, z, osClock, false, playerID)
+		elseif cmdType == 'erase' then
+			AddCommandSpotter('map_erase', x, y, z, osClock, false, playerID)
+		end
+	end
+end
 
 function widget:MousePress(x, y, button)
 	local traceType, tracedScreenRay = Spring.TraceScreenRay(x, y, true)
@@ -178,9 +291,6 @@ function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpti
 end
 
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
 
 function widget:DrawWorldPreUnit()
 	
@@ -195,14 +305,24 @@ function widget:DrawWorldPreUnit()
 	
 		local clickOsClock	= cmdValue.osClock
 		local cmdType		= cmdValue.cmdType
+		local unitID		= cmdValue.unitID
+		local playerID		= cmdValue.playerID
 		
+		-- remove when duration has passed
 		if osClock - clickOsClock > OPTIONS.duration then
 			if commandHistoryCoords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] <= 1 then
 				commandHistoryCoords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] = nil
 			else
 				commandHistoryCoords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] = commandHistoryCoords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] - 1
 			end
-			commandHistory[cmdKey] = nil		-- remove because its no longer visible
+			commandHistory[cmdKey] = nil
+			
+		-- remove nicknames when user has drawn something new
+		elseif  OPTIONS.showMapmarkSpecNames  and  cmdType == 'map_draw'  and  mapNicknameTime[playerID] ~= nil  and  clickOsClock < mapNicknameTime[playerID] then
+			
+			commandHistory[cmdKey] = nil
+			
+		-- draw all
 		elseif  OPTIONS.types[cmdType].color[4] > 0  or  OPTIONS.types[cmdType].ringColor[4] > 0  then
 			if commandCoordsRendered[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] == nil then
 				commandCoordsRendered[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] = true
@@ -241,7 +361,54 @@ function widget:DrawWorldPreUnit()
 					if parts < 6 then parts = 6 end
 					gl.BeginEnd(GL.QUADS, DrawRingCircle, parts, ringSize, ringInnerSize, ringOuterSize, rRing,gRing,bRing,aRing)
 				end
+				
+				-- line
+				if OPTIONS.drawLine and cmdType == 'move' then
+					gl.Color(r,g,b,a)
+					local cmdQueue = Spring.GetUnitCommands(unitID)
+					if cmdQueue ~= nil then
+						if #cmdQueue < 2  and 1 == 2 then		-- should only be unit coords if unit has no queue with cmd-coords
+							local originX, originY, originZ = Spring.GetUnitPosition(unitID)
+							gl.BeginEnd(GL.QUADS, DrawLine, cmdValue.x, cmdValue.y, cmdValue.z, originX, originY, originZ, OPTIONS.linePartWidth, OPTIONS.linePartLength)
+						end
+						
+						for i=1, #cmdQueue do
+							
+							if (cmdQueue[i].id == CMD.MOVE) then
+								local originX	= cmdQueue[i].params[1]
+								local originY	= cmdQueue[i].params[2]
+								local originZ	= cmdQueue[i].params[3]
+								if i == 1 then
+									local prevX, prevY, prevZ = Spring.GetUnitPosition(unitID)
+									--gl.Translate(originX, originY, originZ)
+									gl.BeginEnd(GL.QUADS, DrawLine, originX, originY, originZ, prevX, prevY, prevZ, OPTIONS.linePartWidth, OPTIONS.linePartLength)
+								else
+									local prevX		= cmdQueue[i-1].params[1]
+									local prevY		= cmdQueue[i-1].params[2]
+									local prevZ		= cmdQueue[i-1].params[3]
+									if cmdQueue[i-1].id == CMD.MOVE then
+										gl.Translate(originX, originY, originZ)
+										--gl.BeginEnd(GL.QUADS, DrawLine, originX, originY, originZ, prevX, prevY, prevZ, OPTIONS.linePartWidth, OPTIONS.linePartLength)
+									end
+								end
+							end
+						end
+					end
+				end
+				
+				-- text
+				if  playerID  and  cmdType == 'map_draw'  and  OPTIONS.showMapmarkSpecNames and  playerID ~= ownPlayerID then
+					-- if spectator
+					local playerInfo = Spring.GetPlayerInfo(playerID)
+					if (select(3, playerInfo)) then		
+						local nickname = select(1, playerInfo)
+						gl.Color(r,g,b, a * OPTIONS.nicknameOpacityMultiplier )
+						gl.Billboard()
+						gl.Text(nickname, 0, -28, 20, "cn")
+					end
+				end
 				gl.PopMatrix()
+				
 			end
 		end
 	end

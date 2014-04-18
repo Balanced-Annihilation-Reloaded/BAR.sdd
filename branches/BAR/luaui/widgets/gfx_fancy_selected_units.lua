@@ -15,7 +15,7 @@ end
 
 -- NOTE:  STILL IN DEVELOPMENT!
 -- dont change things if it will break current behavior plz
--- also notify me if youÂ´re about to work on this widget, thanks!
+-- also (18/04/14) notify Floris if you´re about to work on this widget, thanks!
 
 -- TODO / Known Issues:
 -- general performance optimisations
@@ -56,7 +56,6 @@ selectedUnitsData['totalSelectedUnits']	= 0
 
 local teamList = Spring.GetTeamList()
 local numberOfTeams = #teamList
-
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -101,13 +100,14 @@ local OPTIONS = {
 	-- animation
 	rotationSpeed					= 0.08,
 	selectionStartAnimation			= true,
-	selectionStartAnimationTime		= 0.065,		-- for now keeping it a lil bit higher than needed for clarity when developing 
+	selectionStartAnimationTime		= 0.25, --high so as visible while developing
 	selectionStartAnimationScale	= 0.8,
 	-- selectionStartAnimationScale	= 1.17,
-	selectionStartAnimationOpacity	= 0.11,			-- starts with this addition opacity, over makes it overflow a bit at the end of the fadein
+	selectionStartAnimationOpacity	= 0.11,	-- starts with this addition opacity, over makes it overflow a bit at the end of the fadein
 	selectionEndAnimation			= true,
-	selectionEndAnimationTime		= 0.1,			-- for now keeping it a lil bit higher than needed for clarity when developing 
+	selectionEndAnimationTime		= 0.25, --high so as visible while developing
 	selectionEndAnimationScale		= 0.9,
+	selectionEndAnimationOpacity    = 0.11,
 	-- selectionEndAnimationScale	= 1.17,
 	animationSpeed					= 0.0007,
 	animateSpotterSize				= true,
@@ -118,6 +118,46 @@ local OPTIONS = {
 
 ------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------
+
+local currentSelClock = os.clock()
+local maxSelectTime = 0
+local maxDeselectedTime = -1
+
+local function updateSelectedUnitsData()
+
+	-- remove deselected units 
+	local os_clock = os.clock()
+	for unitID in pairs(selectedUnitsData['unit']) do
+		if not Spring.IsUnitSelected(unitID) and selectedUnitsData['unit'][unitID]['selected'] then
+			selectedUnitsData['unit'][unitID]['selected'] = false 
+			selectedUnitsData['unit'][unitID]['new'] = false
+			selectedUnitsData['unit'][unitID]['old'] = os_clock
+		end
+	end
+
+	currentSelClock = os_clock
+	
+	-- add selected units
+	if Spring.GetSelectedUnitsCount() > 0 then
+		local units = Spring.GetSelectedUnitsSorted()
+		for uDID,_ in pairs(units) do
+			if uDID ~= 'n' then --'n' returns table size
+				for i=1,#units[uDID] do
+					local unitID = units[uDID][i]
+					local unit = UNITCONF[uDID]
+					if (unit) then
+						if not KeyExists(selectedUnitsData['unit'], unitID) then
+							selectedUnitsData['unit'][unitID]				= {}
+							selectedUnitsData['unit'][unitID]['new']		= currentSelClock
+							selectedUnitsData['unit'][unitID]['selected']	= true
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
 
 
 function KeyExists(tbl, key)
@@ -130,70 +170,18 @@ function KeyExists(tbl, key)
 	return false
 end
 
+function Round(num, idp)
+    local mult = 10^(idp or 0)
+    return math.floor(num * mult + 0.5) / mult
+end
 
 local function SetupCommandColors(state)
 	local alpha = state and 1 or 0
 	Spring.LoadCmdColorsConfig('unitBox  0 1 0 ' .. alpha)
 end
 
-
-function Round(num, idp)
-    local mult = 10^(idp or 0)
-    return math.floor(num * mult + 0.5) / mult
-end
-
-
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-
-
-local function updateSelectedUnitsData()
-
-	-- remove old deselected units, BUT ONLY AFTER THEY HAVE FADED AWAY
-	currentClock = os.clock()
-	local maxDeselectedTime	= currentClock - OPTIONS.selectionEndAnimationTime
-	local maxSelectTime		= currentClock - OPTIONS.selectionStartAnimationTime
-	for unitID in pairs(selectedUnitsData['unit']) do
-		if not Spring.IsUnitSelected(unitID) then
-			selectedUnitsData['unit'][unitID]['selected'] = false 
-			selectedUnitsData['unit'][unitID]['new'] = false
-			if selectedUnitsData['unit'][unitID]['clock'] < maxDeselectedTime then
-				selectedUnitsData['unit'][unitID] = nil
-			end
-		end
-	end
-	
-	-- add selected units
-	local units = Spring.GetVisibleUnits(-1, 30, true)
-	for i=1, #units do
-		local unitID = units[i]
-		local udid = Spring.GetUnitDefID(unitID)
-		local unit = UNITCONF[udid]
-		
-		if (unit) then
-			if (Spring.IsUnitSelected(unitID)) then
-				if not KeyExists(selectedUnitsData['unit'], unitID) then
-					selectedUnitsData['unit'][unitID]				= {}
-					selectedUnitsData['unit'][unitID]['new']		= currentClock
-					selectedUnitsData['unit'][unitID]['selected']	= true
-					--selectedUnitsData['unit'][unitID]['visible']	= Spring.IsUnitVisible(unitID, 30, true)
-				end
-				selectedUnitsData['unit'][unitID]['clock'] = currentClock
-				if selectedUnitsData['unit'][unitID]['new']  and  selectedUnitsData['unit'][unitID]['new'] < maxSelectTime then
-					selectedUnitsData['unit'][unitID]['new']		= false
-				end
-			end
-		end
-	end
-	
-	-- Just simply using: "Spring.GetSelectedUnitsCount()" wont count the deselected units that are still fading away!
-	selectedUnitsData['totalSelectedUnits'] = 0
-	for unitID in pairs(selectedUnitsData['unit']) do
-		selectedUnitsData['totalSelectedUnits'] = selectedUnitsData['totalSelectedUnits'] + 1
-	end
-end
-
-
 
 -- Creating polygons:
 local function CreateDisplayLists(callback)
@@ -538,12 +526,17 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+function widget:CommandsChanged()
+	updateSelectedUnitsData()	
+end
+
 
 local degrot = {}
 function widget:GameFrame(frame)
-	
-	updateSelectedUnitsData()		-- skipping this results in laggy start animation and a missing end animation
-	
+	currentClock = os.clock()
+	maxSelectTime = currentClock - OPTIONS.selectionStartAnimationTime
+	maxDeselectedTime = currentClock - OPTIONS.selectionEndAnimationTime
+
 	--if frame %2~=0 then return end
 	
 	-- logs current unit direction	(needs regular updates for air units, and for buildings only once)
@@ -595,19 +588,28 @@ function DrawSelectionSpottersPart(type, r,g,b,a,scale, opposite, relativeScaleS
 			
 			local changedScale = 1
 				
-			-- check if the unit is deselected
-			if OPTIONS.selectionEndAnimation  or  OPTIONS.selectionStartAnimation then
+			if not selectedUnitsData['unit'][unitID] then return end 
+				
+			if (OPTIONS.selectionEndAnimation  or  OPTIONS.selectionStartAnimation) then
 				if changeOpacity then
 					gl.Color(r,g,b,a)
 				end
-				if (OPTIONS.selectionEndAnimation  and  not selectedUnitsData['unit'][unitID]['selected']) then
-					changedScale = 1 - (((currentClock - selectedUnitsData['unit'][unitID]['clock']) / OPTIONS.selectionEndAnimationTime)) * (1 - OPTIONS.selectionEndAnimationScale)
-					if (changeOpacity) then
-						local newAlpha = a + (((currentClock - selectedUnitsData['unit'][unitID]['clock']) / OPTIONS.selectionEndAnimationTime) * (1-a))
-						gl.Color(r,g,b,newAlpha)
+				-- check if the unit is deselected
+				if (OPTIONS.selectionEndAnimation and not selectedUnitsData['unit'][unitID]['selected']) then
+					--Spring.Echo(maxDeselectedTime, selectedUnitsData['unit'][unitID]['old'])
+					if (maxDeselectedTime < selectedUnitsData['unit'][unitID]['old']) then
+						changedScale = OPTIONS.selectionEndAnimationScale + (((selectedUnitsData['unit'][unitID]['old'] - maxDeselectedTime) / OPTIONS.selectionEndAnimationTime)) * (1 - OPTIONS.selectionEndAnimationScale)
+						if (changeOpacity) then
+							local newAlpha = 1 - OPTIONS.selectionEndAnimationOpacity - (((selectedUnitsData['unit'][unitID]['old'] - maxDeselectedTime) / OPTIONS.selectionEndAnimationTime) * (1-a))
+							gl.Color(r,g,b,newAlpha)
+						end
+					else
+						selectedUnitsData['unit'][unitID] = nil
+						return
 					end
 				-- check if the unit is newly selected
-				elseif (OPTIONS.selectionStartAnimation  and selectedUnitsData['unit'][unitID]['new']) then
+				elseif (OPTIONS.selectionStartAnimation and selectedUnitsData['unit'][unitID]['new'] > maxSelectTime) then
+					--Spring.Echo(selectedUnitsData['unit'][unitID]['new'] - maxSelectTime)
 					changedScale = OPTIONS.selectionStartAnimationScale + (((currentClock - selectedUnitsData['unit'][unitID]['new']) / OPTIONS.selectionStartAnimationTime)) * (1 - OPTIONS.selectionStartAnimationScale)
 					if (changeOpacity) then
 						local newAlpha = 1 - OPTIONS.selectionStartAnimationOpacity - (((currentClock - selectedUnitsData['unit'][unitID]['new']) / OPTIONS.selectionStartAnimationTime) * (1-a))
@@ -615,6 +617,7 @@ function DrawSelectionSpottersPart(type, r,g,b,a,scale, opposite, relativeScaleS
 					end
 				end
 			end
+
 			local usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs ,opposite)
 			if type == 'normal solid'  or  type == 'normal alpha' then
 				
@@ -719,17 +722,12 @@ function DrawSelectionSpotters(r,g,b,a,scale, opposite, relativeScaleSchrinking)
 	DrawSelectionSpottersPart('alphabuffer2', r,g,b,a,scale, opposite, relativeScaleSchrinking)
 end
 
-
-
-
 function widget:DrawWorldPreUnit()
 	
 	local clockDifference = (os.clock() - previousOsClock)
 	previousOsClock = os.clock()
 	
-   --if Spring.IsGUIHidden() then return end
-	
-	if (selectedUnitsData['totalSelectedUnits'] == 0) then return end
+   if Spring.IsGUIHidden() then return end
 	
 	gl.PushAttrib(GL.COLOR_BUFFER_BIT)
 	gl.DepthTest(false)
@@ -773,7 +771,6 @@ function widget:DrawWorldPreUnit()
 			end
 		end
 	end
-	
 	
 	-- loop teams
 	for teamListIndex=1, numberOfTeams do
@@ -866,12 +863,10 @@ function widget:DrawWorldPreUnit()
 			
 		end --if #teamVisibleSelected > 0
 	end
-	
-	
+
 	gl.Color(1,1,1,1)
 	gl.PopAttrib()
 end
---allySelUnits
 
 	
 

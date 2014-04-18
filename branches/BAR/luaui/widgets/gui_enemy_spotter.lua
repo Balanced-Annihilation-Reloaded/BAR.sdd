@@ -33,11 +33,10 @@ local drawWithHiddenGUI                 = true    -- keep widget enabled when gr
 local skipOwnAllyTeam                   = true    -- keep this 'true' if you dont want circles rendered under your own units
 
 local circleSize                        = 1
-local circleDivs                        = 12      -- how precise circle? octagon by default
-local innercircleOpacity                = 0.35
-local outercircleOpacity                = 0.3
-local innerSize                         = 0.8    -- circle scale compared to unit radius
-local outerSize                         = 1.35    -- outer fade size compared to circle scale (1 = no outer fade)
+local circleDivs                        = 12      -- how precise circle?
+local circleOpacity                     = 0.18
+local innerSize                         = 1.35    -- circle scale compared to unit radius
+local outerSize                         = 1.30    -- outer fade size compared to circle scale (1 = no outer fade)
                                         
 local defaultColorsForAllyTeams         = 0       -- (number of teams)   if number <= of total numebr of allyTeams then dont use teamcoloring but default colors
 local keepTeamColorsForSmallAllyTeam    = 3       -- (number of teams)   use teamcolors if number or teams (inside allyTeam)  <=  this value
@@ -47,20 +46,8 @@ local spotterColor = {                            -- default color values
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
--- Automatically generated local definitions
-
-local GL_ONE                  = GL.ONE
-local GL_ONE_MINUS_SRC_ALPHA  = GL.ONE_MINUS_SRC_ALPHA
-local GL_SRC_ALPHA            = GL.SRC_ALPHA
-local glBlending              = gl.Blending
-local glBeginEnd              = gl.BeginEnd
-local glColor                 = gl.Color
-local glCreateList            = gl.CreateList
-local glDeleteList            = gl.DeleteList
-local glDepthTest             = gl.DepthTest
 local glDrawListAtUnit        = gl.DrawListAtUnit
-local glPolygonOffset         = gl.PolygonOffset
-local glVertex                = gl.Vertex
+
 local spGetTeamColor          = Spring.GetTeamColor
 local spGetUnitDefDimensions  = Spring.GetUnitDefDimensions
 local spGetUnitDefID          = Spring.GetUnitDefID
@@ -80,8 +67,13 @@ local myAllyID                = Spring.GetMyAllyTeamID()
 local realRadii               = {}
 local circlePolys             = {}
 local allyToSpotterColor      = {}
+local unitConf                = {}
 local allyToSpotterColorCount = 0
 local pickTeamColor           = false
+
+-- preferred to keep these values the same as fancy unit selections widget
+local rectangleFactor		= 3.3
+local scalefaktor			= 2.9
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -89,6 +81,9 @@ local pickTeamColor           = false
 
 -- Creating polygons:
 function widget:Initialize()
+
+	setUnitConf()
+	
    local allyTeamList = spGetAllyTeamList()
    local numberOfAllyTeams = #allyTeamList
    for allyTeamListIndex = 1, numberOfAllyTeams do
@@ -117,41 +112,41 @@ function widget:Initialize()
          end
          
          
-         circlePolys[allyID] = glCreateList(function()
+         circlePolys[allyID] = gl.CreateList(function()
          
-            glBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)      -- disable layer blending
+            gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)      -- disable layer blending
             
             -- colored inner circle:
-            glBeginEnd(GL.TRIANGLES, function()
+            gl.BeginEnd(GL.TRIANGLES, function()
                local radstep = (2.0 * math.pi) / circleDivs
                for i = 1, circleDivs do
                   local a1 = (i * radstep)
                   local a2 = ((i+1) * radstep)
                   --(fadefrom)
-                  glColor(usedSpotterColor[1], usedSpotterColor[2], usedSpotterColor[3], 0)
-                  glVertex(0, 0, 0)
+                  gl.Color(usedSpotterColor[1], usedSpotterColor[2], usedSpotterColor[3], 0)
+                  gl.Vertex(0, 0, 0)
                   --(colorSet)
-                  glColor(usedSpotterColor[1], usedSpotterColor[2], usedSpotterColor[3], innercircleOpacity)
-                  glVertex(math.sin(a1), 0, math.cos(a1))
-                  glVertex(math.sin(a2), 0, math.cos(a2))
+                  gl.Color(usedSpotterColor[1], usedSpotterColor[2], usedSpotterColor[3], circleOpacity)
+                  gl.Vertex(math.sin(a1), 0, math.cos(a1))
+                  gl.Vertex(math.sin(a2), 0, math.cos(a2))
                end
             end)
             
             if (outerSize ~= 1) then
                -- colored outer circle:
-               glBeginEnd(GL.QUADS, function()
+               gl.BeginEnd(GL.QUADS, function()
                   local radstep = (2.0 * math.pi) / circleDivs
                   for i = 1, circleDivs do
                      local a1 = (i * radstep)
                      local a2 = ((i+1) * radstep)
                      --(colorSet)
-                     glColor(usedSpotterColor[1], usedSpotterColor[2], usedSpotterColor[3], outercircleOpacity)
-                     glVertex(math.sin(a1), 0, math.cos(a1))
-                     glVertex(math.sin(a2), 0, math.cos(a2))
+                     gl.Color(usedSpotterColor[1], usedSpotterColor[2], usedSpotterColor[3], circleOpacity)
+                     gl.Vertex(math.sin(a1), 0, math.cos(a1))
+                     gl.Vertex(math.sin(a2), 0, math.cos(a2))
                      --(fadeto)
-                     glColor(usedSpotterColor[1], usedSpotterColor[2], usedSpotterColor[3], 0)
-                     glVertex(math.sin(a2)*outerSize, 0, math.cos(a2)*outerSize)
-                     glVertex(math.sin(a1)*outerSize, 0, math.cos(a1)*outerSize)
+                     gl.Color(usedSpotterColor[1], usedSpotterColor[2], usedSpotterColor[3], 0)
+                     gl.Vertex(math.sin(a2)*outerSize, 0, math.cos(a2)*outerSize)
+                     gl.Vertex(math.sin(a1)*outerSize, 0, math.cos(a1)*outerSize)
                   end
                end)
             end
@@ -160,30 +155,40 @@ function widget:Initialize()
    end
 end
 
+
 function widget:Shutdown()
-   --glDeleteList(circlePolys)
+	local allyTeamList = spGetAllyTeamList()
+	for i=1, #allyTeamList do
+		local allyID = allyTeamList[i]
+		if circlePolys[allyID] then
+			gl.DeleteList(circlePolys[allyID])
+		end
+	end
 end
 
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-
--- Retrieving radius:
-local function GetUnitDefRealRadius(udid)
-   local radius = realRadii[udid]
-   if (radius) then return radius end
-   local ud = UnitDefs[udid]
-   if (ud == nil) then return nil end
-   local dims = spGetUnitDefDimensions(udid)
-   if (dims == nil) then return nil end
-   local scale = ud.hitSphereScale -- missing in 0.76b1+
-   scale = ((scale == nil) or (scale == 0.0)) and 1.0 or scale
-   radius = dims.radius / scale
-   realRadii[udid] = radius*circleSize
-   return radius
+function setUnitConf()
+	for udid, unitDef in pairs(UnitDefs) do
+		local xsize, zsize = unitDef.xsize, unitDef.zsize
+		local scale = scalefaktor*( xsize^2 + zsize^2 )^0.5
+		local shape, xscale, zscale
+		
+		if (unitDef.isBuilding or unitDef.isFactory or unitDef.speed==0) then
+			shape = 'square'
+			xscale, zscale = rectangleFactor * xsize, rectangleFactor * zsize
+		elseif (unitDef.isAirUnit) then
+			shape = 'triangle'
+			xscale, zscale = scale, scale
+		else
+			shape = 'circle'
+			xscale, zscale = scale, scale
+		end
+		unitConf[udid] = {shape=shape, xscale=xscale, zscale=zscale}
+	end
 end
-
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -194,21 +199,21 @@ function widget:DrawWorldPreUnit()
    if not drawWithHiddenGUI then
       if spIsGUIHidden() then return end
    end
-   glDepthTest(true)
-   glPolygonOffset(-100, -2)
+   gl.DepthTest(true)
+   gl.PolygonOffset(-100, -2)
    local visibleUnits = spGetVisibleUnits()
    if #visibleUnits then
       for i=1, #visibleUnits do
-         unitID = visibleUnits[i]
+         local unitID = visibleUnits[i]
          local allyID = spGetUnitAllyTeam(unitID)
          if circlePolys[allyID] ~= nil then
             if not skipOwnAllyTeam  or  (skipOwnAllyTeam  and  not (allyID == myAllyID))  then
                local unitDefIDValue = spGetUnitDefID(unitID)
                if (unitDefIDValue) then
-                  local radius = GetUnitDefRealRadius(unitDefIDValue) * circleSize
-                  if (radius) then
-                     glDrawListAtUnit(unitID, circlePolys[allyID], false, radius, 1.0, radius)
-                  end
+                  
+					local unit = unitConf[unitDefIDValue]
+					glDrawListAtUnit(unitID, circlePolys[allyID], false, unit.xscale*2, 1.0, unit.zscale*2)
+					
                end
             end
          end

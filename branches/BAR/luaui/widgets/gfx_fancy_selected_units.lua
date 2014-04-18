@@ -51,8 +51,10 @@ local animationMultiplierAdd		= true
 
 local selectedUnits					= {}
 
-local teamList = Spring.GetTeamList()
-local numberOfTeams = #teamList
+local currentSelClock = os.clock() --time at which selected units last changed
+local maxSelectTime = 0 --time at which units "new selection" animation will end
+local maxDeselectedTime = --team at which units deselection animation will end
+
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -115,10 +117,6 @@ local OPTIONS = {
 
 ------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------
-
-local currentSelClock = os.clock()
-local maxSelectTime = 0
-local maxDeselectedTime = -1
 
 local function updateSelectedUnitsData()
 

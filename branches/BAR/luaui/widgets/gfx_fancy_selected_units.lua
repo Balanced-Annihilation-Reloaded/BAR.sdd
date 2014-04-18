@@ -534,9 +534,10 @@ end
 
 local degrot = {}
 function widget:GameFrame(frame)
-	if frame%3~=0 then return end
 
-	updateSelectedUnitsData()	
+	updateSelectedUnitsData()
+	
+	if frame%3~=0 then return end
 	
 	for unitID in pairs(selectedUnitsData['unit']) do
 		local dirx, _, dirz = Spring.GetUnitDirection(unitID)

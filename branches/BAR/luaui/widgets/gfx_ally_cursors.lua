@@ -10,7 +10,7 @@
 function widget:GetInfo()
 	return {
 		name	= "Ally Cursors",
-		desc	= "Shows the mouse position and name of (allied) players and specs",
+		desc	= "Shows the mouse pos of allied players",
 		author	= "jK,TheFatController",
 		date	= "Apr,2009",
 		license	= "GNU GPL, v2 or later",
@@ -22,23 +22,52 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+-- Console commands:
+
+-- /allycursorsnames
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
 -- configs
 
-local cursorSize			= 6.5
-local drawNames				= true
-local fontSizePlayer		= 21
-local fontSizeSpec          = 17
-local sendPacketEvery		= 0.7
-local numMousePos			= 2 --//num mouse pos in 1 packet
+local cursorSize				= 11
+local drawNames					= true
+local drawNamesCursorSize		= 7
+local fontSizePlayer			= 21
+local fontSizeSpec				= 17
+local sendPacketEvery			= 0.8
+local numMousePos				= 2 --//num mouse pos in 1 packet
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local alliedCursorsPos = {}
+local pairs					= pairs
+
+local spGetGroundHeight		= Spring.GetGroundHeight
+local spGetPlayerInfo		= Spring.GetPlayerInfo
+local spGetTeamColor		= Spring.GetTeamColor
+local spIsSphereInView		= Spring.IsSphereInView
+
+local alliedCursorsPos		= {}
+
+
+local teamColors			= {}
+local color,time,wx,wz,lastUpdateDiff,scale,iscale,fscale,gy --keep memory always allocated for these since they are referenced so frequently
+local notIdle				= {}
+
+local usedCursorSize		= 12
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 
 function widget:Initialize()
 	widgetHandler:RegisterGlobal('MouseCursorEvent', MouseCursorEvent)
+	
+	if drawNames then
+		usedCursorSize = drawNamesCursorSize
+	end
 end
 
 
@@ -58,6 +87,7 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
 local playerPos = {}
 function MouseCursorEvent(playerID,x,z,click)
 	local playerPosList = playerPos[playerID] or {}
@@ -78,7 +108,7 @@ function MouseCursorEvent(playerID,x,z,click)
 			acp[i*2+1] = playerPosList[i+1].x
 			acp[i*2+2] = playerPosList[i+1].z
 		end
-
+		
 		acp[(numMousePos+1)*2+1] = os.clock()
 		acp[(numMousePos+1)*2+2] = playerPosList[#playerPosList].click
 	else
@@ -95,10 +125,11 @@ function MouseCursorEvent(playerID,x,z,click)
 
 		acp[(numMousePos+1)*2+1] = os.clock()
 		acp[(numMousePos+1)*2+2] = playerPosList[#playerPosList].click
-		_,_,_,acp[(numMousePos+1)*2+3] = Spring.GetPlayerInfo(playerID)
+		_,_,_,acp[(numMousePos+1)*2+3] = spGetPlayerInfo(playerID)
 	end
 end
 
+--------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 
@@ -113,12 +144,6 @@ local function DrawGroundquad(wx,gy,wz,size)
 	gl.Vertex(wx+size,gy+size,wz-size)
 end
 
-
-local teamColors = {}
-local color
-local time,wx,wz,lastUpdateDiff,scale,iscale,fscale,gy --keep memory always allocated for these since they are referenced so frequently
-local notIdle = {}
-
 local function SetTeamColor(teamID,playerID,a)
 	color = teamColors[playerID]
 	if color then
@@ -127,8 +152,8 @@ local function SetTeamColor(teamID,playerID,a)
 	end
 	
 	--make color
-	local r, g, b = Spring.GetTeamColor(teamID)
-	local _, _, isSpec = Spring.GetPlayerInfo(playerID)
+	local r, g, b = spGetTeamColor(teamID)
+	local _, _, isSpec = spGetPlayerInfo(playerID)
 	if isSpec then
 		color = {1, 1, 1, 0.6}
 	elseif r and g and b then
@@ -141,8 +166,8 @@ end
 
 
 function widget:PlayerChanged(playerID)
-	local _, _, isSpec, teamID = Spring.GetPlayerInfo(playerID)
-	local r, g, b = Spring.GetTeamColor(teamID)
+	local _, _, isSpec, teamID = spGetPlayerInfo(playerID)
+	local r, g, b = spGetTeamColor(teamID)
 	local color
 	if isSpec then
 		color = {1, 1, 1, 0.6}
@@ -161,10 +186,10 @@ function widget:DrawWorldPreUnit()
 	time = os.clock()
 	for playerID,data in pairs(alliedCursorsPos) do 
 		--local teamID = data[#data]
-		local name,_,spec,teamID = Spring.GetPlayerInfo(playerID)
+		name,_,spec,teamID = spGetPlayerInfo(playerID)
 		
-		local wx,wz = data[1],data[2]
-		local lastUpdatedDiff = time-data[#data-2] + 0.025
+		wx,wz = data[1],data[2]
+		lastUpdatedDiff = time-data[#data-2] + 0.025
 		
 		if (lastUpdatedDiff<sendPacketEvery) then
 			scale  = (1-(lastUpdatedDiff/sendPacketEvery))*numMousePos
@@ -176,16 +201,16 @@ function widget:DrawWorldPreUnit()
 		
 		if notIdle[playerID] then
 			--draw a cursor
-			local gy = Spring.GetGroundHeight(wx,wz)
-			if (Spring.IsSphereInView(wx,gy,wz,cursorSize)) then
+			local gy = spGetGroundHeight(wx,wz)
+			if (spIsSphereInView(wx,gy,wz,usedCursorSize)) then
 				SetTeamColor(teamID,playerID,1)
 				if not drawNames  or  drawNames and not spec then
 					if cursorGlow or drawNames then
 						gl.Texture('LuaUI/Images/AlliedCursors.png')
-						gl.BeginEnd(GL.QUADS,DrawGroundquad,wx,gy,wz,cursorSize)
+						gl.BeginEnd(GL.QUADS,DrawGroundquad,wx,gy,wz,usedCursorSize)
 						gl.Texture(false)
 					else
-						gl.BeginEnd(GL.QUADS,DrawGroundquad,wx,gy,wz,cursorSize)
+						gl.BeginEnd(GL.QUADS,DrawGroundquad,wx,gy,wz,usedCursorSize)
 					end
 				end
 				
@@ -198,8 +223,8 @@ function widget:DrawWorldPreUnit()
 						gl.Color(1,1,1,0.55)
 						gl.Text(name, 0, 0, fontSizeSpec, "cn")
 					else
-						local verticalOffset = cursorSize + 12.5
-						local horizontalOffset = cursorSize + 2
+						local verticalOffset = usedCursorSize + 12.5
+						local horizontalOffset = usedCursorSize + 2
 						-- text shadow
 						gl.Color(0,0,0,0.6)
 						gl.Text(name, horizontalOffset-(fontSizePlayer/45), verticalOffset-(fontSizePlayer/38), fontSizePlayer, "n")
@@ -227,7 +252,32 @@ function widget:DrawWorldPreUnit()
 	gl.PolygonOffset(false)
 	gl.Texture(false)
 	gl.DepthTest(false)
-end       				
+end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
+-- (console) commands
+function widget:TextCommand(command)
+    if (string.find(command, "allycursors_names") == 1  and  string.len(command) == 17) then drawNames = not drawNames end
+    
+	if drawNames then
+		usedCursorSize = drawNamesCursorSize
+	end
+end
+
+-- save data
+function widget:GetConfigData(data)
+    savedTable = {}
+    savedTable.drawNames  = drawNames
+    return savedTable
+end
+
+-- restore data
+function widget:SetConfigData(data)
+    if data.drawNames ~= nil   then  drawNames   = data.drawNames end
+	
+	if drawNames then
+		usedCursorSize = drawNamesCursorSize
+	end
+end

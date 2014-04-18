@@ -1,6 +1,6 @@
 function widget:GetInfo()
    return {
-      name      = "Commands FX",
+      name      = "Commands FX - dev",
       desc      = "Adds glow-pulses wherever commands are queued. Including mapmarks",
       author    = "Floris",
       date      = "14.04.2014",
@@ -14,6 +14,7 @@ end
 --------------------------------------------------------------------------------
 
 -- NOTE:  STILL IN DEVELOPMENT!
+-- dont change without asking/permission
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -21,7 +22,8 @@ end
 local commandHistory			= {}	
 local commandHistoryCoords		= {}	-- this table is used to count cmd´s with same coordinates
 local commandCoordsRendered		= {}	-- this table is used to skip cmd´s that have the same coordinates
-local mapNicknameTime			= {}	-- this table is used to filter out previous map drawing nicknames if user has drawn something new
+local mapDrawNicknameTime		= {}	-- this table is used to filter out previous map drawing nicknames if user has drawn something new
+local mapEraseNicknameTime		= {}	-- 
 local ownPlayerID				= Spring.GetMyPlayerID()
 
 --------------------------------------------------------------------------------
@@ -51,48 +53,48 @@ local OPTIONS = {
 	
 	types = {
 		leftclick = {
-			size			= 0.55,
-			color 			= {1.00 ,0.50 ,0.00 ,0.28},
+			size			= 0.58,
+			baseColor 		= {1.00 ,0.50 ,0.00 ,0.28},
 			ringColor		= {1.00 ,0.50 ,0.00 ,0.12}
 		},
 		rightclick = {
-			size			= 0.55,
-			color 			= {1.00 ,0.75 ,0.00 ,0.25},
+			size			= 0.58,
+			baseColor		= {1.00 ,0.75 ,0.00 ,0.25},
 			ringColor		= {1.00 ,0.75 ,0.00 ,0.11}
 		},
 		move = {
 			size			= 1,
-			color 			= {0.00 ,1.00 ,0.00 ,0.25},
+			baseColor		= {0.00 ,1.00 ,0.00 ,0.25},
 			ringColor		= {0.00 ,1.00 ,0.00 ,0.25}
 		},
 		fight = {
 			size			= 1.2,
-			color 			= {1.00 ,0.00 ,1.00 ,0.25},
+			baseColor		= {1.00 ,0.00 ,1.00 ,0.25},
 			ringColor		= {1.00 ,0.00 ,1.00 ,0.35}
 		},
 		attack = {
 			size			= 1.4,
-			color 			= {1.00 ,0.00 ,0.00 ,0.30},
+			baseColor		= {1.00 ,0.00 ,0.00 ,0.30},
 			ringColor		= {1.00 ,0.00 ,0.00 ,0.40}
 		},
 		patrol = {
 			size			= 1,
-			color 			= {0.00 ,0.00 ,1.00 ,0.25},
+			baseColor		= {0.00 ,0.00 ,1.00 ,0.25},
 			ringColor		= {0.00 ,0.00 ,1.00 ,0.25}
 		},
 		map_mark = {
 			size			= 3,
-			color 			= {1.00 ,1.00 ,1.00 ,0.50},
+			baseColor		= {1.00 ,1.00 ,1.00 ,0.50},
 			ringColor		= {1.00 ,1.00 ,1.00 ,0.70}
 		},
 		map_draw = {
 			size			= 0.63,
-			color 			= {1.00 ,1.00 ,1.00 ,0.15},
+			baseColor		= {1.00 ,1.00 ,1.00 ,0.15},
 			ringColor		= {1.00 ,1.00 ,1.00 ,0.00}
 		},
 		map_erase = {
 			size			= 2.7,
-			color 			= {1.00 ,1.00 ,1.00 ,0.12},
+			baseColor		= {1.00 ,1.00 ,1.00 ,0.12},
 			ringColor		= {1.00 ,1.00 ,1.00 ,0.00}
 		}
 	}
@@ -250,9 +252,10 @@ function widget:MapDrawCmd(playerID, cmdType, x, y, z, a, b, c)
 		if cmdType == 'point' then
 			AddCommandSpotter('map_mark', x, y, z, osClock, false, playerID)
 		elseif cmdType == 'line' then
-			mapNicknameTime[playerID] = osClock
+			mapDrawNicknameTime[playerID] = osClock
 			AddCommandSpotter('map_draw', x, y, z, osClock, false, playerID)
 		elseif cmdType == 'erase' then
+			mapEraseNicknameTime[playerID] = osClock
 			AddCommandSpotter('map_erase', x, y, z, osClock, false, playerID)
 		end
 	end
@@ -318,12 +321,12 @@ function widget:DrawWorldPreUnit()
 			commandHistory[cmdKey] = nil
 			
 		-- remove nicknames when user has drawn something new
-		elseif  OPTIONS.showMapmarkSpecNames  and  cmdType == 'map_draw'  and  mapNicknameTime[playerID] ~= nil  and  clickOsClock < mapNicknameTime[playerID] then
+		elseif  OPTIONS.showMapmarkSpecNames  and  cmdType == 'map_draw'  and  mapDrawNicknameTime[playerID] ~= nil  and  clickOsClock < mapDrawNicknameTime[playerID] then
 			
 			commandHistory[cmdKey] = nil
 			
 		-- draw all
-		elseif  OPTIONS.types[cmdType].color[4] > 0  or  OPTIONS.types[cmdType].ringColor[4] > 0  then
+		elseif  OPTIONS.types[cmdType].baseColor[4] > 0  or  OPTIONS.types[cmdType].ringColor[4] > 0  then
 			if commandCoordsRendered[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] == nil then
 				commandCoordsRendered[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] = true
 				local alphaMultiplier = 1 + (OPTIONS.reduceOverlapEffect * (commandHistoryCoords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] - 1))	 -- add a bit to the multiplier for each cmd issued on the same coords
@@ -335,10 +338,10 @@ function widget:DrawWorldPreUnit()
 				local gRing	= OPTIONS.types[cmdType].ringColor[2]
 				local bRing	= OPTIONS.types[cmdType].ringColor[3]
 				local aRing	= a * OPTIONS.types[cmdType].ringColor[4]
-				local r		= OPTIONS.types[cmdType].color[1]
-				local g		= OPTIONS.types[cmdType].color[2]
-				local b		= OPTIONS.types[cmdType].color[3]
-				a			= a * OPTIONS.types[cmdType].color[4]
+				local r		= OPTIONS.types[cmdType].baseColor[1]
+				local g		= OPTIONS.types[cmdType].baseColor[2]
+				local b		= OPTIONS.types[cmdType].baseColor[3]
+				a			= a * OPTIONS.types[cmdType].baseColor[4]
 					
 				local ringSize = OPTIONS.ringStartSize + (size * OPTIONS.ringScale) * ((osClock - clickOsClock) / OPTIONS.duration)
 				local ringInnerSize = ringSize - OPTIONS.ringWidth
@@ -348,7 +351,7 @@ function widget:DrawWorldPreUnit()
 				gl.Translate(cmdValue.x, cmdValue.y, cmdValue.z)
 				
 				-- base glow
-				if OPTIONS.types[cmdType].color[4] > 0 then
+				if OPTIONS.types[cmdType].baseColor[4] > 0 then
 					local parts = Round(OPTIONS.baseParts - ((camY - cmdValue.y) / 500))
 					if parts < 6 then parts = 6 end
 					gl.BeginEnd(GL.TRIANGLE_FAN, DrawBaseGlow, parts, size, r,g,b,a)
@@ -397,12 +400,13 @@ function widget:DrawWorldPreUnit()
 				end
 				
 				-- text
-				if  playerID  and  cmdType == 'map_draw'  and  OPTIONS.showMapmarkSpecNames and  playerID ~= ownPlayerID then
-					-- if spectator
-					local playerInfo = Spring.GetPlayerInfo(playerID)
-					if (select(3, playerInfo)) then		
-						local nickname = select(1, playerInfo)
-						gl.Color(r,g,b, a * OPTIONS.nicknameOpacityMultiplier )
+				if  playerID  and  playerID ~= ownPlayerID  and  OPTIONS.showMapmarkSpecNames  and   cmdType == 'map_draw'  or   cmdType == 'map_erase' and  clickOsClock >= mapEraseNicknameTime[playerID] then
+					local nickname,_,isSpec = Spring.GetPlayerInfo(playerID)
+					if (isSpec) then
+						if cmdType == 'map_erase' then
+							nickname = 'ERASING:  '..nickname
+						end
+						gl.Color(r,g,b, a * OPTIONS.nicknameOpacityMultiplier)
 						gl.Billboard()
 						gl.Text(nickname, 0, -28, 20, "cn")
 					end

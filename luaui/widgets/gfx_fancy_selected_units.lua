@@ -14,15 +14,16 @@ end
 --------------------------------------------------------------------------------
 
 -- NOTE:  STILL IN DEVELOPMENT!
+-- dont change things if it will break current behavior plz
+-- also notify me if you´re about to work on this widget, thanks!
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
-local function SetupCommandColors(state)
-	local alpha = state and 1 or 0
-	--Spring.LoadCmdColorsConfig('move  0.5 1.0 0.5 ' .. alpha)
-	Spring.LoadCmdColorsConfig('unitBox  0 1 0 ' .. alpha)
-end
+-- TODO / Known Issues:
+-- general performance optimisations
+-- reducing quality when zoomed out
+-- adding the selections of teammates
+-- improve acuracy/code of keeping the same line thickness with bigger and smaller units
+-- fix blending differences/issues when not drawing then 2nd line
+-- DrawCircleSolid needs to align identically with DrawCircleLine
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -56,12 +57,13 @@ selectedUnitsData['totalSelectedUnits']	= 0
 local teamList = Spring.GetTeamList()
 local numberOfTeams = #teamList
 
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 local OPTIONS = {
 	-- Quality settings
-	showNoOverlap					= true,		-- set true for no line overlapping for solid lines
+	showNoOverlap					= true,		-- set true for no line overlapping so thata the alpha levels will be different on intersections
 	showBase						= true,
 	showFirstLine					= true,
 	showSecondLine					= true,
@@ -99,12 +101,12 @@ local OPTIONS = {
 	-- animation
 	rotationSpeed					= 0.08,
 	selectionStartAnimation			= true,
-	selectionStartAnimationTime		= 0.025,
+	selectionStartAnimationTime		= 0.065,		-- for now keeping it a lil bit higher than needed for clarity when developing 
 	selectionStartAnimationScale	= 0.8,
 	-- selectionStartAnimationScale	= 1.17,
-	selectionStartAnimationOpacity	= 0.11,	-- starts with this addition opacity, over makes it overflow a bit at the end of the fadein
+	selectionStartAnimationOpacity	= 0.11,			-- starts with this addition opacity, over makes it overflow a bit at the end of the fadein
 	selectionEndAnimation			= true,
-	selectionEndAnimationTime		= 0.05,
+	selectionEndAnimationTime		= 0.1,			-- for now keeping it a lil bit higher than needed for clarity when developing 
 	selectionEndAnimationScale		= 0.9,
 	-- selectionEndAnimationScale	= 1.17,
 	animationSpeed					= 0.0007,
@@ -118,52 +120,6 @@ local OPTIONS = {
 ------------------------------------------------------------------------------------
 
 
-
-local function updateSelectedUnitsData()
-
-	-- remove old deselected units from the selectedUnitsData array
-	currentClock = os.clock()
-	local maxDeselectedTime = currentClock - OPTIONS.selectionEndAnimationTime
-	local maxSelectTime = currentClock - OPTIONS.selectionStartAnimationTime
-	for unitID in pairs(selectedUnitsData['unit']) do
-		if not Spring.IsUnitSelected(unitID) then
-			selectedUnitsData['unit'][unitID]['selected'] = false 
-			selectedUnitsData['unit'][unitID]['new'] = false
-			if selectedUnitsData['unit'][unitID]['clock'] < maxDeselectedTime then
-				selectedUnitsData['unit'][unitID] = nil
-			end
-		end
-	end
-	
-	-- add selected units
-	selectedUnitsData['totalSelectedUnits'] = Spring.GetSelectedUnitsCount()
-	if selectedUnitsData['totalSelectedUnits'] > 0 then
-		local units = Spring.GetSelectedUnitsSorted()
-		for uDID,_ in pairs(units) do
-			if uDID ~= 'n' then --'n' returns table size
-				for i=1,#units[uDID] do
-					local unitID = units[uDID][i]
-					local unit = UNITCONF[uDID]
-					if (unit) then
-						if not KeyExists(selectedUnitsData['unit'], unitID) then
-							selectedUnitsData['unit'][unitID]				= {}
-							selectedUnitsData['unit'][unitID]['new']		= currentClock
-							selectedUnitsData['unit'][unitID]['selected']	= true
-							--selectedUnitsData['unit'][unitID]['visible']	= Spring.IsUnitVisible(unitID, 30, true)
-						end
-						selectedUnitsData['unit'][unitID]['clock'] = currentClock
-						if selectedUnitsData['unit'][unitID]['new']  and  selectedUnitsData['unit'][unitID]['new'] < maxSelectTime then
-							selectedUnitsData['unit'][unitID]['new']		= false
-						end
-					end
-				end
-			end
-		end
-	end
-end
-
-
-
 function KeyExists(tbl, key)
 	for k in pairs(tbl) do
 		if key == k then
@@ -175,14 +131,68 @@ function KeyExists(tbl, key)
 end
 
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
+local function SetupCommandColors(state)
+	local alpha = state and 1 or 0
+	Spring.LoadCmdColorsConfig('unitBox  0 1 0 ' .. alpha)
+end
 
 
 function Round(num, idp)
     local mult = 10^(idp or 0)
     return math.floor(num * mult + 0.5) / mult
 end
+
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+
+local function updateSelectedUnitsData()
+
+	-- remove old deselected units, BUT ONLY AFTER THEY HAVE FADED AWAY
+	currentClock = os.clock()
+	local maxDeselectedTime	= currentClock - OPTIONS.selectionEndAnimationTime
+	local maxSelectTime		= currentClock - OPTIONS.selectionStartAnimationTime
+	for unitID in pairs(selectedUnitsData['unit']) do
+		if not Spring.IsUnitSelected(unitID) then
+			selectedUnitsData['unit'][unitID]['selected'] = false 
+			selectedUnitsData['unit'][unitID]['new'] = false
+			if selectedUnitsData['unit'][unitID]['clock'] < maxDeselectedTime then
+				selectedUnitsData['unit'][unitID] = nil
+			end
+		end
+	end
+	
+	-- add selected units
+	local units = Spring.GetVisibleUnits(-1, 30, true)
+	for i=1, #units do
+		local unitID = units[i]
+		local udid = Spring.GetUnitDefID(unitID)
+		local unit = UNITCONF[udid]
+		
+		if (unit) then
+			if (Spring.IsUnitSelected(unitID)) then
+				if not KeyExists(selectedUnitsData['unit'], unitID) then
+					selectedUnitsData['unit'][unitID]				= {}
+					selectedUnitsData['unit'][unitID]['new']		= currentClock
+					selectedUnitsData['unit'][unitID]['selected']	= true
+					--selectedUnitsData['unit'][unitID]['visible']	= Spring.IsUnitVisible(unitID, 30, true)
+				end
+				selectedUnitsData['unit'][unitID]['clock'] = currentClock
+				if selectedUnitsData['unit'][unitID]['new']  and  selectedUnitsData['unit'][unitID]['new'] < maxSelectTime then
+					selectedUnitsData['unit'][unitID]['new']		= false
+				end
+			end
+		end
+	end
+	
+	-- Just simply using: "Spring.GetSelectedUnitsCount()" wont count the deselected units that are still fading away!
+	selectedUnitsData['totalSelectedUnits'] = 0
+	for unitID in pairs(selectedUnitsData['unit']) do
+		selectedUnitsData['totalSelectedUnits'] = selectedUnitsData['totalSelectedUnits'] + 1
+	end
+end
+
 
 
 -- Creating polygons:
@@ -528,17 +538,15 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-function widget:CommandsChanged()
-end
-
 
 local degrot = {}
 function widget:GameFrame(frame)
-
-	updateSelectedUnitsData()
 	
-	if frame%3~=0 then return end
+	updateSelectedUnitsData()		-- skipping this results in laggy start animation and a missing end animation
 	
+	--if frame %2~=0 then return end
+	
+	-- logs current unit direction	(needs regular updates for air units, and for buildings only once)
 	for unitID in pairs(selectedUnitsData['unit']) do
 		local dirx, _, dirz = Spring.GetUnitDirection(unitID)
 		if (dirz ~= nil) then
@@ -711,6 +719,9 @@ function DrawSelectionSpotters(r,g,b,a,scale, opposite, relativeScaleSchrinking)
 	DrawSelectionSpottersPart('alphabuffer2', r,g,b,a,scale, opposite, relativeScaleSchrinking)
 end
 
+
+
+
 function widget:DrawWorldPreUnit()
 	
 	local clockDifference = (os.clock() - previousOsClock)
@@ -764,99 +775,97 @@ function widget:DrawWorldPreUnit()
 	end
 	
 	
-		-- loop teams
-		for teamListIndex=1, numberOfTeams do
-			local teamID = teamList[teamListIndex]
-			teamVisibleSelected = {}
-			if teamID ~= gaiaTeamID then
-				selectedUnitsData['team'][teamID] = {}
-				for unitID in pairs(selectedUnitsData['unit']) do
-					UnitTeamID = Spring.GetUnitTeam(unitID)
-					if UnitTeamID == teamID then
-						table.insert(teamVisibleSelected, unitID)
-						table.insert(selectedUnitsData['team'][teamID], unitID)
-					end
+	-- loop teams
+	for teamListIndex=1, numberOfTeams do
+		local teamID = teamList[teamListIndex]
+		teamVisibleSelected = {}
+		if teamID ~= gaiaTeamID then
+			selectedUnitsData['team'][teamID] = {}
+			for unitID in pairs(selectedUnitsData['unit']) do
+				UnitTeamID = Spring.GetUnitTeam(unitID)
+				if UnitTeamID == teamID then
+					table.insert(teamVisibleSelected, unitID)
+					table.insert(selectedUnitsData['team'][teamID], unitID)
 				end
 			end
+		end
+		
+		if #teamVisibleSelected > 0 then
+			local scale = 1
+			if OPTIONS.secondLineOpacity then
+				r,g,b = OPTIONS.defaultOwnColor[1], OPTIONS.defaultOwnColor[2], OPTIONS.defaultOwnColor[3]
+			else
+				r,g,b = Spring.GetTeamColor(teamID)
+			end
 			
-			if #teamVisibleSelected > 0 then
-				local scale = 1
-				if OPTIONS.secondLineOpacity then
-					r,g,b = OPTIONS.defaultOwnColor[1], OPTIONS.defaultOwnColor[2], OPTIONS.defaultOwnColor[3]
-				else
+			-- To fix Water
+			gl.ColorMask(false,false,false,true)
+			gl.BlendFunc(GL.ONE, GL.ONE)
+			gl.Color(r,g,b,1)
+			-- Does not need to be drawn per Unit .. it covers the whole map
+			glCallList(clearquad)
+			
+			
+			-- 1st layer
+			if OPTIONS.showFirstLine then
+				scale = 1.015 * OPTIONS.scaleMultiplier * animationMultiplierInner
+				DrawSelectionSpotters(r,g,b,OPTIONS.firstLineOpacity * OPTIONS.spotterOpacity,scale)
+			end
+			
+			
+			-- extra 3rd layer (for coms)
+			if OPTIONS.showExtraComLine then
+				gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
+				DrawSelectionSpottersPart('coms', r,g,b,a,scale)
+			end
+			
+			
+			-- extra 3rd layer (for buildings with a weapon)
+			if OPTIONS.showExtraBuildingWeaponLine then
+				gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
+				DrawSelectionSpottersPart('building with weapon', r,g,b,a,scale)
+			end
+			
+			
+			-- 2nd layer
+			if OPTIONS.showSecondLine then
+				scale = 1.17 * OPTIONS.scaleMultiplier * animationMultiplier
+				DrawSelectionSpotters(r,g,b,OPTIONS.secondLineOpacity * OPTIONS.spotterOpacity,scale, true, true)
+			end
+				
+				
+			-- base layer
+			if OPTIONS.showBase then
+				if OPTIONS.useDefaultColor  and  OPTIONS.useOriginalBaseColor then
 					r,g,b = Spring.GetTeamColor(teamID)
 				end
-				
-				-- To fix Water
-				gl.ColorMask(false,false,false,true)
-				gl.BlendFunc(GL.ONE, GL.ONE)
+				scale = 1.32 * OPTIONS.scaleMultiplier * animationMultiplier
+				if not showSecondLine then
+					scale = scale - 0.18
+				end
+				gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
+				gl.Color(r,g,b,0)
+				DrawSelectionSpottersPart('base solid', r,g,b,a,scale)
+					
+				--  Here the inner of the selected spotters are removed
+				gl.BlendFunc(GL.ONE, GL.ZERO)
+				a = OPTIONS.baseOpacity * OPTIONS.spotterOpacity
+				gl.Color(r,g,b,a)
+				DrawSelectionSpottersPart('base alpha', r,g,b,a,scale, false, false, true)
+			
+				--  Really draw the spotters now  (This could be optimised if we could say Draw as much as DST_ALPHA * SRC_ALPHA is)
+				-- (without protecting form drawing them twice)
+				gl.ColorMask(true,true,true,true)
+				gl.BlendFunc(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA)
 				gl.Color(r,g,b,1)
-				-- Does not need to be drawn per Unit .. it covers the whole map
-				glCallList(clearquad)
-				
-				
-				-- 1st layer
-				if OPTIONS.showFirstLine then
-					scale = 1.015 * OPTIONS.scaleMultiplier * animationMultiplierInner
-					DrawSelectionSpotters(r,g,b,OPTIONS.firstLineOpacity * OPTIONS.spotterOpacity,scale)
-				end
-				
-				
-				-- extra 3rd layer (for coms)
-				if OPTIONS.showExtraComLine then
-					gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
-					DrawSelectionSpottersPart('coms', r,g,b,a,scale)
-				end
-				
-				
-				-- extra 3rd layer (for buildings with a weapon)
-				if OPTIONS.showExtraBuildingWeaponLine then
-					gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
-					DrawSelectionSpottersPart('building with weapon', r,g,b,a,scale)
-					
-				end
-				
-				
-				-- 2nd layer
-				if OPTIONS.showSecondLine then
-					scale = 1.17 * OPTIONS.scaleMultiplier * animationMultiplier
-					DrawSelectionSpotters(r,g,b,OPTIONS.secondLineOpacity * OPTIONS.spotterOpacity,scale, true, true)
-				end
-					
-					
-				-- base layer
-				if OPTIONS.showBase then
-					if OPTIONS.useDefaultColor  and  OPTIONS.useOriginalBaseColor then
-						r,g,b = Spring.GetTeamColor(teamID)
-					end
-					scale = 1.32 * OPTIONS.scaleMultiplier * animationMultiplier
-					if not showSecondLine then
-						scale = scale - 0.18
-					end
-					gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
-					gl.Color(r,g,b,0)
-					DrawSelectionSpottersPart('base solid', r,g,b,a,scale)
-						
-					--  Here the inner of the selected spotters are removed
-					gl.BlendFunc(GL.ONE, GL.ZERO)
-					a = OPTIONS.baseOpacity * OPTIONS.spotterOpacity
-					gl.Color(r,g,b,a)
-					DrawSelectionSpottersPart('base alpha', r,g,b,a,scale, false, false, true)
-				
-					--  Really draw the spotters now  (This could be optimised if we could say Draw as much as DST_ALPHA * SRC_ALPHA is)
-					-- (without protecting form drawing them twice)
-					gl.ColorMask(true,true,true,true)
-					gl.BlendFunc(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA)
-					gl.Color(r,g,b,1)
-				end
-				
-				-- Does not need to be drawn per Unit anymore
-				glCallList(clearquad)
-				
-				
-			end --if #teamVisibleSelected > 0
-		end
-
+			end
+			
+			-- Does not need to be drawn per Unit anymore
+			glCallList(clearquad)
+			
+			
+		end --if #teamVisibleSelected > 0
+	end
 	
 	
 	gl.Color(1,1,1,1)

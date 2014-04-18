@@ -571,6 +571,7 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 		local udid = Spring.GetUnitDefID(unitID)
 		local unitUnitDefs = UnitDefs[udid]
 		local unit = UNITCONF[udid]
+		local draw = true
 		
 		if (unit) then
 			local unitPosX, unitPosY, unitPosZ = Spring.GetUnitViewPosition(unitID, true)
@@ -595,7 +596,6 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 						end
 					else
 						selectedUnits[teamID][unitID] = nil
-						return
 					end
 				-- check if the unit is newly selected
 				elseif (OPTIONS.selectionStartAnimation and selectedUnits[teamID][unitID]['new'] > maxSelectTime) then
@@ -607,64 +607,66 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 					end
 				end
 			end
-
+			
+			if selectedUnits[teamID][unitID] then
 			local usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs ,opposite)
-			if type == 'normal solid'  or  type == 'normal alpha' then
+				if type == 'normal solid'  or  type == 'normal alpha' then
+					
+					if relativeScaleSchrinking then
+						glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/10), usedRotationAngle, 0, degrot[unitID], 0)
+					else
+						glDrawListAtUnit(unitID, unit.shape.select, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+					end
 				
-				if relativeScaleSchrinking then
-					glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/10), usedRotationAngle, 0, degrot[unitID], 0)
-				else
-					glDrawListAtUnit(unitID, unit.shape.select, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
-				end
+				elseif type == 'solid overlap' then
 				
-			elseif type == 'solid overlap' then
+					if relativeScaleSchrinking then
+						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/50), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/50), usedRotationAngle, 0, degrot[unitID], 0)
+					else
+						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)+((unit.xscale-15)/15), 1.0, (unit.zscale*scale*changedScale)+((unit.zscale-15)/15), usedRotationAngle, 0, degrot[unitID], 0)
+					end
 				
-				if relativeScaleSchrinking then
-					glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/50), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/50), usedRotationAngle, 0, degrot[unitID], 0)
-				else
-					glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)+((unit.xscale-15)/15), 1.0, (unit.zscale*scale*changedScale)+((unit.zscale-15)/15), usedRotationAngle, 0, degrot[unitID], 0)
-				end
+				elseif type == 'alphabuffer1' then
 				
-			elseif type == 'alphabuffer1' then
+					glDrawListAtUnit(unitID, unit.shape.shape, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+					glDrawListAtUnit(unitID, unit.shape.inner, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
 				
-				glDrawListAtUnit(unitID, unit.shape.shape, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
-				glDrawListAtUnit(unitID, unit.shape.inner, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+				elseif type == 'alphabuffer2' then
 				
-			elseif type == 'alphabuffer2' then
+					glDrawListAtUnit(unitID, unit.shape.large, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
 				
-				glDrawListAtUnit(unitID, unit.shape.large, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+				elseif type == 'coms' then
 				
-			elseif type == 'coms' then
-				
-				if (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
-					scale = 1.34 * OPTIONS.scaleMultiplier * animationMultiplier
-					usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
-					gl.Color(r,g,b,0.25)
-					glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
-					scale = 1.54 * OPTIONS.scaleMultiplier * animationMultiplier
-					usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs , true)
-					gl.Color(r,g,b,0.33)
-					glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
-				end
-				
-			elseif type == 'building with weapon' then
-				
-				if (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
-					if (#unitUnitDefs.weapons > 0) then
+					if (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
 						scale = 1.34 * OPTIONS.scaleMultiplier * animationMultiplier
 						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
-						gl.Color(r,g,b,0.5)
-						glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
-						scale = 1.38 * OPTIONS.scaleMultiplier * animationMultiplier
-						glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
+						gl.Color(r,g,b,0.25)
+						glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
+						scale = 1.54 * OPTIONS.scaleMultiplier * animationMultiplier
+						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs , true)
+						gl.Color(r,g,b,0.33)
+						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
 					end
-				end
 				
-			elseif type == 'base solid'  or  type == 'base alpha' then
+				elseif type == 'building with weapon' then
 				
-				glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/10), degrot[unitID], 0, degrot[unitID], 0)
+					if (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
+						if (#unitUnitDefs.weapons > 0) then
+							scale = 1.34 * OPTIONS.scaleMultiplier * animationMultiplier
+							usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
+							gl.Color(r,g,b,0.5)
+							glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
+							scale = 1.38 * OPTIONS.scaleMultiplier * animationMultiplier
+							glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
+						end
+					end
 				
-			end			
+				elseif type == 'base solid'  or  type == 'base alpha' then
+				
+					glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/10), degrot[unitID], 0, degrot[unitID], 0)
+				
+				end	
+			end
 		end
 	end	
 end

@@ -53,7 +53,7 @@ local selectedUnits					= {}
 
 local currentSelClock = os.clock() --time at which selected units last changed
 local maxSelectTime = 0 --time at which units "new selection" animation will end
-local maxDeselectedTime = --team at which units deselection animation will end
+local maxDeselectedTime = -1 --team at which units deselection animation will end
 
 
 --------------------------------------------------------------------------------

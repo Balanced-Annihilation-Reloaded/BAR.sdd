@@ -53,6 +53,8 @@ selectedUnitsData['unit']			= {}
 selectedUnitsData['team']			= {}
 selectedUnitsData['totalSelectedUnits']	= 0
 
+local teamList = Spring.GetTeamList()
+local numberOfTeams = #teamList
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -134,32 +136,29 @@ local function updateSelectedUnitsData()
 	end
 	
 	-- add selected units
-	--local units = Spring.GetAllUnits()
-	local units = Spring.GetVisibleUnits(-1, 30, true)
-	for i=1, #units do
-		local unitID = units[i]
-		local udid = Spring.GetUnitDefID(unitID)
-		local unit = UNITCONF[udid]
-		
-		if (unit) then
-			if (Spring.IsUnitSelected(unitID)) then
-				if not KeyExists(selectedUnitsData['unit'], unitID) then
-					selectedUnitsData['unit'][unitID]				= {}
-					selectedUnitsData['unit'][unitID]['new']		= currentClock
-					selectedUnitsData['unit'][unitID]['selected']	= true
-					--selectedUnitsData['unit'][unitID]['visible']	= Spring.IsUnitVisible(unitID, 30, true)
-				end
-				selectedUnitsData['unit'][unitID]['clock'] = currentClock
-				if selectedUnitsData['unit'][unitID]['new']  and  selectedUnitsData['unit'][unitID]['new'] < maxSelectTime then
-					selectedUnitsData['unit'][unitID]['new']		= false
+	selectedUnitsData['totalSelectedUnits'] = Spring.GetSelectedUnitsCount()
+	if selectedUnitsData['totalSelectedUnits'] > 0 then
+		local units = Spring.GetSelectedUnitsSorted()
+		for uDID,_ in pairs(units) do
+			if uDID ~= 'n' then --'n' returns table size
+				for i=1,#units[uDID] do
+					local unitID = units[uDID][i]
+					local unit = UNITCONF[uDID]
+					if (unit) then
+						if not KeyExists(selectedUnitsData['unit'], unitID) then
+							selectedUnitsData['unit'][unitID]				= {}
+							selectedUnitsData['unit'][unitID]['new']		= currentClock
+							selectedUnitsData['unit'][unitID]['selected']	= true
+							--selectedUnitsData['unit'][unitID]['visible']	= Spring.IsUnitVisible(unitID, 30, true)
+						end
+						selectedUnitsData['unit'][unitID]['clock'] = currentClock
+						if selectedUnitsData['unit'][unitID]['new']  and  selectedUnitsData['unit'][unitID]['new'] < maxSelectTime then
+							selectedUnitsData['unit'][unitID]['new']		= false
+						end
+					end
 				end
 			end
 		end
-	end
-	
-	selectedUnitsData['totalSelectedUnits'] = 0
-	for unitID in pairs(selectedUnitsData['unit']) do
-		selectedUnitsData['totalSelectedUnits'] = selectedUnitsData['totalSelectedUnits'] + 1
 	end
 end
 
@@ -529,11 +528,15 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+function widget:CommandsChanged()
+end
+
 
 local degrot = {}
-function widget:Update()
-	
-	updateSelectedUnitsData()
+function widget:GameFrame(frame)
+	if frame%3~=0 then return end
+
+	updateSelectedUnitsData()	
 	
 	for unitID in pairs(selectedUnitsData['unit']) do
 		local dirx, _, dirz = Spring.GetUnitDirection(unitID)
@@ -707,9 +710,6 @@ function DrawSelectionSpotters(r,g,b,a,scale, opposite, relativeScaleSchrinking)
 	DrawSelectionSpottersPart('alphabuffer2', r,g,b,a,scale, opposite, relativeScaleSchrinking)
 end
 
-
-
-
 function widget:DrawWorldPreUnit()
 	
 	local clockDifference = (os.clock() - previousOsClock)
@@ -763,14 +763,7 @@ function widget:DrawWorldPreUnit()
 	end
 	
 	
-	-- loop allyTeams
-	local allyTeamList = Spring.GetAllyTeamList()
-	local numberOfAllyTeams = #allyTeamList
-	for allyTeamListIndex=1, numberOfAllyTeams do
-		local allyID = allyTeamList[allyTeamListIndex]
-		local teamList = Spring.GetTeamList(allyID)
-		local numberOfTeams = #teamList
-		-- loop teams inside allyTeams
+		-- loop teams
 		for teamListIndex=1, numberOfTeams do
 			local teamID = teamList[teamListIndex]
 			teamVisibleSelected = {}
@@ -862,7 +855,7 @@ function widget:DrawWorldPreUnit()
 				
 			end --if #teamVisibleSelected > 0
 		end
-	end
+
 	
 	
 	gl.Color(1,1,1,1)

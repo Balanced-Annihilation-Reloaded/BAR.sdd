@@ -29,10 +29,10 @@ Settings['Cursor']           = 'Default'
 Settings['CursorName']       = 'ba'
 Settings['Water']            = 'Reflective'
 Settings['Shadows']          = 'Medium'
-Settings['DistIcon']         = 'Medium'
-Settings['MaxNanoParticles'] = 'Medium'
-Settings['MaxParticles']     = 'High'
-Settings['DistDraw']         = 'Very High'
+Settings['DistIcon']         = 200
+Settings['MaxNanoParticles'] = 1000
+Settings['MaxParticles']     = 100
+Settings['DistDraw']         = 100
 Settings['MapBorder']        = true
 Settings['AdvMapShading']    = true
 Settings['AdvModelShading']  = true
@@ -346,6 +346,7 @@ local function applySetting(obj)
 	end
 
 	Settings[setting] =  obj.items[obj.selected]
+	Spring.Echo(setting.." set to "..value)
 end
 
 ---------------------------- 
@@ -421,20 +422,46 @@ local checkBox = function(obj)
 end
 
 ---------------------------- 
--- Temporary control to work exclusively for default bloom options
---  The same interface could be added to other widgets 
---  although it would probably be easier to come up with a better sytem and add that to the bloom widget.
-local incDec = function(obj)
-	local incDec = Chili.Control:New{name=obj.name,parent=tabs[obj.parent],y=obj.y,width='50%',height=30,right=0,padding={0,0,0,0}}
-	local decOption = function(self)
-		spSendCommands('luaui -'..self.parent.name)
+-- 
+local slider = function(obj)
+	local obj = obj
+	
+	local trackbar = Chili.Control:New{
+		y       = obj.y,
+		width   = '45%',
+		height  = 40,
+		x       = 0,
+		padding = {0,0,0,0}
+	}
+	
+	
+	local function apply(self)
+		Settings[obj.name] = self.value
+		spSendCommands(obj.name..' '..self.value)
 	end
-	local incOption = function(self)
-		spSendCommands('luaui +'..self.parent.name)
-	end
-	incDec:AddChild(Chili.Label:New{right=45,y=0,caption=obj.label})
-	incDec:AddChild(Chili.Button:New{right=0,y=0,width=20,height=16,font={size=20},caption='+',OnMouseUp={incOption}})
-	incDec:AddChild(Chili.Button:New{right=21,y=0,width=20,height=16,font={size=20},caption='-',OnMouseUp={decOption}})
+	
+	trackbar:AddChild(
+		Chili.Label:New{
+			x       = 0,
+			y       = 0,
+			caption = obj.title or obj.name,
+		})
+	
+	trackbar:AddChild(
+		Chili.Trackbar:New{
+			name     = obj.name,
+			height   = 25,
+			x        = 60,
+			y        = 15,
+			right    = 0,
+			min      = obj.min or 0,
+			max      = obj.max or 1000,
+			step     = obj.step or 100,
+			value    = Settings[obj.name] or 500,
+			OnChange = {apply},
+		})
+	
+	return trackbar
 end
 
 -----OPTIONS-----------------
@@ -454,18 +481,10 @@ local function Options()
 			comboBox{y=40,name='Shadows',
 				labels={'Off','Very Low','Low','Medium','High','Very High'},
 				options={'0','2 1024','1 1024','2 2048','1 2048','1 4096'},},
-			comboBox{y=80,name='DistDraw',title='Unit Draw Distance',
-				labels={'Low','Medium','High','Very High'},
-				options={100,300,500,1000},},
-			comboBox{y=120,name='DistIcon',title='Unit Icon Distance',
-				labels={'Off','Low','Medium','High','Very High'},
-				options={10000,100,200,300,400},},
-			comboBox{y=160,name='MaxParticles',title='Particles',
-				labels={'Very Low','Low','Medium','High','Very High'},
-				options={500,1000,2000,3000,5000},},
-			comboBox{y=200,name='MaxNanoParticles',title='Nano Particles',
-				labels={'Very Low','Low','Medium','High','Very High'},
-				options={500,1000,2000,3000,5000},},
+			slider{y=80,name='DistDraw',title='Unit Draw Distance', max = 600},
+			slider{y=120,name='DistIcon',title='Unit Icon Distance', max = 600},
+			slider{y=160,name='MaxParticles',title='Max Particles', max = 5000},
+			slider{y=200,name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
 			checkBox{y = 250, title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables vertical-sync (Graphics setting)"},
 			checkBox{y = 270, title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Set or toggle advanced map shading mode"},
 			checkBox{y = 290, title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Set or toggle advanced model shading mode"},

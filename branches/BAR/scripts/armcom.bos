@@ -6,7 +6,7 @@
 piece  torso, luparm, ruparm, nano, pelvis, laserflare,
        lthigh, rthigh, rloarm, biggun, rleg, lleg, lfoot, rfoot, lflare, dish, bigguncyl, barrel;
 
-static-var  bMoving, bAiming, Static_Var_3, Static_Var_4, justfired,
+static-var  bMoving, bAiming, Static_Var_3, IsFiringDgun, justfired,
 			building, buildx, buildy, moveSpeed, currentSpeed;
 
 // Signal definitions
@@ -362,6 +362,14 @@ walklegs()
 	sleep 8000 / currentSpeed;
 }
 
+GetReady()  // Fixes Arm/Weapon firing line with a fresh commander
+{
+	sleep 4000 / currentSpeed;
+	turn rloarm to x-axis <-42.000000> speed <500.963855> *  currentSpeed / 100;
+	turn biggun to x-axis <-63.000000> speed <751.445783> *  currentSpeed / 100;
+}
+
+
 UnitSpeed()
 {
 	while(TRUE)
@@ -381,7 +389,7 @@ MotionControl(moving, aiming, justmoved)
 		aiming = bAiming;
 		if( moving )
 		{
-			Static_Var_4 = 0;
+			IsFiringDgun = 0;
 			if( aiming )
 			{
 				Static_Var_3 = 1;
@@ -425,7 +433,7 @@ Create()
 	building = FALSE;
 	justfired = FALSE;
 	Static_Var_3 = 1;
-	Static_Var_4 = 0;
+	IsFiringDgun = 0;
 	buildy = 0;
 	buildx = 0;
 	moveSpeed = get MAX_SPEED;
@@ -433,12 +441,13 @@ Create()
 	start-script MotionControl();
 	start-script UnitSpeed();
 	spin dish around y-axis speed <200>;
+	call-script GetReady();
 }
 
 StartMoving()
 {
 	bMoving = TRUE;
-	Static_Var_4 = 0;
+	IsFiringDgun = 0;
 }
 
 StopMoving()
@@ -464,7 +473,7 @@ RestorePosition()
 	wait-for-turn torso around y-axis;
 	wait-for-turn luparm around x-axis;
 	wait-for-turn ruparm around x-axis;
-	Static_Var_4 = 0;
+	IsFiringDgun = 0;
 	bAiming = FALSE;
 }
 
@@ -490,7 +499,7 @@ QueryPrimary(piecenum)
 
 AimPrimary(heading, pitch)
 {
-	if( Static_Var_4 == 1 )
+	if( IsFiringDgun == 1 )
 	{
 		return (0);
 	}
@@ -498,7 +507,7 @@ AimPrimary(heading, pitch)
 	set-signal-mask SIG_AIM;
 	bAiming = TRUE;
 	turn torso to y-axis heading speed <300.000000>;
-	turn ruparm to x-axis <-45.000000> - pitch speed <250.000000>;
+	turn ruparm to x-axis <-42.00000> - pitch speed <250.000000>;
 	wait-for-turn torso around y-axis;
 	wait-for-turn ruparm around x-axis;
 	justfired = TRUE;
@@ -531,12 +540,12 @@ QuerySecondary(piecenum)
 
 AimSecondary(heading, pitch)
 {	
-	get PRINT(get PIECE_Y(dish))
+	//get PRINT(get PIECE_Y(dish))
     if ( get PIECE_Y(dish) > -4 ) // Check Depth of Unit Part (Dish) Before Firing
     {
      	return (0);
     }
-	if( Static_Var_4 == 1 )
+	if( IsFiringDgun == 1 )
 	{
 		return (0);
 	}
@@ -548,7 +557,7 @@ AimSecondary(heading, pitch)
 	set-signal-mask SIG_AIM;
 	bAiming = TRUE;
 	turn torso to y-axis heading speed <300.000000>;
-	turn ruparm to x-axis <-70.000000> - pitch speed <250.000000>;
+	turn ruparm to x-axis <-53.000000> - pitch speed <250.000000>;
 	wait-for-turn torso around y-axis;
 	wait-for-turn ruparm around x-axis;
 	justfired = TRUE;
@@ -584,7 +593,7 @@ AimTertiary(heading, pitch)
 {
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
-	Static_Var_4 = 1;
+	IsFiringDgun = 1;
 	bAiming = TRUE;
 	turn torso to y-axis heading speed <300.000000>;
 	turn luparm to x-axis <-24.000000> - pitch speed <90.000000>;
@@ -602,12 +611,12 @@ FireTertiary()
 	move barrel to y-axis [0] speed [4];
 	sleep 100;
 	hide lflare;
-	Static_Var_4 = 0;
+	IsFiringDgun = 0;
 }
 
 StartBuilding(Func_Var_1, Func_Var_2)
 {
-	Static_Var_4 = 0;
+	IsFiringDgun = 0;
 	bAiming = TRUE;
 	building = TRUE;
 	turn torso to y-axis Func_Var_1 speed <300.000000>;

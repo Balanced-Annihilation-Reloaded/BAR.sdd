@@ -31,12 +31,14 @@ end
 
 local drawWithHiddenGUI                 = true    -- keep widget enabled when graphical user interface is hidden (when pressing F5)
 local skipOwnAllyTeam                   = true    -- keep this 'true' if you dont want circles rendered under your own units
+local useVariableSpotterDetail          = true   -- how precise circle?
 
-local circleSize                        = 1
-local circleDivs                        = 12      -- how precise circle?
-local circleOpacity                     = 0.18
+local circleParts	                    = 12      	-- number of parts for a cirlce, when not using useVariableSpotterDetail
+local circlePartsMin                    = 9      	-- minimal number of parts for a cirlce, when zommed out
+local circlePartsMax                    = 18      	-- maximum number of parts for a cirlce, when zoomed in
+local circleOpacity                     = 0.28
 local innerSize                         = 1.35    -- circle scale compared to unit radius
-local outerSize                         = 1.30    -- outer fade size compared to circle scale (1 = no outer fade)
+local outerSize                         = 1.30    -- outer fade size compared to circle scale (1 = not rendered)
                                         
 local defaultColorsForAllyTeams         = 0       -- (number of teams)   if number <= of total numebr of allyTeams then dont use teamcoloring but default colors
 local keepTeamColorsForSmallAllyTeam    = 3       -- (number of teams)   use teamcolors if number or teams (inside allyTeam)  <=  this value
@@ -57,7 +59,9 @@ local spGetTeamList           = Spring.GetTeamList
 local spGetVisibleUnits       = Spring.GetVisibleUnits
 local spIsGUIHidden           = Spring.IsGUIHidden
 local spGetUnitAllyTeam       = Spring.GetUnitAllyTeam
-                              
+local spGetCameraPosition	  = Spring.GetCameraPosition
+local spGetUnitPosition       = Spring.GetUnitPosition
+          
 local myTeamID                = Spring.GetLocalTeamID()
 local myAllyID                = Spring.GetMyAllyTeamID()
 
@@ -79,10 +83,58 @@ local scalefaktor			= 2.9
 --------------------------------------------------------------------------------
 
 
--- Creating polygons:
+function Round(num, idp)
+    local mult = 10^(idp or 0)
+    return math.floor(num * mult + 0.5) / mult
+end
+
+
+function CreateSpotterList(r,g,b,a, parts)
+	return gl.CreateList(function()
+
+		gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)      -- disable layer blending
+
+		-- colored inner circle:
+		gl.BeginEnd(GL.TRIANGLE_FAN, function()
+			gl.Color(r, g, b, 0)
+			gl.Vertex(0, 0, 0)
+			local radstep = (2.0 * math.pi) / parts
+			for i = 1, parts do
+				local a1 = (i * radstep)
+				local a2 = ((i+1) * radstep)
+				
+				gl.Color(r, g, b, a)
+				gl.Vertex(math.sin(a1), 0, math.cos(a1))
+				gl.Vertex(math.sin(a2), 0, math.cos(a2))
+			end
+		end)
+
+		if (outerSize ~= 1) then
+			-- colored outer circle:
+			gl.BeginEnd(GL.QUADS, function()
+				local radstep = (2.0 * math.pi) / parts
+				for i = 1, parts do
+					local a1 = (i * radstep)
+					local a2 = ((i+1) * radstep)
+					
+					gl.Color(r, g, b, a)
+					gl.Vertex(math.sin(a1), 0, math.cos(a1))
+					gl.Vertex(math.sin(a2), 0, math.cos(a2))
+					
+					gl.Color(r, g, b, 0)
+					gl.Vertex(math.sin(a2)*outerSize, 0, math.cos(a2)*outerSize)
+					gl.Vertex(math.sin(a1)*outerSize, 0, math.cos(a1)*outerSize)
+				end
+			end)
+		end
+	end)
+end
+
+
+
 function widget:Initialize()
 
-	setUnitConf()
+	SetUnitConf()
 	
    local allyTeamList = spGetAllyTeamList()
    local numberOfAllyTeams = #allyTeamList
@@ -111,46 +163,11 @@ function widget:Initialize()
             end
          end
          
-         
-         circlePolys[allyID] = gl.CreateList(function()
-         
-            gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)      -- disable layer blending
-            
-            -- colored inner circle:
-            gl.BeginEnd(GL.TRIANGLES, function()
-               local radstep = (2.0 * math.pi) / circleDivs
-               for i = 1, circleDivs do
-                  local a1 = (i * radstep)
-                  local a2 = ((i+1) * radstep)
-                  --(fadefrom)
-                  gl.Color(usedSpotterColor[1], usedSpotterColor[2], usedSpotterColor[3], 0)
-                  gl.Vertex(0, 0, 0)
-                  --(colorSet)
-                  gl.Color(usedSpotterColor[1], usedSpotterColor[2], usedSpotterColor[3], circleOpacity)
-                  gl.Vertex(math.sin(a1), 0, math.cos(a1))
-                  gl.Vertex(math.sin(a2), 0, math.cos(a2))
-               end
-            end)
-            
-            if (outerSize ~= 1) then
-               -- colored outer circle:
-               gl.BeginEnd(GL.QUADS, function()
-                  local radstep = (2.0 * math.pi) / circleDivs
-                  for i = 1, circleDivs do
-                     local a1 = (i * radstep)
-                     local a2 = ((i+1) * radstep)
-                     --(colorSet)
-                     gl.Color(usedSpotterColor[1], usedSpotterColor[2], usedSpotterColor[3], circleOpacity)
-                     gl.Vertex(math.sin(a1), 0, math.cos(a1))
-                     gl.Vertex(math.sin(a2), 0, math.cos(a2))
-                     --(fadeto)
-                     gl.Color(usedSpotterColor[1], usedSpotterColor[2], usedSpotterColor[3], 0)
-                     gl.Vertex(math.sin(a2)*outerSize, 0, math.cos(a2)*outerSize)
-                     gl.Vertex(math.sin(a1)*outerSize, 0, math.cos(a1)*outerSize)
-                  end
-               end)
-            end
-         end)
+         -- generating list for all possible amount of circle-detail parts
+		 circlePolys[allyID] = {}
+         for i=circlePartsMin, circlePartsMax do
+			 circlePolys[allyID][i] = CreateSpotterList(usedSpotterColor[1],usedSpotterColor[2],usedSpotterColor[3],circleOpacity, i)
+         end
       end
    end
 end
@@ -161,7 +178,11 @@ function widget:Shutdown()
 	for i=1, #allyTeamList do
 		local allyID = allyTeamList[i]
 		if circlePolys[allyID] then
-			gl.DeleteList(circlePolys[allyID])
+			for i=circlePartsMin, circlePartsMax do
+				if circlePolys[allyID][i] then
+					gl.DeleteList(circlePolys[allyID][i])
+				end
+			end
 		end
 	end
 end
@@ -170,7 +191,7 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-function setUnitConf()
+function SetUnitConf()
 	for udid, unitDef in pairs(UnitDefs) do
 		local xsize, zsize = unitDef.xsize, unitDef.zsize
 		local scale = scalefaktor*( xsize^2 + zsize^2 )^0.5
@@ -196,29 +217,60 @@ end
 
 -- Drawing:
 function widget:DrawWorldPreUnit()
-   if not drawWithHiddenGUI then
-      if spIsGUIHidden() then return end
-   end
-   gl.DepthTest(true)
-   gl.PolygonOffset(-100, -2)
-   local visibleUnits = spGetVisibleUnits()
-   if #visibleUnits then
-      for i=1, #visibleUnits do
-         local unitID = visibleUnits[i]
-         local allyID = spGetUnitAllyTeam(unitID)
-         if circlePolys[allyID] ~= nil then
-            if not skipOwnAllyTeam  or  (skipOwnAllyTeam  and  not (allyID == myAllyID))  then
-               local unitDefIDValue = spGetUnitDefID(unitID)
-               if (unitDefIDValue) then
-                  
-					local unit = unitConf[unitDefIDValue]
-					glDrawListAtUnit(unitID, circlePolys[allyID], false, unit.xscale*2, 1.0, unit.zscale*2)
+	if not drawWithHiddenGUI then
+		if spIsGUIHidden() then return end
+	end
+	--local totalVariableParts,totalFixedParts = 0,0
+	
+	local camX, camY, camZ = spGetCameraPosition()
+	local unitZ = false
+	local parts = circleParts
+	
+	--gl.DepthTest(true)
+	gl.PolygonOffset(-100, -2)
+	local visibleUnits = spGetVisibleUnits()
+	if #visibleUnits then
+		for i=1, #visibleUnits do
+			local unitID = visibleUnits[i]
+			local allyID = spGetUnitAllyTeam(unitID)
+			if circlePolys[allyID] ~= nil then
+				if not skipOwnAllyTeam  or  (skipOwnAllyTeam  and  not (allyID == myAllyID))  then
+					local unitDefIDValue = spGetUnitDefID(unitID)
+					if (unitDefIDValue) then
 					
-               end
-            end
-         end
-      end
-   end
+						local unit = unitConf[unitDefIDValue]
+						local unitScale = unit.xscale*2
+						
+						if not useVariableSpotterDetail then
+							parts = circleParts
+						else
+							-- only process camera distance calculation for the first unit, to improve performance. It doesnt seem to hurt acuracy much.
+							if not unitZ then
+								local unitX,unitY,unitZ = spGetUnitPosition(unitID, true)
+								local xDifference = camX - unitX
+								local yDifference = camY - unitY
+								local zDifference = camZ - unitZ
+								local camDistance = math.sqrt(xDifference*xDifference + yDifference*yDifference + zDifference*zDifference)
+								
+								parts = Round(circlePartsMax - (camDistance / 800))
+								
+								if parts < circlePartsMin then
+									parts = circlePartsMin
+								elseif parts > circlePartsMax then
+									parts = circlePartsMax
+								end
+								--totalFixedParts = totalFixedParts + circleParts
+								--totalVariableParts = totalVariableParts + parts
+							end
+						end
+						glDrawListAtUnit(unitID, circlePolys[allyID][parts], false, unitScale, 1.0, unitScale)
+
+					end
+				end
+			end
+		end
+	end
+	--Spring.Echo('Variable Parts:  '..totalVariableParts..'      Fixed Parts per unit:  '..totalFixedParts)
 end
              
 

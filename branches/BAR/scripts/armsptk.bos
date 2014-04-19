@@ -300,35 +300,24 @@ SetMaxReloadTime(t)
 }
 
 
-
-QueryPrimary(piecenum)
-{
-	piecenum=fire_count;
-}
-
 FirePrimary()
 {
 	signal SIG_FIRE1;
 	set-signal-mask SIG_FIRE1;
 	if(fire_count==0)
 	{
-		hide flare1;
 		show flare1;
-		fire_count=1;
 	}
 	if(fire_count==1)
 	{
-		hide flare2;
 		show flare2;
-		fire_count=2;
 	}
 	if(fire_count==2)
 	{
-		hide flare3;
 		show flare3;
-		fire_count=3;
 	}
-	if(fire_count>3)
+	++fire_count;
+	if(fire_count>=3)
 	{
 		fire_count=0;
 	}
@@ -342,6 +331,21 @@ FirePrimary()
 
 
 
+QueryPrimary(piecenum)
+{
+	if(fire_count==0)
+	{
+		piecenum=flare1;	
+	}
+	if(fire_count==1)
+	{
+		piecenum=flare2;
+	}
+	if(fire_count==2)
+	{
+		piecenum=flare3;
+	}
+}
 
 
 	//maxvelocity	1.7200000286102, thus elmos per frame = 52 elmost per second

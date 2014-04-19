@@ -27,6 +27,7 @@ end
 -- allycursors_names
 -- allycursors_specs
 -- allycursors_scaling
+-- allycursors_namesfade
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -34,9 +35,15 @@ end
 -- configs
 
 local cursorSize				= 11
-local drawNames					= true
-local drawNamesScaling			= true		-- scale up when camera is mroe distant
+
 local hideSpecs					= false
+
+local drawNames					= true
+local drawNamesScaling			= true		-- scale up when camera is more distant
+local drawNamesFade				= true
+local NameFadeStartDistance		= 6300
+local NameFadeEndDistance		= 9600
+
 local drawNamesCursorSize		= 7
 local fontSizePlayer			= 21
 local fontSizeSpec				= 17.5
@@ -232,33 +239,41 @@ function widget:DrawWorldPreUnit()
 					gl.Translate(wx, gy, wz)
 					gl.Billboard()
 					
-					if drawNamesScaling and camZ then
+					local opacityMultiplier = 1
+					if drawNamesFade and camZ   or   drawNamesScaling and camZ then
 						local xDifference = camX - wx
 						local yDifference = camY - gy
 						local zDifference = camZ - wz
 						local camDistance = math.sqrt(xDifference*xDifference + yDifference*yDifference + zDifference*zDifference)
 						
-						local scale = 0.83 + camDistance / 5000
-						gl.Scale(scale,scale,scale)
-					end
-					
-					if spec then
-						if not hideSpecs then
-							gl.Color(1,1,1,0.55)
-							gl.Text(name, 0, 0, fontSizeSpec, "cn")
+						if drawNamesScaling then
+							local scale = 0.83 + camDistance / 5000
+							gl.Scale(scale,scale,scale)
 						end
-					else
-						local verticalOffset = usedCursorSize + 12.5
-						local horizontalOffset = usedCursorSize + 2
-						-- text shadow
-						gl.Color(0,0,0,0.6)
-						gl.Text(name, horizontalOffset-(fontSizePlayer/45), verticalOffset-(fontSizePlayer/38), fontSizePlayer, "n")
-						gl.Text(name, horizontalOffset+(fontSizePlayer/45), verticalOffset-(fontSizePlayer/38), fontSizePlayer, "n")
-						-- text
-						gl.Color(teamColors[playerID][1],teamColors[playerID][2],teamColors[playerID][3],0.72)
-						gl.Text(name, horizontalOffset, verticalOffset, fontSizePlayer, "n")
+						if drawNamesFade and camDistance > NameFadeStartDistance then 
+							local fadeDistance = NameFadeEndDistance - NameFadeStartDistance
+							opacityMultiplier = opacityMultiplier - ((camDistance - NameFadeStartDistance) / fadeDistance)
+						end
 					end
-					gl.PopMatrix()
+					if opacityMultiplier then
+						if spec then
+							if not hideSpecs then
+								gl.Color(1,1,1,0.55*opacityMultiplier)
+								gl.Text(name, 0, 0, fontSizeSpec, "cn")
+							end
+						else
+							local verticalOffset = usedCursorSize + 12.5
+							local horizontalOffset = usedCursorSize + 2
+							-- text shadow
+							gl.Color(0,0,0,0.62*opacityMultiplier)
+							gl.Text(name, horizontalOffset-(fontSizePlayer/45), verticalOffset-(fontSizePlayer/38), fontSizePlayer, "n")
+							gl.Text(name, horizontalOffset+(fontSizePlayer/45), verticalOffset-(fontSizePlayer/38), fontSizePlayer, "n")
+							-- text
+							gl.Color(teamColors[playerID][1],teamColors[playerID][2],teamColors[playerID][3],0.75*opacityMultiplier)
+							gl.Text(name, horizontalOffset, verticalOffset, fontSizePlayer, "n")
+						end
+						gl.PopMatrix()
+					end
 				end
 			end
 		else
@@ -287,6 +302,7 @@ function widget:TextCommand(command)
     if (string.find(command, "allycursors_names") == 1	and  string.len(command) == 17) then drawNames = not drawNames end
     if (string.find(command, "allycursors_specs") == 1  and  string.len(command) == 17) then hideSpecs = not hideSpecs end
     if (string.find(command, "allycursors_scaling") == 1  and  string.len(command) == 19) then drawNamesScaling = not drawNamesScaling end
+    if (string.find(command, "allycursors_namesfade") == 1  and  string.len(command) == 21) then drawNamesFade = not drawNamesFade end
     
 	if drawNames then
 		usedCursorSize = drawNamesCursorSize
@@ -299,14 +315,16 @@ function widget:GetConfigData(data)
     savedTable.drawNames		= drawNames
     savedTable.hideSpecs		= hideSpecs
     savedTable.drawNamesScaling	= drawNamesScaling
+    savedTable.drawNamesFade	= drawNamesFade
     return savedTable
 end
 
 -- restore data
 function widget:SetConfigData(data)
-    if data.drawNames ~= nil   then  drawNames			= data.drawNames end
-    if data.drawNames ~= nil   then  hideSpecs			= data.hideSpecs end
-    if data.drawNames ~= nil   then  drawNamesScaling   = data.drawNamesScaling end
+    if data.drawNames ~= nil			then  drawNames			= data.drawNames end
+    if data.hideSpecs ~= nil			then  hideSpecs			= data.hideSpecs end
+    if data.drawNamesScaling ~= nil		then  drawNamesScaling	= data.drawNamesScaling end
+    if data.drawNamesFade ~= nil		then  drawNamesFade		= data.drawNamesFade end
 	
 	if drawNames then
 		usedCursorSize = drawNamesCursorSize

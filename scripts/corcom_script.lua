@@ -28,8 +28,9 @@ local rbigflash = piece "rbigflash"
 local SIG_stop = 1
 local SIG_walk = 2
 local SIG_aim1 = 4
-local SIG_aim3 = 8
-local SIG_build = 16
+local SIG_aim2 = 8
+local SIG_aim3 = 16
+local SIG_build = 32
 
 -- Variables And Speed-ups
 local echo = Spring.Echo
@@ -325,7 +326,6 @@ end
 
 ------
 
-function script.AimFromWeapon() return luparm end
 
 function script.StartBuilding(heading, pitch)
 	Signal( SIG_build )
@@ -356,14 +356,53 @@ function script.AimFromWeapon1() return torso end
 function script.AimWeapon1( heading, pitch )
 	Signal( SIG_aim1 )
 	SetSignalMask( SIG_aim1 )
-    aiming = true
-	Turn(torso, y_axis, heading, VAR_speed_turn_torso_y)
-	WaitForTurn(torso, y_axis)
-	StartThread( RestoreAfterDelay )
-	return true
+	local _, basepos, _ = Spring.GetUnitPosition(unitID)
+	if basepos > -16 then
+		aiming = true
+		Turn(torso, y_axis, heading, VAR_speed_turn_torso_y)
+		WaitForTurn(torso, y_axis)
+		StartThread( RestoreAfterDelay )
+		return true
+	else
+		return false
+	end	
 end
 
 function script.QueryWeapon1() return lfirept end
+
+  
+function script.FireWeapon1()
+	fire1()
+	Sleep(1)
+end
+
+--
+function script.AimFromWeapon2() return torso end
+
+function script.AimWeapon2( heading, pitch )
+	Signal( SIG_aim2 )
+	SetSignalMask( SIG_aim2 )
+	local _, basepos, _ = Spring.GetUnitPosition(unitID)
+	Spring.Echo(basepos)
+	if basepos < -40 then
+		aiming = true
+		Turn(torso, y_axis, heading, VAR_speed_turn_torso_y)
+		WaitForTurn(torso, y_axis)
+		StartThread( RestoreAfterDelay )
+		return true
+	else
+		return false
+	end
+end
+
+function script.QueryWeapon2() return lfirept end
+
+  
+function script.FireWeapon2()
+	fire1()
+	Sleep(1)
+end
+--
 
 function script.AimFromWeapon3() return torso end
 
@@ -379,10 +418,6 @@ end
 
 function script.QueryWeapon3() return rbigflash end
 
-function script.FireWeapon1()
-	fire1()
-	Sleep(1)
-end
 
 function script.FireWeapon3()
 	fire3()

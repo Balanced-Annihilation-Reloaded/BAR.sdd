@@ -10,8 +10,8 @@
 function widget:GetInfo()
 	return {
 		name	= "Ally Cursors",
-		desc	= "Shows the mouse pos of allied players",
-		author	= "jK,TheFatController",
+		desc	= "Shows the mouse pos of allied players (also optionally with nicknames)",
+		author	= "Floris,jK,TheFatController",
 		date	= "Apr,2009",
 		license	= "GNU GPL, v2 or later",
 		layer	= 0,
@@ -24,7 +24,9 @@ end
 
 -- Console commands:
 
--- /allycursorsnames
+-- allycursors_names
+-- allycursors_specs
+-- allycursors_scaling
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -33,9 +35,11 @@ end
 
 local cursorSize				= 11
 local drawNames					= true
+local drawNamesScaling			= true		-- scale up when camera is mroe distant
+local hideSpecs					= false
 local drawNamesCursorSize		= 7
 local fontSizePlayer			= 21
-local fontSizeSpec				= 17
+local fontSizeSpec				= 17.5
 local sendPacketEvery			= 0.8
 local numMousePos				= 2 --//num mouse pos in 1 packet
 
@@ -48,6 +52,7 @@ local spGetGroundHeight		= Spring.GetGroundHeight
 local spGetPlayerInfo		= Spring.GetPlayerInfo
 local spGetTeamColor		= Spring.GetTeamColor
 local spIsSphereInView		= Spring.IsSphereInView
+local spGetCameraPosition	= Spring.GetCameraPosition
 
 local alliedCursorsPos		= {}
 
@@ -184,6 +189,9 @@ function widget:DrawWorldPreUnit()
 	gl.Texture('LuaUI/Images/AlliedCursors.png')
 	gl.PolygonOffset(-7,-10)
 	time = os.clock()
+	
+	local camX,camY,camZ = spGetCameraPosition()
+	
 	for playerID,data in pairs(alliedCursorsPos) do 
 		--local teamID = data[#data]
 		name,_,spec,teamID = spGetPlayerInfo(playerID)
@@ -204,13 +212,17 @@ function widget:DrawWorldPreUnit()
 			local gy = spGetGroundHeight(wx,wz)
 			if (spIsSphereInView(wx,gy,wz,usedCursorSize)) then
 				SetTeamColor(teamID,playerID,1)
-				if not drawNames  or  drawNames and not spec then
-					if cursorGlow or drawNames then
+				if not spec     or    not drawNames and spec and not hideSpecs then
+					local quadSize = usedCursorSize
+					if spec then
+						quadSize = usedCursorSize * 0.77
+					end
+					if drawNames then
 						gl.Texture('LuaUI/Images/AlliedCursors.png')
-						gl.BeginEnd(GL.QUADS,DrawGroundquad,wx,gy,wz,usedCursorSize)
+						gl.BeginEnd(GL.QUADS,DrawGroundquad,wx,gy,wz,quadSize)
 						gl.Texture(false)
 					else
-						gl.BeginEnd(GL.QUADS,DrawGroundquad,wx,gy,wz,usedCursorSize)
+						gl.BeginEnd(GL.QUADS,DrawGroundquad,wx,gy,wz,quadSize)
 					end
 				end
 				
@@ -219,9 +231,22 @@ function widget:DrawWorldPreUnit()
 					gl.PushMatrix()
 					gl.Translate(wx, gy, wz)
 					gl.Billboard()
+					
+					if drawNamesScaling and camZ then
+						local xDifference = camX - wx
+						local yDifference = camY - gy
+						local zDifference = camZ - wz
+						local camDistance = math.sqrt(xDifference*xDifference + yDifference*yDifference + zDifference*zDifference)
+						
+						local scale = 0.83 + camDistance / 5000
+						gl.Scale(scale,scale,scale)
+					end
+					
 					if spec then
-						gl.Color(1,1,1,0.55)
-						gl.Text(name, 0, 0, fontSizeSpec, "cn")
+						if not hideSpecs then
+							gl.Color(1,1,1,0.55)
+							gl.Text(name, 0, 0, fontSizeSpec, "cn")
+						end
 					else
 						local verticalOffset = usedCursorSize + 12.5
 						local horizontalOffset = usedCursorSize + 2
@@ -259,7 +284,9 @@ end
 
 -- (console) commands
 function widget:TextCommand(command)
-    if (string.find(command, "allycursors_names") == 1  and  string.len(command) == 17) then drawNames = not drawNames end
+    if (string.find(command, "allycursors_names") == 1	and  string.len(command) == 17) then drawNames = not drawNames end
+    if (string.find(command, "allycursors_specs") == 1  and  string.len(command) == 17) then hideSpecs = not hideSpecs end
+    if (string.find(command, "allycursors_scaling") == 1  and  string.len(command) == 19) then drawNamesScaling = not drawNamesScaling end
     
 	if drawNames then
 		usedCursorSize = drawNamesCursorSize
@@ -269,13 +296,17 @@ end
 -- save data
 function widget:GetConfigData(data)
     savedTable = {}
-    savedTable.drawNames  = drawNames
+    savedTable.drawNames		= drawNames
+    savedTable.hideSpecs		= hideSpecs
+    savedTable.drawNamesScaling	= drawNamesScaling
     return savedTable
 end
 
 -- restore data
 function widget:SetConfigData(data)
-    if data.drawNames ~= nil   then  drawNames   = data.drawNames end
+    if data.drawNames ~= nil   then  drawNames			= data.drawNames end
+    if data.drawNames ~= nil   then  hideSpecs			= data.hideSpecs end
+    if data.drawNames ~= nil   then  drawNamesScaling   = data.drawNamesScaling end
 	
 	if drawNames then
 		usedCursorSize = drawNamesCursorSize

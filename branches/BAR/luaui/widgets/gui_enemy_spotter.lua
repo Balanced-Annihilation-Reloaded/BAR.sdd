@@ -1,50 +1,47 @@
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
---
---  file:    gui_enemy_spotter.lua
---  brief:   Draws transparant smoothed donuts under enemy units
---  author:  Dave Rodgers (orig. TeamPlatter edited by TradeMark)
---
---  Copyright (C) 2007.
---  Licensed under the terms of the GNU GPL, v2 or later.
---
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
 function widget:GetInfo()
    return {
       name      = "EnemySpotter",
       desc      = "Draws transparant smoothed donuts under enemy units (with teamcolors or predefined colors, depending on situation)",
-      author    = "TradeMark  (Floris: added multiple ally color support)",
-      date      = "17.03.2013",
+      author    = "Floris (original enemyspotter by TradeMark, who edited 'TeamPlatter' by Dave Rodgers)",
+      date      = "20.04.2014",
       license   = "GNU GPL, v2 or later",
       layer     = 5,
-      enabled   = false  --  loaded by default?
+      enabled   = true
    }
 end
 
+--------------------------------------------------------------------------------
+-- Console commands
+--------------------------------------------------------------------------------
 
+-- /enemyspotter_drawself
+-- /enemyspotter_specmode
+-- /+enemyspotter_opacity
+-- /-enemyspotter_opacity
 
 --------------------------------------------------------------------------------
 -- Config
 --------------------------------------------------------------------------------
 
-local drawWithHiddenGUI                 = true    -- keep widget enabled when graphical user interface is hidden (when pressing F5)
-local skipOwnAllyTeam                   = true    -- keep this 'true' if you dont want circles rendered under your own units
-local useVariableSpotterDetail          = true   -- how precise circle?
+local drawWithHiddenGUI                 = true		-- keep widget enabled when graphical user interface is hidden (when pressing F5)
+local useVariableSpotterDetail          = true		-- use variable number of parts the spotter circle consists of
+local renderAllTeamsAsSpec				= true		-- renders for all teams when spectator
+local renderAllTeamsAsPlayer			= false		-- keep this 'false' if you dont want circles rendered under your own units as player
 
-local circleParts	                    = 12      	-- number of parts for a cirlce, when not using useVariableSpotterDetail
-local circlePartsMin                    = 9      	-- minimal number of parts for a cirlce, when zommed out
-local circlePartsMax                    = 18      	-- maximum number of parts for a cirlce, when zoomed in
-local circleOpacity                     = 0.28
-local innerSize                         = 1.35    -- circle scale compared to unit radius
-local outerSize                         = 1.30    -- outer fade size compared to circle scale (1 = not rendered)
+local circleParts						= 12      	-- number of parts for a cirlce, when not using useVariableSpotterDetail
+local circlePartsMin					= 9      	-- minimal number of parts for a cirlce, when zoomed out
+local circlePartsMax					= 18      	-- maximum number of parts for a cirlce, when zoomed in
+
+local spotterOpacity					= 0.25
+local innerSize							= 1.30		-- circle scale compared to unit radius
+local outerSize							= 1.30		-- outer fade size compared to circle scale (1 = not rendered)
                                         
-local defaultColorsForAllyTeams         = 0       -- (number of teams)   if number <= of total numebr of allyTeams then dont use teamcoloring but default colors
-local keepTeamColorsForSmallAllyTeam    = 3       -- (number of teams)   use teamcolors if number or teams (inside allyTeam)  <=  this value
-local spotterColor = {                            -- default color values
-   {0,0,1} , {1,0,1} , {0,1,1} , {0,1,0} , {1,0.5,0} , {0,1,1} , {1,1,0} , {1,1,1} , {0.5,0.5,0.5} , {0,0,0} , {0.5,0,0} , {0,0.5,0} , {0,0,0.5} , {0.5,0.5,0} , {0.5,0,0.5} , {0,0.5,0.5} , {1,0.5,0.5} , {0.5,0.5,0.1} , {0.5,0.1,0.5},
+local defaultColorsForAllyTeams			= 0 		-- (number of teams)   if number <= of total numebr of allyTeams then dont use teamcoloring but default colors
+local keepTeamColorsForSmallAllyTeam	= 3			-- (number of teams)   use teamcolors if number or teams (inside allyTeam)  <=  this value
+local spotterColor = {								-- default color values
+	{0,0,1} , {1,0,1} , {0,1,1} , {0,1,0} , {1,0.5,0} , {0,1,1} , {1,1,0} , {1,1,1} , {0.5,0.5,0.5} , {0,0,0} , {0.5,0,0} , {0,0.5,0} , {0,0,0.5} , {0.5,0.5,0} , {0.5,0,0.5} , {0,0.5,0.5} , {1,0.5,0.5} , {0.5,0.5,0.1} , {0.5,0.1,0.5},
 }
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -64,6 +61,7 @@ local spGetUnitPosition       = Spring.GetUnitPosition
           
 local myTeamID                = Spring.GetLocalTeamID()
 local myAllyID                = Spring.GetMyAllyTeamID()
+local gaiaTeamID			  = Spring.GetGaiaTeamID()
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -72,8 +70,8 @@ local realRadii               = {}
 local circlePolys             = {}
 local allyToSpotterColor      = {}
 local unitConf                = {}
-local allyToSpotterColorCount = 0
 local pickTeamColor           = false
+local skipOwnAllyTeam         = true
 
 -- preferred to keep these values the same as fancy unit selections widget
 local rectangleFactor		= 3.3
@@ -90,6 +88,9 @@ end
 
 
 function CreateSpotterList(r,g,b,a, parts)
+	if spotterOpacity < 0.08 then spotterOpacity = 0.08
+	elseif spotterOpacity > 0.4 then spotterOpacity = 0.4 end
+
 	return gl.CreateList(function()
 
 		gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)      -- disable layer blending
@@ -131,65 +132,60 @@ function CreateSpotterList(r,g,b,a, parts)
 end
 
 
-
-function widget:Initialize()
-
-	SetUnitConf()
-	
-   local allyTeamList = spGetAllyTeamList()
-   local numberOfAllyTeams = #allyTeamList
-   for allyTeamListIndex = 1, numberOfAllyTeams do
-      local allyID                = allyTeamList[allyTeamListIndex]
-      if not skipOwnAllyTeam  or  (skipOwnAllyTeam  and  not (allyID == myAllyID))  then
-         allyToSpotterColorCount     = allyToSpotterColorCount+1
-         allyToSpotterColor[allyID]  = allyToSpotterColorCount
-         local usedSpotterColor      = spotterColor[allyToSpotterColorCount]
-         if defaultColorsForAllyTeams < numberOfAllyTeams-1 then
-            local teamList              = spGetTeamList(allyID)
-            for teamListIndex = 1, #teamList do
-               local teamID = teamList[teamListIndex]
-               if (teamListIndex == 1  and  #teamList <= keepTeamColorsForSmallAllyTeam) then     -- only check for the first allyTeam  (to be consistent with picking a teamcolor or default color, inconsistency could happen with different teamsizes)
-                  pickTeamColor = true
-               end
-               if pickTeamColor then
-                  -- pick the first team in the allyTeam and take the color from that one
-                  if (teamListIndex == 1) then
-                     local r,g,b,a       = spGetTeamColor(teamID)
-                     usedSpotterColor[1] = r
-                     usedSpotterColor[2] = g
-                     usedSpotterColor[3] = b
-                  end
-               end
-            end
-         end
-         
-         -- generating list for all possible amount of circle-detail parts
-		 circlePolys[allyID] = {}
-         for i=circlePartsMin, circlePartsMax do
-			 circlePolys[allyID][i] = CreateSpotterList(usedSpotterColor[1],usedSpotterColor[2],usedSpotterColor[3],circleOpacity, i)
-         end
-      end
-   end
-end
-
-
-function widget:Shutdown()
-	local allyTeamList = spGetAllyTeamList()
-	for i=1, #allyTeamList do
-		local allyID = allyTeamList[i]
-		if circlePolys[allyID] then
-			for i=circlePartsMin, circlePartsMax do
-				if circlePolys[allyID][i] then
-					gl.DeleteList(circlePolys[allyID][i])
-				end
-			end
+function DeleteSpotterLists()
+	local count = 0
+	for allyID, lists in pairs(circlePolys) do
+		for parts in pairs(lists) do
+			gl.DeleteList(circlePolys[allyID][parts])
 		end
 	end
 end
 
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
+function CreateSpotterLists()
+	
+	DeleteSpotterLists()
+	
+	local allyToSpotterColorCount = 0
+	local allyTeamList = spGetAllyTeamList()
+	local numberOfAllyTeams = #allyTeamList
+	for allyTeamListIndex = 1, numberOfAllyTeams do
+		local allyID = allyTeamList[allyTeamListIndex]
+		if not skipOwnAllyTeam  or  (skipOwnAllyTeam  and  not (allyID == myAllyID))  then
+			allyToSpotterColorCount     = allyToSpotterColorCount+1
+			allyToSpotterColor[allyID]  = allyToSpotterColorCount
+			local usedSpotterColor      = spotterColor[allyToSpotterColorCount]
+			if defaultColorsForAllyTeams < numberOfAllyTeams-1 then
+				local teamList = Spring.GetTeamList(allyID)
+				for teamListIndex = 1, #teamList do
+					local teamID = teamList[teamListIndex]
+					if teamID ~= gaiaTeamID then
+						local pickTeamColor = false
+						if (teamListIndex == 1  and  #teamList <= keepTeamColorsForSmallAllyTeam) then     -- only check for the first allyTeam, (to be consistent with picking a teamcolor or default color, inconsistency could happen with different teamsizes)
+							pickTeamColor = true
+						end
+						if pickTeamColor then
+						-- pick the first team in the allyTeam and take the color from that one
+							if (teamListIndex == 1) then
+								usedSpotterColor[1],usedSpotterColor[2],usedSpotterColor[3],_       = Spring.GetTeamColor(teamID)
+							end
+						end
+					end
+				end
+			end
+			teamList = Spring.GetTeamList(allyID)
+			for teamListIndex = 1, #teamList do
+				teamID = teamList[teamListIndex]
+				if teamID ~= gaiaTeamID then
+					 circlePolys[allyID] = {}
+					for i=circlePartsMin, circlePartsMax do
+						circlePolys[allyID][i] = CreateSpotterList(usedSpotterColor[1],usedSpotterColor[2],usedSpotterColor[3],spotterOpacity, i)
+					end
+				end
+			end
+		end
+	end
+end
 
 function SetUnitConf()
 	for udid, unitDef in pairs(UnitDefs) do
@@ -211,11 +207,30 @@ function SetUnitConf()
 	end
 end
 
+
 --------------------------------------------------------------------------------
+-- Engine Calls
 --------------------------------------------------------------------------------
 
+function widget:Initialize()
+	
+	SetUnitConf()
+	
+    if Spring.GetSpectatingState()  and  renderAllTeamsAsSpec then
+        skipOwnAllyTeam = false
+    elseif not Spring.GetSpectatingState() and renderAllTeamsAsPlayer then
+        skipOwnAllyTeam = false
+    end
+	CreateSpotterLists()
+end
 
--- Drawing:
+
+function widget:Shutdown()
+	
+	DeleteSpotterLists()
+end
+
+
 function widget:DrawWorldPreUnit()
 	if not drawWithHiddenGUI then
 		if spIsGUIHidden() then return end
@@ -272,7 +287,30 @@ function widget:DrawWorldPreUnit()
 	end
 	--Spring.Echo('Variable Parts:  '..totalVariableParts..'      Fixed Parts per unit:  '..totalFixedParts)
 end
-             
+
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
+function widget:GetConfigData(data)
+    savedTable = {}
+    savedTable.renderAllTeamsAsSpec		= renderAllTeamsAsSpec
+    savedTable.renderAllTeamsAsPlayer	= renderAllTeamsAsPlayer
+    savedTable.spotterOpacity			= spotterOpacity
+    return savedTable
+end
+
+function widget:SetConfigData(data)
+    if data.renderAllTeamsAsSpec ~= nil     then  renderAllTeamsAsSpec   = data.renderAllTeamsAsSpec end
+    if data.renderAllTeamsAsPlayer ~= nil   then  renderAllTeamsAsPlayer   = data.renderAllTeamsAsPlayer end
+    spotterOpacity        = data.spotterOpacity       or spotterOpacity
+end
+
+function widget:TextCommand(command)
+    if (string.find(command, "enemyspotter_drawself") == 1  and  string.len(command) == 21) then renderAllTeamsAsPlayer = not renderAllTeamsAsPlayer ; if not Spring.GetSpectatingState() then skipOwnAllyTeam = not renderAllTeamsAsPlayer ; callfunction = CreateSpotterLists() elseif not renderAllTeamsAsSpec and not renderAllTeamsAsPlayer then skipOwnAllyTeam = not renderAllTeamsAsPlayer ; callfunction = CreateSpotterLists() end end
+
+    if (string.find(command, "enemyspotter_specmode") == 1  and  string.len(command) == 21) then renderAllTeamsAsSpec = not renderAllTeamsAsSpec ; if Spring.GetSpectatingState() and not renderAllTeamsAsPlayer then skipOwnAllyTeam = not renderAllTeamsAsSpec ;  callfunction = CreateSpotterLists() end end
+
+    if (string.find(command, "+enemyspotter_opacity") == 1) then spotterOpacity = spotterOpacity + 0.02 ; callfunction = CreateSpotterLists() end
+    if (string.find(command, "-enemyspotter_opacity") == 1) then spotterOpacity = spotterOpacity - 0.02 ; callfunction = CreateSpotterLists() end
+end

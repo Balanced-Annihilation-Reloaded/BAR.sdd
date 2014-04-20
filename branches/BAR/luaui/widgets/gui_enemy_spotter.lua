@@ -15,7 +15,7 @@ end
 --------------------------------------------------------------------------------
 
 -- /enemyspotter_self
--- /enemyspotter_specmode
+-- /enemyspotter_all
 -- /+enemyspotter_opacity
 -- /-enemyspotter_opacity
 
@@ -51,7 +51,7 @@ local spGetTeamColor          = Spring.GetTeamColor
 local spGetUnitDefDimensions  = Spring.GetUnitDefDimensions
 local spGetUnitDefID          = Spring.GetUnitDefID
 local spIsUnitSelected        = Spring.IsUnitSelected
-local spGetAllyTeamList       = Spring.GetAllyTeamList 
+local spGetAllyTeamList       = Spring.GetAllyTeamList
 local spGetTeamList           = Spring.GetTeamList
 local spGetVisibleUnits       = Spring.GetVisibleUnits
 local spIsGUIHidden           = Spring.IsGUIHidden
@@ -87,7 +87,7 @@ end
 
 function CreateSpotterList(r,g,b,a, parts)
 	if spotterOpacity < 0.08 then spotterOpacity = 0.08
-	elseif spotterOpacity > 0.4 then spotterOpacity = 0.4 end
+	elseif spotterOpacity > 0.5 then spotterOpacity = 0.5 end
 
 	return gl.CreateList(function()
 
@@ -131,25 +131,33 @@ end
 
 
 function DeleteSpotterLists()
-	local count = 0
 	for allyID, lists in pairs(circlePolys) do
 		for parts in pairs(lists) do
 			gl.DeleteList(circlePolys[allyID][parts])
 		end
+		circlePolys[allyID] = nil
 	end
 end
 
 
 function CreateSpotterLists()
-	
+
 	DeleteSpotterLists()
-	
+
+    if Spring.GetSpectatingState()  and  renderAllTeamsAsSpec then
+        skipOwnAllyTeam = false
+    elseif not Spring.GetSpectatingState() and renderAllTeamsAsPlayer then
+        skipOwnAllyTeam = false
+    end
+    
 	local allyToSpotterColorCount = 0
 	local allyTeamList = spGetAllyTeamList()
 	local numberOfAllyTeams = #allyTeamList
 	for allyTeamListIndex = 1, numberOfAllyTeams do
 		local allyID = allyTeamList[allyTeamListIndex]
+		
 		if not skipOwnAllyTeam  or  (skipOwnAllyTeam  and  not (allyID == myAllyID))  then
+		
 			allyToSpotterColorCount     = allyToSpotterColorCount+1
 			allyToSpotterColor[allyID]  = allyToSpotterColorCount
 			local usedSpotterColor      = spotterColor[allyToSpotterColorCount]
@@ -213,12 +221,6 @@ end
 function widget:Initialize()
 	
 	SetUnitConf()
-	
-    if Spring.GetSpectatingState()  and  renderAllTeamsAsSpec then
-        skipOwnAllyTeam = false
-    elseif not Spring.GetSpectatingState() and renderAllTeamsAsPlayer then
-        skipOwnAllyTeam = false
-    end
 	CreateSpotterLists()
 end
 
@@ -278,7 +280,7 @@ function widget:DrawWorldPreUnit()
 						end
 						
 						glDrawListAtUnit(unitID, circlePolys[allyID][parts], false, unitScale, 1.0, unitScale)
-
+						
 					end
 				end
 			end
@@ -317,9 +319,25 @@ function widget:SetConfigData(data)
 end
 
 function widget:TextCommand(command)
-    if (string.find(command, "enemyspotter_self") == 1  and  string.len(command) == 17) then renderAllTeamsAsPlayer = not renderAllTeamsAsPlayer ; if not Spring.GetSpectatingState() then skipOwnAllyTeam = not renderAllTeamsAsPlayer ; callfunction = CreateSpotterLists() elseif not renderAllTeamsAsSpec and not renderAllTeamsAsPlayer then skipOwnAllyTeam = not renderAllTeamsAsPlayer ; callfunction = CreateSpotterLists() end end
+    if (string.find(command, "enemyspotter_self") == 1  and  string.len(command) == 17) then 
+		renderAllTeamsAsPlayer = not renderAllTeamsAsPlayer
+		if not Spring.GetSpectatingState() then 
+			skipOwnAllyTeam = not renderAllTeamsAsPlayer
+			CreateSpotterLists()
+		end
+	end
 
-    if (string.find(command, "enemyspotter_specmode") == 1  and  string.len(command) == 21) then renderAllTeamsAsSpec = not renderAllTeamsAsSpec ; if Spring.GetSpectatingState() and not renderAllTeamsAsPlayer then skipOwnAllyTeam = not renderAllTeamsAsSpec ;  callfunction = CreateSpotterLists() end end
+    if (string.find(command, "enemyspotter_all") == 1  and  string.len(command) == 16) then 
+		renderAllTeamsAsSpec = not renderAllTeamsAsSpec
+		if Spring.GetSpectatingState() then 
+			skipOwnAllyTeam = not renderAllTeamsAsSpec
+			CreateSpotterLists()
+		end
+	end
+
+    --if (string.find(command, "enemyspotter_self") == 1  and  string.len(command) == 17) then renderAllTeamsAsPlayer = not renderAllTeamsAsPlayer ; CreateSpotterLists() end
+
+    --if (string.find(command, "enemyspotter_all") == 1  and  string.len(command) == 16) then renderAllTeamsAsSpec = not renderAllTeamsAsSpec ; CreateSpotterLists() end
 
     if (string.find(command, "+enemyspotter_opacity") == 1) then spotterOpacity = spotterOpacity + 0.02 ; callfunction = CreateSpotterLists() end
     if (string.find(command, "-enemyspotter_opacity") == 1) then spotterOpacity = spotterOpacity - 0.02 ; callfunction = CreateSpotterLists() end

@@ -14,7 +14,7 @@ end
 -- Console commands
 --------------------------------------------------------------------------------
 
--- /enemyspotter_drawself
+-- /enemyspotter_self
 -- /enemyspotter_specmode
 -- /+enemyspotter_opacity
 -- /-enemyspotter_opacity
@@ -66,11 +66,9 @@ local gaiaTeamID			  = Spring.GetGaiaTeamID()
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local realRadii               = {}
 local circlePolys             = {}
 local allyToSpotterColor      = {}
 local unitConf                = {}
-local pickTeamColor           = false
 local skipOwnAllyTeam         = true
 
 -- preferred to keep these values the same as fancy unit selections widget
@@ -278,6 +276,7 @@ function widget:DrawWorldPreUnit()
 								--totalVariableParts = totalVariableParts + parts
 							end
 						end
+						
 						glDrawListAtUnit(unitID, circlePolys[allyID][parts], false, unitScale, 1.0, unitScale)
 
 					end
@@ -286,6 +285,17 @@ function widget:DrawWorldPreUnit()
 		end
 	end
 	--Spring.Echo('Variable Parts:  '..totalVariableParts..'      Fixed Parts per unit:  '..totalFixedParts)
+end
+
+
+function widget:PlayerChanged()
+    if Spring.GetSpectatingState()  and  renderAllTeamsAsSpec then
+        skipOwnAllyTeam = false
+        CreateSpotterLists()
+    elseif not Spring.GetSpectatingState() and renderAllTeamsAsPlayer then
+        skipOwnAllyTeam = false
+        CreateSpotterLists()
+    end
 end
 
 
@@ -307,7 +317,7 @@ function widget:SetConfigData(data)
 end
 
 function widget:TextCommand(command)
-    if (string.find(command, "enemyspotter_drawself") == 1  and  string.len(command) == 21) then renderAllTeamsAsPlayer = not renderAllTeamsAsPlayer ; if not Spring.GetSpectatingState() then skipOwnAllyTeam = not renderAllTeamsAsPlayer ; callfunction = CreateSpotterLists() elseif not renderAllTeamsAsSpec and not renderAllTeamsAsPlayer then skipOwnAllyTeam = not renderAllTeamsAsPlayer ; callfunction = CreateSpotterLists() end end
+    if (string.find(command, "enemyspotter_self") == 1  and  string.len(command) == 17) then renderAllTeamsAsPlayer = not renderAllTeamsAsPlayer ; if not Spring.GetSpectatingState() then skipOwnAllyTeam = not renderAllTeamsAsPlayer ; callfunction = CreateSpotterLists() elseif not renderAllTeamsAsSpec and not renderAllTeamsAsPlayer then skipOwnAllyTeam = not renderAllTeamsAsPlayer ; callfunction = CreateSpotterLists() end end
 
     if (string.find(command, "enemyspotter_specmode") == 1  and  string.len(command) == 21) then renderAllTeamsAsSpec = not renderAllTeamsAsSpec ; if Spring.GetSpectatingState() and not renderAllTeamsAsPlayer then skipOwnAllyTeam = not renderAllTeamsAsSpec ;  callfunction = CreateSpotterLists() end end
 

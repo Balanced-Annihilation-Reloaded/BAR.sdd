@@ -217,8 +217,8 @@ end
     StopHook()
   end
 
-local tick = 0.1
-local averageTime = 5
+local tick = 0.2
+local averageTime = 2
 local loadAverages = {}
 
 local function CalcLoad(old_load, new_load, t)
@@ -249,7 +249,8 @@ end
 
     if (deltaTime>=tick) then
       startTimer = Spring.GetTimer()
-
+	  sortedList = {}
+	  
       totalLoads = {}
       maximum = 0
       allOverTime = 0
@@ -268,7 +269,8 @@ end
         end
 
         local load = 100*total/deltaTime
-        loadAverages[wname] = CalcLoad(loadAverages[wname] or load, load, averageTime)
+        local load_avg = CalcLoad(loadAverages[wname] or load, load, averageTime)
+		loadAverages[wname] = load_avg
 
         allOverTimeSec = allOverTimeSec + total
 
@@ -278,7 +280,7 @@ end
         if (maximum<tLoad) then maximum=tLoad end
         n = n + 1
       end
-
+	  
       table.sort(sortedList,SortFunc)
     end
 
@@ -287,26 +289,32 @@ end
     end
 
     local vsx, vsy = gl.GetViewSizes()
-    local x,y = vsx-300, vsy-40
+    local x,y = vsx-350, vsy-150
 
     gl.Color(1,1,1,1)
     gl.BeginText()
+	local j = 0
     for i=1,#sortedList do
+	  j = j +1
       local v = sortedList[i]
       local wname = v[1]
       local tLoad = v[2]
       if maximum > 0 then
-        gl.Rect(x+100-tLoad/maximum*100, y+1-(12)*i, x+100, y+9-(12)*i)
+        gl.Rect(x+100-tLoad/maximum*100, y+1-(12)*j, x+100, y+9-(12)*j)
       end
-      gl.Text(wname, x+150, y+1-(12)*i, 10)
-      gl.Text(('%.3f%%'):format(tLoad), x+105, y+1-(12)*i, 10)
+      gl.Text(wname, x+150, y+1-(12)*j, 10)
+      gl.Text(('%.3f%%'):format(tLoad), x+105, y+1-(12)*j, 10)
+	  if i%50==0 then
+		x = x - 350
+		j = 0
+	  end
     end
-    local i = #sortedList + 1    
-    gl.Text("\255\255\064\064total time", x+150, y-1-(12)*i, 10)
-    gl.Text("\255\255\064\064"..('%.3fs'):format(allOverTimeSec), x+105, y-1-(12)*i, 10)
-    i = i+1
-    gl.Text("\255\255\064\064total FPS cost", x+150, y-1-(12)*i, 10)
-    gl.Text("\255\255\064\064"..('%.1f%%'):format(allOverTime), x+105, y-1-(12)*i, 10)
+	j = j + 1
+    gl.Text("\255\255\064\064total time", x+150, y-1-(12)*j, 10)
+    gl.Text("\255\255\064\064"..('%.3fs'):format(allOverTimeSec), x+105, y-1-(12)*j, 10)
+    j = j + 1
+    gl.Text("\255\255\064\064total FPS cost", x+150, y-1-(12)*j, 10)
+    gl.Text("\255\255\064\064"..('%.1f%%'):format(allOverTime), x+105, y-1-(12)*j, 10)
     gl.EndText()
   end
 

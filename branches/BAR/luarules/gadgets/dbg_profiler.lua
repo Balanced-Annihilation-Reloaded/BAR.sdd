@@ -377,7 +377,7 @@ end
     end
 
     local vsx, vsy = gl.GetViewSizes()
-    local x,y = vsx-600, vsy-100
+    local x,y = vsx-1050, vsy-100
 
     local maximum_ = (maximumSYNCED > maximum) and (maximumSYNCED) or (maximum)
 
@@ -400,9 +400,11 @@ end
 
       gl.Rect(x, y+5-(12)*j, x+230, y+4-(12)*j)
       gl.Color(1,0,0)   
+	  y = y - 8
       gl.Text("SYNCED", x+115, y-3-(12)*j, 12, "nOc")
       gl.Color(1,1,1,1)
       j = j
+	  y = y - 5
 
       for i=1,#sortedListSYNCED do
         local v = sortedListSYNCED[i]

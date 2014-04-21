@@ -51,6 +51,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "COMMANDER_BLAST",
 		selfdestructcountdown = 5,
+		script = "armcom.lua",
 		showplayername = true,
 		sightdistance = 450,
 		sonardistance = 300,

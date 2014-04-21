@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
---  file:    camera_smooth_scroll.lua
+--  file:    camera_smooth_move.lua
 --  brief:   Alternate camera scrolling for the middle mouse button
 --  author:  Dave Rodgers
 --
@@ -57,7 +57,7 @@ local spWarpMouse        = Spring.WarpMouse
 --  1. The GetCameraState() table is supposed to be opaque.
 --
 
-local blockModeSwitching = false
+local blockModeSwitching = true
 
 
 local vsx, vsy = widgetHandler:GetViewSizes()
@@ -68,7 +68,7 @@ end
 
 
 local decayFactor = 1
-local speedFactor = 1
+local speedFactor = 25
 
 local mx, my
 local active = false
@@ -229,26 +229,26 @@ local green = { 0, 1, 0 }
 local black = { 0, 0, 0 }
 local white = { 1, 1, 1 }
 
-
+--[[
 function widget:DrawScreen()
   if (active) then
     local x, y = spGetMouseState()
 
-    -- DrawPoint(mx, my, black, 14)
-    -- DrawPoint(mx, my, white, 11)
-    -- DrawPoint(mx, my, black,  8)
-    -- DrawPoint(mx, my, red,    5)
+    DrawPoint(mx, my, black, 14)
+    DrawPoint(mx, my, white, 11)
+    DrawPoint(mx, my, black,  8)
+    DrawPoint(mx, my, red,    5)
 
-    -- glLineWidth(2)
-    -- glBeginEnd(GL_LINES, DrawLine, x, y, green, mx, my, red)
-    -- glLineWidth(1)
+    glLineWidth(2)
+    glBeginEnd(GL_LINES, DrawLine, x, y, green, mx, my, red)
+    glLineWidth(1)
 
-    -- DrawPoint(x, y, { 0, 1, 0 },  5)
+    DrawPoint(x, y, { 0, 1, 0 },  5)
 
-    -- glPointSize(1)
+    glPointSize(1)
   end
 end
-
+]]
 
 --------------------------------------------------------------------------------
 

@@ -16,17 +16,32 @@ end
 -- NOTE:  STILL IN DEVELOPMENT!
 -- dont change without asking/permission please
 
+---TODO
+-- trigegr cmd's only when units are selected
+-- show lab waypoints separately
+-- optionally show non-self cmd's
+-- disable/replace engine cmd type icons/cursors
+-- hotkey to show all issued cmd's (like current shift+space)
+
+---NICE TO HAVES
+-- maybe add ETA? (only when giving a cmd to a single unit)
+-- add 'notify on arrival' shortcut addition
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local commandHistory			= {}	
-local commandHistoryCoords		= {}	-- this table is used to count cmd´s with same coordinates
-local commandCoordsRendered		= {}	-- this table is used to skip cmd´s that have the same coordinates
+local commandHistory= {
+	commands		= {},
+	coords			= {},	-- this table is used to count cmd´s with same coordinates
+	coordRendered	= {},	-- this table is used to skip cmd´s that have the same coordinates
+	units			= {}	-- this table stores the newest queued cmd time of each unit.
+}
+
 local mapDrawNicknameTime		= {}	-- this table is used to filter out previous map drawing nicknames if user has drawn something new
 local mapEraseNicknameTime		= {}	-- 
 local ownPlayerID				= Spring.GetMyPlayerID()
 
-
+-- spring vars
 local spGetUnitPosition			= Spring.GetUnitPosition
 local spGetCameraPosition		= Spring.GetCameraPosition
 local spGetUnitCommands			= Spring.GetUnitCommands
@@ -39,15 +54,17 @@ local spGetTeamColor			= Spring.GetTeamColor
 --------------------------------------------------------------------------------
 
 local OPTIONS = {
+	disableEngineLines 			= true,		-- disables default Spring Engine lines (move, patrol, attack, fight)
+	
 	showMapmarkFx 				= true,
 	showMapmarkSpecNames		= true,
 	showMapmarkSpecIcons		= true,		-- showMapmarkFx must be true for this to work
 	nicknameOpacityMultiplier	= 6,		-- multiplier applied to the given color opacity of the type: 'map_draw'
 	scaleWithCamera				= true,
 	
-	size 						= 28,
-	opacity 					= 1,
-	duration					= 0.7,		-- each type has its own duration, but this settings applies to all
+	size 						= 28,		-- overall size
+	opacity 					= 0.75,		-- overall opacity
+	duration					= 0.7,		-- overall duration
 	
 	baseParts					= 14,		-- (note that if camera is distant the number of parts will be reduced, up to 6 as minimum)
 	ringParts					= 24,		-- (note that if camera is distant the number of parts will be reduced, up to 6 as minimum)
@@ -56,8 +73,8 @@ local OPTIONS = {
 	ringScale					= 0.75,
 	reduceOverlapEffect			= 0.08,		-- when spotters have the same coordinates: reduce the opacity: 1 is no reducing while 0 is no adding
 	
-	drawLine					= false,
-	linePartWidth				= 15,
+	drawLines					= true,
+	linePartWidth				= 12,
 	linePartLength				= 20,
 	
 	types = {
@@ -173,12 +190,15 @@ local function DrawRingCircle(parts, ringSize, ringInnerSize, ringOuterSize, rRi
 end
 
 
+-- still doesnt render a proper line
 local function DrawLine(x1,y1,z1, x2,y2,z2, width, partLength)
+
 	local xDifference		= x2 - x1
-	local yDifference		= y2 - y1
+	local yDifference		= y2 - y1	-- remember.. in spring 'y' is height/depth
 	local zDifference		= z2 - z1
+	
 	local halfWidth			= width / 2
-	local thetaInRadians	= math.atan2(yDifference, xDifference)
+	local thetaInRadians	= math.atan2(zDifference, xDifference)
 	local theta				= thetaInRadians * 180 / math.pi
 	local perpendicular		= theta + 90;
 	if (perpendicular > 360) then
@@ -188,25 +208,22 @@ local function DrawLine(x1,y1,z1, x2,y2,z2, width, partLength)
 	end
 	local perpendicularInRadians = perpendicular * math.pi / 180
 
-	local yOffset = math.sin(perpendicularInRadians) * halfWidth
+	local zOffset = math.sin(perpendicularInRadians) * halfWidth
 	local xOffset = math.cos(perpendicularInRadians) * halfWidth
 	
-	--Spring.Echo(yOffset .. '   ' .. xOffset)
+	gl.Vertex(0+xOffset, 0, 0+zOffset)
+	gl.Vertex(0-zOffset, 0, 0-zOffset)
 	
-	gl.Vertex(0+xOffset, 0+yOffset, 0)
-	gl.Vertex(0-xOffset, 0-yOffset, 0)
-	
-	gl.Vertex((x2-x1)-xOffset, (y2-y1)-yOffset, z2-z1)
-	gl.Vertex((x2-x1)+xOffset, (y2-y1)+yOffset, z2-z1)
-	
+	gl.Vertex((x2-x1)-xOffset, y2-y1, (z2-z1)-zOffset)
+	gl.Vertex((x2-x1)+xOffset, y2-y1, (z2-z1)-zOffset)
 	
 	if 1 == 2 then
+		-- draw lines with gaps
 		local distance = math.sqrt(xDifference*xDifference + yDifference*yDifference + zDifference*zDifference)
 		local parts = Round(distance / partLength)
 		local partDistance = distance / parts
 		local partSpacing = 0.8
 		for i = 1, parts do
-			
 			
 			
 		end
@@ -228,7 +245,10 @@ end
 
 local function SetupCommandColors(state)
 	local alpha = state and 1 or 0
-	--spLoadCmdColorsConfig('move  0.5 1.0 0.5 ' .. alpha)
+	spLoadCmdColorsConfig('move     0.5  1.0  0.5  ' .. alpha)
+	spLoadCmdColorsConfig('patrol   0.3  0.3  1.0  ' .. alpha)
+	spLoadCmdColorsConfig('attack   1.0  0.2  0.2  ' .. alpha)
+	spLoadCmdColorsConfig('fight    0.5  0.5  1.0  ' .. alpha)
 end
 
 
@@ -240,7 +260,7 @@ local function AddCommandSpotter(cmdType, x, y, z, osClock, unitID, playerID)
 		playerID = false
 	end
 	local uniqueNumber = unitID..'_'..osClock
-	commandHistory[uniqueNumber] = {
+	commandHistory.commands[uniqueNumber] = {
 		cmdType		= cmdType,
 		x			= x,
 		y			= y,
@@ -249,11 +269,12 @@ local function AddCommandSpotter(cmdType, x, y, z, osClock, unitID, playerID)
 		unitID		= unitID,
 		playerID	= playerID
 	}
-	if commandHistoryCoords[cmdType..x..y..z] then
-		commandHistoryCoords[cmdType..x..y..z] = commandHistoryCoords[cmdType..x..y..z] + 1
+	if commandHistory.coords[cmdType..x..y..z] then
+		commandHistory.coords[cmdType..x..y..z] = commandHistory.coords[cmdType..x..y..z] + 1
 	else
-		commandHistoryCoords[cmdType..x..y..z] = 1
+		commandHistory.coords[cmdType..x..y..z] = 1
 	end
+	commandHistory.units[unitID] = osClock
 end
 
 
@@ -267,12 +288,16 @@ end
 
 
 function widget:Initialize()
-	SetupCommandColors(false)
+	if OPTIONS.disableEngineLines then
+		SetupCommandColors(false)
+	end
 end
 
 
 function widget:Shutdown()
-	SetupCommandColors(true)
+	if OPTIONS.disableEngineLines then
+		SetupCommandColors(true)
+	end
 end
 
 
@@ -333,9 +358,9 @@ function widget:DrawWorldPreUnit()
 	gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
 	gl.DepthTest(false)
 	
-	commandCoordsRendered = {}
+	commandHistory.coordRendered = {}
 	
-	for cmdKey, cmdValue in pairs(commandHistory) do
+	for cmdKey, cmdValue in pairs(commandHistory.commands) do
 	
 		local clickOsClock	= cmdValue.osClock
 		local cmdType		= cmdValue.cmdType
@@ -345,23 +370,22 @@ function widget:DrawWorldPreUnit()
 		
 		-- remove when duration has passed
 		if osClock - clickOsClock > duration  then
-			if commandHistoryCoords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] <= 1 then
-				commandHistoryCoords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] = nil
+			if commandHistory.coords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] <= 1 then
+				commandHistory.coords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] = nil
 			else
-				commandHistoryCoords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] = commandHistoryCoords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] - 1
+				commandHistory.coords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] = commandHistory.coords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] - 1
 			end
-			commandHistory[cmdKey] = nil
+			commandHistory.commands[cmdKey] = nil
 			
 		-- remove nicknames when user has drawn something new
 		elseif  OPTIONS.showMapmarkSpecNames  and  cmdType == 'map_draw'  and  mapDrawNicknameTime[playerID] ~= nil  and  clickOsClock < mapDrawNicknameTime[playerID] then
 			
-			commandHistory[cmdKey] = nil
+			commandHistory.commands[cmdKey] = nil
 			
 		-- draw all
 		elseif  OPTIONS.types[cmdType].baseColor[4] > 0  or  OPTIONS.types[cmdType].ringColor[4] > 0  then
-			if commandCoordsRendered[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] == nil then
-				commandCoordsRendered[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] = true
-				local alphaMultiplier = 1 + (OPTIONS.reduceOverlapEffect * (commandHistoryCoords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] - 1))	 -- add a bit to the multiplier for each cmd issued on the same coords
+			if commandHistory.coordRendered[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] == nil   or   OPTIONS.drawLines then
+				local alphaMultiplier = 1 + (OPTIONS.reduceOverlapEffect * (commandHistory.coords[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] - 1))	 -- add a bit to the multiplier for each cmd issued on the same coords
 				
 				local size	= OPTIONS.size * OPTIONS.types[cmdType].size
 				local a		= (1 - ((osClock - clickOsClock) / duration)) * OPTIONS.opacity * alphaMultiplier
@@ -376,7 +400,7 @@ function widget:DrawWorldPreUnit()
 					if not spec then
 						r,g,b = spGetTeamColor(teamID)
 					end
-					baseColor = {1,1,1,baseColor[4]}
+					baseColor = {r,g,b,baseColor[4]}
 					ringColor = {r,g,b,ringColor[4]}
 				end
 				
@@ -407,63 +431,64 @@ function widget:DrawWorldPreUnit()
 					scale = 0.82 + camDistance / 7500
 					gl.Scale(scale,scale,scale)
 				end
-						
-				-- base glow
-				if baseColor[4] > 0 then
-					local parts = Round(((OPTIONS.baseParts - (camDistance / 800)) + (size / 20)) * scale)
-					if parts < 6 then parts = 6 end
-					gl.BeginEnd(GL.TRIANGLE_FAN, DrawBaseGlow, parts, size, r,g,b,a)
-				end
 				
-				-- ring circle:
-				if aRing > 0 then
-					local parts = Round(((OPTIONS.ringParts - (camDistance / 800)) + (ringSize / 10)) * scale)
-					--parts = parts * (ringSize / (size*OPTIONS.ringScale))		-- this reduces parts when ring is little, but introduces temporary gaps when a part is added
-					if parts < 6 then parts = 6 end
-					gl.BeginEnd(GL.QUADS, DrawRingCircle, parts, ringSize, ringInnerSize, ringOuterSize, rRing,gRing,bRing,aRing)
+				
+				if commandHistory.coordRendered[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] == nil then
+					-- base glow
+					if baseColor[4] > 0 then
+						local parts = Round(((OPTIONS.baseParts - (camDistance / 800)) + (size / 20)) * scale)
+						if parts < 6 then parts = 6 end
+						gl.BeginEnd(GL.TRIANGLE_FAN, DrawBaseGlow, parts, size, r,g,b,a)
+					end
+					
+					-- ring circle:
+					if aRing > 0 then
+						local parts = Round(((OPTIONS.ringParts - (camDistance / 800)) + (ringSize / 10)) * scale)
+						--parts = parts * (ringSize / (size*OPTIONS.ringScale))		-- this reduces parts when ring is little, but introduces temporary gaps when a part is added
+						if parts < 6 then parts = 6 end
+						gl.BeginEnd(GL.QUADS, DrawRingCircle, parts, ringSize, ringInnerSize, ringOuterSize, rRing,gRing,bRing,aRing)
+					end
 				end
 				
 				-- line
-				if OPTIONS.drawLine and cmdType == 'move' then
-					gl.Color(r,g,b,a)
+				if commandHistory.units[unitID]  and  commandHistory.units[unitID] == clickOsClock then
 					local cmdQueue = spGetUnitCommands(unitID)
 					if cmdQueue ~= nil then
-						if #cmdQueue < 2  and 1 == 2 then		-- should only be unit coords if unit has no queue with cmd-coords
-							local originX, originY, originZ = spGetUnitPosition(unitID)
-							gl.BeginEnd(GL.QUADS, DrawLine, cmdValue.x, cmdValue.y, cmdValue.z, originX, originY, originZ, OPTIONS.linePartWidth, OPTIONS.linePartLength)
-						end
 						
+						-- loop queue
+						local prevX, prevY, prevZ = spGetUnitPosition(unitID)
+						gl.Translate(-cmdValue.x + prevX, -cmdValue.y + prevY, -cmdValue.z + prevZ)		-- minus cmd position   plus unit position
 						for i=1, #cmdQueue do
-							
+							local lineColor = nil
 							if (cmdQueue[i].id == CMD.MOVE) then
-								local originX	= cmdQueue[i].params[1]
-								local originY	= cmdQueue[i].params[2]
-								local originZ	= cmdQueue[i].params[3]
-								if i == 1 then
-									local prevX, prevY, prevZ = spGetUnitPosition(unitID)
-									--gl.Translate(originX, originY, originZ)
-									gl.BeginEnd(GL.QUADS, DrawLine, originX, originY, originZ, prevX, prevY, prevZ, OPTIONS.linePartWidth, OPTIONS.linePartLength)
-								else
-									local prevX		= cmdQueue[i-1].params[1]
-									local prevY		= cmdQueue[i-1].params[2]
-									local prevZ		= cmdQueue[i-1].params[3]
-									if cmdQueue[i-1].id == CMD.MOVE then
-										gl.Translate(originX, originY, originZ)
-										--gl.BeginEnd(GL.QUADS, DrawLine, originX, originY, originZ, prevX, prevY, prevZ, OPTIONS.linePartWidth, OPTIONS.linePartLength)
-									end
-								end
+								lineColor = OPTIONS.types['move'].baseColor
+							elseif (cmdQueue[i].id == CMD.PATROL) then
+								lineColor = OPTIONS.types['patrol'].baseColor
+							elseif (cmdQueue[i].id == CMD.ATTACK or cmdQueue[i].id == CMD.DGUN) then
+								lineColor = OPTIONS.types['attack'].baseColor
+							elseif (cmdQueue[i].id == CMD.FIGHT and cmdQueue[i].id ~= CMD.DGUN) then
+								lineColor = OPTIONS.types['fight'].baseColor
+							end
+							if (lineColor and #cmdQueue[i].params == 3) then
+							
+								gl.Color(lineColor[1],lineColor[2],lineColor[3],a)
+								local originX, originY, originZ	= cmdQueue[i].params[1], cmdQueue[i].params[2], cmdQueue[i].params[3]
+							
+								gl.Translate(-prevX + originX, -prevY + originY, -prevZ + originZ)		-- minus previous cmd position   plus new cmd position
+								gl.BeginEnd(GL.QUADS, DrawLine,    originX, originY, originZ,    prevX, prevY, prevZ,    OPTIONS.linePartWidth, OPTIONS.linePartLength)
+								prevX, prevY, prevZ = originX, originY, originZ
 							end
 						end
 					end
 				end
 				
-				-- draw + erase:   nickname / draw icon
+				-- Mapmarks - draw + erase:   nickname / draw icon
 				if  playerID  and  playerID ~= ownPlayerID  and  OPTIONS.showMapmarkSpecNames  and   (cmdType == 'map_draw'  or    cmdType == 'map_erase' and  clickOsClock >= mapEraseNicknameTime[playerID]) then
 					
 					local nickname,_,spec = spGetPlayerInfo(playerID)
 					if (spec) then
 						gl.Color(r,g,b, a * OPTIONS.nicknameOpacityMultiplier)
-							
+						
 						if OPTIONS.showMapmarkSpecIcons then
 							if cmdType == 'map_draw' then
 								gl.Texture('LuaUI/Images/commandsfx/pencil.png')
@@ -480,8 +505,10 @@ function widget:DrawWorldPreUnit()
 						
 					end
 				end
-				gl.PopMatrix()
 				
+				commandHistory.coordRendered[cmdType..cmdValue.x..cmdValue.y..cmdValue.z] = true
+				
+				gl.PopMatrix()
 			end
 		end
 	end

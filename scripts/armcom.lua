@@ -116,10 +116,10 @@ function script.AimFromWeapon(weaponID)
 end
 
 function script.QueryWeapon(weaponID)
-	if weaponID == 1 then
-		return laserflare
-	elseif weaponID == 3 then
-		return lflare	
+	if weaponID == 3 then
+		return lflare
+	else
+		return laserflare	
 	end
 end
 

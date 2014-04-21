@@ -72,6 +72,11 @@ return {
 				world = "All Worlds",
 			},
 		},
+		sfxtypes = {
+			explosiongenerators = {
+				[1] = "custom:muzzle_flare_rocket",
+			},
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

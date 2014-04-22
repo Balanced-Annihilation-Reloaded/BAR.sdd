@@ -27,12 +27,16 @@ return {
 		movementclass = "KBOT2",
 		name = "Sharpshooter",
 		nochasecategory = "VTOL",
-		objectname = "ARMSNIPE",
+		objectname = "ARMSNIPE.s3o",
 		radardistancejam = 10,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 455,
 		turnrate = 1338,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

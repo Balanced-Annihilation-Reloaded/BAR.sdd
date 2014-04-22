@@ -40,13 +40,13 @@ local hideSpecs					= false
 
 local drawNames					= true
 local drawNamesScaling			= true		-- scale up when camera is more distant
-local drawNamesFade				= true
-local NameFadeStartDistance		= 6300
-local NameFadeEndDistance		= 9600
+local drawNamesFade				= false
+local NameFadeStartDistance		= 6600
+local NameFadeEndDistance		= 10000
 
 local drawNamesCursorSize		= 7
-local fontSizePlayer			= 21
-local fontSizeSpec				= 17.5
+local fontSizePlayer			= 15
+local fontSizeSpec				= 12.5
 local sendPacketEvery			= 0.8
 local numMousePos				= 2 --//num mouse pos in 1 packet
 
@@ -62,13 +62,10 @@ local spIsSphereInView		= Spring.IsSphereInView
 local spGetCameraPosition	= Spring.GetCameraPosition
 
 local alliedCursorsPos		= {}
-
-
 local teamColors			= {}
-local color,time,wx,wz,lastUpdateDiff,scale,iscale,fscale,gy --keep memory always allocated for these since they are referenced so frequently
 local notIdle				= {}
-
 local usedCursorSize		= 12
+local color,time,wx,wz,lastUpdateDiff,scale,iscale,fscale,gy --keep memory always allocated for these since they are referenced so frequently
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -247,7 +244,7 @@ function widget:DrawWorldPreUnit()
 						local camDistance = math.sqrt(xDifference*xDifference + yDifference*yDifference + zDifference*zDifference)
 						
 						if drawNamesScaling then
-							local scale = 0.83 + camDistance / 5000
+							local scale = 0.83 + camDistance / 3000
 							gl.Scale(scale,scale,scale)
 						end
 						if drawNamesFade and camDistance > NameFadeStartDistance then 

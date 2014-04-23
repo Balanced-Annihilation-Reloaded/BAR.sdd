@@ -6,7 +6,7 @@ function widget:GetInfo()
       date      = "14.04.2014",
       license   = "GNU GPL, v2 or later",
       layer     = 2,
-      enabled   = false,
+      enabled   = true,
    }
 end
 
@@ -69,7 +69,7 @@ local OPTIONS = {
 	ringScale					= 0.75,
 	reduceOverlapEffect			= 0.08,		-- when spotters have the same coordinates: reduce the opacity: 1 is no reducing while 0 is no adding
 	
-	disableEngineLines 			= true,		-- disables default Spring Engine lines (move, patrol, attack, fight)
+	disableEngineLines 			= false,		-- disables default Spring Engine lines (move, patrol, attack, fight)
 	drawLines					= true,
 	linePartWidth				= 12,
 	linePartLength				= 20,
@@ -448,7 +448,7 @@ function widget:DrawWorldPreUnit()
 				local scale = 1
 				if OPTIONS.scaleWithCamera and camZ then
 					scale = 0.82 + camDistance / 7500
-					gl.Scale(scale,scale,scale)
+					--gl.Scale(scale,scale,scale)
 				end
 				
 				

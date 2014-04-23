@@ -14,31 +14,25 @@ end
 --------------------------------------------------------------------------------
 
 -- NOTE:  STILL IN DEVELOPMENT!
--- dont change without asking/permission please
 
 ---TODO
--- trigegr cmd's only when units are selected
 -- show lab waypoints separately
 -- optionally show non-self cmd's
--- disable/replace engine cmd type icons/cursors
 -- hotkey to show all issued cmd's (like current shift+space)
 
----NICE TO HAVES
--- maybe add ETA? (only when giving a cmd to a single unit)
--- add 'notify on arrival' shortcut addition
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local commandHistory= {
-	commands		= {},
-	coords			= {},	-- this table is used to count cmd´s with same coordinates
-	coordRendered	= {},	-- this table is used to skip cmd´s that have the same coordinates
-	units			= {}	-- this table stores the newest queued cmd time of each unit.
+local commandHistory = {
+	commands				= {},
+	coords					= {},	-- this table is used to count cmd´s with same coordinates
+	coordRendered			= {},	-- this table is used to skip cmd´s that have the same coordinates
+	units					= {},	-- this table stores the newest queued cmd time of each unit.
+	mapDrawNicknameTime		= {},	-- this table is used to filter out previous map drawing nicknames if user has drawn something new
+	mapEraseNicknameTime	= {}
 }
 
-local mapDrawNicknameTime		= {}	-- this table is used to filter out previous map drawing nicknames if user has drawn something new
-local mapEraseNicknameTime		= {}	-- 
 local ownPlayerID				= Spring.GetMyPlayerID()
 
 -- spring vars
@@ -49,12 +43,14 @@ local spGetPlayerInfo			= Spring.GetPlayerInfo
 local spTraceScreenRay			= Spring.TraceScreenRay
 local spLoadCmdColorsConfig		= Spring.LoadCmdColorsConfig
 local spGetTeamColor			= Spring.GetTeamColor
+local spIsUnitSelected			= Spring.IsUnitSelected
+local spGetSelectedUnitsCount	= Spring.GetSelectedUnitsCount
+local spGetSelectedUnitsSorted	= Spring.GetSelectedUnitsSorted
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 local OPTIONS = {
-	disableEngineLines 			= true,		-- disables default Spring Engine lines (move, patrol, attack, fight)
 	
 	showMapmarkFx 				= true,
 	showMapmarkSpecNames		= true,
@@ -64,7 +60,7 @@ local OPTIONS = {
 	
 	size 						= 28,		-- overall size
 	opacity 					= 0.75,		-- overall opacity
-	duration					= 0.7,		-- overall duration
+	duration					= 1,		-- overall duration
 	
 	baseParts					= 14,		-- (note that if camera is distant the number of parts will be reduced, up to 6 as minimum)
 	ringParts					= 24,		-- (note that if camera is distant the number of parts will be reduced, up to 6 as minimum)
@@ -73,6 +69,7 @@ local OPTIONS = {
 	ringScale					= 0.75,
 	reduceOverlapEffect			= 0.08,		-- when spotters have the same coordinates: reduce the opacity: 1 is no reducing while 0 is no adding
 	
+	disableEngineLines 			= true,		-- disables default Spring Engine lines (move, patrol, attack, fight)
 	drawLines					= true,
 	linePartWidth				= 12,
 	linePartLength				= 20,
@@ -114,21 +111,27 @@ local OPTIONS = {
 			baseColor		= {0.00 ,0.00 ,1.00 ,0.25},
 			ringColor		= {0.00 ,0.00 ,1.00 ,0.25}
 		},
+		unload = {
+			size			= 1,
+			duration		= 1,
+			baseColor		= {1.00 ,1.00 ,0.00 ,0.30},
+			ringColor		= {1.00 ,1.00 ,0.00 ,0.30}
+		},
 		map_mark = {
-			size			= 2,
-			duration		= 4.5,
+			size			= 2.33,
+			duration		= 9,
 			baseColor		= {1.00 ,1.00 ,1.00 ,0.40},
 			ringColor		= {1.00 ,1.00 ,1.00 ,0.75}
 		},
 		map_draw = {
 			size			= 0.63,
-			duration		= 1.4,
+			duration		= 1.5,
 			baseColor		= {1.00 ,1.00 ,1.00 ,0.15},
 			ringColor		= {1.00 ,1.00 ,1.00 ,0.00}
 		},
 		map_erase = {
-			size			= 2,
-			duration		= 3,
+			size			= 2.33,
+			duration		= 4,
 			baseColor		= {1.00 ,1.00 ,1.00 ,0.13},
 			ringColor		= {1.00 ,1.00 ,1.00 ,0.00}
 		}
@@ -249,6 +252,8 @@ local function SetupCommandColors(state)
 	spLoadCmdColorsConfig('patrol   0.3  0.3  1.0  ' .. alpha)
 	spLoadCmdColorsConfig('attack   1.0  0.2  0.2  ' .. alpha)
 	spLoadCmdColorsConfig('fight    0.5  0.5  1.0  ' .. alpha)
+	spLoadCmdColorsConfig('unload   1.0  1.0  0.0  ' .. alpha)
+	spLoadCmdColorsConfig('useQueueIcons ' .. alpha)
 end
 
 
@@ -307,14 +312,15 @@ function widget:MapDrawCmd(playerID, cmdType, x, y, z, a, b, c)
 		if cmdType == 'point' then
 			AddCommandSpotter('map_mark', x, y, z, osClock, false, playerID)
 		elseif cmdType == 'line' then
-			mapDrawNicknameTime[playerID] = osClock
+			commandHistory.mapDrawNicknameTime[playerID] = osClock
 			AddCommandSpotter('map_draw', x, y, z, osClock, false, playerID)
 		elseif cmdType == 'erase' then
-			mapEraseNicknameTime[playerID] = osClock
+			commandHistory.mapEraseNicknameTime[playerID] = osClock
 			AddCommandSpotter('map_erase', x, y, z, osClock, false, playerID)
 		end
 	end
 end
+
 
 
 function widget:MousePress(x, y, button)
@@ -328,24 +334,37 @@ function widget:MousePress(x, y, button)
 end
 
 
+--for feature:  hotkey to show all issued cmd's (like current shift+space)
+--function widget:KeyPress(key, mods, isRepeat)
+
+--end
+--function widget:KeyPress(key, mods, isRepeat)
+
+--end
+
 
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
 	local cmdType = false
-	if type(cmdOptions) == 'table'  and  #cmdOptions >= 3 then
-		if cmdID == CMD.MOVE then
-			cmdType = 'move'
-			
-		elseif cmdID == CMD.FIGHT  and   cmdID ~= CMD.DGUN  then
-			cmdType = 'fight'
-			
-		elseif cmdID == CMD.ATTACK  or   cmdID == CMD.DGUN  then
-			cmdType = 'attack'
-			
-		elseif cmdID == CMD.PATROL  then
-			cmdType = 'patrol'
-		end
-		if cmdType then
-			AddCommandSpotter(cmdType, cmdOptions[1], cmdOptions[2], cmdOptions[3], os.clock(), unitID)
+	if spIsUnitSelected(unitID) then
+		if type(cmdOptions) == 'table'  and  #cmdOptions >= 3 then
+			if cmdID == CMD.MOVE then
+				cmdType = 'move'
+				
+			elseif cmdID == CMD.FIGHT  and   cmdID ~= CMD.DGUN  then
+				cmdType = 'fight'
+				
+			elseif cmdID == CMD.ATTACK  or   cmdID == CMD.DGUN  then
+				cmdType = 'attack'
+				
+			elseif cmdID == CMD.PATROL  then
+				cmdType = 'patrol'
+				
+			elseif cmdID == CMD.UNLOAD_UNIT   or  cmdID == CMD.UNLOAD_UNITS  then
+				cmdType = 'unload'
+			end
+			if cmdType then
+				AddCommandSpotter(cmdType, cmdOptions[1], cmdOptions[2], cmdOptions[3], os.clock(), unitID)
+			end
 		end
 	end
 end
@@ -378,7 +397,7 @@ function widget:DrawWorldPreUnit()
 			commandHistory.commands[cmdKey] = nil
 			
 		-- remove nicknames when user has drawn something new
-		elseif  OPTIONS.showMapmarkSpecNames  and  cmdType == 'map_draw'  and  mapDrawNicknameTime[playerID] ~= nil  and  clickOsClock < mapDrawNicknameTime[playerID] then
+		elseif  OPTIONS.showMapmarkSpecNames  and  cmdType == 'map_draw'  and  commandHistory.mapDrawNicknameTime[playerID] ~= nil  and  clickOsClock < commandHistory.mapDrawNicknameTime[playerID] then
 			
 			commandHistory.commands[cmdKey] = nil
 			
@@ -468,6 +487,8 @@ function widget:DrawWorldPreUnit()
 								lineColor = OPTIONS.types['attack'].baseColor
 							elseif (cmdQueue[i].id == CMD.FIGHT and cmdQueue[i].id ~= CMD.DGUN) then
 								lineColor = OPTIONS.types['fight'].baseColor
+							elseif (cmdQueue[i].id == CMD.UNLOAD_UNIT  or  cmdQueue[i].id == CMD.UNLOAD_UNITS) then
+								lineColor = OPTIONS.types['unload'].baseColor
 							end
 							if (lineColor and #cmdQueue[i].params == 3) then
 							
@@ -483,7 +504,7 @@ function widget:DrawWorldPreUnit()
 				end
 				
 				-- Mapmarks - draw + erase:   nickname / draw icon
-				if  playerID  and  playerID ~= ownPlayerID  and  OPTIONS.showMapmarkSpecNames  and   (cmdType == 'map_draw'  or    cmdType == 'map_erase' and  clickOsClock >= mapEraseNicknameTime[playerID]) then
+				if  playerID  and  playerID ~= ownPlayerID  and  OPTIONS.showMapmarkSpecNames  and   (cmdType == 'map_draw'  or    cmdType == 'map_erase' and  clickOsClock >= commandHistory.mapEraseNicknameTime[playerID]) then
 					
 					local nickname,_,spec = spGetPlayerInfo(playerID)
 					if (spec) then

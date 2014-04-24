@@ -1,5 +1,4 @@
 -- WIP
--- TODO add color to text
 function widget:GetInfo()
 	return {
 		name    = 'Funks Chat Console',
@@ -44,8 +43,8 @@ local log
 
 -- Local Variables --
 local messages = {}
-local timer = getTimer() 
-local oldTimer = timer --time of last message (or last time at which we checked to hide the console and then didn't)
+local endTime = getTimer() 
+local startTime = endTime --time of last message (or last time at which we checked to hide the console and then didn't)
 local myID = Spring.GetMyPlayerID()
 local myAllyID = Spring.GetMyAllyTeamID()
 local gameOver = false --is the game over?
@@ -159,7 +158,7 @@ end
 
 local function showChat()
 	-- show chat
-	oldTimer = getTimer()
+	startTime = getTimer()
 	if msgWindow.hidden then
 		msgWindow:Show()
 	end
@@ -203,9 +202,9 @@ end
 
 function widget:Update()
 	-- if console has been visible for longer than msgTime since last event, see if its not needed anymore
-	timer = getTimer()
-	if diffTimers(timer, oldTimer) > msgTime then
-		oldTimer = timer
+	endTime = getTimer()
+	if diffTimers(endTime, startTime) > msgTime then
+		startTime = endTime
 		hideChat()
 	end
 end
@@ -300,10 +299,20 @@ function widget:AddConsoleLine(msg)
 	-- update chat with new line
 	local text, ignore = processLine(msg)
 	if ignore then return end
+	
+	local prevMsg = log.children[#log.children]
+	if prevMsg and (text == prevMsg.text or text == prevMsg.origText) then
+		prevMsg.duplicates = prevMsg.duplicates + 1
+		prevMsg.origText = text
+		prevMsg:SetText(getInline{1,0,0}..(prevMsg.duplicates + 1)..'x \b'..text)
+		return
+	end
+	
 	Chili.TextBox:New{
 		parent      = log,
 		text        = text,
 		width       = '100%',
+		duplicates  = 0,
 		align       = "left",
 		valign      = "ascender",
 		padding     = {0,0,0,0},

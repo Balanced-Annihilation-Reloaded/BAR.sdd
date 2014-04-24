@@ -490,8 +490,8 @@ function loadWindow()
 		},
 	}
 
-	if WG.BarMenu then
-		WG.BarMenu.AddControl('Graph', control0)
+	if WG.MainMenu then
+		WG.MainMenu.AddControl('Graph', control0)
 	else
 		Chili.Button:New{
 			parent = control0,
@@ -528,26 +528,26 @@ function widget:Initialize()
 	end
 
 	getTeamInfo()
-	if WG.BarMenu and speccing then
+	if WG.MainMenu and speccing then
 		loadWindow()
 	end
 end
 
 function widget:GameStart()
 	getTeamInfo()
-	if WG.BarMenu and speccing then
+	if WG.MainMenu and speccing then
 		loadWindow()
 	end
 end
 
 function widget:GameOver()
 	
-	if not (WG.BarMenu and speccing) then
+	if not (WG.MainMenu and speccing) then
 		loadWindow()
 	end
 	
-	if WG.BarMenu then
-		WG.BarMenu.ShowHide('Graph')
+	if WG.MainMenu then
+		WG.MainMenu.ShowHide('Graph')
 	end
 	-- Draw initial graph
 	drawGraph(button[1])

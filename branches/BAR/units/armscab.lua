@@ -26,12 +26,16 @@ return {
 		movementclass = "TKBOT3",
 		name = "Scarab",
 		nochasecategory = "ALL",
-		objectname = "ARMSCAB",
+		objectname = "ARMSCAB.s3o",
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 450,
 		turnrate = 473,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

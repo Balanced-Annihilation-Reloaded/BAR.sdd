@@ -27,12 +27,16 @@ return {
 		movementclass = "ATANK3",
 		name = "Marauder",
 		nochasecategory = "VTOL",
-		objectname = "MARAUDER",
+		objectname = "MARAUDER.s3o",
 		seismicsignature = 0,
 		selfdestructas = "CRAWL_BLASTSML",
 		sightdistance = 455,
 		turnrate = 1056,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,
@@ -163,7 +167,7 @@ return {
 				def = "ARMMECH_CANNON",
 				onlytargetcategory = "SURFACE",
 			},
-			[3] = {
+			[2] = {
 				def = "ARMAMPH_MISSILE",
 				onlytargetcategory = "VTOL",
 			},

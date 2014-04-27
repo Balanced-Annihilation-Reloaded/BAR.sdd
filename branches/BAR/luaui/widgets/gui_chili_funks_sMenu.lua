@@ -159,6 +159,7 @@ local function addBuild(cmd, category)
 	local button = unit[cmd.name]
 	local label = button.children[1].children[1]
 	local caption = queue[-cmd.id] or ''
+	local disabled = cmd.disabled -- build command is disabled (note that this can change dependent on the number of this type of unit currently alive)
 	label:SetCaption(caption)
 	if not grid[category]:GetChildByName(button.name) then
 		grid[category]:AddChild(button)

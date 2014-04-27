@@ -426,13 +426,28 @@ function widget:Initialize()
 	end
 
 	-- Creates a cache of buttons.
-	for name, data in pairs(UnitDefNames) do
-		local tooltip = data.humanName..' - '..data.tooltip..
-			            '\nCost: '..getInline{0.6,0.6,0.8}..data.metalCost..'\b Metal, '..getInline{1,1,0.3}..data.energyCost..'\b Energy'..
-			            '\nBuild Time: '..data.buildTime
+	for name, unitDef in pairs(UnitDefNames) do
+		-- if it can attack and it's not a plane, get max range of weapons of unit
+		local range = 0
+		local rangeText = ""
+		for _,weapon in pairs(unitDef.weapons) do
+			local weaponDefID = weapon.weaponDef
+			range = math.max(range, WeaponDefs[weaponDefID].range)
+		end
+		if range > 0 and not unitDef.canFly then
+			rangeText = '\nRange: ' .. range
+		end
+		
+		-- make the tooltip for this unit
+		local tooltip = unitDef.humanName..' - '..unitDef.tooltip..
+			            '\nCost: '..getInline{0.6,0.6,0.8}..unitDef.metalCost..'\b Metal, '..getInline{1,1,0.3}..unitDef.energyCost..'\b Energy'..
+			            '\nBuild Time: '..unitDef.buildTime..
+						rangeText
+						
+		-- make the button for this unit
 		unit[name] = Chili.Button:New{
 			name      = name,
-			cmdId     = -data.id,
+			cmdId     = -unitDef.id,
 			tooltip   = tooltip,
 			caption   = '',
 			padding   = {0,0,0,0},

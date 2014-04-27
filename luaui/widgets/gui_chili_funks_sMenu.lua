@@ -207,12 +207,10 @@ end
 local function parseCmds()
 	local menuCat
 	local cmdList = spGetActiveCmdDescs()
-
 	-- Parses through each active cmd and gives it its own button
 	for i = 1, #cmdList do
 		local cmd = cmdList[i]
 		if cmd.name ~= '' and not (ignoreCMDs[cmd.name] or ignoreCMDs[cmd.action]) then
-			
 			-- Is it a unit and if so what kind?
 			if UnitDefNames[cmd.name] then
 				local ud = UnitDefNames[cmd.name]
@@ -332,12 +330,17 @@ local function queueHandler()
 		end
 	end
 end
-
 ---------------------------
--- Iniatilizes main/permanent chili controls
---  These are then shown/hidden when needed
+local function LayoutHandler(xIcons, yIcons, cmdCount, commands)
+        widgetHandler.commands   = commands
+        widgetHandler.commands.n = cmdCount
+        widgetHandler:CommandsChanged()
+      
+        return "", xIcons, yIcons, {}, {}, {}, {}, {}, {}, {}, {[1337]=9001}
+end
+---------------------------
 function widget:Initialize()
-	widgetHandler:ConfigLayoutHandler(false)
+	widgetHandler:ConfigLayoutHandler(LayoutHandler)
 	Spring.ForceLayoutUpdate()
 	spSendCommands({'tooltip 0'})
 
@@ -483,7 +486,7 @@ function widget:CommandsChanged()
 end
 --------------------------- 
 -- If update is required this Loads the panel and queue for the new unit or hides them if none exists
---  There is an offset to prevent the panel dissappearing right after a command has changed (for fast clicking)
+--  There is an offset to prevent the panel disappearing right after a command has changed (for fast clicking)
 function widget:Update()
 	if updateRequired then
 		updateRequired = false

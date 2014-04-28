@@ -1,4 +1,5 @@
 -- WIP (excuse the mess)
+--  TODO add build progress bar.
 function widget:GetInfo()
 	return {
 		name      = 'Funks Selection Menu',
@@ -105,6 +106,7 @@ end
 
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
+	if obj.disabled then return end
 	local index = spGetCmdDescIndex(obj.cmdId)
 	if (index) then
 		local left, right = (button == 1), (button == 3)
@@ -158,17 +160,31 @@ end
 local function addBuild(cmd, category)
 	local button = unit[cmd.name]
 	local label = button.children[1].children[1]
+	local overlay = button.children[1].children[2]
 	local caption = queue[-cmd.id] or ''
-	local disabled = cmd.disabled -- build command is disabled (note that this can change dependent on the number of this type of unit currently alive)
+	
+	-- Build command is disabled (note that this can change dependent on the number of this type of unit currently alive)
+	if cmd.disabled then
+		-- No Highlight on mouse over
+		button.focusColor[4] = 0
+		-- Grey out Unit pic
+		overlay.color = {0.4,0.4,0.4}
+	else
+		button.focusColor[4] = 0.5
+		overlay.color = teamColor
+	end
+	button.disabled = cmd.disabled
+	
 	label:SetCaption(caption)
 	if not grid[category]:GetChildByName(button.name) then
+		-- No duplicates
 		grid[category]:AddChild(button)
 	end
 end
 
 local function addState(cmd)
 	local button = Chili.Button:New{
-		caption = cmd.params[cmd.params[1] + 2],
+		caption   = cmd.params[cmd.params[1] + 2],
 		cmdName   = cmd.name,
 		tooltip   = cmd.tooltip,
 		cmdId     = cmd.id,
@@ -332,6 +348,7 @@ local function queueHandler()
 	end
 end
 ---------------------------
+-- Including LayoutHandler causes CommandsChanged to be called twice?
 local function LayoutHandler(xIcons, yIcons, cmdCount, commands)
         widgetHandler.commands   = commands
         widgetHandler.commands.n = cmdCount
@@ -361,7 +378,11 @@ function widget:Initialize()
 	local aspect = Game.mapX/Game.mapY
 	local minMapH = scrH * 0.3
 	local minMapW = minMapH * aspect
-
+	if aspect > 1 then
+		minMapW = minMapH * aspect^0.5
+		minMapH = minMapW / aspect
+	end
+	
 	buildMenu = Chili.Window:New{
 		parent       = screen0,
 		name         = 'buildMenu',
@@ -442,7 +463,7 @@ function widget:Initialize()
 		local tooltip = unitDef.humanName..' - '..unitDef.tooltip..
 			            '\nCost: '..getInline{0.6,0.6,0.8}..unitDef.metalCost..'\b Metal, '..getInline{1,1,0.3}..unitDef.energyCost..'\b Energy'..
 			            '\nBuild Time: '..unitDef.buildTime..
-						rangeText
+		              rangeText
 						
 		-- make the button for this unit
 		unit[name] = Chili.Button:New{
@@ -450,6 +471,7 @@ function widget:Initialize()
 			cmdId     = -unitDef.id,
 			tooltip   = tooltip,
 			caption   = '',
+			disabled  = false,
 			padding   = {0,0,0,0},
 			margin    = {0,0,0,0},
 			OnMouseUp = {cmdAction},
@@ -477,7 +499,7 @@ function widget:Initialize()
 
 end
 --------------------------- 
--- quick and dirty fix for resizing (needs clean up, repeating code etc..)
+-- quick and dirty fix for resizing (needs clean up, has copy/paste code etc..)
 function widget:ViewResize(_,scrH)
 	local ordH = scrH * 0.05
 	local ordY = scrH - ordH
@@ -487,6 +509,10 @@ function widget:ViewResize(_,scrH)
 	local aspect = Game.mapX/Game.mapY
 	local minMapH = scrH * 0.3
 	local minMapW = minMapH * aspect
+	if aspect > 1 then
+		minMapW = minMapH * aspect^0.5
+		minMapH = minMapW / aspect
+	end
 	
 	buildMenu:SetPos(0, winY, winW, winH)
 	menuTabs:SetPos(winW,winY+20)
@@ -505,12 +531,15 @@ end
 --  There is an offset to prevent the panel disappearing right after a command has changed (for fast clicking)
 function widget:Update()
 	if updateRequired then
+		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
+		teamColor = {r,g,b}
+		
 		updateRequired = false
 		buildMenu.active = false
 		queue = {}
 		queueHandler()
 		loadPanels()
-
+		
 		if not buildMenu.active and buildMenu.visible then
 			buildMenu:Hide()
 		elseif buildMenu.active and buildMenu.hidden then

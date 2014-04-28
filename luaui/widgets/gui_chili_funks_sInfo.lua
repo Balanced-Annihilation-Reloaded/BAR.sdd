@@ -154,7 +154,9 @@ end
 
 ----------------------------------
 local function getInfo()
-	
+	local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
+	teamColor = {r,g,b}
+
 	units = spGetSelectedUnits()
 	
 	if #units == 0 then

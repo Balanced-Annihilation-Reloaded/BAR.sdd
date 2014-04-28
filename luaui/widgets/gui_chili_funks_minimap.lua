@@ -38,10 +38,10 @@ local function MakeMinimapWindow(screenH)
 	local h = screenH * 0.3
 	local w = h * aspect
 	
-	--~ if aspect > 1 then
-		--~ w = h * aspect^0.5
-		--~ h = w / aspect
-	--~ end
+	if aspect > 1 then
+		w = h * aspect^0.5
+		h = w / aspect
+	end
 	
 	minimap = Chili.Window:New{
 		name      = "Minimap", 

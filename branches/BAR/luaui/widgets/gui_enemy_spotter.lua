@@ -66,10 +66,10 @@ local gaiaTeamID			  = Spring.GetGaiaTeamID()
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local circlePolys             = {}
-local allyToSpotterColor      = {}
-local unitConf                = {}
-local skipOwnAllyTeam         = true
+local circlePolys			= {}
+local allyToSpotterColor	= {}
+local unitConf				= {}
+local skipOwnAllyTeam		= true
 
 -- preferred to keep these values the same as fancy unit selections widget
 local rectangleFactor		= 3.3
@@ -90,8 +90,6 @@ function CreateSpotterList(r,g,b,a, parts)
 	elseif spotterOpacity > 0.5 then spotterOpacity = 0.5 end
 
 	return gl.CreateList(function()
-
-		gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)      -- disable layer blending
 
 		-- colored inner circle:
 		gl.BeginEnd(GL.TRIANGLE_FAN, function()
@@ -237,14 +235,14 @@ function widget:DrawWorldPreUnit()
 	end
 	--local totalVariableParts,totalFixedParts = 0,0
 	
-	local camX, camY, camZ = spGetCameraPosition()
 	local unitZ = false
 	local parts = circleParts
 	
-	--gl.DepthTest(true)
-	gl.PolygonOffset(-100, -2)
-	local visibleUnits = spGetVisibleUnits()
+	local visibleUnits = spGetVisibleUnits(skipOwnAllyTeam and Spring.ENEMY_UNITS or Spring.ALL_UNITS, nil, false)
 	if #visibleUnits then
+		--gl.DepthTest(true)
+		gl.PolygonOffset(-100, -2)
+		gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)      -- disable layer blending
 		for i=1, #visibleUnits do
 			local unitID = visibleUnits[i]
 			local allyID = spGetUnitAllyTeam(unitID)
@@ -261,13 +259,14 @@ function widget:DrawWorldPreUnit()
 						else
 							-- only process camera distance calculation for the first unit, to improve performance. It doesnt seem to hurt acuracy much.
 							if not unitZ then
+								local camX, camY, camZ = spGetCameraPosition()
 								local unitX,unitY,unitZ = spGetUnitPosition(unitID, true)
 								local xDifference = camX - unitX
 								local yDifference = camY - unitY
 								local zDifference = camZ - unitZ
 								local camDistance = math.sqrt(xDifference*xDifference + yDifference*yDifference + zDifference*zDifference)
 								
-								parts = Round(circlePartsMax - (camDistance / 800))
+								parts = Round(circlePartsMax - (camDistance / 1000))
 								
 								if parts < circlePartsMin then
 									parts = circlePartsMin
@@ -326,7 +325,6 @@ function widget:TextCommand(command)
 			CreateSpotterLists()
 		end
 	end
-
     if (string.find(command, "enemyspotter_all") == 1  and  string.len(command) == 16) then 
 		renderAllTeamsAsSpec = not renderAllTeamsAsSpec
 		if Spring.GetSpectatingState() then 
@@ -334,11 +332,6 @@ function widget:TextCommand(command)
 			CreateSpotterLists()
 		end
 	end
-
-    --if (string.find(command, "enemyspotter_self") == 1  and  string.len(command) == 17) then renderAllTeamsAsPlayer = not renderAllTeamsAsPlayer ; CreateSpotterLists() end
-
-    --if (string.find(command, "enemyspotter_all") == 1  and  string.len(command) == 16) then renderAllTeamsAsSpec = not renderAllTeamsAsSpec ; CreateSpotterLists() end
-
-    if (string.find(command, "+enemyspotter_opacity") == 1) then spotterOpacity = spotterOpacity + 0.02 ; callfunction = CreateSpotterLists() end
-    if (string.find(command, "-enemyspotter_opacity") == 1) then spotterOpacity = spotterOpacity - 0.02 ; callfunction = CreateSpotterLists() end
+    if (string.find(command, "+enemyspotter_opacity") == 1) then spotterOpacity = spotterOpacity + 0.02 ; CreateSpotterLists() end
+    if (string.find(command, "-enemyspotter_opacity") == 1) then spotterOpacity = spotterOpacity - 0.02 ; CreateSpotterLists() end
 end

@@ -237,10 +237,11 @@ function AmIBored()
 end
 
 function LookAround()
-	Turn(base, y_axis, 0, 5)
 	
 	while true do
 		if AmIBored() then
+			Turn(base, y_axis, 0, 5)
+			
 			local randomRotDegrees	= math.random(10, 50)
 			local randomRotRadians	= math.rad(randomRotDegrees)
 			randomAnim = math.random(1, 3)	
@@ -292,18 +293,3 @@ function LookAround()
 		end
 	end
 end
-
-function MotionControl()
-	idleTimer = 0
-	while (1) do
-		if ( isMoving and isMoving == true ) then
-			inStance = false
-
-			--StartThread(walk)
-		else
-		-- we only want to run the standing animation once			
-
-		end
-		Sleep(50)
-	end
-end 

@@ -24,7 +24,7 @@
 	dish		= piece 'dish'
 
 -- State variables
-	isMoving, isAiming, isBuilding = "derpy spring", "derpy spring", "derpy spring"
+	isMoving, isAiming, isBuilding = false, false, false
 
 -- used to restore build aiming
 	buildY, buildX	= 0, 0
@@ -36,18 +36,11 @@
 -- Unit animation preferences
 	leftArm		=	true;
 	rightArm	=	true;
-	heavy		=	true;
-			
+	heavy		=	true;			
 
 -- Signal definitions
 local SIG_AIM			=	2
 local SIG_WALK			=	4
-
--- effects for emitters
-local effectA = 1024
-local effectB = 1025
-
---local SMOKEPIECE1 = base
 
 function script.StartMoving()
 	isMoving = true
@@ -62,8 +55,6 @@ end
 --#include "\headers\smoke.h"
 include("include/walk.lua")
 
-
-
 --------------------------------------------------------
 --start ups :)
 --------------------------------------------------------
@@ -77,32 +68,14 @@ function script.Create()
 
 	Spin(dish, y_axis, 2.5)
 	
-	-- because DERP
-	isAiming	= false	
-    isBuilding	= false
-	isMoving	= false
-	
 	if(heavy == true ) then
 		SquatStance()	
 	else
 		StandStance()
 	end
 	-- should do this instead of query nano piece
-	--Spring.SetUnitNanoPieces( unitID, {nano} )
+	Spring.SetUnitNanoPieces( unitID, {nano} )
 end
-
------------------------------------------------------------------------
---function to restore the aim if construction was interupted by combat
------------------------------------------------------------------------	
-function ResumeBuilding()
-	sleep(400)
-	
-    if isBuilding and firedWeapon then
-	   Turn(base, y_axis, buildY, 2.618)
-	   Turn(r_arm, x_axis, 0.5235 - buildx, 2.618 )
-    end
-end
-
 
 -----------------------------------------------------------------------
 --gun functions;
@@ -129,28 +102,27 @@ end
 -- augmentation needed to lus.
 -----------------------------------------------------------------------
 local function RestoreAfterDelayLeft()
-	Sleep(1000)
+	Sleep(2000)
 	
-	--[[Turn(base, y_axis, 0, math.rad(105))
+	Turn(base, y_axis, 0, math.rad(305))
 	Turn(l_forearm, x_axis, math.rad(-38), math.rad(95))
-	Turn(l_arm, x_axis, math.rad(15), math.rad(95))]]--
+	Turn(l_arm, x_axis, 0, math.rad(95))
 
 	isAiming = false
 end
 
 local function RestoreAfterDelayRight()
-	Sleep(1000)
+	Sleep(2000)
 	
-	--[[Turn(base, y_axis, 0, math.rad(105))
+	Turn(base, y_axis, 0, math.rad(305))
 	Turn(r_forearm, x_axis, math.rad(-38), math.rad(95))
-	Turn(r_arm, x_axis, math.rad(15), math.rad(95))]]--
+	Turn(r_arm, x_axis, 0, math.rad(95))
 	
 	isAiming = false
 end
 
 function script.AimWeapon(weaponID, heading, pitch)
-	-- Spring.Echo("AimWeapon " .. weaponID)
-	
+	-- Spring.Echo("AimWeapon " .. weaponID)	
 	-- weapon2 is supposed to only fire underwater, check for it.
 	if weaponID == 2 then
 		local _, basepos, _ = Spring.GetUnitPosition(unitID) 
@@ -158,34 +130,15 @@ function script.AimWeapon(weaponID, heading, pitch)
 			return false
 		end
 	end 
-
+	
+	Turn(base, x_axis, 0, math.rad(395))
+	Turn(cod, x_axis, 0, math.rad(395))
+	
 	Signal(SIG_AIM)
 	SetSignalMask(SIG_AIM)
 	isAiming = true
 		
-	if weaponID == 1 or weaponID == 2 then
-		FixArms(false, true)
-		
-		Turn(base, y_axis, heading, math.rad(105))
-		Turn(r_forearm, x_axis, math.rad(-55), math.rad(390))
-		Turn(r_arm,	x_axis, math.rad(-45) - pitch, math.rad(390))
-				
-		WaitForTurn(base, y_axis)
-		WaitForTurn(r_arm, x_axis)
-		WaitForTurn(r_forearm, x_axis)
-		-- Spring.Echo("AimWeapon " .. weaponID .. " done turning")
-
-		StartThread(RestoreAfterDelayRight)
-				
-		firedWeapon		= false
-		-- if I was buidling restore my arm position
-		if (isBuilding == true) then
-		--	ResumeBuilding();
-		end
-		
-		-- Spring.Echo("AimWeapon " .. weaponID .. " end")
-		return true
-	elseif weaponID == 3 then
+	if weaponID == 3 then
 		FixArms(true, false)
 		
 		Turn(base, y_axis, heading, math.rad(105))
@@ -199,16 +152,26 @@ function script.AimWeapon(weaponID, heading, pitch)
 
 		StartThread(RestoreAfterDelayLeft)
 		
-		firedWeapon		= false
-		-- if I was buidling restore my arm position
-		if (isBuilding == true) then
-		--	ResumeBuilding();
-		end
-		
+		firedWeapon		= false		
 		-- Spring.Echo("AimWeapon end")
 		return true
 	else
-		return false	
+		FixArms(false, true)
+		
+		Turn(base, y_axis, heading, math.rad(105))
+		Turn(r_forearm, x_axis, math.rad(-55), math.rad(390))
+		Turn(r_arm,	x_axis, math.rad(-45) - pitch, math.rad(390))
+				
+		WaitForTurn(base, y_axis)
+		WaitForTurn(r_arm, x_axis)
+		WaitForTurn(r_forearm, x_axis)
+		-- Spring.Echo("AimWeapon " .. weaponID .. " done turning")
+
+		StartThread(RestoreAfterDelayRight)
+				
+		firedWeapon		= false		
+		-- Spring.Echo("AimWeapon " .. weaponID .. " end")
+		return true	
 	end	
 end
 
@@ -217,18 +180,13 @@ function script.FireWeapon(weaponID)
 	firedWeapon		= true
 end
 
------------------------------------------------------------------------
--- I dunno, a bunch of stuff I hastily ported to lua.
------------------------------------------------------------------------
-function script.QueryNanoPiece()
-	return nano
-end
-
 function script.StartBuilding(heading, pitch)
 --	Spring.Echo("StartBuilding")
-	IsFiringDgun	= 0;
 	isBuilding		= true;
-	buildY, buildX	= heading, pitch
+	
+		
+	Turn(base, x_axis, 0, math.rad(395))
+	Turn(cod, x_axis, 0, math.rad(395))
 	
 	Turn(base, y_axis, heading, math.rad(105))
 	Turn(r_forearm, x_axis, math.rad(-55), math.rad(390))

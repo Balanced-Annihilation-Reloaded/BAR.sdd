@@ -31,7 +31,7 @@ return {
 		movementclass = "VKBOT3",
 		name = "Bantha",
 		nochasecategory = "VTOL",
-		objectname = "ARMBANTH",
+		objectname = "ARMBANTHA.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BANTHA_NUKE",
 		selfdestructcountdown = 10,
@@ -40,6 +40,8 @@ return {
 		upright = true,
 		customparams = {
 			paralyzemultiplier = 0.5,
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

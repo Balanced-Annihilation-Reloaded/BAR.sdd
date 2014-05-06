@@ -13,17 +13,13 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
--- NOTE:  STILL IN DEVELOPMENT!
--- dont change things if it will break current behavior plz
--- also (18/04/14) notify Floris if you´re about to work on this widget, thanks!
-
 -- TODO / Known Issues:
 -- general performance optimisations
 -- reducing quality when zoomed out
--- adding the selections of teammates
+-- show the selections of teammates
 -- improve acuracy/code of keeping the same line thickness with bigger and smaller units
--- fix blending differences/issues when not drawing then 2nd line
--- DrawCircleSolid needs to align identically with DrawCircleLine
+-- buggy opacity/animation when paused
+-- longdrag-window(ed): circle offset gets bigger and bigger
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -68,13 +64,10 @@ local OPTIONS = {
 	showExtraComLine				= true,		-- extra circle lines for the commander unit
 	showExtraBuildingWeaponLine		= true,
 	
-	circlePieces					= 38,		-- (1 or higher)
+	circlePieces					= 36,		-- (1 or higher)
 	circlePieceDetail				= 1,		-- smoothness of each piece (1 or higher)
 	circleSpaceUsage				= 0.75,		-- 1 = whole circle space gets filled
 	circleInnerOffset				= 0.45,
-	
-	circleDivs						= 32,		-- how precise circle?  (the inner circle that cuts out overlapping spotters)
-	
 	
 	-- size
 	scaleMultiplier					= 1.04,
@@ -86,9 +79,9 @@ local OPTIONS = {
 	
 	-- opacity
 	spotterOpacity					= 1,			-- 0 is opaque
-	baseOpacity						= 0.8,		-- 0 is opaque
-	firstLineOpacity				= 0.1,
-	secondLineOpacity				= 0.5,
+	baseOpacity						= 0.77,			-- 0 is opaque
+	firstLineOpacity				= 0,
+	secondLineOpacity				= 0.44,
 	
 	-- color
 	useDefaultColor					= true,
@@ -102,11 +95,11 @@ local OPTIONS = {
 	selectionStartAnimationTime		= 0.25, --high so as visible while developing
 	selectionStartAnimationScale	= 0.8,
 	-- selectionStartAnimationScale	= 1.17,
-	selectionStartAnimationOpacity	= 0.11,	-- starts with this addition opacity, over makes it overflow a bit at the end of the fadein
+	selectionStartAnimationOpacity	= 0,	-- starts with this addition opacity, over makes it overflow a bit at the end of the fadein
 	selectionEndAnimation			= true,
 	selectionEndAnimationTime		= 0.25, --high so as visible while developing
 	selectionEndAnimationScale		= 0.9,
-	selectionEndAnimationOpacity    = 0.11,
+	selectionEndAnimationOpacity    = 0,
 	-- selectionEndAnimationScale	= 1.17,
 	animationSpeed					= 0.0007,
 	animateSpotterSize				= true,
@@ -119,20 +112,22 @@ local OPTIONS = {
 ------------------------------------------------------------------------------------
 
 local function updateSelectedUnitsData()
-
+	
 	-- remove deselected units 
 	local os_clock = os.clock()
 	for teamID,_ in pairs(selectedUnits) do
-	for unitID,_ in pairs(selectedUnits[teamID]) do
-		if not Spring.IsUnitSelected(unitID) and selectedUnits[teamID][unitID]['selected'] then
-			selectedUnits[teamID][unitID]['selected'] = false 
-			selectedUnits[teamID][unitID]['new'] = false
-			selectedUnits[teamID][unitID]['old'] = os_clock
+		for unitID,_ in pairs(selectedUnits[teamID]) do
+			if not Spring.IsUnitSelected(unitID) and selectedUnits[teamID][unitID]['selected'] then
+				local clockDifference = OPTIONS.selectionStartAnimationTime - (os_clock - selectedUnits[teamID][unitID]['new'])
+				if clockDifference < 0 then
+					clockDifference = 0
+				end
+				selectedUnits[teamID][unitID]['selected'] = false 
+				selectedUnits[teamID][unitID]['new'] = false
+				selectedUnits[teamID][unitID]['old'] = os_clock - clockDifference
+			end
 		end
 	end
-	end
-
-	currentSelClock = os_clock
 	
 	-- add selected units
 	if Spring.GetSelectedUnitsCount() > 0 then
@@ -148,15 +143,33 @@ local function updateSelectedUnitsData()
 							selectedUnits[teamID] = {}
 						end
 						if not selectedUnits[teamID][unitID] then
-							selectedUnits[teamID][unitID]				= {}
-							selectedUnits[teamID][unitID]['new']		= currentSelClock
-							selectedUnits[teamID][unitID]['selected']	= true
+							selectedUnits[teamID][unitID]			= {}
+							selectedUnits[teamID][unitID]['new']	= os_clock
+						elseif selectedUnits[teamID][unitID]['old'] then
+							local clockDifference = OPTIONS.selectionEndAnimationTime - (os_clock - selectedUnits[teamID][unitID]['old'])
+							if clockDifference < 0 then
+								clockDifference = 0
+							end
+							selectedUnits[teamID][unitID]['new']	= os_clock - clockDifference
+							selectedUnits[teamID][unitID]['old']	= nil
 						end
+						selectedUnits[teamID][unitID]['selected']	= true
 					end
 				end
 			end
 		end
 	end
+end
+
+
+
+function KeyExists(tbl, key)
+	for k in pairs(tbl) do
+		if key == k then
+			return true
+		end
+	end
+	return false
 end
 
 function Round(num, idp)
@@ -244,18 +257,18 @@ local function DrawCircleSolid(size)
 	end)
 	end
 	gl.BeginEnd(GL.TRIANGLE_FAN, function()
-		local radstep = (2.0 * math.pi) / OPTIONS.circleDivs
+		local radstep = (2.0 * math.pi) / OPTIONS.circlePieces
 		if (color) then
 			gl.Color(color)
 		end
 		gl.Vertex(0, 0, 0)
-		for i = 0, OPTIONS.circleDivs do
+		for i = 0, OPTIONS.circlePieces do
 			local a1 = (i * radstep)
 			gl.Vertex(math.sin(a1)*size, 0, math.cos(a1)*size)
 		end
 	end)
 end
-			
+
 local function CreateCircleLists()
 	local callback = {}
 	
@@ -273,7 +286,7 @@ end
 
 
 local function DrawSquareLine(innersize, outersize)
-			
+	
 	gl.BeginEnd(GL.QUADS, function()
 		local parts = 4
 		local radstep = (2.0 * math.pi) / parts
@@ -429,7 +442,7 @@ local function DrawTriangleSolid(size)
 end
 
 local function CreateTriangleLists()
-
+	
 	local callback = {}
 	
 	function callback.fading(innersize, outersize)
@@ -476,6 +489,8 @@ function widget:Initialize()
 		end)
 	end)
 	SetupCommandColors(false)
+	
+	currentClock = os.clock()
 end
 
 
@@ -515,9 +530,11 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-function widget:CommandsChanged()
-	updateSelectedUnitsData()	
+
+function widget:Update()
+	updateSelectedUnitsData()		-- calling updateSelectedUnitsData() inside widget:CommandsChanged() will return in buggy behavior in combination with the 'smart-select' widget
 end
+
 
 
 local degrot = {}
@@ -525,22 +542,22 @@ function widget:GameFrame(frame)
 	currentClock = os.clock()
 	maxSelectTime = currentClock - OPTIONS.selectionStartAnimationTime
 	maxDeselectedTime = currentClock - OPTIONS.selectionEndAnimationTime
-
+	
 	if frame%2~=0 then return end
 	
 	-- logs current unit direction	(needs regular updates for air units, and for buildings only once)
 	for teamID,_ in pairs(selectedUnits) do
-	for unitID,_ in pairs(selectedUnits[teamID]) do
-		local dirx, _, dirz = Spring.GetUnitDirection(unitID)
-		if (dirz ~= nil) then
-			degrot[unitID] = 180 - math.acos(dirz) * rad_con
-			if dirx < 0 then
+		for unitID,_ in pairs(selectedUnits[teamID]) do
+			local dirx, _, dirz = Spring.GetUnitDirection(unitID)
+			if (dirz ~= nil) then
 				degrot[unitID] = 180 - math.acos(dirz) * rad_con
-			else
-				degrot[unitID] = 180 + math.acos(dirz) * rad_con
+				if dirx < 0 then
+					degrot[unitID] = 180 - math.acos(dirz) * rad_con
+				else
+					degrot[unitID] = 180 + math.acos(dirz) * rad_con
+				end
 			end
 		end
-	end
 	end
 end
 
@@ -563,8 +580,8 @@ end
 
 
 
-function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relativeScaleSchrinking, changeOpacity)
-
+function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relativeScaleSchrinking, changeOpacity, drawUnitStyles)
+	
 	local camX, camY, camZ = Spring.GetCameraPosition()
 	
 	for unitID in pairs(selectedUnits[teamID]) do
@@ -578,9 +595,10 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 			local camHeightDifference = camY - unitPosY
 			
 			local changedScale = 1
+			local usedAlpha = a
 				
 			if not selectedUnits[teamID][unitID] then return end 
-				
+			
 			if (OPTIONS.selectionEndAnimation  or  OPTIONS.selectionStartAnimation) then
 				if changeOpacity then
 					gl.Color(r,g,b,a)
@@ -591,8 +609,8 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 					if (maxDeselectedTime < selectedUnits[teamID][unitID]['old']) then
 						changedScale = OPTIONS.selectionEndAnimationScale + (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS.selectionEndAnimationTime)) * (1 - OPTIONS.selectionEndAnimationScale)
 						if (changeOpacity) then
-							local newAlpha = 1 - OPTIONS.selectionEndAnimationOpacity - (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS.selectionEndAnimationTime) * (1-a))
-							gl.Color(r,g,b,newAlpha)
+							usedAlpha = 1 - OPTIONS.selectionEndAnimationOpacity - (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS.selectionEndAnimationTime) * (1-a))
+							gl.Color(r,g,b,usedAlpha)
 						end
 					else
 						selectedUnits[teamID][unitID] = nil
@@ -602,8 +620,8 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 					--Spring.Echo(selectedUnits[teamID][unitID]['new'] - maxSelectTime)
 					changedScale = OPTIONS.selectionStartAnimationScale + (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS.selectionStartAnimationTime)) * (1 - OPTIONS.selectionStartAnimationScale)
 					if (changeOpacity) then
-						local newAlpha = 1 - OPTIONS.selectionStartAnimationOpacity - (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS.selectionStartAnimationTime) * (1-a))
-						gl.Color(r,g,b,newAlpha)
+						usedAlpha = 1 - OPTIONS.selectionStartAnimationOpacity - (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS.selectionStartAnimationTime) * (1-a))
+						gl.Color(r,g,b,usedAlpha)
 					end
 				end
 			end
@@ -612,59 +630,56 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 			local usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs ,opposite)
 				if type == 'normal solid'  or  type == 'normal alpha' then
 					
-					if relativeScaleSchrinking then
-						glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/10), usedRotationAngle, 0, degrot[unitID], 0)
+					-- special style for coms
+					if drawUnitStyles and OPTIONS.showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
+						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
+						gl.Color(r,g,b,usedAlpha * usedAlpha)
+						local usedScale = scale * 1.235
+						glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
+						usedScale = scale * 1.2
+						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs , true)
+						gl.Color(r,g,b,usedAlpha*1.2)
+						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
 					else
-						glDrawListAtUnit(unitID, unit.shape.select, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+						-- adding style for buildings with weapons
+						if drawUnitStyles and OPTIONS.showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
+							if (#unitUnitDefs.weapons > 0) then
+								usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
+								gl.Color(r,g,b,usedAlpha*(usedAlpha+0.2))
+								local usedScale = scale * 1.11
+								glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
+							end
+							gl.Color(r,g,b,usedAlpha)
+						end
+						
+						if relativeScaleSchrinking then
+							glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/10), usedRotationAngle, 0, degrot[unitID], 0)
+						else
+							glDrawListAtUnit(unitID, unit.shape.select, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+						end
 					end
-				
+					
 				elseif type == 'solid overlap' then
-				
+					
 					if relativeScaleSchrinking then
 						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/50), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/50), usedRotationAngle, 0, degrot[unitID], 0)
 					else
 						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)+((unit.xscale-15)/15), 1.0, (unit.zscale*scale*changedScale)+((unit.zscale-15)/15), usedRotationAngle, 0, degrot[unitID], 0)
 					end
-				
+					
 				elseif type == 'alphabuffer1' then
-				
+					
 					glDrawListAtUnit(unitID, unit.shape.shape, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
 					glDrawListAtUnit(unitID, unit.shape.inner, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
-				
+					
 				elseif type == 'alphabuffer2' then
-				
+					
 					glDrawListAtUnit(unitID, unit.shape.large, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
-				
-				elseif type == 'coms' then
-				
-					if (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
-						scale = 1.34 * OPTIONS.scaleMultiplier * animationMultiplier
-						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
-						gl.Color(r,g,b,0.25)
-						glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
-						scale = 1.54 * OPTIONS.scaleMultiplier * animationMultiplier
-						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs , true)
-						gl.Color(r,g,b,0.33)
-						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
-					end
-				
-				elseif type == 'building with weapon' then
-				
-					if (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
-						if (#unitUnitDefs.weapons > 0) then
-							scale = 1.34 * OPTIONS.scaleMultiplier * animationMultiplier
-							usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
-							gl.Color(r,g,b,0.5)
-							glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
-							scale = 1.38 * OPTIONS.scaleMultiplier * animationMultiplier
-							glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
-						end
-					end
-				
+					
 				elseif type == 'base solid'  or  type == 'base alpha' then
-				
+					
 					glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/10), degrot[unitID], 0, degrot[unitID], 0)
-				
+					
 				end	
 			end
 		end
@@ -673,27 +688,27 @@ end
 
 
 
---  Draw selection circle (nly one layer)
-function DrawSelectionSpotters(teamID, r,g,b,a,scale, opposite, relativeScaleSchrinking)
+--  Draw selection circle (only one layer)
+function DrawSelectionSpotters(teamID, r,g,b,a,scale, opposite, relativeScaleSchrinking, drawUnitStyles)
 	
 	-- draw normal spotters solid
 	local a1 = (OPTIONS.showNoOverlap and 0 or a)
 	
 	gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
 	gl.Color(r,g,b,a1)
-	DrawSelectionSpottersPart(teamID, 'normal solid', r,g,b,a,scale, opposite, relativeScaleSchrinking)
+	DrawSelectionSpottersPart(teamID, 'normal solid', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
 	
 	if OPTIONS.showNoOverlap then
 		--  Here the spotters are given the alpha level (this step makes sure overlappings dont have different alpha level)
 		gl.BlendFunc(GL.ONE, GL.ZERO)
 		gl.Color(r,g,b,a)
-		DrawSelectionSpottersPart(teamID, 'normal alpha', r,g,b,a,scale, opposite, relativeScaleSchrinking, true)
+		DrawSelectionSpottersPart(teamID, 'normal alpha', r,g,b,a,scale, opposite, relativeScaleSchrinking, true, drawUnitStyles)
 	end
 	
 	--  Here the inner of the selected spotters are removed
 	gl.BlendFunc(GL.ONE, GL.ZERO)
 	gl.Color(r,g,b,1)
-	DrawSelectionSpottersPart(teamID, 'solid overlap', r,g,b,a,scale, opposite, relativeScaleSchrinking)
+	DrawSelectionSpottersPart(teamID, 'solid overlap', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
 	
 	
 	--  Really draw the spotters now  (This could be optimised if we could say Draw as much as DST_ALPHA * SRC_ALPHA is)
@@ -709,17 +724,19 @@ function DrawSelectionSpotters(teamID, r,g,b,a,scale, opposite, relativeScaleSch
 	gl.ColorMask(false, false, false, true)
 	gl.BlendFunc(GL.DST_ALPHA, GL.ZERO)
 	
-	DrawSelectionSpottersPart(teamID, 'alphabuffer1', r,g,b,a,scale, opposite, relativeScaleSchrinking)
+	DrawSelectionSpottersPart(teamID, 'alphabuffer1', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
 	
-	DrawSelectionSpottersPart(teamID, 'alphabuffer2', r,g,b,a,scale, opposite, relativeScaleSchrinking)
+	DrawSelectionSpottersPart(teamID, 'alphabuffer2', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
 end
+
+
 
 function widget:DrawWorldPreUnit()
 	
 	local clockDifference = (os.clock() - previousOsClock)
 	previousOsClock = os.clock()
 	
-   if Spring.IsGUIHidden() then return end
+	if Spring.IsGUIHidden() then return end
 	
 	gl.PushAttrib(GL.COLOR_BUFFER_BIT)
 	gl.DepthTest(false)
@@ -767,81 +784,60 @@ function widget:DrawWorldPreUnit()
 	-- loop teams
 	for teamID,_ in pairs(selectedUnits) do
 		
-		local scale = 1
+		local scale = 1 * OPTIONS.scaleMultiplier * animationMultiplierInner
 		if OPTIONS.secondLineOpacity then
 			r,g,b = OPTIONS.defaultOwnColor[1], OPTIONS.defaultOwnColor[2], OPTIONS.defaultOwnColor[3]
 		else
 			r,g,b = Spring.GetTeamColor(teamID)
 		end
 		
-		-- To fix Water
 		gl.ColorMask(false,false,false,true)
 		gl.BlendFunc(GL.ONE, GL.ONE)
 		gl.Color(r,g,b,1)
-		-- Does not need to be drawn per Unit .. it covers the whole map
-		glCallList(clearquad)
 		
+		glCallList(clearquad)
 		
 		-- 1st layer
 		if OPTIONS.showFirstLine then
-			scale = 1.015 * OPTIONS.scaleMultiplier * animationMultiplierInner
-			DrawSelectionSpotters(teamID, r,g,b,OPTIONS.firstLineOpacity * OPTIONS.spotterOpacity,scale)
-		end
-	
-		-- extra 3rd layer (for coms)
-		if OPTIONS.showExtraComLine then
-			gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
-			DrawSelectionSpottersPart(teamID, 'coms', r,g,b,a,scale)
+			DrawSelectionSpotters(teamID, r,g,b,OPTIONS.firstLineOpacity * OPTIONS.spotterOpacity,scale*1.015,false,false,false)
 		end
 		
-		-- extra 3rd layer (for buildings with a weapon)
-		if OPTIONS.showExtraBuildingWeaponLine then
-			gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
-			DrawSelectionSpottersPart(teamID, 'building with weapon', r,g,b,a,scale)
-		end
 		
 		-- 2nd layer
 		if OPTIONS.showSecondLine then
-			scale = 1.17 * OPTIONS.scaleMultiplier * animationMultiplier
-			DrawSelectionSpotters(teamID, r,g,b,OPTIONS.secondLineOpacity * OPTIONS.spotterOpacity,scale, true, true)
+			DrawSelectionSpotters(teamID, r,g,b,OPTIONS.secondLineOpacity * OPTIONS.spotterOpacity,scale*1.17, true, true, true)
 		end
-			
-			
+		
 		-- base layer
 		if OPTIONS.showBase then
+			local baseR, baseG, baseB = r,g,b
 			if OPTIONS.useDefaultColor  and  OPTIONS.useOriginalBaseColor then
-				r,g,b = Spring.GetTeamColor(teamID)
+				baseR,baseG,baseB = Spring.GetTeamColor(teamID)
 			end
-			scale = 1.32 * OPTIONS.scaleMultiplier * animationMultiplier
-			if not showSecondLine then
-				scale = scale - 0.18
-			end
+			local usedScale = scale * 1.24
+			
 			gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
-			gl.Color(r,g,b,0)
-			DrawSelectionSpottersPart(teamID, 'base solid', r,g,b,a,scale)
-				
+			DrawSelectionSpottersPart(teamID, 'base solid', baseR,baseG,baseB,0,usedScale, false, false, false, false)
+			
 			--  Here the inner of the selected spotters are removed
 			gl.BlendFunc(GL.ONE, GL.ZERO)
-			a = OPTIONS.baseOpacity * OPTIONS.spotterOpacity
-			gl.Color(r,g,b,a)
-			DrawSelectionSpottersPart(teamID, 'base alpha', r,g,b,a,scale, false, false, true)
-		
+			DrawSelectionSpottersPart(teamID, 'base alpha', baseR,baseG,baseB,OPTIONS.baseOpacity * OPTIONS.spotterOpacity,usedScale, false, false, true, false)
+			
 			--  Really draw the spotters now  (This could be optimised if we could say Draw as much as DST_ALPHA * SRC_ALPHA is)
 			-- (without protecting form drawing them twice)
 			gl.ColorMask(true,true,true,true)
 			gl.BlendFunc(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA)
-			gl.Color(r,g,b,1)
+		
+			glCallList(clearquad)	
 		end
 		
-		-- Does not need to be drawn per Unit anymore
-		glCallList(clearquad)	
 	end
-
+	
 	gl.Color(1,1,1,1)
 	gl.PopAttrib()
 end
 
-	
+
 
 
 --------------------------------------------------------------------------------
@@ -852,10 +848,10 @@ end
 
 
 function widget:TextCommand(command)
-    local mycommand = false
-    if (string.find(command, "+unitspotteropacity") == 1) then OPTIONS.spotterOpacity = OPTIONS.spotterOpacity - 0.02 end
-    if (string.find(command, "-unitspotteropacity") == 1) then OPTIONS.spotterOpacity = OPTIONS.spotterOpacity + 0.02 end
-    
-    if (string.find(command, "+unitspotterbaseopacity") == 1) then OPTIONS.baseOpacity = OPTIONS.baseOpacity - 0.02 end
-    if (string.find(command, "-unitspotterbaseopacity") == 1) then OPTIONS.baseOpacity = OPTIONS.baseOpacity + 0.02 end
+	local mycommand = false
+	if (string.find(command, "+unitspotteropacity") == 1) then OPTIONS.spotterOpacity = OPTIONS.spotterOpacity - 0.02 end
+	if (string.find(command, "-unitspotteropacity") == 1) then OPTIONS.spotterOpacity = OPTIONS.spotterOpacity + 0.02 end
+	
+	if (string.find(command, "+unitspotterbaseopacity") == 1) then OPTIONS.baseOpacity = OPTIONS.baseOpacity - 0.02 end
+	if (string.find(command, "-unitspotterbaseopacity") == 1) then OPTIONS.baseOpacity = OPTIONS.baseOpacity + 0.02 end
 end

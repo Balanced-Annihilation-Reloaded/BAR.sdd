@@ -24,12 +24,12 @@ local unitConf				= {}
 --------------------------------------------------------------------------------
 
 local selfdUnits = {}
-local glDrawListAtUnit			= gl.DrawListAtUnit
 local glDrawFuncAtUnit			= gl.DrawFuncAtUnit
 
 local spIsGUIHidden				= Spring.IsGUIHidden
 local spGetUnitDefID			= Spring.GetUnitDefID
 local spIsUnitInView 			= Spring.IsUnitInView
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -40,10 +40,7 @@ function DrawIcon(posY, posX, iconSize, text)
 	gl.Translate(posX*0.9,posY,posX*1.5)
 	gl.Billboard()
 	gl.TexRect(-(iconSize/2), 0, (iconSize/2), iconSize)
-	gl.Color(0,0,0,0.8)
-	gl.Text(text, -18, 3, 14, 'cn')
-	gl.Color(0.9,0.9,0.9,1)
-	gl.Text(text, -18, 3.4, 14, 'cn')
+	gl.Text(text, -16, 1, 12, 'c')
 end
 
 
@@ -89,17 +86,17 @@ end
 -- draw icons
 function widget:DrawWorld()
 	if spIsGUIHidden() then return end
-	local osClock = os.clock()
+	local gameSecs = Spring.GetGameSeconds()
 	
 	gl.DepthMask(true)
 	gl.DepthTest(true)
 	
-	for unitID, unitEndClock in pairs(selfdUnits) do
+	for unitID, unitEndSecs in pairs(selfdUnits) do
 		if spIsUnitInView(unitID) then
 			
 			local unitDefs = unitConf[spGetUnitDefID(unitID)]
 			local unitScale = unitDefs.xscale*1.22 - (unitDefs.xscale/6.6)
-			glDrawFuncAtUnit(unitID, false, DrawIcon, 10.1, unitScale, 18, math.floor((unitEndClock - osClock)+1))
+			glDrawFuncAtUnit(unitID, false, DrawIcon, 10.1, unitScale, 18, math.floor((unitEndSecs - gameSecs)+1))
 		end
 	end
 	
@@ -111,12 +108,12 @@ end
 
 
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
+
 	if cmdID == CMD.SELFD then
-		
 		if selfdUnits[unitID] then  
 			selfdUnits[unitID] = nil
 		else
-			selfdUnits[unitID] = os.clock() + UnitDefs[spGetUnitDefID(unitID)].selfDCountdown
+			selfdUnits[unitID] = Spring.GetGameSeconds() + UnitDefs[spGetUnitDefID(unitID)].selfDCountdown
 		end
 	end
 end

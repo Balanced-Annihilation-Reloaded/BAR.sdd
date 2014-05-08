@@ -77,20 +77,15 @@ local OPTIONS = {
 	innersize						= 1.7,
 	selectinner						= 1.65,
 	outersize						= 1.8,
-	scalefaktor						= 2.9,
-	rectangleFactor					= 3.3,
+	
+	scalefaktor						= 2.9,			-- prefer not to change because other widgets use these values too  (enemyspotter, given_units, selfd_icons)
+	rectangleFactor					= 3.3,			-- prefer not to change because other widgets use these values too  (enemyspotter, given_units, selfd_icons)
 	
 	-- opacity
 	spotterOpacity					= 1,			-- 0 is opaque
 	baseOpacity						= 0.77,			-- 0 is opaque
 	firstLineOpacity				= 0,
-	secondLineOpacity				= 0.44,
-	
-	-- color
-	useDefaultColor					= true,
-	defaultOwnColor					= {1,1,1},
-	defaultOthersColor				= {0.5,1,0.5},
-	useOriginalBaseColor			= true,			-- if using the default color, still useplayers color for the base-spotter?
+	secondLineOpacity				= 0.25,
 	
 	-- animation
 	rotationSpeed					= 0.08,
@@ -636,12 +631,12 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 					-- special style for coms
 					if drawUnitStyles and OPTIONS.showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
 						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
-						gl.Color(r,g,b,(usedAlpha*usedAlpha))
+						gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.12)
 						local usedScale = scale * 1.26
 						glDrawListAtUnit(unitID, unit.shape.inner, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
 						usedScale = scale * 1.235
 						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs , true)
-						gl.Color(r,g,b,(usedAlpha*(usedAlpha - 0.25)) )
+						gl.Color(r,g,b,(usedAlpha*usedAlpha))
 						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
 					else
 						-- adding style for buildings with weapons
@@ -801,11 +796,7 @@ function widget:DrawWorldPreUnit()
 	for teamID,_ in pairs(selectedUnits) do
 		
 		local scale = 1 * OPTIONS.scaleMultiplier * animationMultiplierInner
-		if OPTIONS.secondLineOpacity then
-			r,g,b = OPTIONS.defaultOwnColor[1], OPTIONS.defaultOwnColor[2], OPTIONS.defaultOwnColor[3]
-		else
-			r,g,b = spGetTeamColor(teamID)
-		end
+		r,g,b = 1,1,1
 		
 		gl.ColorMask(false,false,false,true)
 		gl.BlendFunc(GL.ONE, GL.ONE)
@@ -827,9 +818,7 @@ function widget:DrawWorldPreUnit()
 		-- base layer
 		if OPTIONS.showBase then
 			local baseR, baseG, baseB = r,g,b
-			if OPTIONS.useDefaultColor  and  OPTIONS.useOriginalBaseColor then
-				baseR,baseG,baseB = spGetTeamColor(teamID)
-			end
+			baseR,baseG,baseB = spGetTeamColor(teamID)
 			local usedScale = scale * 1.24
 			
 			gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)

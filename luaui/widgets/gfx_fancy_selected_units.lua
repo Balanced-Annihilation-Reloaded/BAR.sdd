@@ -636,7 +636,7 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 					-- special style for coms
 					if drawUnitStyles and OPTIONS.showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
 						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
-						gl.Color(r,g,b,(usedAlpha*usedAlpha) + 0.14)
+						gl.Color(r,g,b,(usedAlpha*usedAlpha))
 						local usedScale = scale * 1.26
 						glDrawListAtUnit(unitID, unit.shape.inner, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
 						usedScale = scale * 1.235
@@ -704,16 +704,17 @@ end
 --  Draw selection circle (only one layer)
 function DrawSelectionSpotters(teamID, r,g,b,a,scale, opposite, relativeScaleSchrinking, drawUnitStyles)
 	
-	-- draw normal spotters solid
-	local a1 = (OPTIONS.showNoOverlap and 0 or a)
-	
 	gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
-	gl.Color(r,g,b,a1)
-	DrawSelectionSpottersPart(teamID, 'normal solid', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
-	
 	if OPTIONS.showNoOverlap then
+		-- draw normal spotters solid
+		gl.Color(r,g,b,0)
+		DrawSelectionSpottersPart(teamID, 'normal solid', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
+	
 		--  Here the spotters are given the alpha level (this step makes sure overlappings dont have different alpha level)
 		gl.BlendFunc(GL.ONE, GL.ZERO)
+		gl.Color(r,g,b,a)
+		DrawSelectionSpottersPart(teamID, 'normal alpha', r,g,b,a,scale, opposite, relativeScaleSchrinking, true, drawUnitStyles)
+	else
 		gl.Color(r,g,b,a)
 		DrawSelectionSpottersPart(teamID, 'normal alpha', r,g,b,a,scale, opposite, relativeScaleSchrinking, true, drawUnitStyles)
 	end

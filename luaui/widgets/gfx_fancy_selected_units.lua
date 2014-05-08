@@ -1,7 +1,7 @@
 function widget:GetInfo()
    return {
       name      = "Fancy Selected Units",
-      desc      = "(took 'UnitShapes' widget as a base)",
+      desc      = "Switch styles with /selectedunits_style",
       author    = "Floris",
       date      = "04.04.2014",
       license   = "GNU GPL, v2 or later",
@@ -9,6 +9,9 @@ function widget:GetInfo()
       enabled   = true
    }
 end
+
+--(took 'UnitShapes' widget as a base for this one)
+
 
 --------------------------------------------------------------------------------
 -- Console commands
@@ -729,12 +732,12 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 					-- special style for coms
 					if drawUnitStyles and OPTIONS[currentOption].showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
 						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
-						gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.13)
+						gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.22)
 						local usedScale = scale * 1.25
 						glDrawListAtUnit(unitID, unit.shape.inner, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
 						usedScale = scale * 1.23
 						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs , true)
-						gl.Color(r,g,b,(usedAlpha*usedAlpha))
+						gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.08)
 						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
 					else
 						-- adding style for buildings with weapons
@@ -922,7 +925,6 @@ function widget:DrawWorldPreUnit()
 			-- (without protecting form drawing them twice)
 			gl.ColorMask(true,true,true,true)
 			gl.BlendFunc(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA)
-			
 			glCallList(clearquad)
 		end
 		
@@ -938,6 +940,7 @@ function widget:DrawWorldPreUnit()
 		
 	end
 	
+	gl.BlendFunc(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA)
 	glCallList(clearquad)
 		
 	gl.Color(1,1,1,1)

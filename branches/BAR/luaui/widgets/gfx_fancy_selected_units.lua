@@ -54,6 +54,8 @@ local selectedUnits					= {}
 local maxSelectTime					= 0				--time at which units "new selection" animation will end
 local maxDeselectedTime				= -1			--time at which units deselection animation will end
 
+local currentOption					= 1
+
 local glCallList					= gl.CallList
 local glDrawListAtUnit				= gl.DrawListAtUnit
 
@@ -73,28 +75,6 @@ local spGetTeamColor				= Spring.GetTeamColor
 --------------------------------------------------------------------------------
 
 local OPTIONS = {
-	-- opacity
-	spotterOpacity					= 1,			-- 0 is opaque
-	baseOpacity						= 0.77,			-- 0 is opaque
-	
-	-- animation
-	selectionStartAnimation			= true,
-	selectionStartAnimationTime		= 0.25, --high so as visible while developing
-	selectionStartAnimationScale	= 0.8,
-	-- selectionStartAnimationScale	= 1.17,
-	selectionStartAnimationOpacity	= 0,	-- starts with this addition opacity, over makes it overflow a bit at the end of the fadein
-	selectionEndAnimation			= true,
-	selectionEndAnimationTime		= 0.25, --high so as visible while developing
-	selectionEndAnimationScale		= 0.9,
-	selectionEndAnimationOpacity    = 0,
-	-- selectionEndAnimationScale	= 1.17,
-	animationSpeed					= 0.0006,
-	
-	-- prefer not to change because other widgets use these values too  (enemyspotter, given_units, selfd_icons)
-	scaleFactor						= 2.9,			
-	rectangleFactor					= 3.3,
-}
-OPTIONS[1] = {
 	-- Quality settings
 	showNoOverlap					= false,	-- set true for no line overlapping
 	showBase						= true,
@@ -103,6 +83,32 @@ OPTIONS[1] = {
 	showExtraComLine				= true,		-- extra circle lines for the commander unit
 	showExtraBuildingWeaponLine		= true,
 	
+	-- opacity
+	spotterOpacity					= 1,		-- 0 is opaque
+	baseOpacity						= 0.77,		-- 0 is opaque
+	
+	-- animation
+	selectionStartAnimation			= true,
+	selectionStartAnimationTime		= 0.25, 	--high so as visible while developing
+	selectionStartAnimationScale	= 0.8,
+	-- selectionStartAnimationScale	= 1.17,
+	selectionStartAnimationOpacity	= 0,		-- starts with this addition opacity, over makes it overflow a bit at the end of the fadein
+	selectionEndAnimation			= true,
+	selectionEndAnimationTime		= 0.25, 	--high so as visible while developing
+	selectionEndAnimationScale		= 0.9,
+	selectionEndAnimationOpacity    = 0,
+	-- selectionEndAnimationScale	= 1.17,
+	
+	animationSpeed					= 0.0006,	-- speed of scaling up/down inner and outer lines
+	animateSpotterSize				= true,
+	maxAnimationMultiplier			= 1.014,
+	minAnimationMultiplier			= 0.99,
+	
+	-- prefer not to change because other widgets use these values too  (enemyspotter, given_units, selfd_icons)
+	scaleFactor						= 2.9,			
+	rectangleFactor					= 3.3,
+}
+OPTIONS[1] = {
 	circlePieces					= 36,		-- (1 or higher)
 	circlePieceDetail				= 1,		-- smoothness of each piece (1 or higher)
 	circleSpaceUsage				= 0.7,		-- 1 = whole circle space gets filled
@@ -119,20 +125,8 @@ OPTIONS[1] = {
 	
 	-- animation
 	rotationSpeed					= 0.08,
-	animateSpotterSize				= true,
-	animateInnerSpotterSize			= true,
-	maxAnimationMultiplier			= 1.014,
-	minAnimationMultiplier			= 0.99
 }
 OPTIONS[2] = {
-	-- Quality settings
-	showNoOverlap					= false,	-- set true for no line overlapping
-	showBase						= true,
-	showFirstLine					= true,
-	showSecondLine					= true,
-	showExtraComLine				= true,		-- extra circle lines for the commander unit
-	showExtraBuildingWeaponLine		= true,
-	
 	circlePieces					= 22,		-- (1 or higher)
 	circlePieceDetail				= 4,		-- smoothness of each piece (1 or higher)
 	circleSpaceUsage				= 0.28,		-- 1 = whole circle space gets filled
@@ -150,23 +144,11 @@ OPTIONS[2] = {
 	
 	-- animation
 	rotationSpeed					= 0.08,
-	animateSpotterSize				= true,
-	animateInnerSpotterSize			= true,
-	maxAnimationMultiplier			= 1.014,
-	minAnimationMultiplier			= 0.99
 }
 OPTIONS[3] = {
-	-- Quality settings
-	showNoOverlap					= false,	-- set true for no line overlapping
-	showBase						= true,
-	showFirstLine					= true,
-	showSecondLine					= true,
-	showExtraComLine				= true,		-- extra circle lines for the commander unit
-	showExtraBuildingWeaponLine		= true,
-	
-	circlePieces					= 12,		-- (1 or higher)
-	circlePieceDetail				= 4,		-- smoothness of each piece (1 or higher)
-	circleSpaceUsage				= 0.75,		-- 1 = whole circle space gets filled
+	circlePieces					= 42,		-- (1 or higher)
+	circlePieceDetail				= 1,		-- smoothness of each piece (1 or higher)
+	circleSpaceUsage				= 0.62,		-- 1 = whole circle space gets filled
 	circleInnerOffset				= 0,
 	
 	-- size
@@ -181,20 +163,8 @@ OPTIONS[3] = {
 	
 	-- animation
 	rotationSpeed					= 0.1,
-	animateSpotterSize				= true,
-	animateInnerSpotterSize			= true,
-	maxAnimationMultiplier			= 1.014,
-	minAnimationMultiplier			= 0.99
 }
 OPTIONS[4] = {
-	-- Quality settings
-	showNoOverlap					= false,	-- set true for no line overlapping
-	showBase						= true,
-	showFirstLine					= true,
-	showSecondLine					= true,
-	showExtraComLine				= true,		-- extra circle lines for the commander unit
-	showExtraBuildingWeaponLine		= true,
-	
 	circlePieces					= 5,		-- (1 or higher)
 	circlePieceDetail				= 7,		-- smoothness of each piece (1 or higher)
 	circleSpaceUsage				= 0.75,		-- 1 = whole circle space gets filled
@@ -212,13 +182,7 @@ OPTIONS[4] = {
 	
 	-- animation
 	rotationSpeed					= 0.22,
-	animateSpotterSize				= true,
-	animateInnerSpotterSize			= true,
-	maxAnimationMultiplier			= 1.014,
-	minAnimationMultiplier			= 0.99
 }
-local currentOption		= 1
-local totalOptions		= 4
 
 
 ------------------------------------------------------------------------------------
@@ -227,7 +191,7 @@ local totalOptions		= 4
 
 local function toggleOptions()
 	currentOption = currentOption + 1
-	if currentOption > totalOptions then
+	if not OPTIONS[currentOption] then
 		currentOption = 1
 	end
 	loadConfig()
@@ -283,7 +247,6 @@ local function updateSelectedUnitsData()
 		end
 	end
 end
-
 
 
 function KeyExists(tbl, key)
@@ -730,7 +693,7 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 				if type == 'normal solid'  or  type == 'normal alpha' then
 					
 					-- special style for coms
-					if drawUnitStyles and OPTIONS[currentOption].showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
+					if drawUnitStyles and OPTIONS.showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
 						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
 						gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.22)
 						local usedScale = scale * 1.25
@@ -741,7 +704,7 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
 					else
 						-- adding style for buildings with weapons
-						if drawUnitStyles and OPTIONS[currentOption].showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
+						if drawUnitStyles and OPTIONS.showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
 							if (#unitUnitDefs.weapons > 0) then
 								usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
 								gl.Color(r,g,b,usedAlpha*(usedAlpha+0.2))
@@ -778,10 +741,10 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 				elseif type == 'base solid'  or  type == 'base alpha' then
 					local usedXScale = unit.xscale
 					local usedZScale = unit.zscale
-					if OPTIONS[currentOption].showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
+					if OPTIONS.showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
 						usedXScale = usedXScale * 1.23
 						usedZScale = usedZScale * 1.23
-					elseif OPTIONS[currentOption].showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
+					elseif OPTIONS.showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
 						if (#unitUnitDefs.weapons > 0) then
 							usedXScale = usedXScale * 1.14
 							usedZScale = usedZScale * 1.14
@@ -801,7 +764,7 @@ end
 function DrawSelectionSpotters(teamID, r,g,b,a,scale, opposite, relativeScaleSchrinking, drawUnitStyles)
 	
 	gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
-	if OPTIONS[currentOption].showNoOverlap then
+	if OPTIONS.showNoOverlap then
 		-- draw normal spotters solid
 		gl.Color(r,g,b,0)
 		DrawSelectionSpottersPart(teamID, 'normal solid', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
@@ -872,22 +835,22 @@ function widget:DrawWorldPreUnit()
 	
 	
 	-- animate spotter scale 
-	if OPTIONS[currentOption].animateSpotterSize then
+	if OPTIONS.animateSpotterSize then
 		local addedMultiplierValue = OPTIONS.animationSpeed * (clockDifference * 50)
-		if (animationMultiplierAdd  and  animationMultiplier < OPTIONS[currentOption].maxAnimationMultiplier) then
+		if (animationMultiplierAdd  and  animationMultiplier < OPTIONS.maxAnimationMultiplier) then
 			animationMultiplier = animationMultiplier + addedMultiplierValue
 			animationMultiplierInner = animationMultiplierInner - addedMultiplierValue
-			if (animationMultiplier > OPTIONS[currentOption].maxAnimationMultiplier) then
-				animationMultiplier = OPTIONS[currentOption].maxAnimationMultiplier
-				animationMultiplierInner = OPTIONS[currentOption].minAnimationMultiplier
+			if (animationMultiplier > OPTIONS.maxAnimationMultiplier) then
+				animationMultiplier = OPTIONS.maxAnimationMultiplier
+				animationMultiplierInner = OPTIONS.minAnimationMultiplier
 				animationMultiplierAdd = false
 			end
 		else
 			animationMultiplier = animationMultiplier - addedMultiplierValue
 			animationMultiplierInner = animationMultiplierInner + addedMultiplierValue
-			if (animationMultiplier < OPTIONS[currentOption].minAnimationMultiplier) then
-				animationMultiplier = OPTIONS[currentOption].minAnimationMultiplier
-				animationMultiplierInner = OPTIONS[currentOption].maxAnimationMultiplier
+			if (animationMultiplier < OPTIONS.minAnimationMultiplier) then
+				animationMultiplier = OPTIONS.minAnimationMultiplier
+				animationMultiplierInner = OPTIONS.maxAnimationMultiplier
 				animationMultiplierAdd = true
 			end
 		end
@@ -899,7 +862,7 @@ function widget:DrawWorldPreUnit()
 		local r,g,b = 1,1,1
 		local scale = 1 * OPTIONS[currentOption].scaleMultiplier * animationMultiplierInner
 		local scaleBase = scale * 1.133
-		if OPTIONS[currentOption].showSecondLine then 
+		if OPTIONS.showSecondLine then 
 			scaleOuter = (1 * OPTIONS[currentOption].scaleMultiplier * animationMultiplier) * 1.17
 			scaleBase = scaleOuter * 1.07
 		end
@@ -910,7 +873,7 @@ function widget:DrawWorldPreUnit()
 		glCallList(clearquad)
 		
 		-- base layer
-		if OPTIONS[currentOption].showBase then
+		if OPTIONS.showBase then
 			local baseR, baseG, baseB = r,g,b
 			baseR,baseG,baseB = spGetTeamColor(teamID)
 			
@@ -931,17 +894,18 @@ function widget:DrawWorldPreUnit()
 		gl.ColorMask(false,false,false,true)
 		
 		-- 1st layer
-		DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].firstLineOpacity * OPTIONS.spotterOpacity,scale,false,false,false)
+		if OPTIONS.showFirstLine then
+			DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].firstLineOpacity * OPTIONS.spotterOpacity,scale,false,false,false)
+		end
 		
 		-- 2nd layer
-		if OPTIONS[currentOption].showSecondLine then
+		if OPTIONS.showSecondLine then
 			DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].secondLineOpacity * OPTIONS.spotterOpacity,scaleOuter, true, true, true)
 		end
 		
 	end
 	
-	gl.BlendFunc(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA)
-	glCallList(clearquad)
+	gl.ColorMask(false,false,false,false)
 		
 	gl.Color(1,1,1,1)
 	gl.PopAttrib()

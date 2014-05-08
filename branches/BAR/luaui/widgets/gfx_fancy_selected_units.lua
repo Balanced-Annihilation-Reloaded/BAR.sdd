@@ -13,13 +13,8 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
--- TODO / Known Issues:
--- general performance optimisations
--- reducing quality when zoomed out
+-- TODO
 -- show the selections of teammates
--- improve acuracy/code of keeping the same line thickness with bigger and smaller units
--- buggy opacity/animation when paused
--- longdrag-window(ed): circle offset gets bigger and bigger
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -28,12 +23,7 @@ end
 local clearquad
 local shapes = {}
 
-local gaiaTeamID					= Spring.GetGaiaTeamID()
-
 local rad_con						= 180 / math.pi
-
-local glCallList					= gl.CallList
-local glDrawListAtUnit				= gl.DrawListAtUnit
 
 local UNITCONF						= {}
 
@@ -47,17 +37,30 @@ local animationMultiplierAdd		= true
 
 local selectedUnits					= {}
 
-local currentSelClock = os.clock() --time at which selected units last changed
-local maxSelectTime = 0 --time at which units "new selection" animation will end
-local maxDeselectedTime = -1 --team at which units deselection animation will end
+local maxSelectTime					= 0				--time at which units "new selection" animation will end
+local maxDeselectedTime				= -1			--time at which units deselection animation will end
 
+local glCallList					= gl.CallList
+local glDrawListAtUnit				= gl.DrawListAtUnit
+
+local spIsUnitSelected				= Spring.IsUnitSelected
+local spGetSelectedUnitsCount		= Spring.GetSelectedUnitsCount
+local spGetSelectedUnitsSorted		= Spring.GetSelectedUnitsSorted
+local spGetUnitTeam					= Spring.GetUnitTeam
+local spLoadCmdColorsConfig			= Spring.LoadCmdColorsConfig
+local spGetUnitDirection			= Spring.GetUnitDirection
+local spGetCameraPosition			= Spring.GetCameraPosition
+local spGetUnitViewPosition			= Spring.GetUnitViewPosition
+local spGetUnitDefID				= Spring.GetUnitDefID
+local spIsGUIHidden					= Spring.IsGUIHidden
+local spGetTeamColor				= Spring.GetTeamColor
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 local OPTIONS = {
 	-- Quality settings
-	showNoOverlap					= true,		-- set true for no line overlapping so thata the alpha levels will be different on intersections
+	showNoOverlap					= false,	-- set true for no line overlapping
 	showBase						= true,
 	showFirstLine					= true,
 	showSecondLine					= true,
@@ -101,15 +104,16 @@ local OPTIONS = {
 	selectionEndAnimationScale		= 0.9,
 	selectionEndAnimationOpacity    = 0,
 	-- selectionEndAnimationScale	= 1.17,
-	animationSpeed					= 0.0007,
+	animationSpeed					= 0.0006,
 	animateSpotterSize				= true,
 	animateInnerSpotterSize			= true,
-	maxAnimationMultiplier			= 1.015,
+	maxAnimationMultiplier			= 1.014,
 	minAnimationMultiplier			= 0.99
 }
 
 ------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------
+
 
 local function updateSelectedUnitsData()
 	
@@ -117,7 +121,7 @@ local function updateSelectedUnitsData()
 	local os_clock = os.clock()
 	for teamID,_ in pairs(selectedUnits) do
 		for unitID,_ in pairs(selectedUnits[teamID]) do
-			if not Spring.IsUnitSelected(unitID) and selectedUnits[teamID][unitID]['selected'] then
+			if not spIsUnitSelected(unitID) and selectedUnits[teamID][unitID]['selected'] then
 				local clockDifference = OPTIONS.selectionStartAnimationTime - (os_clock - selectedUnits[teamID][unitID]['new'])
 				if clockDifference < 0 then
 					clockDifference = 0
@@ -130,15 +134,15 @@ local function updateSelectedUnitsData()
 	end
 	
 	-- add selected units
-	if Spring.GetSelectedUnitsCount() > 0 then
-		local units = Spring.GetSelectedUnitsSorted()
+	if spGetSelectedUnitsCount() > 0 then
+		local units = spGetSelectedUnitsSorted()
 		for uDID,_ in pairs(units) do
 			if uDID ~= 'n' then --'n' returns table size
 				for i=1,#units[uDID] do
 					local unitID = units[uDID][i]
 					local unit = UNITCONF[uDID]
 					if (unit) then
-						teamID = Spring.GetUnitTeam(unitID)
+						teamID = spGetUnitTeam(unitID)
 						if not selectedUnits[teamID] then
 							selectedUnits[teamID] = {}
 						end
@@ -179,7 +183,7 @@ end
 
 local function SetupCommandColors(state)
 	local alpha = state and 1 or 0
-	Spring.LoadCmdColorsConfig('unitBox  0 1 0 ' .. alpha)
+	spLoadCmdColorsConfig('unitBox  0 1 0 ' .. alpha)
 end
 
 --------------------------------------------------------------------------------
@@ -532,6 +536,10 @@ end
 
 
 function widget:Update()
+	currentClock = os.clock()
+	maxSelectTime = currentClock - OPTIONS.selectionStartAnimationTime
+	maxDeselectedTime = currentClock - OPTIONS.selectionEndAnimationTime
+	
 	updateSelectedUnitsData()		-- calling updateSelectedUnitsData() inside widget:CommandsChanged() will return in buggy behavior in combination with the 'smart-select' widget
 end
 
@@ -539,16 +547,13 @@ end
 
 local degrot = {}
 function widget:GameFrame(frame)
-	currentClock = os.clock()
-	maxSelectTime = currentClock - OPTIONS.selectionStartAnimationTime
-	maxDeselectedTime = currentClock - OPTIONS.selectionEndAnimationTime
 	
 	if frame%2~=0 then return end
 	
 	-- logs current unit direction	(needs regular updates for air units, and for buildings only once)
 	for teamID,_ in pairs(selectedUnits) do
 		for unitID,_ in pairs(selectedUnits[teamID]) do
-			local dirx, _, dirz = Spring.GetUnitDirection(unitID)
+			local dirx, _, dirz = spGetUnitDirection(unitID)
 			if (dirz ~= nil) then
 				degrot[unitID] = 180 - math.acos(dirz) * rad_con
 				if dirx < 0 then
@@ -579,19 +584,18 @@ function GetUsedRotationAngle(unitID, unitUnitDefs, opposite)
 end
 
 
-
 function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relativeScaleSchrinking, changeOpacity, drawUnitStyles)
 	
-	local camX, camY, camZ = Spring.GetCameraPosition()
+	local camX, camY, camZ = spGetCameraPosition()
 	
 	for unitID in pairs(selectedUnits[teamID]) do
-		local udid = Spring.GetUnitDefID(unitID)
+		local udid = spGetUnitDefID(unitID)
 		local unitUnitDefs = UnitDefs[udid]
 		local unit = UNITCONF[udid]
 		local draw = true
 		
 		if (unit) then
-			local unitPosX, unitPosY, unitPosZ = Spring.GetUnitViewPosition(unitID, true)
+			local unitPosX, unitPosY, unitPosZ = spGetUnitViewPosition(unitID, true)
 			local camHeightDifference = camY - unitPosY
 			
 			local changedScale = 1
@@ -605,7 +609,6 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 				end
 				-- check if the unit is deselected
 				if (OPTIONS.selectionEndAnimation and not selectedUnits[teamID][unitID]['selected']) then
-					--Spring.Echo(maxDeselectedTime, selectedUnits[teamID][unitID]['old'])
 					if (maxDeselectedTime < selectedUnits[teamID][unitID]['old']) then
 						changedScale = OPTIONS.selectionEndAnimationScale + (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS.selectionEndAnimationTime)) * (1 - OPTIONS.selectionEndAnimationScale)
 						if (changeOpacity) then
@@ -617,7 +620,7 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 					end
 				-- check if the unit is newly selected
 				elseif (OPTIONS.selectionStartAnimation and selectedUnits[teamID][unitID]['new'] > maxSelectTime) then
-					--Spring.Echo(selectedUnits[teamID][unitID]['new'] - maxSelectTime)
+					--spEcho(selectedUnits[teamID][unitID]['new'] - maxSelectTime)
 					changedScale = OPTIONS.selectionStartAnimationScale + (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS.selectionStartAnimationTime)) * (1 - OPTIONS.selectionStartAnimationScale)
 					if (changeOpacity) then
 						usedAlpha = 1 - OPTIONS.selectionStartAnimationOpacity - (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS.selectionStartAnimationTime) * (1-a))
@@ -627,18 +630,18 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 			end
 			
 			if selectedUnits[teamID][unitID] then
-			local usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs ,opposite)
+				local usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs ,opposite)
 				if type == 'normal solid'  or  type == 'normal alpha' then
 					
 					-- special style for coms
 					if drawUnitStyles and OPTIONS.showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
 						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
-						gl.Color(r,g,b,usedAlpha * usedAlpha)
-						local usedScale = scale * 1.235
-						glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
-						usedScale = scale * 1.2
+						gl.Color(r,g,b,(usedAlpha*usedAlpha) + 0.14)
+						local usedScale = scale * 1.26
+						glDrawListAtUnit(unitID, unit.shape.inner, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
+						usedScale = scale * 1.235
 						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs , true)
-						gl.Color(r,g,b,usedAlpha*1.2)
+						gl.Color(r,g,b,(usedAlpha*(usedAlpha - 0.25)) )
 						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
 					else
 						-- adding style for buildings with weapons
@@ -677,8 +680,18 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 					glDrawListAtUnit(unitID, unit.shape.large, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
 					
 				elseif type == 'base solid'  or  type == 'base alpha' then
-					
-					glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-10)/10), degrot[unitID], 0, degrot[unitID], 0)
+					local usedXScale = unit.xscale
+					local usedZScale = unit.zscale
+					if OPTIONS.showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
+						usedXScale = usedXScale * 1.24
+						usedZScale = usedZScale * 1.24
+					elseif OPTIONS.showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
+						if (#unitUnitDefs.weapons > 0) then
+							usedXScale = usedXScale * 1.14
+							usedZScale = usedZScale * 1.14
+						end
+					end
+					glDrawListAtUnit(unitID, unit.shape.large, false, (usedXScale*scale*changedScale)-((usedXScale*changedScale-10)/10), 1.0, (usedZScale*scale*changedScale)-((usedZScale*changedScale-10)/10), degrot[unitID], 0, degrot[unitID], 0)
 					
 				end	
 			end
@@ -736,19 +749,18 @@ function widget:DrawWorldPreUnit()
 	local clockDifference = (os.clock() - previousOsClock)
 	previousOsClock = os.clock()
 	
-	if Spring.IsGUIHidden() then return end
+	if spIsGUIHidden() then return end
 	
 	gl.PushAttrib(GL.COLOR_BUFFER_BIT)
 	gl.DepthTest(false)
 	
 	
-	local currentGameSpeed, _, paused = Spring.GetGameSpeed()
 	if not paused then
 		currentRotationAngle = currentRotationAngle + (OPTIONS.rotationSpeed/2)
 		if currentRotationAngle > 360 then
 		   currentRotationAngle = currentRotationAngle - 360
 		end
-		local rotationSpeedMultiplier = (clockDifference * 50) * currentGameSpeed
+		local rotationSpeedMultiplier = (clockDifference * 50)
 			
 		currentRotationAngle = currentRotationAngle + ((OPTIONS.rotationSpeed/2) * rotationSpeedMultiplier)
 		
@@ -757,7 +769,6 @@ function widget:DrawWorldPreUnit()
 		if currentRotationAngleOpposite < -360 then
 		   currentRotationAngleOpposite = currentRotationAngleOpposite + 360
 		end
-		currentGameSpeed, _, paused = Spring.GetGameSpeed()
 		
 		currentRotationAngleOpposite = currentRotationAngleOpposite - (OPTIONS.rotationSpeed * rotationSpeedMultiplier)
 	end
@@ -770,12 +781,16 @@ function widget:DrawWorldPreUnit()
 			animationMultiplier = animationMultiplier + addedMultiplierValue
 			animationMultiplierInner = animationMultiplierInner - addedMultiplierValue
 			if (animationMultiplier > OPTIONS.maxAnimationMultiplier) then
+				animationMultiplier = OPTIONS.maxAnimationMultiplier
+				animationMultiplierInner = OPTIONS.minAnimationMultiplier
 				animationMultiplierAdd = false
 			end
 		else
 			animationMultiplier = animationMultiplier - addedMultiplierValue
 			animationMultiplierInner = animationMultiplierInner + addedMultiplierValue
 			if (animationMultiplier < OPTIONS.minAnimationMultiplier) then
+				animationMultiplier = OPTIONS.minAnimationMultiplier
+				animationMultiplierInner = OPTIONS.maxAnimationMultiplier
 				animationMultiplierAdd = true
 			end
 		end
@@ -788,7 +803,7 @@ function widget:DrawWorldPreUnit()
 		if OPTIONS.secondLineOpacity then
 			r,g,b = OPTIONS.defaultOwnColor[1], OPTIONS.defaultOwnColor[2], OPTIONS.defaultOwnColor[3]
 		else
-			r,g,b = Spring.GetTeamColor(teamID)
+			r,g,b = spGetTeamColor(teamID)
 		end
 		
 		gl.ColorMask(false,false,false,true)
@@ -802,9 +817,9 @@ function widget:DrawWorldPreUnit()
 			DrawSelectionSpotters(teamID, r,g,b,OPTIONS.firstLineOpacity * OPTIONS.spotterOpacity,scale*1.015,false,false,false)
 		end
 		
-		
 		-- 2nd layer
 		if OPTIONS.showSecondLine then
+			scale = 1 * OPTIONS.scaleMultiplier * animationMultiplier
 			DrawSelectionSpotters(teamID, r,g,b,OPTIONS.secondLineOpacity * OPTIONS.spotterOpacity,scale*1.17, true, true, true)
 		end
 		
@@ -812,7 +827,7 @@ function widget:DrawWorldPreUnit()
 		if OPTIONS.showBase then
 			local baseR, baseG, baseB = r,g,b
 			if OPTIONS.useDefaultColor  and  OPTIONS.useOriginalBaseColor then
-				baseR,baseG,baseB = Spring.GetTeamColor(teamID)
+				baseR,baseG,baseB = spGetTeamColor(teamID)
 			end
 			local usedScale = scale * 1.24
 			
@@ -836,7 +851,6 @@ function widget:DrawWorldPreUnit()
 	gl.Color(1,1,1,1)
 	gl.PopAttrib()
 end
-
 
 
 

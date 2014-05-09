@@ -33,7 +33,6 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-
 local clearquad
 local shapes = {}
 
@@ -70,6 +69,8 @@ local spGetUnitViewPosition			= Spring.GetUnitViewPosition
 local spGetUnitDefID				= Spring.GetUnitDefID
 local spIsGUIHidden					= Spring.IsGUIHidden
 local spGetTeamColor				= Spring.GetTeamColor
+local spGetUnitHealth 				= Spring.GetUnitHealth
+local spGetUnitIsCloaked			= Spring.GetUnitIsCloaked
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -82,21 +83,23 @@ local OPTIONS = {
 	showSecondLine					= true,
 	showExtraComLine				= true,		-- extra circle lines for the commander unit
 	showExtraBuildingWeaponLine		= true,
+	showUnitHighlight				= true,
+	showUnitHighlightHealth			= false,	-- (overrides showUnitHighlight)
 	
 	-- opacity
 	spotterOpacity					= 1,		-- 0 is opaque
-	baseOpacity						= 0.77,		-- 0 is opaque
+	baseOpacity						= 0.78,		-- 0 is opaque
+	unitHighlightOpacity			= 0.08,
+	unitHighlightHealthOpacity		= 0.35,
 	
 	-- animation
 	selectionStartAnimation			= true,
 	selectionStartAnimationTime		= 0.25, 	--high so as visible while developing
 	selectionStartAnimationScale	= 0.8,
 	-- selectionStartAnimationScale	= 1.17,
-	selectionStartAnimationOpacity	= 0,		-- starts with this addition opacity, over makes it overflow a bit at the end of the fadein
 	selectionEndAnimation			= true,
 	selectionEndAnimationTime		= 0.25, 	--high so as visible while developing
 	selectionEndAnimationScale		= 0.9,
-	selectionEndAnimationOpacity    = 0,
 	-- selectionEndAnimationScale	= 1.17,
 	
 	animationSpeed					= 0.0006,	-- speed of scaling up/down inner and outer lines
@@ -124,7 +127,7 @@ OPTIONS[1] = {
 	secondLineOpacity				= 0.35,
 	
 	-- animation
-	rotationSpeed					= 0.08,
+	rotationSpeed					= 0.8,
 }
 OPTIONS[2] = {
 	circlePieces					= 22,		-- (1 or higher)
@@ -143,7 +146,7 @@ OPTIONS[2] = {
 	secondLineOpacity				= 0.35,
 	
 	-- animation
-	rotationSpeed					= 0.08,
+	rotationSpeed					= 0.8,
 }
 OPTIONS[3] = {
 	circlePieces					= 42,		-- (1 or higher)
@@ -162,7 +165,7 @@ OPTIONS[3] = {
 	secondLineOpacity				= 0.35,
 	
 	-- animation
-	rotationSpeed					= 0.1,
+	rotationSpeed					= 1,
 }
 OPTIONS[4] = {
 	circlePieces					= 5,		-- (1 or higher)
@@ -173,15 +176,15 @@ OPTIONS[4] = {
 	-- size
 	scaleMultiplier					= 1.04,
 	innersize						= 1.7,
-	selectinner						= 1.65,
-	outersize						= 1.8,
+	selectinner						= 1.68,
+	outersize						= 1.815,
 	
 	-- opacity
 	firstLineOpacity				= 0.06,
 	secondLineOpacity				= 0.35,
 	
 	-- animation
-	rotationSpeed					= 0.22,
+	rotationSpeed					= 1.8,
 }
 
 
@@ -518,6 +521,19 @@ end
 
 
 
+local function highlightUnit(unitID, r,g,b,a)
+  local health,maxHealth,paralyzeDamage,captureProgress,buildProgress=spGetUnitHealth(unitID)
+  gl.Color(
+    health>maxHealth/2 and 2-2*health/maxHealth or 1, -- red
+    health>maxHealth/2 and 1 or 2*health/maxHealth, -- green
+    0, -- blue
+    0.4) -- alpha
+    gl.Color(r,g,b,a)
+    gl.Unit(unitID, true)
+end
+
+
+
 local function DestroyShape(shape)
 	gl.DeleteList(shape.select)
 	gl.DeleteList(shape.invertedSelect)
@@ -607,7 +623,7 @@ end
 local degrot = {}
 function widget:GameFrame(frame)
 	
-	if frame%2~=0 then return end
+	if frame%1~=0 then return end
 	
 	-- logs current unit direction	(needs regular updates for air units, and for buildings only once)
 	for teamID,_ in pairs(selectedUnits) do
@@ -671,7 +687,11 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 					if (maxDeselectedTime < selectedUnits[teamID][unitID]['old']) then
 						changedScale = OPTIONS.selectionEndAnimationScale + (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS.selectionEndAnimationTime)) * (1 - OPTIONS.selectionEndAnimationScale)
 						if (changeOpacity) then
-							usedAlpha = 1 - OPTIONS.selectionEndAnimationOpacity - (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS.selectionEndAnimationTime) * (1-a))
+							if type == 'unit highlight'then
+								usedAlpha = (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS.selectionEndAnimationTime) * a)
+							else
+								usedAlpha = 1 - (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS.selectionEndAnimationTime) * (1-a))
+							end
 							gl.Color(r,g,b,usedAlpha)
 						end
 					else
@@ -682,13 +702,18 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 					--spEcho(selectedUnits[teamID][unitID]['new'] - maxSelectTime)
 					changedScale = OPTIONS.selectionStartAnimationScale + (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS.selectionStartAnimationTime)) * (1 - OPTIONS.selectionStartAnimationScale)
 					if (changeOpacity) then
-						usedAlpha = 1 - OPTIONS.selectionStartAnimationOpacity - (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS.selectionStartAnimationTime) * (1-a))
+						if type == 'unit highlight'then
+							usedAlpha = (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS.selectionStartAnimationTime) * a)
+						else
+							usedAlpha = 1 - (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS.selectionStartAnimationTime) * (1-a))
+						end
 						gl.Color(r,g,b,usedAlpha)
 					end
 				end
 			end
 			
 			if selectedUnits[teamID][unitID] then
+			
 				local usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs ,opposite)
 				if type == 'normal solid'  or  type == 'normal alpha' then
 					
@@ -752,6 +777,18 @@ function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relati
 					end
 					glDrawListAtUnit(unitID, unit.shape.large, false, (usedXScale*scale*changedScale)-((usedXScale*changedScale-10)/10), 1.0, (usedZScale*scale*changedScale)-((usedZScale*changedScale-10)/10), degrot[unitID], 0, degrot[unitID], 0)
 					
+				elseif type == 'unit highlight'then
+				
+					if OPTIONS.showUnitHighlightHealth and OPTIONS.unitHighlightHealthOpacity > 0 then
+						local health,maxHealth,paralyzeDamage,captureProgress,buildProgress = spGetUnitHealth(unitID)
+						gl.Color(
+							health>maxHealth/2 and 2-2*health/maxHealth or 1,
+							health>maxHealth/2 and 1 or 2*health/maxHealth,
+							0,
+							usedAlpha
+						)
+					end
+					gl.Unit(unitID, true)
 				end	
 			end
 		end
@@ -809,32 +846,25 @@ function widget:DrawWorldPreUnit()
 	local clockDifference = (os.clock() - previousOsClock)
 	previousOsClock = os.clock()
 	
-	if spIsGUIHidden() then return end
+	--if spIsGUIHidden() then return end
 	
 	gl.PushAttrib(GL.COLOR_BUFFER_BIT)
 	gl.DepthTest(false)
 	
+	-- animate rotation
+	local angleDifference = (OPTIONS[currentOption].rotationSpeed) * (clockDifference * 5)
+	currentRotationAngle = currentRotationAngle + (angleDifference*0.66)
+	if currentRotationAngle > 360 then
+	   currentRotationAngle = currentRotationAngle - 360
+	end
 	
-	if not paused then
-		currentRotationAngle = currentRotationAngle + (OPTIONS[currentOption].rotationSpeed/2)
-		if currentRotationAngle > 360 then
-		   currentRotationAngle = currentRotationAngle - 360
-		end
-		local rotationSpeedMultiplier = (clockDifference * 50)
-			
-		currentRotationAngle = currentRotationAngle + ((OPTIONS[currentOption].rotationSpeed/2) * rotationSpeedMultiplier)
-		
-		
-		currentRotationAngleOpposite = currentRotationAngleOpposite - OPTIONS[currentOption].rotationSpeed
-		if currentRotationAngleOpposite < -360 then
-		   currentRotationAngleOpposite = currentRotationAngleOpposite + 360
-		end
-		
-		currentRotationAngleOpposite = currentRotationAngleOpposite - (OPTIONS[currentOption].rotationSpeed * rotationSpeedMultiplier)
+	currentRotationAngleOpposite = currentRotationAngleOpposite - angleDifference
+	if currentRotationAngleOpposite < -360 then
+	   currentRotationAngleOpposite = currentRotationAngleOpposite + 360
 	end
 	
 	
-	-- animate spotter scale 
+	-- animate scale 
 	if OPTIONS.animateSpotterSize then
 		local addedMultiplierValue = OPTIONS.animationSpeed * (clockDifference * 50)
 		if (animationMultiplierAdd  and  animationMultiplier < OPTIONS.maxAnimationMultiplier) then
@@ -872,7 +902,7 @@ function widget:DrawWorldPreUnit()
 		gl.Color(r,g,b,1)
 		glCallList(clearquad)
 		
-		-- base layer
+		-- draw base background layer
 		if OPTIONS.showBase then
 			local baseR, baseG, baseB = r,g,b
 			baseR,baseG,baseB = spGetTeamColor(teamID)
@@ -893,16 +923,15 @@ function widget:DrawWorldPreUnit()
 		
 		gl.ColorMask(false,false,false,true)
 		
-		-- 1st layer
+		-- draw 1st line layer
 		if OPTIONS.showFirstLine then
 			DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].firstLineOpacity * OPTIONS.spotterOpacity,scale,false,false,false)
 		end
 		
-		-- 2nd layer
+		-- draw 2nd line layer
 		if OPTIONS.showSecondLine then
 			DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].secondLineOpacity * OPTIONS.spotterOpacity,scaleOuter, true, true, true)
 		end
-		
 	end
 	
 	gl.ColorMask(false,false,false,false)
@@ -911,6 +940,28 @@ function widget:DrawWorldPreUnit()
 	gl.PopAttrib()
 end
 
+
+function widget:DrawWorld()
+	
+	-- draw unit highlight
+	if (OPTIONS.showUnitHighlight and OPTIONS.unitHighlightOpacity > 0)  or (OPTIONS.showUnitHighlightHealth and OPTIONS.unitHighlightHealthOpacity > 0) then
+		gl.DepthTest(true)
+		gl.PolygonOffset(-2, -2)
+		gl.Blending(GL.SRC_ALPHA, GL.ONE)
+		local opacity = OPTIONS.unitHighlightOpacity
+		if OPTIONS.showUnitHighlightHealth and OPTIONS.unitHighlightHealthOpacity > 0 then
+			opacity = OPTIONS.unitHighlightHealthOpacity
+		end
+		-- loop teams
+		for teamID,_ in pairs(selectedUnits) do
+			local r,g,b = spGetTeamColor(teamID)
+			DrawSelectionSpottersPart(teamID, 'unit highlight', r,g,b,opacity,0, false, false, true, false)
+		end
+		gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
+		gl.PolygonOffset(false)
+		gl.DepthTest(false)
+	end
+end
 
 
 --------------------------------------------------------------------------------

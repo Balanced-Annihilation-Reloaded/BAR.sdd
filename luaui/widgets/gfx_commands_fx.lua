@@ -29,8 +29,9 @@ local commandHistory = {
 	coords					= {},	-- this table is used to count cmd´s with same coordinates
 	coordRendered			= {},	-- this table is used to skip cmd´s that have the same coordinates
 	units					= {},	-- this table stores the newest queued cmd time of each unit.
+	highlightedUnits		= {},	-- this table stores every unit that will get highlighted with value being the color
 	mapDrawNicknameTime		= {},	-- this table is used to filter out previous map drawing nicknames if user has drawn something new
-	mapEraseNicknameTime	= {}
+	mapEraseNicknameTime	= {},
 }
 
 local ownPlayerID				= Spring.GetMyPlayerID()
@@ -57,6 +58,8 @@ local OPTIONS = {
 	showMapmarkSpecIcons		= true,		-- showMapmarkFx must be true for this to work
 	nicknameOpacityMultiplier	= 6,		-- multiplier applied to the given color opacity of the type: 'map_draw'
 	scaleWithCamera				= true,
+	drawLines					= true,
+	showUnitHighlight			= true,		-- only enabled when drawLines = true
 	
 	size 						= 28,		-- overall size
 	opacity 					= 0.75,		-- overall opacity
@@ -69,10 +72,10 @@ local OPTIONS = {
 	ringScale					= 0.75,
 	reduceOverlapEffect			= 0.08,		-- when spotters have the same coordinates: reduce the opacity: 1 is no reducing while 0 is no adding
 	
-	disableEngineLines 			= false,		-- disables default Spring Engine lines (move, patrol, attack, fight)
-	drawLines					= true,
+	disableEngineLines 			= false,	-- disables default Spring Engine lines (move, patrol, attack, fight)
 	linePartWidth				= 12,
 	linePartLength				= 20,
+	unitHighLightMultiplier		= 0.5,		-- how heavy should the unit be highlighted. (application: lineOpacity * unitHighLightMultiplier)
 	
 	types = {
 		leftclick = {
@@ -120,7 +123,7 @@ local OPTIONS = {
 		map_mark = {
 			size			= 2.33,
 			duration		= 9,
-			baseColor		= {1.00 ,1.00 ,1.00 ,0.40},
+			baseColor		= {1.00 ,1.00 ,1.00 ,0.45},
 			ringColor		= {1.00 ,1.00 ,1.00 ,0.75}
 		},
 		map_draw = {
@@ -345,7 +348,7 @@ end
 
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
 	local cmdType = false
-	if spIsUnitSelected(unitID) then
+	--if spIsUnitSelected(unitID) then
 		if type(cmdOptions) == 'table'  and  #cmdOptions >= 3 then
 			if cmdID == CMD.MOVE then
 				cmdType = 'move'
@@ -366,7 +369,7 @@ function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpti
 				AddCommandSpotter(cmdType, cmdOptions[1], cmdOptions[2], cmdOptions[3], os.clock(), unitID)
 			end
 		end
-	end
+	--end
 end
 
 
@@ -378,9 +381,10 @@ function widget:DrawWorldPreUnit()
 	gl.DepthTest(false)
 	
 	commandHistory.coordRendered = {}
+	commandHistory.highlightedUnits = {}
 	
 	for cmdKey, cmdValue in pairs(commandHistory.commands) do
-	
+		
 		local clickOsClock	= cmdValue.osClock
 		local cmdType		= cmdValue.cmdType
 		local unitID		= cmdValue.unitID
@@ -408,6 +412,7 @@ function widget:DrawWorldPreUnit()
 				
 				local size	= OPTIONS.size * OPTIONS.types[cmdType].size
 				local a		= (1 - ((osClock - clickOsClock) / duration)) * OPTIONS.opacity * alphaMultiplier
+				local aLine	= (1 - ((osClock - clickOsClock) / duration)) * OPTIONS.opacity
 				
 				local baseColor = OPTIONS.types[cmdType].baseColor
 				local ringColor = OPTIONS.types[cmdType].ringColor
@@ -431,6 +436,7 @@ function widget:DrawWorldPreUnit()
 				local g		= baseColor[2]
 				local b		= baseColor[3]
 				a			= a * baseColor[4]
+				aLine		= aLine * baseColor[4]
 					
 				local ringSize = OPTIONS.ringStartSize + (size * OPTIONS.ringScale) * ((osClock - clickOsClock) / duration)
 				local ringInnerSize = ringSize - OPTIONS.ringWidth
@@ -490,14 +496,19 @@ function widget:DrawWorldPreUnit()
 							elseif (cmdQueue[i].id == CMD.UNLOAD_UNIT  or  cmdQueue[i].id == CMD.UNLOAD_UNITS) then
 								lineColor = OPTIONS.types['unload'].baseColor
 							end
-							if (lineColor and #cmdQueue[i].params == 3) then
+							if (lineColor and #cmdQueue[i].params > 2) then
 							
-								gl.Color(lineColor[1],lineColor[2],lineColor[3],a)
+								gl.Color(lineColor[1],lineColor[2],lineColor[3],aLine)
 								local originX, originY, originZ	= cmdQueue[i].params[1], cmdQueue[i].params[2], cmdQueue[i].params[3]
 							
 								gl.Translate(-prevX + originX, -prevY + originY, -prevZ + originZ)		-- minus previous cmd position   plus new cmd position
 								gl.BeginEnd(GL.QUADS, DrawLine,    originX, originY, originZ,    prevX, prevY, prevZ,    OPTIONS.linePartWidth, OPTIONS.linePartLength)
 								prevX, prevY, prevZ = originX, originY, originZ
+								
+								-- 
+								if i == 1  and  OPTIONS.showUnitHighlight then
+									commandHistory.highlightedUnits[unitID] = {lineColor[1],lineColor[2],lineColor[3],aLine*OPTIONS.unitHighLightMultiplier}
+								end
 							end
 						end
 					end
@@ -538,3 +549,21 @@ function widget:DrawWorldPreUnit()
 	gl.Color(1,1,1,1)
 end
 
+
+
+function widget:DrawWorld()
+	
+	if OPTIONS.showUnitHighlight  and  OPTIONS.drawLines then
+		gl.DepthTest(true)
+		gl.PolygonOffset(-2, -2)
+		gl.Blending(GL.SRC_ALPHA, GL.ONE)
+		for unitID, color in pairs(commandHistory.highlightedUnits) do
+			gl.Color(color[1],color[2],color[3],color[4])
+			gl.Unit(unitID, true)
+			
+		end
+		gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
+		gl.PolygonOffset(false)
+		gl.DepthTest(false)
+	end
+end

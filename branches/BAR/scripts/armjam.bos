@@ -5,7 +5,74 @@
 
 piece  base, eye, blwheel, blthigh, blleg, flwheel, flthigh, flleg, brwheel, brthigh, brleg, frwheel, frthigh, frleg;
 
-static-var  Static_Var_1;
+static-var  Static_Var_1, turnClock, turnCounter, wheelSpeed, currentSpeed, moveSpeed, pivotAngle;
+
+TurnControl()
+{
+	var lastHeading, currHeading, diffHeading;
+	lastHeading = GET HEADING;
+	while (TRUE)
+	{
+		currHeading = GET HEADING;
+		diffHeading = currHeading - lastHeading;
+		// Set values for tilt
+		
+		if ( !get ACTIVATION )
+		{
+			//Smooth out values
+			if (diffHeading < 1000 AND diffHeading > -1000) pivotAngle = 0;
+			turn base to z-axis 1.3 * diffHeading speed <13>;
+		}
+		// Set Values for differential system
+		if ( get ACTIVATION )
+		{
+		turnClock = 2;
+		turnCounter = 2;	
+		if (diffHeading >= 500)
+			{
+			turnClock = <0.01>;
+			}
+		if (diffHeading <= -500)
+			{
+			turnCounter = <0.01>;
+			}
+		}
+		lastHeading = currHeading;
+		sleep 67;
+	}
+}
+
+WheelControl()
+{
+	sleep 33;
+	while(TRUE)
+	{
+		currentSpeed = (get CURRENT_SPEED)*20/moveSpeed;
+		wheelSpeed = currentSpeed * 7;
+		if (currentSpeed<4) currentSpeed=4;	// prevent infinite timing
+		//get PRINT(currentSpeed,turnCounter,turnClock);	
+		if ( get ACTIVATION )
+		{
+		//	get PRINT((<6.8> * wheelSpeed ) * turnClock)
+			//left wheels
+			spin flwheel around x-axis speed (<1.000000> * wheelSpeed ) * turnClock accelerate <5.000000> * currentSpeed;
+			spin blwheel around x-axis speed (<1.000000> * wheelSpeed ) * turnClock accelerate <5.000000> * currentSpeed;
+		
+			//right wheels
+			spin frwheel around x-axis speed (<1.000000> * wheelSpeed ) * turnCounter accelerate <5.000000> * currentSpeed;
+			spin brwheel around x-axis speed (<1.000000> * wheelSpeed ) * turnCounter accelerate <5.000000> * currentSpeed;
+		}
+		if ( !get ACTIVATION )
+		{
+			spin flwheel around x-axis speed (<1.000000> * wheelSpeed ) * 2 accelerate <5.000000> * currentSpeed;
+			spin blwheel around x-axis speed (<1.000000> * wheelSpeed ) * 2 accelerate <5.000000> * currentSpeed;
+			spin frwheel around x-axis speed (<1.000000> * wheelSpeed ) * 2 accelerate <5.000000> * currentSpeed;
+			spin brwheel around x-axis speed (<1.000000> * wheelSpeed ) * 2 accelerate <5.000000> * currentSpeed;
+		}
+		sleep 67;
+	}
+}
+
 
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
@@ -14,6 +81,8 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	{
 		sleep 400;
 	}
+	start-script WheelControl();
+	start-script TurnControl();
 	while( TRUE )
 	{
 		healthpercent = get HEALTH;
@@ -34,7 +103,6 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 		sleep sleeptime;
 	}
 	return (0);
-	// Build by COBBLER Ver4.0 Copyright @1998 DIGITAL CONCEPT SOFTWARE (MANU@inext.fr) / http://www.annihilationcenter.com/DCS/  
 }
 
 Create()
@@ -42,6 +110,7 @@ Create()
 
 	start-script SmokeUnit();
 	Static_Var_1 = 0;
+	moveSpeed = get MAX_SPEED;
 	return (0);
 }
 
@@ -65,7 +134,8 @@ Activate()
 
 Deactivate()
 {
-	
+	turn base to z-axis <0> speed 400;
+	wait-for-turn base around z-axis;
 	turn blleg to y-axis <-55> speed <90>;
 	turn blthigh to y-axis <55> speed <90>;
 	turn flleg to y-axis <55> speed <90>;
@@ -80,18 +150,19 @@ Deactivate()
 
 StartMoving()
 {
-	spin flwheel around x-axis speed <50> accelerate <10>;
-	spin blwheel around x-axis speed <50> accelerate <10>;
-	spin frwheel around x-axis speed <50> accelerate <10>;
-	spin brwheel around x-axis speed <50> accelerate <10>;
+	//spin flwheel around x-axis speed <50> accelerate <10>;
+	//spin blwheel around x-axis speed <50> accelerate <10>;
+	//spin frwheel around x-axis speed <50> accelerate <10>;
+	//spin brwheel around x-axis speed <50> accelerate <10>;
 }
 
 StopMoving()
 {
-	stop-spin flwheel around x-axis;
-	stop-spin blwheel around x-axis;
-	stop-spin frwheel around x-axis;
-	stop-spin brwheel around x-axis;
+//	stop-spin flwheel around x-axis;
+//	stop-spin blwheel around x-axis;
+//	stop-spin frwheel around x-axis;
+//	stop-spin brwheel around x-axis;
+sleep 1; //need for some odd reason (does not open/close otherwise)
 }
 
 
@@ -105,6 +176,7 @@ HitByWeapon(Func_Var_1, Func_Var_2)
 	{
 		signal 2;
 		set-signal-mask 2;
+		turn base to z-axis <0> speed 400;
 		set ACTIVATION to 0;
 		sleep 8000;
 		Static_Var_1 = 0;

@@ -17,36 +17,37 @@ function widget:GetInfo()
     date      = "2009",
     license   = "GNU GPL, v2 or later",
     layer     = -10,
-    enabled   = true  --  loaded by default?
+    enabled   = true
   }
 end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local barHeight = 3
-local barWidth  = 14  --// (barWidth)x2 total width!!!
-local barAlpha  = 0.9
+local barHeight                 = 3
+local barWidth                  = 12.5  --// (barWidth)x2 total width!!!
+local barAlpha                  = 0.87
 
-local featureBarHeight = 3
-local featureBarWidth  = 10
-local featureBarAlpha  = 0.6
+local featureBarHeight          = 3
+local featureBarWidth           = 10
+local featureBarAlpha           = 0.45
 
-local drawBarTitles = true
-local titlesAlpha   = 0.3*barAlpha
+local drawBarTitles             = true			-- (I disabled the healthbar text, cause that one doesnt need an explanation)
+local titlesAlpha               = 0.3*barAlpha
 
-local drawFullHealthBars = false
+local drawBarPercentage         = 50		-- wont draw heath percentage text above this percentage
+local drawFeatureBarPercentage  = 0		-- wont draw heath percentage text above this percentage
+local choppedCorners            = true
+local choppedCornerSize         = 0.55
+local drawFullHealthBars        = false
 
-local drawFeatureHealth  = true
-local featureTitlesAlpha = featureBarAlpha * titlesAlpha/barAlpha
-local featureHpThreshold = 0.85
+local drawFeatureHealth         = true
+local featureTitlesAlpha        = featureBarAlpha * titlesAlpha/barAlpha
+local featureHpThreshold        = 0.85
 
-local infoDistance = 300000 --max squared distance at which text it drawn for healthbars
-local maxFeatureInfoDistance = 300000 --max squared distance at which text it drawn for features
-local maxFeatureDistance = 900000 --max squared distance at which any info is drawn for features
-local maxUnitDistance = 9000000 --max squared distance at which any info is drawn for units  MUST BE LARGER THAN FOR FEATURES!
+local infoDistance              = 900000
 
-local minReloadTime = 4 --// in seconds
+local minReloadTime             = 4 --// in seconds
 
 local drawStunnedOverlay = true
 
@@ -60,14 +61,14 @@ local stockpileW = 12
 --------------------------------------------------------------------------------
 
 --// colors
-local bkBottom   = { 0.40,0.40,0.40,barAlpha }
-local bkTop      = { 0.10,0.10,0.10,barAlpha }
-local hpcolormap = { {0.8, 0.0, 0.0, barAlpha},  {0.8, 0.6, 0.0, barAlpha}, {0.0,0.70,0.0,barAlpha} }
+local bkBottom   = { 0.38,0.38,0.38,barAlpha }
+local bkTop      = { 0.08,0.08,0.08,barAlpha }
+local hpcolormap = { {1, 0.0, 0.0, barAlpha},  {0.8, 0.60, 0.0, barAlpha}, {0.0,0.75,0.0,barAlpha} }
 local bfcolormap = {}
 
 local fbkBottom   = { 0.40,0.40,0.40,featureBarAlpha }
 local fbkTop      = { 0.06,0.06,0.06,featureBarAlpha }
-local fhpcolormap = { {0.8, 0.0, 0.0, featureBarAlpha},  {0.8, 0.6, 0.0, featureBarAlpha}, {0.0,0.70,0.0,featureBarAlpha} }
+local fhpcolormap = { {0.5, 0, 0, featureBarAlpha*1.55},  {0.4, 0.3, 0, featureBarAlpha*1.55}, {0,0.4,0,featureBarAlpha*1.55} }
 
 local barColors = {
   emp     = { 0.50,0.50,1.00,barAlpha },
@@ -91,7 +92,7 @@ local gameFrame = 0;
 local empDecline = 32/30/40;
 
 local cx, cy, cz = 0,0,0;  --// camera pos
-local smoothheight = 0 -- smoothmesh under camera
+
 local paraUnits   = {};
 
 local barShader;
@@ -197,36 +198,141 @@ function widget:Initialize()
     });
 
     if (barShader) then
+    
+      local cs = choppedCornerSize
       barDList = gl.CreateList(function()
-        gl.BeginEnd(GL.QUADS,function()
-          gl.Vertex(-barWidth,0,        0,0);
-          gl.Vertex(-barWidth,0,        barWidth*2,0);
-          gl.Vertex(-barWidth,barHeight,barWidth*2,0);
-          gl.Vertex(-barWidth,barHeight,0,0);
-
-          gl.Color(bkBottom);
-          gl.Vertex(barWidth,0,        0,         1);
-          gl.Vertex(barWidth,0,        barWidth*2,1);
-          gl.Color(bkTop);
-          gl.Vertex(barWidth,barHeight,barWidth*2,1);
-          gl.Vertex(barWidth,barHeight,0,         1);
-        end)
+      
+        if (choppedCorners) then 
+          gl.BeginEnd(GL.QUADS,function()
+            -- mid piece
+            gl.Vertex(-barWidth+cs,0,         0,                 0);
+            gl.Vertex(-barWidth,   0,         (barWidth*2)-cs*2, 0);
+            gl.Vertex(-barWidth,   barHeight, (barWidth*2)-cs*2, 0);
+            gl.Vertex(-barWidth+cs,barHeight, 0,                 0);
+            
+            -- left piece
+            gl.Vertex(-barWidth,    cs,           0, 0);
+            gl.Vertex(-barWidth+cs, 0,            0, 0);
+            gl.Vertex(-barWidth+cs, barHeight,    0, 0);
+            gl.Vertex(-barWidth,    barHeight-cs, 0, 0);
+            
+            -- right piece
+            gl.Vertex(-barWidth+cs,cs,          (barWidth*2)-cs*2, 0);
+            gl.Vertex(-barWidth,0,              (barWidth*2)-cs*2, 0);
+            gl.Vertex(-barWidth,barHeight,      (barWidth*2)-cs*2, 0);
+            gl.Vertex(-barWidth+cs,barHeight-cs,(barWidth*2)-cs*2, 0);
+            
+            -- mid piece
+            gl.Color(bkBottom);
+            gl.Vertex(barWidth-cs-cs, 0,         0,                 1);
+            gl.Vertex(barWidth-cs,    0,         (barWidth*2)-cs*2, 1);
+            gl.Color(bkTop);
+            gl.Vertex(barWidth-cs,    barHeight, (barWidth*2)-cs*2, 1);
+            gl.Vertex(barWidth-cs-cs, barHeight, 0,                 1);
+            
+            -- right piece
+            gl.Color(bkBottom);
+            gl.Vertex(barWidth-cs,    cs,           0, 1);
+            gl.Vertex(barWidth-cs-cs, 0,            0, 1);
+            gl.Color(bkTop);
+            gl.Vertex(barWidth-cs-cs, barHeight,    0, 1);
+            gl.Vertex(barWidth-cs,    barHeight-cs, 0, 1)
+            
+          end)
+          -- corner fillers
+          gl.BeginEnd(GL.TRIANGLES,function()
+            gl.Color(bkTop);
+            gl.Vertex(barWidth-cs,    barHeight-cs,  (barWidth*2)-cs*2, 1);
+            gl.Vertex(barWidth-cs,    barHeight,     (barWidth*2)-cs*2, 1);
+            gl.Vertex(barWidth-cs-cs, barHeight,     (barWidth*2)-cs*2, 1);
+            
+            gl.Color(bkBottom);
+            gl.Vertex(barWidth-cs,    cs,  (barWidth*2)-cs*2, 1);
+            gl.Vertex(barWidth-cs,    0,   (barWidth*2)-cs*2, 1);
+            gl.Vertex(barWidth-cs-cs, 0,   (barWidth*2)-cs*2, 1);
+          end)
+		else
+          gl.BeginEnd(GL.QUADS,function()
+            gl.Vertex(-barWidth,0,        0,0);
+            gl.Vertex(-barWidth,0,        barWidth*2,0);
+            gl.Vertex(-barWidth,barHeight,barWidth*2,0);
+            gl.Vertex(-barWidth,barHeight,0,0);
+          
+            gl.Color(bkBottom);
+            gl.Vertex(barWidth,0,        0,         1);
+            gl.Vertex(barWidth,0,        barWidth*2,1);
+            gl.Color(bkTop);
+            gl.Vertex(barWidth,barHeight,barWidth*2,1);
+            gl.Vertex(barWidth,barHeight,0,         1);
+          end)
+        end
       end)
 
       barFeatureDList = gl.CreateList(function()
-        gl.BeginEnd(GL.QUADS,function()
-          gl.Vertex(-featureBarWidth,0,               0,0);
-          gl.Vertex(-featureBarWidth,0,               featureBarWidth*2,0);
-          gl.Vertex(-featureBarWidth,featureBarHeight,featureBarWidth*2,0);
-          gl.Vertex(-featureBarWidth,featureBarHeight,0,0);
-
-          gl.Color(fbkBottom);
-          gl.Vertex(featureBarWidth,0,               0,         1);
-          gl.Vertex(featureBarWidth,0,               featureBarWidth*2,1);
-          gl.Color(fbkTop);
-          gl.Vertex(featureBarWidth,featureBarHeight,featureBarWidth*2,1);
-          gl.Vertex(featureBarWidth,featureBarHeight,0,         1);
-        end)
+        if (choppedCorners) then 
+          gl.BeginEnd(GL.QUADS,function()
+            -- mid piece
+            gl.Vertex(-featureBarWidth+cs,0,         0,                 0);
+            gl.Vertex(-featureBarWidth,   0,         (featureBarWidth*2)-cs*2, 0);
+            gl.Vertex(-featureBarWidth,   featureBarHeight, (featureBarWidth*2)-cs*2, 0);
+            gl.Vertex(-featureBarWidth+cs,featureBarHeight, 0,                 0);
+            
+            -- left piece
+            gl.Vertex(-featureBarWidth,    cs,           0, 0);
+            gl.Vertex(-featureBarWidth+cs, 0,            0, 0);
+            gl.Vertex(-featureBarWidth+cs, featureBarHeight,    0, 0);
+            gl.Vertex(-featureBarWidth,    featureBarHeight-cs, 0, 0);
+            
+            -- right piece
+            gl.Vertex(-featureBarWidth+cs,cs,          (featureBarWidth*2)-cs*2, 0);
+            gl.Vertex(-featureBarWidth,0,              (featureBarWidth*2)-cs*2, 0);
+            gl.Vertex(-featureBarWidth,featureBarHeight,      (featureBarWidth*2)-cs*2, 0);
+            gl.Vertex(-featureBarWidth+cs,featureBarHeight-cs,(featureBarWidth*2)-cs*2, 0);
+            
+            -- mid piece
+            gl.Color(fbkBottom);
+            gl.Vertex(featureBarWidth-cs-cs, 0,         0,                 1);
+            gl.Vertex(featureBarWidth-cs,    0,         (featureBarWidth*2)-cs*2, 1);
+            gl.Color(fbkTop);
+            gl.Vertex(featureBarWidth-cs,    featureBarHeight, (featureBarWidth*2)-cs*2, 1);
+            gl.Vertex(featureBarWidth-cs-cs, featureBarHeight, 0,                 1);
+            
+            -- right piece
+            gl.Color(fbkBottom);
+            gl.Vertex(featureBarWidth-cs,    cs,           0, 1);
+            gl.Vertex(featureBarWidth-cs-cs, 0,            0, 1);
+            gl.Color(fbkTop);
+            gl.Vertex(featureBarWidth-cs-cs, featureBarHeight,    0, 1);
+            gl.Vertex(featureBarWidth-cs,    featureBarHeight-cs, 0, 1)
+              
+          end)
+          -- corner fillers
+          gl.BeginEnd(GL.TRIANGLES,function()
+            gl.Color(fbkTop);
+            gl.Vertex(featureBarWidth-cs,    featureBarHeight-cs,  (featureBarWidth*2)-cs*2, 1);
+            gl.Vertex(featureBarWidth-cs,    featureBarHeight,     (featureBarWidth*2)-cs*2, 1);
+            gl.Vertex(featureBarWidth-cs-cs, featureBarHeight,     (featureBarWidth*2)-cs*2, 1);
+            
+            gl.Color(fbkBottom);
+            gl.Vertex(featureBarWidth-cs,    cs,  (featureBarWidth*2)-cs*2, 1);
+            gl.Vertex(featureBarWidth-cs,    0,   (featureBarWidth*2)-cs*2, 1);
+            gl.Vertex(featureBarWidth-cs-cs, 0,   (featureBarWidth*2)-cs*2, 1);
+          end)
+        else
+          gl.BeginEnd(GL.QUADS,function()
+            gl.Vertex(-featureBarWidth,0,               0,0);
+            gl.Vertex(-featureBarWidth,0,               featureBarWidth*2,0);
+            gl.Vertex(-featureBarWidth,featureBarHeight,featureBarWidth*2,0);
+            gl.Vertex(-featureBarWidth,featureBarHeight,0,0);
+          
+            gl.Color(fbkBottom);
+            gl.Vertex(featureBarWidth,0,               0,         1);
+            gl.Vertex(featureBarWidth,0,               featureBarWidth*2,1);
+            gl.Color(fbkTop);
+            gl.Vertex(featureBarWidth,featureBarHeight,featureBarWidth*2,1);
+            gl.Vertex(featureBarWidth,featureBarHeight,0,         1);
+          end)
+        end
       end)
     end
   end
@@ -290,6 +396,7 @@ do
   local glText          = gl.Text
 
   local function DrawGradient(left,top,right,bottom,topclr,bottomclr)
+  
     glColor(bottomclr)
     glVertex(left,bottom)
     glVertex(right,bottom)
@@ -382,11 +489,13 @@ do
       DrawUnitBar(yoffset,barInfo.progress,barInfo.color)
       if (fullText) then
         if (barShader) then glMyText(1) end
-        glColor(1,1,1,barAlpha)
-        glText(barInfo.text,barStart,yoffset,4,"r")
-        if (drawBarTitles) then
+        if (drawBarPercentage > 0) then
+          glColor(1,1,1,barAlpha)
+          glText(barInfo.text,barStart,yoffset,4,"r")
+        end
+        if (drawBarTitles and barInfo.title ~= "health") then
           glColor(1,1,1,titlesAlpha)
-          glText(barInfo.title,0,yoffset,2.5,"cd")
+		  glText(barInfo.title,0,yoffset,2.5,"cd")
         end
         if (barShader) then glMyText(0) end
       end
@@ -403,9 +512,11 @@ do
       DrawFeatureBar(yoffset,barInfo.progress,barInfo.color)
       if (fullText) then
         if (barShader) then glMyText(1) end
-        glColor(1,1,1,featureBarAlpha)
-        glText(barInfo.text,fBarStart,yoffset,4,"r")
-        if (drawBarTitles) then
+        if (drawBarPercentage > 0) then
+          glColor(1,1,1,featureBarAlpha)
+          glText(barInfo.text,fBarStart,yoffset,4,"r")
+        end
+        if (drawBarTitles and barInfo.title ~= "health") then
           glColor(1,1,1,featureTitlesAlpha)
           glText(barInfo.title,0,yoffset,2.5,"cd")
         end
@@ -457,7 +568,7 @@ do
         maxShield     = ud.shieldPower,
         canStockpile  = ud.canStockpile,
         reloadTime    = ud.reloadTime,
-        primaryWeapon = ud.primaryWeapon,
+        primaryWeapon = ud.primaryWeapon-1,
       }
     end
     ux, uy, uz = GetUnitViewPosition(unitID)
@@ -470,7 +581,7 @@ do
     dx, dy, dz = ux-cx, uy-cy, uz-cz
     dist = dx*dx + dy*dy + dz*dz
     if (dist > infoDistance) then
-      if (dist > maxUnitDistance) then
+      if (dist > 9000000) then
         return
       end
       fullText = false
@@ -500,7 +611,7 @@ do
         hp100 = hp*100; hp100 = hp100 - hp100%1; --//same as floor(hp*100), but 10% faster
         if (hp100<0) then hp100=0 elseif (hp100>100) then hp100=100 end
         if (drawFullHealthBars)or(hp100<100) and not (hp<0) then
-          AddBar("health",hp,nil,(fullText and hp100..'%') or '',bfcolormap[hp100])
+          AddBar("health",hp,nil,(hp100 <= drawBarPercentage and hp100..'%') or '',bfcolormap[hp100])
         end
       end
 
@@ -615,7 +726,6 @@ do
     ci = customInfo[featureDefID]
 
     health,maxHealth,resurrect = GetFeatureHealth(featureID)
-	if (health == nil or health<1) then  return end
     _,_,_,_,reclaimLeft        = GetFeatureResources(featureID)
     if (not resurrect)   then resurrect=0 end
     if (not reclaimLeft) then reclaimLeft=1 end
@@ -632,7 +742,8 @@ do
       --// HEALTH
       if (hp<featureHpThreshold)and(drawFeatureHealth) then
         local hpcolor = {GetColor(fhpcolormap,hp)}
-        AddBar("health",hp,nil,(fullText and floor(hp*100)..'%') or '',hpcolor)
+        
+        AddBar("health",hp,nil,(floor(hp*100) <= drawFeatureBarPercentage and floor(hp*100)..'%') or '',hpcolor)
       end
 
       --// RESURRECT
@@ -736,65 +847,56 @@ local visibleUnits = {}
 
 do
   local GetCameraPosition    = Spring.GetCameraPosition
-  local GetSmoothMeshHeight    = Spring.GetSmoothMeshHeight
   local GetUnitDefID         = Spring.GetUnitDefID
-  local IsGUIHidden         = Spring.IsGUIHidden
   local glDepthMask          = gl.DepthMask
 
   function widget:DrawWorld()
-  
+
+    --if Spring.IsGUIHidden() then return end
+
     if (#visibleUnits+#visibleFeatures==0) then
       return
     end
 
+    --gl.Fog(false)
+    --gl.DepthTest(true)
+    glDepthMask(true)
+
     cx, cy, cz = GetCameraPosition()
-	
-	--if the camera is too far up, higher than maxDistance on smoothmesh, dont even call any visibility checks or nothing 
-	local smoothheight=GetSmoothMeshHeight(cx,cz) --clamps x and z
-	if (not IsGUIHidden() and (cy-smoothheight)^2 < maxUnitDistance) then 
-		
-		--gl.Fog(false)
-		--gl.DepthTest(true)
-		glDepthMask(true)
-		
-		if (barShader) then gl.UseShader(barShader); glMyText(0); end
 
-		--// draw bars of units
-		local unitID,unitDefID,unitDef
-		for i=1,#visibleUnits do
-		  unitID    = visibleUnits[i]
-		  unitDefID = GetUnitDefID(unitID)
-		  unitDef   = UnitDefs[unitDefID or -1]
-		  if (unitDef) then
-			DrawUnitInfos(unitID, unitDefID, unitDef)
-		  end
-		end
+    if (barShader) then gl.UseShader(barShader); glMyText(0); end
 
-		--// draw bars for features
-		if ((cy-smoothheight)^2 < maxFeatureDistance) then
-			
-			local wx, wy, wz, dx, dy, dz, dist
-			local featureInfo
-			for i=1,#visibleFeatures do
-			  featureInfo = visibleFeatures[i]
-			  wx, wy, wz = featureInfo[1],featureInfo[2],featureInfo[3]
-			  dx, dy, dz = wx-cx, wy-cy, wz-cz
-			  dist = dx*dx + dy*dy + dz*dz
-			  if (dist < maxFeatureDistance) then
-				if (dist < maxFeatureInfoDistance) then
-				  DrawFeatureInfos(featureInfo[4], featureInfo[5], true, wx,wy,wz)
-				else
-				  DrawFeatureInfos(featureInfo[4], featureInfo[5], false, wx,wy,wz)
-				end
-			  end
-			end
-		--else
-			--Spring.Echo('healthbars cam too high to draw features')
-		end
-		
-		if (barShader) then gl.UseShader(0) end
-		glDepthMask(false)
-	end
+    --// draw bars of units
+    local unitID,unitDefID,unitDef
+    for i=1,#visibleUnits do
+      unitID    = visibleUnits[i]
+      unitDefID = GetUnitDefID(unitID)
+      unitDef   = UnitDefs[unitDefID or -1]
+      if (unitDef) then
+        DrawUnitInfos(unitID, unitDefID, unitDef)
+      end
+    end
+
+    --// draw bars for features
+    local wx, wy, wz, dx, dy, dz, dist
+    local featureInfo
+    for i=1,#visibleFeatures do
+      featureInfo = visibleFeatures[i]
+      wx, wy, wz = featureInfo[1],featureInfo[2],featureInfo[3]
+      dx, dy, dz = wx-cx, wy-cy, wz-cz
+      dist = dx*dx + dy*dy + dz*dz
+      if (dist < 2200000) then
+        if (dist < infoDistance) then
+          DrawFeatureInfos(featureInfo[4], featureInfo[5], true, wx,wy,wz)
+        else
+          DrawFeatureInfos(featureInfo[4], featureInfo[5], false, wx,wy,wz)
+        end
+      end
+    end
+
+    if (barShader) then gl.UseShader(0) end
+    glDepthMask(false)
+
     DrawOverlays()
 
     glColor(1,1,1,1)
@@ -809,7 +911,6 @@ do
   local GetFeatureDefID      = Spring.GetFeatureDefID
   local GetFeaturePosition   = Spring.GetFeaturePosition
   local GetFeatureResources  = Spring.GetFeatureResources
-  local IsGUIHidden         = Spring.IsGUIHidden
   local select = select
 
   local sec = 0
@@ -817,7 +918,6 @@ do
   local sec2 = 0
 
   local videoFrame   = 0
-  
 
   function widget:Update(dt)
     sec=sec+dt
@@ -827,23 +927,18 @@ do
 
     videoFrame = videoFrame+1
     sec1=sec1+dt
-	
-	if IsGUIHidden() == true then 
-		return
-	end
-	
-    if (sec1>1/25) and ((cy-smoothheight)^2 < maxUnitDistance) then
+    if (sec1>1/25) then
       sec1 = 0
       visibleUnits = GetVisibleUnits(-1,nil,false)
     end
 
     sec2=sec2+dt
-    if (sec2>1/3) and  ((cy-smoothheight)^2 < maxFeatureDistance)  then
+    if (sec2>1/3) then
       sec2 = 0
       visibleFeatures = GetVisibleFeatures(-1,nil,false,false)
       local cnt = #visibleFeatures
       local featureID,featureDefID,featureDef
-      for i=cnt,1,-1 do  --TODO:  this is very inefficient 
+      for i=cnt,1,-1 do
         featureID    = visibleFeatures[i]
         featureDefID = GetFeatureDefID(featureID) or -1
         featureDef   = FeatureDefs[featureDefID]

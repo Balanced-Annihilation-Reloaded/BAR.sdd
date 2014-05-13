@@ -154,7 +154,7 @@ end
 
 
 -- for testing: draw halos on selected units
---if 1 == 2 then
+if 1 == 2 then
 function widget:CommandsChanged()
 	
 	if spGetSelectedUnitsCount() > 0 then
@@ -171,7 +171,7 @@ function widget:CommandsChanged()
 		end
 	end
 end
---end
+end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

@@ -13,7 +13,7 @@ function widget:GetInfo()
   return {
     name      = "HealthBars",
     desc      = "Gives various informations about units in form of bars.",
-    author    = "jK",
+    author    = "jK, (all whistles and bells added by Floris)",
     date      = "2009",
     license   = "GNU GPL, v2 or later",
     layer     = -10,
@@ -22,23 +22,32 @@ function widget:GetInfo()
 end
 
 --------------------------------------------------------------------------------
+-- Console commands
 --------------------------------------------------------------------------------
 
-local barHeight                 = 3
-local barWidth                  = 12.5  --// (barWidth)x2 total width!!!
+-- /healthbars_percentage			-- toggles rendering of the textual percentage beside each bar
+-- /healthbars_compercentage		-- toggles always rendering health precentagees for coms
+-- /healthbars_rounded				-- toggles rounded (chopped) corners
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+local barHeight                 = 2.85
+local barWidth                  = 12.2  --// (barWidth)x2 total width!!!
 local barAlpha                  = 0.87
 
-local featureBarHeight          = 3
+local featureBarHeight          = 2.85
 local featureBarWidth           = 10
-local featureBarAlpha           = 0.45
+local featureBarAlpha           = 0.42
 
 local drawBarTitles             = true			-- (I disabled the healthbar text, cause that one doesnt need an explanation)
 local titlesAlpha               = 0.3*barAlpha
 
-local drawBarPercentage         = 50		-- wont draw heath percentage text above this percentage  (commanders always will show health number)
-local drawFeatureBarPercentage  = 0		-- wont draw heath percentage text above this percentage
+local drawBarPercentage         = 0		        -- wont draw heath percentage text above this percentage
+local alwaysDrawBarPercentageForComs = true
+local drawFeatureBarPercentage  = 0		        -- true:  commanders always will show health percentage number
 local choppedCorners            = true
-local choppedCornerSize         = 0.55
+local choppedCornerSize         = 0.5
 local drawFullHealthBars        = false
 
 local drawFeatureHealth         = true
@@ -46,9 +55,9 @@ local featureTitlesAlpha        = featureBarAlpha * titlesAlpha/barAlpha
 local featureHpThreshold        = 0.85
 
 local infoDistance              = 900000
-local maxFeatureInfoDistance    = 300000 --max squared distance at which text it drawn for features 
-local maxFeatureDistance        = 900000 --max squared distance at which any info is drawn for features 
-local maxUnitDistance           = 9000000 --max squared distance at which any info is drawn for units  MUST BE LARGER THAN FOR FEATURES!
+local maxFeatureInfoDistance    = 300000   --max squared distance at which text it drawn for features 
+local maxFeatureDistance        = 900000   --max squared distance at which any info is drawn for features 
+local maxUnitDistance           = 9000000  --max squared distance at which any info is drawn for units  MUST BE LARGER THAN FOR FEATURES!
 
 local minReloadTime             = 4 --// in seconds
 
@@ -65,13 +74,13 @@ local stockpileW = 12
 
 --// colors
 local bkBottom   = { 0.38,0.38,0.38,barAlpha }
-local bkTop      = { 0.08,0.08,0.08,barAlpha }
+local bkTop      = { 0.10,0.10,0.10,barAlpha }
 local hpcolormap = { {1, 0.0, 0.0, barAlpha},  {0.8, 0.60, 0.0, barAlpha}, {0.0,0.75,0.0,barAlpha} }
 local bfcolormap = {}
 
 local fbkBottom   = { 0.40,0.40,0.40,featureBarAlpha }
 local fbkTop      = { 0.06,0.06,0.06,featureBarAlpha }
-local fhpcolormap = { {0.5, 0, 0, featureBarAlpha*1.55},  {0.4, 0.3, 0, featureBarAlpha*1.55}, {0,0.4,0,featureBarAlpha*1.55} }
+local fhpcolormap = { {0.37, 0.27, 0.27, featureBarAlpha*1.55},  {0.37, 0.32, 0.27, featureBarAlpha*1.55}, {0.27,0.37,0.27,featureBarAlpha*1.55} }
 
 local barColors = {
   emp     = { 0.50,0.50,1.00,barAlpha },
@@ -128,13 +137,8 @@ do
   end
 end --//end do
 
-function widget:Initialize()
-  --// catch f9
-  Spring.SendCommands({"showhealthbars 0"})
-  Spring.SendCommands({"showrezbars 0"})
-  widgetHandler:AddAction("showhealthbars", showhealthbars)
-  Spring.SendCommands({"unbind f9 showhealthbars"})
-  Spring.SendCommands({"bind f9 luaui showhealthbars"})
+
+function init()
 
   --// find real primary weapon and its reloadtime
   for _,ud in pairs(UnitDefs) do
@@ -187,7 +191,7 @@ function widget:Initialize()
              if (gl_Vertex.y>0.0) {
                gl_FrontColor = vec4(barColor.rgb*1.5,barColor.a);
              }else{
-               gl_FrontColor = barColor;
+               gl_FrontColor = vec4(barColor.rgb*0.85,barColor.a);
              }
              if (gl_Vertex.z>1.0) {
                gl_Vertex.x += progress*gl_Vertex.z;
@@ -341,7 +345,17 @@ function widget:Initialize()
       end)
     end
   end
+end
 
+function widget:Initialize()
+  --// catch f9
+  Spring.SendCommands({"showhealthbars 0"})
+  Spring.SendCommands({"showrezbars 0"})
+  widgetHandler:AddAction("showhealthbars", showhealthbars)
+  Spring.SendCommands({"unbind f9 showhealthbars"})
+  Spring.SendCommands({"bind f9 luaui showhealthbars"})
+  
+  init()
 end
 
 function widget:Shutdown()
@@ -494,7 +508,7 @@ do
       DrawUnitBar(yoffset,barInfo.progress,barInfo.color)
       if (fullText) then
         if (barShader) then glMyText(1) end
-        if (drawBarPercentage > 0) then
+        if (drawBarPercentage > 0  or alwaysDrawBarPercentageForComs) then
           glColor(1,1,1,barAlpha)
           glText(barInfo.text,barStart,yoffset,4,"r")
         end
@@ -620,9 +634,11 @@ do
           if (hp100 and hp100 <= drawBarPercentage) then
             healthText = hp100..'%'
           end
-          local unitName = UnitDefs[GetUnitDefID(unitID)].name
-          if (unitName == 'corcom'  or  unitName == 'armcom') then
-            healthText = hp100..'%'
+          if alwaysDrawBarPercentageForComs then
+			  local unitName = UnitDefs[GetUnitDefID(unitID)].name
+			  if (unitName == 'corcom'  or  unitName == 'armcom') then
+				healthText = hp100..'%'
+			  end
           end
           AddBar("health",hp,nil,healthText or '',bfcolormap[hp100])
         end
@@ -861,8 +877,8 @@ local visibleUnits = {}
 
 do
   local GetCameraPosition    = Spring.GetCameraPosition
-  local GetSmoothMeshHeight    = Spring.GetSmoothMeshHeight 
-  local IsGUIHidden         = Spring.IsGUIHidden 
+  local GetSmoothMeshHeight  = Spring.GetSmoothMeshHeight 
+  local IsGUIHidden          = Spring.IsGUIHidden 
   local glDepthMask          = gl.DepthMask
 
   function widget:DrawWorld()
@@ -894,31 +910,31 @@ do
             local unitID,unitDefID,unitDef
             for i=1,#visibleUnits do
               unitID    = visibleUnits[i]
-              unitDefID = GetUnitDefID(unitID)
-              unitDef   = UnitDefs[unitDefID or -1]
-              if (unitDef) then
-                    DrawUnitInfos(unitID, unitDefID, unitDef)
-              end
+			  unitDefID = GetUnitDefID(unitID)
+			  unitDef   = UnitDefs[unitDefID or -1]
+			  if (unitDef) then
+				DrawUnitInfos(unitID, unitDefID, unitDef)
+			  end
             end
 
             --// draw bars for features
             if ((cy-smoothheight)^2 < maxFeatureDistance) then
-                    
-                    local wx, wy, wz, dx, dy, dz, dist
-                    local featureInfo
-                    for i=1,#visibleFeatures do
-                      featureInfo = visibleFeatures[i]
-                      wx, wy, wz = featureInfo[1],featureInfo[2],featureInfo[3]
-                      dx, dy, dz = wx-cx, wy-cy, wz-cz
-                      dist = dx*dx + dy*dy + dz*dz
-                      if (dist < maxFeatureDistance) then
-                            if (dist < maxFeatureInfoDistance) then
-                              DrawFeatureInfos(featureInfo[4], featureInfo[5], true, wx,wy,wz)
-                            else
-                              DrawFeatureInfos(featureInfo[4], featureInfo[5], false, wx,wy,wz)
-                            end
-                      end
-                    end
+               
+               local wx, wy, wz, dx, dy, dz, dist
+               local featureInfo
+               for i=1,#visibleFeatures do
+                 featureInfo = visibleFeatures[i]
+                 wx, wy, wz = featureInfo[1],featureInfo[2],featureInfo[3]
+                 dx, dy, dz = wx-cx, wy-cy, wz-cz
+                 dist = dx*dx + dy*dy + dz*dz
+                 if (dist < maxFeatureDistance) then
+                       if (dist < maxFeatureInfoDistance) then
+                         DrawFeatureInfos(featureInfo[4], featureInfo[5], true, wx,wy,wz)
+                       else
+                         DrawFeatureInfos(featureInfo[4], featureInfo[5], false, wx,wy,wz)
+                       end
+                 end
+               end
             --else
                     --Spring.Echo('healthbars cam too high to draw features')
             end
@@ -990,5 +1006,33 @@ do
 
 end --//end do
 
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
+function widget:GetConfigData(data)
+    savedTable = {}
+    savedTable.drawBarPercentage				= drawBarPercentage
+    savedTable.alwaysDrawBarPercentageForComs	= alwaysDrawBarPercentageForComs
+    savedTable.choppedCorners					= choppedCorners
+    return savedTable
+end
+
+function widget:SetConfigData(data)
+    if data.drawBarPercentage ~= nil    			then  drawBarPercentage	= data.drawBarPercentage end
+    if data.alwaysDrawBarPercentageForComs ~= nil   then  alwaysDrawBarPercentageForComs = data.alwaysDrawBarPercentageForComs end
+    if data.choppedCorners ~= nil					then  choppedCorners = data.choppedCorners end
+end
+
+function widget:TextCommand(command)
+    if (string.find(command, "healthbars_percentage") == 1  and  string.len(command) == 21) then 
+		drawBarPercentage =  (drawBarPercentage < 100 and 100 or 0)
+	end
+    if (string.find(command, "healthbars_compercentage") == 1  and  string.len(command) == 24) then 
+		alwaysDrawBarPercentageForComs = not alwaysDrawBarPercentageForComs
+	end
+    if (string.find(command, "healthbars_rounded") == 1  and  string.len(command) == 18) then 
+		choppedCorners = not choppedCorners
+		init()
+	end
+end

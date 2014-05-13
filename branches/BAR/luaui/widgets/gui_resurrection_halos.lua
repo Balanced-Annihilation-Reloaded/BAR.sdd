@@ -14,7 +14,7 @@ end
 -- Console commands
 --------------------------------------------------------------------------------
 
--- /ressurectionhalos_buildings			-- toggles halos for buildings (and non-movable units/factories)
+-- /resurrectionhalos_buildings			-- toggles halos for buildings (and non-movable units/factories)
 
 --------------------------------------------------------------------------------
 -- Config
@@ -187,7 +187,7 @@ function widget:SetConfigData(data)
 end
 
 function widget:TextCommand(command)
-    if (string.find(command, "ressurectionhalos_buildings") == 1  and  string.len(command) == 27) then 
+    if (string.find(command, "resurrectionhalos_buildings") == 1  and  string.len(command) == 27) then 
 		OPTIONS.skipBuildings = not OPTIONS.skipBuildings
 	end
 end

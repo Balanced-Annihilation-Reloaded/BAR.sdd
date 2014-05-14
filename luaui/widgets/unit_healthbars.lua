@@ -12,7 +12,7 @@
 function widget:GetInfo()
   return {
     name      = "HealthBars",
-    desc      = "Gives various informations about units in form of bars. options: /healthbars_percentage, _rounded, _outline",
+    desc      = "Gives various informations about units in form of bars. options: /healthbars_style,  /healthbars_percentage",
     author    = "jK, (all whistles and bells added by Floris)",
     date      = "2009",
     license   = "GNU GPL, v2 or later",
@@ -27,8 +27,7 @@ end
 
 -- /healthbars_percentage			-- toggles rendering of the textual percentage beside each bar
 -- /healthbars_compercentage		-- toggles always rendering health precentagees for coms
--- /healthbars_rounded				-- toggles rounded (chopped) corners
--- /healthbars_outline				-- toggles an outline around the bars (/healthbars_rounded must be enabled)
+-- /healthbars_style				-- toggles different styles
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -39,7 +38,7 @@ local barAlpha                  = 0.85
 local barValueAlpha             = 0.9	-- alpha of the colored part
 
 local featureBarHeight          = 2.85
-local featureBarWidth           = 10
+local featureBarWidth           = 1
 local featureBarAlpha           = 0.4
 
 local drawBarTitles             = true			-- (I disabled the healthbar text, cause that one doesnt need an explanation)
@@ -49,9 +48,11 @@ local drawBarPercentage         = 0		        -- wont draw heath percentage text 
 local alwaysDrawBarPercentageForComs = true
 local drawFeatureBarPercentage  = 0		        -- true:  commanders always will show health percentage number
 local choppedCorners            = true
-local showOutline               = true
-local outlineSize               = 0.85
 local choppedCornerSize         = 0.5
+local showOutline               = true
+local outlineSize               = 0.7
+local showInnerBg               = true
+local innerBgAlpha              = 0.45
 local drawFullHealthBars        = false
 
 local drawFeatureHealth         = true
@@ -73,18 +74,49 @@ local walls = {dragonsteeth=true,dragonsteeth_core=true,fortification=true,forti
 local stockpileH = 24
 local stockpileW = 12
 
+
+local OPTIONS = {}
+OPTIONS.defaults = {
+  choppedCorners            = true,
+  showOutline               = true,
+  showInnerBg               = true,
+}
+OPTIONS[1] = {
+  choppedCorners            = false,
+  showOutline               = false,
+  showInnerBg               = false,
+}
+OPTIONS[2] = {
+  choppedCorners            = true,
+  showOutline               = false,
+  showInnerBg               = false,
+}
+OPTIONS[3] = {
+  choppedCorners            = true,
+  showOutline               = true,
+  showInnerBg               = false,
+}
+OPTIONS[4] = {
+  choppedCorners            = true,
+  showOutline               = true,
+  showInnerBg               = true,
+}
+local currentOption = 4
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 --// colors
-local bkBottom   = { 0.25,0.25,0.25,barAlpha }
-local bkTop      = { 0.10,0.10,0.10,barAlpha }
-local hpcolormap = { {1, 0.0, 0.0, barValueAlpha},  {0.8, 0.60, 0.0, barValueAlpha}, {0.0,0.75,0.0,barValueAlpha} }
-local bfcolormap = {}
+local bkBottom        = { 0.25,0.25,0.25,barAlpha }
+local bkTop           = { 0.10,0.10,0.10,barAlpha }
+local bkInnerBottom   = { 0.05,0.05,0.05,innerBgAlpha }
+local bkInnerTop      = { 0.33,0.33,0.33,innerBgAlpha*0.7 }
+local hpcolormap      = { {1, 0.0, 0.0, barValueAlpha},  {0.8, 0.60, 0.0, barValueAlpha}, {0.0,0.75,0.0,barValueAlpha} }
+local bfcolormap      = {}
 
-local fbkBottom   = { 0.40,0.40,0.40,featureBarAlpha }
-local fbkTop      = { 0.06,0.06,0.06,featureBarAlpha }
-local fhpcolormap = { {0.4, 0.27, 0.27, featureBarAlpha*1.5},  {0.4, 0.34, 0.27, featureBarAlpha*1.5}, {0.27,0.39,0.27,featureBarAlpha*1.5} }
+local fbkBottom       = { 0.40,0.40,0.40,featureBarAlpha }
+local fbkTop          = { 0.06,0.06,0.06,featureBarAlpha }
+local fhpcolormap     = { {0.4, 0.27, 0.27, featureBarAlpha*1.5},  {0.4, 0.34, 0.27, featureBarAlpha*1.5}, {0.27,0.39,0.27,featureBarAlpha*1.5} }
 
 local barColors = {
   emp     = { 0.50,0.50,1.00,barValueAlpha },
@@ -128,6 +160,7 @@ local GetUnitDefID         = Spring.GetUnitDefID
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+
 do
   local deactivated = false
   function showhealthbars(cmd, line, words)
@@ -147,10 +180,10 @@ function drawBarGl()
 
   local cs = choppedCornerSize
   local heightAddition = 0
-  if showOutline then
+  if OPTIONS[currentOption].showOutline then
     heightAddition = outlineSize
   end
-  if (choppedCorners) then 
+  if (OPTIONS[currentOption].choppedCorners) then 
     gl.BeginEnd(GL.QUADS,function()
       -- color (value part) mid piece
       gl.Vertex(-barWidth+cs, 0,         0,                 0);
@@ -178,10 +211,30 @@ function drawBarGl()
       gl.Vertex(barWidth-cs,    barHeight+heightAddition, (barWidth*2)-cs*2, 1);
       gl.Vertex(barWidth-cs-cs, barHeight+heightAddition, 0,                 1);
       
-      -- background right piece
-      if choppedCorners or showOutline then
+      if OPTIONS[currentOption].showOutline and OPTIONS[currentOption].showInnerBg then
+        cs = choppedCornerSize
+        -- inner center background piece
+        gl.Color(bkInnerBottom[1],bkInnerBottom[2],bkInnerBottom[3],bkInnerBottom[4]);
+        gl.Vertex(barWidth-cs-cs-cs, 0,         0,                 1);
+        gl.Vertex(barWidth-cs,    0,         (barWidth*2)-cs*2, 1);
+        gl.Color(bkInnerTop[1],bkInnerTop[2],bkInnerTop[3],bkInnerTop[4]);
+        gl.Vertex(barWidth-cs,    barHeight, (barWidth*2)-cs*2, 1);
+        gl.Vertex(barWidth-cs-cs-cs, barHeight, 0,                 1);
+        
+      -- inner background right piece
         local cs2 = cs
-        if showOutline then
+        gl.Color(bkInnerBottom[1],bkInnerBottom[2],bkInnerBottom[3],bkInnerBottom[4]);
+        gl.Vertex(barWidth-cs-cs-cs+cs2,   cs2,           0, 1);
+        gl.Vertex(barWidth-cs-cs-cs,       0,             0, 1);
+        gl.Color(bkInnerTop[1],bkInnerTop[2],bkInnerTop[3],bkInnerTop[4]);
+        gl.Vertex(barWidth-cs-cs-cs,       barHeight,     0, 1);
+        gl.Vertex(barWidth-cs-cs-cs+cs2,   barHeight-cs2, 0, 1);
+      end
+      
+      -- background right piece
+      if OPTIONS[currentOption].choppedCorners or OPTIONS[currentOption].showOutline then
+        local cs2 = cs
+        if OPTIONS[currentOption].showOutline then
           cs2 = outlineSize
         end
         gl.Color(bkBottom);
@@ -226,7 +279,7 @@ function drawBarGl()
     -- corner fillers
     gl.BeginEnd(GL.TRIANGLES,function()
       cs = choppedCornerSize
-      -- top
+      -- top right
       local usedColor = bkTop[1]+((bkBottom[1]-bkTop[1]) * ((heightAddition+cs)/(barHeight+heightAddition+heightAddition)))
       gl.Color(usedColor,usedColor,usedColor,bkTop[4]);
       gl.Vertex(barWidth-cs,    barHeight-cs,  (barWidth*2)-cs*2, 1);
@@ -236,7 +289,7 @@ function drawBarGl()
       gl.Vertex(barWidth-cs,    barHeight,     (barWidth*2)-cs*2, 1);
       gl.Vertex(barWidth-cs-cs, barHeight,     (barWidth*2)-cs*2, 1);
       
-      -- bottom
+      -- bottom right
       usedColor = bkBottom[1]-((bkBottom[1]-bkTop[1]) * ((heightAddition+cs)/(barHeight+heightAddition+heightAddition)))
       gl.Color(usedColor,usedColor,usedColor,bkBottom[4]);
       gl.Vertex(barWidth-cs,    cs,  (barWidth*2)-cs*2, 1);
@@ -246,8 +299,28 @@ function drawBarGl()
       gl.Vertex(barWidth-cs,    0,   (barWidth*2)-cs*2, 1);
       gl.Vertex(barWidth-cs-cs, 0,   (barWidth*2)-cs*2, 1);
       
+      if OPTIONS[currentOption].showOutline and OPTIONS[currentOption].showInnerBg then
+        -- top right
+        usedColor = bkInnerTop[1]-((bkInnerTop[1]-bkInnerBottom[1]) * ((cs)/(barHeight)))
+        gl.Color(usedColor,usedColor,usedColor,bkInnerTop[4]);
+        gl.Vertex(barWidth-cs,    barHeight-cs,  (barWidth*2)-cs*2, 1);
+        
+        gl.Color(bkInnerTop[1],bkInnerTop[2],bkInnerTop[3],bkInnerTop[4]);
+        gl.Vertex(barWidth-cs,    barHeight,     (barWidth*2)-cs*2, 1);
+        gl.Vertex(barWidth-cs-cs, barHeight,     (barWidth*2)-cs*2, 1);
+        
+        -- bottom right
+        usedColor = bkInnerBottom[1]+((bkInnerTop[1]-bkInnerBottom[1]) * ((cs)/(barHeight)))
+        gl.Color(usedColor,usedColor,usedColor,bkInnerBottom[4]);
+        gl.Vertex(barWidth-cs,    cs,  (barWidth*2)-cs*2, 1);
+        
+        gl.Color(bkInnerBottom[1],bkInnerBottom[2],bkInnerBottom[3],bkInnerBottom[4]);
+        gl.Vertex(barWidth-cs,    0,   (barWidth*2)-cs*2, 1);
+        gl.Vertex(barWidth-cs-cs, 0,   (barWidth*2)-cs*2, 1);
+      end
+      
       if heightAddition > 0 then
-        -- top
+        -- top left
         usedColor = bkTop[1]+((bkBottom[1]-bkTop[1]) * ((heightAddition+cs)/(barHeight+heightAddition+heightAddition)))
         gl.Color(usedColor,usedColor,usedColor,bkTop[4]);
         gl.Vertex(-barWidth,    barHeight-cs,  0, 1);
@@ -257,7 +330,7 @@ function drawBarGl()
         gl.Vertex(-barWidth,    barHeight,     0, 1);
         gl.Vertex(-barWidth+cs, barHeight,     0, 1);
         
-        -- bottom
+        -- bottom left
         usedColor = bkBottom[1]-((bkBottom[1]-bkTop[1]) * ((heightAddition+cs)/(barHeight+heightAddition+heightAddition)))
         gl.Color(usedColor,usedColor,usedColor,bkBottom[4]);
         gl.Vertex(-barWidth,   cs,  0, 1);
@@ -284,7 +357,7 @@ function drawBarGl()
     end)
   end
 end
-      
+
       
 function init()
 
@@ -361,6 +434,25 @@ function init()
   end
 end
 
+
+local function toggleOption()
+	currentOption = currentOption + 1
+	if not OPTIONS[currentOption] then
+		currentOption = 1
+	end
+	init()
+end
+
+function loadOption()
+	local appliedOption = OPTIONS[currentOption]
+	OPTIONS[currentOption] = table.shallow_copy(OPTIONS.defaults)
+	
+	for option, value in pairs(appliedOption) do
+		OPTIONS[currentOption][option] = value
+	end
+	init()
+end
+
 function widget:Initialize()
   --// catch f9
   Spring.SendCommands({"showhealthbars 0"})
@@ -369,8 +461,9 @@ function widget:Initialize()
   Spring.SendCommands({"unbind f9 showhealthbars"})
   Spring.SendCommands({"bind f9 luaui showhealthbars"})
   
-  init()
+  loadOption()
 end
+
 
 function widget:Shutdown()
   --// catch f9
@@ -500,9 +593,9 @@ do
   local maxBars = 20
   local bars    = {}
   local barHeightL = barHeight + 2
-  local barStart   = -(barWidth + 1) - (showOutline and outlineSize or 0)
+  local barStart   = -(barWidth + 1) - (OPTIONS[currentOption].showOutline and outlineSize or 0)
   local fBarHeightL = featureBarHeight + 2
-  local fBarStart   = -(featureBarWidth + 1) - (showOutline and outlineSize or 0)
+  local fBarStart   = -(featureBarWidth + 1) - (OPTIONS[currentOption].showOutline and outlineSize or 0)
 
   for i=1,maxBars do bars[i] = {} end
 
@@ -1034,16 +1127,14 @@ function widget:GetConfigData(data)
     savedTable = {}
     savedTable.drawBarPercentage				= drawBarPercentage
     savedTable.alwaysDrawBarPercentageForComs	= alwaysDrawBarPercentageForComs
-    savedTable.choppedCorners					= choppedCorners
-    savedTable.showOutline					= showOutline
+    savedTable.currentOption					= currentOption
     return savedTable
 end
 
 function widget:SetConfigData(data)
     if data.drawBarPercentage ~= nil    			then  drawBarPercentage	= data.drawBarPercentage end
     if data.alwaysDrawBarPercentageForComs ~= nil   then  alwaysDrawBarPercentageForComs = data.alwaysDrawBarPercentageForComs end
-    if data.choppedCorners ~= nil					then  choppedCorners = data.choppedCorners end
-    if data.showOutline ~= nil						then  showOutline = data.showOutline end
+    if data.currentOption ~= nil					then  currentOption = data.currentOption end
 end
 
 function widget:TextCommand(command)
@@ -1053,12 +1144,7 @@ function widget:TextCommand(command)
     if (string.find(command, "healthbars_compercentage") == 1  and  string.len(command) == 24) then 
 		alwaysDrawBarPercentageForComs = not alwaysDrawBarPercentageForComs
 	end
-    if (string.find(command, "healthbars_rounded") == 1  and  string.len(command) == 18) then 
-		choppedCorners = not choppedCorners
-		init()
-	end
-    if (string.find(command, "healthbars_outline") == 1  and  string.len(command) == 18) then 
-		showOutline = not showOutline
-		init()
+    if (string.find(command, "healthbars_style") == 1  and  string.len(command) == 16) then 
+		toggleOption()
 	end
 end

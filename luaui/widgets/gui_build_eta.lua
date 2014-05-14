@@ -199,7 +199,7 @@ local function DrawEtaText(timeLeft,yoffset)
   gl.Billboard()
   gl.Translate(0, 5 ,0)
   --fontHandler.DrawCentered(etaStr)
-  gl.Text(etaStr, 0, 0, 8, "c")
+  gl.Text(etaStr, 0, 0, 4.5, "c")
 end
 
 function widget:DrawWorld()

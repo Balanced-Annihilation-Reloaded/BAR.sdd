@@ -12,7 +12,7 @@
 function widget:GetInfo()
   return {
     name      = "HealthBars",
-    desc      = "Gives various informations about units in form of bars.",
+    desc      = "Gives various informations about units in form of bars. options: /healthbars_percentage, _rounded, _outline",
     author    = "jK, (all whistles and bells added by Floris)",
     date      = "2009",
     license   = "GNU GPL, v2 or later",
@@ -28,17 +28,19 @@ end
 -- /healthbars_percentage			-- toggles rendering of the textual percentage beside each bar
 -- /healthbars_compercentage		-- toggles always rendering health precentagees for coms
 -- /healthbars_rounded				-- toggles rounded (chopped) corners
+-- /healthbars_outline				-- toggles an outline around the bars (/healthbars_rounded must be enabled)
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 local barHeight                 = 2.85
 local barWidth                  = 12.2  --// (barWidth)x2 total width!!!
-local barAlpha                  = 0.87
+local barAlpha                  = 0.85
+local barValueAlpha             = 0.9	-- alpha of the colored part
 
 local featureBarHeight          = 2.85
 local featureBarWidth           = 10
-local featureBarAlpha           = 0.42
+local featureBarAlpha           = 0.4
 
 local drawBarTitles             = true			-- (I disabled the healthbar text, cause that one doesnt need an explanation)
 local titlesAlpha               = 0.3*barAlpha
@@ -47,6 +49,8 @@ local drawBarPercentage         = 0		        -- wont draw heath percentage text 
 local alwaysDrawBarPercentageForComs = true
 local drawFeatureBarPercentage  = 0		        -- true:  commanders always will show health percentage number
 local choppedCorners            = true
+local showOutline               = true
+local outlineSize               = 0.85
 local choppedCornerSize         = 0.5
 local drawFullHealthBars        = false
 
@@ -54,10 +58,10 @@ local drawFeatureHealth         = true
 local featureTitlesAlpha        = featureBarAlpha * titlesAlpha/barAlpha
 local featureHpThreshold        = 0.85
 
-local infoDistance              = 900000
+local infoDistance              = 800000
 local maxFeatureInfoDistance    = 300000   --max squared distance at which text it drawn for features 
-local maxFeatureDistance        = 900000   --max squared distance at which any info is drawn for features 
-local maxUnitDistance           = 9000000  --max squared distance at which any info is drawn for units  MUST BE LARGER THAN FOR FEATURES!
+local maxFeatureDistance        = 600000   --max squared distance at which any info is drawn for features 
+local maxUnitDistance           = 11000000  --max squared distance at which any info is drawn for units  MUST BE LARGER THAN FOR FEATURES!
 
 local minReloadTime             = 4 --// in seconds
 
@@ -73,24 +77,24 @@ local stockpileW = 12
 --------------------------------------------------------------------------------
 
 --// colors
-local bkBottom   = { 0.38,0.38,0.38,barAlpha }
+local bkBottom   = { 0.25,0.25,0.25,barAlpha }
 local bkTop      = { 0.10,0.10,0.10,barAlpha }
-local hpcolormap = { {1, 0.0, 0.0, barAlpha},  {0.8, 0.60, 0.0, barAlpha}, {0.0,0.75,0.0,barAlpha} }
+local hpcolormap = { {1, 0.0, 0.0, barValueAlpha},  {0.8, 0.60, 0.0, barValueAlpha}, {0.0,0.75,0.0,barValueAlpha} }
 local bfcolormap = {}
 
 local fbkBottom   = { 0.40,0.40,0.40,featureBarAlpha }
 local fbkTop      = { 0.06,0.06,0.06,featureBarAlpha }
-local fhpcolormap = { {0.37, 0.27, 0.27, featureBarAlpha*1.55},  {0.37, 0.32, 0.27, featureBarAlpha*1.55}, {0.27,0.37,0.27,featureBarAlpha*1.55} }
+local fhpcolormap = { {0.4, 0.27, 0.27, featureBarAlpha*1.5},  {0.4, 0.34, 0.27, featureBarAlpha*1.5}, {0.27,0.39,0.27,featureBarAlpha*1.5} }
 
 local barColors = {
-  emp     = { 0.50,0.50,1.00,barAlpha },
-  emp_p   = { 0.40,0.40,0.80,barAlpha },
-  emp_b   = { 0.60,0.60,0.90,barAlpha },
-  capture = { 1.00,0.50,0.00,barAlpha },
-  build   = { 0.75,0.75,0.75,barAlpha },
-  stock   = { 0.50,0.50,0.50,barAlpha },
-  reload  = { 0.00,0.60,0.60,barAlpha },
-  shield  = { 0.20,0.60,0.60,barAlpha },
+  emp     = { 0.50,0.50,1.00,barValueAlpha },
+  emp_p   = { 0.40,0.40,0.80,barValueAlpha },
+  emp_b   = { 0.60,0.60,0.90,barValueAlpha },
+  capture = { 1.00,0.50,0.00,barValueAlpha },
+  build   = { 0.75,0.75,0.75,barValueAlpha },
+  stock   = { 0.50,0.50,0.50,barValueAlpha },
+  reload  = { 0.00,0.60,0.60,barValueAlpha },
+  shield  = { 0.20,0.60,0.60,barValueAlpha },
   resurrect = { 1.00,0.50,0.00,featureBarAlpha },
   reclaim   = { 0.75,0.75,0.75,featureBarAlpha },
 }
@@ -138,6 +142,150 @@ do
 end --//end do
 
 
+
+function drawBarGl()
+
+  local cs = choppedCornerSize
+  local heightAddition = 0
+  if showOutline then
+    heightAddition = outlineSize
+  end
+  if (choppedCorners) then 
+    gl.BeginEnd(GL.QUADS,function()
+      -- color (value part) mid piece
+      gl.Vertex(-barWidth+cs, 0,         0,                 0);
+      gl.Vertex(-barWidth,    0,         (barWidth*2)-cs*2, 0);
+      gl.Vertex(-barWidth,    barHeight, (barWidth*2)-cs*2, 0);
+      gl.Vertex(-barWidth+cs, barHeight, 0,                 0);
+      
+      -- color (value part) left piece
+      gl.Vertex(-barWidth,    cs,           0, 0);
+      gl.Vertex(-barWidth+cs, 0,            0, 0);
+      gl.Vertex(-barWidth+cs, barHeight,    0, 0);
+      gl.Vertex(-barWidth,    barHeight-cs, 0, 0);
+      
+      -- color (value part) right piece
+      gl.Vertex(-barWidth+cs,cs,          (barWidth*2)-cs*2, 0);
+      gl.Vertex(-barWidth,0,              (barWidth*2)-cs*2, 0);
+      gl.Vertex(-barWidth,barHeight,      (barWidth*2)-cs*2, 0);
+      gl.Vertex(-barWidth+cs,barHeight-cs,(barWidth*2)-cs*2, 0);
+      
+      -- center background piece
+      gl.Color(bkBottom);
+      gl.Vertex(barWidth-cs-cs, 0-heightAddition,         0,                 1);
+      gl.Vertex(barWidth-cs,    0-heightAddition,         (barWidth*2)-cs*2, 1);
+      gl.Color(bkTop);
+      gl.Vertex(barWidth-cs,    barHeight+heightAddition, (barWidth*2)-cs*2, 1);
+      gl.Vertex(barWidth-cs-cs, barHeight+heightAddition, 0,                 1);
+      
+      -- background right piece
+      if choppedCorners or showOutline then
+        local cs2 = cs
+        if showOutline then
+          cs2 = outlineSize
+        end
+        gl.Color(bkBottom);
+        gl.Vertex(barWidth-cs-cs+cs2,   cs2-heightAddition,           0, 1);
+        gl.Vertex(barWidth-cs-cs,       0-heightAddition,             0, 1);
+        gl.Color(bkTop);
+        gl.Vertex(barWidth-cs-cs,       barHeight+heightAddition,     0, 1);
+        gl.Vertex(barWidth-cs-cs+cs2,   barHeight+heightAddition-cs2, 0, 1);
+        
+        
+        if heightAddition > 0 then
+          cs = outlineSize
+          -- background left piece
+          gl.Color(bkBottom);
+          gl.Vertex(-barWidth-cs,  cs-heightAddition,          0, 1);
+          gl.Vertex(-barWidth,     -heightAddition,            0, 1);
+          gl.Color(bkTop);
+          gl.Vertex(-barWidth,     barHeight+heightAddition,    0, 1);
+          gl.Vertex(-barWidth-cs,  barHeight+heightAddition-cs, 0, 1);
+          
+          cs = choppedCornerSize
+          -- top middle piece
+          local usedColor = bkTop[1]+((bkBottom[1]-bkTop[1]) * (heightAddition/(barHeight+heightAddition+heightAddition)))
+          gl.Color(usedColor,usedColor,usedColor,bkTop[4]);
+          gl.Vertex(-barWidth,    barHeight,                 0,                 1);
+          gl.Vertex(barWidth-cs,  barHeight,                 (barWidth*2)-cs*2, 1);
+          gl.Color(bkTop);
+          gl.Vertex(barWidth-cs,  barHeight+heightAddition,  (barWidth*2)-cs*2, 1);
+          gl.Vertex(-barWidth,    barHeight+heightAddition,  0,                 1);  
+          
+          -- bottom middle piece
+          usedColor = bkBottom[1]-((bkBottom[1]-bkTop[1]) * (heightAddition/(barHeight+heightAddition+heightAddition)))
+          gl.Color(usedColor,usedColor,usedColor,bkTop[4]);
+          gl.Vertex(-barWidth,    0,                0,                 1);
+          gl.Vertex(barWidth-cs,  0,                (barWidth*2)-cs*2, 1);
+          gl.Color(bkBottom);
+          gl.Vertex(barWidth-cs,  -heightAddition,  (barWidth*2)-cs*2, 1);
+          gl.Vertex(-barWidth,    -heightAddition,  0,                 1);
+        end
+      end
+    end)
+    -- corner fillers
+    gl.BeginEnd(GL.TRIANGLES,function()
+      cs = choppedCornerSize
+      -- top
+      local usedColor = bkTop[1]+((bkBottom[1]-bkTop[1]) * ((heightAddition+cs)/(barHeight+heightAddition+heightAddition)))
+      gl.Color(usedColor,usedColor,usedColor,bkTop[4]);
+      gl.Vertex(barWidth-cs,    barHeight-cs,  (barWidth*2)-cs*2, 1);
+      
+      usedColor = bkTop[1]+((bkBottom[1]-bkTop[1]) * (heightAddition/(barHeight+heightAddition+heightAddition)))
+      gl.Color(usedColor,usedColor,usedColor,bkTop[4]);
+      gl.Vertex(barWidth-cs,    barHeight,     (barWidth*2)-cs*2, 1);
+      gl.Vertex(barWidth-cs-cs, barHeight,     (barWidth*2)-cs*2, 1);
+      
+      -- bottom
+      usedColor = bkBottom[1]-((bkBottom[1]-bkTop[1]) * ((heightAddition+cs)/(barHeight+heightAddition+heightAddition)))
+      gl.Color(usedColor,usedColor,usedColor,bkBottom[4]);
+      gl.Vertex(barWidth-cs,    cs,  (barWidth*2)-cs*2, 1);
+      
+      usedColor = bkBottom[1]-((bkBottom[1]-bkTop[1]) * (heightAddition/(barHeight+heightAddition+heightAddition)))
+      gl.Color(usedColor,usedColor,usedColor,bkBottom[4]);
+      gl.Vertex(barWidth-cs,    0,   (barWidth*2)-cs*2, 1);
+      gl.Vertex(barWidth-cs-cs, 0,   (barWidth*2)-cs*2, 1);
+      
+      if heightAddition > 0 then
+        -- top
+        usedColor = bkTop[1]+((bkBottom[1]-bkTop[1]) * ((heightAddition+cs)/(barHeight+heightAddition+heightAddition)))
+        gl.Color(usedColor,usedColor,usedColor,bkTop[4]);
+        gl.Vertex(-barWidth,    barHeight-cs,  0, 1);
+        
+        usedColor = bkTop[1]+((bkBottom[1]-bkTop[1]) * (heightAddition/(barHeight+heightAddition+heightAddition)))
+        gl.Color(usedColor,usedColor,usedColor,bkTop[4]);
+        gl.Vertex(-barWidth,    barHeight,     0, 1);
+        gl.Vertex(-barWidth+cs, barHeight,     0, 1);
+        
+        -- bottom
+        usedColor = bkBottom[1]-((bkBottom[1]-bkTop[1]) * ((heightAddition+cs)/(barHeight+heightAddition+heightAddition)))
+        gl.Color(usedColor,usedColor,usedColor,bkBottom[4]);
+        gl.Vertex(-barWidth,   cs,  0, 1);
+        
+        usedColor = bkBottom[1]-((bkBottom[1]-bkTop[1]) * (heightAddition/(barHeight+heightAddition+heightAddition)))
+        gl.Color(usedColor,usedColor,usedColor,bkBottom[4]);
+        gl.Vertex(-barWidth,    0,   0, 1);
+        gl.Vertex(-barWidth+cs, 0,   0, 1);
+      end
+    end)
+  else
+    gl.BeginEnd(GL.QUADS,function()
+      gl.Vertex(-barWidth,0,        0,0);
+      gl.Vertex(-barWidth,0,        barWidth*2,0);
+      gl.Vertex(-barWidth,barHeight,barWidth*2,0);
+      gl.Vertex(-barWidth,barHeight,0,0);
+    
+      gl.Color(bkBottom);
+      gl.Vertex(barWidth,0,        0,         1);
+      gl.Vertex(barWidth,0,        barWidth*2,1);
+      gl.Color(bkTop);
+      gl.Vertex(barWidth,barHeight,barWidth*2,1);
+      gl.Vertex(barWidth,barHeight,0,         1);
+    end)
+  end
+end
+      
+      
 function init()
 
   --// find real primary weapon and its reloadtime
@@ -189,9 +337,9 @@ function init()
              }
            }else{
              if (gl_Vertex.y>0.0) {
-               gl_FrontColor = vec4(barColor.rgb*1.5,barColor.a);
+               gl_FrontColor = vec4(barColor.rgb*1.8,barColor.a);
              }else{
-               gl_FrontColor = vec4(barColor.rgb*0.85,barColor.a);
+               gl_FrontColor = vec4(barColor.rgb*0.9,barColor.a);
              }
              if (gl_Vertex.z>1.0) {
                gl_Vertex.x += progress*gl_Vertex.z;
@@ -207,142 +355,8 @@ function init()
     });
 
     if (barShader) then
-    
-      local cs = choppedCornerSize
-      barDList = gl.CreateList(function()
-      
-        if (choppedCorners) then 
-          gl.BeginEnd(GL.QUADS,function()
-            -- mid piece
-            gl.Vertex(-barWidth+cs,0,         0,                 0);
-            gl.Vertex(-barWidth,   0,         (barWidth*2)-cs*2, 0);
-            gl.Vertex(-barWidth,   barHeight, (barWidth*2)-cs*2, 0);
-            gl.Vertex(-barWidth+cs,barHeight, 0,                 0);
-            
-            -- left piece
-            gl.Vertex(-barWidth,    cs,           0, 0);
-            gl.Vertex(-barWidth+cs, 0,            0, 0);
-            gl.Vertex(-barWidth+cs, barHeight,    0, 0);
-            gl.Vertex(-barWidth,    barHeight-cs, 0, 0);
-            
-            -- right piece
-            gl.Vertex(-barWidth+cs,cs,          (barWidth*2)-cs*2, 0);
-            gl.Vertex(-barWidth,0,              (barWidth*2)-cs*2, 0);
-            gl.Vertex(-barWidth,barHeight,      (barWidth*2)-cs*2, 0);
-            gl.Vertex(-barWidth+cs,barHeight-cs,(barWidth*2)-cs*2, 0);
-            
-            -- mid piece
-            gl.Color(bkBottom);
-            gl.Vertex(barWidth-cs-cs, 0,         0,                 1);
-            gl.Vertex(barWidth-cs,    0,         (barWidth*2)-cs*2, 1);
-            gl.Color(bkTop);
-            gl.Vertex(barWidth-cs,    barHeight, (barWidth*2)-cs*2, 1);
-            gl.Vertex(barWidth-cs-cs, barHeight, 0,                 1);
-            
-            -- right piece
-            gl.Color(bkBottom);
-            gl.Vertex(barWidth-cs,    cs,           0, 1);
-            gl.Vertex(barWidth-cs-cs, 0,            0, 1);
-            gl.Color(bkTop);
-            gl.Vertex(barWidth-cs-cs, barHeight,    0, 1);
-            gl.Vertex(barWidth-cs,    barHeight-cs, 0, 1)
-            
-          end)
-          -- corner fillers
-          gl.BeginEnd(GL.TRIANGLES,function()
-            gl.Color(bkTop);
-            gl.Vertex(barWidth-cs,    barHeight-cs,  (barWidth*2)-cs*2, 1);
-            gl.Vertex(barWidth-cs,    barHeight,     (barWidth*2)-cs*2, 1);
-            gl.Vertex(barWidth-cs-cs, barHeight,     (barWidth*2)-cs*2, 1);
-            
-            gl.Color(bkBottom);
-            gl.Vertex(barWidth-cs,    cs,  (barWidth*2)-cs*2, 1);
-            gl.Vertex(barWidth-cs,    0,   (barWidth*2)-cs*2, 1);
-            gl.Vertex(barWidth-cs-cs, 0,   (barWidth*2)-cs*2, 1);
-          end)
-		else
-          gl.BeginEnd(GL.QUADS,function()
-            gl.Vertex(-barWidth,0,        0,0);
-            gl.Vertex(-barWidth,0,        barWidth*2,0);
-            gl.Vertex(-barWidth,barHeight,barWidth*2,0);
-            gl.Vertex(-barWidth,barHeight,0,0);
-          
-            gl.Color(bkBottom);
-            gl.Vertex(barWidth,0,        0,         1);
-            gl.Vertex(barWidth,0,        barWidth*2,1);
-            gl.Color(bkTop);
-            gl.Vertex(barWidth,barHeight,barWidth*2,1);
-            gl.Vertex(barWidth,barHeight,0,         1);
-          end)
-        end
-      end)
-
-      barFeatureDList = gl.CreateList(function()
-        if (choppedCorners) then 
-          gl.BeginEnd(GL.QUADS,function()
-            -- mid piece
-            gl.Vertex(-featureBarWidth+cs,0,         0,                 0);
-            gl.Vertex(-featureBarWidth,   0,         (featureBarWidth*2)-cs*2, 0);
-            gl.Vertex(-featureBarWidth,   featureBarHeight, (featureBarWidth*2)-cs*2, 0);
-            gl.Vertex(-featureBarWidth+cs,featureBarHeight, 0,                 0);
-            
-            -- left piece
-            gl.Vertex(-featureBarWidth,    cs,           0, 0);
-            gl.Vertex(-featureBarWidth+cs, 0,            0, 0);
-            gl.Vertex(-featureBarWidth+cs, featureBarHeight,    0, 0);
-            gl.Vertex(-featureBarWidth,    featureBarHeight-cs, 0, 0);
-            
-            -- right piece
-            gl.Vertex(-featureBarWidth+cs,cs,          (featureBarWidth*2)-cs*2, 0);
-            gl.Vertex(-featureBarWidth,0,              (featureBarWidth*2)-cs*2, 0);
-            gl.Vertex(-featureBarWidth,featureBarHeight,      (featureBarWidth*2)-cs*2, 0);
-            gl.Vertex(-featureBarWidth+cs,featureBarHeight-cs,(featureBarWidth*2)-cs*2, 0);
-            
-            -- mid piece
-            gl.Color(fbkBottom);
-            gl.Vertex(featureBarWidth-cs-cs, 0,         0,                 1);
-            gl.Vertex(featureBarWidth-cs,    0,         (featureBarWidth*2)-cs*2, 1);
-            gl.Color(fbkTop);
-            gl.Vertex(featureBarWidth-cs,    featureBarHeight, (featureBarWidth*2)-cs*2, 1);
-            gl.Vertex(featureBarWidth-cs-cs, featureBarHeight, 0,                 1);
-            
-            -- right piece
-            gl.Color(fbkBottom);
-            gl.Vertex(featureBarWidth-cs,    cs,           0, 1);
-            gl.Vertex(featureBarWidth-cs-cs, 0,            0, 1);
-            gl.Color(fbkTop);
-            gl.Vertex(featureBarWidth-cs-cs, featureBarHeight,    0, 1);
-            gl.Vertex(featureBarWidth-cs,    featureBarHeight-cs, 0, 1)
-              
-          end)
-          -- corner fillers
-          gl.BeginEnd(GL.TRIANGLES,function()
-            gl.Color(fbkTop);
-            gl.Vertex(featureBarWidth-cs,    featureBarHeight-cs,  (featureBarWidth*2)-cs*2, 1);
-            gl.Vertex(featureBarWidth-cs,    featureBarHeight,     (featureBarWidth*2)-cs*2, 1);
-            gl.Vertex(featureBarWidth-cs-cs, featureBarHeight,     (featureBarWidth*2)-cs*2, 1);
-            
-            gl.Color(fbkBottom);
-            gl.Vertex(featureBarWidth-cs,    cs,  (featureBarWidth*2)-cs*2, 1);
-            gl.Vertex(featureBarWidth-cs,    0,   (featureBarWidth*2)-cs*2, 1);
-            gl.Vertex(featureBarWidth-cs-cs, 0,   (featureBarWidth*2)-cs*2, 1);
-          end)
-        else
-          gl.BeginEnd(GL.QUADS,function()
-            gl.Vertex(-featureBarWidth,0,               0,0);
-            gl.Vertex(-featureBarWidth,0,               featureBarWidth*2,0);
-            gl.Vertex(-featureBarWidth,featureBarHeight,featureBarWidth*2,0);
-            gl.Vertex(-featureBarWidth,featureBarHeight,0,0);
-          
-            gl.Color(fbkBottom);
-            gl.Vertex(featureBarWidth,0,               0,         1);
-            gl.Vertex(featureBarWidth,0,               featureBarWidth*2,1);
-            gl.Color(fbkTop);
-            gl.Vertex(featureBarWidth,featureBarHeight,featureBarWidth*2,1);
-            gl.Vertex(featureBarWidth,featureBarHeight,0,         1);
-          end)
-        end
-      end)
+      barDList         = gl.CreateList(drawBarGl)
+      barFeatureDList  = gl.CreateList(drawBarGl)
     end
   end
 end
@@ -486,9 +500,9 @@ do
   local maxBars = 20
   local bars    = {}
   local barHeightL = barHeight + 2
-  local barStart   = -(barWidth + 1)
+  local barStart   = -(barWidth + 1) - (showOutline and outlineSize or 0)
   local fBarHeightL = featureBarHeight + 2
-  local fBarStart   = -(featureBarWidth + 1)
+  local fBarStart   = -(featureBarWidth + 1) - (showOutline and outlineSize or 0)
 
   for i=1,maxBars do bars[i] = {} end
 
@@ -605,7 +619,7 @@ do
       end
       fullText = false
     end
-
+	
     --// GET UNIT INFORMATION
     health,maxHealth,paralyzeDamage,capture,build = GetUnitHealth(unitID)
     --if (not health)    then health=-1   elseif(health<1)    then health=1    end
@@ -630,23 +644,27 @@ do
         hp100 = hp*100; hp100 = hp100 - hp100%1; --//same as floor(hp*100), but 10% faster
         if (hp100<0) then hp100=0 elseif (hp100>100) then hp100=100 end
         if (drawFullHealthBars)or(hp100<100) and not (hp<0) then
-          local healthText = ''
-          if (hp100 and hp100 <= drawBarPercentage) then
-            healthText = hp100..'%'
+          local infotext = ''
+          if (fullText and hp100 and hp100 <= drawBarPercentage) then
+            infotext = hp100..'%'
           end
           if alwaysDrawBarPercentageForComs then
 			  local unitName = UnitDefs[GetUnitDefID(unitID)].name
 			  if (unitName == 'corcom'  or  unitName == 'armcom') then
-				healthText = hp100..'%'
+				infotext = hp100..'%'
 			  end
           end
-          AddBar("health",hp,nil,healthText or '',bfcolormap[hp100])
+          AddBar("health",hp,nil,infotext or '',bfcolormap[hp100])
         end
       end
 
       --// BUILD
       if (build<1) then
-        AddBar("building",build,"build",(fullText and floor(build*100)..'%') or '')
+        local infotext = ''
+        if (fullText and drawBarPercentage > 0) then
+          infotext = floor(build*100)..'%'
+        end
+        AddBar("building",build,"build",infotext or '')
       end
 
       --// STOCKPILE
@@ -666,7 +684,7 @@ do
       --// PARALYZE
       if (emp>0.01)and(hp>0.01)and(emp<1e8) then 
         local stunned = GetUnitIsStunned(unitID)
-        local infotext = ""
+        local infotext = ''
         if (stunned) then
           paraUnits[#paraUnits+1]=unitID
           if (fullText) then
@@ -675,7 +693,7 @@ do
           emp = 1
         else
           if (emp>1) then emp=1 end
-          if (fullText) then
+          if (fullText and drawBarPercentage > 0) then
             infotext = floor(emp*100)..'%'
           end
         end
@@ -685,7 +703,11 @@ do
 
       --// CAPTURE
       if ((capture or -1)>0) then
-        AddBar("capture",capture,"capture",(fullText and floor(capture*100)..'%') or '')
+      local infotext = ''
+        if (fullText and drawBarPercentage > 0) then
+            infotext = floor(capture*100)..'%'
+        end
+        AddBar("capture",capture,"capture",infotext or '')
       end
 
       --// RELOAD
@@ -935,8 +957,6 @@ do
                        end
                  end
                end
-            --else
-                    --Spring.Echo('healthbars cam too high to draw features')
             end
             
             if (barShader) then gl.UseShader(0) end
@@ -1015,6 +1035,7 @@ function widget:GetConfigData(data)
     savedTable.drawBarPercentage				= drawBarPercentage
     savedTable.alwaysDrawBarPercentageForComs	= alwaysDrawBarPercentageForComs
     savedTable.choppedCorners					= choppedCorners
+    savedTable.showOutline					= showOutline
     return savedTable
 end
 
@@ -1022,6 +1043,7 @@ function widget:SetConfigData(data)
     if data.drawBarPercentage ~= nil    			then  drawBarPercentage	= data.drawBarPercentage end
     if data.alwaysDrawBarPercentageForComs ~= nil   then  alwaysDrawBarPercentageForComs = data.alwaysDrawBarPercentageForComs end
     if data.choppedCorners ~= nil					then  choppedCorners = data.choppedCorners end
+    if data.showOutline ~= nil						then  showOutline = data.showOutline end
 end
 
 function widget:TextCommand(command)
@@ -1033,6 +1055,10 @@ function widget:TextCommand(command)
 	end
     if (string.find(command, "healthbars_rounded") == 1  and  string.len(command) == 18) then 
 		choppedCorners = not choppedCorners
+		init()
+	end
+    if (string.find(command, "healthbars_outline") == 1  and  string.len(command) == 18) then 
+		showOutline = not showOutline
 		init()
 	end
 end

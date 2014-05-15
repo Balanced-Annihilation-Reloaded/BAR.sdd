@@ -1,11 +1,11 @@
 include("keysym.h.lua")
-local versionNumber = "1.21"
+local versionNumber = "1.30"
 
 function widget:GetInfo()
 	return {
 		name      = "Pause Screen",
-		desc      = "[v" .. string.format("%s", versionNumber ) .. "] Displays pause screen when game is paused.",
-		author    = "very_bad_soldier",
+		desc      = "[v" .. string.format("%s", versionNumber ) .. "] Displays pause screen. Options: /pausescreen_autofade",
+		author    = "very_bad_soldier (enhanced: Floris)",
 		date      = "2009.08.16",
 		license   = "GNU GPL v2",
 		layer     = 0,
@@ -13,6 +13,14 @@ function widget:GetInfo()
 	}
 end
 
+--------------------------------------------------------------------------------
+-- Console commands
+--------------------------------------------------------------------------------
+
+-- /pausescreen_autofade			-- toggles auto fadeout
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 local spGetGameSeconds      = Spring.GetGameSeconds
 local spGetMouseState       = Spring.GetMouseState
@@ -24,10 +32,10 @@ local max					= math.max
 
 local glColor               = gl.Color
 local glTexture             = gl.Texture
+local glScale				= gl.Scale
 local glPopMatrix           = gl.PopMatrix
 local glPushMatrix          = gl.PushMatrix
 local glTranslate           = gl.Translate
-local glText                = gl.Text
 local glBeginEnd			= gl.BeginEnd
 local glTexRect 			= gl.TexRect
 local glLoadFont			= gl.LoadFont
@@ -37,29 +45,39 @@ local glLineWidth           = gl.LineWidth
 local glDepthTest           = gl.DepthTest
 
 local osClock				= os.clock
+
 ----------------------------------------------------------------------------------
+
 -- CONFIGURATION
-local debug = false	
-local boxWidth = 300
-local boxHeight = 60
-local slideTime = 0.4
-local fadeTime = 1
-local wndBorderSize = 4
-local imgWidth = 160 --drawing size of the image (independent from the real image pixel size)
-local imgTexCoordX = 0.625  --image texture coordinate X -- textures image's dimension is a power of 2 (i use 0.625 cause my image has a width of 256, but region to use is only 160 pixel -> 160 / 256 = 0.625 )
-local imgTexCoordY = 0.625	--image texture coordinate Y -- enter values other than 1.0 to use just a region of the texture image
-local fontSizeHeadline = 36
-local fontSizeAddon = 24
-local windowIconPath = "LuaUI/Images/SpringIconmkII.png"
-local fontPath = "LuaUI/Fonts/MicrogrammaDBold.ttf"
-local windowClosePath = "LuaUI/Images/closex_32.png"
-local imgCloseWidth = 32
+
+local debug              = false
+local sizeMultiplier     = 1
+local startAlpha         = 0.88
+local boxWidth           = 185
+local boxHeight          = 35
+local slideTime          = 0.18
+local fadeTime           = 0.22
+local fadeToAlpha        = 0.1
+local wndBorderSize      = 4
+local imgWidth           = 100 --drawing size of the image (independent from the real image pixel size)
+local imgTexCoordX       = 0.625  --image texture coordinate X -- textures image's dimension is a power of 2 (i use 0.625 cause my image has a width of 256, but region to use is only 160 pixel -> 160 / 256 = 0.625 )
+local imgTexCoordY       = 0.625	--image texture coordinate Y -- enter values other than 1.0 to use just a region of the texture image
+local fontSizeHeadline   = 24
+local fontSizeAddon      = 15
+local windowIconPath     = "LuaUI/Images/SpringIconmkII.png"
+local fontPath           = "LuaUI/Fonts/MicrogrammaDBold.ttf"
+local windowClosePath    = "LuaUI/Images/closex_32.png"
+local imgCloseWidth      = 0
+local autoFade           = true
+local autoFadeTime       = 2
+local forceHideWindow    = false
 --Color config in drawPause function
 	
 ----------------
 local screenx, screeny
 local myFont
 local clickTimestamp = 0
+local autoFadeTimestamp = 0
 local pauseTimestamp = 0 --start or end of pause
 local lastPause = false
 local screenCenterX = nil
@@ -74,13 +92,14 @@ local lineOffset = nil
 local yCenter = nil
 local xCut = nil
 local mouseOverClose = false
-local forceHideWindow = false
-
-
+local checkedWindowSize = false
+local usedSizeMultiplier = 1
+local winSizeX, winSizeY = Spring.GetWindowGeometry()
 
 function widget:Initialize()
 	myFont = glLoadFont( fontPath, fontSizeHeadline )
 	updateWindowCoords()
+	
 end
 
 function widget:Shutdown()
@@ -103,6 +122,7 @@ function widget:DrawScreen()
 	if ( paused and not lastPause ) then
 		--new pause
 		clickTimestamp = nil
+		autoFadeTimestamp = nil
 	end
 
 	lastPause = paused
@@ -115,8 +135,8 @@ function widget:DrawScreen()
 end
 
 function isOverWindow(x, y)
-	if ( ( x > screenCenterX - boxWidth) and ( y < screenCenterY + boxHeight ) and 
-		( x < screenCenterX + boxWidth ) and ( y > screenCenterY - boxHeight ) ) then	
+	if ( ( x > screenCenterX - (boxWidth*usedSizeMultiplier)) and ( y < screenCenterY + (boxHeight*usedSizeMultiplier) ) and 
+		( x < screenCenterX + (boxWidth*usedSizeMultiplier) ) and ( y > screenCenterY - (boxHeight*usedSizeMultiplier) ) ) then	
 		return true
 	end
 	return false
@@ -128,6 +148,9 @@ function widget:MousePress(x, y, button)
 		--do not update clickTimestamp any more after right mouse button click
 		if ( not forceHideWindow ) then
 			clickTimestamp = osClock()
+			if autoFadeTimestamp then
+				clickTimestamp = clickTimestamp + (((autoFadeTimestamp - clickTimestamp) / autoFadeTime) * fadeTime)
+			end
 		end
 		
 		--hide window for the rest of the game if it was a right mouse button
@@ -141,6 +164,7 @@ function widget:MousePress(x, y, button)
   
   return false
 end
+
 
 function widget:IsAbove(x,y)
 	local _, _, paused = spGetGameSpeed()
@@ -170,21 +194,34 @@ function drawPause()
 	local now = osClock()
 	local diffPauseTime = ( now - pauseTimestamp)
 
-	local text =  { 1.0, 1.0, 1.0, 1.0 }
-	local text2 =  { 0.9, 0.9, 0.9, 1.0 }
-	local outline =  { 0.4, 0.4, 0.4, 1.0 }	
-	local colorWnd = { 0.0, 0.0, 0.0, 0.6 }
-	local colorWnd2 = { 0.5, 0.5, 0.5, 0.6 }
-	local iconColor = { 1.0, 1.0, 1.0, 1.0 }
-	local mouseOverColor = { 1.0, 1.0, 0.0, 1.0 }
-
+	local text =  { 1.0, 1.0, 1.0, 1.0*startAlpha }
+	local text2 =  { 0.9, 0.9, 0.9, 1.0*startAlpha }
+	local outline =  { 0.4, 0.4, 0.4, 1.0*startAlpha }	
+	local colorWnd = { 0.0, 0.0, 0.0, 0.6*startAlpha }
+	local colorWnd2 = { 0.5, 0.5, 0.5, 0.6*startAlpha }
+	local iconColor = { 1.0, 1.0, 1.0, 1.0*startAlpha }
+	local mouseOverColor = { 1.0, 1.0, 0.0, 1.0*startAlpha }
+	
+	-- check window size and change scale accordingly
+	if ( diffPauseTime <= slideTime ) then
+		if  not checkedWindowSize then
+			winSizeX, winSizeY = Spring.GetWindowGeometry()
+			usedSizeMultiplier = (0.5 + ((winSizeX*winSizeY)/5000000)) * sizeMultiplier
+			checkedWindowSize = true
+		end
+	else
+		checkedWindowSize = false
+	end
+	
 	--adjust transparency when clicked
-	if ( clickTimestamp ~= nil or forceHideWindow ) then
+	if ( clickTimestamp ~= nil or forceHideWindow or autoFadeTimestamp) then
 		local factor = 0.0
 		if ( clickTimestamp ) then		
-			factor = ( 1.0 - ( now - clickTimestamp ) / fadeTime )
+			factor = ( 1.0 - ( now - clickTimestamp ) / fadeTime )*startAlpha
+		elseif autoFadeTimestamp then
+			factor = ( 1.0 - ( now - autoFadeTimestamp ) / autoFadeTime )*startAlpha
 		end
-		factor = max( factor, 0.3 )
+		factor = max( factor, fadeToAlpha )
 		colorWnd[4] = colorWnd[4] * factor
 		text[4] = text[4] * factor
 		text2[4] = text2[4] * factor
@@ -195,8 +232,9 @@ function drawPause()
 	local imgWidthHalf = imgWidth * 0.5
 	
 	--draw window
+	glTranslate(-winSizeX*(usedSizeMultiplier-1)/2,  -winSizeY*(usedSizeMultiplier-1)/2, 0)
+	glScale(usedSizeMultiplier,usedSizeMultiplier,1)
 	glPushMatrix()
-	
 	if ( diffPauseTime <= slideTime ) then
 		local group1XOffset = 0
 		--we are sliding
@@ -252,6 +290,8 @@ function drawPause()
 			--sliding out
 			glTranslate( 0, ( yCenter + imgWidthHalf ) * ( diffPauseTime / slideTime ), 0)
 		end
+	elseif autoFade and not autoFadeTimestamp then
+		autoFadeTimestamp = osClock()
 	end
 	
 	glTexRect( xCut - imgWidthHalf, yCenter + imgWidthHalf, xCut + imgWidthHalf, yCenter - imgWidthHalf, 0.0, 0.0, imgTexCoordX, imgTexCoordY )
@@ -270,12 +310,12 @@ function updateWindowCoords()
 	wndX2 = screenCenterX + boxWidth
 	wndY2 = screenCenterY - boxHeight
 
-	textX = wndX1 + ( wndX2 - wndX1 ) * 0.36
-	textY = wndY2 + ( wndY1 - wndY2 ) * 0.53
-	lineOffset = ( wndY1 - wndY2 ) * 0.3
+	textX = wndX1 + ( wndX2 - wndX1 ) * 0.34
+	textY = wndY2 + ( wndY1 - wndY2 ) * 0.545
+	lineOffset = ( wndY1 - wndY2 ) * 0.32
 	
 	yCenter = wndY2 + ( wndY1 - wndY2 ) * 0.5
-	xCut = wndX1 + ( wndX2 - wndX1 ) * 0.19
+	xCut = wndX1 + ( wndX2 - wndX1 ) * 0.165
 end
 
 function widget:ViewResize(viewSizeX, viewSizeY)
@@ -284,6 +324,7 @@ function widget:ViewResize(viewSizeX, viewSizeY)
 
 --Commons
 function ResetGl() 
+	glScale(1,1,1)
 	glColor( { 1.0, 1.0, 1.0, 1.0 } )
 	glLineWidth( 1.0 )
 	glDepthTest(false)
@@ -307,3 +348,24 @@ function printDebug( value )
 	end
 end
 	
+
+function widget:GetConfigData(data)
+    savedTable = {}
+    savedTable.autoFade = autoFade
+    return savedTable
+end
+
+function widget:SetConfigData(data)
+    if data.autoFade ~= nil 	then  autoFade	= data.autoFade end
+end
+
+function widget:TextCommand(command)
+    if (string.find(command, "pausescreen_autofade") == 1  and  string.len(command) == 20) then 
+		autoFade = not autoFade
+		if autoFade then
+			Spring.Echo("Pause screen:  Autofade on")
+		else
+			Spring.Echo("Pause screen:  Autofade off")
+		end
+	end
+end

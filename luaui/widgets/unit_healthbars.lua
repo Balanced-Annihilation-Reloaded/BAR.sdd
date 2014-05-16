@@ -1067,7 +1067,9 @@ do
       if ((cy-smoothheight)^2 < maxFeatureDistance) then
         drawFeatureInfo = true
       end
-      local wx, wy, wz, dx, dy, dz, dist, featureInfo, resurrect, reclaimLeft
+      local wx, wy, wz, dx, dy, dz, dist, featureInfo, 
+      local resurrect = 0
+      local reclaimLeft = 1
       
       if drawFeatureInfo or (featureResurrectVisibility or featureReclaimVisibility) then
         for i=1,#visibleFeatures do

@@ -418,10 +418,11 @@ function init()
              }
            }else if (gl_Vertex.w>1) {   // added just to smooth out an unavaidable overlap
              if (progress < 0.92) {
-               gl_FrontColor = gl_Color;
+               gl_FrontColor = float4(gl_Color[0]+(barColor.r/4),gl_Color[1]+(barColor.g/4),gl_Color[2]+(barColor.b/4),gl_Color[3]);
              }else{
-               gl_FrontColor = float4(gl_Color[0],gl_Color[1],gl_Color[2],((0.08-(progress-0.92))*12.5)*gl_Color[3]);
+               gl_FrontColor = float4(gl_Color[0]+(barColor.r/4),gl_Color[1]+(barColor.g/4),gl_Color[2]+(barColor.b/4),((0.08-(progress-0.92))*12.5)*gl_Color[3]);
              }
+             
              if (gl_Vertex.z>0.0) {
                gl_Vertex.x -= (1.0-progress)*gl_Vertex.z;
                gl_Vertex.z  = 0.0;
@@ -611,9 +612,9 @@ do
 
   local maxBars = 20
   local bars    = {}
-  local barHeightL = barHeight + 1.4  + (OPTIONS[currentOption].showOutline and outlineSize or 0)
+  local barHeightL = barHeight + 1.5  + (OPTIONS[currentOption].showOutline and outlineSize or 0)
 
-  local barStart   = -(barWidth + 1.4) - (OPTIONS[currentOption].showOutline and outlineSize or 0)
+  local barStart   = -(barWidth + 1.5) - (OPTIONS[currentOption].showOutline and outlineSize or 0)
   local fBarHeightL = featureBarHeight + 1  + (OPTIONS[currentOption].showOutline and outlineSize*2 or 0)
   local fBarStart   = -(featureBarWidth + 1) - (OPTIONS[currentOption].showOutline and outlineSize or 0)
 
@@ -652,7 +653,7 @@ do
   end
 
   function DrawBarsFeature(fullText)
-    local yoffset = 1.4
+    local yoffset = 0
     for i=1,barsN do
       local barInfo = bars[i]
       DrawFeatureBar(yoffset,barInfo.progress,barInfo.color)

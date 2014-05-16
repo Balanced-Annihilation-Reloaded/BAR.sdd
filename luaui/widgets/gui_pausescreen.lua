@@ -52,12 +52,12 @@ local osClock				= os.clock
 
 local sizeMultiplier     = 1
 local maxAlpha           = 0.66
-local boxWidth           = 183
+local boxWidth           = 200
 local boxHeight          = 35
-local slideTime          = 0.44
+local slideTime          = 0.45
 local fadeTime           = 0.22
-local fadeToAlpha        = 0.07
-local fadeToTextAlpha    = 0.09
+local fadeToAlpha        = 0.
+local fadeToTextAlpha    = 0.22
 local wndBorderSize      = 4
 local imgWidth           = 92     --drawing size of the image (independent from the real image pixel size)
 local imgTexCoordX       = 0.625  --image texture coordinate X -- textures image's dimension is a power of 2 (i use 0.625 cause my image has a width of 256, but region to use is only 160 pixel -> 160 / 256 = 0.625 )
@@ -66,10 +66,9 @@ local fontSizeHeadline   = 24
 local fontSizeAddon      = 15
 local windowIconPath     = "LuaUI/Images/SpringIconmkII.png"
 local fontPath           = "LuaUI/Fonts/MicrogrammaDBold.ttf"
-local windowClosePath    = "LuaUI/Images/closex_32.png"
 local imgCloseWidth      = 0
 local autoFade           = true
-local autoFadeTime       = 1.25
+local autoFadeTime       = 1.15
 local forceHideWindow    = false
 --Color config in drawPause function
 	
@@ -269,19 +268,16 @@ function drawPause()
 		glColor( mouseOverColor )
 	end
 	
-	glTexture( ":n:" .. windowClosePath )
-	glTexRect( wndX2 - imgCloseWidth - wndBorderSize, wndY1 - imgCloseWidth - wndBorderSize, wndX2 - wndBorderSize, wndY1 - wndBorderSize, 0.0, 0.0, 1.0, 1.0 )
-	
 	--draw text
 	myFont:Begin()
 	myFont:SetOutlineColor( outline )
 
 	myFont:SetTextColor( text )
-	myFont:Print( "GAME PAUSED", textX, textY, fontSizeHeadline, "O" )
+	myFont:Print( "GAME  PAUSED", textX, textY, fontSizeHeadline, "O" )
 		
-	myFont:SetOutlineColor( outline2 )
-	myFont:SetTextColor( text2 )
-	myFont:Print( "Press 'Pause' to continue.", textX, textY - lineOffset, fontSizeAddon, "O" )
+	--myFont:SetOutlineColor( outline2 )
+	--myFont:SetTextColor( text2 )
+	--myFont:Print( "Press 'Pause' to continue.", textX, textY - lineOffset, fontSizeAddon, "O" )
 	
 	myFont:End()
 	
@@ -322,7 +318,9 @@ function updateWindowCoords()
 	wndY2 = screenCenterY - boxHeight
 
 	textX = wndX1 + ( wndX2 - wndX1 ) * 0.33
-	textY = wndY2 + ( wndY1 - wndY2 ) * 0.56
+	textY = wndY2 + ( wndY1 - wndY2 ) * 0.4
+	--textX = wndX1 + ( wndX2 - wndX1 ) * 0.33
+	--textY = wndY2 + ( wndY1 - wndY2 ) * 0.56
 	lineOffset = ( wndY1 - wndY2 ) * 0.32
 	
 	yCenter = wndY2 + ( wndY1 - wndY2 ) * 0.5

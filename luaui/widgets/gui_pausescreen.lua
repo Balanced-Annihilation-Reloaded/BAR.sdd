@@ -51,17 +51,17 @@ local osClock				= os.clock
 -- CONFIGURATION
 
 local sizeMultiplier     = 1
-local startAlpha         = 0.88
-local boxWidth           = 185
+local maxAlpha           = 0.66
+local boxWidth           = 183
 local boxHeight          = 35
-local slideTime          = 0.18
+local slideTime          = 0.44
 local fadeTime           = 0.22
 local fadeToAlpha        = 0.07
 local fadeToTextAlpha    = 0.09
 local wndBorderSize      = 4
-local imgWidth           = 100 --drawing size of the image (independent from the real image pixel size)
+local imgWidth           = 92     --drawing size of the image (independent from the real image pixel size)
 local imgTexCoordX       = 0.625  --image texture coordinate X -- textures image's dimension is a power of 2 (i use 0.625 cause my image has a width of 256, but region to use is only 160 pixel -> 160 / 256 = 0.625 )
-local imgTexCoordY       = 0.625	--image texture coordinate Y -- enter values other than 1.0 to use just a region of the texture image
+local imgTexCoordY       = 0.62   --image texture coordinate Y -- enter values other than 1.0 to use just a region of the texture image
 local fontSizeHeadline   = 24
 local fontSizeAddon      = 15
 local windowIconPath     = "LuaUI/Images/SpringIconmkII.png"
@@ -69,7 +69,7 @@ local fontPath           = "LuaUI/Fonts/MicrogrammaDBold.ttf"
 local windowClosePath    = "LuaUI/Images/closex_32.png"
 local imgCloseWidth      = 0
 local autoFade           = true
-local autoFadeTime       = 1.2
+local autoFadeTime       = 1.25
 local forceHideWindow    = false
 --Color config in drawPause function
 	
@@ -194,14 +194,14 @@ function drawPause()
 	local now = osClock()
 	local diffPauseTime = ( now - pauseTimestamp)
 
-	local text           = { 1.0, 1.0, 1.0, 1.0*startAlpha }
-	local text2          = { 0.9, 0.9, 0.9, 1.0*startAlpha }
-	local outline        = { 0.0, 0.0, 0.0, 1.0*startAlpha }	
-	local outline2       = { 0.4, 0.4, 0.4, 0.5*startAlpha }	
-	local colorWnd       = { 0.0, 0.0, 0.0, 0.6*startAlpha }
-	local colorWnd2      = { 0.5, 0.5, 0.5, 0.6*startAlpha }
-	local iconColor      = { 1.0, 1.0, 1.0, 1.0*startAlpha }
-	local mouseOverColor = { 1.0, 1.0, 0.0, 1.0*startAlpha }
+	local text           = { 1.0, 1.0, 1.0, 1.0*maxAlpha }
+	local text2          = { 0.9, 0.9, 0.9, 1.0*maxAlpha }
+	local outline        = { 0.0, 0.0, 0.0, 1.0*maxAlpha }	
+	local outline2       = { 0.4, 0.4, 0.4, 0.5*maxAlpha }	
+	local colorWnd       = { 0.0, 0.0, 0.0, 0.6*maxAlpha }
+	local colorWnd2      = { 0.5, 0.5, 0.5, 0.6*maxAlpha }
+	local iconColor      = { 1.0, 1.0, 1.0, 1.0*maxAlpha }
+	local mouseOverColor = { 1.0, 1.0, 0.0, 1.0*maxAlpha }
 	
 	-- check window size and change scale accordingly
 	if ( diffPauseTime <= slideTime ) then
@@ -215,12 +215,19 @@ function drawPause()
 	end
 	
 	--adjust transparency when clicked
-	if ( clickTimestamp ~= nil or forceHideWindow or autoFadeTimestamp) then
+	if ( clickTimestamp ~= nil or forceHideWindow or autoFadeTimestamp or  diffPauseTime <= slideTime ) then
 		local factor = 0.0
-		if ( clickTimestamp ) then		
-			factor = ( 1.0 - ( now - clickTimestamp ) / fadeTime )*startAlpha
-		elseif autoFadeTimestamp then
-			factor = ( 1.0 - ( now - autoFadeTimestamp ) / autoFadeTime )*startAlpha
+		if ( clickTimestamp and clickTimestamp + fadeTime > now) then		
+			factor = ( 1.0 - ( now - clickTimestamp ) / fadeTime )*maxAlpha
+		elseif autoFadeTimestamp and autoFadeTimestamp + autoFadeTime > now then
+			factor = ( 1.0 - ( now - autoFadeTimestamp ) / autoFadeTime )*maxAlpha
+		elseif not paused and pauseTimestamp and pauseTimestamp + slideTime > now then 
+			factor = ( ( now - pauseTimestamp ) / slideTime ) * 0.66
+		elseif paused and pauseTimestamp and pauseTimestamp + slideTime > now then
+			factor = ( 0.5 + ( now - pauseTimestamp ) / (slideTime*1.5))
+		end
+		if factor > maxAlpha then 
+			factor = maxAlpha 
 		end
 		factor = max( factor, fadeToAlpha )
 		colorWnd[4] = colorWnd[4] * factor
@@ -228,8 +235,11 @@ function drawPause()
 		text2[4] = text2[4] * factor
 		outline[4] = (outline[4] * factor) + (fadeToTextAlpha/2.25)
 		outline2[4] = outline2[4] * factor
-		iconColor[4] = iconColor[4] * factor
-		mouseOverColor[4] = mouseOverColor[4] * factor			
+		iconColor[4] = iconColor[4] * (factor - (fadeToAlpha/4))
+		iconColor[1] = iconColor[1] * (factor + 0.44)
+		iconColor[2] = iconColor[2] * (factor + 0.44)
+		iconColor[3] = iconColor[3] * (factor + 0.44)
+		mouseOverColor[4] = mouseOverColor[4] * factor	
 	end
 	local imgWidthHalf = imgWidth * 0.5
 	
@@ -311,12 +321,12 @@ function updateWindowCoords()
 	wndX2 = screenCenterX + boxWidth
 	wndY2 = screenCenterY - boxHeight
 
-	textX = wndX1 + ( wndX2 - wndX1 ) * 0.34
-	textY = wndY2 + ( wndY1 - wndY2 ) * 0.545
+	textX = wndX1 + ( wndX2 - wndX1 ) * 0.33
+	textY = wndY2 + ( wndY1 - wndY2 ) * 0.56
 	lineOffset = ( wndY1 - wndY2 ) * 0.32
 	
 	yCenter = wndY2 + ( wndY1 - wndY2 ) * 0.5
-	xCut = wndX1 + ( wndX2 - wndX1 ) * 0.165
+	xCut = wndX1 + ( wndX2 - wndX1 ) * (imgWidth * 0.00165)
 end
 
 function widget:ViewResize(viewSizeX, viewSizeY)

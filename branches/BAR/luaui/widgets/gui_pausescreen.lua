@@ -1,11 +1,11 @@
 include("keysym.h.lua")
-local versionNumber = "1.30"
+local versionNumber = "1.31"
 
 function widget:GetInfo()
 	return {
 		name      = "Pause Screen",
 		desc      = "[v" .. string.format("%s", versionNumber ) .. "] Displays pause screen. Options: /pausescreen_autofade",
-		author    = "very_bad_soldier (enhanced: Floris)",
+		author    = "very_bad_soldier (enhanced by: Floris)",
 		date      = "2009.08.16",
 		license   = "GNU GPL v2",
 		layer     = 0,
@@ -50,14 +50,14 @@ local osClock				= os.clock
 
 -- CONFIGURATION
 
-local debug              = false
 local sizeMultiplier     = 1
 local startAlpha         = 0.88
 local boxWidth           = 185
 local boxHeight          = 35
 local slideTime          = 0.18
 local fadeTime           = 0.22
-local fadeToAlpha        = 0.1
+local fadeToAlpha        = 0.07
+local fadeToTextAlpha    = 0.09
 local wndBorderSize      = 4
 local imgWidth           = 100 --drawing size of the image (independent from the real image pixel size)
 local imgTexCoordX       = 0.625  --image texture coordinate X -- textures image's dimension is a power of 2 (i use 0.625 cause my image has a width of 256, but region to use is only 160 pixel -> 160 / 256 = 0.625 )
@@ -69,7 +69,7 @@ local fontPath           = "LuaUI/Fonts/MicrogrammaDBold.ttf"
 local windowClosePath    = "LuaUI/Images/closex_32.png"
 local imgCloseWidth      = 0
 local autoFade           = true
-local autoFadeTime       = 2
+local autoFadeTime       = 1.2
 local forceHideWindow    = false
 --Color config in drawPause function
 	
@@ -194,12 +194,13 @@ function drawPause()
 	local now = osClock()
 	local diffPauseTime = ( now - pauseTimestamp)
 
-	local text =  { 1.0, 1.0, 1.0, 1.0*startAlpha }
-	local text2 =  { 0.9, 0.9, 0.9, 1.0*startAlpha }
-	local outline =  { 0.4, 0.4, 0.4, 1.0*startAlpha }	
-	local colorWnd = { 0.0, 0.0, 0.0, 0.6*startAlpha }
-	local colorWnd2 = { 0.5, 0.5, 0.5, 0.6*startAlpha }
-	local iconColor = { 1.0, 1.0, 1.0, 1.0*startAlpha }
+	local text           = { 1.0, 1.0, 1.0, 1.0*startAlpha }
+	local text2          = { 0.9, 0.9, 0.9, 1.0*startAlpha }
+	local outline        = { 0.0, 0.0, 0.0, 1.0*startAlpha }	
+	local outline2       = { 0.4, 0.4, 0.4, 0.5*startAlpha }	
+	local colorWnd       = { 0.0, 0.0, 0.0, 0.6*startAlpha }
+	local colorWnd2      = { 0.5, 0.5, 0.5, 0.6*startAlpha }
+	local iconColor      = { 1.0, 1.0, 1.0, 1.0*startAlpha }
 	local mouseOverColor = { 1.0, 1.0, 0.0, 1.0*startAlpha }
 	
 	-- check window size and change scale accordingly
@@ -223,9 +224,10 @@ function drawPause()
 		end
 		factor = max( factor, fadeToAlpha )
 		colorWnd[4] = colorWnd[4] * factor
-		text[4] = text[4] * factor
+		text[4] = (text[4]  * factor) + fadeToTextAlpha
 		text2[4] = text2[4] * factor
-		outline[4] = outline[4] * factor
+		outline[4] = (outline[4] * factor) + (fadeToTextAlpha/2.25)
+		outline2[4] = outline2[4] * factor
 		iconColor[4] = iconColor[4] * factor
 		mouseOverColor[4] = mouseOverColor[4] * factor			
 	end
@@ -236,16 +238,14 @@ function drawPause()
 	glScale(usedSizeMultiplier,usedSizeMultiplier,1)
 	glPushMatrix()
 	if ( diffPauseTime <= slideTime ) then
-		local group1XOffset = 0
 		--we are sliding
 		if ( paused ) then
 			--sliding in
-			group1XOffset = ( screenx - wndX1 ) * ( 1.0 - ( diffPauseTime / slideTime ) )
+			glTranslate( (( screenx - wndX1 ) / usedSizeMultiplier) * ( 1.0 - ( diffPauseTime / slideTime ) ), 0, 0)
 		else
 			--sliding out
-			group1XOffset = ( screenx - wndX1 ) * ( ( diffPauseTime / slideTime ) )
+			glTranslate( (( screenx - wndX1 ) / usedSizeMultiplier) * ( ( diffPauseTime / slideTime ) ), 0, 0)
 		end
-		glTranslate( group1XOffset, 0, 0)
 	end
 	
 	glColor( colorWnd )
@@ -269,6 +269,7 @@ function drawPause()
 	myFont:SetTextColor( text )
 	myFont:Print( "GAME PAUSED", textX, textY, fontSizeHeadline, "O" )
 		
+	myFont:SetOutlineColor( outline2 )
 	myFont:SetTextColor( text2 )
 	myFont:Print( "Press 'Pause' to continue.", textX, textY - lineOffset, fontSizeAddon, "O" )
 	
@@ -285,10 +286,10 @@ function drawPause()
 		--we are sliding
 		if ( paused ) then
 			--sliding in
-			glTranslate( 0, ( ( yCenter + imgWidthHalf ) * ( 1.0 - ( diffPauseTime / slideTime ) ) ), 0)
+			glTranslate( 0,  (( yCenter + imgWidthHalf ) / usedSizeMultiplier) * ( 1 - ( diffPauseTime / slideTime ) ), 0)
 		else
 			--sliding out
-			glTranslate( 0, ( yCenter + imgWidthHalf ) * ( diffPauseTime / slideTime ), 0)
+			glTranslate( 0, ( (yCenter + imgWidthHalf ) / usedSizeMultiplier) * ( diffPauseTime / slideTime ), 0)
 		end
 	elseif autoFade and not autoFadeTimestamp then
 		autoFadeTimestamp = osClock()
@@ -330,24 +331,6 @@ function ResetGl()
 	glDepthTest(false)
 	glTexture(false)
 end
-
-
-function printDebug( value )
-	if ( debug ) then
-		if ( type( value ) == "boolean" ) then
-			if ( value == true ) then spEcho( "true" )
-				else spEcho("false") end
-		elseif ( type(value ) == "table" ) then
-			spEcho("Dumping table:")
-			for key,val in pairs(value) do 
-				spEcho(key,val) 
-			end
-		else
-			spEcho( value )
-		end
-	end
-end
-	
 
 function widget:GetConfigData(data)
     savedTable = {}

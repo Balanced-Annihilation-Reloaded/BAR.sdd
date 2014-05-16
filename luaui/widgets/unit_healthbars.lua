@@ -57,6 +57,9 @@ local drawFeatureHealth         = true
 local featureTitlesAlpha        = featureBarAlpha * titlesAlpha/barAlpha
 local featureHpThreshold        = 0.85
 
+local featureResurrectVisibility= true    -- draw feature bars for resurrected features on same distance as normal unit bars
+local featureReclaimVisibility  = false   -- draw feature bars for reclaimed features on same distance as normal unit bars
+
 local infoDistance              = 800000
 local maxFeatureInfoDistance    = 300000   --max squared distance at which text it drawn for features 
 local maxFeatureDistance        = 600000   --max squared distance at which any info is drawn for features 
@@ -127,8 +130,8 @@ local barColors = {
   stock   = { 0.50,0.50,0.50,barValueAlpha },
   reload  = { 0.00,0.60,0.60,barValueAlpha },
   shield  = { 0.20,0.60,0.60,barValueAlpha },
-  resurrect = { 1.00,0.50,0.00,featureBarAlpha },
-  reclaim   = { 0.75,0.75,0.75,featureBarAlpha },
+  resurrect = { 1.00,0.50,0.00,barValueAlpha },
+  reclaim   = { 0.75,0.75,0.75,barValueAlpha },
 }
 
 --------------------------------------------------------------------------------
@@ -416,11 +419,11 @@ function init()
                gl_Vertex.x -= (1.0-progress)*gl_Vertex.z;
                gl_Vertex.z  = 0.0;
              }
-           }else if (gl_Vertex.w>1) {   // added just to smooth out an unavaidable overlap
-             if (progress < 0.92) {
-               gl_FrontColor = float4(gl_Color[0]+(barColor.r/4),gl_Color[1]+(barColor.g/4),gl_Color[2]+(barColor.b/4),gl_Color[3]);
-             }else{
+           }else if (gl_Vertex.w>1) {
+             if (progress >= 0.92) {		// smooth out because else the bar wil overlap and look ugly at the end point
                gl_FrontColor = float4(gl_Color[0]+(barColor.r/4),gl_Color[1]+(barColor.g/4),gl_Color[2]+(barColor.b/4),((0.08-(progress-0.92))*12.5)*gl_Color[3]);
+             }else{
+               gl_FrontColor = float4(gl_Color[0]+(barColor.r/4),gl_Color[1]+(barColor.g/4),gl_Color[2]+(barColor.b/4),gl_Color[3]);
              }
              
              if (gl_Vertex.z>0.0) {
@@ -615,8 +618,8 @@ do
   local barHeightL = barHeight + 1.5  + (OPTIONS[currentOption].showOutline and outlineSize or 0)
 
   local barStart   = -(barWidth + 1.5) - (OPTIONS[currentOption].showOutline and outlineSize or 0)
-  local fBarHeightL = featureBarHeight + 1  + (OPTIONS[currentOption].showOutline and outlineSize*2 or 0)
-  local fBarStart   = -(featureBarWidth + 1) - (OPTIONS[currentOption].showOutline and outlineSize or 0)
+  local fBarHeightL = featureBarHeight + 1.5  + (OPTIONS[currentOption].showOutline and outlineSize or 0)
+  local fBarStart   = -(featureBarWidth + 1.5) - (OPTIONS[currentOption].showOutline and outlineSize or 0)
 
   for i=1,maxBars do bars[i] = {} end
 
@@ -875,8 +878,8 @@ do
   local glPushMatrix    = gl.PushMatrix
   local glPopMatrix     = gl.PopMatrix
   local glBillboard     = gl.Billboard
-  local GetFeatureHealth     = Spring.GetFeatureHealth
   local GetFeatureResources  = Spring.GetFeatureResources
+  local GetFeatureHealth     = Spring.GetFeatureHealth
 
   local featureDefID
   local health,maxHealth,resurrect,reclaimLeft
@@ -912,9 +915,8 @@ do
     --// BARS //-----------------------------------------------------------------------------
       --// HEALTH
       if (hp<featureHpThreshold)and(drawFeatureHealth) then
-        local hpcolor = {GetColor(fhpcolormap,hp)}
-        
-        AddBar("health",hp,nil,(floor(hp*100) <= drawFeatureBarPercentage and floor(hp*100)..'%') or '',hpcolor)
+        local color = {GetColor(fhpcolormap,hp)}
+        AddBar("health",hp,nil,(floor(hp*100) <= drawFeatureBarPercentage and floor(hp*100)..'%') or '',color)
       end
 
       --// RESURRECT
@@ -1021,6 +1023,8 @@ do
   local GetSmoothMeshHeight  = Spring.GetSmoothMeshHeight 
   local IsGUIHidden          = Spring.IsGUIHidden 
   local glDepthMask          = gl.DepthMask
+  local GetFeatureHealth     = Spring.GetFeatureHealth
+  local GetFeatureResources  = Spring.GetFeatureResources
 
   function widget:DrawWorld()
 
@@ -1059,23 +1063,28 @@ do
       end
 
       --// draw bars for features
+      local drawFeatureInfo = false
       if ((cy-smoothheight)^2 < maxFeatureDistance) then
-         
-         local wx, wy, wz, dx, dy, dz, dist
-         local featureInfo
-         for i=1,#visibleFeatures do
-           featureInfo = visibleFeatures[i]
-           wx, wy, wz = featureInfo[1],featureInfo[2],featureInfo[3]
-           dx, dy, dz = wx-cx, wy-cy, wz-cz
-           dist = dx*dx + dy*dy + dz*dz
-           if (dist < maxFeatureDistance) then
-             if (dist < maxFeatureInfoDistance) then
-               DrawFeatureInfos(featureInfo[4], featureInfo[5], true, wx,wy,wz)
-             else
-               DrawFeatureInfos(featureInfo[4], featureInfo[5], false, wx,wy,wz)
-             end
-           end
-         end
+        drawFeatureInfo = true
+      end
+      local wx, wy, wz, dx, dy, dz, dist
+      local featureInfo
+      for i=1,#visibleFeatures do
+        featureInfo = visibleFeatures[i]
+        local _,_,resurrect = GetFeatureHealth(featureInfo[4])
+        local _,_,_,_,reclaimLeft = GetFeatureResources(featureInfo[4])
+        if drawFeatureInfo or (featureResurrectVisibility and resurrect > 0) or (featureReclaimVisibility and reclaimLeft < 1) then
+          wx, wy, wz = featureInfo[1],featureInfo[2],featureInfo[3]
+          dx, dy, dz = wx-cx, wy-cy, wz-cz
+          dist = dx*dx + dy*dy + dz*dz
+          if (dist < maxFeatureDistance or ((resurrect > 0 or reclaimLeft < 1) and dist <= maxUnitDistance)) then
+            if (dist < maxFeatureInfoDistance) then
+              DrawFeatureInfos(featureInfo[4], featureInfo[5], true, wx,wy,wz)
+            else
+              DrawFeatureInfos(featureInfo[4], featureInfo[5], false, wx,wy,wz)
+            end
+          end
+        end
       end
       
       if (barShader) then gl.UseShader(0) end

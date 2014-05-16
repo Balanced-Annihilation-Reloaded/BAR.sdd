@@ -1067,9 +1067,7 @@ do
       if ((cy-smoothheight)^2 < maxFeatureDistance) then
         drawFeatureInfo = true
       end
-      local wx, wy, wz, dx, dy, dz, dist, featureInfo
-      local resurrect = 0
-      local reclaimLeft = 1
+      local wx, wy, wz, dx, dy, dz, dist, featureInfo, resurrect, reclaimLeft
       
       if drawFeatureInfo or (featureResurrectVisibility or featureReclaimVisibility) then
         for i=1,#visibleFeatures do
@@ -1080,11 +1078,11 @@ do
           if featureReclaimVisibility then
             _,_,_,_,reclaimLeft = GetFeatureResources(featureInfo[4])
           end
-          if drawFeatureInfo or (featureResurrectVisibility and resurrect > 0) or (featureReclaimVisibility and reclaimLeft < 1) then
+          if drawFeatureInfo or (featureResurrectVisibility and resurrect and resurrect > 0) or (featureReclaimVisibility and reclaimLeft and reclaimLeft < 1) then
             wx, wy, wz = featureInfo[1],featureInfo[2],featureInfo[3]
             dx, dy, dz = wx-cx, wy-cy, wz-cz
             dist = dx*dx + dy*dy + dz*dz
-            if (dist < maxFeatureDistance or (((featureResurrectVisibility and resurrect > 0) or (featureReclaimVisibility and reclaimLeft < 1)) and dist <= maxUnitDistance)) then
+            if (dist < maxFeatureDistance or (((featureResurrectVisibility and resurrect and resurrect > 0) or (featureReclaimVisibility and reclaimLeft and reclaimLeft < 1)) and dist <= maxUnitDistance)) then
               if (dist < maxFeatureInfoDistance) then
                 DrawFeatureInfos(featureInfo[4], featureInfo[5], true, wx,wy,wz)
               else

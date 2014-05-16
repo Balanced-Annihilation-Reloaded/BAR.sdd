@@ -58,7 +58,7 @@ local featureTitlesAlpha        = featureBarAlpha * titlesAlpha/barAlpha
 local featureHpThreshold        = 0.85
 
 local featureResurrectVisibility= true    -- draw feature bars for resurrected features on same distance as normal unit bars
-local featureReclaimVisibility  = false   -- draw feature bars for reclaimed features on same distance as normal unit bars
+local featureReclaimVisibility  = true   -- draw feature bars for reclaimed features on same distance as normal unit bars
 
 local infoDistance              = 800000
 local maxFeatureInfoDistance    = 300000   --max squared distance at which text it drawn for features 
@@ -1067,21 +1067,27 @@ do
       if ((cy-smoothheight)^2 < maxFeatureDistance) then
         drawFeatureInfo = true
       end
-      local wx, wy, wz, dx, dy, dz, dist
-      local featureInfo
-      for i=1,#visibleFeatures do
-        featureInfo = visibleFeatures[i]
-        local _,_,resurrect = GetFeatureHealth(featureInfo[4])
-        local _,_,_,_,reclaimLeft = GetFeatureResources(featureInfo[4])
-        if drawFeatureInfo or (featureResurrectVisibility and resurrect > 0) or (featureReclaimVisibility and reclaimLeft < 1) then
-          wx, wy, wz = featureInfo[1],featureInfo[2],featureInfo[3]
-          dx, dy, dz = wx-cx, wy-cy, wz-cz
-          dist = dx*dx + dy*dy + dz*dz
-          if (dist < maxFeatureDistance or ((resurrect > 0 or reclaimLeft < 1) and dist <= maxUnitDistance)) then
-            if (dist < maxFeatureInfoDistance) then
-              DrawFeatureInfos(featureInfo[4], featureInfo[5], true, wx,wy,wz)
-            else
-              DrawFeatureInfos(featureInfo[4], featureInfo[5], false, wx,wy,wz)
+      local wx, wy, wz, dx, dy, dz, dist, featureInfo, resurrect, reclaimLeft
+      
+      if drawFeatureInfo or (featureResurrectVisibility or featureReclaimVisibility) then
+        for i=1,#visibleFeatures do
+          featureInfo = visibleFeatures[i]
+          if featureResurrectVisibility then
+            _,_,resurrect = GetFeatureHealth(featureInfo[4])
+          end
+          if featureReclaimVisibility then
+            _,_,_,_,reclaimLeft = GetFeatureResources(featureInfo[4])
+          end
+          if drawFeatureInfo or (featureResurrectVisibility and resurrect > 0) or (featureReclaimVisibility and reclaimLeft < 1) then
+            wx, wy, wz = featureInfo[1],featureInfo[2],featureInfo[3]
+            dx, dy, dz = wx-cx, wy-cy, wz-cz
+            dist = dx*dx + dy*dy + dz*dz
+            if (dist < maxFeatureDistance or (((featureResurrectVisibility and resurrect > 0) or (featureReclaimVisibility and reclaimLeft < 1)) and dist <= maxUnitDistance)) then
+              if (dist < maxFeatureInfoDistance) then
+                DrawFeatureInfos(featureInfo[4], featureInfo[5], true, wx,wy,wz)
+              else
+                DrawFeatureInfos(featureInfo[4], featureInfo[5], false, wx,wy,wz)
+              end
             end
           end
         end

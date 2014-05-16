@@ -126,12 +126,12 @@ local barColors = {
   emp_p   = { 0.40,0.40,0.80,barValueAlpha },
   emp_b   = { 0.60,0.60,0.90,barValueAlpha },
   capture = { 1.00,0.50,0.00,barValueAlpha },
-  build   = { 0.75,0.75,0.75,barValueAlpha },
+  build   = { 0.75,0.75,0.75,barValueAlpha*0.85 },
   stock   = { 0.50,0.50,0.50,barValueAlpha },
-  reload  = { 0.00,0.60,0.60,barValueAlpha },
-  shield  = { 0.20,0.60,0.60,barValueAlpha },
+  reload  = { 0.05,0.60,0.60,barValueAlpha*0.33 },
+  shield  = { 0.20,0.60,0.60,barValueAlpha*0.66 },
   resurrect = { 1.00,0.50,0.00,barValueAlpha },
-  reclaim   = { 0.75,0.75,0.75,barValueAlpha },
+  reclaim   = { 0.75,0.75,0.75,barValueAlpha*0.66 },
 }
 
 --------------------------------------------------------------------------------

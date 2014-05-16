@@ -144,17 +144,16 @@ function isOverWindow(x, y)
 function widget:MousePress(x, y, button)
   if ( not clickTimestamp and not forceHideWindow ) then
 	if ( isOverWindow(x, y)) then	
-		--do not update clickTimestamp any more after right mouse button click
-		if ( not forceHideWindow ) then
-			clickTimestamp = osClock()
-			if autoFadeTimestamp then
-				clickTimestamp = clickTimestamp + (((autoFadeTimestamp - clickTimestamp) / autoFadeTime) * fadeTime)
-			end
-		end
 		
 		--hide window for the rest of the game if it was a right mouse button
 		if ( button == 3 ) then
 			forceHideWindow = true
+			autoFadeTimestamp = osClock()
+		else
+			--do not update clickTimestamp any more after right mouse button click
+			if ( not autoFadeTimestamp ) then
+				clickTimestamp = osClock()
+			end
 		end
 		
 		return true
@@ -256,17 +255,10 @@ function drawPause()
 			glTranslate( (( screenx - wndX1 ) / usedSizeMultiplier) * ( ( diffPauseTime / slideTime ) ), 0, 0)
 		end
 	end
-	
 	glColor( colorWnd )
 	glRect( wndX1, wndY1, wndX2, wndY2 )
 	glColor( colorWnd )
 	glRect( wndX1 - wndBorderSize, wndY1 + wndBorderSize, wndX2 + wndBorderSize, wndY2 - wndBorderSize)
-	
-	--draw close icon
-	glColor(  iconColor )
-	if ( mouseOverClose and clickTimestamp == nil and forceHideWindow == false ) then
-		glColor( mouseOverColor )
-	end
 	
 	--draw text
 	myFont:Begin()
@@ -274,10 +266,6 @@ function drawPause()
 
 	myFont:SetTextColor( text )
 	myFont:Print( "GAME  PAUSED", textX, textY, fontSizeHeadline, "O" )
-		
-	--myFont:SetOutlineColor( outline2 )
-	--myFont:SetTextColor( text2 )
-	--myFont:Print( "Press 'Pause' to continue.", textX, textY - lineOffset, fontSizeAddon, "O" )
 	
 	myFont:End()
 	
@@ -297,7 +285,7 @@ function drawPause()
 			--sliding out
 			glTranslate( 0, ( (yCenter + imgWidthHalf ) / usedSizeMultiplier) * ( diffPauseTime / slideTime ), 0)
 		end
-	elseif autoFade and not autoFadeTimestamp then
+	elseif (autoFade or forceHideWindow) and not autoFadeTimestamp then
 		autoFadeTimestamp = osClock()
 	end
 	
@@ -319,8 +307,6 @@ function updateWindowCoords()
 
 	textX = wndX1 + ( wndX2 - wndX1 ) * 0.33
 	textY = wndY2 + ( wndY1 - wndY2 ) * 0.4
-	--textX = wndX1 + ( wndX2 - wndX1 ) * 0.33
-	--textY = wndY2 + ( wndY1 - wndY2 ) * 0.56
 	lineOffset = ( wndY1 - wndY2 ) * 0.32
 	
 	yCenter = wndY2 + ( wndY1 - wndY2 ) * 0.5

@@ -16,7 +16,7 @@ end
 
 -- /resurrectionhalos_buildings			-- toggles halos for buildings (and non-movable units/factories)
 -- /resurrectionhalos_comsonly			-- toggles halos for coms only
--- /resurrectionhalos_dontfade			-- toggles halos to stay visible forever, or to slowly fade away eventually
+-- /resurrectionhalos_dontfade			-- toggles halos to stay visible forever, or to slowly fade away eventually (coms will stay visible forever if defined in config)
 
 --------------------------------------------------------------------------------
 -- Config
@@ -28,7 +28,8 @@ OPTIONS = {
 	skipBuildings			= true,
 	timeoutTime				= 90,
 	timeoutFadeTime			= 40,
-	dontTimeout				= true,
+	dontTimeout				= false,
+	dontTimeoutComs			= true,
 	onlyForComs				= false,
 	sizeVariation			= 0.11,
 	sizeSpeed				= 0.7,
@@ -107,6 +108,7 @@ function AddHaloUnit(unitID)
 			haloUnits[unitID].sizeUp			= true
 			haloUnits[unitID].opacityAddition	= 0
 			haloUnits[unitID].opacityUp			= true
+			haloUnits[unitID].name				= unitUnitDefs.name
 			
 			haloUnitsCount = haloUnitsCount + 1
 		end
@@ -158,7 +160,7 @@ function widget:DrawWorld()
 					end
 				end
 				local alpha = 1
-				if not OPTIONS.dontTimeout then
+				if not OPTIONS.dontTimeout and (not OPTIONS.dontTimeoutComs or (OPTIONS.dontTimeoutComs and unit.name ~= 'corcom' and unit.name ~= 'armcom')) then
 					alpha = ((((unit.endSecs+OPTIONS.timeoutFadeTime) - gameSecs) / OPTIONS.timeoutTime))
 				end
 				if alpha > 1 then alpha = 1 end

@@ -94,11 +94,14 @@ local mouseOverClose = false
 local checkedWindowSize = false
 local usedSizeMultiplier = 1
 local winSizeX, winSizeY = Spring.GetWindowGeometry()
+local widgetInitTime = osClock()
 
 function widget:Initialize()
 	myFont = glLoadFont( fontPath, fontSizeHeadline )
 	updateWindowCoords()
-	
+	winSizeX, winSizeY = Spring.GetWindowGeometry()
+	usedSizeMultiplier = (0.5 + ((winSizeX*winSizeY)/5000000)) * sizeMultiplier
+	checkedWindowSize = true
 end
 
 function widget:Shutdown()
@@ -122,6 +125,11 @@ function widget:DrawScreen()
 		--new pause
 		clickTimestamp = nil
 		autoFadeTimestamp = nil
+		if widgetInitTime + 2.5 > now then		-- so if you do /luaui reload when paused, it wont re-animate
+			clickTimestamp = nil
+			autoFadeTimestamp = now - autoFadeTime
+			pauseTimestamp = now - (slideTime + autoFadeTime)
+		end
 	end
 
 	lastPause = paused

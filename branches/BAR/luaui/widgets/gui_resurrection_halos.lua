@@ -15,6 +15,7 @@ end
 --------------------------------------------------------------------------------
 
 -- /resurrectionhalos_buildings			-- toggles halos for buildings (and non-movable units/factories)
+-- /resurrectionhalos_comsonly			-- toggles halos for coms only
 
 --------------------------------------------------------------------------------
 -- Config
@@ -26,6 +27,11 @@ OPTIONS = {
 	skipBuildings			= true,
 	timeoutTime				= 90,
 	timeoutFadeTime			= 40,
+	onlyForComs				= false,
+	sizeVariation			= 0.11,
+	sizeSpeed				= 0.7,
+	opacityVariation		= 0.09,
+	--opacitySpeed			= 0.35,
 }
 
 --------------------------------------------------------------------------------
@@ -51,6 +57,9 @@ local spGetSelectedUnitsCount	= Spring.GetSelectedUnitsCount
 local spGetSelectedUnits		= Spring.GetSelectedUnits
 local spGetUnitDefID			= Spring.GetUnitDefID
 local spIsUnitInView 			= Spring.IsUnitInView
+
+local prevGameSecs				= Spring.GetGameSeconds()
+	
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -86,13 +95,19 @@ end
 function AddHaloUnit(unitID)
 	local unitUnitDefs = UnitDefs[spGetUnitDefID(unitID)]
 	if not OPTIONS.skipBuildings or (OPTIONS.skipBuildings and not (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0)) then
-		local ud = UnitDefs[spGetUnitDefID(unitID)]
-		
-		haloUnits[unitID] = {}
-		haloUnits[unitID].unitHeight		= ud.height
-		haloUnits[unitID].endSecs			= Spring.GetGameSeconds() + OPTIONS.timeoutTime
-		
-		haloUnitsCount = haloUnitsCount + 1
+		if not OPTIONS.onlyForComs or (OPTIONS.onlyForComs and (unitUnitDefs.name == 'corcom' or unitUnitDefs.name == 'armcom')) then
+			local ud = UnitDefs[spGetUnitDefID(unitID)]
+			
+			haloUnits[unitID] = {}
+			haloUnits[unitID].unitHeight		= ud.height
+			haloUnits[unitID].endSecs			= Spring.GetGameSeconds() + OPTIONS.timeoutTime
+			haloUnits[unitID].sizeAddition		= 0
+			haloUnits[unitID].sizeUp			= true
+			haloUnits[unitID].opacityAddition	= 0
+			haloUnits[unitID].opacityUp			= true
+			
+			haloUnitsCount = haloUnitsCount + 1
+		end
 	end
 end
 
@@ -110,6 +125,8 @@ end
 function widget:DrawWorld()
 	if spIsGUIHidden() then return end
 	local gameSecs = Spring.GetGameSeconds()
+	local diffGameSecs = gameSecs - prevGameSecs
+	prevGameSecs = gameSecs
 	
 	if haloUnitsCount > 0 then
 		gl.DepthMask(true)
@@ -118,10 +135,33 @@ function widget:DrawWorld()
 		for unitID, unit in pairs(haloUnits) do
 			if spIsUnitInView(unitID) then
 				
+				-- calc addition size
+				if OPTIONS.sizeVariation > 0 then
+					if unit.sizeUp and unit.sizeAddition >= OPTIONS.sizeVariation / 2 then
+						unit.sizeUp = false
+					end
+					if not unit.sizeUp and unit.sizeAddition <= -(OPTIONS.sizeVariation / 2) then
+						unit.sizeUp = true
+					end
+					if unit.sizeUp then
+						unit.sizeAddition = unit.sizeAddition + ((OPTIONS.sizeVariation / 2) * (diffGameSecs / OPTIONS.sizeSpeed))
+						if unit.sizeAddition > (OPTIONS.sizeVariation / 2) then
+							unit.sizeAddition = (OPTIONS.sizeVariation / 2)
+						end
+					else
+						unit.sizeAddition = unit.sizeAddition - ((OPTIONS.sizeVariation / 2) * (diffGameSecs / OPTIONS.sizeSpeed))
+						if unit.sizeAddition < -(OPTIONS.sizeVariation / 2) then
+							unit.sizeAddition = -(OPTIONS.sizeVariation / 2)
+						end
+					end
+				end
 				local alpha = 1
-				alpha = (((unit.endSecs+OPTIONS.timeoutFadeTime) - gameSecs) / OPTIONS.timeoutTime)
+				alpha = ((((unit.endSecs+OPTIONS.timeoutFadeTime) - gameSecs) / OPTIONS.timeoutTime))
 				if alpha > 1 then alpha = 1 end
-				if alpha <= 0 then 
+				if OPTIONS.opacityVariation > 0 then alpha = alpha - (OPTIONS.opacityVariation/2) end
+				local alpha1 = alpha
+				alpha = alpha + (alpha * (unit.sizeAddition))
+				if alpha1 <= 0 then 
 					haloUnits[unitID] = nil
 					haloUnitsCount = haloUnitsCount - 1
 				else
@@ -131,7 +171,7 @@ function widget:DrawWorld()
 					if alpha < 1 then 
 						alpha = 1
 					end
-					local iconsize = unitScale * OPTIONS.haloSize
+					local iconsize = (unitScale * OPTIONS.haloSize) + ((unitScale * OPTIONS.haloSize) * unit.sizeAddition)
 					glDrawFuncAtUnit(unitID, false, DrawIcon, unit.unitHeight+(unitScale/2), 0, iconsize)
 				end
 			end
@@ -154,7 +194,7 @@ end
 
 
 -- for testing: draw halos on selected units
-if 1 == 2 then
+--if 1 == 2 then
 function widget:CommandsChanged()
 	
 	if spGetSelectedUnitsCount() > 0 then
@@ -171,7 +211,7 @@ function widget:CommandsChanged()
 		end
 	end
 end
-end
+--end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -179,15 +219,20 @@ end
 function widget:GetConfigData(data)
     savedTable = {}
     savedTable.skipBuildings	= OPTIONS.skipBuildings
+    savedTable.onlyForComs		= OPTIONS.onlyForComs
     return savedTable
 end
 
 function widget:SetConfigData(data)
     if data.skipBuildings ~= nil 	then  OPTIONS.skipBuildings	= data.skipBuildings end
+    if data.onlyForComs ~= nil	 	then  OPTIONS.onlyForComs	= data.onlyForComs end
 end
 
 function widget:TextCommand(command)
     if (string.find(command, "resurrectionhalos_buildings") == 1  and  string.len(command) == 27) then 
 		OPTIONS.skipBuildings = not OPTIONS.skipBuildings
+	end
+    if (string.find(command, "resurrectionhalos_comsonly") == 1  and  string.len(command) == 26) then 
+		OPTIONS.onlyForComs = not OPTIONS.onlyForComs
 	end
 end

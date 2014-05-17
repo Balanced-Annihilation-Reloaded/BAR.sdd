@@ -12,7 +12,7 @@
 function widget:GetInfo()
   return {
     name      = "HealthBars",
-    desc      = "Gives various informations about units in form of bars. options: /healthbars_style,  /healthbars_percentage",
+    desc      = "Gives various informations about units in form of bars. options: /healthbars_style,  /healthbars_percentage,  /healthbars_glow",
     author    = "jK, (all whistles and bells added by Floris)",
     date      = "2009",
     license   = "GNU GPL, v2 or later",
@@ -28,6 +28,7 @@ end
 -- /healthbars_percentage			-- toggles rendering of the textual percentage beside each bar
 -- /healthbars_compercentage		-- toggles always rendering health precentagees for coms
 -- /healthbars_style				-- toggles different styles
+-- /healthbars_glow					-- toggles a subtle glow to the bar´s value
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -57,12 +58,14 @@ local drawFeatureHealth         = true
 local featureTitlesAlpha        = featureBarAlpha * titlesAlpha/barAlpha
 local featureHpThreshold        = 0.85
 
-local featureResurrectVisibility= true    -- draw feature bars for resurrected features on same distance as normal unit bars
-local featureReclaimVisibility  = true   -- draw feature bars for reclaimed features on same distance as normal unit bars
+local featureResurrectVisibility= true      -- draw feature bars for resurrected features on same distance as normal unit bars
+local featureReclaimVisibility  = true      -- draw feature bars for reclaimed features on same distance as normal unit bars
+
+local addGlow                   = true      -- adds a small subtle glow to the bar´s value
 
 local infoDistance              = 800000
-local maxFeatureInfoDistance    = 300000   --max squared distance at which text it drawn for features 
-local maxFeatureDistance        = 600000   --max squared distance at which any info is drawn for features 
+local maxFeatureInfoDistance    = 300000    --max squared distance at which text it drawn for features 
+local maxFeatureDistance        = 600000    --max squared distance at which any info is drawn for features 
 local maxUnitDistance           = 11000000  --max squared distance at which any info is drawn for units  MUST BE LARGER THAN FOR FEATURES!
 
 local minReloadTime             = 4 --// in seconds
@@ -188,6 +191,7 @@ function drawBarGl()
   end
   if (OPTIONS[currentOption].choppedCorners) then 
     gl.BeginEnd(GL.QUADS,function()
+    
       -- color (value part) mid piece
       gl.Vertex(-barWidth+cs, 0,         0,                 0);
       gl.Vertex(-barWidth,    0,         (barWidth*2)-cs*2, 0);
@@ -208,11 +212,11 @@ function drawBarGl()
       
       -- center background piece
       gl.Color((OPTIONS[currentOption].showOutline and bkOutlineBottom or bkBottom));
-      gl.Vertex(barWidth-cs, 0-heightAddition,         0,                 1);
+      gl.Vertex(barWidth-cs,    0-heightAddition,         0,                 1);
       gl.Vertex(barWidth-cs,    0-heightAddition,         (barWidth*2)-cs*2, 1);
       gl.Color((OPTIONS[currentOption].showOutline and bkOutlineTop or bkTop));
       gl.Vertex(barWidth-cs,    barHeight+heightAddition, (barWidth*2)-cs*2, 1);
-      gl.Vertex(barWidth-cs, barHeight+heightAddition, 0,                 1);
+      gl.Vertex(barWidth-cs,    barHeight+heightAddition, 0,                 1);
       
       if OPTIONS[currentOption].showOutline and OPTIONS[currentOption].showInnerBg then
         cs = choppedCornerSize
@@ -367,6 +371,64 @@ function drawBarGl()
       gl.Vertex(barWidth,barHeight,0,         1);
     end)
   end
+  
+  -- add glow
+  if addGlow then
+    local glowSize = outlineSize*5
+		
+    gl.BeginEnd(GL.QUADS,function()
+      -- color (value part) mid piece
+      gl.Vertex(-barWidth,       (barHeight/2),  0,                   -2);
+      gl.Vertex(-barWidth+cs,    (barHeight/2),  (barWidth*2)-cs*2,   -2);
+      gl.Vertex(-barWidth+cs,    -glowSize,      (barWidth*2)-cs*2,   -4);
+      gl.Vertex(-barWidth,       -glowSize,      0,                   -4);        
+      
+      -- color (value part) mid piece
+      gl.Vertex(-barWidth,       (barHeight/2),      0,                   -2);
+      gl.Vertex(-barWidth+cs,    (barHeight/2),      (barWidth*2)-cs*2,   -2);
+      gl.Vertex(-barWidth+cs,    barHeight+glowSize, (barWidth*2)-cs*2,   -4);
+      gl.Vertex(-barWidth,       barHeight+glowSize, 0,                   -4);
+          
+      
+      -- top left
+      gl.Vertex(-barWidth-glowSize,    barHeight,             0, -4);
+      gl.Vertex(-barWidth,             barHeight,             0, -3);
+      gl.Vertex(-barWidth,             barHeight+glowSize,    0, -4);
+      gl.Vertex(-barWidth-glowSize,    barHeight+glowSize,    0, -4);
+      
+      -- bottom left
+      gl.Vertex(-barWidth-glowSize,    0,         0, -4);
+      gl.Vertex(-barWidth,             0,         0, -3);
+      gl.Vertex(-barWidth,             -glowSize, 0, -4);
+      gl.Vertex(-barWidth-glowSize,    -glowSize, 0, -4);
+      
+      -- mid left
+      gl.Vertex(-barWidth-glowSize,    0,         0, -4);
+      gl.Vertex(-barWidth,             0,         0, -3);
+      gl.Vertex(-barWidth,             barHeight, 0, -3);
+      gl.Vertex(-barWidth-glowSize,    barHeight, 0, -4);
+      
+      
+      -- top right
+      gl.Vertex(-barWidth+cs,          barHeight,          (barWidth*2)-cs*2, -3);
+      gl.Vertex(-barWidth+cs+glowSize, barHeight,          (barWidth*2)-cs*2, -4);
+      gl.Vertex(-barWidth+cs+glowSize, barHeight+glowSize, (barWidth*2)-cs*2, -4);
+      gl.Vertex(-barWidth+cs,          barHeight+glowSize, (barWidth*2)-cs*2, -4);
+      
+      -- bottom right
+      gl.Vertex(-barWidth+cs,          0,         (barWidth*2)-cs*2, -3);
+      gl.Vertex(-barWidth+cs+glowSize, 0,         (barWidth*2)-cs*2, -4);
+      gl.Vertex(-barWidth+cs+glowSize, -glowSize, (barWidth*2)-cs*2, -4);
+      gl.Vertex(-barWidth+cs,          -glowSize, (barWidth*2)-cs*2, -4);
+      
+      -- mid right
+      gl.Vertex(-barWidth+cs,          0,         (barWidth*2)-cs*2, -3);
+      gl.Vertex(-barWidth+cs+glowSize, 0,         (barWidth*2)-cs*2, -4);
+      gl.Vertex(-barWidth+cs+glowSize, barHeight, (barWidth*2)-cs*2, -4);
+      gl.Vertex(-barWidth+cs,          barHeight, (barWidth*2)-cs*2, -3);
+      
+    end)
+  end
 end
 
       
@@ -419,7 +481,35 @@ function init()
                gl_Vertex.x -= (1.0-progress)*gl_Vertex.z;
                gl_Vertex.z  = 0.0;
              }
-           }else if (gl_Vertex.w>1) {
+             
+           }else if (gl_Vertex.w==-2 ) {
+             gl_FrontColor = vec4(barColor.rgb,barColor.a/9);
+             
+             if (gl_Vertex.z>1.0) {
+               gl_Vertex.x += progress*gl_Vertex.z;
+               gl_Vertex.z  = 0.0;
+             }
+             gl_Vertex.w  = 1;
+             
+           }else if (gl_Vertex.w==-3 ) {
+             gl_FrontColor = vec4(barColor.rgb,barColor.a/12.5);
+             
+             if (gl_Vertex.z>1.0) {
+               gl_Vertex.x += progress*gl_Vertex.z;
+               gl_Vertex.z  = 0.0;
+             }
+             gl_Vertex.w  = 1;
+             
+           }else if (gl_Vertex.w==-4 ) {
+             gl_FrontColor = vec4(barColor.rgb,0);
+             
+             if (gl_Vertex.z>1.0) {
+               gl_Vertex.x += progress*gl_Vertex.z;
+               gl_Vertex.z  = 0.0;
+             }
+             gl_Vertex.w  = 1;
+             
+           }else if (gl_Vertex.w>1 ) {
              if (progress >= 0.92) {		// smooth out because else the bar wil overlap and look ugly at the end point
                gl_FrontColor = float4(gl_Color[0]+(barColor.r/4),gl_Color[1]+(barColor.g/4),gl_Color[2]+(barColor.b/4),((0.08-(progress-0.92))*12.5)*gl_Color[3]);
              }else{
@@ -431,6 +521,7 @@ function init()
                gl_Vertex.z  = 0.0;
              }
              gl_Vertex.w  = 1.0;
+             
            }else{
              if (gl_Vertex.y>0.0) {
                gl_FrontColor = vec4(barColor.rgb*1.8,barColor.a);
@@ -1169,6 +1260,7 @@ function widget:GetConfigData(data)
     savedTable.drawBarPercentage				= drawBarPercentage
     savedTable.alwaysDrawBarPercentageForComs	= alwaysDrawBarPercentageForComs
     savedTable.currentOption					= currentOption
+    savedTable.addGlow							= addGlow
     return savedTable
 end
 
@@ -1176,6 +1268,7 @@ function widget:SetConfigData(data)
     if data.drawBarPercentage ~= nil    			then  drawBarPercentage	= data.drawBarPercentage end
     if data.alwaysDrawBarPercentageForComs ~= nil   then  alwaysDrawBarPercentageForComs = data.alwaysDrawBarPercentageForComs end
     if data.currentOption ~= nil					then  currentOption = data.currentOption end
+    if data.addGlow ~= nil							then  addGlow = data.addGlow end
 end
 
 function widget:TextCommand(command)
@@ -1187,5 +1280,9 @@ function widget:TextCommand(command)
 	end
     if (string.find(command, "healthbars_style") == 1  and  string.len(command) == 16) then 
 		toggleOption()
+	end
+    if (string.find(command, "healthbars_glow") == 1  and  string.len(command) == 15) then 
+		addGlow = not addGlow
+		loadOption()
 	end
 end

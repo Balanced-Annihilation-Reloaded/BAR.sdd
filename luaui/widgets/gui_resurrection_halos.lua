@@ -16,6 +16,7 @@ end
 
 -- /resurrectionhalos_buildings			-- toggles halos for buildings (and non-movable units/factories)
 -- /resurrectionhalos_comsonly			-- toggles halos for coms only
+-- /resurrectionhalos_dontfade			-- toggles halos to stay visible forever, or to slowly fade away eventually
 
 --------------------------------------------------------------------------------
 -- Config
@@ -27,6 +28,7 @@ OPTIONS = {
 	skipBuildings			= true,
 	timeoutTime				= 90,
 	timeoutFadeTime			= 40,
+	dontTimeout				= true,
 	onlyForComs				= false,
 	sizeVariation			= 0.11,
 	sizeSpeed				= 0.7,
@@ -156,7 +158,9 @@ function widget:DrawWorld()
 					end
 				end
 				local alpha = 1
-				alpha = ((((unit.endSecs+OPTIONS.timeoutFadeTime) - gameSecs) / OPTIONS.timeoutTime))
+				if not OPTIONS.dontTimeout then
+					alpha = ((((unit.endSecs+OPTIONS.timeoutFadeTime) - gameSecs) / OPTIONS.timeoutTime))
+				end
 				if alpha > 1 then alpha = 1 end
 				if OPTIONS.opacityVariation > 0 then alpha = alpha - (OPTIONS.opacityVariation/2) end
 				local alpha1 = alpha
@@ -220,12 +224,14 @@ function widget:GetConfigData(data)
     savedTable = {}
     savedTable.skipBuildings	= OPTIONS.skipBuildings
     savedTable.onlyForComs		= OPTIONS.onlyForComs
+    savedTable.dontTimeout		= OPTIONS.dontTimeout
     return savedTable
 end
 
 function widget:SetConfigData(data)
     if data.skipBuildings ~= nil 	then  OPTIONS.skipBuildings	= data.skipBuildings end
     if data.onlyForComs ~= nil	 	then  OPTIONS.onlyForComs	= data.onlyForComs end
+    if data.dontTimeout ~= nil	 	then  OPTIONS.dontTimeout	= data.dontTimeout end
 end
 
 function widget:TextCommand(command)
@@ -234,5 +240,8 @@ function widget:TextCommand(command)
 	end
     if (string.find(command, "resurrectionhalos_comsonly") == 1  and  string.len(command) == 26) then 
 		OPTIONS.onlyForComs = not OPTIONS.onlyForComs
+	end
+    if (string.find(command, "resurrectionhalos_dontfade") == 1  and  string.len(command) == 26) then 
+		OPTIONS.dontTimeout = not OPTIONS.dontTimeout
 	end
 end

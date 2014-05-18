@@ -1,5 +1,5 @@
 include("keysym.h.lua")
-local versionNumber = "1.31"
+local versionNumber = "1.32"
 
 function widget:GetInfo()
 	return {
@@ -154,7 +154,7 @@ function widget:MousePress(x, y, button)
 	if ( isOverWindow(x, y)) then	
 		
 		--hide window for the rest of the game if it was a right mouse button
-		if ( button == 3 ) then
+		if ( button == 3 and not autoFade) then
 			forceHideWindow = true
 			autoFadeTimestamp = osClock()
 		else

@@ -221,23 +221,25 @@ function widget:DrawWorldPreUnit()
 			end
 			if lineOpacityMultiplier > 0.18 then
 				if showTitles and camDistance < showTitleDistance then
+					local heightAddition = 5
+					
 					-- DGUN titles
 					local lineDistance	= 5
 					local fontSize		= 10
 					local radius		= dgunRange
-					local text = "DGUN"
+					local text			= "DGUN"
 					
 					glColor(1, 0.8, 0, .3*lineOpacityMultiplier)
 					glTranslate(center[1], 0, center[3])
 					
-					local mapHeight = spGetGroundHeight(center[1],center[3]-radius)
+					local mapHeight = spGetGroundHeight(center[1],center[3]-radius) + heightAddition
 					glTranslate(0,mapHeight,-radius)
 					glRotate(90,-1,0,0)
 					glText(text, 0, lineDistance, fontSize, "cn")
 					glRotate(90,1,0,0)
 					glTranslate(0,-mapHeight,radius)
 					
-					mapHeight = spGetGroundHeight(center[1],center[3]+radius)
+					mapHeight = spGetGroundHeight(center[1],center[3]+radius) + heightAddition
 					glTranslate(0,mapHeight,radius)
 					glRotate(90,-1,0,0)
 					glRotate(180,0,0,1)
@@ -246,7 +248,7 @@ function widget:DrawWorldPreUnit()
 					glRotate(90,1,0,0)
 					glTranslate(0,-mapHeight,-radius)
 					
-					mapHeight = spGetGroundHeight(center[1]-radius,center[3])
+					mapHeight = spGetGroundHeight(center[1]-radius,center[3]) + heightAddition
 					glTranslate(-radius,mapHeight,0)
 					glRotate(90,-1,0,0)
 					glRotate(90,0,0,1)
@@ -255,7 +257,7 @@ function widget:DrawWorldPreUnit()
 					glRotate(90,1,0,0)
 					glTranslate(radius,-mapHeight,0)
 					
-					mapHeight = spGetGroundHeight(center[1]+radius,center[3])
+					mapHeight = spGetGroundHeight(center[1]+radius,center[3]) + heightAddition
 					glTranslate(radius,mapHeight,0)
 					glRotate(90,-1,0,0)
 					glRotate(270,0,0,1)
@@ -276,14 +278,14 @@ function widget:DrawWorldPreUnit()
 					glColor(1, 0, 0, .37*lineOpacityMultiplier)
 					glTranslate(center[1], 0, center[3])
 					
-					local mapHeight = spGetGroundHeight(center[1],center[3]-radius)
+					local mapHeight = spGetGroundHeight(center[1],center[3]-radius) + heightAddition
 					glTranslate(0,mapHeight,-radius)
 					glRotate(90,-1,0,0)
 					glText(text, 0, lineDistance, fontSize, "cn")
 					glRotate(90,1,0,0)
 					glTranslate(0,-mapHeight,radius)
 					
-					mapHeight = spGetGroundHeight(center[1],center[3]+radius)
+					mapHeight = spGetGroundHeight(center[1],center[3]+radius) + heightAddition
 					glTranslate(0,mapHeight,radius)
 					glRotate(90,-1,0,0)
 					glRotate(180,0,0,1)
@@ -292,7 +294,7 @@ function widget:DrawWorldPreUnit()
 					glRotate(90,1,0,0)
 					glTranslate(0,-mapHeight,-radius)
 					
-					mapHeight = spGetGroundHeight(center[1]-radius,center[3])
+					mapHeight = spGetGroundHeight(center[1]-radius,center[3]) + heightAddition
 					glTranslate(-radius,mapHeight,0)
 					glRotate(90,-1,0,0)
 					glRotate(90,0,0,1)
@@ -301,7 +303,7 @@ function widget:DrawWorldPreUnit()
 					glRotate(90,1,0,0)
 					glTranslate(radius,-mapHeight,0)
 					
-					mapHeight = spGetGroundHeight(center[1]+radius,center[3])
+					mapHeight = spGetGroundHeight(center[1]+radius,center[3]) + heightAddition
 					glTranslate(radius,mapHeight,0)
 					glRotate(90,-1,0,0)
 					glRotate(270,0,0,1)

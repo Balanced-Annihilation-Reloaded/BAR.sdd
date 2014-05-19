@@ -44,17 +44,20 @@ local comCenters = {}
 local drawList
 local amSpec = false
 local inSpecFullView = false
+local dgunRange	= WeaponDefNames["armcom_arm_disintegrator"].range + 2*WeaponDefNames["armcom_arm_disintegrator"].damageAreaOfEffect
 
 --------------------------------------------------------------------------------
 -- OPTIONS
 --------------------------------------------------------------------------------
 
+local opacityMultiplier		= 1
+local fadeMultiplier		= 1			-- lower value: fades out sooner
 local circleDivs			= 64		-- circle detail, when fading out it will lower this aswell (so dont go too low)
 local blastRadius			= 360		-- com explosion
-local dgunRange				= WeaponDefNames["armcom_arm_disintegrator"].range + 2*WeaponDefNames["armcom_arm_disintegrator"].damageAreaOfEffect
 local showTitles			= true		-- shows title text around the circle-line
 local showTitleDistance		= 750
-local showLineGlow 			= true		-- a ticker but faint 2nd line will be drawn underneath		
+local showLineGlow 			= true		-- a ticker but faint 2nd line will be drawn underneath	
+	
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -212,7 +215,7 @@ function widget:DrawWorldPreUnit()
 			if lineWidthMinus > 2 then
 				lineWidthMinus = 2
 			end
-			local lineOpacityMultiplier = (1200/camDistance)
+			local lineOpacityMultiplier = (1100/camDistance)*fadeMultiplier
 			if lineOpacityMultiplier > 1 then
 				lineOpacityMultiplier = 1
 			end
@@ -310,23 +313,28 @@ function widget:DrawWorldPreUnit()
 					glTranslate(-center[1], 0, -center[3])
 				end
 				
+				local usedCircleDivs = math.floor(circleDivs*lineOpacityMultiplier)
+				if usedCircleDivs < 24 then
+					usedCircleDivs = 24
+				end
+				
 				-- draw lines
 				if showLineGlow then
 					glLineWidth(10-lineWidthMinus)
 					glColor(1, 0.8, 0, .04*lineOpacityMultiplier)
-					glDrawGroundCircle(center[1], center[2], center[3], dgunRange, circleDivs*lineOpacityMultiplier)
+					glDrawGroundCircle(center[1], center[2], center[3], dgunRange, usedCircleDivs)
 					
 					glLineWidth(10-lineWidthMinus)
 					glColor(1, 0, 0, .055*lineOpacityMultiplier)
-					glDrawGroundCircle(center[1], center[2], center[3], blastRadius, (circleDivs*1.2)*lineOpacityMultiplier)
+					glDrawGroundCircle(center[1], center[2], center[3], blastRadius, math.floor(usedCircleDivs*1.2))
 				end
 				glLineWidth(3-lineWidthMinus)
-				glColor(1, 0.8, 0, .36*lineOpacityMultiplier)
-				glDrawGroundCircle(center[1], center[2], center[3], dgunRange, circleDivs*lineOpacityMultiplier)
+				glColor(1, 0.8, 0, .28*lineOpacityMultiplier*opacityMultiplier)
+				glDrawGroundCircle(center[1], center[2], center[3], dgunRange, usedCircleDivs)
 				
 				glLineWidth(3.3-lineWidthMinus)
-				glColor(1, 0, 0, .48*lineOpacityMultiplier)
-				glDrawGroundCircle(center[1], center[2], center[3], blastRadius, (circleDivs*1.2)*lineOpacityMultiplier)
+				glColor(1, 0, 0, .44*lineOpacityMultiplier*opacityMultiplier)
+				glDrawGroundCircle(center[1], center[2], center[3], blastRadius, math.floor(usedCircleDivs*1.2))
 			end
 		end
 	end

@@ -355,10 +355,10 @@ end
 function widget:TextCommand(command)
     if (string.find(command, "comranges_glow") == 1  and  string.len(command) == 14) then 
 		showLineGlow = not showLineGlow
-		if autoFade then
-			Spring.Echo("Pause screen:  Glow on")
+		if showLineGlow then
+			Spring.Echo("Comblast & Dgun Range:  Glow enabled")
 		else
-			Spring.Echo("Pause screen:  Glow off")
+			Spring.Echo("Comblast & Dgun Range:  Glow disabled")
 		end
 	end
 end

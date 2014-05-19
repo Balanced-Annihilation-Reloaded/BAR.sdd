@@ -1,4 +1,4 @@
-local versionNumber = "1.71"
+local versionNumber = "1.80"
 
 function widget:GetInfo()
   return {
@@ -13,14 +13,26 @@ function widget:GetInfo()
 end
 
 --------------------------------------------------------------------------------
+-- Console commands
+--------------------------------------------------------------------------------
+
+--/comnames_rank
+--/comnames_trueskill
+--/comnames_flag
+
+
+--------------------------------------------------------------------------------
 -- config
 --------------------------------------------------------------------------------
 
-local showStickyTags = false --comms literally wear name tags
-local heightOffset = 22
-local xOffset = 0
-local yOffset = 0
-local fontSize = 6
+local showStickyTags	= false --comms literally wear name tags
+local heightOffset		= 28
+local xOffset			= 0
+local yOffset			= 0
+local fontSize			= 6
+local showRank			= true
+local showTrueskill		= true
+local showCountry		= true
 
 --------------------------------------------------------------------------------
 -- speed-ups
@@ -62,6 +74,19 @@ local glScale          = gl.Scale
 local overheadFont	= "LuaUI/Fonts/FreeSansBold_14"
 local stickyFont	= "LuaUI/Fonts/FreeSansBold_14"
 local fhDraw		= fontHandler.Draw
+
+
+--rank pics
+local rankImages = {}
+rankImages[0] = "LuaUI/Images/advplayerslist/Ranks/rank0.png"
+rankImages[1] = "LuaUI/Images/advplayerslist/Ranks/rank1.png"
+rankImages[2] = "LuaUI/Images/advplayerslist/Ranks/rank2.png"
+rankImages[3] = "LuaUI/Images/advplayerslist/Ranks/rank3.png"
+rankImages[4] = "LuaUI/Images/advplayerslist/Ranks/rank4.png"
+rankImages[5] = "LuaUI/Images/advplayerslist/Ranks/rank5.png"
+rankImages[6] = "LuaUI/Images/advplayerslist/Ranks/rank6.png"
+rankImages[7] = "LuaUI/Images/advplayerslist/Ranks/rank7.png"
+
 --------------------------------------------------------------------------------
 -- local variables
 --------------------------------------------------------------------------------
@@ -75,6 +100,22 @@ local comms = {}
 -- helper functions
 --------------------------------------------------------------------------------
 
+function GetSkill(playerID)
+	customtable = select(10,Spring.GetPlayerInfo(playerID)) or {} -- player custom table
+	tsMu = customtable.skill
+	tsSigma = customtable.skilluncertainty or "N/A"
+	tskill = 0
+	if tsMu then
+		tskill = tsMu and tonumber(tsMu:match("%d+%.?%d*")) or 0
+		tskill = math.floor(tskill,0)
+		--if string.find(tsMu, ")") then
+		--	tskill = "\255"..string.char(190)..string.char(140)..string.char(140) .. tskill -- ')' means inferred from lobby rank
+		--end
+	end
+	return tskill
+end
+
+
 --gets the name, color, and height of the commander
 local function GetCommAttributes(unitID, unitDefID)
   local team = GetUnitTeam(unitID)
@@ -82,25 +123,46 @@ local function GetCommAttributes(unitID, unitDefID)
     return nil
   end
   local _, player = GetTeamInfo(team)
-  local name = GetPlayerInfo(player) or 'Robert Paulson'
+  local name,_,_,_,_,_,_,country,rank = GetPlayerInfo(player)
   local r, g, b, a = GetTeamColor(team)
   local height = UnitDefs[unitDefID].height + heightOffset
   local pm = spGetUnitPieceMap(unitID)
   local pmt = pm["torso"]
   if (pmt == nil) then 
     pmt = pm["chest"]
-  end    
-  return {name, {r, g, b, a}, height, pmt }
+  end
+  return {name or 'Robert Paulson', {r, g, b, a}, height, pmt, rank or '', country or '', GetSkill(player) }
 end
 
 local function DrawCommName(unitID, attributes)
   glTranslate(0, attributes[3], 0 )
   glBillboard()
-  
   glColor(attributes[2])
   --glText(attributes[1], xOffset, yOffset, fontSize, "cn")
   fontHandler.UseFont(overheadFont)
   fontHandler.DrawCentered(attributes[1], xOffset,yOffset)
+  
+  
+  if showCountry and attributes[6] and attributes[6] ~= '' then
+	glColor(1,1,1,0.9)
+    glTexture("LuaUI/Images/flags/"..string.lower(attributes[6])..".png")
+    glTexRect(-22.5, 17.5, -10.5, 25.75)
+    glTexture(false)
+  end
+  if showTrueskill and attributes[7] and attributes[7] > 0 then
+	glColor(0,0,0,0.33)
+    gl.Text(tostring(attributes[7]),8.2,17.8,10.5,"n")
+	glColor(1,1,1,0.9)
+    gl.Text(tostring(attributes[7]),8.2,18.3,10.5,"n")
+  end
+  
+  if showRank and rankImages[tonumber(attributes[5])] then
+    glColor(1,1,1,0.9)
+    glTexture(rankImages[tonumber(attributes[5])])
+    glTexRect(-13/2,19.5, 13/2, 19.5+13)
+    glTexture(false)
+  end
+  
   glColor(1,1,1,1)
 end
 
@@ -151,6 +213,9 @@ end
 
 
 function widget:DrawWorld()
+
+  --if Spring.IsGUIHidden() then return end
+
   glDepthTest(true)
   glAlphaTest(GL_GREATER, 0)
 
@@ -228,4 +293,31 @@ end
 
 function widget:UnitEnteredLos(unitID, unitDefID, unitTeam)
   widget:UnitCreated( unitID,  unitDefID,  unitTeam)
+end
+
+
+function widget:GetConfigData(data)
+    savedTable = {}
+    savedTable.showRank			= showRank
+    savedTable.showTrueskill	= showTrueskill
+    savedTable.showCountry		= showCountry
+    return savedTable
+end
+
+function widget:SetConfigData(data)
+    if data.showRank ~= nil 		then  showRank		= data.showRank end
+    if data.showTrueskill ~= nil 	then  showTrueskill	= data.showTrueskill end
+    if data.showCountry ~= nil	 	then  showCountry	= data.showCountry end
+end
+
+function widget:TextCommand(command)
+    if (string.find(command, "comnames_rank") == 1  and  string.len(command) == 13) then 
+		showRank = not showRank
+	end
+    if (string.find(command, "comnames_trueskill") == 1  and  string.len(command) == 18) then 
+		showTrueskill = not showTrueskill
+	end
+    if (string.find(command, "comnames_flag") == 1  and  string.len(command) == 13) then 
+		showCountry = not showCountry
+	end
 end

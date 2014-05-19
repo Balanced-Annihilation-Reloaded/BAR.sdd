@@ -38,7 +38,10 @@ local glColor				= gl.Color
 local glTranslate			= gl.Translate
 local glRotate				= gl.Rotate
 local glText				= gl.Text
-local GL_ALWAYS				= GL.ALWAYS
+local glBlending			= gl.Blending
+local GL_ALWAYS					= GL.ALWAYS
+local GL_SRC_ALPHA				= GL.SRC_ALPHA
+local GL_ONE_MINUS_SRC_ALPHA	= GL.ONE_MINUS_SRC_ALPHA
 
 local comCenters = {}
 local drawList
@@ -52,7 +55,7 @@ local dgunRange	= WeaponDefNames["armcom_arm_disintegrator"].range + 2*WeaponDef
 
 local opacityMultiplier		= 1
 local fadeMultiplier		= 1			-- lower value: fades out sooner
-local circleDivs			= 64		-- circle detail, when fading out it will lower this aswell (so dont go too low)
+local circleDivs			= 64		-- circle detail, when fading out it will lower this aswell (minimum always will be 40 anyway)
 local blastRadius			= 360		-- com explosion
 local showTitles			= true		-- shows title text around the circle-line
 local showTitleDistance		= 750
@@ -203,6 +206,7 @@ end
 function widget:DrawWorldPreUnit()
 	local camX, camY, camZ = spGetCameraPosition()
 	glDepthTest(GL_ALWAYS)
+	glBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 	for _,center in pairs(comCenters) do
 		if center[4] then
 		
@@ -316,8 +320,8 @@ function widget:DrawWorldPreUnit()
 				end
 				
 				local usedCircleDivs = math.floor(circleDivs*lineOpacityMultiplier)
-				if usedCircleDivs < 24 then
-					usedCircleDivs = 24
+				if usedCircleDivs < 40 then
+					usedCircleDivs = 40
 				end
 				
 				-- draw lines
@@ -331,11 +335,11 @@ function widget:DrawWorldPreUnit()
 					glDrawGroundCircle(center[1], center[2], center[3], blastRadius, math.floor(usedCircleDivs*1.2))
 				end
 				glLineWidth(3-lineWidthMinus)
-				glColor(1, 0.8, 0, .28*lineOpacityMultiplier*opacityMultiplier)
+				glColor(1, 0.8, 0, .24*lineOpacityMultiplier*opacityMultiplier)
 				glDrawGroundCircle(center[1], center[2], center[3], dgunRange, usedCircleDivs)
 				
 				glLineWidth(3.3-lineWidthMinus)
-				glColor(1, 0, 0, .44*lineOpacityMultiplier*opacityMultiplier)
+				glColor(1, 0, 0, .4*lineOpacityMultiplier*opacityMultiplier)
 				glDrawGroundCircle(center[1], center[2], center[3], blastRadius, math.floor(usedCircleDivs*1.2))
 			end
 		end

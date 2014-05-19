@@ -321,11 +321,11 @@ function widget:DrawWorldPreUnit()
 				-- draw lines
 				if showLineGlow then
 					glLineWidth(10-lineWidthMinus)
-					glColor(1, 0.8, 0, .04*lineOpacityMultiplier)
+					glColor(1, 0.8, 0, .028*lineOpacityMultiplier)
 					glDrawGroundCircle(center[1], center[2], center[3], dgunRange, usedCircleDivs)
 					
 					glLineWidth(10-lineWidthMinus)
-					glColor(1, 0, 0, .055*lineOpacityMultiplier)
+					glColor(1, 0, 0, .042*lineOpacityMultiplier)
 					glDrawGroundCircle(center[1], center[2], center[3], blastRadius, math.floor(usedCircleDivs*1.2))
 				end
 				glLineWidth(3-lineWidthMinus)
@@ -349,7 +349,7 @@ function widget:GetConfigData(data)
 end
 
 function widget:SetConfigData(data)
-    if data.showLineGlow ~= nil 	then  autoFade	= data.showLineGlow end
+    if data.showLineGlow ~= nil 	then  showLineGlow	= data.showLineGlow end
 end
 
 function widget:TextCommand(command)

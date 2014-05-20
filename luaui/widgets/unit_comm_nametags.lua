@@ -1,4 +1,4 @@
-local versionNumber = "1.80"
+local versionNumber = "1.81"
 
 function widget:GetInfo()
   return {
@@ -27,6 +27,7 @@ end
 
 local showStickyTags	= false --comms literally wear name tags
 local heightOffset		= 28
+local scale				= 0.75
 local xOffset			= 0
 local yOffset			= 0
 local fontSize			= 6
@@ -100,19 +101,57 @@ local comms = {}
 -- helper functions
 --------------------------------------------------------------------------------
 
+function round(num, idp)
+  local mult = 10^(idp or 0)
+  return math.floor(num * mult + 0.5) / mult
+end
+
+
 function GetSkill(playerID)
-	customtable = select(10,Spring.GetPlayerInfo(playerID)) or {} -- player custom table
-	tsMu = customtable.skill
-	tsSigma = customtable.skilluncertainty or "N/A"
-	tskill = 0
+	local customtable = select(10,GetPlayerInfo(playerID)) -- player custom table
+	local tsMu = customtable.skill
+	local tsSigma = customtable.skilluncertainty
+	local tskill = ""
+	local tskillValue = ""
 	if tsMu then
 		tskill = tsMu and tonumber(tsMu:match("%d+%.?%d*")) or 0
-		tskill = math.floor(tskill,0)
-		--if string.find(tsMu, ")") then
-		--	tskill = "\255"..string.char(190)..string.char(140)..string.char(140) .. tskill -- ')' means inferred from lobby rank
-		--end
+		tskill = round(tskill,0)
+		tskillValue = tskill
+		if string.find(tsMu, ")") then
+			tskill = "\255"..string.char(190)..string.char(140)..string.char(140) .. tskill -- ')' means inferred from lobby rank
+		else
+		
+			-- show privacy mode
+			local priv = ""
+			if string.find(tsMu, "~") then -- '~' means privacy mode is on
+				priv = "\255"..string.char(200)..string.char(200)..string.char(200) .. "*"
+			end
+			
+			--show sigma
+			if tsSigma then -- 0 is low sigma, 3 is high sigma
+				tsSigma=tonumber(tsSigma)
+				local tsRed, tsGreen, tsBlue 
+				if tsSigma > 2 then
+					tsRed, tsGreen, tsBlue = 190, 130, 130
+				elseif tsSigma == 2 then
+					tsRed, tsGreen, tsBlue = 140, 140, 140
+				elseif tsSigma == 1 then
+					tsRed, tsGreen, tsBlue = 195, 195, 195
+				elseif tsSigma < 1 then
+						tsRed, tsGreen, tsBlue = 250, 250, 250
+				end
+				tskill = priv .. "\255"..string.char(tsRed)..string.char(tsGreen)..string.char(tsBlue) .. tskill
+			else
+				tskill = priv .. "\255"..string.char(195)..string.char(195)..string.char(195) .. tskill --should never happen
+			end
+			if priv ~= "" then
+				tskillValue = "*"..tskillValue
+			end
+		end
+	else
+		tskill = "\255"..string.char(160)..string.char(160)..string.char(160) .. "?"
 	end
-	return tskill
+	return {tskillValue, tskill}
 end
 
 
@@ -143,26 +182,29 @@ local function DrawCommName(unitID, attributes)
   fontHandler.DrawCentered(attributes[1], xOffset,yOffset)
   
   
+  glTranslate(0, 17*(scale+((1-scale)/2)), 0 )
+  glScale(scale,scale,scale)
   if showCountry and attributes[6] and attributes[6] ~= '' then
 	glColor(1,1,1,0.9)
     glTexture("LuaUI/Images/flags/"..string.lower(attributes[6])..".png")
-    glTexRect(-22.5, 17.5, -10.5, 25.75)
+    glTexRect(-22.5, 0.5, -10.5, 8.75)
     glTexture(false)
   end
-  if showTrueskill and attributes[7] and attributes[7] > 0 then
-	glColor(0,0,0,0.33)
-    gl.Text(tostring(attributes[7]),8.2,17.8,10.5,"n")
+  if showTrueskill and attributes[7] and attributes[7][1] then
+	glColor(0,0,0,0.6)
+    gl.Text(tostring(attributes[7][1]),8.2,0.8,10.5,"n")
 	glColor(1,1,1,0.9)
-    gl.Text(tostring(attributes[7]),8.2,18.3,10.5,"n")
+    gl.Text(tostring(attributes[7][2]),8.2,1.3,10.5,"n")
   end
   
   if showRank and rankImages[tonumber(attributes[5])] then
     glColor(1,1,1,0.9)
     glTexture(rankImages[tonumber(attributes[5])])
-    glTexRect(-13/2,19.5, 13/2, 19.5+13)
+    glTexRect(-13/2,2.5, 13/2, 2.5+13)
     glTexture(false)
   end
   
+  glScale(1,1,1)
   glColor(1,1,1,1)
 end
 
@@ -218,7 +260,6 @@ function widget:DrawWorld()
 
   glDepthTest(true)
   glAlphaTest(GL_GREATER, 0)
-
   if (showStickyTags) then
     glTexture('LuaUI/Images/hellomynameis.png')
     for unitID, attributes in pairs(comms) do

@@ -223,7 +223,7 @@ function widget:DrawWorldPreUnit()
 			if lineOpacityMultiplier > 1 then
 				lineOpacityMultiplier = 1
 			end
-			if lineOpacityMultiplier > 0.18 then
+			if lineOpacityMultiplier > 0.2 then
 				if showTitles and camDistance < showTitleDistance then
 					local heightAddition = 5
 					
@@ -326,11 +326,11 @@ function widget:DrawWorldPreUnit()
 				
 				-- draw lines
 				if showLineGlow then
-					glLineWidth(10-lineWidthMinus)
+					glLineWidth(10)
 					glColor(1, 0.8, 0, .028*lineOpacityMultiplier)
 					glDrawGroundCircle(center[1], center[2], center[3], dgunRange, usedCircleDivs)
 					
-					glLineWidth(10-lineWidthMinus)
+					glLineWidth(10)
 					glColor(1, 0, 0, .042*lineOpacityMultiplier)
 					glDrawGroundCircle(center[1], center[2], center[3], blastRadius, math.floor(usedCircleDivs*1.2))
 				end

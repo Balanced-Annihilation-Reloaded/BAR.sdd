@@ -3,7 +3,7 @@ local versionName = "v1.2"
 --------------------------------------------------------------------------------
 function widget:GetInfo()
   return {
-    name      = "Vertical Line on Radar Dots-dev",
+    name      = "Vertical Line on Radar Dots",
     desc      = versionName .. " help you identify enemy units by adding vertical line on radar dots",
     author    = "msafwan",
     date      = "April 2, 2012",

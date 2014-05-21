@@ -2,7 +2,7 @@ function widget:GetInfo()
     return {
         name      = "Comblast & Dgun Range",
         desc      = "Shows the range of commander death explosion and dgun ranges",
-        author    = "Bluestone, based on similar widgets by vbs, tfc, decay",
+        author    = "Bluestone, based on similar widgets by vbs, tfc, decay  (made fancy by Floris)",
         date      = "11/2013",
         license   = "GPL v3 or later",
         layer     = 0,
@@ -14,7 +14,8 @@ end
 -- Console commands
 --------------------------------------------------------------------------------
 
---/comranges_glow			-- toggles a faint glow on the line
+--/comranges_glow				-- toggles a faint glow on the line
+--/comranges_nearbyenemy		-- toggles hiding of ranges when enemy is nearby
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -31,6 +32,8 @@ local spGetGroundHeight		= Spring.GetGroundHeight
 local spIsSphereInView		= Spring.IsSphereInView
 local spValidUnitID			= Spring.ValidUnitID
 local spGetCameraPosition	= Spring.GetCameraPosition
+local spGetUnitNearestEnemy	= Spring.GetUnitNearestEnemy
+
 local glDepthTest 			= gl.DepthTest
 local glDrawGroundCircle 	= gl.DrawGroundCircle
 local glLineWidth 			= gl.LineWidth
@@ -39,6 +42,7 @@ local glTranslate			= gl.Translate
 local glRotate				= gl.Rotate
 local glText				= gl.Text
 local glBlending			= gl.Blending
+
 local GL_ALWAYS					= GL.ALWAYS
 local GL_SRC_ALPHA				= GL.SRC_ALPHA
 local GL_ONE_MINUS_SRC_ALPHA	= GL.ONE_MINUS_SRC_ALPHA
@@ -54,13 +58,17 @@ local dgunRange	= WeaponDefNames["armcom_arm_disintegrator"].range + 2*WeaponDef
 --------------------------------------------------------------------------------
 
 local opacityMultiplier		= 1
-local fadeMultiplier		= 1			-- lower value: fades out sooner
+local fadeMultiplier		= 1.2			-- lower value: fades out sooner
 local circleDivs			= 64		-- circle detail, when fading out it will lower this aswell (minimum always will be 40 anyway)
 local blastRadius			= 360		-- com explosion
 local showTitles			= true		-- shows title text around the circle-line
 local showTitleDistance		= 750
 local showLineGlow 			= true		-- a ticker but faint 2nd line will be drawn underneath	
-	
+local hideOnDistantEnemy	= true
+local showOnEnemyDistance	= 650
+local fadeInDistance		= 350
+local smoothoutTime			= 2.2		-- time to smoothout sudden changes (value = time between max and zero opacity)
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -161,7 +169,7 @@ function checkComs()
         for _, unitID in ipairs(visibleUnits) do
             local unitDefID = spGetUnitDefID(unitID)
             if unitDefID and UnitDefs[unitDefID].customParams.iscommander == "1" then
-                addCom(unitID)
+				addCom(unitID)
             end
         end
     end
@@ -178,13 +186,16 @@ function widget:GameFrame(n)
 		checkComs()
 		inSpecFullView = specFullView
     end
-
+    
 	-- check com movement
 	for unitID in pairs(comCenters) do
 		local x,y,z = spGetUnitPosition(unitID)
 		if x then
+			local osClock = os.clock()
 			local yg = spGetGroundHeight(x,z) 
 			local draw = true
+			local opacityMultiplier = 1
+			oldOpacityMultiplier = opacityMultiplier
 			-- check if com is off the ground
 			if y-yg>10 then 
 				draw = false
@@ -192,7 +203,49 @@ function widget:GameFrame(n)
 			elseif not spIsSphereInView(x,y,z,blastRadius) then
 				draw = false
 			end
-			comCenters[unitID] = {x,y,z,draw}
+			if draw and hideOnDistantEnemy then
+				local nearestEnemyUnitID = spGetUnitNearestEnemy(unitID,showOnEnemyDistance+fadeInDistance)
+				if nearestEnemyUnitID then
+					local ex,ey,ez = spGetUnitPosition(nearestEnemyUnitID)
+					local xDifference = x - ex
+					local yDifference = y - ey
+					local zDifference = z - ez
+					local distance = math.sqrt(xDifference*xDifference + yDifference*yDifference + zDifference*zDifference)
+					if distance < blastRadius + showOnEnemyDistance then
+						draw = true
+						opacityMultiplier = 1 - (distance - showOnEnemyDistance) / fadeInDistance
+						if opacityMultiplier > 1 then
+							opacityMultiplier = 1
+						elseif opacityMultiplier < 0 then
+							opacityMultiplier = 0
+						end
+						oldOpacityMultiplier = opacityMultiplier
+					end
+				else
+					opacityMultiplier = 0
+					oldOpacityMultiplier = opacityMultiplier
+					draw = false
+				end
+				
+				-- smooth out sudden changes of enemy unit distance
+				if comCenters[unitID] and comCenters[unitID][4] and comCenters[unitID][7] and opacityMultiplier ~= comCenters[unitID][7] and comCenters[unitID][6] and (osClock - comCenters[unitID][6]) < smoothoutTime then
+					draw = true
+					
+					local opacityDifference = comCenters[unitID][7] - opacityMultiplier
+					local opacityAddition = (1 - ((osClock - comCenters[unitID][6]) / smoothoutTime)) * opacityDifference
+					
+					opacityMultiplier = oldOpacityMultiplier + opacityAddition
+					if opacityMultiplier > 1 then
+						opacityMultiplier = 1
+					elseif opacityMultiplier < 0 then
+						opacityMultiplier = 0
+						draw = false
+					end
+					oldOpacityMultiplier = comCenters[unitID][7]	-- keep old
+					osClock = comCenters[unitID][6]					-- keep old
+				end
+			end
+			comCenters[unitID] = {x,y,z,draw,opacityMultiplier,osClock,oldOpacityMultiplier}
 		else
 			--couldn't get position, check if its still a unit 
 			if not spValidUnitID(unitID) then
@@ -209,7 +262,6 @@ function widget:DrawWorldPreUnit()
 	glBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 	for _,center in pairs(comCenters) do
 		if center[4] then
-		
 			local xDifference = camX - center[1]
 			local yDifference = camY - center[2]
 			local zDifference = camZ - center[3]
@@ -223,7 +275,11 @@ function widget:DrawWorldPreUnit()
 			if lineOpacityMultiplier > 1 then
 				lineOpacityMultiplier = 1
 			end
-			if lineOpacityMultiplier > 0.2 then
+			if center[5] then
+				lineOpacityMultiplier = lineOpacityMultiplier * center[5]
+			end
+			
+			if lineOpacityMultiplier > 0.05 then
 				if showTitles and camDistance < showTitleDistance then
 					local heightAddition = 5
 					
@@ -327,10 +383,9 @@ function widget:DrawWorldPreUnit()
 				-- draw lines
 				if showLineGlow then
 					glLineWidth(10)
-					glColor(1, 0.8, 0, .028*lineOpacityMultiplier)
+					glColor(1, 0.8, 0, .027*lineOpacityMultiplier)
 					glDrawGroundCircle(center[1], center[2], center[3], dgunRange, usedCircleDivs)
 					
-					glLineWidth(10)
 					glColor(1, 0, 0, .042*lineOpacityMultiplier)
 					glDrawGroundCircle(center[1], center[2], center[3], blastRadius, math.floor(usedCircleDivs*1.2))
 				end
@@ -350,12 +405,14 @@ end
 
 function widget:GetConfigData(data)
     savedTable = {}
-    savedTable.showLineGlow = showLineGlow
+    savedTable.showLineGlow			= showLineGlow
+    savedTable.hideOnDistantEnemy	= hideOnDistantEnemy
     return savedTable
 end
 
 function widget:SetConfigData(data)
-    if data.showLineGlow ~= nil 	then  showLineGlow	= data.showLineGlow end
+    if data.showLineGlow ~= nil 		then  showLineGlow			= data.showLineGlow end
+    if data.hideOnDistantEnemy ~= nil 	then  hideOnDistantEnemy	= data.hideOnDistantEnemy end
 end
 
 function widget:TextCommand(command)
@@ -365,6 +422,14 @@ function widget:TextCommand(command)
 			Spring.Echo("Comblast & Dgun Range:  Glow enabled")
 		else
 			Spring.Echo("Comblast & Dgun Range:  Glow disabled")
+		end
+	end
+    if (string.find(command, "comranges_nearbyenemy") == 1  and  string.len(command) == 21) then 
+		hideOnDistantEnemy = not hideOnDistantEnemy
+		if hideOnDistantEnemy then
+			Spring.Echo("Comblast & Dgun Range:  Hides ranges when enemy is nearby")
+		else
+			Spring.Echo("Comblast & Dgun Range:  Shows ranges regardless of enemy distance ")
 		end
 	end
 end

@@ -1,4 +1,4 @@
-local versionNumber = "1.81"
+local versionNumber = "1.80"
 
 function widget:GetInfo()
   return {
@@ -150,6 +150,7 @@ function GetSkill(playerID)
 		end
 	else
 		tskill = "\255"..string.char(160)..string.char(160)..string.char(160) .. "?"
+		tskillValue = "?"
 	end
 	return {tskillValue, tskill}
 end
@@ -190,13 +191,12 @@ local function DrawCommName(unitID, attributes)
     glTexRect(-22.5, 0.5, -10.5, 8.75)
     glTexture(false)
   end
-  if showTrueskill and attributes[7] and attributes[7][1] then
+  if showTrueskill and attributes[7] and attributes[7][1] and attributes[7][1] ~= "?" then
 	glColor(0,0,0,0.6)
     gl.Text(tostring(attributes[7][1]),8.2,0.8,10.5,"n")
 	glColor(1,1,1,0.9)
     gl.Text(tostring(attributes[7][2]),8.2,1.3,10.5,"n")
   end
-  
   if showRank and rankImages[tonumber(attributes[5])] then
     glColor(1,1,1,0.9)
     glTexture(rankImages[tonumber(attributes[5])])

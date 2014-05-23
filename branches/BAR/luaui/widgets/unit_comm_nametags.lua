@@ -29,13 +29,11 @@ end
 --------------------------------------------------------------------------------
 
 local heightOffset			= 28
-local infoScale				= 0.75
-local xOffset				= 0
-local yOffset				= 0
+local infoScale				= 0.77
 
-local fontSize				= 13.5
+local fontSize				= 13
 local scaleFontSize			= true
-local scaleFontAmount		= 140
+local scaleFontAmount		= 133
 
 local useThickLeterring		= true
 
@@ -48,8 +46,8 @@ local fadeNames				= false
 local fadeStartHeight		= 3200
 local fadeEndHeight			= 5200
 
-local fadeIconStartHeight	= 1250		
-local fadeIconEndHeight		= 1660		--needs to be smaller than fadeEndHeight
+local fadeIconStartHeight	= 1100		
+local fadeIconEndHeight		= 1600		--needs to be smaller than fadeEndHeight
 
 --------------------------------------------------------------------------------
 -- speed-ups
@@ -196,7 +194,7 @@ end
 
 local function DrawCommName(unitID, attributes)
        
-  local iconHeight = 17*(infoScale+((1-infoScale)/2))
+  local iconHeight = (12.5+usedFontSize/1.6)*(infoScale+((1-infoScale)/2))
   
   glTranslate(0, attributes[3], 0 )
   glBillboard()
@@ -210,8 +208,8 @@ local function DrawCommName(unitID, attributes)
       font:SetTextColor({0,0,0,0.9*attributes[2][4]*attributes[2][4]*attributes[2][4]*attributes[2][4]})
       font:SetOutlineColor(({0,0,0,0.9*attributes[2][4]*attributes[2][4]*attributes[2][4]*attributes[2][4]}))
     end
-    font:Print(attributes[1], xOffset-0.3, yOffset-0.66, usedFontSize, "con")
-    font:Print(attributes[1], xOffset+0.3, yOffset-0.66, usedFontSize, "con")
+    font:Print(attributes[1], -0.6, -0.66, usedFontSize, "con")
+    font:Print(attributes[1], 0, -0.66, usedFontSize, "con")
   end
   
   font:SetTextColor(attributes[2])
@@ -222,7 +220,7 @@ local function DrawCommName(unitID, attributes)
   else
     font:SetOutlineColor(({0,0,0,0.87*attributes[2][4]*attributes[2][4]*attributes[2][4]}))
   end
-  font:Print(attributes[1], xOffset, yOffset, usedFontSize, "con")
+  font:Print(attributes[1], -0.3, 0, usedFontSize, "con")
   
   if showInfo and showTrueskill and attributes[7] and attributes[7][1] and attributes[7][1] ~= "?" then
     font:SetTextColor({0,0,0,0.55 * attributes[8]})
@@ -238,8 +236,8 @@ local function DrawCommName(unitID, attributes)
     
     if showCountry and attributes[6] and attributes[6] ~= '' then
       glColor(1,1,1,0.9 * attributes[8])
-      glTexture("LuaUI/Images/flags/"..string.lower(attributes[6])..".png")
-      glTexRect(-22.5, iconHeight+0.5, -10.5, iconHeight+8.75)
+      glTexture("LuaUI/Images/flags-hq/"..string.upper(attributes[6])..".png")
+      glTexRect(-22.5, iconHeight-1.5, -10.5, iconHeight+10.5)
       glTexture(false)
     end
     if showRank and rankImages[tonumber(attributes[5])] then

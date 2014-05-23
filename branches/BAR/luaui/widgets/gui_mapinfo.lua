@@ -24,11 +24,13 @@ end
 
 local scale					= 1
 local offset				= 5
-local backgroundOpacity		= 0.55
+local backgroundOpacity		= 0.5
 local textOpacity			= 0.85
 local fadeMultiplier		= 1
 local stickToFloor			= true
 local thickness				= 6
+local fadeStartHeight		= 600
+local fadeEndHeight			= 4000
 
 --------------------------------------------------------------------------------
 -- speed-ups
@@ -48,6 +50,7 @@ local glTranslate       = gl.Translate
 local glBeginEnd        = gl.BeginEnd
 local glVertex          = gl.Vertex
 local glGetTextWidth	= gl.GetTextWidth
+local glBlending		= gl.Blending
 
 local glDepthTest       = gl.DepthTest
 local glAlphaTest       = gl.AlphaTest
@@ -63,8 +66,8 @@ local mapInfoWidth = 400	-- minimum width
 
 function DrawMapInfo(backgroundOpacity, opacityMultiplier)
 	
-	glDepthTest(false)
-	gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
+	glDepthTest(true)
+	glBlending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
 	
 	if stickToFloor then
 		glTranslate(offset, offset, Game.mapSizeZ)
@@ -134,7 +137,7 @@ function DrawMapInfo(backgroundOpacity, opacityMultiplier)
 	glColor(1,1,1,(textOpacity*1.12)*opacityMultiplier)
 	glText(text, textOffsetX,-usedTextOffsetY,14,"n")
 	glColor(0,0,0,textOpacity*0.12*opacityMultiplier)
-	glText(text, textOffsetX,-usedTextOffsetY-1,14,"n")
+	glText(text, textOffsetX+0.5,-usedTextOffsetY-0.9,14,"n")
 	
 	--map description
 	usedTextOffsetY = usedTextOffsetY+textOffsetY
@@ -236,12 +239,12 @@ end
 
 function widget:DrawWorld()
 	if inView then
-		local opacityMultiplier = (1700/camDistance)*fadeMultiplier
+		local opacityMultiplier = (1 - (camDistance-fadeStartHeight) / (fadeEndHeight-fadeStartHeight))*fadeMultiplier
 		if opacityMultiplier > 1 then
 			opacityMultiplier = 1
 		end
 		
-		if opacityMultiplier > 0.15 then
+		if opacityMultiplier > 0.06 then
 			DrawMapInfo(backgroundOpacity, opacityMultiplier)
 		end
 	end

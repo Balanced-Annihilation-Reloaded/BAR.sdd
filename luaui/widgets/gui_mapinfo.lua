@@ -3,7 +3,7 @@ local versionNumber = "0.50"
 function widget:GetInfo()
   return {
     name      = "Map Info",
-    desc      = versionNumber .." Shows map-info on the bottom left of the map.  Toggle height with /mapinfo_floor",
+    desc      = versionNumber .." Draws map-info on the bottom left of the map.  Toggle height with /mapinfo_floor",
     author    = "Floris",
     date      = "20 May 2014",
     license   = "GNU GPL, v2 or later",
@@ -24,12 +24,11 @@ end
 
 local scale					= 1
 local offset				= 5
-local backgroundOpacity		= 0.62
+local backgroundOpacity		= 0.55
 local textOpacity			= 0.85
 local fadeMultiplier		= 1
 local stickToFloor			= true
 local thickness				= 6
-local textDetail			= false
 
 --------------------------------------------------------------------------------
 -- speed-ups
@@ -48,6 +47,7 @@ local glPopMatrix       = gl.PopMatrix
 local glTranslate       = gl.Translate
 local glBeginEnd        = gl.BeginEnd
 local glVertex          = gl.Vertex
+local glGetTextWidth	= gl.GetTextWidth
 
 local glDepthTest       = gl.DepthTest
 local glAlphaTest       = gl.AlphaTest
@@ -55,7 +55,7 @@ local glTexture         = gl.Texture
 local glRotate          = gl.Rotate
 
 local mapInfo = {}
-local mapInfoWidth = 600
+local mapInfoWidth = 400	-- minimum width
 
 --------------------------------------------------------------------------------
 -- Functions
@@ -78,7 +78,8 @@ function DrawMapInfo(backgroundOpacity, opacityMultiplier)
 		glRotate(180,1,0,0)
 		
 		local length = mapInfoWidth
-		local height = 115
+		glGetTextWidth(mapInfo.mapDescription)
+		local height = 90
 		local thickness = -(thickness*scale)
 		glBeginEnd(GL.QUADS,function()
 			glColor(0.12,0.12,0.12,backgroundOpacity*opacityMultiplier*opacityMultiplier)
@@ -130,22 +131,16 @@ function DrawMapInfo(backgroundOpacity, opacityMultiplier)
 	glRotate(180,1,0,0)
 	
 	-- map name
-	glColor(1,1,1,textOpacity*opacityMultiplier)
+	glColor(1,1,1,(textOpacity*1.12)*opacityMultiplier)
 	glText(text, textOffsetX,-usedTextOffsetY,14,"n")
-	if textDetail then
-		glColor(0,0,0,textOpacity*0.17*opacityMultiplier)
-		glText(text, textOffsetX,-usedTextOffsetY-1,14,"n")
-	end
+	glColor(0,0,0,textOpacity*0.12*opacityMultiplier)
+	glText(text, textOffsetX,-usedTextOffsetY-1,14,"n")
 	
 	--map description
 	usedTextOffsetY = usedTextOffsetY+textOffsetY
 	text = mapInfo.mapDescription
 	glColor(1,1,1,textOpacity*0.6*opacityMultiplier)
 	glText(text, textOffsetX,-usedTextOffsetY,12,"n")
-	if textDetail then
-		glColor(0,0,0,textOpacity*0.6*0.17*opacityMultiplier)
-		glText(text, textOffsetX,-usedTextOffsetY-1,12,"n")
-	end
 	
 	if 1 == 2 then
 	usedTextOffsetY = usedTextOffsetY+textOffsetY
@@ -202,6 +197,9 @@ function Init()
 	mapInfo.gameVersion			= Game.gameVersion
 	mapInfo.gameMutator			= Game.gameMutator
 	
+	if (glGetTextWidth(mapInfo.mapDescription) * 12) > mapInfoWidth then
+		--mapInfoWidth = (glGetTextWidth(mapInfo.mapDescription) * 12) + 33
+	end
 	if stickToFloor then
 		mapInfoBoxHeight = 0
 	else

@@ -1,4 +1,4 @@
-local versionNumber = "1.81"
+local versionNumber = "1.82"
 
 function widget:GetInfo()
   return {
@@ -46,8 +46,8 @@ local fadeNames				= false
 local fadeStartHeight		= 3200
 local fadeEndHeight			= 5200
 
-local fadeIconStartHeight	= 1100		
-local fadeIconEndHeight		= 1600		--needs to be smaller than fadeEndHeight
+local fadeIconStartHeight	= 1050		
+local fadeIconEndHeight		= 1550		--needs to be smaller than fadeEndHeight
 
 --------------------------------------------------------------------------------
 -- speed-ups
@@ -91,15 +91,16 @@ local usedFontSize	 = fontSize
 local font = gl.LoadFont("Fonts/FreeSansBold.otf",50, 6, 15)
 
 --rank pics
+local rankImgFolder = "LuaUI/Images/player-ranks/"
 local rankImages = {}
-rankImages[0] = "LuaUI/Images/advplayerslist/Ranks/rank0.png"
-rankImages[1] = "LuaUI/Images/advplayerslist/Ranks/rank1.png"
-rankImages[2] = "LuaUI/Images/advplayerslist/Ranks/rank2.png"
-rankImages[3] = "LuaUI/Images/advplayerslist/Ranks/rank3.png"
-rankImages[4] = "LuaUI/Images/advplayerslist/Ranks/rank4.png"
-rankImages[5] = "LuaUI/Images/advplayerslist/Ranks/rank5.png"
-rankImages[6] = "LuaUI/Images/advplayerslist/Ranks/rank6.png"
-rankImages[7] = "LuaUI/Images/advplayerslist/Ranks/rank7.png"
+rankImages[0] = rankImgFolder.."rank0.png"
+rankImages[1] = rankImgFolder.."rank1.png"
+rankImages[2] = rankImgFolder.."rank2.png"
+rankImages[3] = rankImgFolder.."rank3.png"
+rankImages[4] = rankImgFolder.."rank4.png"
+rankImages[5] = rankImgFolder.."rank5.png"
+rankImages[6] = rankImgFolder.."rank6.png"
+rankImages[7] = rankImgFolder.."rank7.png"
 
 --------------------------------------------------------------------------------
 -- local variables
@@ -121,54 +122,56 @@ end
 
 
 function GetSkill(playerID)
-	local customtable = select(10,GetPlayerInfo(playerID)) -- player custom table
-	local tsMu = customtable.skill
-	local tsSigma = customtable.skilluncertainty
 	local color = {1,1,1}
 	local tskill = ""
 	local tskillValue = ""
-	if tsMu then
-		tskill = tsMu and tonumber(tsMu:match("%d+%.?%d*")) or 0
-		tskill = round(tskill,0)
-		tskillValue = tskill
-		if string.find(tsMu, ")") then
-			tskill = "\255"..string.char(190)..string.char(140)..string.char(140) .. tskill -- ')' means inferred from lobby rank
-			color = {190/255, 140/255, 140/255}
-		else
-		
-			-- show privacy mode
-			local priv = ""
-			if string.find(tsMu, "~") then -- '~' means privacy mode is on
-				priv = "\255"..string.char(200)..string.char(200)..string.char(200) .. "*"
-			end
-			
-			--show sigma
-			if tsSigma then -- 0 is low sigma, 3 is high sigma
-				tsSigma=tonumber(tsSigma)
-				local tsRed, tsGreen, tsBlue 
-				if tsSigma > 2 then
-					tsRed, tsGreen, tsBlue = 190, 130, 130
-				elseif tsSigma == 2 then
-					tsRed, tsGreen, tsBlue = 140, 140, 140
-				elseif tsSigma == 1 then
-					tsRed, tsGreen, tsBlue = 195, 195, 195
-				elseif tsSigma < 1 then
-						tsRed, tsGreen, tsBlue = 250, 250, 250
-				end
-				tskill = priv .. "\255"..string.char(tsRed)..string.char(tsGreen)..string.char(tsBlue) .. tskill
-				color = {tsRed/255, tsGreen/255, tsBlue/255}
+	local customtable = select(10,GetPlayerInfo(playerID)) -- player custom table
+	if customtable.skill then 
+		local tsMu = customtable.skill
+		local tsSigma = customtable.skilluncertainty
+		if tsMu then
+			tskill = tsMu and tonumber(tsMu:match("%d+%.?%d*")) or 0
+			tskill = round(tskill,0)
+			tskillValue = tskill
+			if string.find(tsMu, ")") then
+				tskill = "\255"..string.char(190)..string.char(140)..string.char(140) .. tskill -- ')' means inferred from lobby rank
+				color = {190/255, 140/255, 140/255}
 			else
-				tskill = priv .. "\255"..string.char(195)..string.char(195)..string.char(195) .. tskill --should never happen
-				color = {195/255, 195/255, 195/255}
+			
+				-- show privacy mode
+				local priv = ""
+				if string.find(tsMu, "~") then -- '~' means privacy mode is on
+					priv = "\255"..string.char(200)..string.char(200)..string.char(200) .. "*"
+				end
+				
+				--show sigma
+				if tsSigma then -- 0 is low sigma, 3 is high sigma
+					tsSigma=tonumber(tsSigma)
+					local tsRed, tsGreen, tsBlue 
+					if tsSigma > 2 then
+						tsRed, tsGreen, tsBlue = 190, 130, 130
+					elseif tsSigma == 2 then
+						tsRed, tsGreen, tsBlue = 140, 140, 140
+					elseif tsSigma == 1 then
+						tsRed, tsGreen, tsBlue = 195, 195, 195
+					elseif tsSigma < 1 then
+							tsRed, tsGreen, tsBlue = 250, 250, 250
+					end
+					tskill = priv .. "\255"..string.char(tsRed)..string.char(tsGreen)..string.char(tsBlue) .. tskill
+					color = {tsRed/255, tsGreen/255, tsBlue/255}
+				else
+					tskill = priv .. "\255"..string.char(195)..string.char(195)..string.char(195) .. tskill --should never happen
+					color = {195/255, 195/255, 195/255}
+				end
+				if priv ~= "" then
+					tskillValue = "*"..tskillValue
+				end
 			end
-			if priv ~= "" then
-				tskillValue = "*"..tskillValue
-			end
+		else
+			tskillValue = "?"
+			tskill = "\255"..string.char(160)..string.char(160)..string.char(160) .. "?"
+			color = {160/255, 160/255, 160/255}
 		end
-	else
-		tskillValue = "?"
-		tskill = "\255"..string.char(160)..string.char(160)..string.char(160) .. "?"
-		color = {160/255, 160/255, 160/255}
 	end
 	return {tskill, tskillValue, color}
 end
@@ -222,27 +225,31 @@ local function DrawCommName(unitID, attributes)
   end
   font:Print(attributes[1], -0.3, 0, usedFontSize, "con")
   
-  if showInfo and showTrueskill and attributes[7] and attributes[7][1] and attributes[7][1] ~= "?" then
+  if showInfo and showTrueskill and attributes[8] > 0 and attributes[7] and attributes[7][1] and attributes[7][1] ~= "?" then
     font:SetTextColor({0,0,0,0.55 * attributes[8]})
     font:Print(attributes[7][2], 13.5*infoScale, (iconHeight+1.5)*infoScale, 8*infoScale, "cn")
     
-    font:SetTextColor({attributes[7][3][1],attributes[7][3][2],attributes[7][3][3],0.95 * attributes[8]})
+    font:SetTextColor({attributes[7][3][1],attributes[7][3][2],attributes[7][3][3],attributes[8] * attributes[8] * attributes[8]})
     font:Print(attributes[7][2], 13.5*infoScale, (iconHeight+1.9)*infoScale, 8*infoScale, "cn")
   end
   font:End()
   
-  if showInfo then
+  if showInfo and attributes[8] > 0 then
     glScale(infoScale,infoScale,infoScale)
     
     if showCountry and attributes[6] and attributes[6] ~= '' then
-      glColor(1,1,1,0.9 * attributes[8])
       glTexture("LuaUI/Images/flags-hq/"..string.upper(attributes[6])..".png")
+      glColor(0,0,0,0.55 * attributes[8] * attributes[8] * attributes[8])
+      glTexRect(-22.5, iconHeight-2, -10.5, iconHeight+10)
+      glColor(1,1,1,attributes[8])
       glTexRect(-22.5, iconHeight-1.5, -10.5, iconHeight+10.5)
       glTexture(false)
     end
     if showRank and rankImages[tonumber(attributes[5])] then
-      glColor(1,1,1,0.9 * attributes[8])
       glTexture(rankImages[tonumber(attributes[5])])
+      glColor(0,0,0,0.55 * attributes[8] * attributes[8] * attributes[8])
+      glTexRect(-13/2, iconHeight+2, 13/2, iconHeight+2+13)
+      glColor(1,1,1,attributes[8])
       glTexRect(-13/2, iconHeight+2.5, 13/2, iconHeight+2.5+13)
       glTexture(false)
     end

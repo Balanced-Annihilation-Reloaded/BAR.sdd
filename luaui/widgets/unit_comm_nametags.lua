@@ -1,4 +1,4 @@
-local versionNumber = "1.82"
+local versionNumber = "1.81"
 
 function widget:GetInfo()
   return {
@@ -46,8 +46,8 @@ local fadeNames				= false
 local fadeStartHeight		= 3200
 local fadeEndHeight			= 5200
 
-local fadeIconStartHeight	= 1050		
-local fadeIconEndHeight		= 1550		--needs to be smaller than fadeEndHeight
+local fadeIconStartHeight	= 1200		
+local fadeIconEndHeight		= 1700		--needs to be smaller than fadeEndHeight
 
 --------------------------------------------------------------------------------
 -- speed-ups
@@ -126,7 +126,7 @@ function GetSkill(playerID)
 	local tskill = ""
 	local tskillValue = ""
 	local customtable = select(10,GetPlayerInfo(playerID)) -- player custom table
-	if customtable.skill then 
+	if customtable.skill ~= nil then 
 		local tsMu = customtable.skill
 		local tsSigma = customtable.skilluncertainty
 		if tsMu then

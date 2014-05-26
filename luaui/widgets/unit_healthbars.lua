@@ -33,10 +33,10 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local barHeight                 = 2.75
+local barHeight                 = 2.65
 local barWidth                  = 12         --// (barWidth)x2 total width!!!
 local barAlpha                  = 0.85
-local barOutlineAlpha           = 0.77
+local barOutlineAlpha           = 0.8
 local barInnerAlpha             = 0.5
 local barValueAlpha             = 0.9	      -- alpha of the colored part
 
@@ -117,7 +117,7 @@ local bkBottom        = { 0.25,0.25,0.25,barAlpha }
 local bkTop           = { 0.10,0.10,0.10,barAlpha }
 local bkOutlineBottom = { 0.25,0.25,0.25,barOutlineAlpha }
 local bkOutlineTop    = { 0.10,0.10,0.10,barOutlineAlpha }
-local bkInnerBottom   = { 0.06,0.06,0.06,barInnerAlpha*0.9 }
+local bkInnerBottom   = { 0.06,0.06,0.06,barInnerAlpha }
 local bkInnerTop      = { 0.33,0.33,0.33,barInnerAlpha*0.5 }
 local hpcolormap      = { {1, 0.0, 0.0, barValueAlpha},  {0.8, 0.60, 0.0, barValueAlpha}, {0.0,0.75,0.0,barValueAlpha} }
 local bfcolormap      = {}
@@ -185,15 +185,15 @@ end --//end do
 
 
 function drawBarGl()
-
+  
   local cs = choppedCornerSize
   local heightAddition = 0
   if OPTIONS[currentOption].showOutline then
     heightAddition = outlineSize
   end
+  
   -- add glow
   if addGlow then
-		
     gl.BeginEnd(GL.QUADS,function()
       -- bottom mid piece
       gl.Vertex(-barWidth,       (barHeight/2),  0,                   -2);
@@ -206,7 +206,7 @@ function drawBarGl()
       gl.Vertex(-barWidth+cs,    (barHeight/2),      (barWidth*2)-cs*2,   -2);
       gl.Vertex(-barWidth+cs,    barHeight+glowSize, (barWidth*2)-cs*2,   -4);
       gl.Vertex(-barWidth,       barHeight+glowSize, 0,                   -4);
-          
+      
       
       -- top left
       gl.Vertex(-barWidth-glowSize,    barHeight,             0, -4);
@@ -547,7 +547,7 @@ function init()
          }
       ]],
 		uniform = {
-			glowAlpha = 0.09,
+			glowAlpha = 0.1,
 		},
     });
 	
@@ -654,6 +654,7 @@ do
     glColor(topclr)
     glVertex(right,top)
     glVertex(left,top)
+    
   end
 
   local brightClr = {}
@@ -880,7 +881,7 @@ do
       --// BUILD
       if (build<1) then
         local infotext = ''
-        if (fullText and drawBarPercentage > 0) then
+        if (fullText and (drawBarPercentage > 0 or dist < minPercentageDistance)) then
           infotext = floor(build*100)..'%'
         end
         AddBar("building",build,"build",infotext or '')
@@ -1285,15 +1286,26 @@ end
 function widget:TextCommand(command)
     if (string.find(command, "healthbars_percentage") == 1  and  string.len(command) == 21) then 
 		drawBarPercentage =  (drawBarPercentage < 100 and 100 or 0)
+		Spring.Echo("Healthbars: percentages: "..(drawBarPercentage == 100 and "always" or "sometimes"))
 	end
     if (string.find(command, "healthbars_compercentage") == 1  and  string.len(command) == 24) then 
 		alwaysDrawBarPercentageForComs = not alwaysDrawBarPercentageForComs
 	end
     if (string.find(command, "healthbars_style") == 1  and  string.len(command) == 16) then 
 		toggleOption()
+		if barShader then
+			Spring.Echo("Healthbars: style: "..currentOption)
+		else
+			Spring.Echo("Healthbars: styles are not supported")
+		end
 	end
     if (string.find(command, "healthbars_glow") == 1  and  string.len(command) == 15) then 
 		addGlow = not addGlow
 		loadOption()
+		if barShader then
+			Spring.Echo("Healthbars: glow: "..(addGlow and "enabled" or "disabled"))
+		else
+			Spring.Echo("Healthbars: glow is not supported")
+		end
 	end
 end

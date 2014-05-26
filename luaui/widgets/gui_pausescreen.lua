@@ -54,10 +54,10 @@ local sizeMultiplier     = 1
 local maxAlpha           = 0.66
 local boxWidth           = 200
 local boxHeight          = 35
-local slideTime          = 0.45
+local slideTime          = 0.4
 local fadeTime           = 0.22
-local fadeToAlpha        = 0.
-local fadeToTextAlpha    = 0.22
+local fadeToAlpha        = 0
+local fadeToTextAlpha    = 0.25
 local wndBorderSize      = 4
 local imgWidth           = 92     --drawing size of the image (independent from the real image pixel size)
 local imgTexCoordX       = 0.625  --image texture coordinate X -- textures image's dimension is a power of 2 (i use 0.625 cause my image has a width of 256, but region to use is only 160 pixel -> 160 / 256 = 0.625 )
@@ -68,7 +68,7 @@ local windowIconPath     = "LuaUI/Images/SpringIconmkII.png"
 local fontPath           = "LuaUI/Fonts/MicrogrammaDBold.ttf"
 local imgCloseWidth      = 0
 local autoFade           = true
-local autoFadeTime       = 1.15
+local autoFadeTime       = 1
 local forceHideWindow    = false
 --Color config in drawPause function
 	
@@ -95,12 +95,16 @@ local checkedWindowSize = false
 local usedSizeMultiplier = 1
 local winSizeX, winSizeY = Spring.GetWindowGeometry()
 local widgetInitTime = osClock()
+local previousGameframeClock = osClock()
+local previousDrawScreenClock = osClock()
+local paused = false
+
 
 function widget:Initialize()
 	myFont = glLoadFont( fontPath, fontSizeHeadline )
 	updateWindowCoords()
 	winSizeX, winSizeY = Spring.GetWindowGeometry()
-	usedSizeMultiplier = (0.5 + ((winSizeX*winSizeY)/5000000)) * sizeMultiplier
+	usedSizeMultiplier = (0.55 + ((winSizeX*winSizeY)/5000000)) * sizeMultiplier
 	checkedWindowSize = true
 end
 
@@ -110,7 +114,17 @@ end
 
 function widget:DrawScreen()
 	local now = osClock()
-	local _, _, paused = spGetGameSpeed()
+	local drawScreenDelay = now - previousDrawScreenClock
+	previousDrawScreenClock = now
+	
+	local _, _, isPaused = spGetGameSpeed()		-- note: when viewing a replay.. isPaused wont be set true if you pause
+	local diffPauseTime = ( now - pauseTimestamp)
+	
+	if not paused and ((spGetGameSeconds() > 0 and previousGameframeClock <= (now-0.25)-(drawScreenDelay*2)) or isPaused) then
+		paused = true
+	end
+	
+	
 	local diffPauseTime = ( now - pauseTimestamp)
 	
 	if ( ( not paused and lastPause ) or ( paused and not lastPause ) ) then
@@ -131,9 +145,9 @@ function widget:DrawScreen()
 			pauseTimestamp = now - (slideTime + autoFadeTime)
 		end
 	end
-
+	
 	lastPause = paused
-		
+	
 	if ( paused or ( ( now - pauseTimestamp) <= slideTime ) ) then
 		drawPause()
 	end
@@ -180,6 +194,14 @@ function widget:IsAbove(x,y)
 	return false
 end
 
+function widget:GameFrame()
+	local _, _, isPaused = spGetGameSpeed()
+	if not isPaused then
+		paused = false
+	end
+	previousGameframeClock = osClock()
+end
+
 function widget:Update()
 	local x,y = spGetMouseState()
 	if ( isOverWindow(x, y) ) then	
@@ -196,10 +218,9 @@ function widget:GetTooltip(x, y)
 end
 
 function drawPause()
-	local _, _, paused = spGetGameSpeed()
 	local now = osClock()
 	local diffPauseTime = ( now - pauseTimestamp)
-
+	
 	local text           = { 1.0, 1.0, 1.0, 1.0*maxAlpha }
 	local text2          = { 0.9, 0.9, 0.9, 1.0*maxAlpha }
 	local outline        = { 0.0, 0.0, 0.0, 1.0*maxAlpha }	
@@ -250,9 +271,9 @@ function drawPause()
 	local imgWidthHalf = imgWidth * 0.5
 	
 	--draw window
+	glPushMatrix()
 	glTranslate(-winSizeX*(usedSizeMultiplier-1)/2,  -winSizeY*(usedSizeMultiplier-1)/2, 0)
 	glScale(usedSizeMultiplier,usedSizeMultiplier,1)
-	glPushMatrix()
 	if ( diffPauseTime <= slideTime ) then
 		--we are sliding
 		if ( paused ) then
@@ -271,18 +292,19 @@ function drawPause()
 	--draw text
 	myFont:Begin()
 	myFont:SetOutlineColor( outline )
-
 	myFont:SetTextColor( text )
 	myFont:Print( "GAME  PAUSED", textX, textY, fontSizeHeadline, "O" )
-	
 	myFont:End()
 	
 	glPopMatrix()
 	
+	
 	--draw logo
+	glPushMatrix()
 	glColor(  iconColor )
 	glTexture( ":n:" .. windowIconPath )
-	glPushMatrix()
+	glTranslate(-winSizeX*(usedSizeMultiplier-1)/2,  -winSizeY*(usedSizeMultiplier-1)/2, 0)
+	glScale(usedSizeMultiplier,usedSizeMultiplier,1)
 	
 	if ( diffPauseTime <= slideTime ) then
 		--we are sliding
@@ -299,8 +321,7 @@ function drawPause()
 	
 	glTexRect( xCut - imgWidthHalf, yCenter + imgWidthHalf, xCut + imgWidthHalf, yCenter - imgWidthHalf, 0.0, 0.0, imgTexCoordX, imgTexCoordY )
 	glPopMatrix()
-	
-	glTexture(false)
+	ResetGl()
 end
 
 function updateWindowCoords()
@@ -326,7 +347,7 @@ function widget:ViewResize(viewSizeX, viewSizeY)
  end
 
 --Commons
-function ResetGl() 
+function ResetGl()
 	glScale(1,1,1)
 	glColor( { 1.0, 1.0, 1.0, 1.0 } )
 	glLineWidth( 1.0 )

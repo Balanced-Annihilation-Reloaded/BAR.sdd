@@ -1,5 +1,5 @@
 include("keysym.h.lua")
-local versionNumber = "1.32"
+local versionNumber = "1.33"
 
 function widget:GetInfo()
 	return {
@@ -178,7 +178,7 @@ function widget:MousePress(x, y, button)
 			end
 		end
 		
-		return true
+		--return true
 	end
   end
   

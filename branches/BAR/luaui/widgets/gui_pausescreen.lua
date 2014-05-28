@@ -139,7 +139,7 @@ function widget:DrawScreen()
 		--new pause
 		clickTimestamp = nil
 		autoFadeTimestamp = nil
-		if widgetInitTime + 2.5 > now then		-- so if you do /luaui reload when paused, it wont re-animate
+		if widgetInitTime + 5 > now then		-- so if you do /luaui reload when paused, it wont re-animate
 			clickTimestamp = nil
 			autoFadeTimestamp = now - autoFadeTime
 			pauseTimestamp = now - (slideTime + autoFadeTime)

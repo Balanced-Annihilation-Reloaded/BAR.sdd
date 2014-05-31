@@ -6,7 +6,7 @@ function widget:GetInfo()
 		date		= "Feb, 2014",
 		license		= "GNU GPL, v2 or later",
 		layer		= 0,
-		enabled		= false
+		enabled		= true
 	}
 end
 
@@ -152,6 +152,12 @@ function widget:Initialize()
 	if Spring.GetGameFrame() > 0 then
 		Recount()
 	end
+    
+    --set position if it wasn't in config
+    if not xPos or not yPos then
+        xPos = 0.80
+        yPos = 0.85
+    end
 end
 
 function widget:GameStart()
@@ -206,56 +212,56 @@ function widget:DrawScreen()
 	if not inProgress then
 		return
 	end
-	if xPos and yPos then
-		local flickerState = allyComs == 1 and flashIcon and flicker()
-		if countChanged or flickerLastState ~= flickerState then
-			countChanged = false
-			CheckStatus()
-			
-			glDeleteList(displayList)
-			-- regenerate the display list
-			displayList = glCreateList( function()
-				glTranslate(xPos, yPos, 0)
-				--background
-				glColor(0, 0, 0, 0.5)
-				glRect(0, 0, panelWidth, panelHeight)
-				--com pic
-				if flickerState then
-					glColor(1,0.6,0,0.6)
-				else
-					glColor(1,1,1,0.3)
-				end
-				if VFSFileExists('LuaUI/Images/comIcon.png') then
-					glTexture('LuaUI/Images/comIcon.png')
-				end
-				glTexRect(panelWidth/2-34/2, 5, panelWidth/2+34/2, 5+40)
-				glTexture(false)
-				--ally coms
-				if allyComs >0 then
-					glColor(0,1,0,1)	
-					local text = tostring(allyComs)
-					local width = glGetTextWidth(text)*22
-					glText(text, panelWidth/2 - width/2 + 1, 20, 22)
-				end
-				--enemy coms
-				glColor(1,0,0,1)
-				if amISpec then
-					text = tostring(enemyComs)
-					width = glGetTextWidth(text)*14
-					glText(text, panelWidth - width - 3, 3, 14)
-				elseif receiveCount then
-					text = tostring(enemyComCount)
-					width = glGetTextWidth(text)*14
-					glText(text, panelWidth - width - 3, 3, 14)			
-				end
-			end)
-			flickerLastState = flickerState
-		end
+	
+	local flickerState = allyComs == 1 and flashIcon and flicker()
+	if countChanged or flickerLastState ~= flickerState then
+		countChanged = false
+		CheckStatus()
 		
-		glPushMatrix()
-		glCallList(displayList)
-		glPopMatrix()
+		glDeleteList(displayList)
+		-- regenerate the display list
+		displayList = glCreateList( function()
+			glTranslate(xPos, yPos, 0)
+			--background
+			glColor(0, 0, 0, 0.5)
+			glRect(0, 0, panelWidth, panelHeight)
+			--com pic
+			if flickerState then
+				glColor(1,0.6,0,0.6)
+			else
+				glColor(1,1,1,0.3)
+			end
+			if VFSFileExists('LuaUI/Images/comIcon.png') then
+				glTexture('LuaUI/Images/comIcon.png')
+			end
+			glTexRect(panelWidth/2-34/2, 5, panelWidth/2+34/2, 5+40)
+			glTexture(false)
+			--ally coms
+			if allyComs >0 then
+				glColor(0,1,0,1)	
+				local text = tostring(allyComs)
+				local width = glGetTextWidth(text)*22
+				glText(text, panelWidth/2 - width/2 + 1, 20, 22)
+			end
+			--enemy coms
+			glColor(1,0,0,1)
+			if amISpec then
+				text = tostring(enemyComs)
+				width = glGetTextWidth(text)*14
+				glText(text, panelWidth - width - 3, 3, 14)
+			elseif receiveCount then
+				text = tostring(enemyComCount)
+				width = glGetTextWidth(text)*14
+				glText(text, panelWidth - width - 3, 3, 14)			
+			end
+		end)
+		flickerLastState = flickerState
 	end
+	
+	glPushMatrix()
+	glCallList(displayList)
+	glPopMatrix()
+	
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -290,9 +296,7 @@ function drawCheckbox(x, y, state, text)
 end
 
 function widget:IsAbove(mx, my)
-	if xPos and yPos then
-		return mx > xPos and my > yPos and mx < xPos + panelWidth and my < yPos + panelHeight
-	end
+	return mx > xPos and my > yPos and mx < xPos + panelWidth and my < yPos + panelHeight
 end
 
 function widget:MousePress(mx, my, button)

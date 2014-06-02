@@ -154,7 +154,6 @@ local function makeWidgetList(filter)
 	for i=1,num_cats do
         -- Get group of pos i
         local cat = wCategories[inv_pos[i]]
-        Spring.Echo(i,inv_pos[i])
 		local list = cat.list
 		if #list>0 then
 			widgetNum = widgetNum + 1

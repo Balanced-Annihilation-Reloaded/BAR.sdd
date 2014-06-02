@@ -53,22 +53,18 @@ if credits == '' then credits = 'credits is blank, normally this would read the 
 
 
 local wCategories = {
-	{cat = 'gfx'      , label = 'Effects'       , list = {}, },
-	{cat = 'gui'      , label = 'GUI'           , list = {}, },
-	{cat = 'camera'   , label = 'Camera'        , list = {}, },
-	{cat = 'map'      , label = 'Map'           , list = {}, },
-	{cat = 'cmd'      , label = 'Commands'      , list = {}, },
-	{cat = 'unit'     , label = 'Units'         , list = {}, },
-	{cat = 'minimap'  , label = 'Minimap'       , list = {}, },
-	{cat = 'mission'  , label = 'Mission'       , list = {}, },
-	{cat = 'api'      , label = 'API'           , list = {}, },
-	{cat = 'dbg'      , label = 'Debugging'     , list = {}, },
-	{cat = 'hook'     , label = 'Commands'      , list = {}, },
-	{cat = 'ico'      , label = 'GUI'           , list = {}, },
-	{cat = 'init'     , label = 'Initialization', list = {}, },
-	{cat = 'snd'      , label = 'Sound'         , list = {}, },
-	{cat = 'test'     , label = 'Test Widgets'  , list = {}, },
-	{cat = 'ungrouped', label = 'Ungrouped'     , list = {}, }
+	['unit']      = {label = 'Units',       list = {}, pos = 1,},
+	['cmd']       = {label = 'Commands',    list = {}, pos = 2,},
+	['gui']       = {label = 'GUI',         list = {}, pos = 3,},
+	['gfx']       = {label = 'GFX',         list = {}, pos = 4,},
+	['snd']       = {label = 'Sound',       list = {}, pos = 5,},
+	['camera']    = {label = 'Camera',      list = {}, pos = 6,},
+	['map']       = {label = 'Map',         list = {}, pos = 7,},
+	['minimap']   = {label = 'Minimap',     list = {}, pos = 8,},
+	['api']       = {label = 'API',         list = {}, pos = 9,},
+	['dbg']       = {label = 'Debugging',   list = {}, pos = 10,},
+	['test']      = {label = 'Test Widgets',list = {}, pos = 11,},
+	['ungrouped'] = {label = 'Ungrouped',   list = {}, pos = 12,},
 }
 ---------------------------- 
 --
@@ -109,11 +105,11 @@ end
 -- 
 local function groupWidget(name,wData)
 	local _, _, category = string.find(wData.basename, '([^_]*)')
-	if not category then category = 'ungrouped' end
-	
-	for i=1,#wCategories do
-		if category == wCategories[i].cat then
-			wCategories[i].list[#wCategories[i].list+1] = {name = name,wData = wData} 
+	if not category or not wCategories[category] then category = 'ungrouped' end
+    
+	for cat_name,cat in pairs(wCategories) do
+		if category == cat_name then
+			cat.list[#cat.list+1] = {name = name, wData = wData} 
 		end
 	end
 
@@ -129,9 +125,9 @@ local function sortWidgetList(filter)
 		or (Settings.searchWidgetAuth and string.lower(wData.author or ''):find(filter)) then
 			groupWidget(name,wData)
 		end
-		for i=1,#wCategories do
-			local ascending = function(a,b) return a.name<b.name end
-			table.sort(wCategories[i].list,ascending)
+		for _,cat in pairs(wCategories) do
+			local ascending_name = function(a,b) return a.name<b.name end
+			table.sort(cat.list,ascending_name)
 		end
 	end
 end
@@ -145,16 +141,28 @@ local function makeWidgetList(filter)
 	local widgetNum = 0
 	local scrollpanel = tabs['Interface']:GetObjectByName('widgetList')
 	scrollpanel:ClearChildren()
+    -- Get order of categories
+    local inv_pos = {}
+    local num_cats = 0
+    for cat_name,cat in pairs(wCategories) do
+        if cat.pos then
+            inv_pos[cat.pos] = cat_name
+            num_cats = num_cats + 1
+        end
+    end
 	-- First loop adds group label
-	for a=1,#wCategories do
-		local list = wCategories[a].list
+	for i=1,num_cats do
+        -- Get group of pos i
+        local cat = wCategories[inv_pos[i]]
+        Spring.Echo(i,inv_pos[i])
+		local list = cat.list
 		if #list>0 then
 			widgetNum = widgetNum + 1
 			Chili.Label:New{
 				parent   = scrollpanel,
 				x        = 0,  
 				y        = widgetNum * 20 - 10,
-				caption  = '- '..wCategories[a].label..' -',
+				caption  = '- '..cat.label..' -',
 				align    = 'center',
 				width    = '100%',
 				autosize = false,
@@ -185,7 +193,7 @@ local function makeWidgetList(filter)
 				widgetNum = widgetNum + 1
 			end
 		end
-		wCategories[a].list = {}
+		cat.list = {}
 	end
 end
 

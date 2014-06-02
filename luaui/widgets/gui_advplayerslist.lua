@@ -14,8 +14,8 @@ function widget:GetInfo()
 		name      = "AdvPlayersList",
 		desc      = "Players list with useful information / shortcuts. Use tweakmode (ctrl+F11) to customize.",
 		author    = "Marmoth.",
-		date      = "11.06.2013",
-		version   = "11.1",
+		date      = "03.06.2014",
+		version   = "12.0",
 		license   = "GNU GPL, v2 or later",
 		layer     = -4,
 		enabled   = true,  --  loaded by default?
@@ -32,6 +32,7 @@ end
 -- v11.1 (Bluestone): Added TrueSkill column
 -- v11.2 (Bluestone): Remove lots of hardcoded crap about module names/pictures
 -- v11.3 (Bluestone): More cleaning up 
+-- v12.0 (Floris): Restyled looks + added imageDirectory var
 
 --------------------------------------------------------------------------------
 -- SPEED UPS
@@ -77,53 +78,55 @@ local gl_GetTextWidth	  = gl.GetTextWidth
 -- IMAGES
 --------------------------------------------------------------------------------
 
-local unitsPic        = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/units.png"
-local energyPic       = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/energy.png"
-local metalPic        = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/metal.png"
-local notFirstPic     = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/notfirst.png"
-local notFirstPicWO   = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/notfirstWO.png"
-local pingPic         = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/ping.png"
-local cpuPic          = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/cpu.png"
-local selectPic       = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/select.png"
-local barPic          = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/bar.png"
-local amountPic       = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/amount.png"
-local pointPic        = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/point.png"
-local lowPic          = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/low.png"
-local settingsPic     = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/settings.png"
-local rankPic         = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/ranks.png"
-local arrowPic        = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/arrow.png"
-local arrowdPic       = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/arrowd.png"
-local takePic         = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/take.png"
-local crossPic        = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/cross.png"
-local pointbPic       = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/pointb.png"
-local takebPic        = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/takeb.png"
-local seespecPic      = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/seespec.png"
+local imageDirectory = ":n:"..LUAUI_DIRNAME.."Images/Advplayerslist/"
+
+local unitsPic        = imageDirectory.."units.png"
+local energyPic       = imageDirectory.."energy.png"
+local metalPic        = imageDirectory.."metal.png"
+local notFirstPic     = imageDirectory.."notfirst.png"
+local notFirstPicWO   = imageDirectory.."notfirstWO.png"
+local pingPic         = imageDirectory.."ping.png"
+local cpuPic          = imageDirectory.."cpu.png"
+local selectPic       = imageDirectory.."select.png"
+local barPic          = imageDirectory.."bar.png"
+local amountPic       = imageDirectory.."amount.png"
+local pointPic        = imageDirectory.."point.png"
+local lowPic          = imageDirectory.."low.png"
+local settingsPic     = imageDirectory.."settings.png"
+local rankPic         = imageDirectory.."ranks.png"
+local arrowPic        = imageDirectory.."arrow.png"
+local arrowdPic       = imageDirectory.."arrowd.png"
+local takePic         = imageDirectory.."take.png"
+local crossPic        = imageDirectory.."cross.png"
+local pointbPic       = imageDirectory.."pointb.png"
+local takebPic        = imageDirectory.."takeb.png"
+local seespecPic      = imageDirectory.."seespec.png"
 
 --module pics
-local specPic         = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/spec.png" 
-local chatPic         = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/chat.png"
-local sidePic         = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/side.png"
-local cpuPingPic      = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/cpuping.png"
-local sharePic        = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/share.png"
-local namePic         = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/name.png"
-local idPic           = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/ID.png"
-local tsPic           = ":n:"..LUAUI_DIRNAME.."Images/advplayerslist/TS.png"
+local specPic         = imageDirectory.."spec.png" 
+local chatPic         = imageDirectory.."chat.png"
+local sidePic         = imageDirectory.."side.png"
+local cpuPingPic      = imageDirectory.."cpuping.png"
+local sharePic        = imageDirectory.."share.png"
+local namePic         = imageDirectory.."name.png"
+local idPic           = imageDirectory.."ID.png"
+local tsPic           = imageDirectory.."TS.png"
 
 --rank pics
-local rank0      = "LuaUI/Images/advplayerslist/Ranks/rank0.png"
-local rank1      = "LuaUI/Images/advplayerslist/Ranks/rank1.png"
-local rank2      = "LuaUI/Images/advplayerslist/Ranks/rank2.png"
-local rank3      = "LuaUI/Images/advplayerslist/Ranks/rank3.png"
-local rank4      = "LuaUI/Images/advplayerslist/Ranks/rank4.png"
-local rank5      = "LuaUI/Images/advplayerslist/Ranks/rank5.png"
-local rank6      = "LuaUI/Images/advplayerslist/Ranks/rank6.png"
-local rank7      = "LuaUI/Images/advplayerslist/Ranks/rank7.png"
-local rank8      = "LuaUI/Images/advplayerslist/Ranks/rank_unknown.png"
+local rank0      = imageDirectory.."Ranks/rank0.png"
+local rank1      = imageDirectory.."Ranks/rank1.png"
+local rank2      = imageDirectory.."Ranks/rank2.png"
+local rank3      = imageDirectory.."Ranks/rank3.png"
+local rank4      = imageDirectory.."Ranks/rank4.png"
+local rank5      = imageDirectory.."Ranks/rank5.png"
+local rank6      = imageDirectory.."Ranks/rank6.png"
+local rank7      = imageDirectory.."Ranks/rank7.png"
+local rank8      = imageDirectory.."Ranks/rank_unknown.png"
 
 local sidePics        = {}  -- loaded in SetSidePics function
 local sidePicsWO      = {}  -- loaded in SetSidePics function
 local originalColourNames = {} -- loaded in SetOriginalColourNames, format is originalColourNames['name'] = colourString
-local readyTexture = "LuaUI/Images/advplayerslist/blob_small.png"
+local readyTexture = imageDirectory.."blob_small.png"
 --------------------------------------------------------------------------------
 -- Colors
 --------------------------------------------------------------------------------
@@ -213,13 +216,13 @@ local expandLeft                                 = true
 local right
 
 local activePlayers   = {}
-local labelOffset     = 20
+local labelOffset     = 33
 local separatorOffset = 3
 local playerOffset    = 18
 local specOffset 	  = 12
 local drawList        = {}
 local teamN
-
+local backgroundMargin = 8
 
 --------------------------------------------------
 -- Modules
@@ -496,11 +499,11 @@ function SetSidePics()
 		end
 	
 		if teamside then
-			sidePics[team] = ":n:LuaUI/Images/Advplayerslist/"..teamside.."_default.png"
-			sidePicsWO[team] = ":n:LuaUI/Images/Advplayerslist/"..teamside.."WO_default.png"
+			sidePics[team] = imageDirectory..teamside.."_default2.png"
+			sidePicsWO[team] = imageDirectory..teamside.."WO_default2.png"
 		else
-			sidePics[team] = ":n:"..LUAUI_DIRNAME.."Images/Advplayerslist/default.png"
-			sidePicsWO[team] = ":n:"..LUAUI_DIRNAME.."Images/Advplayerslist/defaultWO.png"
+			sidePics[team] = imageDirectory.."default.png"
+			sidePicsWO[team] = imageDirectory.."defaultWO.png"
 		end
 	end
 end
@@ -783,12 +786,18 @@ function SortAllyTeams(vOffset)
 	local allyTeamID
 	local allyTeamList = Spring_GetAllyTeamList()
 	local firstEnnemy = true
+	local isFirstDrawnTeam = true
 	allyTeamsCount = table.maxn(allyTeamList)-1
 	
 	--find own ally team
 	for allyTeamID = 0, allyTeamsCount - 1 do
 		if allyTeamID == myAllyTeamID  then
-			vOffset = vOffset + labelOffset - 2
+			usedLabelOffset = labelOffset
+			if isFirstDrawnTeam then
+				isFirstDrawnTeam = false
+				usedLabelOffset = usedLabelOffset - 12
+			end
+			vOffset = vOffset + usedLabelOffset - 3
 			table.insert(drawListOffset, vOffset)
 			table.insert(drawList, -2)  -- "Allies" label
 			vOffset = SortTeams(allyTeamID, vOffset)	-- Add the teams from the allyTeam		
@@ -800,7 +809,12 @@ function SortAllyTeams(vOffset)
 	for allyTeamID = 0, allyTeamsCount-1 do
 		if allyTeamID ~= myAllyTeamID then
 			if firstEnnemy == true then
-				vOffset = vOffset + labelOffset - 2
+				usedLabelOffset = labelOffset
+				if isFirstDrawnTeam then
+					isFirstDrawnTeam = false
+					usedLabelOffset = usedLabelOffset - 12
+				end
+				vOffset = vOffset + labelOffset - 3
 				table.insert(drawListOffset, vOffset)
 				table.insert(drawList, -3) -- "Ennemies" label
 				firstEnnemy = false
@@ -1003,18 +1017,28 @@ function CreateBackground()
 	if Background then
 		gl_DeleteList(Background)
 	end
+	local margin = backgroundMargin
 	
 	Background = gl_CreateList(function()	
 	-- draws background rectangle
-	gl_Color(0.1,0.1,.45,0.18)                              
-	gl_Rect(widgetPosX,widgetPosY, widgetPosX + widgetWidth, widgetPosY + widgetHeight - 1)
+	gl_Color(0.05,0.05,0.05,0.55)
+	gl_Rect(widgetPosX-margin,widgetPosY-margin, widgetPosX + widgetWidth+margin, widgetPosY + widgetHeight - 1 + margin)
 	
 	-- draws black border
-	gl_Color(0,0,0,1)
-	gl_Rect(widgetPosX,widgetPosY, widgetPosX + widgetWidth, widgetPosY+1)
-	gl_Rect(widgetPosX,widgetPosY + widgetHeight  - 2, widgetPosX + widgetWidth, widgetPosY + widgetHeight  - 1)
-	gl_Rect(widgetPosX , widgetPosY, widgetPosX + 1, widgetPosY + widgetHeight  - 1)
-	gl_Rect(widgetPosX + widgetWidth - 1, widgetPosY, widgetPosX + widgetWidth, widgetPosY + widgetHeight  - 1)
+	gl_Color(0,0,0,0.25)
+	gl_Rect(widgetPosX-margin,						widgetPosY-margin,						widgetPosX + widgetWidth+margin, 			widgetPosY+1-margin)
+	gl_Rect(widgetPosX+margin + widgetWidth - 1, 	widgetPosY-margin, 						widgetPosX+margin + widgetWidth, 			widgetPosY + widgetHeight  - 1+margin)
+	
+	gl_Color(0.0,0.06,0.06,0.18)
+	gl_Rect(widgetPosX-margin-2,					widgetPosY + widgetHeight +1+margin, 	widgetPosX + widgetWidth+margin-1, 			widgetPosY + widgetHeight+margin)
+	gl_Rect(widgetPosX-margin-2 , 					widgetPosY-margin, 						widgetPosX-margin-1, 						widgetPosY-margin + widgetHeight + 1  - 1+margin+margin)
+	gl_Color(0,0,0,0.18)
+	gl_Rect(widgetPosX-margin,						widgetPosY-margin-1,					widgetPosX + widgetWidth+margin+1, 			widgetPosY+1-margin-1)
+	gl_Rect(widgetPosX+margin + widgetWidth, 		widgetPosY-margin, 						widgetPosX+margin + widgetWidth+1, 			widgetPosY + widgetHeight  + 1+margin)
+	
+	gl_Color(0.25,0.25,0.25,0.7)	
+	gl_Rect(widgetPosX-margin-1,					widgetPosY + widgetHeight +margin, 		widgetPosX + widgetWidth+margin-1, 			widgetPosY + widgetHeight-1+margin)
+	gl_Rect(widgetPosX-margin-1 , 					widgetPosY-margin+2, 					widgetPosX-margin, 							widgetPosY-margin + widgetHeight + 1  - 1+margin+margin)
 	gl_Color(1,1,1,1)
 	
 	end)	
@@ -1121,19 +1145,23 @@ function DrawLabel(text, vOffset)
 	if widgetWidth < 67 then
 		text = string.sub(text, 0, 1)
 	end
-	gl_Text(text, widgetPosX + 2, widgetPosY + widgetHeight -vOffset+1, 15, "o")
-	gl_Color(1,1,1,0.5)
-	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset-1, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset-2)
-	gl_Color(0,0,0,0.5)
-	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset-2, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset-3)
+	gl_Color(0.9,0.9,0.9,0.44)
+	gl_Text(text, widgetPosX, widgetPosY + widgetHeight -vOffset+7.5, 13, "n")
+	gl_Color(0.14,0.14,0.14,0.33)
+	gl_Text(text, widgetPosX - 0.5, widgetPosY + widgetHeight -vOffset+7.5, 13, "")
+	
+	gl_Color(0.5,0.5,0.5,0.22)
+	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset+2.5, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset+1.5)
+	gl_Color(0,0,0,0.25)
+	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset+2, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset+1)
 	gl_Color(1,1,1)
 end
 
 function DrawSeparator(vOffset)
-	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset-1, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset-2)
-	gl_Color(0,0,0)
-	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset-2, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset-3)
-	gl_Color(1,1,1)
+	--gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset-1, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset-2)
+	--gl_Color(0,0,0)
+	--gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset-2, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset-3)
+	--gl_Color(1,1,1)
 end
 
 
@@ -1181,14 +1209,14 @@ function DrawPlayer(playerID, leader, vOffset, mouseX, mouseY)
 					end
 				end
 			else
-				if m_spec.active == true then
+				if name ~= absentName and m_spec.active == true then
 					DrawSpecButton(team, posY)                           -- spec button
 					if tipY == true then SpecTip(mouseX, mouseY) end
 				end
 			end
 			gl_Color(red,green,blue,1)	
 			if m_rank.active == true then
-					DrawRank(rank, posY, dark)
+					--DrawRank(rank, posY, dark)		-- disabled, cause else this makes it draw the icon twice
 			end
 			if m_ID.active == true then
 					DrawID(team, posY, dark)
@@ -1199,10 +1227,10 @@ function DrawPlayer(playerID, leader, vOffset, mouseX, mouseY)
 		end
 		gl_Color(red,green,blue,1)
 		if m_rank.active == true then                        
-			DrawRank(rank, posY, leader, dark)   
+			DrawRank(rank, posY, leader, dark)    
 		end
 		gl_Color(red,green,blue,1)
-		if m_side.active == true then                        
+		if name ~= absentName and m_side.active == true then                        
 			DrawSidePic(team, playerID, posY, leader, dark, ai)   
 		end
 		gl_Color(red,green,blue,1)	
@@ -1368,9 +1396,9 @@ function DrawRank(rank, posY, dark)
 end
 
 function DrawRankImage(rankImage, posY)
-		gl_Color(1,1,1)
-		gl_Texture(rankImage)
-		gl_TexRect(widgetPosX + 2, posY, widgetPosX + 18, posY + 16)
+	gl_Color(1,1,1)
+	gl_Texture(rankImage)
+	gl_TexRect(widgetPosX + 2, posY, widgetPosX + 18, posY + 16)
 end
 
 function colourNames(teamID)
@@ -1391,7 +1419,18 @@ function colourNames(teamID)
 end 
 
 function DrawName(name, team, posY, dark)
-	gl_Text(colourNames(team) .. name, m_name.posX + widgetPosX + 3, posY + 3, 15, "o") -- draws name
+    local nameColourR,nameColourG,nameColourB,nameColourA = Spring_GetTeamColor(team)
+	
+	if (nameColourR + nameColourG*1.35 + nameColourB*0.5) < 0.75 then
+		gl_Text(colourNames(team) .. name, m_name.posX + widgetPosX + 3, posY + 3, 15, "o") -- draws name
+	else
+		gl_Color(0,0,0,0.4)
+		gl_Text(name, m_name.posX + widgetPosX + 2, posY + 2.5, 15, "n") -- draws name
+		gl_Text(name, m_name.posX + widgetPosX + 4, posY + 2.5, 15, "n") -- draws name
+		gl_Color(nameColourR,nameColourG,nameColourB,1)
+		gl_Text(name, m_name.posX + widgetPosX + 3, posY + 3.5, 15, "n") -- draws name
+	end
+	
 	gl_Color(1,1,1)
 end
 
@@ -1399,7 +1438,11 @@ function DrawSmallName(name, posY, dark, playerID)
 	if originalColourNames[playerID] then
 		name = originalColourNames[playerID] .. name
 	end
-	gl_Text(name, m_name.posX + widgetPosX + 3, posY + 3, 12, "o")
+	gl_Color(0,0,0,0.3)
+	gl_Text(name, m_name.posX + widgetPosX + 2.2, posY + 3.5, 12, "n")
+	gl_Text(name, m_name.posX + widgetPosX + 3.8, posY + 2.5, 12, "n")
+	gl_Color(1,1,1,0.72)
+	gl_Text(name, m_name.posX + widgetPosX + 3, posY + 3, 12, "n")
 	gl_Color(1,1,1)
 end
 

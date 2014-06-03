@@ -1156,9 +1156,9 @@ function DrawLabel(text, vOffset)
 end
 
 function DrawSeparator(vOffset)
-	gl_Color(0.5,0.5,0.5,0.5)
+	gl_Color(0.5,0.5,0.5,0.55)
 	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset+0.5, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset-0.5)
-	gl_Color(0,0,0,0.66)
+	gl_Color(0,0,0,0.36)
 	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset-1)
 	gl_Color(1,1,1)
 end

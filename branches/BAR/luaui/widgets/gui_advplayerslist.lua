@@ -1019,7 +1019,7 @@ function CreateBackground()
 	
 	Background = gl_CreateList(function()	
 	-- draws background rectangle
-	gl_Color(0.05,0.05,0.05,0.55)
+	gl_Color(0.05,0.05,0.05,0.5)
 	gl_Rect(widgetPosX-margin,widgetPosY-margin, widgetPosX + widgetWidth+margin, widgetPosY + widgetHeight - 1 + margin)
 	
 	-- draws black border
@@ -1143,14 +1143,14 @@ function DrawLabel(text, vOffset)
 	if widgetWidth < 67 then
 		text = string.sub(text, 0, 1)
 	end
-	gl_Color(0.9,0.9,0.9,0.44)
+	gl_Color(0,0,0,0.5)
+	gl_Text(text, widgetPosX - 0.5, widgetPosY + widgetHeight -vOffset+6, 13, "")
+	gl_Color(0.9,0.9,0.9,0.66)
 	gl_Text(text, widgetPosX, widgetPosY + widgetHeight -vOffset+7.5, 13, "n")
-	gl_Color(0.14,0.14,0.14,0.33)
-	gl_Text(text, widgetPosX - 0.5, widgetPosY + widgetHeight -vOffset+7.5, 13, "")
 	
-	gl_Color(0.5,0.5,0.5,0.5)
-	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset+2.5, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset+1.5)
-	gl_Color(0,0,0,0.66)
+	gl_Color(0.5,0.5,0.5,0.55)
+	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset+3, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset+2)
+	gl_Color(0,0,0,0.36)
 	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset+2, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset+1)
 	gl_Color(1,1,1)
 end

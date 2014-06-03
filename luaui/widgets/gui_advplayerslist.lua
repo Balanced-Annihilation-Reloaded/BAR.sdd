@@ -31,7 +31,7 @@ end
 -- v11  (Bluestone): Get take info from cmd_idle_players
 -- v11.1 (Bluestone): Added TrueSkill column
 -- v11.2 (Bluestone): Remove lots of hardcoded crap about module names/pictures
--- v11.3 (Bluestone): More cleaning up 
+-- v11.3 (Bluestone): More cleaning up
 -- v12.0 (Floris): Restyled looks + added imageDirectory var
 
 --------------------------------------------------------------------------------
@@ -503,8 +503,8 @@ function SetSidePics()
 		end
 	
 		if teamside then
-			sidePics[team] = imageDirectory..teamside.."_default2.png"
-			sidePicsWO[team] = imageDirectory..teamside.."WO_default2.png"
+			sidePics[team] = imageDirectory..teamside.."_default.png"
+			sidePicsWO[team] = imageDirectory..teamside.."WO_default.png"
 		else
 			sidePics[team] = imageDirectory.."default.png"
 			sidePicsWO[team] = imageDirectory.."defaultWO.png"
@@ -810,6 +810,7 @@ function SortAllyTeams(vOffset)
 		if allyTeamID ~= myAllyTeamID then
 			if firstEnnemy == true then
                 vOffset = vOffset + 13
+
 				vOffset = vOffset + labelOffset - 3
 				table.insert(drawListOffset, vOffset)
 				table.insert(drawList, -3) -- "Ennemies" label
@@ -1147,18 +1148,19 @@ function DrawLabel(text, vOffset)
 	gl_Color(0.14,0.14,0.14,0.33)
 	gl_Text(text, widgetPosX - 0.5, widgetPosY + widgetHeight -vOffset+7.5, 13, "")
 	
-	gl_Color(0.5,0.5,0.5,0.22)
+	gl_Color(0.5,0.5,0.5,0.5)
 	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset+2.5, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset+1.5)
-	gl_Color(0,0,0,0.25)
+	gl_Color(0,0,0,0.66)
 	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset+2, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset+1)
 	gl_Color(1,1,1)
 end
 
 function DrawSeparator(vOffset)
-	--gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset-1, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset-2)
-	--gl_Color(0,0,0)
-	--gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset-2, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset-3)
-	--gl_Color(1,1,1)
+	gl_Color(0.5,0.5,0.5,0.5)
+	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset+0.5, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset-0.5)
+	gl_Color(0,0,0,0.66)
+	gl_Rect(widgetPosX+1, widgetPosY + widgetHeight -vOffset, widgetPosX + widgetWidth-1, widgetPosY + widgetHeight -vOffset-1)
+	gl_Color(1,1,1)
 end
 
 

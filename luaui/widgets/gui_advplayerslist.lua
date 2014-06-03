@@ -216,7 +216,7 @@ local expandLeft                                 = true
 local right
 
 local activePlayers   = {}
-local labelOffset     = 33
+local labelOffset     = 20
 local separatorOffset = 3
 local playerOffset    = 18
 local specOffset 	  = 12
@@ -461,10 +461,6 @@ function widget:Initialize()
 		Spring.SendCommands("info 0")
 	end
 
-	if Spring.GetGameFrame()>0 then
-		gameStarted = true
-	end
-	
 	GeometryChange()	
 	SetModulesPositionX() 
 	SetSidePics() 
@@ -792,32 +788,24 @@ function SortAllyTeams(vOffset)
 	local firstEnnemy = true
 	local isFirstDrawnTeam = true
 	allyTeamsCount = table.maxn(allyTeamList)-1
-	
+    
 	--find own ally team
 	for allyTeamID = 0, allyTeamsCount - 1 do
 		if allyTeamID == myAllyTeamID  then
-			usedLabelOffset = labelOffset
-			if isFirstDrawnTeam then
-				isFirstDrawnTeam = false
-				usedLabelOffset = usedLabelOffset - 12
-			end
-			vOffset = vOffset + usedLabelOffset - 3
+			vOffset = vOffset + labelOffset - 3
 			table.insert(drawListOffset, vOffset)
 			table.insert(drawList, -2)  -- "Allies" label
 			vOffset = SortTeams(allyTeamID, vOffset)	-- Add the teams from the allyTeam		
 			break
 		end
 	end
+
 	
 	-- add the others
 	for allyTeamID = 0, allyTeamsCount-1 do
 		if allyTeamID ~= myAllyTeamID then
 			if firstEnnemy == true then
-				usedLabelOffset = labelOffset
-				if isFirstDrawnTeam then
-					isFirstDrawnTeam = false
-					usedLabelOffset = usedLabelOffset - 12
-				end
+                vOffset = vOffset + 13
 				vOffset = vOffset + labelOffset - 3
 				table.insert(drawListOffset, vOffset)
 				table.insert(drawList, -3) -- "Ennemies" label
@@ -922,6 +910,7 @@ function SortSpecs(vOffset)
 				
 				-- add "Specs" label if first spec
 				if noSpec == true then
+                    vOffset = vOffset + 13
 					vOffset = vOffset + labelOffset - 2
 					table.insert(drawListOffset, vOffset)
 					table.insert(drawList, -5)

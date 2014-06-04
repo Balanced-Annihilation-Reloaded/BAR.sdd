@@ -16,12 +16,21 @@ end
 
 -- /enemyspotter_self
 -- /enemyspotter_all
--- /+enemyspotter_opacity
--- /-enemyspotter_opacity
+
+-- /enemyspotter_platter
+-- /+enemyspotter_platter		-- opacity
+-- /-enemyspotter_platter		-- opacity
+
+-- /enemyspotter_highlight
+-- /+enemyspotter_highlight		-- opacity
+-- /-enemyspotter_highlight		-- opacity
 
 --------------------------------------------------------------------------------
 -- Config
 --------------------------------------------------------------------------------
+
+local drawPlatter						= false
+local useXrayHighlight					= true
 
 local drawWithHiddenGUI                 = true		-- keep widget enabled when graphical user interface is hidden (when pressing F5)
 local useVariableSpotterDetail          = true		-- use variable number of parts the spotter circle consists of
@@ -32,7 +41,7 @@ local circleParts						= 12      	-- number of parts for a cirlce, when not usin
 local circlePartsMin					= 9      	-- minimal number of parts for a cirlce, when zoomed out
 local circlePartsMax					= 18      	-- maximum number of parts for a cirlce, when zoomed in
 
-local spotterOpacity					= 0.25
+local spotterOpacity					= 0.1
 local innerSize							= 1.30		-- circle scale compared to unit radius
 local outerSize							= 1.30		-- outer fade size compared to circle scale (1 = not rendered)
                                         
@@ -67,9 +76,14 @@ local gaiaTeamID			  = Spring.GetGaiaTeamID()
 --------------------------------------------------------------------------------
 
 local circlePolys			= {}
+local allyColors       		= {}
 local allyToSpotterColor	= {}
 local unitConf				= {}
 local skipOwnAllyTeam		= true
+
+local edgeExponent			= 1.5
+local highlightOpacity		= 1.7
+local smoothPolys			= gl.Smoothing and true			-- looks a lot nicer, esp. without FSAA  (but eats into the FPS too much)
 
 -- preferred to keep these values the same as fancy unit selections widget
 local rectangleFactor		= 3.3
@@ -138,6 +152,58 @@ function DeleteSpotterLists()
 end
 
 
+function CreateHighlightShader()
+	gl.DeleteShader(shader)
+	
+	shader = gl.CreateShader({
+
+	uniform = {
+	  edgeExponent = edgeExponent * highlightOpacity,
+	},
+
+	vertex = [[
+	  // Application to vertex shader
+	  varying vec3 normal;
+	  varying vec3 eyeVec;
+	  varying vec3 color;
+	  uniform mat4 camera;
+	  uniform mat4 caminv;
+
+	  void main()
+	  {
+		vec4 P = gl_ModelViewMatrix * gl_Vertex;
+			  
+		eyeVec = P.xyz;
+			  
+		normal  = gl_NormalMatrix * gl_Normal;
+			  
+		color = gl_Color.rgb;
+			  
+		gl_Position = gl_ProjectionMatrix * P;
+	  }
+	]],  
+
+	fragment = [[
+	  varying vec3 normal;
+	  varying vec3 eyeVec;
+	  varying vec3 color;
+
+	  uniform float edgeExponent;
+
+	  void main()
+	  {
+		float opac = dot(normalize(normal), normalize(eyeVec));
+		opac = 1.0 - abs(opac);
+		opac = pow(opac, edgeExponent);
+		  
+		gl_FragColor.rgb = color;
+		gl_FragColor.a = opac;
+	  }
+	]],
+	})
+end
+
+
 function CreateSpotterLists()
 
 	DeleteSpotterLists()
@@ -181,7 +247,8 @@ function CreateSpotterLists()
 			for teamListIndex = 1, #teamList do
 				teamID = teamList[teamListIndex]
 				if teamID ~= gaiaTeamID then
-					 circlePolys[allyID] = {}
+					circlePolys[allyID] = {}
+					allyColors[allyID] = usedSpotterColor
 					for i=circlePartsMin, circlePartsMax do
 						circlePolys[allyID][i] = CreateSpotterList(usedSpotterColor[1],usedSpotterColor[2],usedSpotterColor[3],spotterOpacity, i)
 					end
@@ -220,12 +287,14 @@ function widget:Initialize()
 	
 	SetUnitConf()
 	CreateSpotterLists()
+	CreateHighlightShader()
 end
 
 
 function widget:Shutdown()
 	
 	DeleteSpotterLists()
+	gl.DeleteShader(shader)
 end
 
 
@@ -234,52 +303,53 @@ function widget:DrawWorldPreUnit()
 		if spIsGUIHidden() then return end
 	end
 	--local totalVariableParts,totalFixedParts = 0,0
-	
-	local unitZ = false
-	local parts = circleParts
-	
-	local visibleUnits = spGetVisibleUnits(skipOwnAllyTeam and Spring.ENEMY_UNITS or Spring.ALL_UNITS, nil, false)
-	if #visibleUnits then
-		--gl.DepthTest(true)
-		gl.PolygonOffset(-100, -2)
-		gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)      -- disable layer blending
-		for i=1, #visibleUnits do
-			local unitID = visibleUnits[i]
-			local allyID = spGetUnitAllyTeam(unitID)
-			if circlePolys[allyID] ~= nil then
-				if not skipOwnAllyTeam  or  (skipOwnAllyTeam  and  not (allyID == myAllyID))  then
-					local unitDefIDValue = spGetUnitDefID(unitID)
-					if (unitDefIDValue) then
-					
-						local unit = unitConf[unitDefIDValue]
-						local unitScale = unit.xscale*2
-						
-						if not useVariableSpotterDetail then
-							parts = circleParts
-						else
-							-- only process camera distance calculation for the first unit, to improve performance. It doesnt seem to hurt acuracy much.
-							if not unitZ then
-								local camX, camY, camZ = spGetCameraPosition()
-								local unitX,unitY,unitZ = spGetUnitPosition(unitID, true)
-								local xDifference = camX - unitX
-								local yDifference = camY - unitY
-								local zDifference = camZ - unitZ
-								local camDistance = math.sqrt(xDifference*xDifference + yDifference*yDifference + zDifference*zDifference)
-								
-								parts = Round(circlePartsMax - (camDistance / 1000))
-								
-								if parts < circlePartsMin then
-									parts = circlePartsMin
-								elseif parts > circlePartsMax then
-									parts = circlePartsMax
+	if drawPlatter then
+		local unitZ = false
+		local parts = circleParts
+		
+		local visibleUnits = spGetVisibleUnits(skipOwnAllyTeam and Spring.ENEMY_UNITS or Spring.ALL_UNITS, nil, false)
+		if #visibleUnits then
+			gl.DepthTest(true)
+			gl.PolygonOffset(-100, -2)
+			gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)      -- disable layer blending
+			for i=1, #visibleUnits do
+				local unitID = visibleUnits[i]
+				local allyID = spGetUnitAllyTeam(unitID)
+				if circlePolys[allyID] ~= nil then
+					if not skipOwnAllyTeam  or  (skipOwnAllyTeam  and  not (allyID == myAllyID))  then
+						local unitDefIDValue = spGetUnitDefID(unitID)
+						if (unitDefIDValue) then
+							
+							local unit = unitConf[unitDefIDValue]
+							local unitScale = unit.xscale*2
+							
+							if not useVariableSpotterDetail then
+								parts = circleParts
+							else
+								-- only process camera distance calculation for the first unit, to improve performance. It doesnt seem to hurt acuracy much.
+								if not unitZ then
+									local camX, camY, camZ = spGetCameraPosition()
+									local unitX,unitY,unitZ = spGetUnitPosition(unitID, true)
+									local xDifference = camX - unitX
+									local yDifference = camY - unitY
+									local zDifference = camZ - unitZ
+									local camDistance = math.sqrt(xDifference*xDifference + yDifference*yDifference + zDifference*zDifference)
+									
+									parts = Round(circlePartsMax - (camDistance / 1000))
+									
+									if parts < circlePartsMin then
+										parts = circlePartsMin
+									elseif parts > circlePartsMax then
+										parts = circlePartsMax
+									end
+									--totalFixedParts = totalFixedParts + circleParts
+									--totalVariableParts = totalVariableParts + parts
 								end
-								--totalFixedParts = totalFixedParts + circleParts
-								--totalVariableParts = totalVariableParts + parts
 							end
+							
+							glDrawListAtUnit(unitID, circlePolys[allyID][parts], false, unitScale, 1.0, unitScale)
+							
 						end
-						
-						glDrawListAtUnit(unitID, circlePolys[allyID][parts], false, unitScale, 1.0, unitScale)
-						
 					end
 				end
 			end
@@ -288,6 +358,84 @@ function widget:DrawWorldPreUnit()
 	--Spring.Echo('Variable Parts:  '..totalVariableParts..'      Fixed Parts per unit:  '..totalFixedParts)
 end
 
+
+function widget:DrawWorld()
+	if useXrayHighlight then
+		if not drawWithHiddenGUI then
+			if spIsGUIHidden() then return end
+		end
+		--local totalVariableParts,totalFixedParts = 0,0
+		
+		local unitZ = false
+		local parts = circleParts
+		
+		local visibleUnits = spGetVisibleUnits(skipOwnAllyTeam and Spring.ENEMY_UNITS or Spring.ALL_UNITS, nil, false)
+		if #visibleUnits then
+			if (smoothPolys) then
+				gl.Smoothing(nil, nil, true)
+			end
+
+			gl.Color(1, 1, 1, 0.7)
+			gl.UseShader(shader)
+			gl.DepthTest(true)
+			gl.Blending(GL.SRC_ALPHA, GL.ONE)
+			gl.PolygonOffset(-2, -2)
+
+			for i=1, #visibleUnits do
+				local unitID = visibleUnits[i]
+				local allyID = spGetUnitAllyTeam(unitID)
+				if circlePolys[allyID] ~= nil then
+					if not skipOwnAllyTeam  or  (skipOwnAllyTeam  and  not (allyID == myAllyID))  then
+						local unitDefIDValue = spGetUnitDefID(unitID)
+						if (unitDefIDValue) then
+							
+							local unit = unitConf[unitDefIDValue]
+							local unitScale = unit.xscale*2
+							
+							if not useVariableSpotterDetail then
+								parts = circleParts
+							else
+								-- only process camera distance calculation for the first unit, to improve performance. It doesnt seem to hurt acuracy much.
+								if not unitZ then
+									local camX, camY, camZ = spGetCameraPosition()
+									local unitX,unitY,unitZ = spGetUnitPosition(unitID, true)
+									local xDifference = camX - unitX
+									local yDifference = camY - unitY
+									local zDifference = camZ - unitZ
+									local camDistance = math.sqrt(xDifference*xDifference + yDifference*yDifference + zDifference*zDifference)
+									
+									parts = Round(circlePartsMax - (camDistance / 1000))
+									
+									if parts < circlePartsMin then
+										parts = circlePartsMin
+									elseif parts > circlePartsMax then
+										parts = circlePartsMax
+									end
+									--totalFixedParts = totalFixedParts + circleParts
+									--totalVariableParts = totalVariableParts + parts
+								end
+							end
+							--glDrawListAtUnit(unitID, circlePolys[allyID][parts], false, unitScale, 1.0, unitScale)
+							gl.Color(allyColors[allyID][1], allyColors[allyID][2], allyColors[allyID][3], 1)
+							gl.Unit(unitID, true)
+							
+						end
+					end
+				end
+			end
+
+			gl.PolygonOffset(false)
+			gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
+			gl.DepthTest(false)
+			gl.UseShader(0)
+			gl.Color(1, 1, 1, 0.7)
+			
+			if (smoothPolys) then
+				gl.Smoothing(nil, nil, false)
+			end
+		end
+	end
+end
 
 function widget:PlayerChanged()
     if Spring.GetSpectatingState()  and  renderAllTeamsAsSpec then
@@ -305,19 +453,37 @@ end
 
 function widget:GetConfigData(data)
     savedTable = {}
+    savedTable.drawPlatter				= drawPlatter
+    savedTable.useXrayHighlight			= useXrayHighlight
     savedTable.renderAllTeamsAsSpec		= renderAllTeamsAsSpec
     savedTable.renderAllTeamsAsPlayer	= renderAllTeamsAsPlayer
     savedTable.spotterOpacity			= spotterOpacity
+    savedTable.highlightOpacity			= highlightOpacity
     return savedTable
 end
 
 function widget:SetConfigData(data)
-    if data.renderAllTeamsAsSpec ~= nil     then  renderAllTeamsAsSpec   = data.renderAllTeamsAsSpec end
-    if data.renderAllTeamsAsPlayer ~= nil   then  renderAllTeamsAsPlayer   = data.renderAllTeamsAsPlayer end
+    if data.drawPlatter ~= nil				then  drawPlatter				= data.drawPlatter end
+    if data.useXrayHighlight ~= nil			then  useXrayHighlight			= data.useXrayHighlight end
+    if data.renderAllTeamsAsSpec ~= nil		then  renderAllTeamsAsSpec		= data.renderAllTeamsAsSpec end
+    if data.renderAllTeamsAsPlayer ~= nil	then  renderAllTeamsAsPlayer	= data.renderAllTeamsAsPlayer end
     spotterOpacity        = data.spotterOpacity       or spotterOpacity
+    highlightOpacity        = data.highlightOpacity       or highlightOpacity
 end
 
 function widget:TextCommand(command)
+
+    if (string.find(command, "enemyspotter_platter") == 1  and  string.len(command) == 20) then 
+		drawPlatter = not drawPlatter
+	end
+    if (string.find(command, "enemyspotter_highlight") == 1  and  string.len(command) == 22) then 
+    
+		if (shader == nil) then
+			Spring.Echo("EnemySpotter: This shader is not supported on your hardware, or you have disabled shaders in Spring settings.")
+		else
+			useXrayHighlight = not useXrayHighlight
+		end
+	end
     if (string.find(command, "enemyspotter_self") == 1  and  string.len(command) == 17) then 
 		renderAllTeamsAsPlayer = not renderAllTeamsAsPlayer
 		if not Spring.GetSpectatingState() then 
@@ -332,6 +498,9 @@ function widget:TextCommand(command)
 			CreateSpotterLists()
 		end
 	end
-    if (string.find(command, "+enemyspotter_opacity") == 1) then spotterOpacity = spotterOpacity + 0.02 ; CreateSpotterLists() end
-    if (string.find(command, "-enemyspotter_opacity") == 1) then spotterOpacity = spotterOpacity - 0.02 ; CreateSpotterLists() end
+    if (string.find(command, "+enemyspotter_platter") == 1) then spotterOpacity = spotterOpacity + 0.02 ; CreateSpotterLists() end
+    if (string.find(command, "-enemyspotter_platter") == 1) then spotterOpacity = spotterOpacity - 0.02 ; CreateSpotterLists() end
+    
+    if (string.find(command, "+enemyspotter_highlight") == 1) then highlightOpacity = highlightOpacity - (0.03 + highlightOpacity / 5) if highlightOpacity < 0.7 then highlightOpacity = 0.7 end ; CreateHighlightShader() end
+    if (string.find(command, "-enemyspotter_highlight") == 1) then highlightOpacity = highlightOpacity + (0.03 + highlightOpacity / 5) if highlightOpacity > 10 then highlightOpacity = 10 end ; CreateHighlightShader() end
 end

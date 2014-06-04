@@ -29,7 +29,7 @@ end
 -- Config
 --------------------------------------------------------------------------------
 
-local drawPlatter						= false
+local drawPlatter						= true
 local useXrayHighlight					= true
 
 local drawWithHiddenGUI                 = true		-- keep widget enabled when graphical user interface is hidden (when pressing F5)

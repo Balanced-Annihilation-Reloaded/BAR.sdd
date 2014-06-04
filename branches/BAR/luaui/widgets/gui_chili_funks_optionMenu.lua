@@ -22,7 +22,7 @@ local spGetTimer     = Spring.GetTimer
 
 local Chili, mainMenu, menuTabs, menuBtn
 local Settings = {}
--- Defaults --- ignored unless fresh install
+-- Defaults ---  overwritten by widget config (when they have been changed/saved)
 -- TODO Get defaults from Spring.GetConfig
 Settings['Skin']             = 'Flat'
 Settings['Cursor']           = 'Default'
@@ -46,6 +46,7 @@ Settings['searchWidgetName'] = true
 Settings['widget']           = {}
 Settings['UIwidget']         = {}
 ------------------------------------
+local wFilterString = ""
 local widgetList = {}
 local tabs = {}
 local credits = VFS.LoadFile('credits.txt')
@@ -92,9 +93,9 @@ end
 local function toggleWidget(self)
 	widgetHandler:ToggleWidget(self.name)
 	if self.checked then
-		self.font.color        = {1,0.5,0,1}
-		self.font.outlineColor = {1,0.5,0,0.2}
-		else
+		self.font.color        = {1,0,0,1}
+		self.font.outlineColor = {1,0,0,0.2}
+	else
 		self.font.color        = {0.5,1,0,1}
 		self.font.outlineColor = {0.5,1,0,0.2}
 	end
@@ -102,11 +103,12 @@ local function toggleWidget(self)
 end
 
 ---------------------------- 
--- 
+-- Adds widget to pertaining groups list of widgets
 local function groupWidget(name,wData)
+
 	local _, _, category = string.find(wData.basename, '([^_]*)')
-	if not category or not wCategories[category] then category = 'ungrouped' end
-    
+	if (not category) or (not wCategories[category]) then category = 'ungrouped' end
+
 	for cat_name,cat in pairs(wCategories) do
 		if category == cat_name then
 			cat.list[#cat.list+1] = {name = name, wData = wData} 
@@ -116,66 +118,81 @@ local function groupWidget(name,wData)
 end
 
 ---------------------------- 
---
-local function sortWidgetList(filter)
-	local filter = string.lower(filter or '')
+-- Decides which group each widget goes into
+local function sortWidgetList(wFilterString)
+	local wFilterString = string.lower(wFilterString or '')
 	for name,wData in pairs(widgetHandler.knownWidgets) do
-		if (Settings.searchWidgetName and string.lower(name or ''):find(filter))
-		or (Settings.searchWidgetDesc and string.lower(wData.desc or ''):find(filter))
-		or (Settings.searchWidgetAuth and string.lower(wData.author or ''):find(filter)) then
+	
+		-- Only adds widget to group if it matches an enabled filter
+		if (Settings.searchWidgetName and string.lower(name or ''):find(wFilterString))
+		or (Settings.searchWidgetDesc and string.lower(wData.desc or ''):find(wFilterString))
+		or (Settings.searchWidgetAuth and string.lower(wData.author or ''):find(wFilterString)) then
 			groupWidget(name,wData)
 		end
+		
+		-- Alphabetizes widgets by name in ascending order
 		for _,cat in pairs(wCategories) do
-			local ascending_name = function(a,b) return a.name<b.name end
-			table.sort(cat.list,ascending_name)
+			local ascendingName = function(a,b) return a.name<b.name end
+			table.sort(cat.list,ascendingName)
 		end
+		
 	end
 end
 
 ---------------------------- 
 -- Creates widget list for interface tab
---  TODO create cache of chili objects on initialize
---  TODO detect widget failure, set color
-local function makeWidgetList(filter)
-	sortWidgetList(filter)
-	local widgetNum = 0
+--  TODO create cache of chili objects on initialize 
+--    (doesn't need to recreate everything unless /luaui reload is called)
+--  TODO detect widget failure, set color accordingly
+local function makeWidgetList()
+	sortWidgetList()
+	local yStep = 0
 	local scrollpanel = tabs['Interface']:GetObjectByName('widgetList')
 	scrollpanel:ClearChildren()
-    -- Get order of categories
-    local inv_pos = {}
-    local num_cats = 0
-    for cat_name,cat in pairs(wCategories) do
-        if cat.pos then
-            inv_pos[cat.pos] = cat_name
-            num_cats = num_cats + 1
-        end
-    end
+	
+	-- Get order of categories
+	local inv_pos = {}
+	local num_cats = 0
+	for cat_name,cat in pairs(wCategories) do
+		if cat.pos then
+			inv_pos[cat.pos] = cat_name
+			num_cats = num_cats + 1
+		end
+	end
+	
 	-- First loop adds group label
-	for i=1,num_cats do
-        -- Get group of pos i
-        local cat = wCategories[inv_pos[i]]
+	for i=1, num_cats do
+		-- Get group of pos i
+		local cat = wCategories[inv_pos[i]]
 		local list = cat.list
 		if #list>0 then
-			widgetNum = widgetNum + 1
+			yStep = yStep + 1
 			Chili.Label:New{
 				parent   = scrollpanel,
 				x        = 0,  
-				y        = widgetNum * 20 - 10,
+				y        = yStep * 20 - 10,
 				caption  = '- '..cat.label..' -',
 				align    = 'center',
 				width    = '100%',
 				autosize = false,
 			}
-			widgetNum = widgetNum + 1
+			yStep = yStep + 1
 			
 			-- Second loop adds each widget
 			for b=1,#list do
 				local enabled = (widgetHandler.orderList[list[b].name] or 0)>0
+				local active  = list[b].wData.active
 				local fontColor
-				if enabled then fontColor = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
-				else fontColor = {color = {1,0.5,0,1}, outlineColor = {1,0.5,0,0.2}} end
-				local author = list[b].wData.author or ""
-				local desc = list[b].wData.desc or ""
+				
+				-- Enabled and Active (only enabled widgets can be active)
+				if active then fontColor = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
+				-- Enabled but not Active
+				elseif enabled then fontColor = {color = {1,0.5,0,1}, outlineColor = {1,0.5,0,0.2}}
+				-- Disabled
+				else fontColor = {color = {1,0,0,1}, outlineColor = {1,0,0,0.2}} end
+				
+				local author = list[b].wData.author or "Unkown"
+				local desc = list[b].wData.desc or "No Description"
 				Chili.Checkbox:New{
 					name      = list[b].name,
 					caption   = list[b].name,
@@ -183,13 +200,13 @@ local function makeWidgetList(filter)
 					tooltip   = 'Author: '..author.. '\n'.. desc,
 					x         = 0,
 					right     = 0,
-					y         = widgetNum*20,
+					y         = yStep*20,
 					height    = 19,
 					font      = fontColor,
 					checked   = enabled,
 					OnChange  = {toggleWidget},
 				}
-				widgetNum = widgetNum + 1
+				yStep = yStep + 1
 			end
 		end
 		cat.list = {}
@@ -227,7 +244,8 @@ end
 --
 local function addFilter()
 	local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
-	makeWidgetList(editbox.text)
+	wFilterString = editbox.text or ""
+	makeWidgetList()
 	editbox:SetText('')
 end
 
@@ -358,7 +376,6 @@ end
 
 ---------------------------- 
 -- Creates a combobox style control
---  TODO Use chili default combobox(gajops)
 local comboBox = function(obj)
 	local obj = obj
 	local options = obj.options or obj.labels
@@ -370,7 +387,6 @@ local comboBox = function(obj)
 		x       = 0,
 		padding = {0,0,0,0}
 	}
-	
 	
 	local selected
 	for i = 1, #obj.labels do
@@ -402,12 +418,11 @@ local comboBox = function(obj)
 end
 
 ---------------------------- 
---
---
+-- 
 local checkBox = function(obj)
 	local obj = obj
 	
-	local function toggle(self)
+	local toggle = obj.OnChange or function(self)
 		Settings[obj.name] = self.checked
 		spSendCommands(self.name)
 	end
@@ -434,7 +449,7 @@ local slider = function(obj)
 	local obj = obj
 	
 	local trackbar = Chili.Control:New{
-		y       = obj.y,
+		y       = obj.y or 0,
 		width   = '45%',
 		height  = 40,
 		x       = 0,
@@ -442,7 +457,7 @@ local slider = function(obj)
 	}
 	
 	
-	local function apply(self)
+	local apply = obj.OnChange or function(self)
 		Settings[obj.name] = self.value
 		spSendCommands(obj.name..' '..self.value)
 	end
@@ -474,7 +489,7 @@ end
 -----OPTIONS-----------------
 -----------------------------
 local function Options()
-	-- Each tab has its own control, which is shown when selected {Info,Interface,Graphics, and Sound}
+	-- Each tab has its own control, which is shown when selected {Info,Interface,Graphics,etc..}
 	-- mainMenu = Chili.Window:New{parent=Chili.Screen0,x = 400, y = 200, width = 500, height = 400,padding = {5,8,5,5}, draggable = true,
 	--  Each graphical element is defined as a child of these controls and given a function to fullfill, when a certain event happens(i.e. OnClick)
 	
@@ -506,8 +521,7 @@ local function Options()
 			checkBox{y = 490, title = 'Show Engine Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"},
 		}
 	}
-	
-	
+
 	-- Interface --
 	tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', --Control attached to tab
 		children = {
@@ -568,27 +582,36 @@ local function addChoice(tab,control,obj)
 	local child
 	if control == 'combobox' then 
 		child = comboBox(obj)
-	elseif control == 'checkbox' then 
+	elseif control == 'checkbox' then
 		child = checkBox(obj)
+	elseif control == 'slider' then
+		child = slider(obj)
 	end
 	
-	tabs[tab]:AddChild(child)
+	addToStack(tab, child)
 	return child
 end
+
 -----------------------------
--- Global
------------------------------
+-- Makes certain functions global, extending their usage to other widgets
+--  most manipulate and/or create chili objects in some way to extend options
+--  look at relevant functions above for more info
 local function globalize()
 	local Menu = {}
+	
 	Menu.Save       = save
 	Menu.Load       = load
 	Menu.ShowHide   = showHide
 	Menu.AddChoice  = addChoice
 	Menu.AddControl = addControl
 	Menu.AddToStack = addToStack
+	Menu.Checkbox   = checkbox
+	Menu.Slider     = slider
+	
 	WG.MainMenu = Menu
 end
 -----------------------------
+
 function widget:GetConfigData()
 	return Settings
 end
@@ -633,6 +656,14 @@ function widget:Initialize()
 	spSendCommands('bind S+esc openMenu')
 	spSendCommands('bind f11 openWidgets')
 	spSendCommands('bind esc hideMenu')
+end
+-------------------------- 
+--
+function widget:Update()
+	if widgetHandler.knownChanged then
+		widgetHandler.knownChanged = false
+		makeWidgetList()
+	end
 end
 -------------------------- 
 --

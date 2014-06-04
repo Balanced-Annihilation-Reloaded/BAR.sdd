@@ -104,7 +104,7 @@ function widget:Initialize()
 	myFont = glLoadFont( fontPath, fontSizeHeadline )
 	updateWindowCoords()
 	winSizeX, winSizeY = Spring.GetWindowGeometry()
-	usedSizeMultiplier = (0.55 + ((winSizeX*winSizeY)/5000000)) * sizeMultiplier
+	usedSizeMultiplier = (0.66 + ((winSizeX*winSizeY)/8000000)) * sizeMultiplier
 	checkedWindowSize = true
 end
 

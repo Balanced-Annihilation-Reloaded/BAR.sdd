@@ -258,7 +258,7 @@ end
 -- draw circles
 function widget:DrawWorldPreUnit()
 	local camX, camY, camZ = spGetCameraPosition()
-	glDepthTest(GL_ALWAYS)
+	glDepthTest(true)
 	glBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 	for _,center in pairs(comCenters) do
 		if center[4] then
@@ -383,10 +383,10 @@ function widget:DrawWorldPreUnit()
 				-- draw lines
 				if showLineGlow then
 					glLineWidth(10)
-					glColor(1, 0.8, 0, .027*lineOpacityMultiplier)
+					glColor(1, 0.8, 0, .024*lineOpacityMultiplier)
 					glDrawGroundCircle(center[1], center[2], center[3], dgunRange, usedCircleDivs)
 					
-					glColor(1, 0, 0, .042*lineOpacityMultiplier)
+					glColor(1, 0, 0, .037*lineOpacityMultiplier)
 					glDrawGroundCircle(center[1], center[2], center[3], blastRadius, math.floor(usedCircleDivs*1.2))
 				end
 				glLineWidth(3-lineWidthMinus)

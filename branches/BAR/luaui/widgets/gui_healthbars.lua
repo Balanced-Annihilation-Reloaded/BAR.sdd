@@ -33,7 +33,7 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local barHeight                 = 2.65
+local barHeight                 = 2.6
 local barWidth                  = 12         --// (barWidth)x2 total width!!!
 local barAlpha                  = 0.85
 local barOutlineAlpha           = 0.8
@@ -50,7 +50,7 @@ local titlesAlpha               = 0.3*barAlpha
 local drawBarPercentage         = 0		        -- wont draw heath percentage text above this percentage
 local alwaysDrawBarPercentageForComs = true
 local drawFeatureBarPercentage  = 0	            -- true:  commanders always will show health percentage number
-local choppedCornerSize         = 0.5
+local choppedCornerSize         = 0.44
 local outlineSize               = 0.63
 local drawFullHealthBars        = false
 
@@ -185,15 +185,15 @@ end --//end do
 
 
 function drawBarGl()
-  
+
   local cs = choppedCornerSize
   local heightAddition = 0
   if OPTIONS[currentOption].showOutline then
     heightAddition = outlineSize
   end
-  
   -- add glow
   if addGlow then
+		
     gl.BeginEnd(GL.QUADS,function()
       -- bottom mid piece
       gl.Vertex(-barWidth,       (barHeight/2),  0,                   -2);
@@ -206,7 +206,7 @@ function drawBarGl()
       gl.Vertex(-barWidth+cs,    (barHeight/2),      (barWidth*2)-cs*2,   -2);
       gl.Vertex(-barWidth+cs,    barHeight+glowSize, (barWidth*2)-cs*2,   -4);
       gl.Vertex(-barWidth,       barHeight+glowSize, 0,                   -4);
-      
+          
       
       -- top left
       gl.Vertex(-barWidth-glowSize,    barHeight,             0, -4);
@@ -547,7 +547,7 @@ function init()
          }
       ]],
 		uniform = {
-			glowAlpha = 0.1,
+			glowAlpha = 0.11,
 		},
     });
 	
@@ -592,7 +592,7 @@ end
 
 function widget:Shutdown()
   --// catch f9
-  widgetHandler:RemoveAction("showhealthbars", showhealthbars)
+  widgetHanglowSizedler:RemoveAction("showhealthbars", showhealthbars)
   Spring.SendCommands({"unbind f9 luaui"})
   Spring.SendCommands({"bind f9 showhealthbars"})
   Spring.SendCommands({"showhealthbars 1"})
@@ -654,7 +654,6 @@ do
     glColor(topclr)
     glVertex(right,top)
     glVertex(left,top)
-    
   end
 
   local brightClr = {}
@@ -748,7 +747,7 @@ do
         end
         if (drawBarTitles and barInfo.title ~= "health") then
           glColor(1,1,1,titlesAlpha)
-          glText(barInfo.title,0,yoffset-outlineSize,2.5,"cd")
+          glText(barInfo.title,0,yoffset-outlineSize,2.35,"cd")
         end
         if (barShader) then glMyText(0) end
       end
@@ -771,7 +770,7 @@ do
         end
         if (drawBarTitles and barInfo.title ~= "health") then
           glColor(1,1,1,featureTitlesAlpha)
-          glText(barInfo.title,0,yoffset-outlineSize,2.5,"cd")
+          glText(barInfo.title,0,yoffset-outlineSize,2.35,"cd")
         end
         if (barShader) then glMyText(0) end
       end
@@ -1138,7 +1137,7 @@ do
     end
     
     --gl.Fog(false)
-    --gl.DepthTest(true)
+    gl.DepthTest(true)
     glDepthMask(true)
 
     cx, cy, cz = GetCameraPosition()
@@ -1146,7 +1145,7 @@ do
     
     --if the camera is too far up, higher than maxDistance on smoothmesh, dont even call any visibility checks or nothing 
     local smoothheight=GetSmoothMeshHeight(cx,cz) --clamps x and z
-    if (not IsGUIHidden() and (cy-smoothheight)^2 < maxUnitDistance) then 
+    if ((cy-smoothheight)^2 < maxUnitDistance) then 
             
       --gl.Fog(false)
       --gl.DepthTest(true)
@@ -1286,26 +1285,20 @@ end
 function widget:TextCommand(command)
     if (string.find(command, "healthbars_percentage") == 1  and  string.len(command) == 21) then 
 		drawBarPercentage =  (drawBarPercentage < 100 and 100 or 0)
-		Spring.Echo("Healthbars: percentages: "..(drawBarPercentage == 100 and "always" or "sometimes"))
 	end
     if (string.find(command, "healthbars_compercentage") == 1  and  string.len(command) == 24) then 
 		alwaysDrawBarPercentageForComs = not alwaysDrawBarPercentageForComs
 	end
     if (string.find(command, "healthbars_style") == 1  and  string.len(command) == 16) then 
 		toggleOption()
-		if barShader then
-			Spring.Echo("Healthbars: style: "..currentOption)
-		else
-			Spring.Echo("Healthbars: styles are not supported")
-		end
 	end
     if (string.find(command, "healthbars_glow") == 1  and  string.len(command) == 15) then 
 		addGlow = not addGlow
 		loadOption()
-		if barShader then
-			Spring.Echo("Healthbars: glow: "..(addGlow and "enabled" or "disabled"))
+		if addGlow then
+			Spring.Echo("Healthbars:  Glow enabled")
 		else
-			Spring.Echo("Healthbars: glow is not supported")
+			Spring.Echo("Healthbars:  Glow disabled")
 		end
 	end
 end

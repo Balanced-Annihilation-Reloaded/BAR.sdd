@@ -1,4 +1,4 @@
-local versionNumber = "0.50"
+local versionNumber = "0.51"
 
 function widget:GetInfo()
   return {
@@ -29,8 +29,8 @@ local textOpacity			= 0.85
 local fadeMultiplier		= 1
 local stickToFloor			= true
 local thickness				= 6
-local fadeStartHeight		= 600
-local fadeEndHeight			= 4000
+local fadeStartHeight		= 800
+local fadeEndHeight			= 4800
 
 --------------------------------------------------------------------------------
 -- speed-ups
@@ -80,8 +80,9 @@ function DrawMapInfo(backgroundOpacity, opacityMultiplier)
 		glRotate(90,0,-1,0)
 		glRotate(180,1,0,0)
 		
-		local length = mapInfoWidth
-		glGetTextWidth(mapInfo.mapDescription)
+		local length = math.max(mapInfoWidth, (glGetTextWidth(mapInfo.mapDescription)*12) + 45)
+		--Spring.Echo(glGetTextWidth(mapInfo.mapDescription))
+		
 		local height = 90
 		local thickness = -(thickness*scale)
 		glBeginEnd(GL.QUADS,function()
@@ -238,6 +239,7 @@ function widget:Update()
 end
 
 function widget:DrawWorld()
+    if Spring.IsGUIHidden() then return end
 	if inView then
 		local opacityMultiplier = (1 - (camDistance-fadeStartHeight) / (fadeEndHeight-fadeStartHeight))*fadeMultiplier
 		if opacityMultiplier > 1 then

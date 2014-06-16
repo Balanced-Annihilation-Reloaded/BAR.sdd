@@ -1,5 +1,5 @@
 include("keysym.h.lua")
-local versionNumber = "1.33"
+local versionNumber = "1.34"
 
 function widget:GetInfo()
 	return {
@@ -104,7 +104,7 @@ function widget:Initialize()
 	myFont = glLoadFont( fontPath, fontSizeHeadline )
 	updateWindowCoords()
 	winSizeX, winSizeY = Spring.GetWindowGeometry()
-	usedSizeMultiplier = (0.66 + ((winSizeX*winSizeY)/8000000)) * sizeMultiplier
+	usedSizeMultiplier = (0.66 + ((winSizeX*winSizeY)/10000000)) * sizeMultiplier
 	checkedWindowSize = true
 end
 
@@ -120,7 +120,7 @@ function widget:DrawScreen()
 	local _, _, isPaused = spGetGameSpeed()		-- note: when viewing a replay.. isPaused wont be set true if you pause
 	local diffPauseTime = ( now - pauseTimestamp)
 	
-	if not paused and ((spGetGameSeconds() > 0 and previousGameframeClock <= (now-0.25)-(drawScreenDelay*2)) or isPaused) then
+	if not paused and ((spGetGameSeconds() > 0 and previousGameframeClock <= (now-1.5)-(drawScreenDelay*2)) or isPaused) then
 		paused = true
 	end
 	

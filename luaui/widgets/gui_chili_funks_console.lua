@@ -21,12 +21,15 @@ local getConsoleBuffer = Spring.GetConsoleBuffer
 local getPlayerRoster  = Spring.GetPlayerRoster
 local getTeamColor     = Spring.GetTeamColor
 local getMouseState    = Spring.GetMouseState
+local ssub = string.sub
+local slen = string.len
+local sfind = string.find
 ----------------------
 
 
 -- Config --
 local msgTime   = 6 -- time to display messages in seconds
-local msgWidth  = 420 --width of the console
+local msgWidth  = 470 --width of the console
 local settings = {
 	autohide = true,
 	}
@@ -67,7 +70,7 @@ local function loadWindow()
 		parent  = screen,
 		width   = msgWidth,
 		color   = {0,0,0,0},
-		height  = 100,
+		height  = 125,
 		padding = {0,0,0,0},
 		right   = 450,
 		y       = 0,
@@ -217,10 +220,10 @@ local function processLine(line)
 
 	-- get data from player roster 
 	local roster = getPlayerRoster()
-	local players = {}
-	
+	local names = {}
+    
 	for i=1,#roster do
-		players[roster[i][1]] = {
+		names[roster[i][1]] = {
 			ID     = roster[i][2],
 			allyID = roster[i][4],
 			spec   = roster[i][5],
@@ -232,47 +235,37 @@ local function processLine(line)
 	
 	local name = ''
 	
-	-- Player Message
-	if line:find('<.->') then
-		name = line:match('<(.-)>')
-		text = line:gsub('<.->', '')
-		
-	-- Spec Message
-	elseif line:find('%[.-%]') then
-		name = line:match('%[(.-)%]')
-		text = line:gsub('%[.-%]', '')
-		
-	-- Point added
-	elseif line:find('added point:') then
-		name = line:match('(.-)%sadded point: ')
-		text = line:gsub('.-%sadded point: ', '')
-		
-	-- Game Message
-	elseif line:sub(1,1) == ">" then
-		return color.game .. line
-		
-	-- Filter messages
-	elseif line:find('-> Version') or line:find('ClientReadNet') or line:find('Address') then --surplus info when user connects
+    if (names[ssub(line,2,(sfind(line,"> ") or 1)-1)] ~= nil) then
+        -- Player Message
+        name = ssub(line,2,sfind(line,"> ")-1)
+        text = ssub(line,slen(name)+4)
+    elseif (names[ssub(line,2,(sfind(line,"] ") or 1)-1)] ~= nil) then
+        -- Spec Message
+        name = ssub(line,2,sfind(line,"] ")-1)
+        text = ssub(line,slen(name)+4)
+    elseif (names[ssub(line,2,(sfind(line,"(replay)") or 3)-3)] ~= nil) then
+        -- Spec Message (replay)
+        name = ssub(line,2,sfind(line,"(replay)")-3)
+        text = ssub(line,slen(name)+13)
+    elseif (names[ssub(line,1,(sfind(line," added point: ") or 1)-1)] ~= nil) then
+        -- Map point
+        name = ssub(line,1,sfind(line," added point: ")-1)
+        text = ssub(line,slen(name.." added point: ")+1)
+    elseif (ssub(line,1,1) == ">") then
+        -- Game Message
+        text = ssub(line,3)
+	elseif sfind(line,'-> Version') or sfind(line,'ClientReadNet') or sfind(line,'Address') or (gameOver and sfind(line,'left the game')) then --surplus info when user connects
+        -- Filter out unwanted messages
 		return _, true --ignore
-	elseif gameOver and line:find('left the game') then --'user left' messages after game is over
-		return _, true --ignore
-		
-	-- Everything else
-	else
-		return color.misc .. line
 	end
 	
-	-- Get rid of any (now) unneeded info in the name
-	name = name:gsub('%s%(replay%)','')
-	name = name:gsub('%s%(spec%)','')
-
-	if players[name] then
-		local player = players[name]
+	if names[name] then
+		local player = names[name]
 		local textColor = color.other
 		local nameColor = color.other
 		
 		if player.spec then
-			name = '(S)'.. name
+			name = '(s) '.. name
 			textColor = color.spec
 		else
 			nameColor = player.color

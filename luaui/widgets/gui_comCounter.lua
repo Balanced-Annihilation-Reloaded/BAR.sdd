@@ -39,7 +39,7 @@ local glCallList			= gl.CallList
 local glDeleteList			= gl.DeleteList
 
 local textSize				= 12
-local xPos, yPos
+local xPos, yPos            = 0.80, 0.85
 local xRelPos, yRelPos		= 0.80, 0.85
 local vsx, vsy				= gl.GetViewSizes()
 local check1x, check1y		= 6, 28
@@ -358,7 +358,7 @@ end
 function widget:SetConfigData(data)
 	xRelPos = data.xRelPos or xRelPos
 	yRelPos = data.yRelPos or yRelPos
-	xPos = yRelPos * vsx
+	xPos = xRelPos * vsx
 	yPos = yRelPos * vsy
 	markers = data.markers or markers
 	flashIcon = data.flashIcon or flashIcon

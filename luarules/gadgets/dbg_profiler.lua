@@ -378,13 +378,18 @@ end
 
     local vsx, vsy = gl.GetViewSizes()
     local x,y = vsx-1050, vsy-100
-
+    
     local maximum_ = (maximumSYNCED > maximum) and (maximumSYNCED) or (maximum)
 
     gl.Color(1,1,1,1)
     gl.BeginText()
-    if (profile_unsynced) then
-      for i=1,#sortedList do
+    
+    if (profile_unsynced) then	
+      y = y - 24
+      gl.Text("UNSYNCED", x+115, y-3, 12, "nOc")
+      y = y - 5
+
+    for i=1,#sortedList do
         local v = sortedList[i]
         local wname = v[1]
         local tLoad = v[2]
@@ -395,10 +400,11 @@ end
         gl.Text(('%.3f%%'):format(tLoad), x+105, y+1-(12)*i, 10)
       end
     end
+    local j = 0
     if (profile_synced) then
-      local j = #sortedList + 1
+      x = x - 300
 
-      gl.Rect(x, y+5-(12)*j, x+230, y+4-(12)*j)
+      --gl.Rect(x, y+5-(12)*j, x+230, y+4-(12)*j)
       gl.Color(1,0,0)   
 	  y = y - 8
       gl.Text("SYNCED", x+115, y-3-(12)*j, 12, "nOc")
@@ -415,14 +421,20 @@ end
         end
         gl.Text(wname, x+150, y+1-(12)*(j+i), 10)
         gl.Text(('%.3f%%'):format(tLoad), x+105, y+1-(12)*(j+i), 10)
+        
+        if i==50 then
+            x = x - 300
+            j = j - 50 --offset
+        end
       end
     end
-    local i = #sortedList + #sortedListSYNCED + 2
-    gl.Text("\255\255\064\064total time", x+150, y-1-(12)*i, 10)
-    gl.Text("\255\255\064\064"..('%.3fs'):format(allOverTimeSec), x+105, y-1-(12)*i, 10)
+    --local i = #sortedList + #sortedListSYNCED + 2
+    local i = #sortedListSYNCED + 1
+    gl.Text("\255\255\064\064total time", x+150, y-1-(12)*(i+j), 10)
+    gl.Text("\255\255\064\064"..('%.3fs'):format(allOverTimeSec), x+105, y-1-(12)*(i+j), 10)
     i = i+1
-    gl.Text("\255\255\064\064total FPS cost", x+150, y-1-(12)*i, 10)
-    gl.Text("\255\255\064\064"..('%.1f%%'):format(allOverTime+allOverTimeSYNCED), x+105, y-1-(12)*i, 10)
+    gl.Text("\255\255\064\064total FPS cost", x+150, y-1-(12)*(i+j), 10)
+    gl.Text("\255\255\064\064"..('%.1f%%'):format(allOverTime+allOverTimeSYNCED), x+105, y-1-(12)*(i+j), 10)
     gl.EndText()
   end
 

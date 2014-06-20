@@ -1,5 +1,5 @@
 --in BA "commando" unit always survives being shot down during transport
---when a com dies in mid air the damage done is controlled by mo_combomb_full_damage 
+--when a com dies in mid air the damage done is controlled by unit_combomb_full_damage 
 
 --several other ways to code this do not work because:
 --when UnitDestroyed() is called, Spring.GetUnitIsTransporting is already empty -> meh
@@ -56,13 +56,13 @@ end
 
 function gadget:GameFrame (currentFrame) 
 	if (toKill[currentFrame]) then --kill units as requested from above
-		for i,u in pairs (toKill[currentFrame]) do
-			t = fromtrans[currentFrame][i]
-			--Spring.Echo ("delayed killing check called for unit " .. i .. " and trans " .. t .. ". ")
+		for uID,_ in pairs (toKill[currentFrame]) do
+			tID = fromtrans[currentFrame][uID]
+			--Spring.Echo ("delayed killing check called for unit " .. uID .. " and trans " .. tID .. ". ")
 			--check that trans is dead/crashing and unit is still alive 
-			if ((not Spring.GetUnitIsDead(i)) and (Spring.GetUnitIsDead(t) or (Spring.GetUnitMoveTypeData(t).aircraftState=="crashing")))	then	
-				--Spring.Echo("killing unit " .. i)
-				Spring.DestroyUnit (i, true, false) 
+			if ((not Spring.GetUnitIsDead(uID)) and (Spring.GetUnitIsDead(tID) or (Spring.GetUnitMoveTypeData(tID).aircraftState=="crashing")))	then	
+				--Spring.Echo("killing unit " .. uID)
+				Spring.DestroyUnit (uID, true, false) 
 			end
 		end
 	toKill[currentFrame] = nil

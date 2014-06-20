@@ -79,13 +79,10 @@ gadgetHandler = {
   xViewSizeOld = 1,
   yViewSizeOld = 1,
 
-  -- dbg_profiler depends on this
   actionHandler = actionHandler,
-
   mouseOwner = nil,
-
-  actionHandler = actionHandler, --not in basecontent, this makes the gadget profiler work!
 }
+
 
 -- initialize the call-in lists
 do
@@ -722,12 +719,11 @@ end
 --
 
 function gadgetHandler:RegisterGlobal(owner, name, value)
-  if ((name == nil)        or
-      (_G[name])           or
-      (self.globals[name]) or
-      (CALLIN_MAP[name])) then
-    return false
-  end
+  if (name == nil) then return false end
+  if (_G[name] ~= nil) then return false end
+  if (self.globals[name] ~= nil) then return false end
+  if (CALLIN_MAP[name] ~= nil) then return false end
+
   _G[name] = value
   self.globals[name] = owner
   return true
@@ -808,6 +804,13 @@ end
 --
 --  The call-in distribution routines
 --
+function gadgetHandler:GameSetup(state, ready, playerStates)
+  local success, newReady = false, ready
+  for _,g in ipairs(self.GameSetupList) do
+    success, newReady = g:GameSetup(state, ready, playerStates)
+  end
+  return success, newReady
+end
 
 function gadgetHandler:GamePreload()
   for _,g in ipairs(self.GamePreloadList) do
@@ -881,10 +884,6 @@ function gadgetHandler:GotChatMsg(msg, player)
     if (g:GotChatMsg(msg, player)) then
       return true
     end
-  end
-
-  if (IsSyncedCode()) then
-    SendToUnsynced(player, msg)
   end
 
   return false
@@ -985,14 +984,6 @@ function gadgetHandler:PlayerRemoved(playerID, reason)
   return
 end
 
-function gadgetHandler:GameSetup(state, ready, playerStates)
-  local success, newReady
-  for _,g in ipairs(self.GameSetupList) do
-    success, newReady = g:GameSetup(state,ready,playerStates)
-  end
-  return success, newReady
-end
-
 
 --------------------------------------------------------------------------------
 --
@@ -1069,19 +1060,18 @@ function gadgetHandler:AllowCommand(unitID, unitDefID, unitTeam,
   return true
 end
 
-
-function gadgetHandler:AllowUnitCreation(unitDefID, builderID, builderTeam, x, y, z, facing)
-  for _,g in ipairs(self.AllowUnitCreationList) do
-    if (not g:AllowUnitCreation(unitDefID, builderID, builderTeam, x, y, z, facing)) then
+function gadgetHandler:AllowStartPosition(cx, cy, cz, playerID, readyState, rx, ry, rz)
+  for _,g in ipairs(self.AllowStartPositionList) do
+    if (not g:AllowStartPosition(cx, cy, cz, playerID, readyState, rx, ry, rz)) then
       return false
     end
   end
   return true
 end
 
-function gadgetHandler:AllowStartPosition(cx, cy, cz, playerID, readyState, x, y, z)
-  for _,g in ipairs(self.AllowStartPositionList) do
-    if (not g:AllowStartPosition(cx, cy, cz, playerID, readyState, x, y, z	)) then
+function gadgetHandler:AllowUnitCreation(unitDefID, builderID, builderTeam, x, y, z, facing)
+  for _,g in ipairs(self.AllowUnitCreationList) do
+    if (not g:AllowUnitCreation(unitDefID, builderID, builderTeam, x, y, z, facing)) then
       return false
     end
   end
@@ -1191,6 +1181,7 @@ function gadgetHandler:TerraformComplete(unitID, unitDefID, unitTeam,
 end
 
 
+
 function gadgetHandler:AllowWeaponTargetCheck(attackerID, attackerWeaponNum, attackerWeaponDefID)
 	for _, g in ipairs(self.AllowWeaponTargetCheckList) do
 		if (not g:AllowWeaponTargetCheck(attackerID, attackerWeaponNum, attackerWeaponDefID)) then
@@ -1216,6 +1207,16 @@ function gadgetHandler:AllowWeaponTarget(attackerID, targetID, attackerWeaponNum
 	end
 
 	return allowed, priority
+end
+
+function gadgetHandler:AllowWeaponInterceptTarget(interceptorUnitID, interceptorWeaponNum, interceptorTargetID)
+	for _, g in ipairs(self.AllowWeaponInterceptTargetList) do
+		if (not g:AllowWeaponInterceptTarget(interceptorUnitID, interceptorWeaponNum, interceptorTargetID)) then
+			return false
+		end
+	end
+
+	return true
 end
 
 
@@ -1301,9 +1302,11 @@ function gadgetHandler:UnitPreDamaged(
   local retImpulse = 1.0
 
   for _,g in ipairs(self.UnitPreDamagedList) do
-    dmg, imp = g:UnitPreDamaged(unitID, unitDefID, unitTeam,
-                  retDamage, paralyzer, weaponDefID, projectileID,
-                  attackerID, attackerDefID, attackerTeam)
+    dmg, imp = g:UnitPreDamaged(
+      unitID, unitDefID, unitTeam,
+      retDamage, paralyzer,
+      weaponDefID, projectileID,
+      attackerID, attackerDefID, attackerTeam)
 
     if (dmg ~= nil) then retDamage = dmg end
     if (imp ~= nil) then retImpulse = imp end
@@ -1476,14 +1479,15 @@ function gadgetHandler:FeatureDamaged(
   featureTeam,
   damage,
   weaponDefID,
+  projectileID,
   attackerID,
   attackerDefID,
   attackerTeam
 )
   for _,g in ipairs(self.FeatureDamagedList) do
     g:FeatureDamaged(featureID, featureDefID, featureTeam,
-                  damage, weaponDefID,
-                  attackerID, attackerDefID, attackerTeam)
+                    damage, weaponDefID, projectileID,
+                    attackerID, attackerDefID, attackerTeam)
   end
 end
 
@@ -1502,9 +1506,11 @@ function gadgetHandler:FeaturePreDamaged(
   local retImpulse = 1.0
 
   for _,g in ipairs(self.FeaturePreDamagedList) do
-    dmg, imp = g:FeaturePreDamaged(featureID, featureDefID, featureTeam,
-                  retDamage, weaponDefID, projectileID,
-                  attackerID, attackerDefID, attackerTeam)
+    dmg, imp = g:FeaturePreDamaged(
+      featureID, featureDefID, featureTeam,
+      retDamage,
+      weaponDefID, projectileID,
+      attackerID, attackerDefID, attackerTeam)
 
     if (dmg ~= nil) then retDamage = dmg end
     if (imp ~= nil) then retImpulse = imp end
@@ -1588,6 +1594,15 @@ function gadgetHandler:DefaultCommand(type, id)
     end
   end
   return
+end
+
+function gadgetHandler:CommandNotify(id, params, options)
+  for _,g in ipairs(self.CommandNotifyList) do
+    if (g:CommandNotify(id, params, options)) then
+      return true
+    end
+  end
+  return false
 end
 
 
@@ -1755,44 +1770,16 @@ function gadgetHandler:GetTooltip(x, y)
   return ''
 end
 
-function gadgetHandler:CommandNotify(id, params, options) 
-  for _,g in ipairs(self.CommandNotifyList) do 
-    if (g:CommandNotify(id, params, options)) then 
-	  return true 
-	end 
-  end 
-  return false 
-end 
-	 	 
-function gadgetHandler:MapDrawCmd(playerID, cmdType, px, py, pz, labelText) 
-  local retval = false 
-  for _,g in ipairs(self.MapDrawCmdList) do 
-	local takeEvent = g:MapDrawCmd(playerID, cmdType, px, py, pz, labelText) 
-	if (takeEvent) then 
-   	  retval = true 
-    end 
-  end 
-  return retval 
-end 
 
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
-function gadgetHandler:Save(zip)
-  for _,g in ipairs(self.SaveList) do
-    g:Save(zip)
+function gadgetHandler:MapDrawCmd(playerID, cmdType, px, py, pz, labelText)
+  for _,g in ipairs(self.MapDrawCmdList) do
+    if (g:MapDrawCmd(playerID, cmdType, px, py, pz, labelText)) then
+      return true
+    end
   end
-  return
+  return false
 end
 
-
-function gadgetHandler:Load(zip)
-  for _,g in ipairs(self.LoadList) do
-    g:Load(zip)
-  end
-  return
-end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -1815,6 +1802,3 @@ end
 --------------------------------------------------------------------------------
 
 gadgetHandler:Initialize()
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------

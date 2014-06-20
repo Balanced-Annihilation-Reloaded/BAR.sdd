@@ -370,7 +370,7 @@ function SpawnTeamStartUnit(teamID, allyTeamID)
 	if not isAIStartPoint then
 		if ((not startPointTable[teamID]) or (startPointTable[teamID][1] < 0)) then
 			-- guess points for the ones classified in startPointTable as not genuine (newbies will not have a genuine startpoint)
-			x,z=GuessStartSpot(teamID, allyID, xmin, zmin, xmax, zmax)
+			x,z=GuessStartSpot(teamID, allyID, xmin, zmin, xmax, zmax, startPointTable)
 		else
 			--fallback 
 			if (x<=0) or (z<=0) then
@@ -411,35 +411,6 @@ end
 
 
 ----------------------------------------------------------------
---- StartPoint Guessing ---
-----------------------------------------------------------------
-
-function GuessStartSpot(teamID, allyID, xmin, zmin, xmax, zmax)
-	--Sanity check
-	if (xmin >= xmax) or (zmin>=zmax) then return 0,0 end 
-	
-	-- Try our guesses
-	local x,z = GuessOne(teamID, allyID, xmin, zmin, xmax, zmax, startPointTable)
-	if x>=0 and z>=0 then
-		startPointTable[teamID]={x,z} 
-		return x,z 
-	end
-	
-	x,z = GuessTwo(teamID, allyID, xmin, zmin, xmax, zmax, startPointTable)
-	if x>=0 and z>=0 then 
-		startPointTable[teamID]={x,z} 
-		return x,z 
-	end
-	
-	
-	-- GIVE UP, fuuuuuuuuuuuuu --
-	x = (xmin + xmax) / 2
-	z = (zmin + zmax) / 2
-	startPointTable[teamID]={x,z} 
-	return x,z
-end
-
-----------------------------------------------------------------
 -- Unsynced
 else
 ----------------------------------------------------------------
@@ -457,9 +428,8 @@ local gameStarting
 local timer = 0
 
 local vsx, vsy = Spring.GetViewGeometry()
-function gadget:ViewResize(viewSizeX, viewSizeY)
-  vsx = viewSizeX
-  vsy = viewSizeY
+function gadget:ViewResize()
+  vsx,vsy = Spring.GetViewGeometry()
 end
 
 local readyX = vsx * 0.8
@@ -494,7 +464,7 @@ end
 function StartPointChosen(_,playerID)
 	if playerID == myPlayerID then
 		startPointChosen = true 
-		if not readied then
+		if not readied and Script.LuaUI("PlayerReadyStateChanged") then
 			Script.LuaUI.PlayerReadyStateChanged(playerID, 4)
 		end
 	end
@@ -514,14 +484,15 @@ function gadget:GameSetup(state,ready,playerStates)
 	-- notify LuaUI if readyStates have changed
 	for playerID,readyState in pairs(playerStates) do
 		if pStates[playerID] ~= readyState then
-			if readyState == "ready" then
-				Script.LuaUI.PlayerReadyStateChanged(playerID, 1)
-			elseif readyState == "missing" then
-				readied = false
-				Script.LuaUI.PlayerReadyStateChanged(playerID, 3)
-			else
-				Script.LuaUI.PlayerReadyStateChanged(playerID, 0) --unready
-			end
+            if Script.LuaUI("PlayerReadyStateChanged") then
+                if readyState == "ready" then
+                    Script.LuaUI.PlayerReadyStateChanged(playerID, 1)
+                elseif readyState == "missing" then
+                    Script.LuaUI.PlayerReadyStateChanged(playerID, 3)
+                else
+                    Script.LuaUI.PlayerReadyStateChanged(playerID, 0) --unready
+                end
+            end
 			pStates[playerID] = readyState
 		end
 	end
@@ -596,7 +567,7 @@ function gadget:DrawScreen()
 	end
 	
 	--remove if after gamestart
-	if Spring.GetGameFrame() > 0 then 
+	if Spring.GetGameFrame() > 0 or Spring.IsReplay() then 
 		gadgetHandler:RemoveGadget()
 		return
 	end

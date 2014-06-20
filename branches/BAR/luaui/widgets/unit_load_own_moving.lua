@@ -1,8 +1,8 @@
 
 function widget:GetInfo()
 	return {
-		name      = "Transport Moving Units",
-		desc      = "Enables you to load units while they are moving",
+		name      = "Load Own Moving",
+		desc      = "Enables loading of your own units when they're moving",
 		author    = "Niobium",
 		version   = "1.0",
 		date      = "June 18, 2010",

@@ -212,24 +212,21 @@ end
 local maxUnitDistance = 9000000 --max squared distance at which any info is drawn for units (matches unit_healthbars)
 
 function widget:DrawWorld()
-<<<<<<< .working
 	if Spring.IsGUIHidden() == false then 
 	  gl.DepthTest(true)
-=======
-  -- do the same check as healthbars; don't draw if too far zoomed out
-  cx, cy, cz = SpGetCameraPosition()
-  local smoothheight = SpGetSmoothMeshHeight(cx,cz) --clamps x and z
-  if ((cy-smoothheight)^2 >= maxUnitDistance) or SpIsGUIHidden() then 
-	return
-  end
+    -- do the same check as healthbars; don't draw if too far zoomed out
+    cx, cy, cz = SpGetCameraPosition()
+    local smoothheight = SpGetSmoothMeshHeight(cx,cz) --clamps x and z
+    if ((cy-smoothheight)^2 >= maxUnitDistance) or SpIsGUIHidden() then 
+        return
+    end
 
-  gl.DepthTest(true)
->>>>>>> .merge-right.r2592
-
-	  gl.Color(1, 1, 1,0.1)
-	  --fontHandler.UseDefaultFont()
-	  local cx, cy, cz = Spring.GetCameraPosition()
-	  for unitID, bi in pairs(etaTable) do
+    gl.DepthTest(true)
+    gl.Color(1, 1, 1,0.1)
+	
+    --fontHandler.UseDefaultFont()
+    local cx, cy, cz = Spring.GetCameraPosition()
+    for unitID, bi in pairs(etaTable) do
 		local ux,uy,uz = Spring.GetUnitViewPosition(unitID)
 		if ux~=nil then
 			local dx, dy, dz = ux-cx, uy-cy, uz-cz
@@ -238,21 +235,11 @@ function widget:DrawWorld()
 				gl.DrawFuncAtUnit(unitID, false, DrawEtaText, bi.timeLeft,bi.yoffset)
 			end
 		end
-	  end
-
-<<<<<<< .working
-	  gl.Color(1, 1, 1,1)
-	  gl.DepthTest(false)
 	end
-=======
-  for unitID, bi in pairs(etaTable) do
-	if SpIsUnitInView(unitID) then
-	  gl.DrawFuncAtUnit(unitID, false, DrawEtaText, bi.timeLeft,bi.yoffset)
-	end
-  end
 
-  gl.DepthTest(false)
->>>>>>> .merge-right.r2592
+	gl.Color(1, 1, 1,1)
+	gl.DepthTest(false)
+	end
 end
   
 

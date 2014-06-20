@@ -42,7 +42,6 @@ local spGetUnitsInCylinder	= Spring.GetUnitsInCylinder
 local spSetUnitRulesParam	= Spring.SetUnitRulesParam
 local spGetCommandQueue     = Spring.GetCommandQueue
 
-
 local CMD_STOP				= CMD.STOP
 
 
@@ -70,8 +69,6 @@ local units = {} -- data holds all unitID data
 
 --------------------------------------------------------------------------------
 -- Commands
-
-local tooltipText = 'Sets a top priority attack target, to be used if within range (not removed by move commands)'
 
 local tooltipText = 'Sets a top priority attack target, to be used if within range (not removed by move commands)'
 
@@ -489,15 +486,7 @@ local commandColour = {1, 0.75, 0, 0.7}
 local drawAllTargets = {}
 local drawTarget = {}
 local unitTargets = {}
-local noTargets = true
 
-function IsTarget()
-	if next(unitTargets) == nil then
-		noTargets = true
-	else
-		noTargets = false
-	end
-end
 
 function gadget:Initialize()
 	gadgetHandler:AddChatAction("targetdrawteam", handleTargetDrawEvent,"toggles drawing targets for units, params: teamID doDraw")
@@ -518,14 +507,14 @@ end
 
 function handleUnitTargetDrawEvent(_,_,params)
 	drawTarget[tonumber(params[1])] = true
-	IsTarget()
+    return true
 end
 
 function handleTargetDrawEvent(_,_,params)
 	local teamID = tonumber(params[1])
 	local doDraw = tonumber(params[2]) ~= 0
 	drawAllTargets[teamID] = doDraw
-	IsTarget()
+    return true
 end
 
 function handleTargetChangeEvent(_,unitID,dataA,dataB,dataC)
@@ -536,7 +525,7 @@ function handleTargetChangeEvent(_,unitID,dataA,dataB,dataC)
 		--3d coordinates format
 		unitTargets[unitID] = {dataA,dataB,dataC}
 	end
-	IsTarget()
+    return true
 end
 
 local function pos2func(u2)
@@ -563,8 +552,8 @@ local function terrainDraw(u, x, y, z)
 	glVertex(x,y,z)
 end
 
+
 function gadget:DrawWorld()
-	if noTargets then return end
 	local alt,ctrl,meta,shift = spGetModKeyState()
 	local spectator = spGetSpectatingState()
 	glPushAttrib(GL.LINE_BITS)

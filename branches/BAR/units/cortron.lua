@@ -118,7 +118,7 @@ return {
 				model = "cortronmissile.s3o",
 				name = "TacticalNuke",
 				noselfdamage = true,
-				range = 3000,
+				range = 2750,
 				reloadtime = 2,
 				smoketrail = true,
 				soundhit = "xplomed4",

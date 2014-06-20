@@ -23,6 +23,7 @@ allyTeamDeathMessages = {
 	"XX has been deprecated",
 	"XX has been incinerated",
 	"XX has been decapitated",
+	"XX has been floccinaucinihilipilificated",
 
 	--ized
 	"XX has been hospitalized",
@@ -57,7 +58,25 @@ allyTeamDeathMessages = {
 	"XX has been disembowelled",
 	"XX has been killed",
 	"XX has been unravelled",
-	 
+	
+	--oned
+	"XX has been bludgeoned",
+	"XX has been unbuttoned",
+	"XX has been imprisoned",
+	"XX has been outreasoned",
+	"XX has been chaperoned",
+	"XX has been dethroned",
+	"XX has been harpooned",
+	"XX has been stoned",
+	"XX has been poisoned",
+	"XX has been unreckoned",
+	"XX has been doggoned",
+	"XX has been gudgeoned",
+	"XX has been picarooned",
+	"XX has been dragooned",
+	"XX has been pensioned",
+	"XX has been sectioned",
+
 }	
 	
 teamDeathMessages = {
@@ -611,6 +630,29 @@ teamDeathMessages = {
 	"XX has the Spon Plague",
 	"XX rolled out the barrel",
 	"XX was ridden by the valkyries",
+	"XX was dropped into a pit of boiling tar",
+	"XX spent too long standing under a loose stalactite",
+	"XX was guillotined",
+	"XX ate too many Easter eggs",
+	"XX got whopped",
+	"XX was covered in barbecue sauce and served up at a Hillybilly Ho-down",
+	"XX violated GPL",
+	"XX had a God delusion",
+	"XX had a mid-life crisis",
+	"XX will be put up for auction",
+	"XX has pneumonoultramicroscopicsilicovolcanoconiosis",
+	"XX is having lobster thermidor aux crevettes, with a mornay sauce garnished with truffle pate, brandy and a fried egg on top and spam",
+	"XX died while balls deep in a squealing hog, firing a shotgun into the air",
+	"XX will clean up the chunks of dead prostitute",
+	"XX acted out one too many lumberjack fantasies",
+	"XX drowned in a pool of childrens tears",
+	"XX was too busy perming its ears",
+	"XX jumped under a fleet of oncoming buses",
+	
+
+	
+	
+	
 	
 	
 	

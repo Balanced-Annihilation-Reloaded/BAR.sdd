@@ -356,6 +356,7 @@ function ToggleNormalmapping(_,_,_, playerID)
     --// reinitializes all shaders
     ToggleShadows()
   end
+  return true
 end
 
 

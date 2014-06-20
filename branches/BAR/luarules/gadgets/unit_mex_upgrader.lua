@@ -523,6 +523,10 @@ function gadget:CommandFallback(unitID, unitDefID, teamID, cmdID, cmdParams, cmd
   end 
   
   local builder = builders[teamID][unitID] 
+  if not builder then
+    return false
+  end
+    
   if not cmdParams[2] then 
     -- Unit 
     if not builder.orderTaken then 
@@ -570,7 +574,10 @@ else
 local bDefs = {} 
 
 local function RegisterUpgradePairs(_, val)
-	Script.LuaUI.registerUpgradePairs(bDefs)
+    if Script.LuaUI("registerUpgradePairs") then
+        Script.LuaUI.registerUpgradePairs(bDefs)
+    end
+    return true
 end
 
 function gadget:Initialize()

@@ -11,7 +11,7 @@ function gadget:GetInfo()
     license   = "GNU GPL, v2 or later",
     layer     = math.huge,
     handler   = true,
-    enabled   = true  --  loaded by default?
+    enabled   = true, --  loaded by default?
   }
 end
 
@@ -173,6 +173,7 @@ local function StartHook()
   end
 
   Spring.Echo("hooked UpdateCallin: OK")
+  return true
 end
 
 --------------------------------------------------------------------------------
@@ -207,7 +208,7 @@ else
     gadget.DrawScreen = gadget.DrawScreen_
     gadgetHandler:UpdateGadgetCallIn("DrawScreen", gadget)
   end
-
+  
   local function Start(cmd, msg, words, playerID)
     if (Spring.GetLocalPlayerID() ~= playerID) then
       return
@@ -233,6 +234,11 @@ else
       UpdateDrawCallin()
     end
   end
+  local function StartBoth(cmd, msg, words, playerID)
+    Start(cmd, msg, words, playerID)
+	StartSYNCED(cmd, msg, words, playerID)
+  end
+    
 
   local timers = {}
   function SyncedCallinStarted(_,gname,cname)
@@ -261,6 +267,7 @@ else
       " : starts the gadget profiler (for debugging issues)"
     )
     gadgetHandler.actionHandler.AddChatAction(gadget, 'profile', StartSYNCED,"")
+	gadgetHandler.actionHandler.AddChatAction(gadget, 'ap', StartBoth,"")
     --StartHook()
   end
 

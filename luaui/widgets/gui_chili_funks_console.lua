@@ -205,8 +205,6 @@ function widget:Initialize()
 end
 
 
-local prevClean = Spring.GetTimer()
-local cleanSecs = 5
 function widget:Update()
 	-- if console has been visible for longer than msgTime since last event, see if its not needed anymore
 	endTime = getTimer()

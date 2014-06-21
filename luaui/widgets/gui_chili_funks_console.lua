@@ -46,6 +46,7 @@ local log
 
 -- Local Variables --
 local messages = {}
+local maxMessages = 100
 local endTime = getTimer() 
 local startTime = endTime --time of last message (or last time at which we checked to hide the console and then didn't)
 local myID = Spring.GetMyPlayerID()
@@ -203,6 +204,9 @@ function widget:Initialize()
 	
 end
 
+
+local prevClean = Spring.GetTimer()
+local cleanSecs = 5
 function widget:Update()
 	-- if console has been visible for longer than msgTime since last event, see if its not needed anymore
 	endTime = getTimer()
@@ -293,14 +297,20 @@ function widget:AddConsoleLine(msg)
 	local text, ignore = processLine(msg)
 	if ignore then return end
 	
-	local prevMsg = log.children[#log.children]
-	if prevMsg and (text == prevMsg.text or text == prevMsg.origText) then
-		prevMsg.duplicates = prevMsg.duplicates + 1
-		prevMsg.origText = text
-		prevMsg:SetText(getInline{1,0,0}..(prevMsg.duplicates + 1)..'x \b'..text)
-		return
-	end
-	
+    for i=1,3 do
+        local prevMsg = log.children[#log.children - i]
+        if prevMsg and (text == prevMsg.text or text == prevMsg.origText) then
+            prevMsg.duplicates = prevMsg.duplicates + 1
+            prevMsg.origText = text
+            prevMsg:SetText(getInline{1,0,0}..(prevMsg.duplicates + 1)..'x \b'..text)
+            return
+        end
+    end
+    
+    if #log.children>maxMessages then
+        log:RemoveChild(log.children[1])
+    end
+    
 	Chili.TextBox:New{
 		parent      = log,
 		text        = text,

@@ -193,9 +193,10 @@ local function makeWidgetList()
 				
 				local author = list[b].wData.author or "Unkown"
 				local desc = list[b].wData.desc or "No Description"
+                local fromZip = list[b].wData.fromZip and "" or "*"
 				Chili.Checkbox:New{
 					name      = list[b].name,
-					caption   = list[b].name,
+					caption   = list[b].name .. fromZip,
 					parent    = scrollpanel,
 					tooltip   = 'Author: '..author.. '\n'.. desc,
 					x         = 0,

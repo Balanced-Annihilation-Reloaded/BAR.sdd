@@ -146,25 +146,13 @@ local function setBar(res)
 	local net = income-expense
 	
 	-- if there is a net gain
-	if net > 0 then
+	if net > 0 or true then
 		netLabel[res].font.color = green
 		netLabel[res].font.outlineColor = greenOutline
-		
-		if res == 'metal' then 
-			meter[res]:SetColor(0.6,0.6,0.8,.8)
-		else
-			meter[res]:SetColor(1,1,0.3,.6)
-		end
 	-- if there is a net loss
 	else
 		netLabel[res].font.color = red
 		netLabel[res].font.outlineColor = redOutline
-		
-		if res == 'metal' then 
-			meter[res]:SetColor(0.6,0.6,0.4,.6)
-		else
-			meter[res]:SetColor(1,0.3,0.3,.6)
-		end
 	end
 	
 	netLabel[res]:SetCaption(readable(net))
@@ -174,11 +162,15 @@ local function setBar(res)
 	meter[res]:SetValue(currentLevel/storage*100)
 	meter[res]:SetCaption(math.floor(currentLevel)..'/'..storage)
 end
+function SetBarColors()
+    meter['metal']:SetColor(0.6,0.6,0.8,.8)
+    meter['energy']:SetColor(1,1,0.3,.6)
+end
 -------------------------------------------
 -- Callins
 -------------------------------------------
 function widget:GameFrame(n)
-	if n%10 == 0 then
+	if n%2 == 0 then
 		setBar('metal')
 		setBar('energy')
 	end
@@ -194,6 +186,16 @@ function widget:Initialize()
 	initWindow()
 	makeBar('metal',0,0)
 	makeBar('energy',30,30)
+    if Spring.GetGameFrame()>0 then
+        SetBarColors()
+    else
+        meter['metal']:SetColor(0.0,0.6,0.9,.8)
+        meter['energy']:SetColor(0.0,0.6,0.9,.8)        
+    end
+end
+
+function widget:GameStart()
+    SetBarColors()
 end
 
 function widget:Shutdown()

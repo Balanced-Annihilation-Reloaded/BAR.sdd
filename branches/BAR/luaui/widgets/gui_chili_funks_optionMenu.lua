@@ -24,7 +24,7 @@ local Chili, mainMenu, menuTabs, menuBtn
 local Settings = {}
 -- Defaults ---  overwritten by widget config (when they have been changed/saved)
 -- TODO Get defaults from Spring.GetConfig
-Settings['Skin']             = 'Flat'
+Settings['Skin']             = 'Robocracy'
 Settings['Cursor']           = 'Default'
 Settings['CursorName']       = 'ba'
 Settings['Water']            = 'Reflective'
@@ -636,7 +636,7 @@ end
 --
 function widget:Initialize()
 	Chili = WG.Chili
-	Chili.theme.skin.general.skinName = Settings['Skin'] or 'Flat'
+	Chili.theme.skin.general.skinName = Settings['Skin'] or 'Robocracy'
 	setCursor(Settings['CursorName'] or 'ba')
 	Options()
 	globalize()

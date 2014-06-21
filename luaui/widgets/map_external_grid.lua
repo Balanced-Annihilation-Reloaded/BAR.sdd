@@ -18,8 +18,6 @@ local DspLst=nil
 local localAllyID = Spring.GetLocalAllyTeamID ()
 --local updateFrequency = 120   -- unused
 local gridTex = "LuaUI/Images/vr_grid.png"
---local height = 0      -- how far above ground to draw
-local mirror = true
 
 ---magical speedups---
 local math = math
@@ -47,22 +45,12 @@ local noFeatureRange = 0
 ]]--
 
 options_path = 'Settings/View/Map/Configure VR Grid'
-options_order = {"mirrorHeightMap","drawForIslands","res","range"}
+options_order = {"drawForIslands","res","range"}
 options = {
-        mirrorHeightMap = {
-                name = "Mirror heightmap",
-                type = 'bool',
-                value = true,
-                desc = 'Mirrors heightmap on the grid',
-                OnChange = function(self)
-                        gl.DeleteList(DspLst)
-                        widget:Initialize()
-                end,            
-        },
         drawForIslands = {
                 name = "Draw for islands",
                 type = 'bool',
-                value = Spring.GetConfigInt("ReflectiveWater", 0) ~= 4,
+                value = Spring.GetConfigInt("ReflectiveWater", 0) ~= 4, --TODO (e.g. asteroids)
                 desc = "Draws grid for islands",                
         },      
         res = {
@@ -72,7 +60,7 @@ options = {
                 min = 64, 
                 max = 512, 
                 step = 64,
-                value = 128,
+                value = 64,
                 desc = 'Sets resolution (lower = more detail)',
                 OnChange = function(self)
                         gl.DeleteList(DspLst)
@@ -86,7 +74,7 @@ options = {
                 min = 1024, 
                 max = 8192, 
                 step = 256,
-                value = 8192,
+                value = 1024,
                 desc = 'How far outside the map to draw',
                 OnChange = function(self)
                         gl.DeleteList(DspLst)
@@ -95,44 +83,85 @@ options = {
         },              
 }
 
--- for terrain randomization - kind of primitive
---[[
-local terrainFuncs = {
-        ridge = function(x, z, args)
-                        if args.height == 0 then return end
-                        for a=x-args.sizeX*res, x+args.sizeX*res,res do
-                                for b=z-args.sizeZ*res, z+args.sizeZ*res,res do
-                                        local distFromCenterX = math.abs(a - x)/res
-                                        local distFromCenterZ = math.abs(b - z)/res
-                                        local heightMod = 0
-                                        local excessDistX, excessDistZ = 0, 0
-                                        if distFromCenterX > args.plateauSizeX then
-                                                excessDistX = distFromCenterX - args.plateauSizeX
-                                        end
-                                        if distFromCenterZ > args.plateauSizeZ then
-                                                excessDistZ = distFromCenterZ - args.plateauSizeZ
-                                        end
-                                        if excessDistX == 0 and excessDistZ == 0 then
-                                                -- do nothing
-                                        elseif excessDistX >= excessDistZ then
-                                                heightMod = excessDistX/(args.sizeX - args.plateauSizeX)
-                                        elseif excessDistX < excessDistZ then
-                                                heightMod = excessDistZ/(args.sizeZ - args.plateauSizeZ)
-                                        end
-                                        
-                                        if heights[a] and heights[a][b] then
-                                                heights[a][b] = heights[a][b] + args.height * (1-heightMod)
-                                        end
-                                end
-                        end
-                        --Spring.Echo(count)
-                end,
-        diamondHill = function(x, z, args) end,
-        mesa = function(x, z, args) end,
-}
-]]--
+local function DistanceFromMapEdge(x,z)
+    local dx, dz
+    if x < 0 then
+        dx = -x
+    elseif x > Game.mapSizeX then
+        dx =  x - Game.mapSizeX
+    else
+        dx = 0
+    end
+    if z < 0 then
+        dz = -z
+    elseif z > Game.mapSizeZ then
+        dz = z - Game.mapSizeZ        
+    else
+        dz = 0
+    end
+    return math.sqrt(dx^2+dz^2)
+end
+
+local function Decay(x)
+    -- smooth at 0,1, o at 0, 1 at 1
+    if x < 0.5 then
+        return x^2
+    else
+        return 1-(1-x)^2 
+    end
+end
+
 local function GetGroundHeight(x, z)
-        return heights[x] and heights[x][z] or spGetGroundHeight(x,z)
+    local h = heights[x] and heights[x][z] 
+    if h then 
+        return h --already computed
+    end
+    
+    local px, pz
+    if x < 0 then
+        px = - x
+    elseif x > Game.mapSizeX then
+        px = 2*Game.mapSizeX - x
+    else
+        px = x
+    end
+    if z < 0 then
+        pz = - z
+    elseif z > Game.mapSizeZ then
+        pz = 2*Game.mapSizeZ - z
+    else
+        pz = z
+    end
+    local inMap = (x>0) and (x<Game.mapSizeX) and (z>0) and (z<Game.mapSizeZ)
+    local h =  Spring.GetGroundHeight(px, pz)
+    local d = DistanceFromMapEdge(x,z) --TODO: falloff
+    
+    return h
+end
+
+local function InitGroundHeights()
+        local res = options.res.value or 128
+        local range = (options.range.value or 8192)/res
+        local TileMaxX = Game.mapSizeX/res +1
+        local TileMaxZ = Game.mapSizeZ/res +1
+        
+        for x = (-range)*res,Game.mapSizeX+range*res, res do
+                heights[x] = {}
+                for z = (-range)*res,Game.mapSizeZ+range*res, res do
+                        heights[x][z] = GetGroundHeight(x,z)       -- 20, 0
+                end
+        end  
+        
+        --[[ for testing
+        local args = {
+                sizeX = maxHillSize,
+                sizeZ = maxHillSize,
+                plateauSizeX = maxPlateauSize,
+                plateauSizeZ = maxPlateauSize,
+                height = maxHeight,
+        }
+        terrainFuncs.ridge(-600,-600,args)      
+        ]]--
 end
 
 local function IsIsland()
@@ -158,72 +187,6 @@ local function IsIsland()
                 end     
         end
         return true
-end
-
-local function InitGroundHeights()
-        local res = options.res.value or 128
-        local range = (options.range.value or 8192)/res
-        local TileMaxX = Game.mapSizeX/res +1
-        local TileMaxZ = Game.mapSizeZ/res +1
-        
-        for x = (-range)*res,Game.mapSizeX+range*res, res do
-                heights[x] = {}
-                for z = (-range)*res,Game.mapSizeZ+range*res, res do
-                        local px, pz
-                        if mirror then
-                                if (x < 0 or x > Game.mapSizeX) then    -- outside X map bounds; mirror true heightmap
-                                        local xAbs = math.abs(x)
-                                        local xFrac = (Game.mapSizeX ~= xAbs) and x%(Game.mapSizeX) or Game.mapSizeX
-                                        local xFlip = -1^math.floor(x/Game.mapSizeX)
-                                        if xFlip == -1 then
-                                                px = Game.mapSizeX - xFrac
-                                        else
-                                                px = xFrac
-                                        end
-                                end
-                                if (z < 0 or z > Game.mapSizeZ) and mirror  then        -- outside Z map bounds; mirror true heightmap
-                                        local zAbs = math.abs(z)
-                                        local zFrac = (Game.mapSizeZ ~= zAbs) and z%(Game.mapSizeZ) or Game.mapSizeZ
-                                        local zFlip = -1^math.floor(z/Game.mapSizeZ)
-                                        if zFlip == -1 then
-                                                pz = Game.mapSizeZ - zFrac
-                                        else
-                                                pz = zFrac
-                                        end                             
-                                end
-                        end
-                        heights[x][z] = GetGroundHeight(px or x, pz or z)       -- 20, 0
-                end
-        end
-        
-        --apply noise
-        --[[
-        for x=-range*res, (TileMaxX+range)*res,res do
-                for z=-range*res, (TileMaxZ+range)*res,res do
-                        if (x > 0 and z > 0) then Spring.Echo(x, z) end
-                        if not (x + noFeatureRange > 0 and z + noFeatureRange > 0 and x - noFeatureRange < TileMaxX and z - noFeatureRange < TileMaxZ) and featureChance>math.random() then
-                                local args = {
-                                        sizeX = math.random(1, maxHillSize),
-                                        sizeZ = math.random(1, maxHillSize),
-                                        plateauSizeX = math.random(1, maxPlateauSize),
-                                        plateauSizeZ = math.random(1, maxPlateauSize),
-                                        height = math.random(-maxHeight, maxHeight),
-                                }
-                                terrainFuncs.ridge(x,z,args)
-                        end
-                end
-        end     
-        
-        -- for testing
-        local args = {
-                sizeX = maxHillSize,
-                sizeZ = maxHillSize,
-                plateauSizeX = maxPlateauSize,
-                plateauSizeZ = maxPlateauSize,
-                height = maxHeight,
-        }
-        terrainFuncs.ridge(-600,-600,args)      
-        ]]--
 end
 
 --[[

@@ -257,9 +257,14 @@ local function processLine(line)
         -- Game Message
         text = ssub(line,3)
 	elseif sfind(line,'-> Version') or sfind(line,'ClientReadNet') or sfind(line,'Address') or (gameOver and sfind(line,'left the game')) then --surplus info when user connects
-        -- Filter out unwanted messages
+        -- Filter out unwanted engine messages
 		return _, true --ignore
 	end
+    
+    if WG.mutedPlayers and WG.mutedPlayers[name] then
+        -- Filter out muted players
+        return _,true --ignore 
+    end
 	
 	if names[name] then
 		local player = names[name]

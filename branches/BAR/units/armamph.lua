@@ -29,12 +29,16 @@ return {
 		movementclass = "HOVER3",
 		name = "Pelican",
 		nochasecategory = "ANTILASER",
-		objectname = "ARMAMPH",
+		objectname = "ARMAMPH.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 377,
 		turnrate = 440,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

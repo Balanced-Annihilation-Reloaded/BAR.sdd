@@ -383,7 +383,6 @@ function script.AimWeapon2( heading, pitch )
 	Signal( SIG_aim2 )
 	SetSignalMask( SIG_aim2 )
 	local _, basepos, _ = Spring.GetUnitPosition(unitID)
-	Spring.Echo(basepos)
 	if basepos < -40 then
 		aiming = true
 		Turn(torso, y_axis, heading, VAR_speed_turn_torso_y)

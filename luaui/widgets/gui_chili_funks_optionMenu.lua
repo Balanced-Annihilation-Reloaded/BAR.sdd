@@ -324,6 +324,9 @@ end
 --
 local function loadMainMenu()
 	local sizeData = load('mainMenuSize') or {}
+    local vsx,vsy = Spring.GetViewGeometry()
+    if vsx < sizeData[1]+sizeData[3]-100 or sizeData[1] < 100 then sizeData[1] = 400 end
+    if vsy < sizeData[2]+sizeData[4]-100 or sizeData[2] < 100 then sizeData[3] = 500 end
 	mainMenu = Chili.Window:New{
 		parent    = Chili.Screen0,
 		x         = sizeData[1] or 400, 

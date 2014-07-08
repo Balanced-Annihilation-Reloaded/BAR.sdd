@@ -29,8 +29,8 @@ walk()
 	turn lcalf to x-axis <-13> speed <78.000000>;
 	turn lfoot to x-axis <-23> speed <138.000000>;
 
-	turn torso to y-axis <0> now;
-	move pelvis to y-axis [0] now;
+	turn torso to y-axis <0> speed <12.000000>;
+	move pelvis to y-axis [0] speed <12.000000>;
 	sleep 160;
 
 	//step 2 leg 
@@ -74,8 +74,8 @@ walk()
 	turn lcalf to x-axis <0> speed <240.000000>;
 	turn lfoot to x-axis <0> speed <120.000000>;
 
-	turn torso to y-axis <0> now;
-	move pelvis to y-axis [0] now;
+	turn torso to y-axis <0> speed <12.000000>;
+	move pelvis to y-axis [0] speed <12.000000>;
 	sleep 160;
 
 	//step 5 leg 
@@ -127,8 +127,9 @@ stopwalk()
 		turn lfoot to x-axis <0> speed <120.000000>;
 
 
-		turn torso to y-axis <0> now;
-		move pelvis to y-axis [0] now;
+		turn torso to y-axis <0> speed <48.000000>;
+		move pelvis to y-axis [0] speed <48.000000>;
+		wait-for-turn torso around y-axis;
 		sleep 160;
 	}
 }
@@ -175,9 +176,16 @@ Create()
 
 StartMoving()
 {
+
 	bMoving = TRUE;
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
+	if( !bAiming )
+	{
+		//Static_Var_8 = 0;
+		turn torso to y-axis <0.000000> speed <60.000000>;
+		turn pelvis to y-axis <0.000000> speed <60.000000>;
+	}
 	while( TRUE )
 	{
 		call-script walk();
@@ -201,7 +209,7 @@ RestoreAfterDelay(Func_Var_1)
 {
 	sleep Static_Var_1;
 	
-	turn torso  to y-axis <0> speed <320>;
+	turn torso  to y-axis <0> speed <30>;
 	turn rloarm to x-axis <0> speed <320>;
 	turn lloarm to x-axis <0> speed <320>;
 	
@@ -222,6 +230,14 @@ QueryPrimary(piecenum)
 	if( gun_1 == 1 )
 	{
 		piecenum = lflare1;
+	}
+	if( gun_1 == 2 )
+	{
+		piecenum = rflare2;
+	}
+	if( gun_1 == 3 )
+	{
+		piecenum = lflare2;
 	}
 }
 
@@ -257,6 +273,26 @@ FirePrimary()
 		show lflare1;
 		sleep 100;
 		hide lflare1;
+		move lbarrel to y-axis [0] speed [6];
+		gun_1 = 2;
+		return (1);
+	}
+		if( gun_1 == 2 )
+	{
+		move rbarrel to y-axis [1.5] speed [1000];
+		show rflare2;
+		sleep 100;
+		hide rflare2;
+		move rbarrel to y-axis [0] speed [6];
+		gun_1 = 3;
+		return (1);
+	}
+	if ( gun_1 == 3 )
+	{
+		move lbarrel to y-axis [1.5] speed [1000];
+		show lflare2;
+		sleep 100;
+		hide lflare2;
 		move lbarrel to y-axis [0] speed [6];
 		gun_1 = 0;
 		return (1);

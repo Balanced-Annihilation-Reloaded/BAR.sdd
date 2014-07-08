@@ -26,12 +26,16 @@ return {
 		maxwaterdepth = 22,
 		movementclass = "HKBOT4",
 		name = "Razorback",
-		objectname = "ARMRAZ",
+		objectname = "ARMRAZ.s3o",
 		seismicsignature = 0,
 		selfdestructas = "MECH_BLAST",
 		sightdistance = 450,
 		turnrate = 668,
 		upright = true,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

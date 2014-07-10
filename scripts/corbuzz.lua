@@ -52,7 +52,7 @@ function script.AimWeapon1(heading, pitch)
 	SetSignalMask( SIG_AIM)
 	Turn( turret , y_axis, heading, math.rad(15.000000) )
 	Turn( spindle , x_axis,(math.rad(60.005495) * gun_1) - pitch, math.rad(200.038462) )
-	Spring.Echo(gun_1,gun_1*60)
+	--Spring.Echo(gun_1,gun_1*60)
 	WaitForTurn(turret, y_axis)
 	WaitForTurn(spindle, x_axis)
 	return true

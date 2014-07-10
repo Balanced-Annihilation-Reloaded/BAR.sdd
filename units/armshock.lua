@@ -28,11 +28,15 @@ return {
 		movementclass = "HTKBOT4",
 		name = "Vanguard",
 		nochasecategory = "VTOL",
-		objectname = "ARMSHOCK",
+		objectname = "ARMSHOCK.s3o",
 		seismicsignature = 0,
 		selfdestructas = "SHOCKER",
 		sightdistance = 625,
-		turnrate = 231,
+		turnrate = 231,		
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

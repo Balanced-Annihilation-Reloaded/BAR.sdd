@@ -59,8 +59,8 @@ options = {
                 type = 'number',
                 min = 64, 
                 max = 512, 
-                step = 64,
-                value = 64,
+                step = 16,
+                value = 16,
                 desc = 'Sets resolution (lower = more detail)',
                 OnChange = function(self)
                         gl.DeleteList(DspLst)
@@ -74,7 +74,7 @@ options = {
                 min = 1024, 
                 max = 8192, 
                 step = 256,
-                value = 1024,
+                value = 512,
                 desc = 'How far outside the map to draw',
                 OnChange = function(self)
                         gl.DeleteList(DspLst)
@@ -99,7 +99,7 @@ local function DistanceFromMapEdge(x,z)
     else
         dz = 0
     end
-    return math.sqrt(dx^2+dz^2)
+    return math.max(dx,dz)
 end
 
 local function Decay(x)
@@ -134,9 +134,11 @@ local function GetGroundHeight(x, z)
     end
     local inMap = (x>0) and (x<Game.mapSizeX) and (z>0) and (z<Game.mapSizeZ)
     local h =  Spring.GetGroundHeight(px, pz)
-    local d = DistanceFromMapEdge(x,z) --TODO: falloff
+    local d = DistanceFromMapEdge(x,z) 
+    local dmax = options.range.value
+    local f = 1-(dmax-d)/dmax
     
-    return h
+    return h * (1-f^2) 
 end
 
 local function InitGroundHeights()
@@ -236,7 +238,7 @@ function widget:ViewResize()
 	vsx, vsy = gl.GetViewSizes()
 end
 
-local function CheckVRGridVisible()
+local function CheckVRGridVisible() --pointless?
 	local at, p = spTraceScreenRay(0,0,true,false,false)
 	if at == nil then
 		return true
@@ -271,8 +273,10 @@ function widget:Initialize()
 	island = IsIsland()
 	InitGroundHeights()
 	DspLst = glCreateList(DrawTiles)
+    Spring.SendCommands('mapborder 0')
 end
 
 function widget:Shutdown()
-        gl.DeleteList(DspList)
+    gl.DeleteList(DspList)
+    Spring.SendCommands('mapborder 1')
 end

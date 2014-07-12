@@ -300,12 +300,13 @@ function widget:AddConsoleLine(msg)
 	local text, ignore = processLine(msg)
 	if ignore then return end
 	
-    for i=1,3 do
+    for i=0,2 do
         local prevMsg = log.children[#log.children - i]
         if prevMsg and (text == prevMsg.text or text == prevMsg.origText) then
             prevMsg.duplicates = prevMsg.duplicates + 1
             prevMsg.origText = text
             prevMsg:SetText(getInline{1,0,0}..(prevMsg.duplicates + 1)..'x \b'..text)
+            showChat()
             return
         end
     end

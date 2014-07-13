@@ -91,7 +91,7 @@ RestorePrimary()
 	sleep restore_delay;
 	turn turret1 to y-axis <0.000000> speed <55.000000>;
 	turn sleeve1 to x-axis <0.000000> speed <30.000000>;
-	bAiming = TRUE;
+	bAiming = 1;
 }
 
 RestoreSecondary()
@@ -195,11 +195,15 @@ FirePrimary()
 		move barrel1b to z-axis [0.000000] speed [1.000000];
 	}
 	++bAiming;
+	if (bAiming > 2)
+	{
+	bAiming = 1;
+	}
 }
 
 FireSecondary()
 {
-	if( Static_Var_2 == 1 )
+	if( Static_Var_2 == 2 )
 	{
 		show flare2a;
 		move barrel2a to z-axis [-2.500000] now;
@@ -207,7 +211,7 @@ FireSecondary()
 		hide flare2a;
 		move barrel2a to z-axis [0.000000] speed [1.000000];
 	}
-	if( Static_Var_2 == 2 )
+	if( Static_Var_2 == 1 )
 	{
 		show flare2b;
 		move barrel2b to z-axis [-2.500000] now;
@@ -216,6 +220,10 @@ FireSecondary()
 		move barrel2b to z-axis [0.000000] speed [1.000000];
 	}
 	++Static_Var_2;
+	if (Static_Var_2 > 2)
+	{
+	Static_Var_2 = 1;
+	}
 }
 
 AimFromPrimary(piecenum)

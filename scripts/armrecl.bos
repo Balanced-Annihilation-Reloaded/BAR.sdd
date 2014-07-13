@@ -5,22 +5,29 @@
 
 piece  base, flare, barrel, ldoor, rdoor, lfin, rfin, screw;
 
-static-var  Static_Var_1, statechg_DesiredState, statechg_StateChanging;
+static-var  Static_Var_1, statechg_DesiredState, statechg_StateChanging, currentSpeed, moveSpeed;
 
-// Signal definitions
-
+Propcontrol()
+{
+	while(TRUE)
+	{
+		currentSpeed = (get CURRENT_SPEED)*1000/moveSpeed;
+		spin screw around z-axis speed <1.000000>*currentSpeed accelerate <10.000000>;
+		sleep 33;
+	}
+}
 
 activatescr()
 {
 	if( TRUE )
 	{
-		move barrel to z-axis [5] speed [5];
+		move barrel to z-axis [2.000000] speed [2.000000];
 		sleep 200;
 	}
 	if( TRUE )
 	{
-		move ldoor to x-axis [-3] speed [5];
-		move rdoor to x-axis [3] speed [5];
+		move ldoor to x-axis [-1.200000] speed [2.000000];
+		move rdoor to x-axis [1.200000] speed [2.000000];
 		sleep 300;
 	}
 }
@@ -29,30 +36,28 @@ deactivatescr()
 {
 	if( TRUE )
 	{
-		move ldoor to x-axis [0] speed [5];
-		move rdoor to x-axis [0] speed [5];
+		move ldoor to x-axis [0.000000] speed [2.000000];
+		move rdoor to x-axis [0.000000] speed [2.000000];
 		sleep 300;
 	}
 	if( TRUE )
 	{
-		move barrel to z-axis [0] speed [5];
+		move barrel to z-axis [0.000000] speed [2.000000];
 		sleep 200;
 	}
 }
 
 StartMoving()
 {
-	spin screw around z-axis speed <360>;
-	move lfin to x-axis [-10] speed [10];
-	move rfin to x-axis [10] speed [10];
+	move lfin to x-axis [-4.000000] speed [4.000000];
+	move rfin to x-axis [4.000000] speed [4.000000];
 	sleep 1000;
 }
 
 StopMoving()
-{	
-	stop-spin screw around z-axis;
-	move lfin to x-axis [0] speed [10];
-	move rfin to x-axis [0] speed [10];
+{
+	move lfin to x-axis [0.000000] speed [4.000000];
+	move rfin to x-axis [0.000000] speed [4.000000];
 	sleep 1000;
 }
 
@@ -103,6 +108,8 @@ RequestState(requestedstate, currentstate)
 Create()
 {
 	Static_Var_1 = 0;
+	moveSpeed = get MAX_SPEED;
+	start-script Propcontrol();
 	call-script InitState();
 }
 

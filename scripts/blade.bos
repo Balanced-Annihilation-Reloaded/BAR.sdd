@@ -15,7 +15,7 @@ activatescr()
 {
 	turn wingl to y-axis <-90> speed <90>;
 	turn wingr to y-axis <90> speed <90>;
-	spin fan around y-axis speed <200> accelerate <10>;
+	spin fan around y-axis speed <250> accelerate <10>;
 	sleep 1000;
 	return (0);
 	// Build by COBBLER Ver4.0 Copyright @1998 DIGITAL CONCEPT SOFTWARE (MANU@inext.fr) / http://www.annihilationcenter.com/DCS/  
@@ -25,7 +25,7 @@ deactivatescr()
 {
 	turn wingl to y-axis <0> speed <90>;
 	turn wingr to y-axis <0> speed <90>;
-	stop-spin fan around y-axis decelerate <10>;
+	stop-spin fan around y-axis decelerate <2>;
 	sleep 1000;
 }
 

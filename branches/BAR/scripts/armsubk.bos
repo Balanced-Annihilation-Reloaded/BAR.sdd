@@ -5,13 +5,25 @@
 
 piece  base, doorr, doorl, flare, prop;
 
+static-var  currentSpeed, moveSpeed;
 
 // Signal definitions
 #define SIG_MOVE			2
 
+Propcontrol()
+{
+	while(TRUE)
+	{
+		currentSpeed = (get CURRENT_SPEED)*1000/moveSpeed;
+		spin prop around z-axis speed <1.000000>*currentSpeed accelerate <10.000000>;
+		sleep 33;
+	}
+}
 
 Create()
 {
+	moveSpeed = get MAX_SPEED;
+	start-script Propcontrol();
 	return (0);
 }
 
@@ -19,7 +31,6 @@ StartMoving()
 {
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
-	spin prop around z-axis speed <100>;
 	while( TRUE )
 	{
 		emit-sfx 256 | 3 from prop;
@@ -30,7 +41,6 @@ StartMoving()
 
 StopMoving()
 {
-	stop-spin prop around z-axis;
 	signal SIG_MOVE;
 	return (0);
 }

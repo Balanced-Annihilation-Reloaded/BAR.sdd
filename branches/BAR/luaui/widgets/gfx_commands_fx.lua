@@ -12,7 +12,6 @@ end
 
 -- future:          hotkey to show all current cmds? (like current shift+space)
 --                  handle set target
---                  handle build commands fully
 
 local spGetUnitPosition	= Spring.GetUnitPosition
 local spGetUnitCommands	= Spring.GetUnitCommands
@@ -22,6 +21,7 @@ local spIsUnitIcon = Spring.IsUnitIcon
 local spValidUnitID = Spring.ValidUnitID
 local spValidFeatureID = Spring.ValidFeatureID
 local spGetFeaturePosition = Spring.GetFeaturePosition
+local spIsUnitSelected = Spring.IsUnitSelected
 
 local GL_SRC_ALPHA = GL.SRC_ALPHA
 local GL_ONE_MINUS_SRC_ALPHA = GL.ONE_MINUS_SRC_ALPHA
@@ -36,7 +36,7 @@ local CMD_GUARD = CMD.GUARD -- icon unit
 local CMD_INSERT = CMD.INSERT 
 local CMD_LOAD_ONTO = CMD.LOAD_ONTO -- icon unit
 local CMD_LOAD_UNITS = CMD.LOAD_UNITS -- icon unit or area
-local CMD_MANUALFIRE = CMD.MANUALFIRE -- icon map
+local CMD_MANUALFIRE = CMD.MANUALFIRE -- icon unit or map (cmdtype edited by gadget)
 local CMD_MOVE = CMD.MOVE -- icon map
 local CMD_PATROL = CMD.PATROL --icon map
 local CMD_RECLAIM = CMD.RECLAIM --icon unit feature or area
@@ -194,15 +194,17 @@ function ExtractTargetLocation(a,b,c,d,cmdID)
     -- input is first 4 parts of cmd.params table
     local x,y,z
     if c or d then
-        if cmdID==CMD_RECLAIM and a > MAX_UNITS and spValidFeatureID(a-MAX_UNITS) then --ugh, but needed
+        if cmdID==CMD_RECLAIM and a >= MAX_UNITS and spValidFeatureID(a-MAX_UNITS) then --ugh, but needed
             x,y,z = spGetFeaturePosition(a-MAX_UNITS)        
+        elseif cmdID==CMD_REPAIR and spValidUnitID(a) then
+            x,y,z = spGetUnitPosition(a)
         else
             x=a
             y=b
             z=c
         end
     elseif a then
-        if a > MAX_UNITS then
+        if a >= MAX_UNITS then
             x,y,z = spGetFeaturePosition(a-MAX_UNITS)
         else
             x,y,z = spGetUnitPosition(a)     
@@ -321,7 +323,7 @@ function widget:DrawWorldPreUnit()
                         end
                         prevX, prevY, prevZ = X, Y, Z
                         -- dot 
-                        if j==commands[i].queueSize and not spIsUnitIcon(unitID) then
+                        if j==commands[i].queueSize and not spIsUnitIcon(unitID) and not spIsUnitSelected(unitID) then
                             local size = dotRadius * CONFIG[commands[i].queue[j].id].sizeMult
                             gl.BeginEnd(GL.TRIANGLE_FAN, DrawDot, size, lineColour[1],lineColour[2],lineColour[4],lineAlpha, X,Y,Z)
                         end

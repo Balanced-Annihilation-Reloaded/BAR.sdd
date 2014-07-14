@@ -43,6 +43,22 @@ Create()
 	return (0);
 }
 
+
+Activate()
+{
+	
+	spin spinner around y-axis speed <50> accelerate <0.5>;
+	return (0);
+}
+
+Deactivate()
+{
+	
+	stop-spin spinner around y-axis decelerate <0.5>;
+	return (0);
+}
+
+
 SweetSpot(piecenum)
 {
 	piecenum = base;

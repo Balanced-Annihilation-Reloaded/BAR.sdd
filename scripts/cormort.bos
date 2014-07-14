@@ -413,14 +413,13 @@ AimPrimary(heading, pitch)
 
 FirePrimary()
 {
-	move Barrel to z-axis [-12.500000] speed [1250.000000];
+	move Barrel to z-axis [-5] now;
 	show flare;
-	sleep 150;
-	turn Torso to x-axis <-10.000000> speed <500.120879>;
+	turn Torso to x-axis <-10.000000> speed <150.120879>;
 	sleep 150;
 	hide flare;
-	turn Torso to x-axis <0.000000> speed <20.000000>;
-	move Barrel to z-axis [0.000000] speed [7.500000];
+	turn Torso to x-axis <0.000000> speed <15.000000>;
+	move Barrel to z-axis [0.000000] speed [5.500000];
 	return (0);
 }
 

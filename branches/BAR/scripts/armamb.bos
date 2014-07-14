@@ -11,7 +11,6 @@ static-var  Static_Var_1, restore_delay, statechg_DesiredState, statechg_StateCh
 
 activatescr()
 {
-get PRINT(999999);
 	if( TRUE )
 	{
 		turn door1 to x-axis <90.000000> speed <227.093407>;
@@ -105,7 +104,6 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 Go()
 {
-	get PRINT(Static_Var_1);
 	if( Static_Var_1 )
 	{
 		call-script activatescr();

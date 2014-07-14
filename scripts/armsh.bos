@@ -54,7 +54,7 @@ HitByWeapon(Func_Var_1, Func_Var_2)
 
 StartMoving()
 {
-	spin fan around z-axis speed <700> accelerate <100>; 
+	spin fan around z-axis speed <1400> accelerate <100>; 
 	signal SIG_MOVE;
 	set-signal-mask SIG_MOVE;
 	while( TRUE )
@@ -76,7 +76,7 @@ StartMoving()
 
 StopMoving()
 {
-	stop-spin fan around z-axis decelerate <10>;
+	stop-spin fan around z-axis decelerate <50>;
 	sleep 150;
 	return (0);
 }

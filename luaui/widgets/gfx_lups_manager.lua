@@ -132,7 +132,7 @@ local UnitEffects = {
   [UnitDefNames["armgate"].id] = {
     --{class='Bursts',options=armgateBursts},
     {class='ShieldSphere',options=armgateShieldSphere},
-    {class='ShieldJitter',options={life=math.huge, pos={0,20,-5}, size=20, precision=2, repeatEffect=true}},
+    {class='ShieldJitter',options={life=math.huge, pos={0,25,-5}, size=20, precision=2, repeatEffect=true}},
     {class='GroundFlash',options=groundFlashGreen},
   },    
   [UnitDefNames["cjuno"].id] = {

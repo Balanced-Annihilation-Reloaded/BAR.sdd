@@ -3,13 +3,27 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  flare, dish, base, gun;
+piece  flare, dish, base, gun, lbwheel, rbwheel, rfwheel, lfwheel;
 
-static-var  restore_delay;
+static-var  restore_delay, currentSpeed, moveSpeed, wheelSpeed;
 
 // Signal definitions
 #define SIG_AIM				2
 
+WheelControl()
+{
+	while(TRUE)
+	{
+		currentSpeed = (get CURRENT_SPEED)*20/moveSpeed;
+		wheelSpeed = currentSpeed * 7;
+		if (currentSpeed<2) currentSpeed=2;	// prevent infinite timing
+		spin rfwheel around x-axis speed (<1.000000> * wheelSpeed ) * 2 accelerate <5.000000> * currentSpeed;
+		spin lfwheel around x-axis speed (<1.000000> * wheelSpeed ) * 2 accelerate <5.000000> * currentSpeed;
+		spin lbwheel around x-axis speed (<0.5.000000> * wheelSpeed ) * 2 accelerate <5.000000> * currentSpeed;
+		spin rbwheel around x-axis speed (<0.5.000000> * wheelSpeed ) * 2 accelerate <5.000000> * currentSpeed;
+		sleep 200;
+	}
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
@@ -17,6 +31,7 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	{
 		sleep 400;
 	}
+	start-script WheelControl();
 	spin dish around y-axis speed <100> accelerate <1>;
 	while( TRUE )
 	{
@@ -55,6 +70,7 @@ HitByWeapon(Func_Var_1, Func_Var_2)
 Create()
 {
 	restore_delay = 3000;
+	moveSpeed = get MAX_SPEED;
 	start-script SmokeUnit();
 	return (0);
 }

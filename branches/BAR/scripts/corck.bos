@@ -21,11 +21,11 @@ walk()
 		move rthigh to y-axis [0.000000] now;
 		move rleg to y-axis [0.000000] now;
 		move lleg to y-axis [0.000000] now;
-		turn lthigh to x-axis <-44.291209> speed <664.368135>;
+		turn lthigh to x-axis <-44.291209> speed <364.368135>;
 		turn rthigh to x-axis <12.291209> speed <184.368135>;
 		turn rleg to x-axis <17.571429> speed <263.571435>;
 		turn rfoot to x-axis <-24.956044> speed <374.340660>;
-		turn lleg to x-axis <36.203297> speed <543.049455>;
+		turn lleg to x-axis <36.203297> speed <343.049455>;
 		turn lfoot to x-axis <2.445055> speed <36.675825>;
 		sleep 4700 / currentSpeed;
 	}
@@ -225,6 +225,7 @@ UnitSpeed()
 	}
 }
 
+
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
 	while( get BUILD_PERCENT_LEFT )
@@ -351,6 +352,7 @@ StopBuilding()
 StartMoving()
 {
 	bMoving = TRUE;
+	currentSpeed = 50;
 }
 
 StopMoving()

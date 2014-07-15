@@ -91,10 +91,10 @@ RestoreAfterDelay()
 	turn sleevef to x-axis <0> speed <250>;
 	
 	turn turretl to x-axis <0> speed <250>;
-	turn sleevel to z-axis <0> speed <250>;
+	turn sleevel to y-axis <0> speed <250>;
 	
 	turn turretr to x-axis <0> speed <250>;
-	turn sleever to z-axis <0> speed <250>;
+	turn sleever to y-axis <0> speed <250>;
 }
 
 StartMoving()
@@ -140,9 +140,17 @@ AimSecondary(heading, pitch)
 {
 	signal SIG_AIM_2;
 	set-signal-mask SIG_AIM_2;
-	turn turretl to x-axis <0> - pitch speed <200.000000>;
-	turn sleevel to z-axis heading speed <200.000000>;
-	wait-for-turn turretl around x-axis;
+	var aimto;
+	aimto= <-90> + heading;
+	if (aimto > <90>) {
+		aimto = <90>;
+	}
+	if (aimto < <-90>) {
+		aimto = <-90>;
+	}
+	//turn turretl to x-axis  speed <200.000000>;
+	turn sleevel to y-axis aimto speed <200.000000>;
+	wait-for-turn sleevel around y-axis;
 	return (1);
 }
 
@@ -150,9 +158,17 @@ AimTertiary(heading, pitch)
 {
 	signal SIG_AIM_3;
 	set-signal-mask SIG_AIM_3;
-	turn turretr to x-axis heading speed <200.000000>;
-	turn sleever to z-axis <0> - pitch speed <200.000000>;
-	wait-for-turn turretr around x-axis;
+	var aimto;
+	aimto= <90> + heading;
+	if (aimto > <90>) {
+		aimto = <90>;
+	}
+	if (aimto < <-90>) {
+		aimto = <-90>;
+	}
+	//turn turretr to x-axis heading speed <200.000000>;
+	turn sleever to y-axis aimto speed <200.000000>;
+	wait-for-turn sleever around y-axis;
 	return (1);
 }
 

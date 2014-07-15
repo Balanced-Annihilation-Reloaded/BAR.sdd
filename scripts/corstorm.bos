@@ -166,7 +166,7 @@ UnitSpeed()
 	{
 		currentSpeed = (get CURRENT_SPEED)*20/moveSpeed;
 		if (currentSpeed<4) currentSpeed=4;
-		animSpeed = 1500 / currentSpeed;
+		animSpeed = 1250 / currentSpeed;
 		sleep 142;
 	}
 }
@@ -202,6 +202,8 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 StartMoving()
 {
 	signal SIG_MOVE;
+	currentSpeed=50;
+	animSpeed=1200/currentSpeed;
 	if( notMoving ) start-script walk();
 }
 

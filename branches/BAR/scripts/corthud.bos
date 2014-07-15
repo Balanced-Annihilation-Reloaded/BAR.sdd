@@ -71,7 +71,7 @@ walk()
 	if( bMoving )
 	{
 		move pelvis to y-axis [0.550000] speed [0.150000] *currentSpeed;
-		turn torso to x-axis <4.219780> speed <13.714285> *currentSpeed;
+		turn torso to x-axis <4.219780> speed <3.714285> *currentSpeed;
 		turn lthigh to x-axis <0.351648> speed <8.439559> *currentSpeed;
 		turn rthigh to x-axis <-22.505495> speed <16.359891> *currentSpeed;
 		turn rleg to x-axis <-38.324176> speed <44.843406> *currentSpeed;
@@ -419,7 +419,7 @@ UnitSpeed()
 {
 	while(TRUE)
 	{
-		currentSpeed = (get CURRENT_SPEED)*20/moveSpeed;
+		currentSpeed = (get CURRENT_SPEED)*25/moveSpeed;
 		if (currentSpeed<4) currentSpeed=4;
 		sleep 142;
 	}

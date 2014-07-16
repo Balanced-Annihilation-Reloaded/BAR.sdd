@@ -10,6 +10,7 @@ function widget:GetInfo()
 	}
 end
 
+
 --[[                HOW AWARDS WORK
     
  >> Normal Awards
@@ -53,7 +54,21 @@ Please put this documentation somewhere sensible when you are done with the exam
     
 ]]
 
+------------
+-- Vars
+
+local Chili, container, stackPanel
 local playerListByTeam = {}
+
+local qIndex = 1
+local quotes = {
+	"No one, you all lose.",
+	"Again, No one. BORING!",
+	"Did you actually play the game?",
+}
+
+------------
+-- Auxillary Functions
 
 function colourNames(teamID)
 		if teamID < 0 then return "" end
@@ -92,8 +107,58 @@ function round(num, idp)
   return string.format("%." .. (idp or 0) .. "f", num)
 end
 
+------------
+-- Main Functions
+
+local function createContainer()
+	stackPanel = Chili.StackPanel:New{
+		x           = 0,
+		y           = 0,
+		width       = '100%',
+		resizeItems = false,
+		autosize    = true,
+		padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+		preserverChildrenOrder = true
+	}
+	
+	container = Chili.ScrollPanel:New{
+		x        = 0,
+		y        = 0,
+		right    = 0,
+		bottom   = 0,
+		children = {stackPanel},
+	}
+	
+	WG.MainMenu.AddControl('Awards', container)
+end
+
+local function createAward(award)
+	return Chili.Control:New{
+		parent   = container,
+		x        = 0,
+		width    = 550,
+		height   = award.height or 100,
+		children = {
+			Chili.Label:New{x=0 ,y=0,caption=award.title,font={size=20}},
+			Chili.Label:New{x=20,y=20,caption=award.first or ''},
+			Chili.Label:New{x=20,y=35,caption=award.second or ''},
+			Chili.Label:New{x=20,y=50,caption=award.third or ''}
+		},
+	}
+end
+
+------------
+-- Callins
+
 function widget:Initialize()
+	if not WG.Chili then return end
+	
     widgetHandler:RegisterGlobal('ReceiveAwards', ReceiveAwards)
+    
+    -- init Chili
+    Chili = WG.Chili
     
     --load a list of players for each team into playerListByTeam
 	local teamList = Spring.GetTeamList()
@@ -128,26 +193,59 @@ function ReceiveAwards( ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKillS
 						dmgRecAward, dmgRecScore, 
 						sleepAward, sleepScore,
 						cowAward)
-    --
 
-    Spring.Echo("Recieved awards")
-    -- normal award example
-    -- do likewise for second/third place (not all places may be awarded)
-    if ecoKillAward > 0 then
-        Spring.Echo("ecoKillAward was won by " .. FindPlayerName(ecoKillAward) .. " with a score of " .. round(ecoKillScore))
-    else
-        Spring.Echo("ecoKillAward was not awarded")
-    end
-    -- special award example
-    if ecoAward > 0 then
-        Spring.Echo("ecoAward was won by " .. FindPlayerName(ecoAward) .. " with a score of " .. round(ecoScore))
-    else
-        -- nothing
-    end
-    -- cow award example
-    if cowAward > 0 then
-        Spring.Echo("A memorial WarCow was won by " .. FindPlayerName(cowAward))
-    else
-        -- nothing
-    end
+	-- Create the chili element containing the awards
+	createContainer()
+    --
+	if ecoKillAward > 0 then
+	
+		local ecoKill
+		ecoKill.title = "Most economy destroyed"
+		ecoKill.first = "This award goes to "..FindPlayerName(ecoKillAward)..", with a score of "..ecoKillScore
+		
+		if ecoKillAwardSec > 0 then
+			ecoKill.second = "In a close second, "..FindPlayerName(ecoKillAwardSec).." had a score of "..ecoKillScoreSec
+		end
+		
+		if ecoKillAwardThi > 0 then
+			ecoKill.third = "Behind both is "..FindPlayerName(ecoKillAwardThi).." with a score of "..ecoKillScoreThi
+		end
+		
+		createAward(ecoKill)
+	end
+    --
+	if fightKillAward > 0 then
+	
+		local fightKill
+		fightKill.title = "Most enemy combantants destroyed"
+		fightKill.first = "This award goes to "..FindPlayerName(fightKillAward)..", with a score of "..fightKillScore
+		
+		if fightKillAwardSec > 0 then
+			fightKill.second = "In a close second, "..FindPlayerName(fightKillAwardSec).." had a score of "..fightKillScoreSec
+		end
+		
+		if fightKillAwardThi > 0 then
+			fightKill.third = "Behind both is "..FindPlayerName(fightKillAwardThi).." with a score of "..fightKillScoreThi
+		end
+		
+		createAward(fightKill)
+	end
+    --
+	if effKillAward > 0 then
+	
+		local effKill
+		effKill.title = "Most efficient use of units"
+		effKill.first = "This award goes to "..FindPlayerName(effKillAward)..", with a score of "..effKillScore
+		
+		if fightKillAwardSec > 0 then
+			effKill.second = "In a close second, "..FindPlayerName(effKillAwardSec).." had a score of "..effKillScoreSec
+		end
+		
+		if fightKillAwardThi > 0 then
+			effKill.third = "Behind both is "..FindPlayerName(effKillAwardThi).." with a score of "..effKillScoreThi
+		end
+		
+		createAward(effKill)
+	end
+	
 end

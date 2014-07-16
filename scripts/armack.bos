@@ -271,7 +271,20 @@ MotionControl(Func_Var_1, Func_Var_2)
 		}
 		else
 		{
-			sleep 100;
+			turn rthigh to x-axis <0> speed <142.500000>;
+			turn rleg to x-axis <0> speed <105.000000>;
+			turn rfoot to x-axis <0> speed <247.500000>;
+	
+			turn lthigh to x-axis <0> speed <307.500000>;
+			turn lleg to x-axis <0> speed <165.000000>;
+			turn lfoot to x-axis <0> speed <165>;
+	
+			
+			move pelvis to y-axis [0] speed [10];
+			turn pelvis to z-axis <0> speed <15.000000>;
+			turn pelvis to x-axis <0> speed <22.500000>;
+
+			sleep 130;
 		}
 	}
 }

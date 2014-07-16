@@ -96,6 +96,11 @@ return {
 				world = "All Worlds",
 			},
 		},
+		sfxtypes = {
+			explosiongenerators = {
+				[1] = "custom:rocketflare",
+			},
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			cloak = "kloak2",

@@ -489,9 +489,12 @@ function loadWindow()
 			end
 		},
 	}
-
+	
+	-- Adds tab to Main Menu
 	if WG.MainMenu then
 		WG.MainMenu.AddControl('Graph', control0)
+		
+	-- For games without my Menu system (makes it stand alone)
 	else
 		Chili.Button:New{
 			parent = control0,

@@ -145,7 +145,7 @@ Create()
 
 SetMaxReloadTime(Func_Var_1)
 {
-	restore_delay = Func_Var_1 * 8;
+	restore_delay = Func_Var_1 * 3;
 }
 
 abaim()

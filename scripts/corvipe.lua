@@ -1,5 +1,5 @@
 --Piece definitions
-local base, turret, flare, door1, door2 = piece("base", "turret", "flare", "door1", "door2");
+local base, turret, flare, door1, door2, exhaust = piece("base", "turret", "flare", "door1", "door2", "exhaust");
 
 --Variable definitions
 local is_open = true;
@@ -61,6 +61,7 @@ function script.AimWeapon1(heading, pitch)
 end
 
 function script.FireWeapon1()
+	UnitScript.EmitSfx(exhaust, 1024)
 end
 
 function script.QueryWeapon1()

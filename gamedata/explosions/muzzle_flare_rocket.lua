@@ -1,4 +1,5 @@
 -- muzzle_flare_rocket
+-- muzzle_flare_faux
 
 return {
   ["muzzle_flare_rocket"] = {
@@ -73,6 +74,62 @@ return {
       },
     },
   },
-
+["muzzle_flare_faux"] = {
+    usedefaultexplosions = false,
+     smoke_front = {
+      air                = true,
+      class              = [[CSimpleParticleSystem]],
+      count              = 1,
+      ground             = true,
+      water              = true,
+      properties = {
+        airdrag            = 0.9,
+        colormap           = [[1 0.5 0.3 0.01 0.1 0.1 0.1 0.2 0.1 0.1 0.1 0.2 0 0 0 0.001]],
+        directional        = false,
+        emitrot            = 0,
+        emitrotspread      = 30,
+        emitvector         = [[dir]],
+        gravity            = [[0, 0 ,0]],
+        numparticles       = 16,
+        particlelife       = 40,
+        particlelifespread = 0,
+        particlesize       = 2.8,
+        particlesizespread = 2,
+        particlespeed      = 0,
+        particlespeedspread = 1,
+        pos                = [[0, 1, 3]],
+        sizegrowth         = 0.15,
+        sizemod            = 1.0,
+        texture            = [[smoke]],
+      },
+    },
+    explo_front = {
+      air                = true,
+      class              = [[CSimpleParticleSystem]],
+      count              = 1,
+      ground             = true,
+      water              = true,
+      properties = {
+        airdrag            = 0.9,
+        colormap           = [[1 0.7 0.7 0.05 0.0 0.0 0.0 0.01]],
+        directional        = false,
+        emitrot            = 0,
+        emitrotspread      = 0,
+        emitvector         = [[dir]],
+        gravity            = [[0, 0 ,0]],
+        numparticles       = 4,
+        particlelife       = 10,
+        particlelifespread = 0,
+        particlesize       = 1,
+        particlesizespread = 1,
+        particlespeed      = 0,
+        particlespeedspread = 1,
+        pos                = [[0, 0, 0]],
+        sizegrowth         = 0.5,
+        sizemod            = 1.0,
+        texture            = [[explo]],
+      },
+    },
+  },
 }
 

@@ -592,7 +592,7 @@ end
 
 function widget:Shutdown()
   --// catch f9
-  widgetHanglowSizedler:RemoveAction("showhealthbars", showhealthbars)
+  widgetHandler:RemoveAction("showhealthbars", showhealthbars)
   Spring.SendCommands({"unbind f9 luaui"})
   Spring.SendCommands({"bind f9 showhealthbars"})
   Spring.SendCommands({"showhealthbars 1"})

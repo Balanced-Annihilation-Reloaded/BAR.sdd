@@ -296,6 +296,11 @@ end
 
 -- Shooting Animation
 local function fire1()
+  if (currBarrel == 1) then
+	EmitSfx(lbarrelflare,1024)
+  else
+    	EmitSfx(rbarrelflare,1024)
+  end
 	Sleep(1)
 end	
 
@@ -398,7 +403,7 @@ function script.FireWeapon1()
 	end
 
 	if currBarrel == 2 then
-	fire2()
+	fire1()
 	end
 
 	currBarrel = currBarrel + 1

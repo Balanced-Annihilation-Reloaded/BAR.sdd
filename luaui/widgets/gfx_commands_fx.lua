@@ -317,7 +317,9 @@ function widget:DrawWorldPreUnit()
                             -- ghost of build queue
                             gl.PushMatrix()
                             gl.Translate(X,Y+1,Z)
+                            gl.Rotate(90 * commands[i].queue[j].params[4], 0, 1, 0)
                             gl.UnitShape(commands[i].queue[j].buildingID, Spring.GetMyTeamID())
+                            gl.Rotate(-90 * commands[i].queue[j].params[4], 0, 1, 0)
                             gl.Translate(-X,-Y-1,-Z)
                             gl.PopMatrix()
                         end

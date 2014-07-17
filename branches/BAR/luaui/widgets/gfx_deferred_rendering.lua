@@ -65,13 +65,15 @@ local spGetDrawFrame         = Spring.GetDrawFrame
 local spIsSphereInView       = Spring.IsSphereInView
 local spWorldToScreenCoords  = Spring.WorldToScreenCoords
 local spTraceScreenRay       = Spring.TraceScreenRay
-local spGetProjectilesInRectangle       = Spring.GetProjectilesInRectangle
-local spGetProjectilePosition       = Spring.GetProjectilePosition
-local spGetProjectileType       = Spring.GetProjectileType
-local spGetProjectileName       = Spring.GetProjectileName
-local spGetCameraPosition       = Spring.GetCameraPosition
-local spGetPieceProjectileParams  =Spring.GetPieceProjectileParams 
-local spGetProjectileVelocity  =Spring.GetProjectileVelocity 
+
+local spGetProjectilesInRectangle = Spring.GetProjectilesInRectangle
+local spGetVisibleProjectiles     = Spring.GetVisibleProjectiles
+local spGetProjectilePosition     = Spring.GetProjectilePosition
+local spGetProjectileType         = Spring.GetProjectileType
+local spGetProjectileName         = Spring.GetProjectileName
+local spGetCameraPosition         = Spring.GetCameraPosition
+local spGetPieceProjectileParams  = Spring.GetPieceProjectileParams 
+local spGetProjectileVelocity     = Spring.GetProjectileVelocity 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
@@ -208,6 +210,7 @@ local function GetLightsFromUnitDefs()
 	return plighttable
 end
 
+--[[
 local function GetVisibleProjectiles()
 	local x1, y1 = 0, 0
 	local x2, y2 = Game.mapSizeX, Game.mapSizeZ
@@ -260,6 +263,7 @@ local function GetVisibleProjectiles()
 	end
 	return plist
 end
+--]]
 
 
 
@@ -472,7 +476,7 @@ local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
 end
 function widget:DrawWorld()
 	if (GLSLRenderer) then
-		local projectiles=GetVisibleProjectiles()
+		local projectiles=spGetVisibleProjectiles()
 		if #projectiles == 0 then return end
 		local beamlightprojectiles={}
 		local pointlightprojectiles={}

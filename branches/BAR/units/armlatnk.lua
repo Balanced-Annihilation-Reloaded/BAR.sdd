@@ -83,6 +83,12 @@ return {
 				world = "All Worlds",
 			},
 		},
+		sfxtypes = {
+			explosiongenerators = {
+				[1] = [[custom:armlatnk_muzzle]],
+				[2] = [[custom:armlatnk_spark]],
+			},
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",
@@ -154,11 +160,12 @@ return {
 				noselfdamage = true,
 				range = 320,
 				reloadtime = 1.3999999761581,
-				rgbcolor = [[.2 5 .9]],
-				rgbcolor2 = [[0 0 1]],
+				rgbColor = [[0.5 0.5 1.0]],
 				soundhit = "lashit",
 				soundstart = "lghthvy1",
 				soundtrigger = true,
+				texture1 = [[strike]],
+				thickness = 3.5,
 				turret = true,
 				weapontype = "LightningCannon",
 				weaponvelocity = 400,

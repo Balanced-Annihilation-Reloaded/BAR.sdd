@@ -83,6 +83,11 @@ return {
 				world = "greenworld",
 			},
 		},
+		sfxtypes = {
+			explosiongenerators = {
+				[1] = [[custom:armlatnk_muzzle]],
+			},
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			cloak = "kloak1",
@@ -121,11 +126,12 @@ return {
 				noselfdamage = true,
 				range = 440,
 				reloadtime = 1.1499999761581,
-				rgbcolor = [[.2 .5 .9]],
-				rgbcolor2 = [[0 0 1]],
+				rgbColor = [[0.5 0.5 1.0]],
 				soundhit = "lashit",
 				soundstart = "lghthvy1",
 				soundtrigger = true,
+				texture1 = [[strike]],
+				thickness = 3.5,
 				turret = true,
 				weapontype = "LightningCannon",
 				weaponvelocity = 450,

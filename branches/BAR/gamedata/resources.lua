@@ -147,7 +147,8 @@ local resources = {
 			GenericSmokeCloud1='GenericSmokeCloud1.tga',
 			smokeorange='gpl/smoke_orange.png',
 			fire1='fire1.tga',
-			--new zeus effect
+			--lightning
+			strike='strike.png',
 			lightningball_new='lightningball.png',
 			flare1='flare1.tga',
 			--Chicken Defense effects

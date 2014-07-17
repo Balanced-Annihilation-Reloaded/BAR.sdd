@@ -85,7 +85,7 @@ return {
 		},
 		sfxtypes = {
 			explosiongenerators = {
-				[1] = [[custom:armlatnk_muzzle]],
+				[1] = "custom:armlatnk_muzzle",
 			},
 		},
 		sounds = {
@@ -126,11 +126,11 @@ return {
 				noselfdamage = true,
 				range = 440,
 				reloadtime = 1.1499999761581,
-				rgbColor = [[0.5 0.5 1.0]],
+				rgbColor = "0.5 0.5 1.0",
 				soundhit = "lashit",
 				soundstart = "lghthvy1",
 				soundtrigger = true,
-				texture1 = [[strike]],
+				texture1 = "strike",
 				thickness = 3.5,
 				turret = true,
 				weapontype = "LightningCannon",

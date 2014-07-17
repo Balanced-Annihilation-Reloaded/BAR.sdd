@@ -121,7 +121,7 @@ return {
 				soundstart = "lghthvy1",
 				soundtrigger = true,
 				targetmoveerror = 0.15,
-				texture1 = "lightning",
+				texture1 = [[strike]],
 				thickness = 10,
 				turret = true,
 				weapontype = "LightningCannon",

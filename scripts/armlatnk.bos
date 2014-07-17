@@ -3,9 +3,9 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, lflare, lturret, wheels, mturret, mbarrel, mflare;
+piece  base, lflare, lturret, wheels, mturret, mbarrel, mflare, emit_spark;
 
-static-var  restore_delay;
+static-var  restore_delay, bAiming;
 
 // Signal definitions
 #define SIG_AIM				2
@@ -63,11 +63,36 @@ HitByWeapon(Func_Var_1, Func_Var_2)
 	return (0);
 }
 
+Sparks()
+{
+	while( TRUE )
+	{
+		while( !bAiming )
+		{
+			sleep 100;
+		}
+		emit-sfx 1025 + 0 from emit_spark;
+		sleep 200;
+	}
+}
+
 Create()
 {
 	restore_delay = 3000;
+	bAiming = FALSE;
 	start-script SmokeUnit();
+	start-script Sparks();
 	return (0);
+}
+
+StartMoving()
+{
+	spin wheels around x-axis speed <140.000000> accelerate <5.000000>;
+}
+
+StopMoving()
+{
+	stop-spin wheels around x-axis decelerate <24.000000>;
 }
 
 SetMaxReloadTime(Func_Var_1)
@@ -83,6 +108,7 @@ RestoreAfterDelay()
 	turn lturret to y-axis <0.000000> speed <150.000000>;
 	turn mturret to y-axis <0.000000> speed <150.000000>;
 	turn mbarrel to x-axis <0.000000> speed <150.000000>;
+	bAiming = FALSE;
 	return (0);
 }
 
@@ -90,6 +116,7 @@ AimPrimary(heading, pitch)
 {
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
+	bAiming = TRUE;
 	turn lturret to y-axis heading speed <150.000000>;
 	wait-for-turn lturret around y-axis;
 	start-script RestoreAfterDelay();
@@ -110,6 +137,7 @@ AimTertiary(heading, pitch)
 
 FirePrimary()
 {
+	emit-sfx 1024+0 from lflare;
 	sleep 100;
 	return (0);
 }

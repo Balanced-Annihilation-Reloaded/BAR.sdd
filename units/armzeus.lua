@@ -75,7 +75,7 @@ return {
 		},
 		sfxtypes = {
 			explosiongenerators = {
-				[1] = [[custom:zeus_muzzle_glow]],
+				[1] = "custom:zeus_muzzle_glow",
 			},
 		},
 		sounds = {
@@ -106,7 +106,7 @@ return {
 				cratermult = 0,
 				duration = 10,
 				energypershot = 35,
-				explosionGenerator = [[custom:zeus_explosion]],
+				explosionGenerator = "custom:zeus_explosion",
 				firestarter = 50,
 				impactonly = 1,
 				impulseboost = 0.123,
@@ -121,7 +121,7 @@ return {
 				soundstart = "lghthvy1",
 				soundtrigger = true,
 				targetmoveerror = 0.15,
-				texture1 = [[strike]],
+				texture1 = "strike",
 				thickness = 10,
 				turret = true,
 				weapontype = "LightningCannon",

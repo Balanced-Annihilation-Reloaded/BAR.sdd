@@ -24,12 +24,16 @@ return {
 		movementclass = "KBOT2",
 		name = "Fido",
 		nochasecategory = "VTOL",
-		objectname = "ARMFIDO",
+		objectname = "ARMFIDO.s3o",
 		onoffable = true,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 400,
 		turnrate = 990,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

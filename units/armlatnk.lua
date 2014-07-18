@@ -86,7 +86,7 @@ return {
 		sfxtypes = {
 			explosiongenerators = {
 				[1] = "custom:armlatnk_muzzle",
-				[2] = "custom:armlatnk_spark",
+				[2] = "custom:lightning_muzzle_spark",
 			},
 		},
 		sounds = {

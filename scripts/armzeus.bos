@@ -3,10 +3,10 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  torso, pelvis, flare, rthigh, lthigh, lleg, rleg, ruparm,
-       luparm, lloarm, rloarm, gripstatic, gunstatic, griphand, gunhand;
+piece  torso, pelvis, flare, rthigh, lthigh, lleg, rleg, ruparm, luparm,
+	   lloarm, rloarm, gripstatic, gunstatic, griphand, gunhand ,emit_spark;
 
-static-var  bMoving, Static_Var_2, Static_Var_3, Static_Var_4, restore_delay,
+static-var  bMoving, bAiming, Static_Var_2, Static_Var_3, Static_Var_4, restore_delay,
             statechg_DesiredState, statechg_StateChanging, moveSpeed,
             currentSpeed, animSpeed;
 
@@ -461,6 +461,19 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	}
 }
 
+Sparks()
+{
+	while( TRUE )
+	{
+		while( !bAiming )
+		{
+			sleep 100;
+		}
+		emit-sfx 1025 + 0 from emit_spark;
+		sleep 200;
+	}
+}
+
 Create()
 {
 	hide flare;
@@ -477,6 +490,8 @@ Create()
 	statechg_StateChanging = FALSE;
 	moveSpeed = get MAX_SPEED;
 	animSpeed = 100;
+	bAiming = FALSE;
+	start-script Sparks();
 	start-script SmokeUnit();
 }
 
@@ -507,6 +522,7 @@ RestoreAfterDelay()
 	turn torso to y-axis <0.000000> speed <90.000000>;
 	
 	turn rloarm to x-axis <0.000000> speed <90.000000>;
+	bAiming = FALSE;
 	start-script RequestState(1);
 }
 
@@ -519,6 +535,7 @@ AimPrimary(heading, pitch)
 	{
 		sleep 100;
 	}
+	bAiming = TRUE;
 	turn torso to y-axis heading speed <250.000000>;
 	turn rloarm to x-axis <0.000000> - pitch speed <90.000000>;
 	wait-for-turn torso around y-axis;

@@ -2,7 +2,7 @@
 -- claw_flash_sub
 -- zeus_explosion
 -- zeus_muzzle_glow
--- armlatnk_muzzle
+-- lightning_muzzle_spark
 
 return {
     ["zeus_explosion"] = {
@@ -156,7 +156,7 @@ return {
       },
     },   
   },
-   ["armlatnk_spark"] = {
+   ["lightning_muzzle_spark"] = {
     unit_sparkles = {
       air                = true,
       class              = [[CSimpleParticleSystem]],

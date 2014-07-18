@@ -76,6 +76,7 @@ return {
 		sfxtypes = {
 			explosiongenerators = {
 				[1] = "custom:zeus_muzzle_glow",
+				[2] = "custom:lightning_muzzle_spark",
 			},
 		},
 		sounds = {

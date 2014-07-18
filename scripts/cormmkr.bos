@@ -3,6 +3,8 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
+#define SIG_ANIM 2
+
 piece  base, fan, tank1, tank2;
 
 static-var  Static_Var_1, Static_Var_2;
@@ -10,26 +12,31 @@ static-var  Static_Var_1, Static_Var_2;
 
 activatescr()
 {
-	if( TRUE )
+	spin fan around y-axis speed <300.000000> accelerate <10>;
+	
+	set-signal-mask SIG_ANIM;
+	while (TRUE)
 	{
+	
 		move tank1 to y-axis [5.000000] speed [5.000000];
 		move tank2 to y-axis [-5.000000] speed [5.000000];
-		wait-for-move tank1 along y-axis;
-		spin fan around y-axis speed <86.000000> accelerate <2.5000000>;
+
+		sleep 1000;
+		
+		move tank1 to y-axis [0.000000] speed [5.000000];
+		move tank2 to y-axis [0.000000] speed [5.000000];
+		sleep 1000;
+	
 	}
-	sleep 266;
+	
 }
 
 deactivatescr()
 {
-	if( TRUE )
-	{
-		move tank1 to y-axis [0.000000] speed [5.000000];
-		move tank2 to y-axis [0.000000] speed [5.000000];
-		wait-for-move tank1 along y-axis;
-		spin fan around y-axis speed <30.000000> accelerate <0.500000>;
-	}
-	sleep 266;
+	stop-spin fan around y-axis decelerate <5>;
+	move tank1 to y-axis [0.000000] speed [5.000000];
+	move tank2 to y-axis [0.000000] speed [5.000000];
+	sleep 30;
 }
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
@@ -66,6 +73,7 @@ Go()
 		set ACTIVATION to 0;
 		return (0);
 	}
+	signal SIG_ANIM;
 	call-script activatescr();
 	set ARMORED to 0;
 }

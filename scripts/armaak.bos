@@ -3,152 +3,111 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  pelvis, rthigh, rleg, lthigh, lleg, torso, lfoot, rfoot, lturret, rturret, lflare1,lflare2,rflare1,rflare2;
+piece pelvis, rthigh, rleg, lthigh, lleg, torso, lfoot, rfoot, lturret, rturret, lflare1,lflare2,rflare1,rflare2;
 
-static-var  bMoving, Static_Var_2, Static_Var_3, Static_Var_4, Static_Var_5,
-            Static_Var_6, Static_Var_7;
+static-var bMoving, Static_Var_2, Static_Var_3, Static_Var_4, Static_Var_5,
+  Static_Var_6, Static_Var_7;
 
 
 walk()
 {
 	while( bMoving )
 	{
+	
+		//maxvelocity = 1.57, speed = 47.4 elmos/sec
+		//animspeed 36 elmos per cycle
+
+		if( bMoving )
+		{	
+		//step 0 
+		turn lthigh to x-axis <0> speed <465.000000>;
+		turn lleg to x-axis <49> speed <487.500000>;
+		turn lfoot to x-axis <-51> speed <202.500000>;
+
+		turn rthigh to x-axis <0> speed <202.500000>;
+		turn rleg to x-axis <0> speed <60.000000>;
+		turn rfoot to x-axis <0> speed <270.000000>;
+
+		move pelvis to y-axis [0] speed [11.250000];
+		turn pelvis to z-axis <-2> speed <15.000000>;
+
+		sleep 130;
+	}
 		if( bMoving )
 		{
-			move pelvis to y-axis [0.000000] now;
-			move lleg to y-axis [0.000000] now;
-			move rleg to y-axis [0.000000] now;
-			turn rthigh to x-axis <36.000000> now;
-			turn lthigh to x-axis <-35.000000> now;
-			turn lleg to x-axis <35.000000> now;
-			turn rleg to x-axis <26.000000> now;
-			sleep 20;
-		}
+		//step 1
+		turn lthigh to x-axis <-58> speed <435.000000>;
+		turn lleg to x-axis <48> speed <7.500000>;
+		turn lfoot to x-axis <0> speed <382.500000>;
+		turn rthigh to x-axis <46> speed <345.000000>;
+		turn rleg to x-axis <-29> speed <217.500000>;
+		turn rfoot to x-axis <-17> speed <127.500000>;
+
+		move pelvis to y-axis [-1] speed [7.500000];
+		turn pelvis to z-axis <2> speed <30.000000>;
+
+		sleep 130;
+	}
 		if( bMoving )
 		{
-			move pelvis to y-axis [0.000000] now;
-			move rleg to y-axis [0.000000] now;
-			turn rthigh to x-axis <20.000000> speed <170.689655>;
-			turn lthigh to x-axis <-31.000000> speed <264.568966>;
-			turn lleg to x-axis <30.000000> speed <256.034483>;
-			turn rleg to x-axis <27.000000> speed <230.431034>;
-			sleep 70;
-		}
+		//step 2 
+		turn lthigh to x-axis <-27> speed <232.500000>;
+		turn lleg to x-axis <-8> speed <420.000000>;
+		turn lfoot to x-axis <36> speed <270.000000>;
+		turn rthigh to x-axis <62> speed <120.000000>;
+		turn rleg to x-axis <-16> speed <97.500000>;
+		turn rfoot to x-axis <-24> speed <52.500000>;
+
+		move pelvis to y-axis [-1.5] speed [3.750000];
+		turn pelvis to z-axis <4> speed <15.000000>;
+
+		sleep 130;
+			}
 		if( bMoving )
 		{
-			move pelvis to y-axis [0.000000] now;
-			move rleg to y-axis [2.500000] speed [29.819277];
-			turn rthigh to x-axis <9.000000> speed <131.204819>;
-			turn lthigh to x-axis <-24.000000> speed <83.493976>;
-			turn lleg to x-axis <25.000000> speed <59.638554>;
-			turn rleg to x-axis <27.000000> now;
-			sleep 60;
-		}
+		//step 3 
+		turn lthigh to x-axis <0> speed <202.500000>;
+		turn lleg to x-axis <0> speed <60.000000>;
+		turn lfoot to x-axis <0> speed <270.000000>;
+		turn rthigh to x-axis <0> speed <465.000000>;
+		turn rleg to x-axis <49> speed <487.500000>;
+		turn rfoot to x-axis <-51> speed <202.500000>;
+
+		move pelvis to y-axis [0] speed [11.250000];
+		turn pelvis to z-axis <2> speed <15.000000>;
+
+		sleep 130;
+			}
 		if( bMoving )
 		{
-			move pelvis to y-axis [-2.500000] speed [29.819277];
-			turn rthigh to x-axis <-12.000000> speed <250.481928>;
-			turn lthigh to x-axis <-7.000000> speed <202.771084>;
-			turn lleg to x-axis <7.000000> speed <214.698795>;
-			turn rleg to x-axis <26.000000> speed <11.927711>;
-			sleep 50;
-		}
-		if( bMoving )
-		{
-			move pelvis to y-axis [0.000000] speed [29.819277];
-			move rleg to y-axis [2.500000] now;
-			turn rthigh to x-axis <-21.000000> speed <107.349398>;
-			turn lthigh to x-axis <5.000000> speed <143.132530>;
-			turn lleg to x-axis <17.000000> speed <119.277108>;
-			turn rleg to x-axis <26.000000> now;
-			sleep 40;
-		}
-		if( bMoving )
-		{
-			move pelvis to y-axis [0.000000] now;
-			turn rthigh to x-axis <-29.000000> speed <95.421687>;
-			turn lthigh to x-axis <16.000000> speed <131.204819>;
-			sleep 50;
-		}
-		if( bMoving )
-		{
-			move pelvis to y-axis [0.000000] now;
-			turn rthigh to x-axis <-44.000000> speed <178.915663>;
-			turn lthigh to x-axis <19.000000> speed <35.783133>;
-			sleep 60;
-		}
-		if( bMoving )
-		{
-			move pelvis to y-axis [0.000000] now;
-			turn rthigh to x-axis <-54.000000> speed <85.344828>;
-			turn lthigh to x-axis <26.000000> speed <59.741379>;
-			sleep 70;
-		}
-		if( bMoving )
-		{
-			move pelvis to y-axis [0.000000] now;
-			move rleg to y-axis [0.000000] now;
-			turn rthigh to x-axis <-36.000000> now;
-			turn lthigh to x-axis <28.000000> now;
-			turn lleg to x-axis <16.000000> now;
-			turn rleg to x-axis <36.000000> now;
-			sleep 20;
-		}
-		if( bMoving )
-		{
-			move pelvis to y-axis [0.000000] now;
-			move lleg to y-axis [2.500000] speed [21.336207];
-			turn rthigh to x-axis <-28.000000> speed <221.896552>;
-			turn lthigh to x-axis <21.000000> speed <42.672414>;
-			turn lleg to x-axis <22.000000> speed <42.672414>;
-			turn rleg to x-axis <28.000000> speed <17.068966>;
-			sleep 70;
-		}
-		if( bMoving )
-		{
-			move pelvis to y-axis [0.000000] now;
-			turn rthigh to x-axis <-22.000000> speed <71.566265>;
-			turn lthigh to x-axis <8.000000> speed <155.060241>;
-			turn lleg to x-axis <24.000000> speed <23.855422>;
-			turn rleg to x-axis <22.000000> speed <71.566265>;
-			sleep 60;
-		}
-		if( bMoving )
-		{
-			move pelvis to y-axis [0.000000] now;
-			turn rthigh to x-axis <-16.000000> speed <71.566265>;
-			turn lthigh to x-axis <-7.000000> speed <178.915663>;
-			turn rleg to x-axis <17.000000> speed <59.638554>;
-			sleep 50;
-		}
-		if( bMoving )
-		{
-			move pelvis to y-axis [0.000000] now;
-			move lleg to y-axis [2.500000] now;
-			turn rthigh to x-axis <-7.000000> speed <107.349398>;
-			turn lthigh to x-axis <-15.000000> speed <95.421687>;
-			turn lleg to x-axis <20.000000> speed <47.710843>;
-			turn rleg to x-axis <25.000000> speed <95.421687>;
-			sleep 40;
-		}
-		if( bMoving )
-		{
-			move pelvis to y-axis [0.000000] now;
-			turn rthigh to x-axis <3.000000> speed <119.277108>;
-			turn lthigh to x-axis <-26.000000> speed <131.204819>;
-			sleep 50;
-		}
-		if( bMoving )
-		{
-			move pelvis to y-axis [0.000000] now;
-			turn rthigh to x-axis <10.000000> speed <83.493976>;
-			turn lthigh to x-axis <-35.000000> speed <107.349398>;
-			sleep 60;
-		}
-		move pelvis to y-axis [0.000000] now;
-		turn rthigh to x-axis <21.000000> speed <93.879310>;
-		turn lthigh to x-axis <-56.000000> speed <179.224138>;
-		sleep 70;
+		//step 4 
+		turn lthigh to x-axis <46> speed <345.000000>;
+		turn lleg to x-axis <-29> speed <217.500000>;
+		turn lfoot to x-axis <-17> speed <127.500000>;
+		turn rthigh to x-axis <-58> speed <435.000000>;
+		turn rleg to x-axis <48> speed <7.500000>;
+		turn rfoot to x-axis <0> speed <382.500000>;
+
+		move pelvis to y-axis [-1] speed [7.500000];
+		turn pelvis to z-axis <-2> speed <30.000000>;
+
+		sleep 130;
+			}
+	
+		//step 5 
+		turn lthigh to x-axis <62> speed <120.000000>;
+		turn lleg to x-axis <-16> speed <97.500000>;
+		turn lfoot to x-axis <-24> speed <52.500000>;
+		turn rthigh to x-axis <-27> speed <232.500000>;
+		turn rleg to x-axis <-8> speed <420.000000>;
+		turn rfoot to x-axis <36> speed <270.000000>;
+
+		move pelvis to y-axis [-1.5] speed [3.750000];
+		turn pelvis to z-axis <-4> speed <15.000000>;
+		sleep 130;
+		
+
+
 	}
 	return (0);
 }
@@ -170,10 +129,22 @@ MotionControl(moving, aiming, justmoved)
 			if( justmoved )
 			{
 				move pelvis to y-axis [0.000000] speed [2.500000];
-				turn rthigh to x-axis <0.000000> speed <200.000000>;
-				turn rleg to x-axis <0.000000> speed <200.000000>;
-				turn lthigh to x-axis <0.000000> speed <200.000000>;
-				turn lleg to x-axis <0.000000> speed <200.000000>;
+
+				//step 0 
+		
+				turn rthigh to x-axis <0> speed <202.500000>;
+				turn rleg to x-axis <0> speed <60.000000>;
+				turn rfoot to x-axis <0> speed <270.000000>;
+		
+				turn lthigh to x-axis <0> speed <202.500000>;
+				turn lleg to x-axis <0> speed <60.000000>;
+				turn lfoot to x-axis <0> speed <270.000000>;
+		
+				move pelvis to y-axis [0] speed [11.250000];
+				turn pelvis to z-axis <0> speed <15.000000>;
+		
+				sleep 130;
+
 				if( !aiming )
 				{
 					turn torso to y-axis <0.000000> speed <90.000000>;
@@ -246,8 +217,8 @@ RestoreAfterDelay()
 	sleep 5000;
 	set-signal-mask 0;
 	turn torso to y-axis <0> speed <250.000000>;
-	turn lturret to x-axis  <0> speed <400>;
-	turn rturret to x-axis  <0> speed <400>;
+	turn lturret to x-axis <0> speed <400>;
+	turn rturret to x-axis <0> speed <400>;
 	return (0);
 }
 
@@ -266,8 +237,8 @@ AimWeapon2(heading, pitch)
 	signal 2;
 	set-signal-mask 2;
 	turn torso to y-axis heading speed <250.000000>;
-	turn lturret to x-axis  -1* pitch speed <400>;
-	turn rturret to x-axis  -1* pitch speed <400>;
+	turn lturret to x-axis -1* pitch speed <400>;
+	turn rturret to x-axis -1* pitch speed <400>;
 	wait-for-turn torso around y-axis;
 	wait-for-turn lturret around x-axis;
 	wait-for-turn rturret around x-axis;
@@ -294,8 +265,8 @@ AimWeapon3(heading, pitch)
 	signal 4;
 	set-signal-mask 4;
 	turn torso to y-axis heading speed <250.000000>;
-	turn lturret to x-axis  -1* pitch speed <400>;
-	turn rturret to x-axis  -1* pitch speed <400>;
+	turn lturret to x-axis -1* pitch speed <400>;
+	turn rturret to x-axis -1* pitch speed <400>;
 	wait-for-turn torso around y-axis;
 	wait-for-turn lturret around x-axis;
 	wait-for-turn rturret around x-axis;
@@ -324,8 +295,8 @@ AimWeapon4(heading, pitch)
 	signal 8;
 	set-signal-mask 8;
 	turn torso to y-axis heading speed <250.000000>;
-	turn lturret to x-axis  -1* pitch speed <400>;
-	turn rturret to x-axis  -1* pitch speed <400>;
+	turn lturret to x-axis -1* pitch speed <400>;
+	turn rturret to x-axis -1* pitch speed <400>;
 	wait-for-turn torso around y-axis;
 	wait-for-turn lturret around x-axis;
 	wait-for-turn rturret around x-axis;
@@ -352,8 +323,8 @@ AimWeapon5(heading, pitch)
 	signal 16;
 	set-signal-mask 16;
 	turn torso to y-axis heading speed <250.000000>;
-	turn lturret to x-axis  -1* pitch speed <400>;
-	turn rturret to x-axis  -1* pitch speed <400>;
+	turn lturret to x-axis -1* pitch speed <400>;
+	turn rturret to x-axis -1* pitch speed <400>;
 	wait-for-turn torso around y-axis;
 	wait-for-turn lturret around x-axis;
 	wait-for-turn rturret around x-axis;

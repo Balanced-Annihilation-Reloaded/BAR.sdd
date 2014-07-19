@@ -14,12 +14,23 @@ static-var  spray, unitviewer, statechg_DesiredState, statechg_StateChanging;
 
 activatescr()
 {
+//	while (TRUE)
+//	{
+//	turn head1 to y-axis 1000* Rand(1,66) now;
+	sleep 150;
+	
+//	}
+	
 
 	sleep 26;
 }
 
 deactivatescr()
 {
+	turn head1 to y-axis <0> speed <45>;
+	turn head2 to y-axis <0> speed <45>;
+	turn head3 to y-axis <0> speed <45>;
+	turn head4 to y-axis <0> speed <45>;
 
 	sleep 26;
 }
@@ -138,6 +149,7 @@ Create()
 
 QueryNanoPiece(piecenum)
 {
+
 	if( spray == 0 )
 	{
 		piecenum = nano1;
@@ -149,10 +161,16 @@ QueryNanoPiece(piecenum)
 	if( spray == 2 )
 	{
 		piecenum = nano3;
-	}
+	}	
+
 	if( spray ==3 )
 	{
 		piecenum = nano4;
+	}	
+	spray=spray +1;
+	
+	if( spray >3 )
+	{
 		spray=0;
 	}
 }

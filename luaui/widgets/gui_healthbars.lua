@@ -82,11 +82,6 @@ local stockpileW = 12
 
 
 local OPTIONS = {}
-OPTIONS.defaults = {
-  choppedCorners            = true,
-  showOutline               = true,
-  showInnerBg               = true,
-}
 OPTIONS[1] = {
   choppedCorners            = false,
   showOutline               = false,
@@ -463,6 +458,7 @@ function init()
 
   --// create bar shader
   if (gl.CreateShader) then
+  
     barShader = gl.CreateShader({
     
       vertex = [[
@@ -547,7 +543,7 @@ function init()
          }
       ]],
 		uniform = {
-			glowAlpha = 0.11,
+			glowAlpha = 0.12,
 		},
     });
 	
@@ -568,15 +564,6 @@ local function toggleOption()
 	init()
 end
 
-function loadOption()
-	local appliedOption = OPTIONS[currentOption]
-	OPTIONS[currentOption] = table.shallow_copy(OPTIONS.defaults)
-	
-	for option, value in pairs(appliedOption) do
-		OPTIONS[currentOption][option] = value
-	end
-	init()
-end
 
 function widget:Initialize()
   --// catch f9
@@ -586,7 +573,7 @@ function widget:Initialize()
   Spring.SendCommands({"unbind f9 showhealthbars"})
   Spring.SendCommands({"bind f9 luaui showhealthbars"})
   
-  loadOption()
+  init()
 end
 
 
@@ -1294,7 +1281,7 @@ function widget:TextCommand(command)
 	end
     if (string.find(command, "healthbars_glow") == 1  and  string.len(command) == 15) then 
 		addGlow = not addGlow
-		loadOption()
+		init()
 		if addGlow then
 			Spring.Echo("Healthbars:  Glow enabled")
 		else

@@ -129,7 +129,7 @@ local function loadOptions()
 	local options = Chili.Control:New{
 		x        = 0,
 		width    = '100%',
-		height   = 70,
+		height   = 35,
 		padding  = {0,0,0,0},
 		children = {
 			Chili.Label:New{caption='Chat',x=0,y=0},
@@ -236,6 +236,7 @@ local function processLine(line)
 	-------------------------------
 	
 	local name = ''
+    local system = false
 	
     if (names[ssub(line,2,(sfind(line,"> ") or 1)-1)] ~= nil) then
         -- Player Message
@@ -256,14 +257,15 @@ local function processLine(line)
     elseif (ssub(line,1,1) == ">") then
         -- Game Message
         text = ssub(line,3)
+        system = true
 	elseif sfind(line,'-> Version') or sfind(line,'ClientReadNet') or sfind(line,'Address') or (gameOver and sfind(line,'left the game')) then --surplus info when user connects
         -- Filter out unwanted engine messages
-		return _, true --ignore
+		return _, true, system --ignore
 	end
     
     if WG.mutedPlayers and WG.mutedPlayers[name] then
         -- Filter out muted players
-        return _,true --ignore 
+        return _,true, system --ignore 
     end
 	
 	if names[name] then
@@ -292,17 +294,17 @@ local function processLine(line)
 		line = nameColor .. name .. ': ' .. textColor .. text
 	end
 
-	return color.misc .. line
+	return color.misc .. line, false, system
 end
 
 function widget:AddConsoleLine(msg)
 	-- update chat with new line
-	local text, ignore = processLine(msg)
+	local text, ignore, system = processLine(msg)
 	if ignore then return end
 	
     for i=0,2 do
         local prevMsg = log.children[#log.children - i]
-        if prevMsg and (text == prevMsg.text or text == prevMsg.origText) then
+        if prevMsg and (not system or i==0) and (text == prevMsg.text or text == prevMsg.origText) then
             prevMsg.duplicates = prevMsg.duplicates + 1
             prevMsg.origText = text
             prevMsg:SetText(getInline{1,0,0}..(prevMsg.duplicates + 1)..'x \b'..text)

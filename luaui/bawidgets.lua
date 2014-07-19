@@ -1220,8 +1220,9 @@ function widgetHandler:CommandNotify(id, params, options)
   end
   return false
 end
-  
+
 function widgetHandler:AddConsoleLine(msg, priority)
+  if msg:find("<<IGNOREME>>") then return end
   for _,w in ipairs(self.AddConsoleLineList) do
     w:AddConsoleLine(msg, priority)
   end

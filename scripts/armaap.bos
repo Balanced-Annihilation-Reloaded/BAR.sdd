@@ -170,7 +170,12 @@ QueryNanoPiece(piecenum)
 	if( spray ==3 )
 	{
 		piecenum = nano4;
-		spray=0;
+
+	}
+	spray=spray+1;
+	if (spray >3)
+	{
+		spray=1;
 	}
 }
 

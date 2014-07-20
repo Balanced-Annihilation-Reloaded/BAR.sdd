@@ -582,8 +582,8 @@ function widget:Shutdown()
   widgetHandler:RemoveAction("showhealthbars", showhealthbars)
   Spring.SendCommands({"unbind f9 luaui"})
   Spring.SendCommands({"bind f9 showhealthbars"})
-  Spring.SendCommands({"showhealthbars 1"})
-  Spring.SendCommands({"showrezbars 1"})
+  --Spring.SendCommands({"showhealthbars 1"}) -- don't re-enable, nobody ever uses engines built in healthbars
+  --Spring.SendCommands({"showrezbars 1"})
 
   if (barShader) then
     gl.DeleteShader(barShader)

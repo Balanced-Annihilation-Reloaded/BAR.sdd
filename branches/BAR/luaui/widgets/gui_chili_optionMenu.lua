@@ -13,38 +13,63 @@ function widget:GetInfo()
 	}
 end
 
-
 local spSendCommands = Spring.SendCommands
-local spSetConfigInt = Spring.SetConfigInt
-local spGetConfigInt = Spring.GetConfigInt
 local spgetFPS       = Spring.GetFPS
 local spGetTimer     = Spring.GetTimer
 
 local Chili, mainMenu, menuTabs, menuBtn
 local Settings = {}
--- Defaults ---  overwritten by widget config (when they have been changed/saved)
--- TODO Get defaults from Spring.GetConfig
-Settings['Skin']             = 'Robocracy'
-Settings['Cursor']           = 'Default'
-Settings['CursorName']       = 'ba'
-Settings['Water']            = 'Reflective'
-Settings['Shadows']          = 'Medium'
-Settings['DistIcon']         = 200
-Settings['MaxNanoParticles'] = 1000
-Settings['MaxParticles']     = 100
-Settings['DistDraw']         = 100
-Settings['MapBorder']        = true
-Settings['AdvMapShading']    = true
-Settings['AdvModelShading']  = true
-Settings['DrawTrees']        = true
-Settings['ShowHealthBars']   = true
-Settings['ShowRezBars']      = true
-Settings['MapMarks']         = true
+local DefaultSettings = {}
+
+-- Defaults ---  
+-- DefaultSettings can only contain things from springsettings
+-- not all setttings appear here, only ones for which we actually want to overwrite the defaults when "reset to defaults" is clicked
+DefaultSettings['Water']            = 'Reflective'
+DefaultSettings['Shadows']          = 'Medium'
+
+DefaultSettings['AdvMapShading']    = true
+DefaultSettings['AdvModelShading']  = true
+DefaultSettings['AllowDeferredMapRendering']   = true
+DefaultSettings['AllowDeferredModelRendering'] = true
+
+DefaultSettings['DistIcon']         = 200
+DefaultSettings['DistDraw']         = 200
+DefaultSettings['MaxParticles']     = 1000
+DefaultSettings['MaxNanoParticles'] = 1000
+DefaultSettings['MapBorder']        = true
+DefaultSettings['DrawTrees']        = true
+DefaultSettings['ShowHealthBars']   = true
+DefaultSettings['MapMarks']         = true
+DefaultSettings['DynamicSky']       = false
+DefaultSettings['DynamicSun']       = false
+
+-- load relevant things from springsettings 
+Settings['DistIcon'] = Spring.GetConfigInt('DistIcon')
+Settings['DistDraw'] = Spring.GetConfigInt('DistDraw')
+Settings['MaxNanoParticles'] = Spring.GetConfigInt('MaxNanoParticles')
+Settings['MaxParticles'] = Spring.GetConfigInt('MaxParticles')
+Settings['MapBorder'] = Spring.GetConfigInt('MapBorder')
+Settings['AdvMapShading'] = Spring.GetConfigInt('AdvMapShading')
+Settings['AdvModelShading'] = Spring.GetConfigInt('AdvModelShading')
+Settings['AllowDeferredMapRendering'] = Spring.GetConfigInt('AllowDeferredMapRendering')
+Settings['AllowDeferredModelRendering'] = Spring.GetConfigInt('AllowDeferredModelRendering')
+Settings['DrawTrees'] = Spring.GetConfigInt('DrawTrees')
+Settings['MapMarks'] = Spring.GetConfigInt('MapMarks')   
+Settings['DynamicSky'] = Spring.GetConfigInt('DynamicSky')
+Settings['DynamicSky'] = Spring.GetConfigInt('DynamicSun')
+Settings['Water'] = Spring.GetConfigInt('Water')
+Settings['Shadows'] = Spring.GetConfigInt('Shadows')
+-- I don't know how to check if luaui healthbars is set to 1 or not!
+
 Settings['searchWidgetDesc'] = true
 Settings['searchWidgetAuth'] = true
 Settings['searchWidgetName'] = true
 Settings['widget']           = {}
 Settings['UIwidget']         = {}
+Settings['Skin']             = 'Robocracy'
+Settings['Cursor']           = 'Default'
+Settings['CursorName']       = 'ba'
+
 ------------------------------------
 local wFilterString = ""
 local widgetList = {}
@@ -361,23 +386,56 @@ end
 
 ---------------------------- 
 -- 
-local function applySetting(obj)
-	local value   = obj.options[obj.selected] or ''
-	local setting = obj.name or ''
-	
-	if setting == 'Skin' then
-		Chili.theme.skin.general.skinName = value; Spring.Echo('To see skin changes; \'/luaui reload\'')
-	elseif setting == 'Cursor' then 
-		setCursor(value)
-		Settings['CursorName'] = value
-	else 
-		spSendCommands(setting..' '..value)
-	end
 
-	Settings[setting] =  obj.items[obj.selected]
-	Spring.Echo(setting.." set to "..value)
+--local waterConvert = {['Basic']=0,['Reflective']=1,['Dynamic']=2,['Refractive']=3,['Bump-Mapped']=4} -- name -> setting value
+local waterConvert_ID = {['Basic']=1,['Reflective']=2,['Dynamic']=3,['Refractive']=4,['Bump-Mapped']=5} -- name -> listID
+--local shadowConvert = {['Off']='0',['Very Low']='2 2014',['Low']='1 2014',['Medium']='2 2048',['High']='1 2048',['Very High']='1 4096'}
+local shadowConvert_ID = {['Off']=1,['Very Low']=2,['Low']=3,['Medium']=4,['High']=5,['Very High']=6}
+local function boolConvert (arg)
+    if (arg==true) then return 1 else return 0 end
 end
 
+local function applyDefaultSettings()
+    for setting,value in pairs(DefaultSettings) do
+        Settings[setting] = value
+        
+        -- hacky code, sorry!
+        if type(value)=='boolean' then 
+            --checkbox
+            for i=1,#tabs.Graphics.children do
+                if (tabs.Graphics.children[i].name==setting) then
+                    if value~=tabs.Graphics.children[i].checked then
+                        tabs.Graphics.children[i]:Toggle()
+                    end
+                end
+            end
+            spSendCommands(setting..' '..boolConvert(value)) -- i couldn't figure out how to use the custom OnChange for checkboxes
+        elseif setting=='Water' then 
+            --combobox
+            for i=1,#tabs.Graphics.children do
+                if (tabs.Graphics.children[i].name==setting) then
+                    tabs.Graphics.children[i].children[2]:Select(waterConvert_ID[value]) -- children[2] seems to always work, but is needed because the comboBox is not a child but a grandchild of tabs.Graphics
+
+                end
+            end
+        elseif setting=='Shadows' then 
+            --combobox
+            for i=1,#tabs.Graphics.children do
+                if (tabs.Graphics.children[i].name==setting) then
+                    tabs.Graphics.children[i].children[2]:Select(shadowConvert_ID[value])
+                end
+            end                
+        else 
+            --slider
+            for i=1,#tabs.Graphics.children do
+                if (tabs.Graphics.children[i].name==setting) then
+                    tabs.Graphics.children[i].children[2]:SetValue(value) 
+                end
+            end                
+        end
+    end
+end
+    
 ---------------------------- 
 -- Creates a combobox style control
 local comboBox = function(obj)
@@ -385,6 +443,7 @@ local comboBox = function(obj)
 	local options = obj.options or obj.labels
 	
 	local comboBox = Chili.Control:New{
+        name    = obj.name,
 		y       = obj.y,
 		width   = '45%',
 		height  = 40,
@@ -396,6 +455,27 @@ local comboBox = function(obj)
 	for i = 1, #obj.labels do
 		if obj.labels[i] == Settings[obj.name] then selected = i end
 	end
+    
+    
+    local function applySetting(obj, listID)
+        local value   = obj.options[listID] or '' 
+        local setting = obj.name or ''
+
+        if setting == 'Skin' then
+            Chili.theme.skin.general.skinName = value
+            Spring.Echo('To see skin changes; \'/luaui reload\'')
+        elseif setting == 'Cursor' then 
+            setCursor(value)
+            Settings['CursorName'] = value
+        elseif setting == 'ShowHealthBars' then
+            spSendCommands('luaui showhealthbars '..value)
+        else 
+            spSendCommands(setting..' '..value)
+        end
+
+        Spring.Echo(setting.." set to "..value) --TODO: this is misleading, some settings require a restart to be applied
+        Settings[setting] =  obj.items[obj.selected]
+    end
 	
 	comboBox:AddChild(
 		Chili.Label:New{
@@ -427,8 +507,8 @@ local checkBox = function(obj)
 	local obj = obj
 	
 	local toggle = obj.OnChange or function(self)
-		Settings[obj.name] = self.checked
-		spSendCommands(self.name)
+		Settings[obj.name] = obj.checked
+		spSendCommands(obj.name)
 	end
 	
 	local checkBox = Chili.Checkbox:New{
@@ -453,6 +533,7 @@ local slider = function(obj)
 	local obj = obj
 	
 	local trackbar = Chili.Control:New{
+        name    = obj.name,
 		y       = obj.y or 0,
 		width   = '45%',
 		height  = 40,
@@ -461,9 +542,9 @@ local slider = function(obj)
 	}
 	
 	
-	local apply = obj.OnChange or function(self)
-		Settings[obj.name] = self.value
-		spSendCommands(obj.name..' '..self.value)
+	local function applySetting(obj, value)
+		Settings[obj.name] = value
+		spSendCommands(obj.name..' '..value)
 	end
 	
 	trackbar:AddChild(
@@ -484,7 +565,7 @@ local slider = function(obj)
 			max      = obj.max or 1000,
 			step     = obj.step or 100,
 			value    = Settings[obj.name] or 500,
-			OnChange = {apply},
+			OnChange = {applySetting},
 		})
 	
 	return trackbar
@@ -507,22 +588,24 @@ local function Options()
 			comboBox{y=40,name='Shadows',
 				labels={'Off','Very Low','Low','Medium','High','Very High'},
 				options={'0','2 1024','1 1024','2 2048','1 2048','1 4096'},},
-			slider{y=80,name='DistDraw',title='Unit Draw Distance', max = 600},
-			slider{y=120,name='DistIcon',title='Unit Icon Distance', max = 600},
+			slider{y=80,name='DistDraw',title='Unit Draw Distance', max = 600, step = 25},
+			slider{y=120,name='DistIcon',title='Unit Icon Distance', max = 600, step = 25},
 			slider{y=160,name='MaxParticles',title='Max Particles', max = 5000},
 			slider{y=200,name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
-			checkBox{y = 250, title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables vertical-sync (Graphics setting)"},
-			checkBox{y = 270, title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Set or toggle advanced map shading mode"},
-			checkBox{y = 290, title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Set or toggle advanced model shading mode"},
-			checkBox{y = 310, title = 'OpenGL safe-mode', name = 'SafeGL', tooltip = "Enables/Disables OpenGL safe-mode"},
-			checkBox{y = 330, title = 'Draw Engine Trees', name = 'DrawTrees', tooltip = "Enable/Disable rendering of engine trees"},
-			checkBox{y = 350, title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
-			checkBox{y = 370, title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
-			checkBox{y = 390, title = 'Hardware Cursor', name = 'HardwareCursor', tooltip = "Enables/Disables hardware mouse-cursor support"},
+			checkBox{y = 250, title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},
+			checkBox{y = 270, title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
+			checkBox{y = 290, title = 'Deferred Map Shading', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
+			checkBox{y = 310, title = 'Deferred Model Shading', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
+			checkBox{y = 350, title = 'Draw Engine Trees', name = 'DrawTrees', tooltip = "Enable/Disable rendering of engine trees"},
+			checkBox{y = 370, title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
+			checkBox{y = 390, title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
 			checkBox{y = 410, title = 'Show Health Bars', name = 'ShowHealthBars', tooltip = "Enable/Disable rendering of health-bars for units"},
-			checkBox{y = 430, title = 'Show Rez Bars', name = 'ShowRezBars', tooltip = "Enable/Disable rendering of resource-bars for features"},
-			checkBox{y = 470, title = 'Show Map marks', name = 'MapMarks', tooltip = "Enables/Disables map marks rendering"},
-			checkBox{y = 490, title = 'Show Engine Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"},
+			checkBox{y = 430, title = 'Show Map marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
+			checkBox{y = 450, title = 'Show Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"},
+			checkBox{y = 490, title = 'Hardware Cursor', name = 'HardwareCursor', tooltip = "Enables/Disables hardware mouse-cursor support"},
+			checkBox{y = 510, title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},
+			checkBox{y = 530, title = 'OpenGL safe-mode', name = 'SafeGL', tooltip = "Enables/Disables OpenGL safe-mode"}, --does this actually do anything?!
+            Chili.Button:New{y=560,name="ResetDefaults",height=20,width='70%',caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},
 		}
 	}
 

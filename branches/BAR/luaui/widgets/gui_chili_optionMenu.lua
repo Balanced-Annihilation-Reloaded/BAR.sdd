@@ -600,7 +600,7 @@ local function Options()
 			checkBox{y = 370, title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
 			checkBox{y = 390, title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
 			checkBox{y = 410, title = 'Show Health Bars', name = 'ShowHealthBars', tooltip = "Enable/Disable rendering of health-bars for units"},
-			checkBox{y = 430, title = 'Show Map marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
+			checkBox{y = 430, title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
 			checkBox{y = 450, title = 'Show Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"},
 			checkBox{y = 490, title = 'Hardware Cursor', name = 'HardwareCursor', tooltip = "Enables/Disables hardware mouse-cursor support"},
 			checkBox{y = 510, title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},

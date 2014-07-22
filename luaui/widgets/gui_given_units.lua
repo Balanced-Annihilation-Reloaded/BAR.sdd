@@ -22,7 +22,7 @@ end
 OPTIONS = {
 	iconSize				= 32,
 	selectedFadeTime		= 0.5,
-	timeoutTime				= 6,
+	timeoutTime				= 12,
 	timeoutFadeTime			= 3.5,
 	iconSize				= 30,
 }
@@ -49,6 +49,7 @@ local spGetSelectedUnitsCount	= Spring.GetSelectedUnitsCount
 local spGetSelectedUnits		= Spring.GetSelectedUnits
 local spGetUnitDefID			= Spring.GetUnitDefID
 local spIsUnitInView 			= Spring.IsUnitInView
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -102,7 +103,6 @@ function widget:Initialize()
 	SetUnitConf()
 end
 
-
 -- draw icons
 function widget:DrawWorld()
 	if spIsGUIHidden() then return end
@@ -144,7 +144,6 @@ function widget:DrawWorld()
 	gl.DepthMask(false)
 end
 
-
 -- add given units
 function widget:UnitGiven(unitID, unitDefID, newTeam, oldTeam)
 	if (newTeam == myTeamID) then
@@ -152,10 +151,17 @@ function widget:UnitGiven(unitID, unitDefID, newTeam, oldTeam)
 	end
 end
 
+-- for testing
+--[[
+function widget:UnitCreated(unitID, unitDefID, newTeam, oldTeam)
+	if (newTeam == myTeamID) then
+		AddGivenUnit(unitID)
+	end
+end
+]]
 
 -- remove icons when the given units are selected
 function widget:CommandsChanged()
-	
 	if spGetSelectedUnitsCount() > 0 then
 		local units = Spring.GetSelectedUnitsSorted()
 		for uDID,_ in pairs(units) do

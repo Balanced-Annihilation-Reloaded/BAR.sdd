@@ -223,11 +223,15 @@ walklegs()
 
 stand()
 {
-	move lthigh to y-axis [0.000000] speed [2.037085];
-	move rthigh to x-axis [0.000000] now;
-	move rthigh to y-axis [0.000000] speed [0.540169];
-	move rfoot to x-axis [0.000000] now;
-	move lleg to x-axis [0.000000] now;
+	turn lthigh to x-axis <0> speed <247.500000>;
+	turn lleg to x-axis <0> speed <37.500000>;
+	turn lfoot to x-axis <0> speed <210.000000>;
+	turn lfoot to z-axis <0> speed <11.250000>;
+	turn rthigh to x-axis <0> speed <247.500000>;
+	turn rleg to x-axis <0> speed <37.500000>;
+	turn rfoot to x-axis <0> speed <210.000000>;
+	turn rfoot to z-axis <0> speed <11.250000>;
+
 	sleep 200;
 	return (0);
 }
@@ -236,11 +240,14 @@ activatescr()
 {
 	if( TRUE )
 	{
-		move lthigh to y-axis [0.000000] now;
-		move rthigh to x-axis [0.000000] now;
-		move rthigh to y-axis [0.000000] now;
-		move rfoot to x-axis [0.000000] now;
-		move lleg to x-axis [0.000000] now;
+		turn lthigh to x-axis <0> speed <247.500000>;
+		turn lleg to x-axis <0> speed <37.500000>;
+		turn lfoot to x-axis <0> speed <210.000000>;
+		turn lfoot to z-axis <0> speed <11.250000>;
+		turn rthigh to x-axis <0> speed <247.500000>;
+		turn rleg to x-axis <0> speed <37.500000>;
+		turn rfoot to x-axis <0> speed <210.000000>;
+		turn rfoot to z-axis <0> speed <11.250000>;
 		sleep 493;
 	}
 	sleep 9;
@@ -251,11 +258,14 @@ deactivatescr()
 {
 	if( TRUE )
 	{
-		move lthigh to y-axis [0.000000] now;
-		move rthigh to x-axis [0.000000] now;
-		move rthigh to y-axis [0.000000] now;
-		move rfoot to x-axis [0.000000] now;
-		move lleg to x-axis [0.000000] now;
+		turn lthigh to x-axis <0> speed <247.500000>;
+		turn lleg to x-axis <0> speed <37.500000>;
+		turn lfoot to x-axis <0> speed <210.000000>;
+		turn lfoot to z-axis <0> speed <11.250000>;
+		turn rthigh to x-axis <0> speed <247.500000>;
+		turn rleg to x-axis <0> speed <37.500000>;
+		turn rfoot to x-axis <0> speed <210.000000>;
+		turn rfoot to z-axis <0> speed <11.250000>;
 ;
 		sleep 10;
 	}

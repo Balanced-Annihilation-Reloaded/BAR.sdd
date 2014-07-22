@@ -5,7 +5,7 @@
 
 piece  body, turret, flare, barrel, sleeve, rfthigh, rfleg, rffoot, lfthigh, lfleg, lffoot, rbthigh, rbleg, rbfoot, lbthigh, lbleg, lbfoot;
 
-static-var  bMoving, bAiming, Static_Var_3, gun_1;
+static-var  bMoving, bAiming, Static_Var_3, gun_1, oldHeading, bSteering;
 
 // Signal definitions
 #define SIG_MOVE			2
@@ -39,14 +39,15 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	}
 }
 
-
 MotionControl()
 {
-	while( bMoving )
+	while(TRUE)
 	{
 		// for left feet, invert y and z axis, and flip front and back feet!
 		
 		// step 0 all centered
+		if (bMoving | bSteering) 
+		{
 		
 		turn rfthigh to y-axis <0> speed <72.000000>;
 		turn rfthigh to z-axis <0> speed <42.000000>;
@@ -90,6 +91,9 @@ MotionControl()
 		turn lffoot to z-axis <1> speed <6.000000>;
 		
 		sleep 140;
+		}
+		if (bMoving | bSteering) 
+		{
 		
 		// step 1 foot back
 		
@@ -135,6 +139,9 @@ MotionControl()
 		
 		
 		sleep 140;
+		}
+		if (bMoving | bSteering) 
+		{
 		
 		// step 2 foot lift heel
 		
@@ -179,6 +186,9 @@ MotionControl()
 		turn lffoot to z-axis <11> speed <120.000000>;
 		
 		sleep 140;
+		}
+		if (bMoving | bSteering) 
+		{
 		
 		// step 3 foot lifted up
 		
@@ -223,6 +233,9 @@ MotionControl()
 		turn lffoot to z-axis <0> speed <66.000000>;
 		
 		sleep 140;
+		}
+		if (bMoving | bSteering) 
+		{
 		
 		// step 4 foot forward
 		
@@ -267,6 +280,9 @@ MotionControl()
 		turn lffoot to z-axis <9> speed <54.000000>;
 		
 		sleep 140;
+		}
+		if (bMoving | bSteering) 
+		{
 		
 		// step 5 put down foot up front
 		
@@ -312,12 +328,31 @@ MotionControl()
 		turn lffoot to x-axis <9.3> speed <67.800000>;
 		turn lffoot to y-axis <-25> speed <60.000000>;
 		turn lffoot to z-axis <10> speed <6.000000>;
-		
+		}
 		sleep 140;
 
 	
 	}
 }
+
+
+
+Steering(heading)
+{
+	while( 1 )
+	{
+		heading = get HEADING;
+		
+		
+		if ( heading < oldheading )	bSteering=TRUE;
+		if ( heading > oldheading )	bSteering=TRUE;
+		if (heading == oldheading ) bSteering=FALSE;
+
+		sleep 66;
+		oldheading = heading;
+	}
+}
+
 
 Create()
 {
@@ -325,23 +360,25 @@ Create()
 	dont-cache flare;
 	bMoving = FALSE;
 	bAiming = FALSE;
+	bSteering = FALSE;
 	Static_Var_3 = 1;
+	oldHeading = get HEADING;
 	gun_1 = body;
 	start-script SmokeUnit();
+	start-script Steering();
+	start-script MotionControl();
 }
 
 StartMoving()
 {
 	bMoving = TRUE;
-	signal SIG_MOVE;
-	set-signal-mask SIG_MOVE;
-	start-script MotionControl();
+	//set-signal-mask SIG_MOVE;
 }
 
 StopMoving()
 {
 	bMoving = FALSE;
-	signal SIG_MOVE;
+	//signal SIG_MOVE;
 	Static_Var_3 = 1;
 
 }

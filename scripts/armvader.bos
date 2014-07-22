@@ -7,7 +7,7 @@ piece  leg1, leg2, leg3, leg4, base, body;
 
 static-var  bMoving;
 
-
+#define SIG_MOVE 1
 walkscr()
 {
 	while( bMoving )
@@ -74,6 +74,7 @@ Create()
 
 StartMoving()
 {
+	signal SIG_MOVE;
 	move leg1 to y-axis [0] speed [28];
 	move leg2 to y-axis [0] speed [28];
 	move base to y-axis [0] speed [28];
@@ -86,7 +87,7 @@ StartMoving()
 
 StopMoving()
 {
-
+	set-signal-mask SIG_MOVE;
 	stop-spin base around x-axis;
 	turn base to x-axis <0> speed <270>;
 	wait-for-turn base around x-axis;	

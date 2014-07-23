@@ -46,6 +46,7 @@ return {
 		reclaimable = false,
 		seismicsignature = 0,
 		selfdestructas = "DECOY_COMMANDER_BLAST",
+		script = "armcom.lua",
 		showplayername = true,
 		sightdistance = 377,
 		terraformspeed = 750,
@@ -69,7 +70,8 @@ return {
 			[9] = "armmakr",
 		},
 		customparams = {
-			paralyzemultiplier = 0.025000000372529,
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		sounds = {
 			build = "nanlath1",

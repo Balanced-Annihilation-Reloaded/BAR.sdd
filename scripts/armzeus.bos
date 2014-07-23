@@ -4,7 +4,7 @@
 #include "exptype.h"
 
 piece  torso, pelvis, flare, rthigh, lthigh, lleg, rleg, ruparm, luparm,
-	   lloarm, rloarm, gripstatic, gunstatic, griphand, gunhand ,emit_spark;
+	   lloarm, rloarm, gripstatic, gunstatic, griphand, gunhand;
 
 static-var  bMoving, bAiming, Static_Var_2, Static_Var_3, Static_Var_4, restore_delay,
             statechg_DesiredState, statechg_StateChanging, moveSpeed,

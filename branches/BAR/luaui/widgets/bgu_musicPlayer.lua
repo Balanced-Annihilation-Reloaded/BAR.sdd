@@ -1,7 +1,7 @@
 -- WIP heavily based on LEDs music player and music players before that
 function widget:GetInfo()
 	return {
-		name    = 'Funks Music Player',
+		name    = 'Music Player',
 		desc    = 'Plays music according to the in-game action',
 		author  = 'Funkencool',
 		date    = 'Sep 2013',

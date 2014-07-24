@@ -1,7 +1,7 @@
 -- WIP
 function widget:GetInfo()
 	return {
-		name    = 'Funks Resource Bar',
+		name    = 'Resource Bars',
 		desc    = 'Simple chili resource bars',
 		author  = 'Funkencool',
 		date    = '2013',

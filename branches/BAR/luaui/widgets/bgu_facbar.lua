@@ -2,7 +2,7 @@
 
 function widget:GetInfo()
   return {
-    name      = "Funks FactoryBar", 
+    name      = "FactoryBar", 
     desc      = "v0.052 Chili buildmenu for factories.",
     author    = "CarRepairer (converted from jK's Buildbar), Bluestone",
     date      = "2010-11-10",

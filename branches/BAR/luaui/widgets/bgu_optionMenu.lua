@@ -2,7 +2,7 @@
 --  TODO Reapply original spring settings on shutdown
 function widget:GetInfo()
 	return {
-		name    = 'Funks Main Menu',
+		name    = 'Main Menu',
 		desc    = 'Graphics, Interface, and Sound Options Menu (WIP)',
 		author  = 'Funkencool',
 		date    = '2013',
@@ -82,11 +82,11 @@ local wCategories = {
 	['unit']      = {label = 'Units',       list = {}, pos = 1,},
 	['cmd']       = {label = 'Commands',    list = {}, pos = 2,},
 	['gui']       = {label = 'GUI',         list = {}, pos = 3,},
-	['gfx']       = {label = 'GFX',         list = {}, pos = 4,},
-	['snd']       = {label = 'Sound',       list = {}, pos = 5,},
-	['camera']    = {label = 'Camera',      list = {}, pos = 6,},
-	['map']       = {label = 'Map',         list = {}, pos = 7,},
-	['minimap']   = {label = 'Minimap',     list = {}, pos = 8,},
+	['snd']       = {label = 'Sound',       list = {}, pos = 4,},
+	['camera']    = {label = 'Camera',      list = {}, pos = 5,},
+	['map']       = {label = 'Map',         list = {}, pos = 6,},
+	['bgu']       = {label = 'BAR GUI',     list = {}, pos = 7,},
+	['gfx']       = {label = 'GFX',         list = {}, pos = 8,},
 	['api']       = {label = 'API',         list = {}, pos = 9,},
 	['dbg']       = {label = 'Debugging',   list = {}, pos = 10,},
 	['test']      = {label = 'Test Widgets',list = {}, pos = 11,},
@@ -348,7 +348,7 @@ end
 ---------------------------- 
 --
 local function loadMainMenu()
-	local sizeData = load('mainMenuSize') or {}
+	local sizeData = load('mainMenuSize') or {400,200,500,400}
     local vsx,vsy = Spring.GetViewGeometry()
     if vsx < sizeData[1]+sizeData[3]-100 or sizeData[1] < 100 then sizeData[1] = 400 end
     if vsy < sizeData[2]+sizeData[4]-100 or sizeData[2] < 100 then sizeData[3] = 500 end

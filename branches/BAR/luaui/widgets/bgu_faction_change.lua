@@ -2,7 +2,7 @@
 function widget:GetInfo()
 	return {
 		name	= 'Faction Change',
-		desc	= 'Adds buttons to switch faction',
+		desc	= 'Adds buttons to switch faction before the game starts',
 		author	= 'Niobium',
 		date	= 'May 2011',
 		license	= 'GNU GPL v2',

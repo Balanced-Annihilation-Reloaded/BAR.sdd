@@ -1,7 +1,7 @@
 -- v1.0
 function widget:GetInfo()
 	return {
-		name    = 'Funks EndGame Graph',
+		name    = 'EndGame Graph',
 		desc    = 'Chili replacement for default EndGame Graph, v1.0',
 		author  = 'Funkencool',
 		date    = '2013', -- 2014

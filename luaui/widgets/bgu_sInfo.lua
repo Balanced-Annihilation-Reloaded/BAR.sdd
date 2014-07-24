@@ -1,7 +1,7 @@
 -- WIP
 function widget:GetInfo()
 	return {
-		name      = 'Funks current selection info',
+		name      = 'Selection info',
 		desc      = 'Shows information about current selection',
 		author    = 'Funkencool',
 		date      = '2013',

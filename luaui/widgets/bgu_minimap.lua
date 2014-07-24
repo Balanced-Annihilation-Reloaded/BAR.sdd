@@ -1,6 +1,6 @@
 function widget:GetInfo()
   return {
-    name      = "Funks Minimap",
+    name      = "Minimap",
     desc      = "Minimap",
     author    = "Funkencool",
     date      = "2014",

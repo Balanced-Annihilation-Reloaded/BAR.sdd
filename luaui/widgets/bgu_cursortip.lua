@@ -1,7 +1,7 @@
 -- WIP
 function widget:GetInfo()
 	return {
-		name    = 'Funks cursor tooltip',
+		name    = 'Cursor tooltip',
 		desc    = 'A simple tooltip to appear when hovering mouse',
 		author  = 'Funkencool',
 		date    = '2013',

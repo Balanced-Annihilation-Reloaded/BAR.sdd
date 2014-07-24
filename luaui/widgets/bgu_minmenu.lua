@@ -1,7 +1,7 @@
 -- WIP
 function widget:GetInfo()
     return {
-        name    = 'Funks Min Menu',
+        name    = 'Min Menu',
         desc    = 'Small Window to access Main Menu, as well as show time and FPS',
         author  = 'Funkencool',
         date    = '2013',

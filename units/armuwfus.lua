@@ -5,13 +5,13 @@ return {
 		brakerate = 0,
 		buildangle = 8192,
 		buildcostenergy = 31429,
-		buildcostmetal = 4668,
+		buildcostmetal = 4908,
 
 
 
 
 		buildpic = "ARMUWFUS.DDS",
-		buildtime = 105004,
+		buildtime = 99870,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
 		description = "Produces Energy / Storage",

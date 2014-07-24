@@ -4,18 +4,23 @@ return {
 		activatewhenbuilt = true,
 		brakerate = 0,
 		buildangle = 8192,
-		buildcostenergy = 24077,
-		buildcostmetal = 380,
+		buildcostenergy = 22026,
+		buildcostmetal = 372,
 
 
 
 
 		buildpic = "ARMUWMMM.DDS",
-		buildtime = 48964,
+		buildtime = 38964,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
+		collisionvolumeoffsets = "0 -10 0",
+		collisionvolumescales = "120 120 120",
+		collisionvolumetest = 1,
+		collisionvolumetype = "Ell",
 		corpse = "DEAD",
-		description = "Converts up to 600 energy into 13 metal per second",
+		description = "Converts up to 650 energy into 13 metal per second",
 		explodeas = "ATOMIC_BLASTSML",
+        floater = true,
 		footprintx = 5,
 		footprintz = 4,
 		icontype = "building",
@@ -30,7 +35,8 @@ return {
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 156,
 
-		yardmap = "oooooooooooooooooooo",
+        yardmap = "oooooooooooooooooooo",
+        waterline = 5,
 		customparams = {
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",

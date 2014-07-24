@@ -578,7 +578,7 @@ teamDeathMessages = {
 	"The fat lady finished singing for XX and went home",
 	"XX found that death was only a lesson in ones own limitations",
 	"XX entered into the afterlife of recrimination",
-	"XX is a pointer to NULL",
+	"XX is a nullptr",
 	"XX suffered a fate worse than a fate worse than death",
 	"XX will spend the rest of the war teaching home economics",
 	"XX needs to re-install Windows",
@@ -648,7 +648,9 @@ teamDeathMessages = {
 	"XX drowned in a pool of childrens tears",
 	"XX was too busy perming its ears",
 	"XX jumped under a fleet of oncoming buses",
-	
+    "XX painted matchstalk men and matchstalk cats and dogs",
+    "XX went the same way as FPS mode",
+    "XX didn't control the spice, or the dune",
 
 	
 	

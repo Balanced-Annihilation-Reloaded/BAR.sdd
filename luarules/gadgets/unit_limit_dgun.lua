@@ -35,6 +35,7 @@ local pointRadius = 525 -- radius of circle about enemy startpoints inside of wh
 local spGetUnitPosition = Spring.GetUnitPosition
 local spGetTeamInfo = Spring.GetTeamInfo
 local CMD_MANUALFIRE = CMD.MANUALFIRE
+local CMD_INSERT = CMD.INSERT
 local boxes = {} --format is boxes[allyTeamID]={x1,z1,x2,z2} with x1<x2 and z1<z2, contain only non-allyteam startboxes, doesn't include gaia
 local points = {} --format is points[allyTeamID][pointID]={x,y,z}; the point at which that player spawned (pointID does not mean anything in relation to teamID or playerID)
 local pointRadiusSqrd = pointRadius^2
@@ -128,8 +129,8 @@ end
 
 
 function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions, cmdTag, synced)
-	if cmdID ~= CMD_MANUALFIRE then --non-dgun commands
-		return true
+    if not (cmdID == CMD_MANUALFIRE or (cmdID==CMD_INSERT and cmdParams[2]==CMD_MANUALFIRE)) then --non-dgun commands
+        return true
 	end
 
 	local unitX, _, unitZ = spGetUnitPosition(unitID)

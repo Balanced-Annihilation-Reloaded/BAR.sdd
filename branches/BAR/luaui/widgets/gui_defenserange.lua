@@ -476,10 +476,25 @@ end
 
 function widget:Initialize()
 	state["myPlayerID"] = spGetLocalTeamID()
-	
+
+    widgetHandler:RegisterGlobal('SetOpacity_Defense_Range', SetOpacity)
+
 	DetectMod()
 
 	UpdateButtons()
+	
+	--Recheck units on widget reload
+	local myAllyTeam = Spring.GetMyAllyTeamID()
+	local units = Spring.GetAllUnits()
+	for i=1,#units do
+		local unitID = units[i]
+		local unitAllyTeam = Spring.GetUnitAllyTeam(unitID)
+		UnitDetected(unitID, unitAllyTeam == myAllyTeam)
+	end
+end
+
+function widget:ShutDown()
+    widgetHandler:DeregisterGlobal('SetOpacity_Defense_Range', SetOpacity)
 end
 
 function widget:UnitCreated( unitID,  unitDefID,  unitTeam)	
@@ -511,12 +526,7 @@ function UnitDetected( unitID, allyTeam, teamId )
 		--not interesting, has no weapons, lame
 		return
 	end
-	--SINCE THIS DOESNT EVEN FUCKING PICK UP MOBILE ANTI's, WHY IS NOT BAILING EARLY ON MOBILE UNITS?
-	if udef.speed and udef.speed  > 0.0001 then 
-		--Spring.Echo('Defense range bailing on unit with no acceleration',udef.name)
-		return
-	end
-	
+
 	if udef.canMove then 
 		--not interesting, it moves
 		return
@@ -756,7 +766,7 @@ function UpdateButtonList()
     	enabled = true
     end
 
-    --DrawButtonGL(data[2], coords[1][1], coords[1][2], coords[2][1], coords[2][2], doHighLight, enemy, enabled)
+    DrawButtonGL(data[2], coords[1][1], coords[1][2], coords[2][1], coords[2][2], enemy, enabled)
   end
   
   ResetGl()
@@ -881,6 +891,11 @@ function CheckSpecState()
 	return true
 end
 
+local darkOpacity = 0
+function SetOpacity(dark,light)
+    darkOpacity = dark
+end
+
 
 function widget:Update()
 	local timef = spGetGameSeconds()
@@ -889,7 +904,8 @@ function widget:Update()
 	if ( (timef - updateTimes["line"]) > 0.2 and timef ~= updateTimes["line"] ) then	
 		updateTimes["line"] = timef
 		
-		--adjust line width and alpha by camera height (is this really worth it?!)
+		--adjust line width and alpha by camera height (old code, kept for refence)
+        --[[
 		_, camy, _ = spGetCameraPosition()
 		if ( camy < 700 ) and ( oldcamy >= 700 ) then
 			oldcamy = camy
@@ -907,8 +923,14 @@ function widget:Update()
 			lineConfig["alphaValue"] = 0.35
 			UpdateCircleList()
 		end
-		
+        ]]
+        
+        lineConfig["lineWidth"] = 1.0
+        lineConfig["alphaValue"] = darkOpacity
+        UpdateCircleList()
+	
 	end
+    
 	
 	-- update timers once every <updateInt> seconds
 	if (time % updateTimes["removeInterval"] == 0 and time ~= updateTimes["remove"] ) then	
@@ -1127,7 +1149,7 @@ function DrawRanges()
 	local color
 	local range
 	for test, def in pairs(defences) do
-		--Spring.Echo('defrangre drawrranges test',test, #def["weapons"])
+		--Spring.Echo('defrange drawrranges test',test, #def["weapons"])
 		for i, weapon in pairs(def["weapons"]) do
 			local execDraw = false
 			if (false) then --3.9 % cpu, 45 fps
@@ -1177,6 +1199,7 @@ function DrawRanges()
 
 	glDepthTest(false)
 end
+
 
 function UpdateCircleList()
 	--delete old list

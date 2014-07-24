@@ -2,13 +2,13 @@
 
 function widget:GetInfo()
   return {
-    name      = "Chili FactoryBar",
+    name      = "Funks FactoryBar", 
     desc      = "v0.052 Chili buildmenu for factories.",
-    author    = "CarRepairer (converted from jK's Buildbar)",
+    author    = "CarRepairer (converted from jK's Buildbar), Bluestone",
     date      = "2010-11-10",
     license   = "GNU GPL, v2 or later",
     layer     = 1001,
-    enabled   = false,
+    enabled   = true,
   }
 end
 
@@ -42,6 +42,7 @@ local screen0
 
 local window_facbar, stack_main
 local echo = Spring.Echo
+local imageDir = 'luaui/images/buildIcons/'
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -84,27 +85,12 @@ local leftTweak, enteredTweak = false, false
 local cycle_half_s = 1
 local cycle_2_s = 1
 
--------------------------------------------------------------------------------
--- SOUNDS
--------------------------------------------------------------------------------
-
-local sound_waypoint  = LUAUI_DIRNAME .. 'Sounds/buildbar_waypoint.wav'
-local sound_click     = LUAUI_DIRNAME .. 'Sounds/buildbar_click.WAV'
-local sound_queue_add = LUAUI_DIRNAME .. 'Sounds/buildbar_add.wav'
-local sound_queue_rem = LUAUI_DIRNAME .. 'Sounds/buildbar_rem.wav'
+local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
+local teamColor = {r,g,b}
 
 -------------------------------------------------------------------------------
 
 local image_repeat    = LUAUI_DIRNAME .. 'Images/repeat.png'
-
-local teamColors = {}
-local GetTeamColor = Spring.GetTeamColor or function (teamID)
-  local color = teamColors[teamID]
-  if (color) then return unpack(color) end
-  local _,_,_,_,_,_,r,g,b = Spring.GetTeamInfo(teamID)
-  teamColors[teamID] = {r,g,b}
-  return r,g,b
-end
 
 -------------------------------------------------------------------------------
 -- SCREENSIZE FUNCTIONS
@@ -115,7 +101,6 @@ function widget:ViewResize(viewSizeX, viewSizeY)
   vsx = viewSizeX
   vsy = viewSizeY
 end
-
 
 -------------------------------------------------------------------------------
 
@@ -128,7 +113,6 @@ local GetFullBuildQueue = Spring.GetFullBuildQueue
 local GetUnitIsBuilding = Spring.GetUnitIsBuilding
 
 local push        = table.insert
-
 
 -------------------------------------------------------------------------------
 
@@ -262,13 +246,14 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
 							Spring.SetCameraTarget(x,y,z)
 						elseif button == 3 then
 							Spring.Echo("FactoryBar: Entered easy waypoint mode")
-							Spring.PlaySoundFile(sound_waypoint, 1, 'ui')
 							waypointMode = 2 -- greedy mode
 							waypointFac  = stackname
 						else
-							Spring.PlaySoundFile(sound_click, 1, 'ui')
 							Spring.SelectUnitArray({unitID})
+                            window_facbar:Hide()
 						end
+                        
+
 					end
 					or nil
 			},
@@ -277,11 +262,18 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
 			children = {
 				unitID ~= 0 and
 					Image:New {
-						file = "#"..unitDefID,
-						file2 = WG.GetBuildIconFrame(UnitDefs[unitDefID]),
+						--file = "#"..unitDefID,
+						file = imageDir..'Units/'.. UnitDefs[unitDefID].name ..'.png',
 						keepAspect = false;
 						width = '100%',
 						height = '100%',
+                        children = {
+                            Chili.Image:New{
+                                color  = teamColor,
+                                height = '100%', width = '100%',
+                                file   = imageDir..'Overlays/'..UnitDefs[unitDefID].name..'.png',
+                            },
+                        },
 					}
 				or nil,
 			},
@@ -369,12 +361,6 @@ local function MakeButton(unitDefID, facID, facIndex)
 					
 					Spring.GiveOrderToUnit(facID, -(unitDefID), {}, opt)
 					
-					if rb then
-						Spring.PlaySoundFile(sound_queue_rem, 0.97, 'ui')
-					else
-						Spring.PlaySoundFile(sound_queue_add, 0.95, 'ui')
-					end
-					
 					--UpdateFac(facIndex, facs[facIndex])
 					
 				end
@@ -396,8 +382,8 @@ local function MakeButton(unitDefID, facID, facIndex)
 				Label:New{ caption = ud.metalCost .. ' m', fontSize = 11, x=2, bottom=2, fontShadow = true, },
 				Image:New {
 					name = 'bp',
-					file = "#"..unitDefID,
-					file2 = WG.GetBuildIconFrame(ud),
+					--file = "#"..unitDefID,
+					file = imageDir..'Units/'.. UnitDefs[unitDefID].name ..'.png',
 					keepAspect = false;
 					width = '100%',height = '80%',
 					children = {
@@ -410,6 +396,11 @@ local function MakeButton(unitDefID, facID, facIndex)
 							x=4,y=4, bottom=4,right=4,
 							skin=nil,
 							skinName='default',
+                        },
+						Chili.Image:New{
+							color  = teamColor,
+							height = '100%', width = '100%',
+							file   = imageDir..'Overlays/'..UnitDefs[unitDefID].name..'.png',
 						},
 					},
 				},
@@ -428,7 +419,6 @@ end
 local function WaypointHandler(x,y,button)
   if (button==1)or(button>3) then
     Spring.Echo("FactoryBar: Exited easy waypoint mode")
-    Spring.PlaySoundFile(sound_waypoint, 1)
     waypointFac  = -1
     waypointMode = 0
     return
@@ -584,6 +574,8 @@ end
 function widget:Update()
 	if myTeamID~=Spring.GetMyTeamID() then
 		myTeamID = Spring.GetMyTeamID()
+        r,g,b = Spring.GetTeamColor(myTeamID)
+        teamColor = {r,g,b}
 		UpdateFactoryList()
 	end
 	inTweak = widgetHandler:InTweakMode()
@@ -667,11 +659,18 @@ function widget:MousePress(x, y, button)
 	end
 	if waypointMode>1 then
 		Spring.Echo("FactoryBar: Exited easy waypoint mode")
-		Spring.PlaySoundFile(sound_waypoint, 1)
 	end
 	waypointFac  = -1
 	waypointMode = 0
 	return false
+end
+
+function ShowFacBar()
+    window_facbar:Show()
+end
+
+function HideFacBar()
+    window_facbar:Hide()
 end
 
 function widget:Initialize()
@@ -679,6 +678,9 @@ function widget:Initialize()
 		widgetHandler:RemoveWidget(widget)
 		return
 	end
+    
+    WG.ShowFacBar = ShowFacBar
+    WG.HideFacBar = HideFacBar
 
 	-- setup Chili
 	Chili = WG.Chili
@@ -725,10 +727,6 @@ function widget:Initialize()
 			stack_main,
 		},
 		OnMouseDown={ function(self)
-			local alt, ctrl, meta, shift = Spring.GetModKeyState()
-			if not meta then return false end
-			WG.crude.OpenPath(options_path)
-			WG.crude.ShowMenu()
 			return true
 		end },
 	}

@@ -542,8 +542,14 @@ function widget:Update()
 		
 		if not buildMenu.active and buildMenu.visible then
 			buildMenu:Hide()
+            if WG.ShowFacBar then
+                WG.ShowFacBar()
+            end
 		elseif buildMenu.active and buildMenu.hidden then
 			buildMenu:Show()
+            if WG.HideFacBar then
+                WG.HideFacBar()
+            end
 		end
 	end
 end

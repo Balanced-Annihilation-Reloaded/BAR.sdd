@@ -14,54 +14,117 @@ end
 --  Declarations
 ---------------------------------------------------------------------------------------------------
 
-local flashIcon				= true
-local markers				= false
-
-local VFSFileExists = VFS.FileExists
-
 local armcomDefID = UnitDefNames.armcom.id
 local corcomDefID = UnitDefNames.corcom.id
 
 local spGetMyTeamID			= Spring.GetMyTeamID
 local spGetGameFrame		= Spring.GetGameFrame
 
-local glTranslate			= gl.Translate
-local glColor				= gl.Color
-local glPushMatrix			= gl.PushMatrix
-local glPopMatrix			= gl.PopMatrix
-local glTexture				= gl.Texture
-local glRect				= gl.Rect
-local glTexRect				= gl.TexRect
-local glText				= gl.Text
-local glGetTextWidth		= gl.GetTextWidth
-local glCreateList			= gl.CreateList
-local glCallList			= gl.CallList
-local glDeleteList			= gl.DeleteList
-
-local textSize				= 12
-local xPos, yPos            = 0.80, 0.85
-local xRelPos, yRelPos		= 0.80, 0.85
-local vsx, vsy				= gl.GetViewSizes()
-local check1x, check1y		= 6, 28
-local check2x, check2y		= 6, 6
 local allyComs				= 0
-local enemyComs				= 0 -- if we are counting ourselves because we are a spec
-local enemyComCount			= 0 -- if we are receiving a count from the gadget part (needs modoption on)
-local prevEnemyComCount		= 0
-local panelWidth 			= 47
-local panelHeight 			= 50
+local enemyComs				= 0 
+local prevEnemyComs         = 0 -- track changes when receiving TeamRulesParam
 local amISpec				= Spring.GetSpectatingState()
 local myTeamID 				= spGetMyTeamID()
 local myAllyTeamID			= Spring.GetMyAllyTeamID()
 local inProgress			= spGetGameFrame() > 0
 local countChanged			= true
-local displayList			= nil
 local flickerLastState		= nil
 local is1v1					= Spring.GetTeamList() == 3 -- +1 because of gaia
-local receiveCount			= (tostring(Spring.GetModOptions().mo_enemycomcount) == "1") or false
+local receiveCount			= (tostring(Spring.GetModOptions().mo_enemycomcount) == "1") or nil
 local comMarkers			= {}
 local removeMarkerFrame		= -1
 local lastMarkerFrame		= -1
+
+
+---------------------------------------------------------------------------------------------------
+--  GUI
+---------------------------------------------------------------------------------------------------
+
+function makeText(i) return (i~=nil) and tostring(i) or "" end
+
+local green        = {0.2, 1.0, 0.2, 1.0}
+local red          = {1.0, 0.2, 0.2, 1.0}
+local greenOutline = {0.2, 0.7, 0.2, 1.0}
+local redOutline   = {1.0, 0.2, 0.2, 0.2}
+
+function widget:Initialize()
+    Chili = WG.Chili
+
+    yellowOverlay = Chili.Image:New{
+                        color  = {1,0.95,0.4, 0.2},
+                        height = '100%', 
+                        width  = '100%',
+                        file   = 'LuaUI/Images/comIcon.png',
+                    }
+                    
+    enemyComText = Chili.Label:New{ --why doesn't this display?
+                        height = 45.6,
+                        width = 48,
+                        caption  = makeText(enemyComs),
+                        align = "right",
+                        valign = "bottom", 
+                        margin = {0,0,0,0},
+                        font = {
+                            size = 16,
+                            color = red,
+                            outline = true,
+                            outlineColor = redOutline,
+                            shadow = false,
+                        },
+                    } 
+
+    allyComText = Chili.Label:New{
+                        height = 45,
+                        width = 34.5,
+                        caption  = makeText(allyComs),
+                        align = "right", --hack because label center alignment don't take acount of text length
+                        valign = "center",
+                        margin = {0,0,0,0},
+                        font = {
+                            size = 25,
+                            color = green,
+                            outline = true,
+                            outlineColor = greenOutline,
+                            shadow = false,
+                        },
+                    }
+
+
+                  
+    window = Chili.Window:New{
+		parent    = Chili.Screen0,
+		right     = 395, 
+		y         = 60,
+		width     = 55,
+		height    = 55,
+		padding   = {5,5,5,5}, 
+		draggable = true,
+		resizable = false,
+        onClick   = MarkComs,
+		children  = {
+            Chili.Image:New {
+                color       = {1,1,1,0.3},
+                file        = 'LuaUI/Images/comIcon.png',
+				keepAspect  = true;
+				width       = '100%',
+				height      = '100%',
+                children = {
+                    enemyComText, allyComText, yellowOverlay 
+                },
+			}
+    
+		}
+	}
+
+	if Spring.GetGameFrame() > 0 then
+		Recount()
+        UpdateCaptions()
+    else
+        enemyComText:Hide()
+        allyComText:Hide()    
+    end
+    
+end
 
 ---------------------------------------------------------------------------------------------------
 --  Counting
@@ -77,16 +140,10 @@ function isCom(unitID,unitDefID)
 	return UnitDefs[unitDefID].customParams.iscommander ~= nil
 end
 
-function CheckStatus()
-	--update my identity
-	amISpec	= Spring.GetSpectatingState()
-	myAllyTeamID = Spring.GetMyAllyTeamID()
-	myTeamID = Spring.GetMyTeamID()
+function UpdateCaptions()
+    allyComText:SetCaption(makeText(allyComs))
+    enemyComText:SetCaption(makeText(enemyComs))
 end
-
-function flicker()
-	return spGetGameFrame() % 12 < 6
-end 
 
 function Recount()
 	-- recount my own ally team coms
@@ -110,10 +167,9 @@ function Recount()
 			end
 		end
 	end
-	
+    
+	UpdateCaptions()
 end
-
---------------------------------------------------------------------------------
 
 function widget:UnitCreated(unitID, unitDefID, unitTeam)
 	if not isCom(unitID,unitDefID) then
@@ -147,23 +203,46 @@ end
 
 -- BA does not allow sharing to enemy, so no need to check Given, Taken, etc
 
-function widget:Initialize()
-	--recount needed in case GameStart not called
-	if Spring.GetGameFrame() > 0 then
-		Recount()
+--------------------------------------------------------------------------------
+
+function MarkComs()
+	local units = Spring.GetAllUnits()
+	-- place a mark on each com
+	for i=1,#units do
+		if Spring.GetUnitAllyTeam(units[i]) == myAllyTeamID then
+			if isCom(units[i],_) then
+				local x,y,z = Spring.GetUnitPosition(units[i])
+				Spring.MarkerAddPoint(x,y,z,"",true)
+				comMarkers[#comMarkers+1] = {x,y,z}
+				removeMarkerFrame = Spring.GetGameFrame() + 30*5
+			end
+		end
 	end
-    
-    --set position if it wasn't in config
-    if not xPos or not yPos then
-        xPos = 0.80
-        yPos = 0.85
+end
+
+function CheckStatus()
+	--update my identity
+	amISpec	= Spring.GetSpectatingState()
+	myAllyTeamID = Spring.GetMyAllyTeamID()
+	myTeamID = Spring.GetMyTeamID()
+    if amISpec and enemyComText.hiden then
+        enemyComText:Show()
     end
 end
+
+function flicker()
+	return spGetGameFrame() % 12 < 6
+end 
 
 function widget:GameStart()
 	inProgress = true
 	CheckStatus()
 	Recount()
+    
+    allyComText:Show()
+    if recieveCount then
+        enemyComText:Show()
+    end
 end
 
 function widget:GameFrame(n)
@@ -175,10 +254,10 @@ function widget:GameFrame(n)
 	
 	-- check if we have received a TeamRulesParam from the gadget part
 	if not amISpec and receiveCount then
-		enemyComCount = Spring.GetTeamRulesParam(myTeamID, "enemyComCount")
-		if enemyComCount ~= prevEnemyComCount then
+		enemyComs = Spring.GetTeamRulesParam(myTeamID, "enemyComCount")
+		if enemyComs ~= prevEnemyComs then
 			countChanged = true
-			prevEnemyComCount = enemyComCount
+			prevEnemyComs = enemyComs
 		end
 	end
 	
@@ -199,167 +278,36 @@ end
 
 function widget:GameOver()
 	inProgress = false
+    if not yellowOverlay.hidden then
+        yellowOverlay:Hide()
+    end
 end
 
----------------------------------------------------------------------------------------------------
---  GUI
----------------------------------------------------------------------------------------------------
 
-function widget:DrawScreen()
-	if widgetHandler:InTweakMode() then
-		return
-	end
-	if not inProgress then
-		return
-	end
+function widget:Update()
+	if not inProgress then return end
 	
-	local flickerState = allyComs == 1 and flashIcon and flicker()
+	local flickerState = flicker()
 	if countChanged or flickerLastState ~= flickerState then
 		countChanged = false
 		CheckStatus()
-		
-		glDeleteList(displayList)
-		-- regenerate the display list
-		displayList = glCreateList( function()
-			glTranslate(xPos, yPos, 0)
-			--background
-			glColor(0, 0, 0, 0.5)
-			glRect(0, 0, panelWidth, panelHeight)
-			--com pic
-			if flickerState then
-				glColor(1,0.6,0,0.6)
-			else
-				glColor(1,1,1,0.3)
-			end
-			if VFSFileExists('LuaUI/Images/comIcon.png') then
-				glTexture('LuaUI/Images/comIcon.png')
-			end
-			glTexRect(panelWidth/2-34/2, 5, panelWidth/2+34/2, 5+40)
-			glTexture(false)
-			--ally coms
-			if allyComs >0 then
-				glColor(0,1,0,1)	
-				local text = tostring(allyComs)
-				local width = glGetTextWidth(text)*22
-				glText(text, panelWidth/2 - width/2 + 1, 20, 22)
-			end
-			--enemy coms
-			glColor(1,0,0,1)
-			if amISpec then
-				text = tostring(enemyComs)
-				width = glGetTextWidth(text)*14
-				glText(text, panelWidth - width - 3, 3, 14)
-			elseif receiveCount then
-				text = tostring(enemyComCount)
-				width = glGetTextWidth(text)*14
-				glText(text, panelWidth - width - 3, 3, 14)			
-			end
-		end)
+        UpdateCaptions()
+       
+        if (allyComs <= 1) and not is1v1 then
+            if flickerState then
+                if not yellowOverlay.hidden then
+                    yellowOverlay:Hide()
+                end
+            else
+                if yellowOverlay.hidden then
+                    yellowOverlay:Show()
+                end
+            end
+        end        
 		flickerLastState = flickerState
-	end
-	
-	glPushMatrix()
-	glCallList(displayList)
-	glPopMatrix()
-	
+	end	
 end
 
----------------------------------------------------------------------------------------------------
--- Tweak mode, settings, mouse stuff
----------------------------------------------------------------------------------------------------
 
-function widget:TweakDrawScreen()
-	glPushMatrix()
-		glTranslate(xPos, yPos, 0)
-		glColor(0, 0, 0, 0.5)
-		glRect(0, 0, 100, panelHeight)
-		drawCheckbox(check1x, check1y, markers, "Place Markers") 
-		drawCheckbox(check2x, check2y, flashIcon, "Flashing Icon")
-	glPopMatrix()
-end
 
-function drawCheckbox(x, y, state, text)
-	glPushMatrix()
-		glTranslate(x, y, 0)
-		glColor(1, 1, 1, 0.2)
-		glRect(0, 0, 16, 16)
-		glColor(1, 1, 1, 1)
-		if state then
-			if VFSFileExists('LuaUI/Images/tick.png') then
-				glTexture('LuaUI/Images/tick.png')
-			end
-			glTexRect(0, 0, 16, 16)
-			glTexture(false)
-		end
-		glText(text, 20, 4, 9, "n")
-	glPopMatrix()
-end
 
-function widget:IsAbove(mx, my)
-	return mx > xPos and my > yPos and mx < xPos + panelWidth and my < yPos + panelHeight
-end
-
-function widget:MousePress(mx, my, button)
-	if not widget:IsAbove(mx,my) then
-		return false
-	end
-	
-	local frame = Spring.GetGameFrame()
-	if markers and frame > lastMarkerFrame + 2.5*30 then --prevent marker spam
-		lastMarkerFrame = frame
-		MarkComs()
-	end
-	return true
-end
-
-function MarkComs()
-	local units = Spring.GetAllUnits()
-	-- place a mark on each com
-	for i=1,#units do
-		if Spring.GetUnitAllyTeam(units[i]) == myAllyTeamID then
-			if isCom(units[i],_) then
-				local x,y,z = Spring.GetUnitPosition(units[i])
-				Spring.MarkerAddPoint(x,y,z,"",true)
-				comMarkers[#comMarkers+1] = {x,y,z}
-				removeMarkerFrame = Spring.GetGameFrame() + 30*5
-			end
-		end
-	end
-end
-
-function widget:TweakMousePress(mx, my)
-	if widget:IsAbove(mx,my) then
-		if mx > xPos+check1x and my > yPos+check1y and mx < (xPos+check1x+16) and my < (yPos+check1y+16) then
-			markers = not markers
-		elseif mx > xPos+check2x and my > yPos+check2y and mx < (xPos+check2x+16) and my < (yPos+check2y+16) then
-			flashIcon = not flashIcon
-		end
-		return true
-	end
-end
-
-function widget:TweakMouseMove(mx, my, dx, dy)
-	xRelPos = xRelPos + dx/vsx
-	yRelPos = yRelPos + dy/vsy
-	xPos, yPos = xRelPos * vsx,yRelPos * vsy
-	countChanged = true
-end
-
-function widget:ViewResize(newX,newY)
-	vsx, vsy = newX, newY
-	xPos, yPos = xRelPos * vsx,yRelPos * vsy
-	countChanged = true
-end
-
-function widget:GetConfigData()
-	return {xRelPos = xRelPos, yRelPos = yRelPos, markers = markers, flashIcon = flashIcon}
-end
-
-function widget:SetConfigData(data)
-	xRelPos = data.xRelPos or xRelPos
-	yRelPos = data.yRelPos or yRelPos
-	xPos = xRelPos * vsx
-	yPos = yRelPos * vsy
-	markers = data.markers or markers
-	flashIcon = data.flashIcon or flashIcon
-end

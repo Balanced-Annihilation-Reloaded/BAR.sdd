@@ -3,7 +3,7 @@ function widget:GetInfo()
 	return {
 		name    = 'Funks Chat Console',
 		desc    = 'A simple chili chat console',
-		author  = 'Funkencool',
+		author  = 'Funkencool, Bluestone',
 		date    = '2013',
 		license = 'GNU GPL v2',
 		layer   = 50,
@@ -32,7 +32,8 @@ local msgTime   = 6 -- time to display messages in seconds
 local msgWidth  = 470 --width of the console
 local settings = {
 	autohide = true,
-	}
+	msgCap   = 100,
+}
 ------------
 
 -- Chili elements --
@@ -46,7 +47,6 @@ local log
 
 -- Local Variables --
 local messages = {}
-local maxMessages = 100
 local endTime = getTimer() 
 local startTime = endTime --time of last message (or last time at which we checked to hide the console and then didn't)
 local myID = Spring.GetMyPlayerID()
@@ -63,6 +63,32 @@ local color = {
 	ally  = '\255\001\255\001', --ally chat
 	spec  = '\255\255\255\001', --spectator chat
 }
+
+local function mouseIsOverChat()
+	local x,y = Spring.GetMouseState()
+	y = screen.height - y -- chili has y axis with 0 at top!	
+	if x > window.x and x < window.x + window.width and y > 0 and ((msgWindow.visible and y < window.height) or (msgWindow.hidden and y < input.height)) then
+		return true
+	else
+		return false
+	end
+end
+
+local function showChat()
+	-- show chat
+	startTime = getTimer()
+	if msgWindow.hidden then
+		msgWindow:Show()
+	end
+end
+
+local function hideChat()
+	-- hide the chat, unless the mouse is hovering over the chat window
+	if msgWindow.visible and settings.autohide and not mouseIsOverChat() then
+		msgWindow:Hide()
+	end
+end
+
 
 local function loadWindow()
 	
@@ -119,27 +145,45 @@ local function loadOptions()
 	for setting,_ in pairs(settings) do
 		settings[setting] = Menu.Load(setting) or settings[setting]
 	end
-	
-	local function toggle(obj)
-		local setting = obj.setting
-		settings[setting] = not settings[setting]
-		Menu.Save(setting, settings[setting])
-	end
-	
-	local options = Chili.Control:New{
-		x        = 0,
-		width    = '100%',
-		height   = 35,
-		padding  = {0,0,0,0},
+
+	Menu.AddOption{
+		tab = 'Interface',
 		children = {
-			Chili.Label:New{caption='Chat',x=0,y=0},
-			Chili.Checkbox:New{caption='Auto-Hide Chat',width=200,y=15,right=0,
-				checked=settings.autohide,setting='autohide',OnChange={toggle}},
+			Chili.Label:New{caption='Chat',font={size=18},x='0%'},
+			Chili.Label:New{caption='Max Messages', x = 60},
+			Chili.Trackbar:New{
+				x        = '10%',
+				width    = '80%',
+				min      = 10,
+				max      = 100,
+				step     = 10,
+				value    = 100,
+				OnChange = {
+					function(_,value)
+						if log and #log.children > value then
+							for i=1, #log.children - value do
+								log:RemoveChild(log.children[1])
+							end
+						end
+						settings.msgCap = value
+					end	
+				},
+			},
+			Chili.Checkbox:New{
+				caption  = 'Auto-Hide Chat',
+				x        = '10%',
+				width    = '80%',
+				checked  = settings.autohide,
+				OnChange = {
+					function()
+						if settings.autohide then showChat() end
+						settings.autohide = not settings.autohide
+					end
+				}
+			},
 			Chili.Line:New{y=30,width='100%'}
 		}
 	}
-	
-	Menu.AddToStack('Interface', options)
 end
 
 local function getInline(r,g,b)
@@ -150,39 +194,16 @@ local function getInline(r,g,b)
 	end
 end
 
-local function mouseIsOverChat()
-	local x,y = Spring.GetMouseState()
-	y = screen.height - y -- chili has y axis with 0 at top!	
-	if x > window.x and x < window.x + window.width and y > 0 and ((msgWindow.visible and y < window.height) or (msgWindow.hidden and y < input.height)) then
-		return true
-	else
-		return false
-	end
-end
-
-local function showChat()
-	-- show chat
-	startTime = getTimer()
-	if msgWindow.hidden then
-		msgWindow:Show()
-	end
-end
-
-local function hideChat()
-	-- hide the chat, unless the mouse is hovering over the chat window
-	if msgWindow.visible and settings.autohide and not mouseIsOverChat() then
-		msgWindow:Hide()
-	end
-end
-
 function widget:Initialize()
 	
 	Chili  = WG.Chili
 	screen = Chili.Screen0
 	Menu   = WG.MainMenu
+	
 	if Menu then 
 		loadOptions() 
 	end
+	
 	loadWindow()
 	
 	-- load from console buffer
@@ -223,7 +244,7 @@ local function processLine(line)
 	-- get data from player roster 
 	local roster = getPlayerRoster()
 	local names = {}
-    
+	
 	for i=1,#roster do
 		names[roster[i][1]] = {
 			ID     = roster[i][2],
@@ -236,37 +257,37 @@ local function processLine(line)
 	-------------------------------
 	
 	local name = ''
-    local system = false
+	local system = false
 	
-    if (names[ssub(line,2,(sfind(line,"> ") or 1)-1)] ~= nil) then
-        -- Player Message
-        name = ssub(line,2,sfind(line,"> ")-1)
-        text = ssub(line,slen(name)+4)
-    elseif (names[ssub(line,2,(sfind(line,"] ") or 1)-1)] ~= nil) then
-        -- Spec Message
-        name = ssub(line,2,sfind(line,"] ")-1)
-        text = ssub(line,slen(name)+4)
-    elseif (names[ssub(line,2,(sfind(line,"(replay)") or 3)-3)] ~= nil) then
-        -- Spec Message (replay)
-        name = ssub(line,2,sfind(line,"(replay)")-3)
-        text = ssub(line,slen(name)+13)
-    elseif (names[ssub(line,1,(sfind(line," added point: ") or 1)-1)] ~= nil) then
-        -- Map point
-        name = ssub(line,1,sfind(line," added point: ")-1)
-        text = ssub(line,slen(name.." added point: ")+1)
-    elseif (ssub(line,1,1) == ">") then
-        -- Game Message
-        text = ssub(line,3)
-        system = true
+	if (names[ssub(line,2,(sfind(line,"> ") or 1)-1)] ~= nil) then
+		-- Player Message
+		name = ssub(line,2,sfind(line,"> ")-1)
+		text = ssub(line,slen(name)+4)
+	elseif (names[ssub(line,2,(sfind(line,"] ") or 1)-1)] ~= nil) then
+		-- Spec Message
+		name = ssub(line,2,sfind(line,"] ")-1)
+		text = ssub(line,slen(name)+4)
+	elseif (names[ssub(line,2,(sfind(line,"(replay)") or 3)-3)] ~= nil) then
+		-- Spec Message (replay)
+		name = ssub(line,2,sfind(line,"(replay)")-3)
+		text = ssub(line,slen(name)+13)
+	elseif (names[ssub(line,1,(sfind(line," added point: ") or 1)-1)] ~= nil) then
+		-- Map point
+		name = ssub(line,1,sfind(line," added point: ")-1)
+		text = ssub(line,slen(name.." added point: ")+1)
+	elseif (ssub(line,1,1) == ">") then
+		-- Game Message
+		text = ssub(line,3)
+		system = true
 	elseif sfind(line,'-> Version') or sfind(line,'ClientReadNet') or sfind(line,'Address') or (gameOver and sfind(line,'left the game')) then --surplus info when user connects
-        -- Filter out unwanted engine messages
+		-- Filter out unwanted engine messages
 		return _, true, system --ignore
 	end
-    
-    if WG.mutedPlayers and WG.mutedPlayers[name] then
-        -- Filter out muted players
-        return _,true, system --ignore 
-    end
+	
+	if WG.mutedPlayers and WG.mutedPlayers[name] then
+		-- Filter out muted players
+		return _,true, system --ignore 
+	end
 	
 	if names[name] then
 		local player = names[name]
@@ -302,21 +323,21 @@ function widget:AddConsoleLine(msg)
 	local text, ignore, system = processLine(msg)
 	if ignore then return end
 	
-    for i=0,2 do
-        local prevMsg = log.children[#log.children - i]
-        if prevMsg and (not system or i==0) and (text == prevMsg.text or text == prevMsg.origText) then
-            prevMsg.duplicates = prevMsg.duplicates + 1
-            prevMsg.origText = text
-            prevMsg:SetText(getInline{1,0,0}..(prevMsg.duplicates + 1)..'x \b'..text)
-            showChat()
-            return
-        end
-    end
-    
-    if #log.children>maxMessages then
-        log:RemoveChild(log.children[1])
-    end
-    
+	for i=0,2 do
+		local prevMsg = log.children[#log.children - i]
+		if prevMsg and (not system or i==0) and (text == prevMsg.text or text == prevMsg.origText) then
+			prevMsg.duplicates = prevMsg.duplicates + 1
+			prevMsg.origText = text
+			prevMsg:SetText(getInline{1,0,0}..(prevMsg.duplicates + 1)..'x \b'..text)
+			showChat()
+			return
+		end
+	end
+	
+	if #log.children > settings.msgCap then
+		log:RemoveChild(log.children[1])
+	end
+	
 	Chili.TextBox:New{
 		parent      = log,
 		text        = text,
@@ -353,6 +374,11 @@ function widget:KeyPress(key, mods, isRepeat)
 end
 
 function widget:Shutdown()
+
+	for setting,value in pairs(settings) do
+		Menu.Save(setting, value)
+	end
+	
 	sendCommands({'console 1', 'inputtextgeo default'})
 	setConfigString('InputTextGeo', '0.26 0.73 0.02 0.028') 
 end

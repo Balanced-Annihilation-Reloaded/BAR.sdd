@@ -1,5 +1,6 @@
 -- WIP
 --  TODO Reapply original spring settings on shutdown
+--    and handle spring settings better in general
 function widget:GetInfo()
 	return {
 		name    = 'Main Menu',
@@ -113,7 +114,7 @@ local function setCursor(cursorSet)
 end
 
 ----------------------------
--- Toggles widgets enabled/disabled when clicked
+-- Toggles widgets, enabled/disabled when clicked
 --  does not account for failed initialization of widgets yet
 local function toggleWidget(self)
 	widgetHandler:ToggleWidget(self.name)
@@ -128,7 +129,7 @@ local function toggleWidget(self)
 end
 
 ---------------------------- 
--- Adds widget to pertaining groups list of widgets
+-- Adds widget to the appropriate groups list of widgets
 local function groupWidget(name,wData)
 
 	local _, _, category = string.find(wData.basename, '([^_]*)')
@@ -240,7 +241,7 @@ local function makeWidgetList()
 end
 
 ---------------------------- 
---
+-- Toggles the menu visibility 
 local function showHide(tab)
 	local oTab = Settings.tabSelected
 	
@@ -259,7 +260,7 @@ local function showHide(tab)
 end
 
 ---------------------------- 
---
+-- Handles the selection of the tabs
 local function sTab(_,tabName)
   if Settings.tabSelected then mainMenu:RemoveChild(tabs[Settings.tabSelected]) end
   mainMenu:AddChild(tabs[tabName])
@@ -267,7 +268,7 @@ local function sTab(_,tabName)
 end
 
 ---------------------------- 
---
+-- Rebuilds widget list with new filter
 local function addFilter()
 	local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
 	wFilterString = editbox.text or ""
@@ -276,7 +277,7 @@ local function addFilter()
 end
 
 ---------------------------- 
---
+-- Saves a variable in the settings array
 local function save(index, data)
 	local old = Settings[index] or 'empty'
 	Settings[index] = data or nil
@@ -284,7 +285,7 @@ local function save(index, data)
 end
 
 ---------------------------- 
---
+-- Loads a variable from the settings array
 local function load(index)
 	local value = Settings[index] or nil
 	return value
@@ -303,7 +304,7 @@ local function addToStack(tab, control)
 end
 
 ---------------------------- 
---
+-- Creates a stack panel which can then be used as a parent to options
 local function addStack(obj)
 	local stack
 	if obj.scroll then
@@ -346,18 +347,21 @@ end
 
 
 ---------------------------- 
---
+-- Creates the original window in which all else is contained
 local function loadMainMenu()
 	local sizeData = load('mainMenuSize') or {400,200,500,400}
+	
+	-- Detects and fixes menu being off-screen
     local vsx,vsy = Spring.GetViewGeometry()
     if vsx < sizeData[1]+sizeData[3]-100 or sizeData[1] < 100 then sizeData[1] = 400 end
     if vsy < sizeData[2]+sizeData[4]-100 or sizeData[2] < 100 then sizeData[3] = 500 end
+    
 	mainMenu = Chili.Window:New{
 		parent    = Chili.Screen0,
-		x         = sizeData[1] or 400, 
-		y         = sizeData[2] or 200,
-		width     = sizeData[3] or 500,
-		height    = sizeData[4] or 400,
+		x         = sizeData[1], 
+		y         = sizeData[2],
+		width     = sizeData[3],
+		height    = sizeData[4],
 		padding   = {5,8,5,5}, 
 		draggable = true,
 		resizable = true,
@@ -385,7 +389,8 @@ local function loadMainMenu()
 end
 
 ---------------------------- 
--- 
+-- TODO: Create different general defaults such as high, low, etc.. 
+--   and possibly custom (maybe even make custom settings savable/loadable)
 
 --local waterConvert = {['Basic']=0,['Reflective']=1,['Dynamic']=2,['Refractive']=3,['Bump-Mapped']=4} -- name -> setting value
 local waterConvert_ID = {['Basic']=1,['Reflective']=2,['Dynamic']=3,['Refractive']=4,['Bump-Mapped']=5} -- name -> listID
@@ -650,16 +655,26 @@ local function Options()
 	
 end
 
+-----------------------------
+-- Creates a tab, mostly as an auxillary function for addControl()
 local function createTab(tab)
 	tabs[tab] = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%'}
 	menuTabs:AddChild(Chili.TabBarItem:New{caption = tab})
 end
 
+-----------------------------
+-- Adds a chili control to a tab
+--  usage is Menu.AddControl('nameOfTab', controlToBeAdded)
+--  if tab doesn't exist, one is created
+--  this is useful if you want a widget to get it's own tab (endgraph is a good example)
+--  this function probably won't change
 local function addControl(tab,control)
 	if not tabs[tab] then createTab(tab) end
 	tabs[tab]:AddChild(control)
 end
 
+-----------------------------
+-- 
 local function addChoice(tab,control,obj)
 	if not tabs[tab] then createTab(tab) end
 	if obj.name and tabs[tab].childrenByName[obj.name] then 
@@ -688,12 +703,15 @@ local function globalize()
 	
 	Menu.Save       = save
 	Menu.Load       = load
-	Menu.ShowHide   = showHide
-	Menu.AddChoice  = addChoice
 	Menu.AddControl = addControl
-	Menu.AddToStack = addToStack
+	Menu.ShowHide   = showHide
+	
+	-- These functions (name and/or usage) are likely to change
+	Menu.AddOption  = addToStack
+	Menu.AddChoice  = addChoice
 	Menu.Checkbox   = checkbox
 	Menu.Slider     = slider
+	------------------------
 	
 	WG.MainMenu = Menu
 end
@@ -719,7 +737,7 @@ function widget:KeyPress(key,mod)
 end
 
 -------------------------- 
---
+-- Initial function called by widget handler
 function widget:Initialize()
 	Chili = WG.Chili
 	Chili.theme.skin.general.skinName = Settings['Skin'] or 'Robocracy'
@@ -729,8 +747,8 @@ function widget:Initialize()
 	makeWidgetList()
 	loadMainMenu()
 	
-	-------------------------- 
-	-----     Hotkeys       --
+	-----------------------
+	---     Hotkeys     ---
 	local openMenu    = function() showHide('Info') end
 	local openWidgets = function() showHide('Interface') end
 	local hideMenu    = function() if mainMenu.visible then mainMenu:Hide() end end
@@ -744,6 +762,7 @@ function widget:Initialize()
 	spSendCommands('bind f11 openWidgets')
 	spSendCommands('bind esc hideMenu')
 end
+
 -------------------------- 
 --
 function widget:Update()
@@ -752,8 +771,9 @@ function widget:Update()
 		makeWidgetList()
 	end
 end
+
 -------------------------- 
---
+-- Called by widget handler when this widget either crashes or is disabled
 function widget:Shutdown()
 	spSendCommands('unbind S+esc openMenu')
 	spSendCommands('unbind f11 openWidgets')

@@ -1,6 +1,8 @@
 -- WIP
 --  TODO Reapply original spring settings on shutdown
 --    and handle spring settings better in general
+--  TODO seperate engine options and handling to seperate widget
+--    same with widget/interface tab
 function widget:GetInfo()
 	return {
 		name    = 'Main Menu',
@@ -24,7 +26,7 @@ local DefaultSettings = {}
 
 -- Defaults ---  
 -- DefaultSettings can only contain things from springsettings
--- not all setttings appear here, only ones for which we actually want to overwrite the defaults when "reset to defaults" is clicked
+-- not all settings appear here, only ones for which we actually want to overwrite the defaults when "reset to defaults" is clicked
 DefaultSettings['Water']            = 'Reflective'
 DefaultSettings['Shadows']          = 'Medium'
 
@@ -45,21 +47,21 @@ DefaultSettings['DynamicSky']       = false
 DefaultSettings['DynamicSun']       = false
 
 -- load relevant things from springsettings 
-Settings['DistIcon'] = Spring.GetConfigInt('DistIcon')
-Settings['DistDraw'] = Spring.GetConfigInt('DistDraw')
-Settings['MaxNanoParticles'] = Spring.GetConfigInt('MaxNanoParticles')
-Settings['MaxParticles'] = Spring.GetConfigInt('MaxParticles')
-Settings['MapBorder'] = Spring.GetConfigInt('MapBorder')
-Settings['AdvMapShading'] = Spring.GetConfigInt('AdvMapShading')
-Settings['AdvModelShading'] = Spring.GetConfigInt('AdvModelShading')
-Settings['AllowDeferredMapRendering'] = Spring.GetConfigInt('AllowDeferredMapRendering')
+Settings['DistIcon']                    = Spring.GetConfigInt('DistIcon')
+Settings['DistDraw']                    = Spring.GetConfigInt('DistDraw')
+Settings['MaxNanoParticles']            = Spring.GetConfigInt('MaxNanoParticles')
+Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles')
+Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder')
+Settings['AdvMapShading']               = Spring.GetConfigInt('AdvMapShading')
+Settings['AdvModelShading']             = Spring.GetConfigInt('AdvModelShading')
+Settings['AllowDeferredMapRendering']   = Spring.GetConfigInt('AllowDeferredMapRendering')
 Settings['AllowDeferredModelRendering'] = Spring.GetConfigInt('AllowDeferredModelRendering')
-Settings['DrawTrees'] = Spring.GetConfigInt('DrawTrees')
-Settings['MapMarks'] = Spring.GetConfigInt('MapMarks')   
-Settings['DynamicSky'] = Spring.GetConfigInt('DynamicSky')
-Settings['DynamicSky'] = Spring.GetConfigInt('DynamicSun')
-Settings['Water'] = Spring.GetConfigInt('Water')
-Settings['Shadows'] = Spring.GetConfigInt('Shadows')
+Settings['DrawTrees']                   = Spring.GetConfigInt('DrawTrees')
+Settings['MapMarks']                    = Spring.GetConfigInt('MapMarks')   
+Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSky')
+Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSun')
+Settings['Water']                       = Spring.GetConfigInt('Water')
+Settings['Shadows']                     = Spring.GetConfigInt('Shadows')
 -- I don't know how to check if luaui healthbars is set to 1 or not!
 
 Settings['searchWidgetDesc'] = true
@@ -145,7 +147,7 @@ end
 
 ---------------------------- 
 -- Decides which group each widget goes into
-local function sortWidgetList(wFilterString)
+local function sortWidgetList()
 	local wFilterString = string.lower(wFilterString or '')
 	for name,wData in pairs(widgetHandler.knownWidgets) do
 	
@@ -241,7 +243,8 @@ local function makeWidgetList()
 end
 
 ---------------------------- 
--- Toggles the menu visibility 
+-- Toggles the menu visibility
+--  also handles tab selection (e.g. f11 was pressed and menu opens to 'Interface')
 local function showHide(tab)
 	local oTab = Settings.tabSelected
 	
@@ -315,7 +318,7 @@ local function addStack(obj)
 			bottom   = obj.bottom or 0,
 			children = {
 				Chili.StackPanel:New{
-					name        = 'Stack',
+					name        = obj.name or 'Stack',
 					x           = 0,
 					y           = 0,
 					width       = '100%',
@@ -324,13 +327,14 @@ local function addStack(obj)
 					padding     = {0,0,0,0},
 					itemPadding = {0,0,0,0},
 					itemMargin  = {0,0,0,0},
+					children    = obj.children or {},
 					preserverChildrenOrder = true
 				}
 			}
 		}
 	else
 		stack = Chili.StackPanel:New{
-			name        = 'Stack',
+			name        = obj.name or 'Stack',
 			x           = obj.x or 0,
 			y           = obj.y or 0,
 			width       = obj.width or '50%',
@@ -339,6 +343,7 @@ local function addStack(obj)
 			padding     = {0,0,0,0},
 			itemPadding = {0,0,0,0},
 			itemMargin  = {0,0,0,0},
+			children    = obj.children or {},
 			preserverChildrenOrder = true
 		}
 	end
@@ -396,6 +401,7 @@ end
 local waterConvert_ID = {['Basic']=1,['Reflective']=2,['Dynamic']=3,['Refractive']=4,['Bump-Mapped']=5} -- name -> listID
 --local shadowConvert = {['Off']='0',['Very Low']='2 2014',['Low']='1 2014',['Medium']='2 2048',['High']='1 2048',['Very High']='1 4096'}
 local shadowConvert_ID = {['Off']=1,['Very Low']=2,['Low']=3,['Medium']=4,['High']=5,['Very High']=6}
+
 local function boolConvert (arg)
     if (arg==true) then return 1 else return 0 end
 end
@@ -448,9 +454,9 @@ local comboBox = function(obj)
 	local options = obj.options or obj.labels
 	
 	local comboBox = Chili.Control:New{
-        name    = obj.name,
+		name    = obj.name,
 		y       = obj.y,
-		width   = '45%',
+		width   = obj.width or '100%',
 		height  = 40,
 		x       = 0,
 		padding = {0,0,0,0}
@@ -463,23 +469,23 @@ local comboBox = function(obj)
     
     
     local function applySetting(obj, listID)
-        local value   = obj.options[listID] or '' 
-        local setting = obj.name or ''
-
-        if setting == 'Skin' then
-            Chili.theme.skin.general.skinName = value
-            Spring.Echo('To see skin changes; \'/luaui reload\'')
-        elseif setting == 'Cursor' then 
-            setCursor(value)
-            Settings['CursorName'] = value
-        elseif setting == 'ShowHealthBars' then
-            spSendCommands('luaui showhealthbars '..value)
-        else 
-            spSendCommands(setting..' '..value)
-        end
-
-        Spring.Echo(setting.." set to "..value) --TODO: this is misleading, some settings require a restart to be applied
-        Settings[setting] =  obj.items[obj.selected]
+		local value   = obj.options[listID] or '' 
+		local setting = obj.name or ''
+		
+		if setting == 'Skin' then
+			Chili.theme.skin.general.skinName = value
+			Spring.Echo('To see skin changes; \'/luaui reload\'')
+		elseif setting == 'Cursor' then 
+			setCursor(value)
+			Settings['CursorName'] = value
+		elseif setting == 'ShowHealthBars' then
+			spSendCommands('luaui showhealthbars '..value)
+		else 
+			spSendCommands(setting..' '..value)
+		end
+		
+		-- Spring.Echo(setting.." set to "..value) --TODO: this is misleading, some settings require a restart to be applied
+		Settings[setting] =  obj.items[obj.selected]
     end
 	
 	comboBox:AddChild(
@@ -522,7 +528,7 @@ local checkBox = function(obj)
 		checked   = Settings[obj.name] or false,
 		tooltip   = obj.tooltip or '',
 		y         = obj.y,
-		width     = '45%',
+		width     = obj.width or '100%',
 		height    = 20,
 		x         = 0,
 		textalign ='left',
@@ -540,7 +546,7 @@ local slider = function(obj)
 	local trackbar = Chili.Control:New{
         name    = obj.name,
 		y       = obj.y or 0,
-		width   = '45%',
+		width   = obj.width or '100%',
 		height  = 40,
 		x       = 0,
 		padding = {0,0,0,0}
@@ -587,30 +593,34 @@ local function Options()
 	tabs.Graphics = Chili.ScrollPanel:New{x = 0, y = 20, bottom = 20, width = '100%', borderColor = {0,0,0,0},backgroundColor = {0,0,0,0},
 		children = {
 			addStack{x='50%'},
-			comboBox{y=0,name='Water',
-				labels={'Basic','Reflective','Dynamic','Refractive','Bump-Mapped'},
-				options={0,1,2,3,4},},
-			comboBox{y=40,name='Shadows',
-				labels={'Off','Very Low','Low','Medium','High','Very High'},
-				options={'0','2 1024','1 1024','2 2048','1 2048','1 4096'},},
-			slider{y=80,name='DistDraw',title='Unit Draw Distance', max = 600, step = 25},
-			slider{y=120,name='DistIcon',title='Unit Icon Distance', max = 600, step = 25},
-			slider{y=160,name='MaxParticles',title='Max Particles', max = 5000},
-			slider{y=200,name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
-			checkBox{y = 250, title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},
-			checkBox{y = 270, title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
-			checkBox{y = 290, title = 'Deferred Map Shading', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
-			checkBox{y = 310, title = 'Deferred Model Shading', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
-			checkBox{y = 350, title = 'Draw Engine Trees', name = 'DrawTrees', tooltip = "Enable/Disable rendering of engine trees"},
-			checkBox{y = 370, title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
-			checkBox{y = 390, title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
-			checkBox{y = 410, title = 'Show Health Bars', name = 'ShowHealthBars', tooltip = "Enable/Disable rendering of health-bars for units"},
-			checkBox{y = 430, title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
-			checkBox{y = 450, title = 'Show Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"},
-			checkBox{y = 490, title = 'Hardware Cursor', name = 'HardwareCursor', tooltip = "Enables/Disables hardware mouse-cursor support"},
-			checkBox{y = 510, title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},
-			checkBox{y = 530, title = 'OpenGL safe-mode', name = 'SafeGL', tooltip = "Enables/Disables OpenGL safe-mode"}, --does this actually do anything?!
-            Chili.Button:New{y=560,name="ResetDefaults",height=20,width='70%',caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},
+			addStack{x = 0, name = 'EngineSettings',
+				children = {
+					comboBox{y=0,name='Water',
+						labels={'Basic','Reflective','Dynamic','Refractive','Bump-Mapped'},
+						options={0,1,2,3,4},},
+					comboBox{y=40,name='Shadows',
+						labels={'Off','Very Low','Low','Medium','High','Very High'},
+						options={'0','2 1024','1 1024','2 2048','1 2048','1 4096'},},
+					slider{name='DistDraw',title='Unit Draw Distance', max = 600, step = 25},
+					slider{name='DistIcon',title='Unit Icon Distance', max = 600, step = 25},
+					slider{name='MaxParticles',title='Max Particles', max = 5000},
+					slider{name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
+					checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},
+					checkBox{title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
+					checkBox{title = 'Deferred Map Shading', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
+					checkBox{title = 'Deferred Model Shading', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
+					checkBox{title = 'Draw Engine Trees', name = 'DrawTrees', tooltip = "Enable/Disable rendering of engine trees"},
+					checkBox{title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
+					checkBox{title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
+					checkBox{title = 'Show Health Bars', name = 'ShowHealthBars', tooltip = "Enable/Disable rendering of health-bars for units"},
+					checkBox{title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
+					checkBox{title = 'Show Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"},
+					checkBox{title = 'Hardware Cursor', name = 'HardwareCursor', tooltip = "Enables/Disables hardware mouse-cursor support"},
+					checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},
+					checkBox{title = 'OpenGL safe-mode', name = 'SafeGL', tooltip = "Enables/Disables OpenGL safe-mode"}, --does this actually do anything?!
+					Chili.Button:New{y=560,name="ResetDefaults",height=20,width='100%',caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},
+				}
+			}
 		}
 	}
 
@@ -629,9 +639,9 @@ local function Options()
 
 			Chili.Line:New{width='50%',y=80},
 			
-			comboBox{name='Skin',y=90,
+			comboBox{name='Skin',y=90, width='45%',
 				labels=Chili.SkinHandler.GetAvailableSkins()},
-			comboBox{name='Cursor',y=125,
+			comboBox{name='Cursor',y=125, width='45%',
 				labels={'Default','ZK Animated','ZK Static','CA Classic','CA Static','Erom','Masse','Lathan','K_haos_girl'},
 				options={'ba','zk','zk_static','ca','ca_static','erom','masse','Lathan','k_haos_girl'}},
 			
@@ -707,7 +717,7 @@ local function globalize()
 	Menu.ShowHide   = showHide
 	
 	-- These functions (name and/or usage) are likely to change
-	Menu.AddOption  = addToStack
+	Menu.AddToStack  = addToStack
 	Menu.AddChoice  = addChoice
 	Menu.Checkbox   = checkbox
 	Menu.Slider     = slider
@@ -730,8 +740,7 @@ end
 function widget:KeyPress(key,mod)
 	local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
 	if key==13 and editbox.state.focused then
-		makeWidgetList(editbox.text)
-		editbox:SetText('')
+		addFilter()
 		return true
 	end
 end

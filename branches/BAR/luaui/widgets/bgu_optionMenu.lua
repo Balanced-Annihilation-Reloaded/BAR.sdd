@@ -307,6 +307,15 @@ local function addToStack(tab, control)
 end
 
 ---------------------------- 
+--
+local function addOption(obj)
+	local stack = tabs[obj.tab]:GetObjectByName(obj.stack or 'Stack')
+	for i = 1, #obj.children do
+		stack:AddChild(obj.children[i])
+	end
+end
+
+---------------------------- 
 -- Creates a stack panel which can then be used as a parent to options
 local function addStack(obj)
 	local stack
@@ -716,8 +725,11 @@ local function globalize()
 	Menu.AddControl = addControl
 	Menu.ShowHide   = showHide
 	
+	-- This will likely be replaced ( but will remain for now as is)
+	Menu.AddToStack = addToStack
+	
 	-- These functions (name and/or usage) are likely to change
-	Menu.AddToStack  = addToStack
+	Menu.AddOption  = addOption
 	Menu.AddChoice  = addChoice
 	Menu.Checkbox   = checkbox
 	Menu.Slider     = slider

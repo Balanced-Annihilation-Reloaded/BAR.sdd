@@ -47,21 +47,22 @@ DefaultSettings['DynamicSky']       = false
 DefaultSettings['DynamicSun']       = false
 
 -- load relevant things from springsettings 
-Settings['DistIcon']                    = Spring.GetConfigInt('DistIcon')
-Settings['DistDraw']                    = Spring.GetConfigInt('DistDraw')
-Settings['MaxNanoParticles']            = Spring.GetConfigInt('MaxNanoParticles')
-Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles')
-Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder')
-Settings['AdvMapShading']               = Spring.GetConfigInt('AdvMapShading')
-Settings['AdvModelShading']             = Spring.GetConfigInt('AdvModelShading')
-Settings['AllowDeferredMapRendering']   = Spring.GetConfigInt('AllowDeferredMapRendering')
-Settings['AllowDeferredModelRendering'] = Spring.GetConfigInt('AllowDeferredModelRendering')
-Settings['DrawTrees']                   = Spring.GetConfigInt('DrawTrees')
-Settings['MapMarks']                    = Spring.GetConfigInt('MapMarks')   
-Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSky')
-Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSun')
-Settings['Water']                       = Spring.GetConfigInt('Water')
-Settings['Shadows']                     = Spring.GetConfigInt('Shadows')
+Settings['DistIcon']                    = Spring.GetConfigInt('DistIcon', 200)
+Settings['DistDraw']                    = Spring.GetConfigInt('DistDraw', 200)
+Settings['MaxNanoParticles']            = Spring.GetConfigInt('MaxNanoParticles', 1000)
+Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles', 1000)
+Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 
+Settings['AdvMapShading']               = Spring.GetConfigInt('AdvMapShading', 1) == 1
+Settings['AdvModelShading']             = Spring.GetConfigInt('AdvModelShading', 1) == 1
+Settings['AllowDeferredMapRendering']   = Spring.GetConfigInt('AllowDeferredMapRendering') == 1
+Settings['AllowDeferredModelRendering'] = Spring.GetConfigInt('AllowDeferredModelRendering') == 1
+Settings['DrawTrees']                   = Spring.GetConfigInt('DrawTrees') == 1
+Settings['MapMarks']                    = Spring.GetConfigInt('MapMarks') == 1
+Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSky') == 1
+Settings['DynamicSun']                  = Spring.GetConfigInt('DynamicSun') == 1
+
+Settings['Water']   = 'Reflective'
+Settings['Shadows'] = 'Medium'
 -- I don't know how to check if luaui healthbars is set to 1 or not!
 
 Settings['searchWidgetDesc'] = true
@@ -221,7 +222,7 @@ local function makeWidgetList()
 				
 				local author = list[b].wData.author or "Unkown"
 				local desc = list[b].wData.desc or "No Description"
-                local fromZip = list[b].wData.fromZip and "" or "*"
+				local fromZip = list[b].wData.fromZip and "" or "*"
 				Chili.Checkbox:New{
 					name      = list[b].name,
 					caption   = list[b].name .. fromZip,
@@ -366,10 +367,10 @@ local function loadMainMenu()
 	local sizeData = load('mainMenuSize') or {400,200,500,400}
 	
 	-- Detects and fixes menu being off-screen
-    local vsx,vsy = Spring.GetViewGeometry()
-    if vsx < sizeData[1]+sizeData[3]-100 or sizeData[1] < 100 then sizeData[1] = 400 end
-    if vsy < sizeData[2]+sizeData[4]-100 or sizeData[2] < 100 then sizeData[3] = 500 end
-    
+	local vsx,vsy = Spring.GetViewGeometry()
+	if vsx < sizeData[1]+sizeData[3]-100 or sizeData[1] < 100 then sizeData[1] = 400 end
+	if vsy < sizeData[2]+sizeData[4]-100 or sizeData[2] < 100 then sizeData[3] = 500 end
+	
 	mainMenu = Chili.Window:New{
 		parent    = Chili.Screen0,
 		x         = sizeData[1], 
@@ -406,56 +407,31 @@ end
 -- TODO: Create different general defaults such as high, low, etc.. 
 --   and possibly custom (maybe even make custom settings savable/loadable)
 
---local waterConvert = {['Basic']=0,['Reflective']=1,['Dynamic']=2,['Refractive']=3,['Bump-Mapped']=4} -- name -> setting value
 local waterConvert_ID = {['Basic']=1,['Reflective']=2,['Dynamic']=3,['Refractive']=4,['Bump-Mapped']=5} -- name -> listID
---local shadowConvert = {['Off']='0',['Very Low']='2 2014',['Low']='1 2014',['Medium']='2 2048',['High']='1 2048',['Very High']='1 4096'}
 local shadowConvert_ID = {['Off']=1,['Very Low']=2,['Low']=3,['Medium']=4,['High']=5,['Very High']=6}
 
-local function boolConvert (arg)
-    if (arg==true) then return 1 else return 0 end
-end
-
 local function applyDefaultSettings()
-    for setting,value in pairs(DefaultSettings) do
-        Settings[setting] = value
-        
-        -- hacky code, sorry!
-        if type(value)=='boolean' then 
-            --checkbox
-            for i=1,#tabs.Graphics.children do
-                if (tabs.Graphics.children[i].name==setting) then
-                    if value~=tabs.Graphics.children[i].checked then
-                        tabs.Graphics.children[i]:Toggle()
-                    end
-                end
-            end
-            spSendCommands(setting..' '..boolConvert(value)) -- i couldn't figure out how to use the custom OnChange for checkboxes
-        elseif setting=='Water' then 
-            --combobox
-            for i=1,#tabs.Graphics.children do
-                if (tabs.Graphics.children[i].name==setting) then
-                    tabs.Graphics.children[i].children[2]:Select(waterConvert_ID[value]) -- children[2] seems to always work, but is needed because the comboBox is not a child but a grandchild of tabs.Graphics
-
-                end
-            end
-        elseif setting=='Shadows' then 
-            --combobox
-            for i=1,#tabs.Graphics.children do
-                if (tabs.Graphics.children[i].name==setting) then
-                    tabs.Graphics.children[i].children[2]:Select(shadowConvert_ID[value])
-                end
-            end                
-        else 
-            --slider
-            for i=1,#tabs.Graphics.children do
-                if (tabs.Graphics.children[i].name==setting) then
-                    tabs.Graphics.children[i].children[2]:SetValue(value) 
-                end
-            end                
-        end
-    end
+	for setting,value in pairs(DefaultSettings) do
+		Settings[setting] = value
+		engineStack = tabs['Graphics']:GetObjectByName('EngineSettings')
+		
+		if type(value)=='boolean' then
+			local checkbox = engineStack:GetObjectByName(setting)
+			if checkbox.checked ~= value then checkbox:Toggle() end
+			spSendCommands(setting..' '..(value and 1 or 0))
+		elseif setting=='Water' then 
+			-- comboBox 
+			engineStack:GetObjectByName(setting):Select(waterConvert_ID[value])
+		elseif setting=='Shadows' then
+			-- comboBox
+			engineStack:GetObjectByName(setting):Select(shadowConvert_ID[value])          
+		else 
+			--slider
+			engineStack:GetObjectByName(setting):SetValue(value)         
+		end
+	end
 end
-    
+	
 ---------------------------- 
 -- Creates a combobox style control
 local comboBox = function(obj)
@@ -463,7 +439,6 @@ local comboBox = function(obj)
 	local options = obj.options or obj.labels
 	
 	local comboBox = Chili.Control:New{
-		name    = obj.name,
 		y       = obj.y,
 		width   = obj.width or '100%',
 		height  = 40,
@@ -475,9 +450,9 @@ local comboBox = function(obj)
 	for i = 1, #obj.labels do
 		if obj.labels[i] == Settings[obj.name] then selected = i end
 	end
-    
-    
-    local function applySetting(obj, listID)
+	
+	
+	local function applySetting(obj, listID)
 		local value   = obj.options[listID] or '' 
 		local setting = obj.name or ''
 		
@@ -495,7 +470,7 @@ local comboBox = function(obj)
 		
 		-- Spring.Echo(setting.." set to "..value) --TODO: this is misleading, some settings require a restart to be applied
 		Settings[setting] =  obj.items[obj.selected]
-    end
+	end
 	
 	comboBox:AddChild(
 		Chili.Label:New{
@@ -553,7 +528,6 @@ local slider = function(obj)
 	local obj = obj
 	
 	local trackbar = Chili.Control:New{
-        name    = obj.name,
 		y       = obj.y or 0,
 		width   = obj.width or '100%',
 		height  = 40,
@@ -610,8 +584,8 @@ local function Options()
 					comboBox{y=40,name='Shadows',
 						labels={'Off','Very Low','Low','Medium','High','Very High'},
 						options={'0','2 1024','1 1024','2 2048','1 2048','1 4096'},},
-					slider{name='DistDraw',title='Unit Draw Distance', max = 600, step = 25},
-					slider{name='DistIcon',title='Unit Icon Distance', max = 600, step = 25},
+					slider{name='DistDraw',title='Unit Draw Distance', max = 600, step = 1},
+					slider{name='DistIcon',title='Unit Icon Distance', max = 600, step = 1},
 					slider{name='MaxParticles',title='Max Particles', max = 5000},
 					slider{name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
 					checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},
@@ -627,7 +601,7 @@ local function Options()
 					checkBox{title = 'Hardware Cursor', name = 'HardwareCursor', tooltip = "Enables/Disables hardware mouse-cursor support"},
 					checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},
 					checkBox{title = 'OpenGL safe-mode', name = 'SafeGL', tooltip = "Enables/Disables OpenGL safe-mode"}, --does this actually do anything?!
-					Chili.Button:New{y=560,name="ResetDefaults",height=20,width='100%',caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},
+					Chili.Button:New{name="ResetDefaults",height=20,width='100%',caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},
 				}
 			}
 		}

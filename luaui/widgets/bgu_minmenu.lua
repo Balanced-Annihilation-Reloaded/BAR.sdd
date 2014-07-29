@@ -13,7 +13,7 @@ function widget:GetInfo()
 end
 
 local spGetFPS = Spring.GetFPS
-local Chili
+local Chili, Menu
 local clockType = "ingame" -- or "system", meaning ingame time or system time
 local oTime,rTime
 
@@ -37,20 +37,15 @@ local function setRealTime(rTime)
 end
 
 local function loadOptions()
-	Menu = WG.MainMenu
 	clockType = Menu.Load('clockType') or clockType
 
-	local options = Chili.Control:New{
-		x        = 0,
-		width    = '100%',
-		height   = 35,
-		padding  = {0,0,0,0},
+	Menu.AddOption{
+		tab      = 'Interface',
 		children = {
-			Chili.Label:New{caption='Clock',x=0,y=0},
+			Chili.Label:New{caption='Clock',x='0%',fontsize=18},
 			Chili.ComboBox:New{
-				width    = 200,
-				y        = 15,
-				right    = 0,
+				x        = '10%',
+				width    = '80%',
 				items    = {"Ingame time", "System clock"},
 				selected = (clockType=="ingame" and 1) or 2,
 				OnSelect = {
@@ -66,11 +61,9 @@ local function loadOptions()
 					end
 				}
 			},
-			Chili.Line:New{y=30,width='100%'},
+			Chili.Line:New{width='100%'},
 		}
 	}
-	
-	Menu.AddToStack('Interface', options)
 	
 	if clockType=='ingame' then
 		timeLbl:SetCaption('\255\255\127\0 00:00')
@@ -115,9 +108,12 @@ local function loadMinMenu()
 end
 
 function widget:Initialize()
-	Chili = WG.Chili
+	Chili = WG.Chili	
+	Menu = WG.MainMenu
 	loadMinMenu()
-	loadOptions()
+	if Menu then
+		loadOptions()
+	end
 end
 
 function widget:Update()

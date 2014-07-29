@@ -149,8 +149,8 @@ local function loadOptions()
 	Menu.AddOption{
 		tab = 'Interface',
 		children = {
-			Chili.Label:New{caption='Chat',font={size=18},x='0%'},
-			Chili.Label:New{caption='Max Messages', x = 60},
+			Chili.Label:New{caption='Chat',fontsize=18,x='0%'},
+			Chili.Label:New{caption='Max Messages'},
 			Chili.Trackbar:New{
 				x        = '10%',
 				width    = '80%',
@@ -181,7 +181,7 @@ local function loadOptions()
 					end
 				}
 			},
-			Chili.Line:New{y=30,width='100%'}
+			Chili.Line:New{width='100%'}
 		}
 	}
 end

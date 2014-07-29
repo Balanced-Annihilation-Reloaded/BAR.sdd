@@ -269,23 +269,21 @@ function widget:Initialize()
     if not Chili then return end
     screen = Chili.Screen0
     Menu   = WG.MainMenu
-    local options = Chili.Control:New{
-        x        = 0,
-        width    = '100%',
-        height   = 65,
-        padding  = {0,0,0,0},
-        children = {
-            Chili.Label:New{caption='Highlight Units',x=0,y=0},
-            Chili.Checkbox:New{caption='Show platters',width=200,y=15,right=0,
-                checked=drawPlatter,setting=drawPlatter,OnChange={function() drawPlatter = not drawPlatter; end}}, --toggle doesn't work
-            Chili.Checkbox:New{caption='Use XRay shader',width=200,y=30,right=0,
-                checked=drawXRayShader,setting=drawXRayShader,OnChange={function() drawXRayShader = not drawXRayShader; end}},
-            Chili.Checkbox:New{caption='Highlight allies',width=200,y=45,right=0,
-                checked=highlightAllyTeam,setting=highlightAllyTeam,OnChange={function() highlightAllyTeam = not highlightAllyTeam; end}},
-            Chili.Line:New{y=60,width='100%'}
+    
+    Menu.AddOption{
+			tab = 'Interface',
+			children = {
+				Chili.Label:New{caption='Highlight Units',x='0%',fontsize=18},
+				Chili.Checkbox:New{caption='Show platters',x='10%',width='80%',
+						checked=drawPlatter,setting=drawPlatter,OnChange={function() drawPlatter = not drawPlatter; end}}, --toggle doesn't work
+				Chili.Checkbox:New{caption='Use XRay shader',x='10%',width='80%',
+						checked=drawXRayShader,setting=drawXRayShader,OnChange={function() drawXRayShader = not drawXRayShader; end}},
+				Chili.Checkbox:New{caption='Highlight allies',x='10%',width='80%',
+						checked=highlightAllyTeam,setting=highlightAllyTeam,OnChange={function() highlightAllyTeam = not highlightAllyTeam; end}},
+				Chili.Line:New{width='100%'}
         }
-    }	
-    Menu.AddToStack('Interface', options)
+    }
+    
 end
 
 function widget:Shutdown()    

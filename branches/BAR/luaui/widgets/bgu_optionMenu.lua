@@ -1,8 +1,10 @@
 -- WIP
---  TODO Reapply original spring settings on shutdown
---    and handle spring settings better in general
---  TODO seperate engine options and handling to seperate widget
---    same with widget/interface tab
+-- Look at the globalize function for an explanation on the 'API' to add options to menu from other widgets
+--  as of writing this it is around line 700
+
+-- TODO Handle spring settings better in general
+-- TODO possibly seperate engine options and handling to seperate widget
+--   same with widget/interface tab
 function widget:GetInfo()
 	return {
 		name    = 'Main Menu',
@@ -15,6 +17,7 @@ function widget:GetInfo()
 		enabled = true
 	}
 end
+
 
 local spSendCommands = Spring.SendCommands
 local spgetFPS       = Spring.GetFPS
@@ -47,11 +50,11 @@ DefaultSettings['DynamicSky']       = false
 DefaultSettings['DynamicSun']       = false
 
 -- load relevant things from springsettings 
-Settings['DistIcon']                    = Spring.GetConfigInt('DistIcon', 200)
+Settings['DistIcon']                    = Spring.GetConfigInt('DistIcon', 200) -- number is used if no config is set
 Settings['DistDraw']                    = Spring.GetConfigInt('DistDraw', 200)
 Settings['MaxNanoParticles']            = Spring.GetConfigInt('MaxNanoParticles', 1000)
 Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles', 1000)
-Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 
+Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 -- turn 0/1 to bool
 Settings['AdvMapShading']               = Spring.GetConfigInt('AdvMapShading', 1) == 1
 Settings['AdvModelShading']             = Spring.GetConfigInt('AdvModelShading', 1) == 1
 Settings['AllowDeferredMapRendering']   = Spring.GetConfigInt('AllowDeferredMapRendering') == 1
@@ -699,11 +702,35 @@ local function globalize()
 	Menu.AddControl = addControl
 	Menu.ShowHide   = showHide
 	
+	-- This will be primary function for adding options to the menu
+	--  the name may change but the general usage should stay the same
+	Menu.AddOption  = addOption
+	-- Example Usage
+	-- Menu.AddOption{
+	--   tab      = 'Interface',
+	--   children = {
+	--     Chili.Label:New{caption='Clock',x='0%',fontsize=18},
+	--     Chili.ComboBox:New{
+	--        x        = '10%',
+	--        width    = '80%',
+	--        items    = {"Option 1", "Option 2", "Option 3"},
+	--        selected = (clockType=="ingame" and 1) or 2,
+	--        OnSelect = {
+	--          function(_,sel)
+	--            Spring.Echo("Option "..sel.." Selected")
+	--          end
+	-- 			  }
+	-- 		},
+	-- 		Chili.Line:New{width='100%'},
+	-- 	}
+	-- }
+	
+	
+	
 	-- This will likely be replaced ( but will remain for now as is)
 	Menu.AddToStack = addToStack
 	
-	-- These functions (name and/or usage) are likely to change
-	Menu.AddOption  = addOption
+	-- These will more than likely be removed
 	Menu.AddChoice  = addChoice
 	Menu.Checkbox   = checkbox
 	Menu.Slider     = slider

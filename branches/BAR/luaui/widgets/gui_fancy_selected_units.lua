@@ -559,6 +559,37 @@ function widget:Initialize()
 	SetupCommandColors(false)
 	
 	currentClock = os.clock()
+	
+	local Chili = WG.Chili
+	local Menu = WG.MainMenu
+	if not Menu then return end
+	
+	Menu.AddOption{
+		tab      = 'Interface',
+		children = {
+			Chili.Label:New{caption='Fancy Units',x='0%',fontsize=18},
+			Chili.ComboBox:New{
+				x        = '10%',
+				width    = '80%',
+				items    = {
+					OPTIONS[1].name,
+					OPTIONS[2].name,
+					OPTIONS[3].name,
+					OPTIONS[4].name,
+					OPTIONS[5].name,
+					OPTIONS[6].name,
+				},
+				selected = 1,
+				OnSelect = {
+					function(_,sel)
+						currentOption = sel
+						loadConfig()
+					end
+				}
+			},
+			Chili.Line:New{width='100%'},
+		}
+	}
 end
 
 

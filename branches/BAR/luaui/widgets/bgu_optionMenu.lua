@@ -709,12 +709,12 @@ local function globalize()
 	-- Menu.AddOption{
 	--   tab      = 'Interface',
 	--   children = {
-	--     Chili.Label:New{caption='Clock',x='0%',fontsize=18},
+	--     Chili.Label:New{caption='Example',x='0%',fontsize=18},
 	--     Chili.ComboBox:New{
 	--        x        = '10%',
 	--        width    = '80%',
 	--        items    = {"Option 1", "Option 2", "Option 3"},
-	--        selected = (clockType=="ingame" and 1) or 2,
+	--        selected = 1,
 	--        OnSelect = {
 	--          function(_,sel)
 	--            Spring.Echo("Option "..sel.." Selected")

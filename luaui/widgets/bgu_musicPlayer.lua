@@ -11,6 +11,7 @@ function widget:GetInfo()
 	}
 end
 
+
 local spGetGameSpeed       = Spring.GetGameSpeed
 local spStopSoundStream    = Spring.StopSoundStream
 local spPauseSoundStream   = Spring.PauseSoundStream
@@ -19,7 +20,7 @@ local spGetSoundStreamTime = Spring.GetSoundStreamTime
 local spGetDrawFrame       = Spring.GetDrawFrame
 local spGetUnitHealth      = Spring.GetUnitHealth
 
-local Chili
+local Chili, Menu
 local musicControl, playButton, skipButton, songLabel, window0, pauseIcon, playIcon,volumeLbl, volume
 
 local lowThreshold 	= 0.0025 
@@ -41,6 +42,19 @@ local playNew   = true
 local musicType = 'peace'
 local curTrack = {}
 
+local disabledTracks = {}
+
+function widget:GetConfigData()
+	return disabledTracks
+end
+
+function widget:SetConfigData(data)
+	if (data and type(data) == 'table') then
+		disabledTracks = data
+	end
+end
+
+
 local color = {
 	war     = {1,0,0,1},
 	coldWar = {1,0.5,0,1},
@@ -57,10 +71,70 @@ local outlineColor = {
 local labelVar         = 0
 local trackName        = ''
 local labelScrollSpeed = 10
+
 ----------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------
 -- Intialize --
 ----------------------------------------------------------------------------------------
+local function loadOptions()
+	local typeTitle = {peace = "Peace", coldWar = "Cold War", war = "War"}
+	
+	local control = Chili.Control:New{
+		x        = 0,
+		y        = 0,
+		right    = 0,
+		bottom   = 0,
+		padding  = {5,5,5,5},
+	}
+	
+	local trackList = Chili.StackPanel:New{
+		x           = 0,
+		y           = 0,
+		width       = '100%',
+		resizeItems = false,
+		autosize    = true,
+		padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+		preserverChildrenOrder = true
+	}
+	
+	for trackType, list in pairs(tracks) do
+		Chili.Label:New{parent=trackList,caption=typeTitle[trackType]}
+		for trackName,_ in pairs(list) do
+			local title = list[trackName].title
+			Chili.Checkbox:New{
+				caption   = title,
+				parent    = trackList,
+				--height    = 20,
+				width     = '80%',
+				x         = '10%',
+				textalign = 'left',
+				boxalign  = 'right',
+				checked   = not disabledTracks[title],
+				OnChange  = {
+					function(self)
+						if curTrack.title == title then playNew = true end
+						disabledTracks[title] = self.checked
+					end
+				}
+			}
+		end
+	end
+	
+	Chili.ScrollPanel:New{
+		parent    = control,
+		x         = 0,
+		y         = 40,
+		right     = 0,
+		bottom    = 0,
+		children  = {trackList},
+	}
+	
+	Menu.AddControl('Music',control)
+		
+end
+
 local function createUI()
 	
 	local screen0 = Chili.Screen0
@@ -72,7 +146,7 @@ local function createUI()
 		bottom   = 10, 
 		width    = 60, 
 		value    = musicVolume,
-		OnChange = {function(self)	Spring.SendCommands('set snd_volmusic ' .. self.value^2/100+1) end},
+		OnChange = {function(self)	Spring.SendCommands('set snd_volmusic ' .. self.value) end},
 	}
 	
 	playIcon = Chili.Image:New{
@@ -107,7 +181,7 @@ local function createUI()
 				if self.paused then
 					pauseIcon:Show()
 					playIcon:Hide()
-					else
+				else
 					pauseIcon:Hide()
 					playIcon:Show()
 				end
@@ -164,7 +238,7 @@ local function playNewTrack()
 	local track
 	repeat
 		track = trackList[math.random(1, #trackList)]
-	until track.filename ~= curTrack.filename
+	until not disabledTracks[track.title] and (track.filename ~= curTrack.filename)
 	
 	curTrack = track
 	
@@ -173,8 +247,11 @@ local function playNewTrack()
 	songLabel.font.outlineColor = outlineColor[musicType]
 	songLabel:SetCaption(trackName)
 	
+	-- hack fix, needs to be set multiple times to work
+	-- I set it 3 times in case two are the same ( and it goes full volume :/ )
 	Spring.SendCommands('set snd_volmusic 0')
-	Spring.SendCommands('set snd_volmusic ' .. volume.value^2/100+1)
+	Spring.SendCommands('set snd_volmusic 1')
+	Spring.SendCommands('set snd_volmusic ' .. volume.value)
 	spPlaySoundStream('music/'..musicType..'/'..curTrack.filename)
 end	
 
@@ -255,8 +332,15 @@ function widget:Initialize()
 		return 
 	end
 	isSpec = Spring.GetSpectatingState()
+	
 	Chili = WG.Chili
 	createUI()
+	
+	Menu = WG.MainMenu
+	if Menu then
+		loadOptions()
+	end
+	
 end
 
 function widget:UnitCreated(_, unitDefID, teamID)
@@ -280,4 +364,3 @@ end
 function widget:Shutdown()
 	spStopSoundStream()                                           
 end
-

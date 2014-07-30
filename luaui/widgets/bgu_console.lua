@@ -28,10 +28,10 @@ local sfind = string.find
 
 
 -- Config --
-local msgTime   = 6 -- time to display messages in seconds
 local msgWidth  = 470 --width of the console
-local settings = {
-	autohide = true,
+local cfg = {
+	msgTime  = 6, -- time to display messages in seconds
+	hideChat = true,
 	msgCap   = 100,
 }
 ------------
@@ -84,7 +84,7 @@ end
 
 local function hideChat()
 	-- hide the chat, unless the mouse is hovering over the chat window
-	if msgWindow.visible and settings.autohide and not mouseIsOverChat() then
+	if msgWindow.visible and cfg.hideChat and not mouseIsOverChat() then
 		msgWindow:Hide()
 	end
 end
@@ -142,14 +142,42 @@ local function loadWindow()
 end
 
 local function loadOptions()
-	for setting,_ in pairs(settings) do
-		settings[setting] = Menu.Load(setting) or settings[setting]
+	for setting,_ in pairs(cfg) do
+		cfg[setting] = Menu.Load(setting) or cfg[setting]
 	end
 
 	Menu.AddOption{
 		tab = 'Interface',
 		children = {
 			Chili.Label:New{caption='Chat',fontsize=18,x='0%'},
+			Chili.Checkbox:New{
+				caption  = 'Auto-Hide Chat',
+				x        = '10%',
+				width    = '80%',
+				checked  = cfg.hideChat,
+				OnChange = {
+					function()
+						if cfg.hideChat then showChat() end
+						cfg.hideChat = not cfg.hideChat
+						Menu.Save('hideChat', hideChat)
+					end
+				}
+			},
+			Chili.Label:New{caption='Delay'},
+			Chili.Trackbar:New{
+				x        = '10%',
+				width    = '80%',
+				min      = 1,
+				max      = 10,
+				step     = 1,
+				value    = 6,
+				OnChange = {
+					function(_,value)
+						cfg.msgTime = value
+						Menu.Save('msgTime',value)
+					end
+				}
+			},
 			Chili.Label:New{caption='Max Messages'},
 			Chili.Trackbar:New{
 				x        = '10%',
@@ -157,7 +185,7 @@ local function loadOptions()
 				min      = 10,
 				max      = 100,
 				step     = 10,
-				value    = 100,
+				value    = cfg.msgCap,
 				OnChange = {
 					function(_,value)
 						if log and #log.children > value then
@@ -165,22 +193,12 @@ local function loadOptions()
 								log:RemoveChild(log.children[1])
 							end
 						end
-						settings.msgCap = value
+						cfg.msgCap = value
+						Menu.Save('msgCap',value)
 					end	
-				},
-			},
-			Chili.Checkbox:New{
-				caption  = 'Auto-Hide Chat',
-				x        = '10%',
-				width    = '80%',
-				checked  = settings.autohide,
-				OnChange = {
-					function()
-						if settings.autohide then showChat() end
-						settings.autohide = not settings.autohide
-					end
 				}
 			},
+			
 			Chili.Line:New{width='100%'}
 		}
 	}
@@ -229,7 +247,7 @@ end
 function widget:Update()
 	-- if console has been visible for longer than msgTime since last event, see if its not needed anymore
 	endTime = getTimer()
-	if diffTimers(endTime, startTime) > msgTime then
+	if diffTimers(endTime, startTime) > cfg.msgTime then
 		startTime = endTime
 		hideChat()
 	end
@@ -334,7 +352,7 @@ function widget:AddConsoleLine(msg)
 		end
 	end
 	
-	if #log.children > settings.msgCap then
+	if #log.children > cfg.msgCap then
 		log:RemoveChild(log.children[1])
 	end
 	
@@ -374,11 +392,6 @@ function widget:KeyPress(key, mods, isRepeat)
 end
 
 function widget:Shutdown()
-
-	for setting,value in pairs(settings) do
-		Menu.Save(setting, value)
-	end
-	
 	sendCommands({'console 1', 'inputtextgeo default'})
 	setConfigString('InputTextGeo', '0.26 0.73 0.02 0.028') 
 end

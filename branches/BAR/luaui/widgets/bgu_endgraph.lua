@@ -41,6 +41,7 @@ local statName = {
 
 local speccing = Spring.IsGameOver() or Spring.GetSpectatingState()
 local isDelta  = false
+local windowLoaded
 local curGraph = {}
 local button = {}
 local team = {}
@@ -370,6 +371,15 @@ function loadWindow()
 		preserveChildrenOrder = true,
 	}
 
+	Chili.ScrollPanel:New{
+		parent    = control0,
+		width     = selW,
+		x         = 0,
+		y         = 0,
+		bottom    = '50%',
+		children  = {graphSelect},
+	}
+	
 	graphPanel = Chili.Control:New{
 		parent   = control0,
 		maxValue = 0,
@@ -380,15 +390,6 @@ function loadWindow()
 		bottom   = 0,
 		tooltip  = '',
 		OnMouseMove = {setTip},
-	}
-
-	Chili.ScrollPanel:New{
-		parent    = control0,
-		width     = selW,
-		x         = 0,
-		y         = 0,
-		bottom    = '50%',
-		children  = {graphSelect},
 	}
 
 	playerList = Chili.StackPanel:New{
@@ -497,12 +498,12 @@ function loadWindow()
 	-- For games without my Menu system (makes it stand alone)
 	else
 		Chili.Button:New{
-			parent = control0,
-			caption = 'Quit',
-			right = 0,
-			y = 0,
-			width = 50,
-			height = 25,
+			parent    = control0,
+			caption   = 'Quit',
+			right     = 0,
+			y         = 0,
+			width     = 50,
+			height    = 25,
 			OnMouseUp = {
 				function()
 					Spring.SendCommands{'quit'}
@@ -520,6 +521,8 @@ function loadWindow()
 			children  = {control0},
 		}
 	end
+	
+	windowLoaded = true
 end
 
 function widget:Initialize()
@@ -545,7 +548,7 @@ end
 
 function widget:GameOver()
 	
-	if not (WG.MainMenu and speccing) then
+	if not windowLoaded then
 		loadWindow()
 	end
 	

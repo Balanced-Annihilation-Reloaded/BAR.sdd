@@ -2,6 +2,7 @@
 -- Look at the globalize function for an explanation on the 'API' to add options to menu from other widgets
 --  as of writing this it is around line 700
 
+-- TODO add popup window/API
 -- TODO Handle spring settings better in general
 -- TODO possibly seperate engine options and handling to seperate widget
 --   same with widget/interface tab
@@ -314,9 +315,21 @@ end
 --
 local function addOption(obj)
 	local stack = tabs[obj.tab]:GetObjectByName(obj.stack or 'Stack')
+	
+	if obj.title then
+		-- Stays if widget fails, needs to be created in widget to work
+		stack:AddChild(Chili.Label:New{caption=obj.title,x='0%',fontsize=18})
+	end
+	
 	for i = 1, #obj.children do
 		stack:AddChild(obj.children[i])
+	end	
+	
+	if obj.bLine then
+		-- Stays if widget fails, needs to be created in widget to work
+		stack:AddChild(Chili.Line:New{width='100%'})
 	end
+
 end
 
 ---------------------------- 
@@ -486,9 +499,9 @@ local comboBox = function(obj)
 		Chili.ComboBox:New{
 			name     = obj.name,
 			height   = 25,
-			x        = 60,
+			x        = '10%',
+			width    = '80%',
 			y        = 15,
-			right    = 0,
 			selected = selected,
 			text     = label,
 			options  = options,
@@ -515,11 +528,11 @@ local checkBox = function(obj)
 		checked   = Settings[obj.name] or false,
 		tooltip   = obj.tooltip or '',
 		y         = obj.y,
-		width     = obj.width or '100%',
+		width     = obj.width or '80%',
 		height    = 20,
-		x         = 0,
-		textalign ='left',
-		boxalign  ='right',
+		x         = '10%',
+		textalign = 'left',
+		boxalign  = 'right',
 		OnChange  = {toggle}
 	}
 	return checkBox
@@ -555,9 +568,9 @@ local slider = function(obj)
 		Chili.Trackbar:New{
 			name     = obj.name,
 			height   = 25,
-			x        = 60,
+			x        = '10%',
+			width    = '80%',
 			y        = 15,
-			right    = 0,
 			min      = obj.min or 0,
 			max      = obj.max or 1000,
 			step     = obj.step or 100,
@@ -667,6 +680,7 @@ end
 local function addControl(tab,control)
 	if not tabs[tab] then createTab(tab) end
 	tabs[tab]:AddChild(control)
+	tabs[tab]:Invalidate()
 end
 
 -----------------------------
@@ -697,6 +711,7 @@ end
 local function globalize()
 	local Menu = {}
 	
+	Menu.UpdateList = makeWidgetList
 	Menu.Save       = save
 	Menu.Load       = load
 	Menu.AddControl = addControl
@@ -790,11 +805,10 @@ end
 function widget:Update()
 	if widgetHandler.knownChanged then
 		widgetHandler.knownChanged = false
+		-- Seems to update to quickly ( before widget is 'inactive' )
 		makeWidgetList()
 	end
 end
-
--------------------------- 
 -- Called by widget handler when this widget either crashes or is disabled
 function widget:Shutdown()
 	spSendCommands('unbind S+esc openMenu')

@@ -306,8 +306,11 @@ end
 ---------------------------- 
 -- Loads a variable from the settings array
 local function load(index)
-	local value = Settings[index]
-	return value
+	if Settings[index] then
+		return Settings[index]
+	else
+		Spring.Echo('[Main Menu]Could not find '..index)
+	end
 end
 
 ---------------------------- 

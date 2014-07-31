@@ -66,7 +66,7 @@ local labelScrollSpeed = 10
 ----------------------------------------------------------------------------------------
 local function loadOptions()
 	local typeTitle = {peace = "Peace", coldWar = "Cold War", war = "War"}	
-	disabledTracks = Menu.Load('disableTracks') or {}
+	disabledTracks = Menu.Load('disabledTracks') or {}
 
 	local control = Chili.Control:New{
 		x        = 0,

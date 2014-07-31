@@ -206,6 +206,7 @@ local function updateGroundInfo()
 	local mx, my    = spGetMouseState()
 	local focus,map = spTraceScreenRay(mx,my)
 	if focus == "ground" and map[1] then
+		if groundInfo.hidden then groundInfo:Show() end
 		local px,pz = math.floor(map[1]),math.floor(map[3])
 		local py = math.floor(spGetGroundHeight(px,pz))
 		groundText:SetText(
@@ -215,6 +216,8 @@ local function updateGroundInfo()
 			"\n Z: ".. pz
 		)
 		groundText:Invalidate()
+	elseif groundInfo.visible then
+		groundInfo:Hide()
 	end
 end
 
@@ -336,7 +339,6 @@ function widget:Update()
 	
 	if curTip == -3 then
 		if infoWindow.visible then infoWindow:Hide() end
-		if groundInfo.hidden then groundInfo:Show() end
 	else
 		if groundInfo.visible then groundInfo:Hide() end
 		if infoWindow.hidden then infoWindow:Show() end

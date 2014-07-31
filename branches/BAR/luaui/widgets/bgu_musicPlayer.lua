@@ -41,19 +41,7 @@ local isSpec 	  = false
 local playNew   = true
 local musicType = 'peace'
 local curTrack = {}
-
 local disabledTracks = {}
-
-function widget:GetConfigData()
-	return disabledTracks
-end
-
-function widget:SetConfigData(data)
-	if (data and type(data) == 'table') then
-		disabledTracks = data
-	end
-end
-
 
 local color = {
 	war     = {1,0,0,1},
@@ -77,8 +65,9 @@ local labelScrollSpeed = 10
 -- Intialize --
 ----------------------------------------------------------------------------------------
 local function loadOptions()
-	local typeTitle = {peace = "Peace", coldWar = "Cold War", war = "War"}
-	
+	local typeTitle = {peace = "Peace", coldWar = "Cold War", war = "War"}	
+	disabledTracks = Menu.Load('disableTracks') or {}
+
 	local control = Chili.Control:New{
 		x        = 0,
 		y        = 0,
@@ -115,7 +104,8 @@ local function loadOptions()
 				OnChange  = {
 					function(self)
 						if curTrack.title == title then playNew = true end
-						disabledTracks[title] = self.checked
+						disabledTracks[title] = self.checked or nil
+						Menu.Save{disabledTracks=disabledTracks}
 					end
 				}
 			}

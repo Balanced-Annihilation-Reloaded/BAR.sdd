@@ -89,7 +89,7 @@ local function loadOptions()
 	}
 	
 	for trackType, list in pairs(tracks) do
-		Chili.Label:New{parent=trackList,caption=typeTitle[trackType]}
+		Chili.Label:New{x='0%',fontsize=18,parent=trackList,caption=typeTitle[trackType]}
 		for trackName,_ in pairs(list) do
 			local title = list[trackName].title
 			Chili.Checkbox:New{

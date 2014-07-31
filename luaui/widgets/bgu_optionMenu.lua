@@ -287,15 +287,26 @@ end
 ---------------------------- 
 -- Saves a variable in the settings array
 local function save(index, data)
-	local old = Settings[index] or 'empty'
-	Settings[index] = data or nil
-	return old
+
+	-- New behavior, Save{ key = value, key2 = value2 } 
+	if type(index)=='table' then
+		for key, value in pairs(index) do
+			Settings[key] = value
+		end
+		
+	-- Old behavior, Save('key', value)
+	else
+		Spring.Echo("Use Save{key=value,key2=value2,etc..} instead of Save('key', value)")
+		local old = Settings[index]
+		Settings[index] = data
+		return old
+	end
 end
 
 ---------------------------- 
 -- Loads a variable from the settings array
 local function load(index)
-	local value = Settings[index] or nil
+	local value = Settings[index]
 	return value
 end
 
@@ -322,14 +333,8 @@ end
 
 ---------------------------- 
 --
-local function addToStack(tab, control)
-	local stack = tabs[tab]:GetObjectByName('Stack')
-	if not stack then
-		Spring.Echo('No Stack in '..tab)
-		return
-	end
-	stack:AddChild(control)
-	-- stack:AddChild(Chili.Line:New{width='100%',x=0})
+local function addToStack()
+	Spring.Echo('AddToStack() is depreciated, instead use AddOption{}')
 end
 
 ---------------------------- 

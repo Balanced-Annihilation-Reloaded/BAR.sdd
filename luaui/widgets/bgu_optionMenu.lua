@@ -179,10 +179,9 @@ end
 --  TODO detect widget failure, set color accordingly
 local function makeWidgetList()
 	sortWidgetList()
-	local yStep = 0
-	local scrollpanel = tabs['Interface']:GetObjectByName('widgetList')
-	scrollpanel:ClearChildren()
-	
+	local stack = tabs['Interface']:GetObjectByName('widgetList')
+	stack:ClearChildren()
+
 	-- Get order of categories
 	local inv_pos = {}
 	local num_cats = 0
@@ -199,48 +198,29 @@ local function makeWidgetList()
 		local cat = wCategories[inv_pos[i]]
 		local list = cat.list
 		if #list>0 then
-			yStep = yStep + 1
-			Chili.Label:New{
-				parent   = scrollpanel,
-				x        = 0,  
-				y        = yStep * 20 - 10,
-				caption  = '- '..cat.label..' -',
-				align    = 'center',
-				width    = '100%',
-				autosize = false,
-			}
-			yStep = yStep + 1
-			
+			stack:AddChild(Chili.Label:New{caption  = cat.label,x='0%',fontsize=18})
 			-- Second loop adds each widget
-			for b=1,#list do
+			for b=1,#list do	
+				local green  = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
+				local orange = {color = {1,0.5,0,1}, outlineColor = {1,0.5,0,0.2}}
+				local red    = {color = {1,0,0,1}, outlineColor = {1,0,0,0.2}}
+				
 				local enabled = (widgetHandler.orderList[list[b].name] or 0)>0
 				local active  = list[b].wData.active
-				local fontColor
-				
-				-- Enabled and Active (only enabled widgets can be active)
-				if active then fontColor = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
-				-- Enabled but not Active
-				elseif enabled then fontColor = {color = {1,0.5,0,1}, outlineColor = {1,0.5,0,0.2}}
-				-- Disabled
-				else fontColor = {color = {1,0,0,1}, outlineColor = {1,0,0,0.2}} end
-				
 				local author = list[b].wData.author or "Unkown"
 				local desc = list[b].wData.desc or "No Description"
 				local fromZip = list[b].wData.fromZip and "" or "*"
-				Chili.Checkbox:New{
+				stack:AddChild(Chili.Checkbox:New{
 					name      = list[b].name,
 					caption   = list[b].name .. fromZip,
-					parent    = scrollpanel,
 					tooltip   = 'Author: '..author.. '\n'.. desc,
-					x         = 0,
-					right     = 0,
-					y         = yStep*20,
-					height    = 19,
-					font      = fontColor,
+					width     = '80%',
+					x         = '10%',
+					font      = (active and green) or (enabled and orange) or red,
 					checked   = enabled,
 					OnChange  = {toggleWidget},
-				}
-				yStep = yStep + 1
+				
+				})
 			end
 		end
 		cat.list = {}
@@ -388,23 +368,27 @@ end
 ---------------------------- 
 -- Creates the original window in which all else is contained
 local function loadMainMenu()
-	local sizeData = load('mainMenuSize') or {400,200,500,400}
+	local sizeData = load('mainMenuSize') or {x=400,y=200,width=585,height=400}
 	
 	-- Detects and fixes menu being off-screen
 	local vsx,vsy = Spring.GetViewGeometry()
-	if vsx < sizeData[1]+sizeData[3]-100 or sizeData[1] < 100 then sizeData[1] = 400 end
-	if vsy < sizeData[2]+sizeData[4]-100 or sizeData[2] < 100 then sizeData[3] = 500 end
+	if vsx < sizeData.x+sizeData.width-100 or sizeData.x < 100 then sizeData.x = 400 end
+	if vsy < sizeData.y+sizeData.height-100 or sizeData.y < 100 then sizeData.height = 500 end
 	
 	mainMenu = Chili.Window:New{
 		parent    = Chili.Screen0,
-		x         = sizeData[1], 
-		y         = sizeData[2],
-		width     = sizeData[3],
-		height    = sizeData[4],
+		x         = sizeData.x, 
+		y         = sizeData.y,
+		width     = sizeData.width,
+		height    = sizeData.height,
 		padding   = {5,8,5,5}, 
 		draggable = true,
 		resizable = true,
-		OnResize  = {function(self) save('mainMenuSize', {self.x,self.y,self.width,self.height} ) end},
+		OnResize  = {
+			function(self) 
+				save{mainMenuSize = {x=self.x,y=self.y,width=self.width,height=self.height}} 
+			end
+		},
 		children  = {
 			Chili.Line:New{parent = mainMenu,y = 15,width = '100%'},
 			Chili.Line:New{parent = mainMenu,bottom = 15,width = '100%'},
@@ -634,7 +618,7 @@ local function Options()
 	-- Interface --
 	tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', --Control attached to tab
 		children = {
-			Chili.ScrollPanel:New{name='widgetList',x = '50%',y = 0,right = 0,bottom = 0},
+			addStack{name='widgetList',x='50%',scroll=true},
 			Chili.EditBox:New{name='widgetFilter',x=0,y=0,width = '35%',text=' Enter filter -> Hit Return,  or -->',OnMouseDown = {function(obj) obj.text = '' end}},
 			Chili.Button:New{right='50%',y=0,height=20,width='15%',caption='Search',OnMouseUp={addFilter}},
 			Chili.Checkbox:New{caption='Search Widget Name',x=0,y=40,width='35%',textalign='left',boxalign='right',checked=Settings.searchWidgetName,
@@ -689,27 +673,6 @@ local function addControl(tab,control)
 	if not tabs[tab] then createTab(tab) end
 	tabs[tab]:AddChild(control)
 	tabs[tab]:Invalidate()
-end
-
------------------------------
--- 
-local function addChoice(tab,control,obj)
-	if not tabs[tab] then createTab(tab) end
-	if obj.name and tabs[tab].childrenByName[obj.name] then 
-		return 
-	end
-	
-	local child
-	if control == 'combobox' then 
-		child = comboBox(obj)
-	elseif control == 'checkbox' then
-		child = checkBox(obj)
-	elseif control == 'slider' then
-		child = slider(obj)
-	end
-	
-	addToStack(tab, child)
-	return child
 end
 
 -----------------------------

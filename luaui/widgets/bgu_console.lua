@@ -142,8 +142,9 @@ local function loadWindow()
 end
 
 local function loadOptions()
-	for setting,_ in pairs(cfg) do
-		cfg[setting] = Menu.Load(setting) or cfg[setting]
+	for key,_ in pairs(cfg) do
+		local value = Menu.Load(key)
+		if value or type(value)=='boolean' then cfg[key] = value end
 	end
 
 	Menu.AddOption{
@@ -157,9 +158,9 @@ local function loadOptions()
 				checked  = cfg.hideChat,
 				OnChange = {
 					function()
-						if cfg.hideChat then showChat() end
 						cfg.hideChat = not cfg.hideChat
-						Menu.Save('hideChat', hideChat)
+						Menu.Save{hideChat=cfg.hideChat}
+						if not cfg.hideChat then showChat() end
 					end
 				}
 			},
@@ -170,13 +171,8 @@ local function loadOptions()
 				min      = 1,
 				max      = 10,
 				step     = 1,
-				value    = 6,
-				OnChange = {
-					function(_,value)
-						cfg.msgTime = value
-						Menu.Save('msgTime',value)
-					end
-				}
+				value    = cfg.msgTime,
+				OnChange = {function(_,value) cfg.msgTime=value; Menu.Save{msgTime=value} end}
 			},
 			Chili.Label:New{caption='Max Messages'},
 			Chili.Trackbar:New{
@@ -194,7 +190,7 @@ local function loadOptions()
 							end
 						end
 						cfg.msgCap = value
-						Menu.Save('msgCap',value)
+						Menu.Save{msgCap=value}
 					end	
 				}
 			},

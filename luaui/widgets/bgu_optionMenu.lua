@@ -74,7 +74,7 @@ Settings['searchWidgetAuth'] = true
 Settings['searchWidgetName'] = true
 Settings['widget']           = {}
 Settings['UIwidget']         = {}
-Settings['Skin']             = 'Robocracy'
+Settings['Skin']             = 'Robofunk'
 Settings['Cursor']           = 'Default'
 Settings['CursorName']       = 'ba'
 
@@ -301,18 +301,6 @@ end
 
 ---------------------------- 
 --
-local function addToStack(tab, control)
-	local stack = tabs[tab]:GetObjectByName('Stack')
-	if not stack then
-		Spring.Echo('No Stack in '..tab)
-		return
-	end
-	stack:AddChild(control)
-	-- stack:AddChild(Chili.Line:New{width='100%',x=0})
-end
-
----------------------------- 
---
 local function addOption(obj)
 	local stack = tabs[obj.tab]:GetObjectByName(obj.stack or 'Stack')
 	
@@ -330,6 +318,18 @@ local function addOption(obj)
 		stack:AddChild(Chili.Line:New{width='100%'})
 	end
 
+end
+
+---------------------------- 
+--
+local function addToStack(tab, control)
+	local stack = tabs[tab]:GetObjectByName('Stack')
+	if not stack then
+		Spring.Echo('No Stack in '..tab)
+		return
+	end
+	stack:AddChild(control)
+	-- stack:AddChild(Chili.Line:New{width='100%',x=0})
 end
 
 ---------------------------- 

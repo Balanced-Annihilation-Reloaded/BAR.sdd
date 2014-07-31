@@ -37,6 +37,7 @@ local TextBox
 local Image
 local Progressbar
 local screen0
+
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
@@ -47,6 +48,7 @@ local imageDir = 'luaui/images/buildIcons/'
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
+local needsRecreate = true
 local function RecreateFacbar() end
 
 options_path = 'Settings/Interface/FactoryBar'
@@ -513,7 +515,7 @@ local function UpdateFactoryList()
   end
   
 	
-	RecreateFacbar()
+	needsRecreate = true
 end
 
 ------------------------------------------------------
@@ -539,7 +541,7 @@ function widget:UnitCreated(unitID, unitDefID, unitTeam)
 	if bo and #bo > 0 then
 		push(facs,{ unitID=unitID, unitDefID=unitDefID, buildList=UnitDefs[unitDefID].buildOptions })
 		--UpdateFactoryList()
-		RecreateFacbar()
+		needsRecreate = true
 	end
   end
   unfinished_facs[unitID] = true
@@ -560,7 +562,7 @@ function widget:UnitDestroyed(unitID, unitDefID, unitTeam)
         table.remove(facs,i)
         unfinished_facs[unitID] = nil
 		--UpdateFactoryList()
-		RecreateFacbar()
+		needsRecreate = true
         return
       end
     end
@@ -594,6 +596,11 @@ function widget:Update()
 			end
 		end
 	end
+    
+    if needsRecreate then
+        RecreateFacBar()
+        needsRecreate = false
+    end
 	
 	
 	if inTweak and not enteredTweak then

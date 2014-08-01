@@ -598,7 +598,7 @@ function widget:Update()
 	end
     
     if needsRecreate then
-        RecreateFacBar()
+        RecreateFacbar()
         needsRecreate = false
     end
 	
@@ -650,7 +650,6 @@ function widget:SelectionChanged(selectedUnits)
 		end
 	end
 end
-
 
 function widget:MouseRelease(x, y, button)
 	if (waypointMode>0)and(not inTweak) and (waypointMode>0)and(waypointFac>0) then
@@ -733,9 +732,6 @@ function widget:Initialize()
 			Label:New{ caption='Factories', fontShadow = true, },
 			stack_main,
 		},
-		OnMouseDown={ function(self)
-			return true
-		end },
 	}
 	myTeamID = Spring.GetMyTeamID()
 

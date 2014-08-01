@@ -65,7 +65,7 @@ local orderColors = {
 -- Chili vars --
 local Chili
 local panH, panW, winW, winH, winX, winB, tabH, minMapH, minMapW
-local screen0, buildMenu, stateMenu, orderMenu, menuTabs 
+local screen0, buildMenu, stateMenu, orderMenu, orderBG, menuTabs 
 local orderArray = {}
 local stateArray = {}
 local menuTab = {}
@@ -219,6 +219,8 @@ local function addOrder(cmd)
 		}
 	}
 	orderMenu:AddChild(button)
+	orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height)
+	orderMenu:SetLayer(2)
 end
 
 local function parseCmds()
@@ -259,6 +261,7 @@ local function parseCmds()
 			elseif #cmd.params > 1 then
 				addState(cmd)
 			elseif cmd.id > 0 then
+				orderMenu.active = true
 				addOrder(cmd)
 			end
 
@@ -405,17 +408,27 @@ function widget:Initialize()
 		padding = {0,0,0,0},
 		margin  = {0,0,0,0}
 	}
-
+	
 	orderMenu = Chili.Grid:New{
-		parent      = screen0,
-		columns     = 21,
-		rows        = 1,
-		y           = scrH - ordH,
-		x           = minMapW,
-		height      = ordH,
-		width       = ordH*21,
-		padding     = {0,0,0,0},
+		parent  = screen0,
+		active  = false,
+		columns = 21,
+		rows    = 1,
+		y       = scrH - ordH,
+		x       = minMapW,
+		height  = ordH,
+		width   = ordH*21,
+		padding = {0,0,0,0},
 	}
+	
+	orderBG = Chili.Window:New{
+		parent = screen0,
+		y      = scrH - ordH,
+		x      = minMapW,
+		height = ordH,
+		width  = ordH*21,
+	}
+
 
 	stateMenu = Chili.Grid:New{
 		parent  = screen0,
@@ -517,6 +530,7 @@ function widget:ViewResize(_,scrH)
 	buildMenu:SetPos(0, winY, winW, winH)
 	menuTabs:SetPos(winW,winY+20)
 	orderMenu:SetPos(minMapW,ordY,ordH*21,ordH)
+	orderBG:SetPos(minMapW,ordY,ordH*#orderMenu.children,ordH)
 	stateMenu:SetPos(winY,0,100,winY)
 	updateRequired = true
 end
@@ -536,20 +550,27 @@ function widget:Update()
 		
 		updateRequired = false
 		buildMenu.active = false
+		orderMenu.active = false
 		queue = {}
 		queueHandler()
 		loadPanels()
 		
+		if not orderMenu.active and orderBG.visible then
+			orderBG:Hide()
+		elseif orderMenu.active and orderBG.hidden then
+			orderBG:Show()
+		end
+		
 		if not buildMenu.active and buildMenu.visible then
 			buildMenu:Hide()
-            if WG.ShowFacBar then
-                WG.ShowFacBar()
-            end
+			if WG.ShowFacBar then
+					WG.ShowFacBar()
+			end
 		elseif buildMenu.active and buildMenu.hidden then
 			buildMenu:Show()
-            if WG.HideFacBar then
-                WG.HideFacBar()
-            end
+			if WG.HideFacBar then
+					WG.HideFacBar()
+			end
 		end
 	end
 end

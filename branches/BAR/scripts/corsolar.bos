@@ -48,11 +48,34 @@ activatescr()
 	turn d7 to z-axis <90> speed <30>;
 	turn d10 to x-axis <90> speed <30>;
 	wait-for-turn d4 around y-axis;
+	hide d1;
+	hide d2;
+	hide d3;
+	hide d4;
+	hide d5;
+	hide d6;
+	hide d7;
+	hide d8;
+	hide d9;
+	hide d10;
+	hide d11;
+	hide d12;
 }
 
 deactivatescr()
 {
-
+	show d1;
+	show d2;
+	show d3;
+	show d4;
+	show d5;
+	show d6;
+	show d7;
+	show d8;
+	show d9;
+	show d10;
+	show d11;
+	show d12;
 	turn d1 to z-axis <0> speed <30>;
 	turn d4 to x-axis <0> speed <30>;
 	turn d7 to z-axis <0> speed <30>;

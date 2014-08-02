@@ -428,7 +428,7 @@ UnitSpeed()
 {
 	while(TRUE)
 	{
-		currentSpeed = (get CURRENT_SPEED)*100/moveSpeed;
+		currentSpeed = (get CURRENT_SPEED)*150/moveSpeed;
 		if (currentSpeed<20) currentSpeed=20;
 		sleep 142;
 	}

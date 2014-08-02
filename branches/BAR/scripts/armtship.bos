@@ -3,22 +3,14 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turret, arm1, arm2, arm3, link, door1, door2, magnet, arm4, arm5, arm6, arm7, ground;
+piece  base, turret, arm1, arm2, arm3, link, door1, door2, door3, magnet, arm4, arm5, arm6, arm7, ground;
 
-static-var  Static_Var_1, Static_Var_2, Static_Var_3, Static_Var_4, oldHead;
+static-var  Static_Var_1, TurretToUnitDistance, TurretToUnitAngleY, TurretToUnitAngleX, bInDistance;
 
 // Signal definitions
 #define SIG_MOVE			2
 
 
-SetDirection(heading)
-{
-	var spd;
-	spd = (get ABS(oldHead) - get ABS(heading)) / 2;
-	turn ground to y-axis heading speed spd;
-	turn base to y-axis 0-heading speed spd;
-	oldHead = heading;
-}
 
 RockOnWaves()
 {
@@ -116,39 +108,41 @@ StartDoorOpen()
 {
 	signal 4;
 	set-signal-mask 4;
-	turn door1 to z-axis <-90.000000> speed <50.000000>;
-	turn door2 to z-axis <90.000000> speed <50.000000>;
-	sleep 5000;
-	turn door1 to z-axis <0.000000> speed <20.000000>;
-	turn door2 to z-axis <0.000000> speed <20.000000>;
+	move door3 to z-axis [-20] speed [30];
+	move door2 to z-axis [-20] speed [30];
+	sleep 3000;
+	move door3 to z-axis [0] speed [30];
+	move door2 to z-axis [0] speed [30];
 }
 
 BoomCalc(posxz, posy)
 {
 	var Func_Var_3, Func_Var_4, Func_Var_5;
 	Func_Var_3 = get PIECE_XZ(turret) - posxz;
-	Func_Var_4 = posy - get PIECE_Y(turret) - [20.000000];
+	Func_Var_4 = posy - get PIECE_Y(turret) + [5.000000];
 	Func_Var_5 = get XZ_HYPOT(Func_Var_3);
-	Static_Var_1 = get HYPOT(Func_Var_5,Func_Var_4) - [20.000000];
-	Static_Var_2 = get XZ_ATAN(Func_Var_3);
-	Static_Var_3 = get ATAN(Func_Var_4,Func_Var_5);
-	Static_Var_4 = Static_Var_1 < [126.000000];
+	TurretToUnitDistance = get HYPOT(Func_Var_5,Func_Var_4) - [15.000000];
+	TurretToUnitAngleY = get XZ_ATAN(Func_Var_3);
+	TurretToUnitAngleX = get ATAN(Func_Var_4,Func_Var_5);
+	bInDistance = TurretToUnitDistance < [220.000000]; //MAX distance at which a unit is picked up/put down
+	//get PRINT(1,bInDistance,TurretToUnitDistance/65000);
+	//get PRINT(1,TurretToUnitAngleX/182, TurretToUnitAngleY/182);
 }
 
 BoomExtend()
 {
 	start-script StartDoorOpen();
-	turn turret to y-axis <180>-Static_Var_2 speed <160.000000>;
-	turn magnet to x-axis Static_Var_3 speed <80.000000>;
-	turn arm1 to x-axis <0.000000> - Static_Var_3 speed <80.000000>;
-	move arm2 to z-axis Static_Var_1 / [0.000037] speed [60.000000];
-	move arm3 to z-axis Static_Var_1 / [0.000037] speed [60.000000];
-	move arm4 to z-axis Static_Var_1 / [0.000037] speed [60.000000];
-	move arm5 to z-axis Static_Var_1 / [0.000037] speed [60.000000];
-	move arm6 to z-axis Static_Var_1 / [0.000037] speed [60.000000];
-	move arm7 to z-axis Static_Var_1 / [0.000037] speed [60.000000];
+	turn arm1 to x-axis TurretToUnitAngleX speed <280.000000>;
+	wait-for-turn arm1 around x-axis;	
+	turn turret to y-axis TurretToUnitAngleY - <180.0> speed <200.000000>;
 	wait-for-turn turret around y-axis;
-	wait-for-turn arm1 around x-axis;
+	move arm2 to z-axis -1*TurretToUnitDistance / 6 speed [60.000000];
+	move arm3 to z-axis -1*TurretToUnitDistance / 6 speed [60.000000];
+	move arm4 to z-axis -1*TurretToUnitDistance / 6 speed [60.000000];
+	move arm5 to z-axis -1*TurretToUnitDistance / 6 speed [60.000000];
+	move arm6 to z-axis -1*TurretToUnitDistance / 6 speed [60.000000];
+	move arm7 to z-axis -1*TurretToUnitDistance / 6 speed [60.000000];
+
 	wait-for-move arm2 along z-axis;
 	wait-for-move arm3 along z-axis;
 	wait-for-move arm4 along z-axis;
@@ -159,23 +153,32 @@ BoomExtend()
 
 BoomReset()
 {
-	turn turret to y-axis <0.000000> speed <80.000000>;
-	turn magnet to x-axis <0.000000> speed <60.000000>;
 	turn arm1 to x-axis <0.000000> speed <60.000000>;
+	
+	wait-for-turn arm1 around x-axis;
+	turn turret to y-axis <0.000000> speed <200.000000>;
 	move arm2 to z-axis [0.000000] speed [50.000000];
 	move arm3 to z-axis [0.000000] speed [50.000000];
 	move arm4 to z-axis [0.000000] speed [50.000000];
 	move arm5 to z-axis [0.000000] speed [50.000000];
 	move arm6 to z-axis [0.000000] speed [50.000000];
 	move arm7 to z-axis [0.000000] speed [50.000000];
+	wait-for-turn turret around y-axis;
+	wait-for-move arm2 along z-axis;
+	wait-for-move arm3 along z-axis;
+	wait-for-move arm4 along z-axis;
+	wait-for-move arm5 along z-axis;
+	wait-for-move arm6 along z-axis;
+	wait-for-move arm7 along z-axis;
 }
 
 BoomToPad()
 {
 	start-script StartDoorOpen();
-	turn turret to y-axis <0.000000> speed <100.000000>;
-	turn magnet to x-axis <0.000000> speed <60.000000>;
 	turn arm1 to x-axis <0.000000> speed <60.000000>;
+	
+	wait-for-turn arm1 around x-axis;
+	turn turret to y-axis <0.000000> speed <200.000000>;
 	move arm2 to z-axis [0.000000] speed [60.000000];
 	move arm3 to z-axis [0.000000] speed [60.000000];
 	move arm4 to z-axis [0.000000] speed [60.000000];
@@ -190,22 +193,22 @@ BoomToPad()
 	wait-for-move arm5 along z-axis;
 	wait-for-move arm6 along z-axis;
 	wait-for-move arm7 along z-axis;
-	turn magnet to x-axis <-30.000000> speed <60.000000>;
-	turn arm1 to x-axis <30.000000> speed <60.000000>;
+	turn arm1 to x-axis <-30.000000> speed <60.000000>;
+	
 	wait-for-turn arm1 around x-axis;
 }
 
 TransportPickup(unitid)
 {
 	call-script BoomCalc(get UNIT_XZ(unitid),get UNIT_Y(unitid) + get UNIT_HEIGHT(unitid));
-	if( Static_Var_4 AND get UNKNOWN_UNIT_VALUE(74)(unitid) == get UNKNOWN_UNIT_VALUE(74)(get UNKNOWN_UNIT_VALUE(71)) )
+	if( bInDistance AND get UNKNOWN_UNIT_VALUE(74)(unitid) == get UNKNOWN_UNIT_VALUE(74)(get UNKNOWN_UNIT_VALUE(71)) )
 	{
 		set BUSY to 1;
 		call-script BoomExtend();
 		move link to y-axis [0.000000] - get UNIT_HEIGHT(unitid) now;
 		attach-unit unitid to link;
 		call-script BoomToPad();
-		attach-unit unitid to 0 - 1;
+		attach-unit unitid to base;
 		call-script BoomReset();
 		set BUSY to 0;
 	}
@@ -214,11 +217,11 @@ TransportPickup(unitid)
 TransportDrop(unitid, position)
 {
 	call-script BoomCalc(position,get GROUND_HEIGHT(position) + get UNIT_HEIGHT(unitid));
-	if( Static_Var_4 )
+	if( bInDistance )
 	{
 		set BUSY to 1;
 		call-script BoomToPad();
-		move link to y-axis [0.000000] - get UNIT_HEIGHT(unitid) now;
+		//move link to y-axis [0.000000] - get UNIT_HEIGHT(unitid) now;
 		attach-unit unitid to link;
 		call-script BoomExtend();
 		drop-unit unitid;

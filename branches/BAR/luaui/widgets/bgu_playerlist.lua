@@ -557,7 +557,7 @@ function GetSkill(playerID)
 			end
 		end
 	else
-		tskill = "30*" --"\255"..string.char(160)..string.char(160)..string.char(160) .. "?"
+		tskill = "" --"\255"..string.char(160)..string.char(160)..string.char(160) .. "?"
 	end
 	return tskill, tsMu
 end
@@ -752,15 +752,12 @@ function widget:Initialize()
 
     iPanel()
     iPanel:Hide()
+    
+    -- TODO: add option for flags and ranks into optionMenu, just need to change options.XXX and call OptionChange()
 end
 
 function widget:PlayerChanged(pID)
     ScheduledUpdate()
-end
-
-function widget:GameStart()
-    options.flags = false
-    OptionChange()
 end
 
 function widget:GameFrame(n)

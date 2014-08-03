@@ -298,8 +298,8 @@ local function processLine(line)
 		return _, true, system --ignore
 	end
 	
-	if WG.mutedPlayers and WG.mutedPlayers[name] then
-		-- Filter out muted players
+	if WG.ignoredPlayers and WG.ignoredPlayers[name] then
+		-- Filter out ignored players
 		return _,true, system --ignore 
 	end
 	

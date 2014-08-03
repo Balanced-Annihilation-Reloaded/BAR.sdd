@@ -692,6 +692,7 @@ function NewAIPlayer(tID)
 
     -- rank, country and skill are nil
     players[pID].skill = ""
+    players[pID].tsMu = -100
 
     players[pID].active = active and (not isDead)
     players[pID].spec = false

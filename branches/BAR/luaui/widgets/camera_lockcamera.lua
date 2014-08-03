@@ -324,7 +324,7 @@ local function UpdateRecentBroadcasters()
 	end
 end
 
-local function LockCamera(playerID)
+function LockCamera(playerID)
 	if playerID and playerID ~= myPlayerID and playerID ~= lockPlayerID then
 		lockPlayerID = playerID
 		myLastCameraState = myLastCameraState or GetCameraState()
@@ -342,6 +342,7 @@ local function LockCamera(playerID)
 	UpdateRecentBroadcasters()
 end
 
+WG.LockCamera = LockCamera
 
 ------------------------------------------------
 --callins

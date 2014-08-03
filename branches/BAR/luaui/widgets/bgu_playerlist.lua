@@ -279,8 +279,6 @@ function iPanelPress(obj,value)
     iPanel:Invalidate()
 end
 
-
-
 --------------------------------------------------------------------------------
 -- player/spec panels
 --------------------------------------------------------------------------------
@@ -674,7 +672,7 @@ function NewAIPlayer(tID)
     players[pID] = {}
     
     local _, _, isDead, isAITeam, _, aID = Spring.GetTeamInfo(tID)
-    local _, _, _, _, _, ping, cpu, _, _ = Spring.GetPlayerInfo(hostPlayerID)  
+    local _, active, _, _, _, ping, cpu, _, _ = Spring.GetPlayerInfo(hostPlayerID)  
     
     players[pID].pID = AIID 
     players[pID].hostID = hostPlayerID
@@ -694,8 +692,8 @@ function NewAIPlayer(tID)
     players[pID].skill = ""
     players[pID].tsMu = -100
 
-    players[pID].active = active and (not isDead)
-    players[pID].spec = false
+    players[pID].active = active
+    players[pID].spec = false or isDead
     players[pID].ping = ping
     players[pID].cpu = cpu
     
@@ -738,18 +736,19 @@ function UpdatePingCPU(pID, ping, cpu)
 end
 
 function UpdateAIPlayer(pID)
-    -- we assume that AIs do not change teamID and stay alive until their allyTeam dies
+    -- we assume that AIs do not change teamID and that they stay alive until their team dies or host player leaves
     local _, _, isDead, isAITeam, _, aID = Spring.GetTeamInfo(players[pID].tID)
-    local _, _, _, _, _, ping, cpu, _, _ = Spring.GetPlayerInfo(players[pID].hostID)  
+    local _, active, _, _, _, ping, cpu, _, _ = Spring.GetPlayerInfo(players[pID].hostID)  
     local update = false
 
     -- check if its team died
-    update, players[pID].active = CheckChange(players[pID].active and (not isDead), active, update)
+    update, players[pID].active = CheckChange(players[pID].active, active, update)
+    update, players[pID].spec = CheckChange(players[pID].spec, isDead, update)    
     
     -- update ping/cpu to match its hosts
     UpdatePingCPU(pID,ping,cpu)
 
-    needsUpdate = needsUpdate or update
+    needUpdate = needUpdate or update
 end
 
 function UpdatePlayer(pID)
@@ -804,12 +803,14 @@ function UpdatePlayer(pID)
 end
 
 function ScheduledUpdate()
-    -- update each player & check for new players
+    -- update each player 
+    for pID,_ in pairs(players) do
+        UpdatePlayer(pID)
+    end
+    -- check for new players
     local playerList = Spring.GetPlayerList()
-    for _,pID in pairs(playerList) do
-        if players[pID] then
-            UpdatePlayer(pID)
-        else
+    for _,pID in ipairs(playerList) do
+        if not players[pID] then
             NewPlayer(pID)
         end
     end
@@ -886,18 +887,10 @@ function widget:Update()
     
     if needUpdate then
         UpdateStack()
+        if not iPanel.hidden then iPanel:Hide() end
         needUpdate = false
     end
 end
-
---[[
-function widget:MousePress()
-    if not iPanel.hidden then 
-        iPanel:Hide()
-    end
-    return false
-end
-]]
 
 function widget:KeyPress()
     if not iPanel.hidden then 
@@ -953,11 +946,12 @@ function AssignPlayersToTeams()
         local spec = players[pID].spec
         local tID = players[pID].tID
         local wasPlayer = players[pID].wasPlayer
+        local isAI = players[pID].isAI
         
         if wasPlayer then 
             -- live or dead player (panel creator will act appropriately)
             table.insert(teams[tID],pID) 
-            if active and spec then
+            if active and spec and not isAI then
                 -- dead player, now a spec                    
                 table.insert(deadPlayers,pID)
             end
@@ -1053,7 +1047,7 @@ function Header(text)
     return panel
 end
 
-function Separator() --FIXME: draws in wrong place
+function Separator() 
     local separator = Chili.Line:New{
         width = '100%',
     }
@@ -1063,7 +1057,7 @@ end
 function HalfSeparator()
     local separator = Chili.Line:New{
         width = 100,
-        right = offset.name - 50,
+        x = offset.max - offset.name - width.name + 100,
     }
     return separator
 end

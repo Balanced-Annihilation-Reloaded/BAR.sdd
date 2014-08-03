@@ -13,7 +13,7 @@ end
 
 
 --------------------------------------------------------------------------------
--- Pics
+-- Pics & Options & Stuff
 --------------------------------------------------------------------------------
 
 --rank pics
@@ -33,22 +33,23 @@ local pingPic         = "LuaUI/Images/playerlist/ping.png"
 local cpuPic          = "LuaUI/Images/playerlist/cpu.png"
 local readyPic        = "LuaUI/Images/playerlist/blob_small.png"
 
+local needUpdate = true
+
 -- local player info
 local myPlayerID = Spring.GetMyPlayerID()
 
 --General players/spectator count and tables
-local players = {} -- list of all players
 local deadPlayerName = " --- "
-
+local players = {} -- list of all players
 local myAllyTeam = {}
 local allyTeams = {}
 local deadPlayers = {}
 local specs = {}
 
-local alliesPanel, enemiesPanel, specsPanel, deadplayersPanel, iPanel
+-- permanent panels
+local alliesPanel, enemiesPanel, specsPanel, deadplayersPanel
+local iPanel, shareE, shareM, watchres, watchcamera, ignore, slap
 local enemyAllyTeamPanels = {}
-
-local needUpdate = true
 
 --To determine faction at start
 local armcomDefID = UnitDefNames.armcom.id
@@ -61,16 +62,11 @@ local absentName = " --- "
 local gameStarted = false
 
 -- Options
---  Flags?
---  Factions/Readystate (players only)
---  Ranks (players only)
-
 local options = {
     ranks = true,
     flags = true,
     ts = true,
 }
-
 local width = {
     flag = 15,
     rank = 15,
@@ -80,7 +76,6 @@ local width = {
     cpu = 15,
     ping = 10,
 }
-
 local offset = {}
 
 --------------------------------------------------------------------------------
@@ -121,8 +116,6 @@ end
 local iPanelWidth = 110
 local iPanelItemHeight = 25
 local iPanelpID -- pID with which iPanel was most recently invoked
-
-local shareE, shareM, watchres, watchcamera, ignore, slap
 
 function WatchCamera()
     if WG.LockCamera then
@@ -487,10 +480,10 @@ function SpecPanel(pID)
 end
 
 --------------------------------------------------------------------------------
--- Player info
+-- Player info helper functions
 --------------------------------------------------------------------------------
 
-function SetFactionPic(pID) 
+function SetFaction(pID) 
 	--set faction, from TeamRulesParam when possible and from initial info if not    
     local startUDID = Spring.GetTeamRulesParam(players[pID].tID, 'startUnit')
 	if startUDID then
@@ -506,6 +499,7 @@ function SetFactionPic(pID)
 	end
        
 	if faction then
+        players[pID].faction = faction
         if players[pID].dark then
             players[pID].factionPic = "LuaUI/Images/playerlist/"..faction.."WO_default.png"
 		else
@@ -592,6 +586,10 @@ function GetFlag(country)
     return path
 end
 
+--------------------------------------------------------------------------------
+-- Player info 
+--------------------------------------------------------------------------------
+
 function NewPlayer(pID)
     players[pID] = {}
     local name, active, spec, tID, aID, ping, cpu, country, rank = Spring.GetPlayerInfo(pID)  
@@ -628,6 +626,7 @@ function NewPlayer(pID)
     players[pID].wasPlayer =  (Spring.GetGameRulesParam("player_" .. tostring(pID) .. "_wasPlayer")==1)      
 
     -- set at gamestart
+    players[pID].faction = nil
     players[pID].factionPic = nil 
     
     -- panels
@@ -760,13 +759,13 @@ function widget:PlayerChanged(pID)
 end
 
 function widget:GameFrame(n)
-    -- load factions, when possible
+    -- show factions just after game starts
     if not gameStarted and n>1 then
         gameStarted = true
         ScheduledUpdate()
         
         for pID,_ in pairs(players) do
-            SetFactionPic(pID)
+            SetFaction(pID)
         
             players[pID].playerPanel:GetChildByName('readystate'):Hide()
         
@@ -1170,7 +1169,7 @@ function UpdateStack()
         specsPanel:AddChild(players[pID].specPanel)
     end 
 
-    stack:Invalidate() --shouldn't be needed but otherwise deadplayers/specs doesn't always get resized properly    
+    stack:Invalidate() -- without this the spectator panel doesn't resize, chili bug?
 end
 
 function OptionChange()

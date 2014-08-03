@@ -1,7 +1,7 @@
 function widget:GetInfo()
 	return {
 		name      = "Player List",
-		desc      = "Players list with options and shortcuts",
+		desc      = "Player list with shortcuts",
 		author    = "Bluestone", --based on Marmoth's Advanced Player List
 		date      = "July 2014",
 		license   = "GNU GPL, v3 or later",
@@ -16,43 +16,22 @@ end
 -- Pics
 --------------------------------------------------------------------------------
 
--- random pics
-local unitsPic        = "LuaUI/Images/advplayerslist/units.png"
-local energyPic       = "LuaUI/Images/advplayerslist/energy.png"
-local metalPic        = "LuaUI/Images/advplayerslist/metal.png"
-local notFirstPic     = "LuaUI/Images/advplayerslist/notfirst.png"
-local notFirstPicWO   = "LuaUI/Images/advplayerslist/notfirstWO.png"
-local selectPic       = "LuaUI/Images/advplayerslist/select.png"
-local barPic          = "LuaUI/Images/advplayerslist/bar.png"
-local amountPic       = "LuaUI/Images/advplayerslist/amount.png"
-local pointPic        = "LuaUI/Images/advplayerslist/point.png"
-local lowPic          = "LuaUI/Images/advplayerslist/low.png"
-local settingsPic     = "LuaUI/Images/advplayerslist/settings.png"
-local rankPic         = "LuaUI/Images/advplayerslist/ranks.png"
-local arrowPic        = "LuaUI/Images/advplayerslist/arrow.png"
-local arrowdPic       = "LuaUI/Images/advplayerslist/arrowd.png"
-local takePic         = "LuaUI/Images/advplayerslist/take.png"
-local crossPic        = "LuaUI/Images/advplayerslist/cross.png"
-local pointbPic       = "LuaUI/Images/advplayerslist/pointb.png"
-local takebPic        = "LuaUI/Images/advplayerslist/takeb.png"
-local seeSpecPic      = "LuaUI/Images/advplayerslist/seespec.png"
-
 --rank pics
 local rankPics = {
-    [0] = "LuaUI/Images/Advplayerslist/Ranks/rank0.png",
-    [1] = "LuaUI/Images/Advplayerslist/Ranks/rank1.png",
-    [2] = "LuaUI/Images/Advplayerslist/Ranks/rank2.png",
-    [3] = "LuaUI/Images/Advplayerslist/Ranks/rank3.png",
-    [4] = "LuaUI/Images/Advplayerslist/Ranks/rank4.png",
-    [5] = "LuaUI/Images/Advplayerslist/Ranks/rank5.png",
-    [6] = "LuaUI/Images/Advplayerslist/Ranks/rank6.png",
-    [7] = "LuaUI/Images/Advplayerslist/Ranks/rank7.png",
-    ['unknown'] = "LuaUI/Images/Advplayerslist/Ranks/rank_unknown.png",
+    [0] = "LuaUI/Images/Ranks/rank0.png",
+    [1] = "LuaUI/Images/Ranks/rank1.png",
+    [2] = "LuaUI/Images/Ranks/rank2.png",
+    [3] = "LuaUI/Images/Ranks/rank3.png",
+    [4] = "LuaUI/Images/Ranks/rank4.png",
+    [5] = "LuaUI/Images/Ranks/rank5.png",
+    [6] = "LuaUI/Images/Ranks/rank6.png",
+    [7] = "LuaUI/Images/Ranks/rank7.png",
+    ['unknown'] = "LuaUI/Images/Ranks/rank_unknown.png",
 }
 
-local pingPic         = "LuaUI/Images/advplayerslist/ping.png"
-local cpuPic          = "LuaUI/Images/advplayerslist/cpu.png"
-local readyPic        = "LuaUI/Images/Advplayerslist/blob_small.png"
+local pingPic         = "LuaUI/Images/playerlist/ping.png"
+local cpuPic          = "LuaUI/Images/playerlist/cpu.png"
+local readyPic        = "LuaUI/Images/playerlist/blob_small.png"
 
 -- local player info
 local myPlayerID = Spring.GetMyPlayerID()
@@ -528,15 +507,15 @@ function SetFactionPic(pID)
        
 	if faction then
         if players[pID].dark then
-            players[pID].factionPic = "LuaUI/Images/Advplayerslist/"..faction.."WO_default.png"
+            players[pID].factionPic = "LuaUI/Images/playerlist/"..faction.."WO_default.png"
 		else
-            players[pID].factionPic = "LuaUI/Images/Advplayerslist/"..faction.."_default.png"
+            players[pID].factionPic = "LuaUI/Images/playerlist/"..faction.."_default.png"
         end
     else
         if players[pID].dark then
-            players[pID].factionPic = "LuaUI/Images/Advplayerslist/defaultWO.png"
+            players[pID].factionPic = "LuaUI/Images/playerlist/defaultWO.png"
         else
-            players[pID].factionPic = "LuaUI/Images/Advplayerslist/default.png"
+            players[pID].factionPic = "LuaUI/Images/playerlist/default.png"
         end
     end
 end
@@ -608,7 +587,7 @@ function GetRankPic(rank)
 end
 
 function GetFlag(country)
-    local path = "LuaUI/Images/flags-hq/"..string.upper(country)..".png"
+    local path = "LuaUI/Images/flags/"..string.upper(country)..".png"
     -- TODO: check if exists, return _unknown.pgn o/w
     return path
 end
@@ -779,6 +758,11 @@ function widget:PlayerChanged(pID)
     ScheduledUpdate()
 end
 
+function widget:GameStart()
+    options.flags = false
+    OptionChange()
+end
+
 function widget:GameFrame(n)
     -- load factions, when possible
     if not gameStarted and n>1 then
@@ -945,51 +929,8 @@ end
 
 
 --------------------------------------------------------------------------------
--- GUI
+-- GUI helper controls
 --------------------------------------------------------------------------------
-function CalculateOffsets()
-    local o = 0 --offset from RHS of stack
-    o = o + 22 -- right margin
-    offset = {}
-    
-    offset.ping = o
-    o = o + width.ping
-    
-    offset.cpu = o
-    o = o + width.cpu
-    
-    if options.ts then
-        offset.ts = o
-        o = o + width.ts
-    end
-            
-    offset.name = o
-    o = o + width.name
-    
-    o = o + 2
-    
-    offset.faction = o
-    o = o + width.faction
-    
-    if options.ranks then
-        offset.rank = o
-        o = o + width.rank
-    else
-        offset.rank = 0
-    end
-    
-    o = o + 1
-    
-    if options.flags then
-        offset.flag = o
-        o = o + width.flag
-    else
-        offset.flag = 0
-    end
-    
-    o = o + 16 --left margin
-    offset.max = o
-end
 
 function Header(text)
     local panel = Chili.LayoutPanel:New{
@@ -1037,6 +978,54 @@ function HalfSeparator()
         right = offset.name - 50,
     }
     return separator
+end
+
+--------------------------------------------------------------------------------
+-- GUI construction
+--------------------------------------------------------------------------------
+
+function CalculateOffsets()
+    local o = 0 --offset from RHS of stack
+    o = o + 22 -- right margin
+    offset = {}
+    
+    offset.ping = o
+    o = o + width.ping
+    
+    offset.cpu = o
+    o = o + width.cpu
+    
+    if options.ts then
+        offset.ts = o
+        o = o + width.ts
+    end
+            
+    offset.name = o
+    o = o + width.name
+    
+    o = o + 2
+    
+    offset.faction = o
+    o = o + width.faction
+    
+    if options.ranks then
+        offset.rank = o
+        o = o + width.rank 
+    else
+        offset.rank = 50 --out of the way, it will be hidden anyway
+    end
+    
+    o = o + 1
+    
+    if options.flags then
+        offset.flag = o
+        o = o + width.flag
+    else
+        offset.flag = 50 --out of the way, it will be hidden anyway
+    end
+    
+    o = o + 16 --left margin
+    offset.max = o
 end
 
 function SetupStack()
@@ -1202,5 +1191,33 @@ function UpdateStack()
     end 
 
     stack:Invalidate() --shouldn't be needed but otherwise deadplayers/specs doesn't always get resized properly    
+end
+
+function OptionChange()
+    -- change the width of stack
+    CalculateOffsets()
+    window:Resize(offset.max,0)
+    
+    -- set flag and rank visibility to match options
+    for pID,_ in pairs(players) do
+        if options.flags then
+            if players[pID].playerPanel:GetChildByName('flag').hidden then
+                players[pID].playerPanel:GetChildByName('flag'):Show()
+            end
+        else
+            if not players[pID].playerPanel:GetChildByName('flag').hidden then
+                players[pID].playerPanel:GetChildByName('flag'):Hide()
+            end
+        end
+        if options.ranks then
+            if players[pID].playerPanel:GetChildByName('rank').hidden then
+                players[pID].playerPanel:GetChildByName('rank'):Show()
+            end
+        else
+            if not players[pID].playerPanel:GetChildByName('rank').hidden then
+                players[pID].playerPanel:GetChildByName('rank'):Hide()
+            end
+        end    
+    end
 end
 

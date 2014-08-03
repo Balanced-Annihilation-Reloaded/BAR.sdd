@@ -717,7 +717,6 @@ function UpdatePlayer(pID)
     --TODO: is takeable?
     --TODO: made marker?
 
-
     -- record globally if we need an update
     needUpdate = needUpdate or update    
 end
@@ -1082,20 +1081,6 @@ function SetupStack()
 		preserveChildrenOrder = true,
 	}
     
-    deadplayersPanel = Chili.LayoutPanel:New{
-        parent      = stack,
-		name        = 'dead players',
-		width       = '100%',
-        minHeight   = 0,
-		resizeItems = false,
-		autosize    = true,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
-		children    = {},
-		preserveChildrenOrder = true,
-	}
-    
     specsPanel = Chili.LayoutPanel:New{
         parent      = stack,
 		name        = 'specs',
@@ -1108,7 +1093,7 @@ function SetupStack()
 		itemMargin  = {0,0,0,0},
 		children    = {},
 		preserveChildrenOrder = true,
-	}   
+	}
     
     UpdateStack()
 end
@@ -1117,7 +1102,7 @@ function UpdateStack()
     -- disassociate all children
     alliesPanel:ClearChildren()
     enemiesPanel:ClearChildren()
-    deadplayersPanel:ClearChildren()
+    specsPanel:ClearChildren()
     specsPanel:ClearChildren()
     for i,_ in ipairs(enemyAllyTeamPanels) do
         enemyAllyTeamPanels[i]:ClearChildren()
@@ -1177,14 +1162,12 @@ function UpdateStack()
     end
     enemiesPanel:AddChild(Separator())
 
-    deadplayersPanel:AddChild(Header("SPECTATORS"))   
+    specsPanel:AddChild(Header("SPECTATORS"))   
     for _,pID in ipairs(deadPlayers) do
-        deadplayersPanel:AddChild(players[pID].specPanel)
+        specsPanel:AddChild(players[pID].specPanel)
     end
-
     for _,pID in ipairs(specs) do
         specsPanel:AddChild(players[pID].specPanel)
-        -- TODO: why don't specs appear?
     end 
 
     stack:Invalidate() --shouldn't be needed but otherwise deadplayers/specs doesn't always get resized properly    

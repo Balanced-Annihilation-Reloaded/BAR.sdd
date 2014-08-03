@@ -159,6 +159,7 @@ function iPanel()
         bottom    = 0,
         width     = iPanelWidth,
         height    = 1,
+        minHeight = 25,
         autosize  = false,
         children  = {},
         padding     = {0,0,0,0},
@@ -215,8 +216,10 @@ end
 
 
 function iPanelPress(obj,value)   
-    iPanel:ToggleVisibility()
-    if iPanel.hidden then return end
+    if not iPanel.hidden then 
+        iPanel:ToggleVisibility()
+        return 
+    end
     
     iPanelpID = obj.pID
     
@@ -226,7 +229,7 @@ function iPanelPress(obj,value)
     local h = 0
     
     -- watch cam
-    if players[myPlayerID].spec or Spring.ArePlayersAllied(myPlayerID, obj.pID) then
+    if (players[myPlayerID].spec or Spring.ArePlayersAllied(myPlayerID, obj.pID)) and not players[obj.pID].isAI then
         iPanelLayout:AddChild(watchcamera)
         h = h + iPanelItemHeight
     end
@@ -238,7 +241,7 @@ function iPanelPress(obj,value)
     end
     
     -- ignore
-    if obj.pID~=myPlayerID then
+    if obj.pID~=myPlayerID and not players[obj.pID].isAI then
         if WG.ignoredPlayers[players[obj.pID].plainName] then
             ignore:SetCaption('un-ignore')
         else    
@@ -249,11 +252,20 @@ function iPanelPress(obj,value)
     end
     
     -- slap
-    if Spring.GetGameFrame()>2 then --because its a luarules action
+    if Spring.GetGameFrame()>2 and not players[obj.pID].isAI then --because its a luarules action
         iPanelLayout:AddChild(slap)
         h = h + iPanelItemHeight
     end
-     
+    
+    if h==0 then --nothing to show
+        if not iPanel.hidden then 
+            iPanel:Hide()        
+        end 
+        return 
+    end 
+
+    iPanel:ToggleVisibility()        
+    
     -- move panel to mouse pos & resize
     local x,y = Spring.GetMouseState()
     local vsx,vsy = Spring.GetViewGeometry()
@@ -515,6 +527,8 @@ function SetFaction(pID)
 end
 
 function GetSkill(playerID)
+    if players[playerID].isAI then return "" end 
+    
 	local customtable = select(10,Spring.GetPlayerInfo(playerID)) -- player custom table
 	local tsMu = customtable.skill
 	local tsSigma = customtable.skilluncertainty
@@ -560,17 +574,13 @@ function ReadyColour(readyState, isAI)
 	local ready = (readyState==1) or (readyState==2) or (readyState==-1)
 	local hasStartPoint = (readyState==4)
 	local readyColour
-    if isAI then
-		readyColour = {0.1,0.1,0.97,1}
-	else 
-		if ready then
-			readyColour = {0.1,0.95,0.2,1}
+    if ready then
+		readyColour = {0.1,0.95,0.2,1}
+	else
+		if hasStartPoint then
+			readyColour = {1,0.65,0.1,1}
 		else
-			if hasStartPoint then
-				readyColour = {1,0.65,0.1,1}
-			else
-				readyColour = {0.8,0.1,0.1,1}	
-			end
+			readyColour = {0.8,0.1,0.1,1}	
 		end
 	end
     return readyColour
@@ -584,57 +594,6 @@ function GetFlag(country)
     local path = "LuaUI/Images/flags/"..string.upper(country)..".png"
     -- TODO: check if exists, return _unknown.pgn o/w
     return path
-end
-
---------------------------------------------------------------------------------
--- Player info 
---------------------------------------------------------------------------------
-
-function NewPlayer(pID)
-    players[pID] = {}
-    local name, active, spec, tID, aID, ping, cpu, country, rank = Spring.GetPlayerInfo(pID)  
-    
-    players[pID].pID = pID
-    players[pID].tID = tID
-    players[pID].aID = aID
-    players[pID].isAI = nil --TODO
-
-    local r,g,b = Spring.GetTeamColor(tID)
-    players[pID].colour = {r,g,b}
-    players[pID].dark = IsDark(r,g,b)
-    
-    players[pID].plainName = name
-    players[pID].name = ((not spec) and InlineColour(players[pID].colour) or "") .. name --TODO use 'original' colours?
-    players[pID].deadname = ((not spec) and InlineColour(players[pID].colour) or "") .. deadPlayerName    
-    
-    players[pID].rank = rank 
-    players[pID].rankPic = GetRankPic(rank)
-    players[pID].country = country
-    players[pID].flagPic = GetFlag(country)
-    
-    local tskill,tsMu = GetSkill(pID)
-    players[pID].skill = tskill --string
-    players[pID].tsMu = tsMu --number
-        
-    players[pID].active = active
-    players[pID].spec = spec
-    players[pID].ping = ping
-    players[pID].cpu = cpu
-    
-    players[pID].readyState = Spring.GetGameRulesParam("player_" .. tostring(pID) .. "_readyState") or 0   
-    players[pID].readyColour = ReadyColour(players[pID].readyState, players[pID].isAI)
-    players[pID].wasPlayer =  (Spring.GetGameRulesParam("player_" .. tostring(pID) .. "_wasPlayer")==1)      
-
-    -- set at gamestart
-    players[pID].faction = nil
-    players[pID].factionPic = nil 
-    
-    -- panels
-    players[pID].playerPanel = PlayerPanel(pID)
-    players[pID].deadPanel = DeadPanel(pID)
-    players[pID].specPanel = SpecPanel(pID)
-
-    needUpdate = true
 end
 
 function cpuLevel(cpu)
@@ -655,6 +614,105 @@ function cpuLevel(cpu)
     return n_cpu
 end
 
+--------------------------------------------------------------------------------
+-- Player info 
+--------------------------------------------------------------------------------
+
+function NewPlayer(pID)
+    players[pID] = {}
+    local name, active, spec, tID, aID, ping, cpu, country, rank = Spring.GetPlayerInfo(pID)  
+    
+    players[pID].pID = pID
+    players[pID].tID = tID
+    players[pID].aID = aID
+    players[pID].isAI = false
+
+    local r,g,b = Spring.GetTeamColor(tID)
+    players[pID].colour = {r,g,b}
+    players[pID].dark = IsDark(r,g,b)
+    
+    players[pID].plainName = name
+    players[pID].name = ((not spec) and InlineColour(players[pID].colour) or "") .. name --TODO use 'original' colours?
+    players[pID].deadname = ((not spec) and InlineColour(players[pID].colour) or "") .. deadPlayerName    
+    
+    players[pID].rank = rank 
+    players[pID].rankPic = GetRankPic(rank)
+    players[pID].country = country
+    players[pID].flagPic = GetFlag(country)
+    
+    local tskill,tsMu = GetSkill(pID, isAI)
+    players[pID].skill = tskill --string
+    players[pID].tsMu = tsMu --number
+        
+    players[pID].active = active
+    players[pID].spec = spec
+    players[pID].ping = ping
+    players[pID].cpu = cpu
+    
+    players[pID].readyState = Spring.GetGameRulesParam("player_" .. tostring(pID) .. "_readyState") or 0   
+    players[pID].readyColour = ReadyColour(players[pID].readyState)
+    players[pID].wasPlayer = (Spring.GetGameRulesParam("player_" .. tostring(pID) .. "_wasPlayer")==1)      
+
+    -- set at gamestart
+    players[pID].faction = nil
+    players[pID].factionPic = nil 
+    
+    -- panels
+    players[pID].playerPanel = PlayerPanel(pID)
+    players[pID].deadPanel = DeadPanel(pID)
+    players[pID].specPanel = SpecPanel(pID)
+
+    needUpdate = true
+end
+
+local AIID = 1000 --dummy pID for AI "players", starts counting at 1000
+
+function NewAIPlayer(tID)    
+    local skirmishAIID, name, hostPlayerID, shortName, version = Spring.GetAIInfo(tID)
+
+    local pID = AIID
+    players[pID] = {}
+    
+    local _, _, isDead, isAITeam, _, aID = Spring.GetTeamInfo(tID)
+    local _, _, _, _, _, ping, cpu, _, _ = Spring.GetPlayerInfo(hostPlayerID)  
+    
+    players[pID].pID = AIID 
+    players[pID].hostID = hostPlayerID
+    players[pID].tID = tID
+    players[pID].aID = aID
+    players[pID].isAI = true
+
+    local r,g,b = Spring.GetTeamColor(tID)
+    players[pID].colour = {r,g,b}
+    players[pID].dark = IsDark(r,g,b)
+
+    players[pID].plainName = shortName 
+    players[pID].name = (InlineColour(players[pID].colour) or "") .. shortName --TODO use 'original' colours?
+    players[pID].deadname = (InlineColour(players[pID].colour) or "") .. deadPlayerName    
+
+    -- rank, country and skill are nil
+    players[pID].skill = ""
+
+    players[pID].active = active and (not isDead)
+    players[pID].spec = false
+    players[pID].ping = ping
+    players[pID].cpu = cpu
+    
+    players[pID].readyState = 0
+    players[pID].readyColour = {0.1,0.1,0.97,1}
+    players[pID].wasPlayer = true      
+    
+    -- set at gamestart
+    players[pID].faction = nil
+    players[pID].factionPic = nil 
+
+    -- panels
+    players[pID].playerPanel = PlayerPanel(pID)
+    players[pID].deadPanel = DeadPanel(pID)
+    players[pID].specPanel = SpecPanel(pID) 
+
+    AIID = AIID + 1
+end
 
 function CheckChange(oldValue, value, update)
     if value~=oldValue then
@@ -664,7 +722,41 @@ function CheckChange(oldValue, value, update)
     end
 end
 
+function UpdatePingCPU(pID, ping, cpu)
+    -- update ping/cpu
+    players[pID].ping = ping -- in ms
+    players[pID].cpu = cpu -- in [0,1]
+
+    local n_cpu = cpuLevel(cpu)
+    local n_ping = math.min(6, 1 + math.floor(ping*1000/300))
+    
+    players[pID].playerPanel:GetChildByName('cpu').color = colourConv[n_cpu]
+    players[pID].playerPanel:GetChildByName('ping').color = colourConv[n_ping]
+    players[pID].playerPanel:GetChildByName('cpu'):Invalidate()
+    players[pID].playerPanel:GetChildByName('ping'):Invalidate()
+end
+
+function UpdateAIPlayer(pID)
+    -- we assume that AIs do not change teamID and stay alive until their allyTeam dies
+    local _, _, isDead, isAITeam, _, aID = Spring.GetTeamInfo(players[pID].tID)
+    local _, _, _, _, _, ping, cpu, _, _ = Spring.GetPlayerInfo(players[pID].hostID)  
+    local update = false
+
+    -- check if its team died
+    update, players[pID].active = CheckChange(players[pID].active and (not isDead), active, update)
+    
+    -- update ping/cpu to match its hosts
+    UpdatePingCPU(pID,ping,cpu)
+
+    needsUpdate = needsUpdate or update
+end
+
 function UpdatePlayer(pID)
+    if players[pID].isAI then
+        UpdateAIPlayer(pID) 
+        return
+    end
+
     local name, active, spec, tID, aID, ping, cpu, country, rank = Spring.GetPlayerInfo(pID)  
     local update = false --does the player mean we need a global update?
 
@@ -687,7 +779,7 @@ function UpdatePlayer(pID)
     end
     
     -- check if a player leaves/resigns/appears
-    update, players[pID].wasPlayer = CheckChange(players[pID].wasPlayer, (Spring.GetGameRulesParam("player_" .. tostring(pID) .. "_wasPlayer")==1), update)      
+    update, players[pID].wasPlayer = CheckChange(players[pID].wasPlayer, (Spring.GetGameRulesParam("player_" .. tostring(pID) .. "_wasPlayer")==1), update)   
     update, players[pID].active = CheckChange(players[pID].active, active, update)
     update, players[pID].spec = CheckChange(players[pID].spec, spec, update)
     
@@ -701,17 +793,7 @@ function UpdatePlayer(pID)
         end
     end
     
-    -- update ping/cpu
-    players[pID].ping = ping -- in ms
-    players[pID].cpu = cpu -- in [0,1]
-
-    local n_cpu = cpuLevel(cpu)
-    local n_ping = math.min(6, 1 + math.floor(ping*1000/300))
-    
-    players[pID].playerPanel:GetChildByName('cpu').color = colourConv[n_cpu]
-    players[pID].playerPanel:GetChildByName('ping').color = colourConv[n_ping]
-    players[pID].playerPanel:GetChildByName('cpu'):Invalidate()
-    players[pID].playerPanel:GetChildByName('ping'):Invalidate()
+    UpdatePingCPU(pID, ping, cpu)
     
     --TODO: is takeable?
     --TODO: made marker?
@@ -741,9 +823,19 @@ function widget:Initialize()
     
     CalculateOffsets()
 
+    -- add players
     local playerList = Spring.GetPlayerList()
-    for _,pID in pairs(playerList) do
+    for _,pID in ipairs(playerList) do
         NewPlayer(pID)
+    end
+
+    -- add AIs
+    local teamList = Spring.GetTeamList()
+    for _,tID in ipairs(teamList) do
+        local _,_,_,isAITeam,_,_ = Spring.GetTeamInfo(tID)
+        if isAITeam then
+            NewAIPlayer(tID)
+        end
     end
 
     SetupStack()
@@ -960,7 +1052,7 @@ function Header(text)
     return panel
 end
 
-function Separator()
+function Separator() --FIXME: draws in wrong place
     local separator = Chili.Line:New{
         width = '100%',
     }

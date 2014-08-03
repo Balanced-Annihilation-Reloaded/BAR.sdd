@@ -7,6 +7,7 @@ function widget:GetInfo()
 		license   = "GNU GPL, v3 or later",
 		layer     = 0,
 		enabled   = true,  
+        handler   = true,
 	}
 end
 
@@ -54,10 +55,7 @@ local cpuPic          = "LuaUI/Images/advplayerslist/cpu.png"
 local readyPic        = "LuaUI/Images/Advplayerslist/blob_small.png"
 
 -- local player info
-local myAllyTeamID                           
-local myTeamID			
-local myPlayerID
-local mySpecStatus,_,_ = Spring.GetSpectatingState()
+local myPlayerID = Spring.GetMyPlayerID()
 
 --General players/spectator count and tables
 local players = {} -- list of all players
@@ -68,7 +66,7 @@ local allyTeams = {}
 local deadPlayers = {}
 local specs = {}
 
-local alliesPanel, enemiesPanel, specsPanel, deadplayersPanel
+local alliesPanel, enemiesPanel, specsPanel, deadplayersPanel, iPanel
 local enemyAllyTeamPanels = {}
 
 local needUpdate = true
@@ -102,7 +100,6 @@ local width = {
     ts = 22,
     cpu = 15,
     ping = 10,
-    interact = 15, -- share/camera
 }
 
 local offset = {}
@@ -139,6 +136,168 @@ function IsDark(red,green,blue)
 end
 
 --------------------------------------------------------------------------------
+-- interaction panel
+--------------------------------------------------------------------------------
+
+local iPanelWidth = 110
+local iPanelItemHeight = 25
+local iPanelpID -- pID with which iPanel was most recently invoked
+
+local shareE, shareM, watchres, watchcamera, ignore, slap
+
+function WatchCamera()
+    if WG.LockCamera then
+        WG.LockCamera(iPanelpID)
+    else
+        Spring.Echo("Lock Camera widget is not enabled!")
+    end
+
+    iPanel:Hide()
+end
+
+function WatchRes()
+    local teamToSpec = 0 --TODO
+    Spring.SendCommands("specteam "..teamToSpec)
+
+    iPanel:Hide()
+end
+
+function Ignore()
+    local pID = 0 --TODO
+    if WG.ignoredPlayers[players[pID].plainName] then
+        Spring.SendCommands("unignoreplayer "..players[pID].plainName)    
+    else    
+        Spring.SendCommands("ignoreplayer "..players[pID].plainName)
+    end
+    
+    iPanel:Hide()
+end
+
+function Slap()
+    Spring.SendCommands('luarules slap '..iPanelpID)
+    
+    iPanel:Hide()
+end
+
+function iPanel()
+    -- setup iPanel
+    iPanel = Chili.Window:New{
+        parent    = Chili.Screen0,
+        right     = 0,
+        bottom    = 0,
+        width     = iPanelWidth,
+        height    = 1,
+        autosize  = false,
+        children  = {},
+        padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+    }
+    
+    iPanelLayout = Chili.LayoutPanel:New{
+        parent      = iPanel,
+		name        = 'stack',
+		width       = iPanelWidth,
+		resizeItems = false,
+		autosize    = true,
+		padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+		children    = {},
+		preserveChildrenOrder = true,
+    }
+    
+    -- setup children
+    
+    watchcamera = Chili.Button:New{
+        minheight = iPanelItemHeight,
+        width = '100%',
+        caption = 'watch camera',
+        right = 0,
+        onclick ={WatchCamera},
+    }
+
+    watchres = Chili.Button:New{
+        minheight = iPanelItemHeight,
+        width = '100%',
+        caption = 'watch res',
+        onclick ={WatchRes},
+    }
+
+    ignore = Chili.Button:New{
+        minheight = iPanelItemHeight,
+        width = '100%',
+        caption = 'ignore',
+        onclick ={Ignore},
+    }
+
+    slap = Chili.Button:New{
+        minheight = iPanelItemHeight,
+        width = '100%',
+        caption = 'slap',
+        onclick ={Slap},
+    }
+    
+end
+
+
+
+function iPanelPress(obj,value)   
+    iPanel:ToggleVisibility()
+    if iPanel.hidden then return end
+    
+    iPanelpID = obj.pID
+    
+    iPanelLayout:ClearChildren()
+    
+    -- add children, calc height
+    local h = 0
+    
+    -- watch cam
+    if players[myPlayerID].spec or Spring.ArePlayersAllied(myPlayerID, obj.pID) then
+        iPanelLayout:AddChild(watchcamera)
+        h = h + iPanelItemHeight
+    end
+    
+    -- watch res
+    if not players[obj.pID].spec and players[myPlayerID].spec then
+        iPanelLayout:AddChild(watchres)
+        h = h + iPanelItemHeight
+    end
+    
+    -- ignore
+    if obj.pID~=myPlayerID then
+        if WG.ignoredPlayers[players[obj.pID].plainName] then
+            ignore:SetCaption('un-ignore')
+        else    
+            ignore:SetCaption('ignore')
+        end
+        iPanelLayout:AddChild(ignore)
+        h = h + iPanelItemHeight
+    end
+    
+    -- slap
+    if Spring.GetGameFrame()>2 then --because its a luarules action
+        iPanelLayout:AddChild(slap)
+        h = h + iPanelItemHeight
+    end
+     
+    -- move panel to mouse pos & resize
+    local x,y = Spring.GetMouseState()
+    local vsx,vsy = Spring.GetViewGeometry()
+    iPanel:Resize(iPanelWidth,h)
+    iPanelLayout:Resize(iPanelWidth,h)
+    iPanel:SetPos(x,vsy-y-h) --TODO: don't go off edge of screen
+        
+    -- draw iPanel in front of stack
+    iPanel:SetLayer(1)
+    stack:SetLayer(2)
+    iPanel:Invalidate()
+end
+
+
+
+--------------------------------------------------------------------------------
 -- player/spec panels
 --------------------------------------------------------------------------------
 
@@ -154,19 +313,23 @@ local colourConv = {
 }
 
 function PlayerPanel(pID)
-    local panel = Chili.Panel:New{
+
+    local panel = Chili.Button:New{
 		width       = '100%',
         minHeight   = 17,
 		resizeItems = false,
 		autosize    = true,
-		padding     = {3,0,0,0},
+		padding     = {5,0,0,0},
 		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        caption     = "",
+        onclick     = {iPanelPress},
 		children    = {},
+        pID         = pID,
 	}
-    
+   
     --children in order from R to L
-
+    
     local ping = Chili.Image:New{
         parent = panel,
         name = "ping",
@@ -175,7 +338,6 @@ function PlayerPanel(pID)
         right = offset.ping,
         file = pingPic, 
     }
-
 
     local cpu = Chili.Image:New{
         parent = panel,
@@ -235,7 +397,6 @@ function PlayerPanel(pID)
         file = readyPic, 
         color = ReadyColour(players[pID].readyState)
     }
-
     -- faction image is created when game starts, readystate image is then hidden
     
     if options.ranks then
@@ -298,9 +459,9 @@ end
 
 
 function SpecPanel(pID)
-    local panel = Chili.StackPanel:New{
+    local panel = Chili.LayoutPanel:New{
 		width       = '100%',
-        minHeight   = 10,
+        minHeight   = 12,
 		resizeItems = false,
 		autosize    = true,
 		padding     = {0,0,0,0},
@@ -308,25 +469,41 @@ function SpecPanel(pID)
 		itemMargin  = {0,0,0,0},
 		children    = {},
 	}
+
+    local button = Chili.Button:New{
+        name        = "button",
+        parent      = panel,
+		width       = width.name,
+        right       = offset.name,
+        minHeight   = 12,
+		padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+		children    = {},
+        pID         = pID,
+        caption     = "",
+        onclick     = {iPanelPress},
+	}
     
     local name = Chili.TextBox:New{
-        parent      = panel,
+        parent      = button,
         name        = "name",
         text        = players[pID].name,
-        width       = width.name,
-        right       = offset.name,
+        width       = '100%',
+        minHeight   = 12,
         autoHeight  = false,
-        height      = 10,
-        padding     = {0,1,0,0},
+        height      = 12,
+        padding     = {8,5,0,0},
         lineSpacing = 0,
         font        = {
             outline          = true,
             autoOutlineColor = true,
             outlineWidth     = 2,
-            outlineWeight    = 5,
-            size             = 10,
+            outlineWeight    = 10,
+            size             = 12,
         },
     }
+    
     return panel
 end
 
@@ -449,6 +626,7 @@ function NewPlayer(pID)
     players[pID].colour = {r,g,b}
     players[pID].dark = IsDark(r,g,b)
     
+    players[pID].plainName = name
     players[pID].name = ((not spec) and InlineColour(players[pID].colour) or "") .. name --TODO use 'original' colours?
     players[pID].deadname = ((not spec) and InlineColour(players[pID].colour) or "") .. deadPlayerName    
     
@@ -526,8 +704,8 @@ function UpdatePlayer(pID)
         players[pID].deadname = ((not spec) and InlineColour(players[pID].colour) or "") .. deadPlayerName    
         
         players[pID].playerPanel:GetChildByName('name'):SetText(players[pID].name)
-        players[pID].specPanel:GetChildByName('name'):SetText(players[pID].name)
         players[pID].deadPanel:GetChildByName('name'):SetText(players[pID].deadname)
+        players[pID].specPanel:GetChildByName('button'):GetChildByName('name'):SetText(players[pID].name)
     end
     
     -- check if a player leaves/resigns/appears
@@ -565,7 +743,7 @@ function UpdatePlayer(pID)
     needUpdate = needUpdate or update    
 end
 
-function ScheduledUpdate(pID)
+function ScheduledUpdate()
     -- update each player & check for new players
     local playerList = Spring.GetPlayerList()
     for _,pID in pairs(playerList) do
@@ -583,7 +761,7 @@ end
 
 function widget:Initialize()
     Chili = WG.Chili
-
+    
     CalculateOffsets()
 
     local playerList = Spring.GetPlayerList()
@@ -592,33 +770,39 @@ function widget:Initialize()
     end
 
     SetupStack()
+
+    iPanel()
+    iPanel:Hide()
 end
 
 function widget:PlayerChanged(pID)
-    ScheduledUpdate(pID)
+    ScheduledUpdate()
 end
 
-function widget:GameStart()
-    gameStarted = true
-    ScheduledUpdate()
-    
-    for pID,_ in pairs(players) do
-        SetFactionPic(pID)
-    
-        players[pID].playerPanel:GetChildByName('readystate'):Hide()
-    
-        Chili.Image:New{
-            parent = players[pID].playerPanel,
-            name = 'faction',
-            height = 17,
-            width = width.faction,
-            right = offset.faction,
-            file = players[pID].factionPic,
-            color = players[pID].colour,
-        }
-    end
+function widget:GameFrame(n)
+    -- load factions, when possible
+    if not gameStarted and n>1 then
+        gameStarted = true
+        ScheduledUpdate()
         
-    needUpdate = true
+        for pID,_ in pairs(players) do
+            SetFactionPic(pID)
+        
+            players[pID].playerPanel:GetChildByName('readystate'):Hide()
+        
+            Chili.Image:New{
+                parent = players[pID].playerPanel,
+                name = 'faction',
+                height = 17,
+                width = width.faction,
+                right = offset.faction,
+                file = players[pID].factionPic,
+                color = players[pID].colour,
+            }
+        end
+            
+        needUpdate = true
+    end
 end
 
 local prevTimer = Spring.GetTimer()
@@ -632,6 +816,22 @@ function widget:Update()
         UpdateStack()
         needUpdate = false
     end
+end
+
+--[[
+function widget:MousePress()
+    if not iPanel.hidden then 
+        iPanel:Hide()
+    end
+    return false
+end
+]]
+
+function widget:KeyPress()
+    if not iPanel.hidden then 
+        iPanel:Hide()
+    end
+    return false
 end
 
 
@@ -707,7 +907,9 @@ function GetMaxTS(tID)
     local playerList = Spring.GetPlayerList(tID)
     local maxTS = -100
     for _,pID in pairs(playerList) do
-        maxTS = math.max(maxTS, players[pID].tsMu)
+        if players[pID].tsMu then
+            maxTS = math.max(maxTS, players[pID].tsMu)
+        end
     end
     return maxTS
 end
@@ -747,11 +949,8 @@ end
 --------------------------------------------------------------------------------
 function CalculateOffsets()
     local o = 0 --offset from RHS of stack
-    o = o + 10 -- right margin
+    o = o + 22 -- right margin
     offset = {}
-    
-    offset.interact = o
-    o = o + width.interact
     
     offset.ping = o
     o = o + width.ping
@@ -788,7 +987,7 @@ function CalculateOffsets()
         offset.flag = 0
     end
     
-    o = o + 10 --left margin
+    o = o + 16 --left margin
     offset.max = o
 end
 
@@ -999,9 +1198,9 @@ function UpdateStack()
 
     for _,pID in ipairs(specs) do
         specsPanel:AddChild(players[pID].specPanel)
+        -- TODO: why don't specs appear?
     end 
 
-    stack:Invalidate() --shouldn't be needed but otherwise deadplayers/specs doesn't always get resized properly
-    
+    stack:Invalidate() --shouldn't be needed but otherwise deadplayers/specs doesn't always get resized properly    
 end
 

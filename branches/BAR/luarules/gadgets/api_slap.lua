@@ -5,7 +5,7 @@ function gadget:GetInfo()
     author    = "Bluestone",
     date      = "August 2014",
     license   = "Horses",
-    layer     = 0,
+    layer     = -math.huge,
     enabled   = true  --  loaded by default?
   }
 end
@@ -29,19 +29,19 @@ local lastSlap = Spring.GetTimer()
 local firstSlap = true
 
 function Slap(cmd,line,words,playerID)
-    local thisSlap = Spring.GetTimer()
-    if not firstSlap and Spring.DiffTimers(thisSlap,lastSlap)<30 then
-        Spring.Echo("Slap limit reached, please wait!")
-        return
-    end
-    firstSlap = false
-
     local theirPlayerID = tonumber(words[1])    
     if playerID~=myPlayerID then return end
     if theirPlayerID==myPlayerID then 
         Spring.Echo("You slapped yourself")
         return
     end
+
+    local thisSlap = Spring.GetTimer()
+    if not firstSlap and Spring.DiffTimers(thisSlap,lastSlap)<30 then
+        Spring.Echo("Slap limit reached, please wait!")
+        return
+    end
+    firstSlap = false
     
     local theirName,_ = Spring.GetPlayerInfo(theirPlayerID)
     if not theirName then return end

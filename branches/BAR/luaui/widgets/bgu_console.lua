@@ -28,7 +28,7 @@ local sfind = string.find
 
 
 -- Config --
-local msgWidth  = 470 --width of the console
+local msgWidth  = 525 --width of the console
 local cfg = {
 	msgTime  = 6, -- time to display messages in seconds
 	hideChat = true,
@@ -97,7 +97,7 @@ local function loadWindow()
 		parent  = screen,
 		width   = msgWidth,
 		color   = {0,0,0,0},
-		height  = 125,
+		height  = 150,
 		padding = {0,0,0,0},
 		right   = 450,
 		y       = 0,
@@ -134,8 +134,8 @@ local function loadWindow()
 		autosize    = true,
 		resizeItems = false,
 		padding     = {0,0,0,0},
-		itemPadding = {1,1,1,1},
-		itemMargin  = {1,1,1,1},
+		itemPadding = {3,0,3,2},
+		itemMargin  = {3,0,3,2},
 		preserveChildrenOrder = true,
 	}
 

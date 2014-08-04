@@ -364,8 +364,7 @@ function widget:AddConsoleLine(msg)
 		lineSpacing = 0,
 		font        = {
 			outline          = true,
-			outlineColor     = {0,0,0,1},
-			autoOutlineColor = false,
+			autoOutlineColor = true,
 			outlineWidth     = 4,
 			outlineWeight    = 3,
 		},

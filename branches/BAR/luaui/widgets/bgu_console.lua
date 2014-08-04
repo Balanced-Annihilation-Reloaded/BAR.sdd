@@ -30,7 +30,7 @@ local sfind = string.find
 -- Config --
 local msgWidth  = 525 --width of the console
 local cfg = {
-	msgTime  = 6, -- time to display messages in seconds
+	msgTime  = 8, -- time to display messages in seconds
 	hideChat = true,
 	msgCap   = 100,
 }
@@ -232,7 +232,7 @@ function widget:Initialize()
 	
 	-- move input to line up with new console
 	sendCommands('inputtextgeo '
-		..(window.x/screen.width)..' '
+		..((window.x+5)/screen.width)..' '
 		..(1 - (window.y + 30) / screen.height)
 		..' 0.1 '
 		..(window.width / screen.width) )
@@ -377,7 +377,7 @@ function widget:KeyPress(key, mods, isRepeat)
 	-- show the chat window when we send a message
 	if (key == KEYSYMS.RETURN) then
 		showChat()
-	end 
+    end 
 
 	-- if control is pressed and the mouse is hovering over the text input box, show the console 
 	if mods.ctrl and mouseIsOverChat() then

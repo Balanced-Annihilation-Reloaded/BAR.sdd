@@ -345,7 +345,7 @@ function widget:Update()
 	end
 	
 	local timer = spGetTimer()
-	local updateGround = curTip == -3 and spDiffTimers(timer, groundTimer) > 0.1 
+	local updateGround = curTip == -3 and spDiffTimers(timer, groundTimer) > 0.05 
 	local updateHealth = curTip >= -1 and (spDiffTimers(timer, healthTimer) > 0.05 or updateNow)
 	
 	if updateGround then

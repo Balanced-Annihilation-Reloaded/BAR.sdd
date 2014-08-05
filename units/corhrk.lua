@@ -24,7 +24,7 @@ return {
 		movementclass = "KBOT2",
 		name = "Dominator",
 		nochasecategory = "VTOL",
-		objectname = "CORHRK_v2.s3o",
+		objectname = "CORHRK.s3o",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 370.5,

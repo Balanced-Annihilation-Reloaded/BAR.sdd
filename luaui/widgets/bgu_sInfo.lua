@@ -126,7 +126,7 @@ local function ResToolTip(Mmake, Muse, Emake, Euse)
 end
 
 
-local function showUnitInfo(texture, overlay, description, humanName, health, maxHealth, Mmake, Muse, Emake, Euse, Mcost, Ecost)
+local function showUnitInfo(unitDefID, texture, overlay, description, humanName, health, maxHealth, Mmake, Muse, Emake, Euse, Mcost, Ecost)
 	
 	unitName = Chili.TextBox:New{
 		x      = 0,
@@ -167,7 +167,7 @@ local function showUnitInfo(texture, overlay, description, humanName, health, ma
             size = 12,
         }
     }
-	
+    
 	unitIcon = Chili.Image:New{
 		file     = texture,
 		y        = 0,
@@ -187,6 +187,10 @@ local function showUnitInfo(texture, overlay, description, humanName, health, ma
 	
 	unitInfo:AddChild(unitIcon)
 	
+    if UnitDefs[unitDefID].customParams.iscommander then
+        unitCostText:Hide()
+    end
+    
 end
 
 local function addUnitGroupInfo()
@@ -288,15 +292,19 @@ local function updateUnitInfo()
                 Emake = Emake + Em
                 Muse = Muse + Mu
                 Euse = Euse + Eu
-                Mcost = Mcost + Mc
-                Ecost = Ecost + Ec                
+                if not UnitDefs[defID].customParams.iscommander then
+                    Mcost = Mcost + Mc
+                    Ecost = Ecost + Ec                
+                end
 			end
 			healthBars[a].max = max
 			healthBars[a]:SetValue(health)
 		end
         unitInfo:GetChildByName('unitResText'):SetText(ResToolTip(Mmake, Muse, Emake, Euse))
-        unitInfo:GetChildByName('unitCostText'):SetText(mColour .. Mcost .. '\n' .. eColour .. Ecost)
-	end
+        if Mcost>0 then
+            unitInfo:GetChildByName('unitCostText'):SetText(mColour .. Mcost .. '\n' .. eColour .. Ecost)
+        end
+    end
 	
 	updateNow = false
 end
@@ -331,7 +339,7 @@ local function getInfo()
         local Ecost = UnitDefs[defID].energyCost
         local Mcost = UnitDefs[defID].metalCost
         
-		showUnitInfo(texture, overlay, description, humanName, curHealth or 0, maxHealth or 0, Mmake, Muse, Emake, Euse, Mcost, Ecost)		
+		showUnitInfo(defID, texture, overlay, description, humanName, curHealth or 0, maxHealth or 0, Mmake, Muse, Emake, Euse, Mcost, Ecost)		
 	else
 		--broad info about lots of units
 		local sortedUnits = spGetSelectedUnitsSorted()

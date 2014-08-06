@@ -228,15 +228,25 @@ local function makeWidgetList()
 end
 
 ---------------------------- 
+local function CheckSpec()
+    -- hide the resign button if we are a spec
+    if Spring.GetSpectatingState() and not tabs.Info:GetChildByName('ResignButton').hidden then
+        tabs.Info:GetChildByName('ResignButton'):Hide()
+    end
+end
+
 -- Toggles the menu visibility
 --  also handles tab selection (e.g. f11 was pressed and menu opens to 'Interface')
 local function showHide(tab)
 	local oTab = Settings.tabSelected
 	
+    
 	if tab then 
 		menuTabs:Select(tab)
-	else
+        CheckSpec()
+    else
 		mainMenu:ToggleVisibility()
+        CheckSpec()
 		return
 	end
 	
@@ -244,7 +254,8 @@ local function showHide(tab)
 		mainMenu:Hide()
 	elseif mainMenu.hidden then
 		mainMenu:Show()
-	end
+        CheckSpec()	
+    end
 end
 
 ---------------------------- 
@@ -641,14 +652,21 @@ local function Options()
 		}
 	}
 
+    local function ResignMe()
+        spSendCommands{'Spectator'}
+        showHide('Graph') 
+        tabs.Info:GetChildByName('ResignButton'):Hide() 
+    end
+    
+    resignButton = 	Chili.Button:New{caption = 'Resign and Spectate', name = "ResignButton", height = '8%', width = '28%', right = '1%', y = '40%', OnMouseUp = {ResignMe}}
+
 	-- Info --
 	tabs.Info = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
 		children = {
 			Chili.Label:New{caption='-- Credits --',x='0%',width='70%',align = 'center'},
 			Chili.ScrollPanel:New{width = '70%', x=0, y=20, bottom=0, children ={Chili.TextBox:New{width='100%',text=credits}}},
-			Chili.Button:New{caption = 'Resign and Spectate',height = '8%',width = '28%',right = '1%', y = '40%',
-				OnMouseUp = {function() spSendCommands{'Spectator'};showHide('Graph') end }},
-			Chili.Button:New{caption = 'Exit To Desktop',height = '8%',width = '28%',right = '1%', y = '52%',
+			resignButton,
+            Chili.Button:New{caption = 'Exit To Desktop',height = '8%',width = '28%',right = '1%', y = '52%',
 				OnMouseUp = {function() spSendCommands{'quit'} end }},
 		}
 	}

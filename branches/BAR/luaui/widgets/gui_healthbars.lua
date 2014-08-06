@@ -33,16 +33,16 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local barHeight                 = 2.6
-local barWidth                  = 12         --// (barWidth)x2 total width!!!
+local barHeight                 = 2.2
+local barWidth                  = 11.5         --// (barWidth)x2 total width!!!
 local barAlpha                  = 0.85
 local barOutlineAlpha           = 0.8
 local barInnerAlpha             = 0.5
 local barValueAlpha             = 0.9	      -- alpha of the colored part
 
-local featureBarHeight          = 2.85
-local featureBarWidth           = 1
-local featureBarAlpha           = 0.4
+local featureBarHeight          = 1.5
+local featureBarWidth           = 7
+local featureBarAlpha           = 0.6
 
 local drawBarTitles             = true          -- (I disabled the healthbar text, cause that one doesnt need an explanation)
 local titlesAlpha               = 0.3*barAlpha
@@ -67,7 +67,7 @@ local glowSize					= outlineSize*7
 local minPercentageDistance     = 80000     -- always show health percentage text below this distance
 local infoDistance              = 800000
 local maxFeatureInfoDistance    = 300000    --max squared distance at which text it drawn for features 
-local maxFeatureDistance        = 600000    --max squared distance at which any info is drawn for features 
+local maxFeatureDistance        = 550000    --max squared distance at which any info is drawn for features 
 local maxUnitDistance           = 11000000  --max squared distance at which any info is drawn for units  MUST BE LARGER THAN FOR FEATURES!
 
 local minReloadTime             = 4 --// in seconds
@@ -119,7 +119,7 @@ local bfcolormap      = {}
 
 local fbkBottom       = { 0.40,0.40,0.40,featureBarAlpha }
 local fbkTop          = { 0.06,0.06,0.06,featureBarAlpha }
-local fhpcolormap     = { {0.4, 0.27, 0.27, featureBarAlpha*1.5},  {0.4, 0.34, 0.27, featureBarAlpha*1.5}, {0.27,0.39,0.27,featureBarAlpha*1.5} }
+local fhpcolormap     = { {0.33, 0.33, 0.33, featureBarAlpha*1.5},  {0.33, 0.33, 0.33, featureBarAlpha*1.5}, {0.33,0.33,0.33,featureBarAlpha*1.5} }
 
 local barColors = {
   emp     = { 0.50,0.50,1.00,barValueAlpha },
@@ -179,8 +179,9 @@ end --//end do
 
 
 
+-- if you change code inside this function, then  dont forget to change drawFeatureBarGl() aswell
 function drawBarGl()
-
+  
   local cs = choppedCornerSize
   local heightAddition = 0
   if OPTIONS[currentOption].showOutline then
@@ -188,7 +189,7 @@ function drawBarGl()
   end
   -- add glow
   if addGlow then
-		
+	
     gl.BeginEnd(GL.QUADS,function()
       -- bottom mid piece
       gl.Vertex(-barWidth,       (barHeight/2),  0,                   -2);
@@ -242,7 +243,7 @@ function drawBarGl()
       
     end)
   end
-      
+  
   if (OPTIONS[currentOption].choppedCorners) then 
     gl.BeginEnd(GL.QUADS,function()
     
@@ -430,7 +431,210 @@ function drawBarGl()
   
 end
 
+
+-- is a copy of drawBarGl(),  without glow vertexcode  +  some vars changed (only at top: barHeight, barWidth, bkBottom, bkTop)
+function drawFeatureBarGl()
+  local barHeight = featureBarHeight
+  local barWidth = featureBarWidth
+  local bkBottom       = fbkBottom
+  local bkTop          = fbkTop
+
+  local cs = choppedCornerSize
+  local heightAddition = 0
+  
+  if OPTIONS[currentOption].showOutline then
+    heightAddition = outlineSize
+  end
+  
+  if (OPTIONS[currentOption].choppedCorners) then 
+    gl.BeginEnd(GL.QUADS,function()
+    
       
+      -- center background piece
+      gl.Color((OPTIONS[currentOption].showOutline and bkOutlineBottom or bkBottom));
+      gl.Vertex(barWidth-cs,    0-heightAddition,         0,                 1);
+      gl.Vertex(barWidth-cs,    0-heightAddition,         (barWidth*2)-cs*2, 1);
+      gl.Color((OPTIONS[currentOption].showOutline and bkOutlineTop or bkTop));
+      gl.Vertex(barWidth-cs,    barHeight+heightAddition, (barWidth*2)-cs*2, 1);
+      gl.Vertex(barWidth-cs,    barHeight+heightAddition, 0,                 1);
+      
+      if OPTIONS[currentOption].showOutline and OPTIONS[currentOption].showInnerBg then
+        cs = choppedCornerSize
+        -- inner center background piece
+        gl.Color(bkInnerBottom[1],bkInnerBottom[2],bkInnerBottom[3],bkInnerBottom[4]);
+        gl.Vertex(barWidth-cs-cs, 0,         0,                 2);
+        gl.Vertex(barWidth-cs,    0,         (barWidth*2)-cs*2, 2);
+        gl.Color(bkInnerTop[1],bkInnerTop[2],bkInnerTop[3],bkInnerTop[4]);
+        gl.Vertex(barWidth-cs,    barHeight, (barWidth*2)-cs*2, 2);
+        gl.Vertex(barWidth-cs-cs, barHeight, 0,                 2);
+        
+        -- inner background right piece
+        local cs2 = cs
+        gl.Color(bkInnerBottom[1],bkInnerBottom[2],bkInnerBottom[3],bkInnerBottom[4]);
+        gl.Vertex(barWidth-cs-cs+cs2,   cs2,           0, 2);
+        gl.Vertex(barWidth-cs-cs,       0,             0, 2);
+        gl.Color(bkInnerTop[1],bkInnerTop[2],bkInnerTop[3],bkInnerTop[4]);
+        gl.Vertex(barWidth-cs-cs,       barHeight,     0, 2);
+        gl.Vertex(barWidth-cs-cs+cs2,   barHeight-cs2, 0, 2);
+      end
+      
+      -- background right piece
+      if OPTIONS[currentOption].choppedCorners or OPTIONS[currentOption].showOutline then
+        local cs2 = cs
+        if OPTIONS[currentOption].showOutline then
+          cs2 = outlineSize
+        end
+        gl.Color((OPTIONS[currentOption].showOutline and bkOutlineBottom or bkBottom));
+        gl.Vertex(barWidth-cs+cs2,   cs2-heightAddition,           0, 1);
+        gl.Vertex(barWidth-cs,       0-heightAddition,             0, 1);
+        gl.Color((OPTIONS[currentOption].showOutline and bkOutlineTop or bkTop));
+        gl.Vertex(barWidth-cs,       barHeight+heightAddition,     0, 1);
+        gl.Vertex(barWidth-cs+cs2,   barHeight+heightAddition-cs2, 0, 1);
+        
+        
+        if heightAddition > 0 then
+          cs = outlineSize
+          -- background left piece
+          gl.Color((OPTIONS[currentOption].showOutline and bkOutlineBottom or bkBottom));
+          gl.Vertex(-barWidth-cs,  cs-heightAddition,          0, 1);
+          gl.Vertex(-barWidth,     -heightAddition,            0, 1);
+          gl.Color((OPTIONS[currentOption].showOutline and bkOutlineTop or bkTop));
+          gl.Vertex(-barWidth,     barHeight+heightAddition,    0, 1);
+          gl.Vertex(-barWidth-cs,  barHeight+heightAddition-cs, 0, 1);
+          
+          cs = choppedCornerSize
+          -- top middle piece
+          local usedColor = bkOutlineTop[1]+((bkOutlineBottom[1]-bkOutlineTop[1]) * (heightAddition/(barHeight+heightAddition+heightAddition)))
+          gl.Color(usedColor,usedColor,usedColor,bkOutlineTop[4]);
+          gl.Vertex(-barWidth,    barHeight,                 0,                 1);
+          gl.Vertex(barWidth-cs,  barHeight,                 (barWidth*2)-cs*2, 1);
+          gl.Color(bkOutlineTop);
+          gl.Vertex(barWidth-cs,  barHeight+heightAddition,  (barWidth*2)-cs*2, 1);
+          gl.Vertex(-barWidth,    barHeight+heightAddition,  0,                 1);  
+          
+          -- bottom middle piece
+          usedColor = bkOutlineBottom[1]-((bkOutlineBottom[1]-bkOutlineTop[1]) * (heightAddition/(barHeight+heightAddition+heightAddition)))
+          gl.Color(usedColor,usedColor,usedColor,bkOutlineTop[4]);
+          gl.Vertex(-barWidth,    0,                0,                 1);
+          gl.Vertex(barWidth-cs,  0,                (barWidth*2)-cs*2, 1);
+          gl.Color(bkOutlineBottom);
+          gl.Vertex(barWidth-cs,  -heightAddition,  (barWidth*2)-cs*2, 1);
+          gl.Vertex(-barWidth,    -heightAddition,  0,                 1);
+        end
+      end
+      
+      -- color (value part) mid piece
+      gl.Vertex(-barWidth+cs, 0,         0,                 0);
+      gl.Vertex(-barWidth,    0,         (barWidth*2)-cs*2, 0);
+      gl.Vertex(-barWidth,    barHeight, (barWidth*2)-cs*2, 0);
+      gl.Vertex(-barWidth+cs, barHeight, 0,                 0);
+      
+      -- color (value part) left piece
+      gl.Vertex(-barWidth,    cs,           0, 0);
+      gl.Vertex(-barWidth+cs, 0,            0, 0);
+      gl.Vertex(-barWidth+cs, barHeight,    0, 0);
+      gl.Vertex(-barWidth,    barHeight-cs, 0, 0);
+      
+      -- color (value part) right piece
+      gl.Vertex(-barWidth+cs,cs,          (barWidth*2)-cs*2, 0);
+      gl.Vertex(-barWidth,0,              (barWidth*2)-cs*2, 0);
+      gl.Vertex(-barWidth,barHeight,      (barWidth*2)-cs*2, 0);
+      gl.Vertex(-barWidth+cs,barHeight-cs,(barWidth*2)-cs*2, 0);
+      
+    end)
+    -- corner fillers
+    gl.BeginEnd(GL.TRIANGLES,function()
+      cs = choppedCornerSize
+      
+      local inputBottomColor = bkBottom
+      local inputTopColor = bkTop
+      if OPTIONS[currentOption].showOutline then
+        inputBottomColor = bkOutlineBottom
+        inputTopColor = bkOutlineTop
+      end
+      -- top right
+      local usedColor = inputTopColor[1]+((inputBottomColor[1]-inputTopColor[1]) * ((heightAddition+cs)/(barHeight+heightAddition+heightAddition)))
+      gl.Color(usedColor,usedColor,usedColor,inputTopColor[4]);
+      gl.Vertex(barWidth-cs,    barHeight-cs,  (barWidth*2)-cs*2, 1);
+      
+      usedColor = inputTopColor[1]+((inputBottomColor[1]-inputTopColor[1]) * (heightAddition/(barHeight+heightAddition+heightAddition)))
+      gl.Color(usedColor,usedColor,usedColor,inputTopColor[4]);
+      gl.Vertex(barWidth-cs,    barHeight,     (barWidth*2)-cs*2, 1);
+      gl.Vertex(barWidth-cs-cs, barHeight,     (barWidth*2)-cs*2, 1);
+      
+      -- bottom right
+      usedColor = inputBottomColor[1]-((inputBottomColor[1]-inputTopColor[1]) * ((heightAddition+cs)/(barHeight+heightAddition+heightAddition)))
+      gl.Color(usedColor,usedColor,usedColor,inputBottomColor[4]);
+      gl.Vertex(barWidth-cs,    cs,  (barWidth*2)-cs*2, 1);
+      
+      usedColor = inputBottomColor[1]-((inputBottomColor[1]-inputTopColor[1]) * (heightAddition/(barHeight+heightAddition+heightAddition)))
+      gl.Color(usedColor,usedColor,usedColor,inputBottomColor[4]);
+      gl.Vertex(barWidth-cs,    0,   (barWidth*2)-cs*2, 1);
+      gl.Vertex(barWidth-cs-cs, 0,   (barWidth*2)-cs*2, 1);
+      
+      -- inner background corners
+      if OPTIONS[currentOption].showOutline and OPTIONS[currentOption].showInnerBg then
+        -- top right
+        usedColor = bkInnerTop[1]-((bkInnerTop[1]-bkInnerBottom[1]) * ((cs)/(barHeight)))
+        gl.Color(usedColor,usedColor,usedColor,bkInnerTop[4]);
+        gl.Vertex(barWidth-cs,    barHeight-cs,  (barWidth*2)-cs*2, 1.0000001);
+        
+        gl.Color(bkInnerTop[1],bkInnerTop[2],bkInnerTop[3],bkInnerTop[4]);
+        gl.Vertex(barWidth-cs,    barHeight,     (barWidth*2)-cs*2, 1.0000001);
+        gl.Vertex(barWidth-cs-cs, barHeight,     (barWidth*2)-cs*2, 1.0000001);
+        
+        -- bottom right
+        usedColor = bkInnerBottom[1]+((bkInnerTop[1]-bkInnerBottom[1]) * ((cs)/(barHeight)))
+        gl.Color(usedColor,usedColor,usedColor,bkInnerBottom[4]);
+        gl.Vertex(barWidth-cs,    cs,  (barWidth*2)-cs*2, 1.0000001);
+        
+        gl.Color(bkInnerBottom[1],bkInnerBottom[2],bkInnerBottom[3],bkInnerBottom[4]);
+        gl.Vertex(barWidth-cs,    0,   (barWidth*2)-cs*2, 1.0000001);
+        gl.Vertex(barWidth-cs-cs, 0,   (barWidth*2)-cs*2, 1.0000001);
+      end
+      
+      if heightAddition > 0 then
+        -- top left
+        usedColor = inputTopColor[1]+((inputBottomColor[1]-inputTopColor[1]) * ((heightAddition+cs)/(barHeight+heightAddition+heightAddition)))
+        gl.Color(usedColor,usedColor,usedColor,inputTopColor[4]);
+        gl.Vertex(-barWidth,    barHeight-cs,  0, 1);
+        
+        usedColor = inputTopColor[1]+((inputBottomColor[1]-inputTopColor[1]) * (heightAddition/(barHeight+heightAddition+heightAddition)))
+        gl.Color(usedColor,usedColor,usedColor,inputTopColor[4]);
+        gl.Vertex(-barWidth,    barHeight,     0, 1);
+        gl.Vertex(-barWidth+cs, barHeight,     0, 1);
+        
+        -- bottom left
+        usedColor = inputBottomColor[1]-((inputBottomColor[1]-inputTopColor[1]) * ((heightAddition+cs)/(barHeight+heightAddition+heightAddition)))
+        gl.Color(usedColor,usedColor,usedColor,inputBottomColor[4]);
+        gl.Vertex(-barWidth,   cs,  0, 1);
+        
+        usedColor = inputBottomColor[1]-((inputBottomColor[1]-inputTopColor[1]) * (heightAddition/(barHeight+heightAddition+heightAddition)))
+        gl.Color(usedColor,usedColor,usedColor,inputBottomColor[4]);
+        gl.Vertex(-barWidth,    0,   0, 1);
+        gl.Vertex(-barWidth+cs, 0,   0, 1);
+      end
+    end)
+  else
+    gl.BeginEnd(GL.QUADS,function()
+      gl.Vertex(-barWidth,0,        0,0);
+      gl.Vertex(-barWidth,0,        barWidth*2,0);
+      gl.Vertex(-barWidth,barHeight,barWidth*2,0);
+      gl.Vertex(-barWidth,barHeight,0,0);
+    
+      gl.Color(bkBottom);
+      gl.Vertex(barWidth,0,        0,         1);
+      gl.Vertex(barWidth,0,        barWidth*2,1);
+      gl.Color(bkTop);
+      gl.Vertex(barWidth,barHeight,barWidth*2,1);
+      gl.Vertex(barWidth,barHeight,0,         1);
+    end)
+  end
+  
+end
+
+
+
 function init()
 
   --// find real primary weapon and its reloadtime
@@ -543,14 +747,14 @@ function init()
          }
       ]],
 		uniform = {
-			glowAlpha = 0.12,
+			glowAlpha = 0.14,
 		},
     });
 	
 	
     if (barShader) then
       barDList         = gl.CreateList(drawBarGl)
-      barFeatureDList  = gl.CreateList(drawBarGl)
+      barFeatureDList  = gl.CreateList(drawFeatureBarGl)
     end
   end
 end

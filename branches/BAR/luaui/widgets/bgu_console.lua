@@ -272,35 +272,40 @@ local function processLine(line)
 	
 	local name = ''
 	local system = false
-	
+	local dedup = 1
+    
 	if (names[ssub(line,2,(sfind(line,"> ") or 1)-1)] ~= nil) then
 		-- Player Message
 		name = ssub(line,2,sfind(line,"> ")-1)
 		text = ssub(line,slen(name)+4)
+        dedup = 5
 	elseif (names[ssub(line,2,(sfind(line,"] ") or 1)-1)] ~= nil) then
 		-- Spec Message
 		name = ssub(line,2,sfind(line,"] ")-1)
 		text = ssub(line,slen(name)+4)
+        dedup = 5
 	elseif (names[ssub(line,2,(sfind(line,"(replay)") or 3)-3)] ~= nil) then
 		-- Spec Message (replay)
 		name = ssub(line,2,sfind(line,"(replay)")-3)
 		text = ssub(line,slen(name)+13)
+        dedup = 5
 	elseif (names[ssub(line,1,(sfind(line," added point: ") or 1)-1)] ~= nil) then
 		-- Map point
 		name = ssub(line,1,sfind(line," added point: ")-1)
 		text = ssub(line,slen(name.." added point: ")+1)
+        dedup = 5
 	elseif (ssub(line,1,1) == ">") then
 		-- Game Message
 		text = ssub(line,3)
-		system = true
+        dedup = 1
 	elseif sfind(line,'-> Version') or sfind(line,'ClientReadNet') or sfind(line,'Address') or (gameOver and sfind(line,'left the game')) then --surplus info when user connects
 		-- Filter out unwanted engine messages
-		return _, true, system --ignore
+        return _, true, _ --ignore
 	end
 	
 	if WG.ignoredPlayers and WG.ignoredPlayers[name] then
 		-- Filter out ignored players
-		return _,true, system --ignore 
+		return _,true, _ --ignore 
 	end
 	
 	if names[name] then
@@ -329,16 +334,15 @@ local function processLine(line)
 		line = nameColor .. name .. ': ' .. textColor .. text
 	end
 
-	return color.misc .. line, false, system
+	return color.misc .. line, false, dedup
 end
 
 function widget:AddConsoleLine(msg)
 	-- update chat with new line
-	local text, ignore, system = processLine(msg)
+	local text, ignore, dedup = processLine(msg)
 	if ignore then return end
-	
-    --[[
-	for i=0,2 do
+    
+	for i=0,dedup-1 do
 		local prevMsg = log.children[#log.children - i]
 		if prevMsg and (not system or i==0) and (text == prevMsg.text or text == prevMsg.origText) then
 			prevMsg.duplicates = prevMsg.duplicates + 1
@@ -348,7 +352,6 @@ function widget:AddConsoleLine(msg)
 			return
 		end
 	end
-    ]]
 	
 	if #log.children > cfg.msgCap then
 		log:RemoveChild(log.children[1])

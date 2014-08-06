@@ -435,7 +435,7 @@ function widget:Initialize()
 		columns = 1,
 		rows    = 8,
 		y       = 1,
-		x       = scrH * 0.2,
+		x       = scrH * 0.2 * 1.05, --x and height match sInfo
 		height  = scrH * 0.2,
 		width   = 100,
 		padding = {0,0,0,0},

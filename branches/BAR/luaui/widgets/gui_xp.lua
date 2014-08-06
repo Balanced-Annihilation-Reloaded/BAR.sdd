@@ -48,12 +48,13 @@ local floor = math.floor
 local unitHeights  = {}
 local ranks = { [0] = {}, [1] = {}, [2] = {}, [3] = {}, [4] = {} }
 local PWranks = { [0] = {}, [1] = {}, [2] = {}, [3] = {}, [4] = {} }
+local maxRenderDistance = 2500000
 
 local PWUnits = {}
 
 local myAllyTeamID = 666
 
-local iconsize   = 33
+local iconsize   = 8
 local iconoffset = 14
 
 local rankTexBase = 'LuaUI/Images/Ranks/'
@@ -218,32 +219,39 @@ function widget:DrawWorld()
     return -- avoid unnecessary GL calls
   end
 
-  gl.Color(1,1,1,1)
-  glDepthMask(true)
-  glDepthTest(true)
-  glAlphaTest(GL_GREATER, 0.001)
-
-  for i=1,4 do
-    if (next(ranks[i])) then
-      glTexture( rankTextures[i] )
-      for unitID,_ in pairs(ranks[i]) do
-        glDrawFuncAtUnit(unitID, false, DrawUnitFunc, unitHeights[unitID])
+  cx, cy, cz = Spring.GetCameraPosition()
+  
+  --if the camera is too far up, higher than maxDistance on smoothmesh, dont even call any visibility checks or nothing 
+  local smoothheight=Spring.GetSmoothMeshHeight(cx,cz) --clamps x and z
+  if ((cy-smoothheight)^2 < maxRenderDistance) then 
+    
+    gl.Color(1,1,1,1)
+    glDepthMask(true)
+    glDepthTest(true)
+    glAlphaTest(GL_GREATER, 0.001)
+    
+    for i=1,4 do
+      if (next(ranks[i])) then
+        glTexture( rankTextures[i] )
+        for unitID,_ in pairs(ranks[i]) do
+          glDrawFuncAtUnit(unitID, false, DrawUnitFunc, unitHeights[unitID])
+        end
       end
     end
-  end
-  for i=0,4 do
-    if (next(PWranks[i])) then
-      glTexture( PWrankTextures[i] )
-      for unitID,_ in pairs(PWranks[i]) do
-        glDrawFuncAtUnit(unitID, false, DrawUnitFunc, unitHeights[unitID])
+    for i=0,4 do
+      if (next(PWranks[i])) then
+        glTexture( PWrankTextures[i] )
+        for unitID,_ in pairs(PWranks[i]) do
+          glDrawFuncAtUnit(unitID, false, DrawUnitFunc, unitHeights[unitID])
+        end
       end
     end
+    glTexture(false)
+    
+    glAlphaTest(false)
+    glDepthTest(false)
+    glDepthMask(false)
   end
-  glTexture(false)
-
-  glAlphaTest(false)
-  glDepthTest(false)
-  glDepthMask(false)
 end
 
 

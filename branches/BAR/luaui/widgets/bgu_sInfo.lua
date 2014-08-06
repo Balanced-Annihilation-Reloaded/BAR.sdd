@@ -55,14 +55,11 @@ local eColour = '\255\255\255\76'
 
 ----------------------------------
 local function refineSelection(obj)
-    -- restrict current selection to unitDefID
-    local unitDefID = obj.unitDefID
-    local sortedUnits = spGetSelectedUnitsSorted()
-    Spring.SelectUnitArray(sortedUnits[unitDefID] or {})
+		Spring.SelectUnitArray(obj.unitIDs)
 end
 
 -- add unitDefID (curTip = -1)
-local function addUnitGroup(name,texture,overlay,unitIDs,unitDefID)
+local function addUnitGroup(name,texture,overlay,unitIDs)
 	local count = #unitIDs
 	if count == 1 then count = '' end
 	
@@ -98,12 +95,12 @@ local function addUnitGroup(name,texture,overlay,unitIDs,unitDefID)
 	}
 	
 	local button = Chili.Button:New{
+		unitIDs = unitIDs,
 		caption  = '',
 		margin   = {1,1,1,1},
 		padding  = {0,0,0,0},
 		children = {unitIcon, healthBars[#healthBars]},
-        unitDefID = unitDefID,
-        onclick = {refineSelection},       
+		onclick = {refineSelection},       
 	}
 	
 	selectionGrid:AddChild(button)
@@ -114,15 +111,15 @@ end
 -- unit info (curTip >= 0)
 
 function round(num, idp)
-  return string.format("%." .. (idp or 0) .. "f", num) -- lua is such a great language that this is the only reliable way to round
+	return string.format("%." .. (idp or 0) .. "f", num) -- lua is such a great language that this is the only reliable way to round
 end
 
 local function ResToolTip(Mmake, Muse, Emake, Euse)
-    --if Mmake>0.01 or Muse>0.01 or Emake>0.01 or Euse>0.01 then
-        return white .. "M: " .. green .. '+' .. round(Mmake,1) .. '  ' .. red .. '-' .. round(Muse,1) .. "\n" ..  white .. "E:  " .. green .. '+' .. round(Emake,1) .. '  ' .. red .. "-" .. round(Euse,1)
-    --else
-    --   return ""
-    --end
+	--if Mmake>0.01 or Muse>0.01 or Emake>0.01 or Euse>0.01 then
+		return white .. "M: " .. green .. '+' .. round(Mmake,1) .. '  ' .. red .. '-' .. round(Muse,1) .. "\n" ..  white .. "E:  " .. green .. '+' .. round(Emake,1) .. '  ' .. red .. "-" .. round(Euse,1)
+	--else
+	--   return ""
+	--end
 end
 
 
@@ -150,24 +147,22 @@ local function showUnitInfo(unitDefID, texture, overlay, description, humanName,
 		height  = 10,
 		color   = {0.5,1,0,1},
 	}
-    
-    unitCostText = Chili.TextBox:New{
-        x = '62%',
-        height = 28,
-        bottom = 3,
-        text = mColour .. Mcost .. '\n' .. eColour .. Ecost,
-    }
-    
-    unitResText = Chili.TextBox:New{
-        x       = 5,
-        bottom  = 35,
-        height = 24,
-        text    =  ResToolTip(Mmake, Muse, Emake, Euse),
-        font = {
-            size = 12,
-        }
-    }
-    
+		
+	unitCostText = Chili.TextBox:New{
+		x      = '62%',
+		height = 28,
+		bottom = 3,
+		text   = mColour .. Mcost .. '\n' .. eColour .. Ecost,
+	}
+	
+	unitResText = Chili.TextBox:New{
+		x        = 5,
+		bottom   = 35,
+		height   = 24,
+		text     =  ResToolTip(Mmake, Muse, Emake, Euse),
+		fontsize = 12,
+	}
+		
 	unitIcon = Chili.Image:New{
 		file     = texture,
 		y        = 0,
@@ -187,38 +182,34 @@ local function showUnitInfo(unitDefID, texture, overlay, description, humanName,
 	
 	unitInfo:AddChild(unitIcon)
 	
-    if UnitDefs[unitDefID].customParams.iscommander then
-        unitCostText:Hide()
-    end
-    
+	if UnitDefs[unitDefID].customParams.iscommander then
+		unitCostText:Hide()
+	end
+		
 end
 
 local function addUnitGroupInfo()
 
-    unitCostText = Chili.TextBox:New{
-        name = "unitCostText",
-        x = '70%',
-        height = 28,
-        bottom = 10,
-        text = "", --mColour .. Mcost .. '\n' .. eColour .. Ecost,
-        font = {
-            size = 12,
-        }
-    }
-    
-    unitResText = Chili.TextBox:New{
-        name    = "unitResText",
-        x       = 5,
-        bottom  = 10,
-        height = 24,
-        text    =  "", --ResToolTip(Mmake, Muse, Emake, Euse),
-        font = {
-            size = 12,
-        }
-    }
-    
-    unitInfo:AddChild(unitCostText)
-    unitInfo:AddChild(unitResText)
+	unitCostText = Chili.TextBox:New{
+		name     = "unitCostText",
+		x        = '70%',
+		height   = 28,
+		bottom   = 10,
+		text     = "", --mColour .. Mcost .. '\n' .. eColour .. Ecost,
+		fontsize = 12,}
+	}
+		
+	unitResText = Chili.TextBox:New{
+		name     = "unitResText",
+		x        = 5,
+		bottom   = 10,
+		height   = 24,
+		text     =  "", --ResToolTip(Mmake, Muse, Emake, Euse),
+		fontsize = 12,}
+	}
+
+	unitInfo:AddChild(unitCostText)
+	unitInfo:AddChild(unitResText)
 end
 
 ----------------------------------
@@ -268,43 +259,43 @@ local function updateUnitInfo()
 		unitHealthText:Invalidate() --not sure why this is needed here but it is
 		unitHealth.max = maxHealth
 		unitHealth:SetValue(health)
-        
-        local Mmake, Muse, Emake, Euse = spGetUnitResources(curTip)
-        unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
+
+		local Mmake, Muse, Emake, Euse = spGetUnitResources(curTip)
+		unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
 		
 	--multiple units, but not so many we cant fit pics
 	elseif curTip == -1 then 
-        local Ecost,Mcost = 0,0
-        local Mmake,Muse,Emake,Euse = 0,0,0,0
+		local Ecost,Mcost = 0,0
+		local Mmake,Muse,Emake,Euse = 0,0,0,0
 		for a = 1, #healthBars do
 			local health,max = 0,0
-            for b = 1, #healthBars[a].unitIDs do
-                local unitID = healthBars[a].unitIDs[b]
-				local defID = spGetUnitDefID(unitID)
-                local h, m = spGetUnitHealth(unitID)
-				max   = max + m
-				health = health + h
-                
-                local Mm, Mu, Em, Eu = spGetUnitResources(unitID)
-                local Ec = UnitDefs[defID].energyCost
-                local Mc = UnitDefs[defID].metalCost
-                Mmake = Mmake + Mm
-                Emake = Emake + Em
-                Muse = Muse + Mu
-                Euse = Euse + Eu
-                if not UnitDefs[defID].customParams.iscommander then
-                    Mcost = Mcost + Mc
-                    Ecost = Ecost + Ec                
-                end
+				for b = 1, #healthBars[a].unitIDs do
+					local unitID = healthBars[a].unitIDs[b]
+					local defID = spGetUnitDefID(unitID)
+					local h, m = spGetUnitHealth(unitID)
+					max   = max + m
+					health = health + h
+					local Mm, Mu, Em, Eu = spGetUnitResources(unitID)
+					local Ec = UnitDefs[defID].energyCost
+					local Mc = UnitDefs[defID].metalCost
+					Mmake = Mmake + Mm
+					Emake = Emake + Em
+					Muse = Muse + Mu
+					Euse = Euse + Eu
+					if not UnitDefs[defID].customParams.iscommander then
+							Mcost = Mcost + Mc
+							Ecost = Ecost + Ec                
+					end
 			end
 			healthBars[a].max = max
 			healthBars[a]:SetValue(health)
 		end
-        unitInfo:GetChildByName('unitResText'):SetText(ResToolTip(Mmake, Muse, Emake, Euse))
-        if Mcost>0 then
-            unitInfo:GetChildByName('unitCostText'):SetText(mColour .. Mcost .. '\n' .. eColour .. Ecost)
-        end
-    end
+		
+		unitInfo:GetChildByName('unitResText'):SetText(ResToolTip(Mmake, Muse, Emake, Euse))
+		if Mcost>0 then
+			unitInfo:GetChildByName('unitCostText'):SetText(mColour .. Mcost .. '\n' .. eColour .. Ecost)
+		end
+	end
 	
 	updateNow = false
 end
@@ -319,11 +310,11 @@ local function getInfo()
 	if #units == 0 then
 		--info about point on map corresponding to cursor (updated every other gameframe)
 		curTip = -3
-        return
-    end    
-    
+		return
+	end    
+		
 	if #units == 1 then
-    
+		
 		--detailed info about a single unit
 		local unitID      = units[1]
 		curTip = unitID
@@ -335,10 +326,10 @@ local function getInfo()
 		local overlay     = imageDir..'Overlays/' .. name .. '.png'
 		local humanName   = UnitDefs[defID].humanName
 		local curHealth, maxHealth = spGetUnitHealth(unitID)
-        local Mmake, Muse, Emake, Euse = spGetUnitResources(unitID)
-        local Ecost = UnitDefs[defID].energyCost
-        local Mcost = UnitDefs[defID].metalCost
-        
+		local Mmake, Muse, Emake, Euse = spGetUnitResources(unitID)
+		local Ecost = UnitDefs[defID].energyCost
+		local Mcost = UnitDefs[defID].metalCost
+				
 		showUnitInfo(defID, texture, overlay, description, humanName, curHealth or 0, maxHealth or 0, Mmake, Muse, Emake, Euse, Mcost, Ecost)		
 	else
 		--broad info about lots of units
@@ -347,7 +338,7 @@ local function getInfo()
 		local unitCount = 0
 		--see if sortedUnits has too many elements
 		if sortedUnits["n"] <= 6 then 
-            curTip = -1
+			curTip = -1
 			--pics & healthbars, grouped by UnitDefID, if it fits
 			for unitDefID, unitIDs in pairs(sortedUnits) do
 				if unitDefID ~= 'n' then 
@@ -357,14 +348,14 @@ local function getInfo()
 					addUnitGroup(name,texture,overlay,unitIDs, unitDefID)
 				end
 			end
-            addUnitGroupInfo()
-        else
-            curTip = -2
+			addUnitGroupInfo()
+		else
+			curTip = -2
 			showBasicSelectionInfo(#units, sortedUnits["n"])
 		end
 	end
-    
-    updateUnitInfo()
+		
+	updateUnitInfo()
 end
 
 ----------------------------------
@@ -467,11 +458,11 @@ function widget:Update()
 	if updateGround then
 		updateGroundInfo()
 		groundTimer = timer
-    end
+	end
 end
 
 function widget:GameFrame()
-    updateUnitInfo()
+	updateUnitInfo()
 end
 
 ----------------------------------

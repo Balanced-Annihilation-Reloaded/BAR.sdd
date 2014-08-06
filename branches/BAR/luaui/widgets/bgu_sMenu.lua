@@ -2,7 +2,7 @@
 --  TODO add build progress bar.
 function widget:GetInfo()
 	return {
-		name      = 'Funks Selection Menu',
+		name      = 'Selection Menu',
 		desc      = 'Shows current selections build, order, and state options',
 		author    = 'Funkencool',
 		date      = 'Sep 2013',

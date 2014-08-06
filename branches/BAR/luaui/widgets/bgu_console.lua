@@ -1,7 +1,7 @@
 -- WIP
 function widget:GetInfo()
 	return {
-		name    = 'Funks Chat Console',
+		name    = 'Chat Console',
 		desc    = 'A simple chili chat console',
 		author  = 'Funkencool, Bluestone',
 		date    = '2013',
@@ -337,6 +337,7 @@ function widget:AddConsoleLine(msg)
 	local text, ignore, system = processLine(msg)
 	if ignore then return end
 	
+    --[[
 	for i=0,2 do
 		local prevMsg = log.children[#log.children - i]
 		if prevMsg and (not system or i==0) and (text == prevMsg.text or text == prevMsg.origText) then
@@ -347,6 +348,7 @@ function widget:AddConsoleLine(msg)
 			return
 		end
 	end
+    ]]
 	
 	if #log.children > cfg.msgCap then
 		log:RemoveChild(log.children[1])

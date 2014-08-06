@@ -3,7 +3,7 @@
 
 function widget:GetInfo()
   return {
-    name      = "WidgetProfiler",
+    name      = "Widget Profiler",
     desc      = "",
     author    = "jK",
     version   = "2.0",
@@ -230,6 +230,7 @@ local maximum = 0
 local totalLoads = {}
 local allOverTime = 0
 local allOverTimeSec = 0
+local chiliTime = 0
 
 local sortedList = {}
 local function SortFunc(a,b)
@@ -254,7 +255,9 @@ end
       totalLoads = {}
       maximum = 0
       allOverTime = 0
+      chiliLoad = 0
       local n = 1
+      
       for wname,callins in pairs(callinTimes) do
         local total = 0
         local cmax  = 0
@@ -270,15 +273,20 @@ end
 
         local load = 100*total/deltaTime
         local load_avg = CalcLoad(loadAverages[wname] or load, load, averageTime)
-		loadAverages[wname] = load_avg
+        loadAverages[wname] = load_avg
 
-        allOverTimeSec = allOverTimeSec + total
+        if not string.find(wname, "Chili") and not string.find(wname, "Widget Profiler") then
+          allOverTimeSec = allOverTimeSec + total
+          local tLoad = loadAverages[wname]
 
-        local tLoad = loadAverages[wname]
-        sortedList[n] = {wname..'('..cmaxname..')',tLoad}
-        allOverTime = allOverTime + tLoad
-        if (maximum<tLoad) then maximum=tLoad end
-        n = n + 1
+          sortedList[n] = {wname..'('..cmaxname..')',tLoad}
+          allOverTime = allOverTime + tLoad
+          if (maximum<tLoad) then maximum=tLoad end
+          n = n + 1
+        elseif string.find(wname, "Chili") then
+          chiliLoad = chiliLoad + loadAverages[wname]
+          chiliTime = chiliTime + total
+        end
       end
 	  
       table.sort(sortedList,SortFunc)
@@ -315,6 +323,12 @@ end
     j = j + 1
     gl.Text("\255\255\064\064total FPS cost", x+150, y-1-(12)*j, 10)
     gl.Text("\255\255\064\064"..('%.1f%%'):format(allOverTime), x+105, y-1-(12)*j, 10)
+    j = j + 2
+    gl.Text("\255\255\064\164Chili time", x+150, y-1-(12)*j, 10)
+    gl.Text("\255\255\064\164"..('%.3fs'):format(chiliTime), x+105, y-1-(12)*j, 10)
+    j = j + 1
+    gl.Text("\255\255\064\164Chili FPS cost", x+150, y-1-(12)*j, 10)
+    gl.Text("\255\255\064\164"..('%.1f%%'):format(chiliLoad), x+105, y-1-(12)*j, 10)
     gl.EndText()
   end
 

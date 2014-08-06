@@ -196,7 +196,7 @@ local function addUnitGroupInfo()
 		height   = 28,
 		bottom   = 10,
 		text     = "", --mColour .. Mcost .. '\n' .. eColour .. Ecost,
-		fontsize = 12,}
+		fontsize = 12
 	}
 		
 	unitResText = Chili.TextBox:New{
@@ -205,7 +205,7 @@ local function addUnitGroupInfo()
 		bottom   = 10,
 		height   = 24,
 		text     =  "", --ResToolTip(Mmake, Muse, Emake, Euse),
-		fontsize = 12,}
+		fontsize = 12,
 	}
 
 	unitInfo:AddChild(unitCostText)

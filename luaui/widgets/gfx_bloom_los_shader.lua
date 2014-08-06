@@ -165,6 +165,7 @@ end
 
 
 function widget:ViewResize(viewSizeX, viewSizeY)
+	Spring.Echo('gfx_bloom_los_shader.lua viewresize')
 	vsx = viewSizeX; ivsx = 1.0 / vsx --we can do /n here!
 	vsy = viewSizeY; ivsy = 1.0 / vsy
 	  qvsx,qvsy = math.floor(vsx/quality), math.floor(vsy/quality)
@@ -484,17 +485,18 @@ end
 function widget:Shutdown()
 	Spring.SendCommands("unbind Any+l luaui los")
 	Spring.SendCommands("bind Any+l togglelos")
-	glDeleteTexture(brightTexture1 or "")
-	glDeleteTexture(brightTexture2 or "")
-	glDeleteTexture(screenTexture or "")
-	glDeleteTexture(losTexture or "")
+	if brightTexture1 not nil then glDeleteTexture(brightTexture1) end
+	if brightTexture2 not nil then glDeleteTexture(brightTexture2) end
+	if screenTexture not nil then glDeleteTexture(screenTexture ) end
+	if losTexture not nil then glDeleteTexture(losTexture) end
+	
 
 	if (glDeleteShader) then
-		glDeleteShader(brightShader or 0)
-		glDeleteShader(blurShaderH71 or 0)
-		glDeleteShader(blurShaderV71 or 0)
-		glDeleteShader(combineShader or 0)
-		glDeleteShader(losShader or 0)
+		if brightShader not nil then glDeleteShader(brightShader) end
+		if blurShaderH71 not nil then glDeleteShader(blurShaderH71) end
+		if blurShaderV71 not nil then glDeleteShader(blurShaderV71) end
+		if combineShader not nil then glDeleteShader(combineShader) end
+		if losShader not nil then glDeleteShader(losShader) end
 	end
 end
 

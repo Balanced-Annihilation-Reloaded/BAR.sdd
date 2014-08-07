@@ -485,18 +485,18 @@ end
 function widget:Shutdown()
 	Spring.SendCommands("unbind Any+l luaui los")
 	Spring.SendCommands("bind Any+l togglelos")
-	if brightTexture1 not nil then glDeleteTexture(brightTexture1) end
-	if brightTexture2 not nil then glDeleteTexture(brightTexture2) end
-	if screenTexture not nil then glDeleteTexture(screenTexture ) end
-	if losTexture not nil then glDeleteTexture(losTexture) end
+	if (brightTexture1 ~= nil) then glDeleteTexture(brightTexture1) end
+	if (brightTexture2 ~= nil) then glDeleteTexture(brightTexture2) end
+	if (screenTexture ~= nil) then glDeleteTexture(screenTexture ) end
+	if (losTexture ~= nil) then glDeleteTexture(losTexture) end
 	
 
 	if (glDeleteShader) then
-		if brightShader not nil then glDeleteShader(brightShader) end
-		if blurShaderH71 not nil then glDeleteShader(blurShaderH71) end
-		if blurShaderV71 not nil then glDeleteShader(blurShaderV71) end
-		if combineShader not nil then glDeleteShader(combineShader) end
-		if losShader not nil then glDeleteShader(losShader) end
+		if (brightShader ~= nil) then glDeleteShader(brightShader) end
+		if (blurShaderH71 ~= nil) then glDeleteShader(blurShaderH71) end
+		if (blurShaderV71 ~= nil) then glDeleteShader(blurShaderV71) end
+		if (combineShader ~= nil) then glDeleteShader(combineShader) end
+		if (losShader ~= nil) then glDeleteShader(losShader) end
 	end
 end
 
@@ -694,7 +694,7 @@ local GetSpectatingState = Spring.GetSpectatingState
 
 
 function widget:DrawWorld()
-
+	Spring.Echo('gfx_bloom_los_shader, DrawWorld')
 	if useLOS then 
 		if status==false then  -- losshader just got turned on
 		status=true

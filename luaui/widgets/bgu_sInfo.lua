@@ -322,8 +322,8 @@ local function getInfo()
 		local defID       = spGetUnitDefID(unitID)
 		local description = UnitDefs[defID].tooltip or ''
 		local name        = UnitDefs[defID].name
-		local texture     = imageDir..'Units/' .. name .. '.png'
-		local overlay     = imageDir..'Overlays/' .. name .. '.png'
+		local texture     = imageDir..'Units/' .. name .. '.dds'
+		local overlay     = imageDir..'Overlays/' .. name .. '.dds'
 		local humanName   = UnitDefs[defID].humanName
 		local curHealth, maxHealth = spGetUnitHealth(unitID)
 		local Mmake, Muse, Emake, Euse = spGetUnitResources(unitID)
@@ -343,8 +343,8 @@ local function getInfo()
 			for unitDefID, unitIDs in pairs(sortedUnits) do
 				if unitDefID ~= 'n' then 
 					local name    = UnitDefs[unitDefID].name
-					local texture = imageDir..'Units/' .. name .. '.png'
-					local overlay = imageDir..'Overlays/' .. name .. '.png'
+					local texture = imageDir..'Units/' .. name .. '.dds'
+					local overlay = imageDir..'Overlays/' .. name .. '.dds'
 					addUnitGroup(name,texture,overlay,unitIDs, unitDefID)
 				end
 			end

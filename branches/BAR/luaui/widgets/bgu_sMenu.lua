@@ -491,7 +491,7 @@ function widget:Initialize()
 			children  = {
 				Chili.Image:New{
 					height = '100%', width = '100%',
-					file   = imageDir..'Units/'..name..'.png',
+					file   = imageDir..'Units/'..name..'.dds',
 					children = {
 						Chili.Label:New{
 							caption = '',
@@ -501,7 +501,7 @@ function widget:Initialize()
 						Chili.Image:New{
 							color  = teamColor,
 							height = '100%', width = '100%',
-							file   = imageDir..'Overlays/'..name..'.png',
+							file   = imageDir..'Overlays/'..name..'.dds',
 						},
 					}
 				}

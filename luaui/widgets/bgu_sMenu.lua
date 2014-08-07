@@ -15,8 +15,8 @@ end
 --------------
 
 -- Config --
-local nCol, nRow = 3, 8
-local catNames = {'ECONOMY', 'DEFENSE', 'INTEL', 'FACTORIES', 'BUILD'} -- order matters
+local nCol, nRow = 4, 8
+local catNames = {'ECONOMY', 'BATTLE', 'FACTORY'} -- order matters
 local imageDir = 'luaui/images/buildIcons/'
 
 -- Not sure if these are wanted? plus they need icons
@@ -234,19 +234,16 @@ local function parseCmds()
 			if UnitDefNames[cmd.name] then
 				local ud = UnitDefNames[cmd.name]
 				
-				if ud.speed > 0 and ud.canMove then
-					-- Mobile Units
-					menuCat = 5
-				elseif ud.isFactory then
-					-- Factories
-					menuCat = 4
+				if (ud.speed > 0 and ud.canMove) or ud.isFactory then
+					-- factories, and the units they can build
+					menuCat = 3
 				elseif (ud.radarRadius > 1 or ud.sonarRadius > 1 or 
 				        ud.jammerRadius > 1 or ud.sonarJamRadius > 1 or
 				        ud.seismicRadius > 1 or ud.name=='coreyes') and #ud.weapons<=0 then
 					-- Intel
-					menuCat = 3
+					menuCat = 2
 				elseif #ud.weapons > 0 or ud.shieldWeaponDef or ud.isFeature then
-					-- Defense
+					-- Defence
 					menuCat = 2
 				else
 					-- Economy
@@ -267,6 +264,25 @@ local function parseCmds()
 
 		end
 	end
+    
+    --work out if we have too many buttons, widen the menu if so
+    local n = 0
+    for i=1,#catNames do
+        n = math.max(n,#grid[i].children)
+    end
+    
+    local cols
+    if n <=3*8 then 
+        cols = 3 
+    else 
+        cols = 4 --max 32 buttons displayed per cat
+    end
+    
+    for i=1,#catNames do
+        grid[i].columns = cols
+    end
+    
+    
 end
 --------------------------------------------------------------
 --------------------------------------------------------------
@@ -457,6 +473,7 @@ function widget:Initialize()
 			margin   = {0,0,0,0},
 		}
 	end
+    
 
 	-- Creates a cache of buttons.
 	for name, unitDef in pairs(UnitDefNames) do

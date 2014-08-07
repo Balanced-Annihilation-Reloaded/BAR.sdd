@@ -78,6 +78,11 @@ local width = {
 }
 local offset = {}
 
+-- Colours
+local mColour = '\255\153\153\204'
+local eColour = '\255\255\255\76'
+
+
 --------------------------------------------------------------------------------
 -- Random helper functions
 --------------------------------------------------------------------------------
@@ -113,7 +118,7 @@ end
 -- interaction panel
 --------------------------------------------------------------------------------
 
-local iPanelWidth = 110
+local iPanelWidth = 125
 local iPanelItemHeight = 25
 local iPanelpID -- pID with which iPanel was most recently invoked
 
@@ -135,8 +140,7 @@ function WatchRes()
 end
 
 function Ignore()
-    local pID = 0 --TODO
-    if WG.ignoredPlayers[players[pID].plainName] then
+    if WG.ignoredPlayers[players[iPanelpID].plainName] then
         Spring.SendCommands("unignoreplayer "..players[pID].plainName)    
     else    
         Spring.SendCommands("ignoreplayer "..players[pID].plainName)
@@ -147,6 +151,35 @@ end
 
 function Slap()
     Spring.SendCommands('luarules slap '..iPanelpID)
+    
+    iPanel:Hide()
+end
+
+function ShareUnits()
+    local tID = players[iPanelpID].tID
+    local n = Spring.GetSelectedUnitsCount()
+    Spring.ShareResources(tID,'units')
+    
+    if n>0 then
+        Spring.SendCommands("say a: I gave "..n.." units to "..players[iPanelpID].plainName) 
+    end
+    
+    iPanel:Hide()
+end
+
+function ShareRes()
+    local e = shareE_slider.value
+    local m = shareM_slider.value
+    local tID = players[iPanelpID].tID
+    Spring.ShareResources(tID,'energy',e)
+    Spring.ShareResources(tID,'metal',m)
+    
+    if e > 0 then
+		Spring.SendCommands("say a: I sent "..e.." energy to "..players[iPanelpID].plainName) 
+	end
+    if m > 0 then
+		Spring.SendCommands("say a: I sent "..m.." metal to "..players[iPanelpID].plainName)
+	end
     
     iPanel:Hide()
 end
@@ -182,6 +215,125 @@ function iPanel()
     
     -- setup children
     
+    shareunits = Chili.Button:New{
+        minheight = iPanelItemHeight,
+        width = '100%',
+        caption = 'share units',
+        right = 0,
+        onclick = {ShareUnits},
+    }
+    shareres_button = Chili.Button:New{
+        minheight = iPanelItemHeight,
+        width = '100%',
+        caption = 'share res',
+        right = 0,
+        onclick = {ShareRes},
+    }
+    
+    shareE_text = Chili.TextBox:New{
+        height = '100%',
+        x = 6,
+        text = eColour .. "E",   
+        font = {
+            outline          = true,
+            outlineColor     = {1,1,1,1},
+            autoOutlineColor = false,
+            outlineWidth     = 2,
+            outlineWeight    = 5,
+            size             = 15,
+        }
+    }
+    
+    shareE_slider = Chili.Trackbar:New{
+        height = '100%',
+        width = 93,
+        x = 37,
+        min = 0,
+        max = 5000,
+        step = 500,
+        value = 1000,
+    }
+
+    shareE_slider_panel = Chili.LayoutPanel:New{
+		height = 25,
+        width = '100%',
+        right = 0,
+		padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+        orientation = 'horizontal',
+        children = {
+            shareE_text,
+            shareE_slider,
+        }
+    }
+    
+    shareM_text = Chili.TextBox:New{
+        height = '100%',
+        x = 4,
+        text = mColour .. "M",    
+        font = {
+            outline          = true,
+            outlineColor     = {0.6,0.6,0.8,1},
+            autoOutlineColor = false,
+            outlineWidth     = 2,
+            outlineWeight    = 3,
+            size             = 15,
+        }
+    }
+    
+    shareM_slider = Chili.Trackbar:New{
+        height = '100%',
+        width = 93,
+        x = 37,
+        min = 0,
+        max = 2500,
+        step = 250,
+        value = 1000,
+    }
+
+    shareM_slider_panel = Chili.LayoutPanel:New{
+		height = 25,
+        width = '100%',
+        right = 0,
+		padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+        orientation = 'horizontal',
+        children = {
+            shareM_text,
+            shareM_slider,
+        }
+    }
+        
+    shareres_sliders = Chili.LayoutPanel:New{
+		height = 63,
+        width = '100%',
+        right = 0,
+		padding     = {8,10,8,3},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+		children    = {
+            shareE_slider_panel,
+            shareM_slider_panel,
+        },    
+    }
+
+    shareres_panel = Chili.LayoutPanel:New{
+		autosize    = true,
+        width = '100%',
+        right = 0,
+		padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+		children    = {
+            shareres_sliders,
+            shareres_button,
+            shareunits,
+        },    
+    }
+    
+
     watchcamera = Chili.Button:New{
         minheight = iPanelItemHeight,
         width = '100%',
@@ -210,7 +362,7 @@ function iPanel()
         caption = 'slap',
         onclick ={Slap},
     }
-    
+        
 end
 
 
@@ -228,6 +380,12 @@ function iPanelPress(obj,value)
     -- add children, calc height
     local h = 0
     
+    -- share stuff 
+    if not players[myPlayerID].spec and not players[obj.pID].spec and obj.pID~=myPlayerID and Spring.GetGameFrame()>0 then
+        iPanelLayout:AddChild(shareres_panel)
+        h = h + 2*iPanelItemHeight + 63
+    end
+
     -- watch cam
     if (players[myPlayerID].spec or Spring.ArePlayersAllied(myPlayerID, obj.pID)) and not players[obj.pID].isAI then
         iPanelLayout:AddChild(watchcamera)
@@ -262,7 +420,7 @@ function iPanelPress(obj,value)
             iPanel:Hide()        
         end 
         return 
-    end 
+    end
 
     iPanel:ToggleVisibility()        
     

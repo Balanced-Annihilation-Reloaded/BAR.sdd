@@ -374,32 +374,32 @@ function iPanelPress(obj,value)
     end
     
     iPanelpID = obj.pID
-    
+        
     iPanelLayout:ClearChildren()
-    
+
     -- add children, calc height
     local h = 0
     
     -- share stuff 
-    if not players[myPlayerID].spec and not players[obj.pID].spec and obj.pID~=myPlayerID and Spring.GetGameFrame()>0 then
+    if not players[myPlayerID].spec and not players[obj.pID].spec and iPanelpID~=myPlayerID and Spring.GetGameFrame()>0 then
         iPanelLayout:AddChild(shareres_panel)
         h = h + 2*iPanelItemHeight + 63
     end
 
     -- watch cam
-    if (players[myPlayerID].spec or Spring.ArePlayersAllied(myPlayerID, obj.pID)) and not players[obj.pID].isAI then
+    if (players[myPlayerID].spec or Spring.ArePlayersAllied(myPlayerID, iPanelpID)) and not players[iPanelpID].isAI then
         iPanelLayout:AddChild(watchcamera)
         h = h + iPanelItemHeight
     end
     
     -- watch res
-    if not players[obj.pID].spec and players[myPlayerID].spec then
+    if not players[iPanelpID].spec and players[myPlayerID].spec then
         iPanelLayout:AddChild(watchres)
         h = h + iPanelItemHeight
     end
     
     -- ignore
-    if obj.pID~=myPlayerID and not players[obj.pID].isAI then
+    if obj.pID~=myPlayerID and not players[iPanelpID].isAI then
         if WG.ignoredPlayers[players[obj.pID].plainName] then
             ignore:SetCaption('un-ignore')
         else    
@@ -410,7 +410,7 @@ function iPanelPress(obj,value)
     end
     
     -- slap
-    if Spring.GetGameFrame()>2 and not players[obj.pID].isAI then --because its a luarules action
+    if Spring.GetGameFrame()>2 and not players[iPanelpID].isAI then --because its a luarules action
         iPanelLayout:AddChild(slap)
         h = h + iPanelItemHeight
     end

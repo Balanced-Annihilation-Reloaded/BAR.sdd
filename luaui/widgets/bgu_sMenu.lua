@@ -432,16 +432,15 @@ function widget:Initialize()
 
 	stateMenu = Chili.Grid:New{
 		parent  = screen0,
-		columns = 1,
+		columns = 2,
 		rows    = 8,
 		y       = 1,
 		x       = scrH * 0.2 * 1.05, --x and height match sInfo
 		height  = scrH * 0.2,
-		width   = 100,
+		width   = 200,
+        orientation = 'vertical',
 		padding = {0,0,0,0},
 	}
-
-
 
 	-- Creates a container for each category.
 	for i=1,#catNames do

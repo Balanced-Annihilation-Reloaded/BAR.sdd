@@ -265,7 +265,7 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
 				unitID ~= 0 and
 					Image:New {
 						--file = "#"..unitDefID,
-						file = imageDir..'Units/'.. UnitDefs[unitDefID].name ..'.png',
+						file = imageDir..'Units/'.. UnitDefs[unitDefID].name ..'.dds',
 						keepAspect = false;
 						width = '100%',
 						height = '100%',
@@ -273,7 +273,7 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
                             Chili.Image:New{
                                 color  = teamColor,
                                 height = '100%', width = '100%',
-                                file   = imageDir..'Overlays/'..UnitDefs[unitDefID].name..'.png',
+                                file   = imageDir..'Overlays/'..UnitDefs[unitDefID].name..'.dds',
                             },
                         },
 					}
@@ -385,7 +385,7 @@ local function MakeButton(unitDefID, facID, facIndex)
 				Image:New {
 					name = 'bp',
 					--file = "#"..unitDefID,
-					file = imageDir..'Units/'.. UnitDefs[unitDefID].name ..'.png',
+					file = imageDir..'Units/'.. UnitDefs[unitDefID].name ..'.dds',
 					keepAspect = false;
 					width = '100%',height = '80%',
 					children = {
@@ -402,7 +402,7 @@ local function MakeButton(unitDefID, facID, facIndex)
 						Chili.Image:New{
 							color  = teamColor,
 							height = '100%', width = '100%',
-							file   = imageDir..'Overlays/'..UnitDefs[unitDefID].name..'.png',
+							file   = imageDir..'Overlays/'..UnitDefs[unitDefID].name..'.dds',
 						},
 					},
 				},

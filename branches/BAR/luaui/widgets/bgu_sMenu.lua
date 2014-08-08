@@ -257,7 +257,8 @@ local function parseCmds()
 				addBuild(cmd,menuCat)
 			elseif #cmd.params > 1 then
 				addState(cmd)
-			elseif cmd.id > 0 then
+			elseif cmd.id > 0 and not WG.OpenHostsList then -- hide the order menu if the oen host list is showing (it shows to specs who have it enabled)
+
 				orderMenu.active = true
 				addOrder(cmd)
 			end
@@ -265,7 +266,7 @@ local function parseCmds()
 		end
 	end
     
-    --work out if we have too many buttons, widen the menu if so
+    -- work out if we have too many buttons, widen the menu if so
     local n = 0
     for i=1,#catNames do
         n = math.max(n,#grid[i].children)
@@ -281,7 +282,6 @@ local function parseCmds()
     for i=1,#catNames do
         grid[i].columns = cols
     end
-    
     
 end
 --------------------------------------------------------------

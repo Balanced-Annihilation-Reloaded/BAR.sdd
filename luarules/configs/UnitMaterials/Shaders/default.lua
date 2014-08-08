@@ -23,7 +23,7 @@ return {
       uniform vec4 shadowParams;
     #endif
   #endif
-
+	varying float aoTerm;
     varying vec3 cameraDir;
     varying vec3 teamColor;
     //varying float fogFactor;
@@ -70,10 +70,12 @@ return {
 			gl_TexCoord[0].s = gl_MultiTexCoord0.s + etcLoc.z;
 		}
 	#endif
+	 aoTerm= max(0.4,fract(gl_MultiTexCoord0.s*16384.0)*1.3); // great
+	  //aoTerm= max(0.5,fract(gl_MultiTexCoord0.s*16384.0)*1.3); // pretty good, if a bit heavy
+	  //aoTerm=1.0; // pretty good, if a bit heavy
 	#ifndef use_treadoffset
 		gl_TexCoord[0].st = gl_MultiTexCoord0.st;
     #endif
-	  
 	  teamColor = gl_TextureEnvColor[0].rgb;
 
       //float fogCoord = length(gl_Position.xyz);
@@ -110,7 +112,7 @@ return {
     uniform sampler2DShadow shadowTex;
     uniform float shadowDensity;
   #endif
-
+	varying float aoTerm;
     varying vec3 teamColor;
     varying vec3 cameraDir;
     //varying float fogFactor;
@@ -175,12 +177,18 @@ return {
        outColor.a   = extraColor.a;
        outColor.rgb = outColor.rgb + outColor.rgb * (normaltex.a - 0.5) * etcLoc.g;
 
-       // other custom stuff
+	   //AO term test:
+	   //aoTerm=1.2*aoTerm-0.2;
+	  outColor.rgb=outColor.rgb*aoTerm;
+	  // outColor.rgb=vec3(aoTerm,aoTerm,aoTerm);
+       
+	   // other custom stuff
        // outColor.rgb = mix(gl_Fog.color.rgb, outColor.rgb, fogFactor); // fog
        // outColor.a   = teamColor.a; // far fading
        // outColor.rgb = normal;
        // outColor.g   = etcLoc.r;
-
+		
+		
        #if (deferred_mode == 0)
        gl_FragColor = outColor;
        #else

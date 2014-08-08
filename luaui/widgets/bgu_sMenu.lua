@@ -493,6 +493,13 @@ function widget:Initialize()
 			            '\nCost: '..getInline{0.6,0.6,0.8}..unitDef.metalCost..'\b Metal, '..getInline{1,1,0.3}..unitDef.energyCost..'\b Energy'..
 			            '\nBuild Time: '..unitDef.buildTime..
 		              rangeText
+                      
+        local raindrop = Chili.Image:New{
+            x = 1,
+            bottom = 1,
+			height = 15, width = 15,
+			file   = imageDir..'raindrop.png',
+		}
 						
 		-- make the button for this unit
 		unit[name] = Chili.Button:New{
@@ -523,6 +530,10 @@ function widget:Initialize()
 				}
 			}
 		}
+        
+        if (unitDef.maxWaterDepth and unitDef.maxWaterDepth>20) or (unitDef.minWaterDepth and unitDef.minWaterDepth>0) then
+            unit[name].children[1]:AddChild(raindrop)
+        end
 	end
 
 

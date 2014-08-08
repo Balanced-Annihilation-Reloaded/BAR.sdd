@@ -232,6 +232,10 @@ local function CheckSpec()
     -- hide the resign button if we are a spec
     if Spring.GetSpectatingState() and not tabs.Info:GetChildByName('ResignButton').hidden then
         tabs.Info:GetChildByName('ResignButton'):Hide()
+    else
+        if tabs.Info:GetChildByName('ResignButton').hidden then
+            tabs.Info:GetChildByName('ResignButton'):Show()        
+        end
     end
 end
 

@@ -780,7 +780,7 @@ function widget:Initialize()
 	-----------------------
 	---     Hotkeys     ---
 	local openMenu    = function() showHide('Info') end
-	local openWidgets = function() showHide('Interface') end
+	local openWidgets = function() if mainMenu.visible then mainMenu:Hide() return end; showHide('Interface') end
 	local hideMenu    = function() if mainMenu.visible then mainMenu:Hide() end end
 	
 	spSendCommands('unbindkeyset f11')

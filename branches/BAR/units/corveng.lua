@@ -20,7 +20,7 @@ return {
 		maxdamage = 140,
 		maxslope = 10,
 		maxvelocity = 9.9200000762939,
-		maxwaterdepth = 255,
+		maxwaterdepth = 0,
 		name = "Avenger",
 		nochasecategory = "NOTAIR",
 		objectname = "CORVENG.s3o",

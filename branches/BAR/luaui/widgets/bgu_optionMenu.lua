@@ -83,6 +83,7 @@ local wFilterString = ""
 local widgetList = {}
 local tabs = {}
 local credits = VFS.LoadFile('credits_game.txt')
+local changelog = VFS.LoadFile('changelog.txt')
 
 local wCategories = {
 	['unit']      = {label = 'Units',       list = {}, pos = 1,},
@@ -416,7 +417,7 @@ local function loadMainMenu()
 			height       = 20, 
 			minItemWidth = 70,
 			selected     = Settings.tabSelected or 'Info',
-			tabs         = {'Info','Interface', 'Graphics'},
+			tabs         = {'Info','Interface', 'Graphics','Credits'},
 			itemPadding  = {1,0,1,0},
 			OnChange     = {sTab}
 		}
@@ -665,14 +666,23 @@ local function Options()
 	-- Info --
 	tabs.Info = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
 		children = {
-			Chili.Label:New{caption='-- Credits --',x='0%',width='70%',align = 'center'},
-			Chili.ScrollPanel:New{width = '70%', x=0, y=20, bottom=0, children ={Chili.TextBox:New{width='100%',text=credits}}},
+			Chili.Label:New{caption='-- Changelog --',x='0%',width='70%',align = 'center'},
+			Chili.ScrollPanel:New{width = '70%', x=0, y=20, bottom=0, children ={Chili.TextBox:New{width='100%',text=changelog}}},
 			resignButton,
             Chili.Button:New{caption = 'Exit To Desktop',height = '8%',width = '28%',right = '1%', y = '52%',
 				OnMouseUp = {function() spSendCommands{'quit'} end }},
 		}
 	}
 
+	-- Info --
+	tabs.Credits = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
+		children = {
+			Chili.Label:New{caption='-- Credits --',x='0%',width='70%',align = 'center'},
+			Chili.ScrollPanel:New{width = '70%', x=0, y=20, bottom=0, children =
+                {Chili.TextBox:New{width='100%',text=credits}}}
+            -- TODO: insert logo on right hand side of this panel!
+		}
+	}
 	
 end
 

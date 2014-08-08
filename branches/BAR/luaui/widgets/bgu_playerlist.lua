@@ -429,7 +429,8 @@ function iPanelPress(obj,value)
     local vsx,vsy = Spring.GetViewGeometry()
     iPanel:Resize(iPanelWidth,h)
     iPanelLayout:Resize(iPanelWidth,h)
-    iPanel:SetPos(x,vsy-y-h) --TODO: don't go off edge of screen
+    local sw, sh = Spring.GetWindowGeometry()
+    iPanel:SetPos(math.min(x,sw-iPanelWidth),vsy-y-h) 
         
     -- draw iPanel in front of stack
     iPanel:SetLayer(1)

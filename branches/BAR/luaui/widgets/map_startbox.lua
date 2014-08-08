@@ -135,7 +135,7 @@ function widget:Initialize()
   -- cone list for world start positions
   coneList = gl.CreateList(function()
     local h = 100
-    local r = 25
+    local r = 8
     local divs = 32
     gl.BeginEnd(GL.TRIANGLE_FAN, function()
       gl.Vertex( 0, h,  0)
@@ -290,7 +290,7 @@ end
 
 function widget:DrawWorld()
   gl.Fog(false)
-
+  
   local time = Spring.DiffTimers(Spring.GetTimer(), startTimer)
 
   -- show the ally startboxes

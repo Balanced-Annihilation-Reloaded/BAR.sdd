@@ -6,7 +6,7 @@ function widget:GetInfo()
 		author	= 'Niobium',
 		date	= 'May 2011',
 		license	= 'GNU GPL v2',
-		layer	= -100,
+		layer	= -1,
 		enabled	= true,
 	}
 end
@@ -59,11 +59,12 @@ local factionChangeList
 --------------------------------------------------------------------------------
 -- Funcs
 --------------------------------------------------------------------------------
-local function QuadVerts(x, y, z, r)
-	glTexCoord(0, 0); glVertex(x - r, y, z - r)
-	glTexCoord(1, 0); glVertex(x + r, y, z - r)
-	glTexCoord(1, 1); glVertex(x + r, y, z + r)
-	glTexCoord(0, 1); glVertex(x - r, y, z + r)
+local function QuadVerts(x, z, r)
+    local y = Spring.GetGroundHeight(x,z)
+	glTexCoord(0, 0); glVertex(x-r, y, z-r)
+	glTexCoord(1, 0); glVertex(x+r, y, z-r)
+	glTexCoord(1, 1); glVertex(x+r, y, z+r)
+	glTexCoord(0, 1); glVertex(x-r, y, z+r)
 end
 
 --------------------------------------------------------------------------------
@@ -79,17 +80,17 @@ end
 
 function widget:DrawWorld()
 	glColor(1, 1, 1, 0.5)
-	glDepthTest(false)
+	glDepthTest(GL.ALWAYS)
 	for i = 1, #teamList do
 		local teamID = teamList[i]
 		local tsx, tsy, tsz = spGetTeamStartPosition(teamID)
 		if tsx and tsx > 0 then
 			if spGetTeamRulesParam(teamID, 'startUnit') == armcomDefID then
 				glTexture('LuaUI/Images/arm.png')
-				glBeginEnd(GL_QUADS, QuadVerts, tsx, spGetGroundHeight(tsx, tsz), tsz, 80)
+				glBeginEnd(GL_QUADS, QuadVerts, tsx, tsz, 80)
 			else
 				glTexture('LuaUI/Images/core.png')
-				glBeginEnd(GL_QUADS, QuadVerts, tsx, spGetGroundHeight(tsx, tsz), tsz, 64)
+				glBeginEnd(GL_QUADS, QuadVerts, tsx, tsz, 64)
 			end
 		end
 	end

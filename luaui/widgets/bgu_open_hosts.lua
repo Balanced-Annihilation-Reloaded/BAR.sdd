@@ -30,11 +30,18 @@ local headersent
 local host = "replays.springrts.com"
 local port = 8222
 
-local battleList = {}
+local battleList = {} -- battleList[type][hostname] = battle, each subtable sorted by battle.playerCount
+local battlePanels = {} -- battlePanels[hostname] = ChiliControl
+local battleTypes = {['team']=6, ['ffa']=2, ['1v1']=2, ['chickens']=2} --battleTypes[type] = max number of this type to display
+for t,_ in pairs(battleTypes) do
+    battleList[t] = {}
+end
+
+local Chili, window, panel, showhide_button
+
 local updateTime = 10
 local prevTimer = Spring.GetTimer()
 local needUpdate = true
-
 
 local myPlayerID = Spring.GetMyPlayerID()
 local amISpec = Spring.GetSpectatingState()
@@ -125,10 +132,28 @@ function widget:Initialize()
 	--Spring.Echo(socket.dns.toip("localhost"))
 	--FIXME dns-request seems to block
 	SocketConnect(host, port)
+    CreateGUI()
 end
 
-function widget:Shutdown()
-    DeleteLists()
+function BattleType(battle) 
+    if battle.passworded or (battle.locked and false) or battle.rankLimit>0 or battle.playerCount==0 then return nil end
+    if battle.playerCount==0 then return nil end
+    
+    local founder = battle.founder
+    if founder=="BlackHoleHost1" or founder=="BlackHoleHost2" or founder=="BlackHoleHost6" or founder=="[ACE]Ortie" or founder=="[ACE]Perge" or founder=="[ACE]Pirine" then
+        return "team"
+    elseif founder=="BlackHoleHost3" or founder=="[ACE]Sure" then
+        return "ffa"
+    elseif founder=="BlackHoleHost5" or founder=="[ACE]Censur" or founder=="[ACE]Embleur" then
+        return "1v1"
+    elseif founder=="[ACE]Sombri" then
+        return "chickens" 
+    end
+    return nil
+end
+
+function BattleCompare(battle1,battle2)
+    return battle1.playerCount > battle2.playerCount
 end
 
 -- called when data was received through socket
@@ -137,11 +162,10 @@ local function SocketDataReceived(sock, data)
 	--Spring.Echo("data!")
     --Spring.Echo(data)
     local line
-    battleList = {}
     while data do
         local battle  = {}
         line,data = getLine(data)
-        -- Spring.Echo(line)
+        --Spring.Echo(line)
         if line and not (string.find(line,"START") or string.find(line,"END") or string.find(line,"battleID")) then --ignore the three 'padding' lines
             --extract battle info from line            
             battle.ID, line         = extract(line) 
@@ -166,13 +190,20 @@ local function SocketDataReceived(sock, data)
             battle.playerCount  = tonumber(battle.playerCount) or 0
             battle.isInGame     = toboolean(battle.isInGame)
             
-            -- add battle to list
-            battleList[#battleList+1] = battle
+            battle.type = BattleType(battle)
+            if battle.type and battle.playerCount>0 then
+                battleList[battle.type][battle.founder] = battle
+            end
         end    
     end
     
+    -- Sort
+    for t,_ in pairs(battleTypes) do
+        table.sort(battleList[t],BattleCompare)      
+    end
+    
     --Spring.Echo(#battleList)
-    CreateBattleList()
+    RefreshBattles()
 end
 
 -- called when a socket is open and we want to send something to it
@@ -187,9 +218,6 @@ local function SocketClosed(sock)
 end
 
 function widget:Update()
-    amISpec = Spring.GetSpectatingState()
-    if not amISpec then return end
-
 	if set==nil or #set<=0 then
 		return -- no sockets?
 	end
@@ -303,231 +331,194 @@ function DrawButton()
     glText("Open Battles", textMargin, textMargin, textSize, "no")
 end
 
-function BattleType(battle) 
-    if battle.passworded or (battle.locked and false) or battle.rankLimit>0 or battle.playerCount==0 then return nil end
-    if battle.playerCount==0 then return nil end
-    
-    local founder = battle.founder
-    if founder=="BlackHoleHost1" or founder=="BlackHoleHost2" or founder=="BlackHoleHost6" or founder=="[ACE]Ortie" or founder=="[ACE]Perge" or founder=="[ACE]Pirine" then
-        return "team"
-    elseif founder=="BlackHoleHost3" or founder=="[ACE]Sure" then
-        return "ffa"
-    elseif founder=="BlackHoleHost5" or founder=="[ACE]Censur" or founder=="[ACE]Embleur" then
-        return "1v1"
-    elseif founder=="[ACE]Sombri" then
-        return "chickens" 
-    end
-    return nil
+local red = '\255\255\0\0'
+local green = '\255\0\255\0'
+local blue = '\255\0\0\255'
+local white = '\255\255\255\255'
+
+function BattleText(battle)
+    local plural_s = (battle.specCount==1) and "" or "s"
+    local ingame = (battle.isIngame) and red .. "ingame" or green .. "open"
+    return blue .. battle.type .. ": " .. white .. battle.founder .. " (" .. battle.playerCount .. " players" .. ", " .. battle.specCount .. " spec" .. plural_s .. ", " .. ingame .. white .. ")"
 end
 
-function DrawBattles()
-    -- select which battles to display
-    local tID_1, tID_2, ffaID, oID, cID  
-    for ID,battle in pairs(battleList) do
-        --Spring.Echo(battle.founder, BattleType(battle))
-        if BattleType(battle)=="team" then
-            if tID_1 and battle.playerCount > battleList[tID_1].playerCount then
-                tID_2 = tID_1
-                tID_1 = ID
-            elseif tID_2 and battle.playerCount > battleList[tID_2].playerCount then
-                tID_2 = ID
-            elseif not tID_1 then
-                tID_1 = ID
-            elseif not tID_2 then
-                tID_2 = ID
-            end
+function NewBattle(battle)
+    -- create the panel for this battle
+    return Chili.TextBox:New{
+        minHeight = 16,
+        width = '100%',
+        text = BattleText(battle),
+        font = {
+            outline          = true,
+            autoOutlineColor = true,
+            outlineWidth     = 4,
+            outlineWeight    = 6,
+            size             = 14,        
+        }
+    }   
+end
+
+function RefreshBattles()
+    local _,_,spec = Spring.GetPlayerInfo(Spring.GetMyPlayerID())
+    if not spec then 
+        -- don't show anything
+        WG.OpenHostsList = false
+        if not window.hidden then
+            window:Hide()
         end
-        if BattleType(battle)=="ffa" then
-            if ffaID and battle.playerCount > battleList[ffaID].playerCount then
-                ffaID = ID
-            elseif not ffaID then
-                ffaID = ID
+        return
+    end
+    
+    -- show at least the control panel
+    WG.OpenHostsList = true --tell sMenu that we're displaying the hosts lists, and it should hide the actions bar
+    if window.hidden then
+        window:Show()
+    end
+    
+    -- clear all children of battles panel, re-add as appropriate
+    panel:ClearChildren()
+
+    local i = 0
+    local n_players = 0
+    local n_specs = 0
+    local n_battles = 0
+    for t,_ in pairs(battleTypes) do
+        for founder,battle in pairs(battleList[t]) do
+            if battlePanels[founder] then
+                --update text
+                battlePanels[founder]:SetText(BattleText(battle))
+            else
+                --create new
+                battlePanels[founder] = NewBattle(battle)
             end
+            
+            if not panel.hidden then
+                panel:AddChild(battlePanels[founder])
+            end
+            
+            n_players = n_players + battle.playerCount
+            n_specs = n_specs + battle.specCount
+            n_battles = n_battles + 1
+            
+            -- stop if we have too many
+            i = i + 1
+            if i==battleTypes[t] then break end
         end
-        if BattleType(battle)=="1v1" then
-            if oID and battle.playerCount > battleList[oID].playerCount then
-                oID = ID
-            elseif not ffaID then
-                oID = ID
-            end
-        end
-        if BattleType(battle)=="chickens" then
-            if cID and battle.playerCount > battleList[cID].playerCount then
-                cID = ID
-            elseif not cID then
-                cID = ID
-            end
-        end    
     end
     
-    -- prepare battle display
-    gl.Color(1,1,1,1)
-    local n = 1
-    local w = 0
-    local ctext, ffatext,otext,t2text,t1text
-    if cID then
-        local plural_p = ""
-        if battleList[cID].playerCount > 1 then plural_p = "s" end
-        local plural_s = ""
-        if battleList[cID].specCount > 1 then plural_s = "s" end
-        local ingame
-        if battleList[cID].isInGame then ingame = "\255\255\0\0ingame\255\255\255\255" else ingame = "\255\0\255\0open\255\255\255\255" end
-        ctext = "Chickens: " .. battleList[cID].founder .. " (" .. battleList[cID].playerCount .. " player" .. plural_p .. ", " .. battleList[cID].specCount .. " spec" .. plural_s .. ", " .. ingame .. ")"
-        w = math.max(w,gl.GetTextWidth(ctext))
-        n = n + 1
-    end
-    if ffaID then
-        local plural_p = ""
-        if battleList[ffaID].playerCount > 1 then plural_p = "s" end
-        local plural_s = ""
-        if battleList[ffaID].specCount > 1 then plural_s = "s" end
-        local ingame
-        if battleList[ffaID].isInGame then ingame = "\255\255\0\0ingame\255\255\255\255" else ingame = "\255\0\255\0open\255\255\255\255" end
-        ffatext = "FFA: " .. battleList[ffaID].founder .. " (" .. battleList[ffaID].playerCount .. " player" .. plural_p .. ", " .. battleList[ffaID].specCount .. " spec" .. plural_s .. ", " .. ingame .. ")"
-        w = math.max(w,gl.GetTextWidth(ffatext))
-        n = n + 1
-    end
-    if oID then
-        local plural_p = ""
-        if battleList[oID].playerCount > 1 then plural_p = "s" end
-        local plural_s = ""
-        if battleList[oID].specCount > 1 then plural_s = "s" end
-        local ingame
-        if battleList[oID].isInGame then ingame = "\255\255\0\0ingame\255\255\255\255" else ingame = "\255\0\255\0open\255\255\255\255" end
-        otext = "1v1: " .. battleList[oID].founder .. " (" .. battleList[oID].playerCount .. " player" .. plural_p .. ", " .. battleList[oID].specCount .. " spec" .. plural_s .. ", " .. ingame .. ")"
-        w = math.max(w,gl.GetTextWidth(otext))
-        n = n + 1
-    end
-    if tID_2 then
-        local plural_p = ""
-        if battleList[tID_2].playerCount > 1 then plural_p = "s" end
-        local plural_s = ""
-        if battleList[tID_2].specCount > 1 then plural_s = "s" end
-        local ingame
-        if battleList[tID_2].isInGame then ingame = "\255\255\0\0ingame\255\255\255\255" else ingame = "\255\0\255\0open\255\255\255\255" end
-        t2text = "Team: " .. battleList[tID_2].founder .. " (" .. battleList[tID_2].playerCount .. " player" .. plural_p .. ", " .. battleList[tID_2].specCount .. " spec" .. plural_s .. ", " .. ingame .. ")"
-        w = math.max(w,gl.GetTextWidth(t2text))
-        n = n + 1
-    end
-    if tID_1 then
-        local plural_p = ""
-        if battleList[tID_1].playerCount > 1 then plural_p = "s" end
-        local plural_s = ""
-        if battleList[tID_1].specCount > 1 then plural_s = "s" end
-        local ingame
-        if battleList[tID_1].isInGame then ingame = "\255\255\0\0ingame\255\255\255\255" else ingame = "\255\0\255\0open\255\255\255\255" end
-        t1text = "Team: " .. battleList[tID_1].founder .. " (" .. battleList[tID_1].playerCount .. " player" .. plural_p .. ", " .. battleList[tID_1].specCount .. " spec" .. plural_s .. ", " .. ingame .. ")"
-        w = math.max(w,gl.GetTextWidth(t1text))
-        n = n + 1
-    end    
-    w = w * textSize + 0.5
-
-    -- draw box
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-    glColor(0, 0, 0, 0.2)
-    glRect(0, 1, w, n)
-
-    -- draw text
-    local m = 1.1
-    gl.BeginText()
-    if ctext then 
-        gl.Text(ctext,textMargin,textMargin+m,textSize,"no")
-        m = m + 1
-    end
-    if ffatext then
-        gl.Text(ffatext,textMargin,textMargin+m,textSize,"no")
-        m = m + 1
-    end
-    if otext then
-        gl.Text(otext,textMargin,textMargin+m,textSize,"no")
-        m = m + 1
-    end
-    if t2text then
-        gl.Text(t2text, textMargin,textMargin+m,textSize,"no")
-        m = m + 1
-    end
-    if t1text then
-        gl.Text(t1text,textMargin,textMargin+m,textSize,"no")
-        m = m + 1
-    end
-    gl.EndText()
-
-    
-    
-end
-
-function CreateBattleList()
-    if battlesGL then 
-        glDeleteList(battlesGL) 
-        battlesGL = nil
-    end
-    battlesGL = glCreateList(DrawBattles)
-end
-
-function DeleteLists()
-    if buttonGL then
-        glDeleteList(buttonGL)
-        buttonGL = nil
-    end
-    if battlesGL then
-        glDeleteList(battlesGL)
-        battlesGL = nil
-    end
-end
-
-function widget:DrawScreen()
-    if spIsGUIHidden() then return end
-    if not buttonGL then
-        buttonGL = gl.CreateList(DrawButton)
+    if n_battles>0 then
+        panel:AddChild(line)
     end
     
-    glLineWidth(lineWidth)
-
-    glPushMatrix()
-        glTranslate(posX*vsx, posY*vsy, 0)
-        glScale(16, 16, 1)
-        glCallList(buttonGL)
-        if show then
-            if battlesGL then
-                glCallList(battlesGL)
-            end
-        end
-    glPopMatrix()
-
-    glColor(1, 1, 1, 1)
-    glLineWidth(1)
+    local player_plural = (n_players==1) and "" or "s"
+    local spec_plural = (n_specs==1) and "" or "s"
+    local battle_plural = (n_battles==1) and "" or "s"
+    showhide_text:SetText(n_players .. " player" .. player_plural .. " and " .. n_specs .. " spectator" .. spec_plural .. " in " .. n_battles .. " battle" .. battle_plural)
 end
 
----------------------------------------------------------
-------------- Show the battle list?
----------------------------------------------------------
-
-function widget:MousePress(x, y, button)
-	if spIsGUIHidden() then return false end
-    
-	tx = (x - posX*vsx)/16
-    ty = (y - posY*vsy)/16
-    if tx < 0 or tx > 8 or ty < 0 or ty > 1 then return false end
-
-    -- show/hide battles
-    show = not show
-    if show then
-        needUpdate = true
+function ShowHide()
+    if panel.hidden then
+        panel:Show()
+        RefreshBattles()
+        showhide_button:SetCaption('hide battles')
+    else
+        panel:ClearChildren()
+        panel:Hide()
+        showhide_button:SetCaption('show battles')
     end
-
-	return true
 end
 
-function widget:GetConfigData(data)
-	return {
-		posX = posX,
-		posY = posY,
-        show = show,
-	}
+
+function CreateGUI()
+    Chili = WG.Chili
+    
+    -- dimensions of minimap
+    local scrH = Chili.Screen0.height
+	local aspect = Game.mapX/Game.mapY
+	local minMapH = scrH * 0.3
+	local minMapW = minMapH * aspect
+	if aspect > 1 then
+		minMapW = minMapH * aspect^0.5
+		minMapH = minMapW / aspect
+	end
+    
+    window = Chili.Window:New{
+        parent = Chili.Screen0,
+        bottom = 0,
+        minHeight = 25,
+		x      = minMapW,
+		autosize = true,
+		width  = 500,
+    }
+    
+    master_panel = Chili.LayoutPanel:New{
+        parent = window,
+        width = '100%',
+		resizeItems = false,
+        autosize = true,
+        minHeight = 25,
+		padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+        orientation = 'vertical',
+    }   
+    
+    panel = Chili.LayoutPanel:New{
+        parent = master_panel,
+        width = '100%',
+		resizeItems = false,
+        autosize = true,
+        minHeight = 1,
+		padding     = {0,0,0,0},
+		itemPadding = {10,0,0,0},
+		itemMargin  = {0,0,0,0},
+        orientation = 'vertical',
+    }   
+    
+    line = Chili.Line:New{
+        width = '100%',
+    }
+
+    
+    controlbar = Chili.LayoutPanel:New{
+        parent = master_panel,
+        width = '100%',
+        height = 25,
+        minHeight = 25,
+		padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+        orientation = 'horizontal',
+    }   
+
+    showhide_button = Chili.Button:New{
+        parent = controlbar,
+        height = 25,
+        width = 100,
+        caption = "hide battles",
+        onclick = {ShowHide},
+    }
+    
+    showhide_text = Chili.TextBox:New{
+        parent = controlbar,
+        height = 20,
+        width = 350,
+        text = "",
+        font = {
+            outline          = true,
+            autoOutlineColor = true,
+            outlineWidth     = 3,
+            outlineWeight    = 8,
+            size             = 14,        
+        }    
+    }
+    
+     RefreshBattles()    
 end
 
-function widget:SetConfigData(data)
-	posX = data.posX or posX
-	posY = data.posY or posY
-    show = data.show or show
+function widget:PlayerChanged(pID)
+    -- show the battle list if we suddenly became a spec
+    if pID==Spring.GetMyPlayerID() then
+        RefreshBattles()
+    end
 end

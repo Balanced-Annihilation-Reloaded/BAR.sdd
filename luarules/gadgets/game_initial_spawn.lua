@@ -200,11 +200,11 @@ end
 
 
 ----------------------------------------------------------------
--- Factions
+-- LuaUI Interaction
 ----------------------------------------------------------------
 
--- keep track of choosing faction ingame
 function gadget:RecvLuaMsg(msg, playerID)
+    -- receive faction change messages from LuaUI
 	local startUnit = tonumber(msg:match(changeStartUnitRegex))
 	if startUnit and validStartUnits[startUnit] then
 		local _, _, playerIsSpec, playerTeam = spGetPlayerInfo(playerID)
@@ -214,6 +214,11 @@ function gadget:RecvLuaMsg(msg, playerID)
 			return true
 		end
 	end
+    
+    -- forward on "i readied up" messages from LuaUI to the unsynced part of this gadget
+    if msg=='\157' then
+        SendToUnsynced("ReadyStateMessage",msg,playerID)
+    end
 end
 
 
@@ -282,8 +287,6 @@ function gadget:AllowStartPosition(x,y,z,playerID,readyState)
 		SendToUnsynced("StartPointChosen", playerID)
 	end	
 	
-
-
 	return true
 end
 
@@ -415,6 +418,8 @@ end
 else
 ----------------------------------------------------------------
 
+-- This part of the gadget manages changes to out own ready state, and informs LuaUI of changes to others ready states
+
 local myPlayerID = Spring.GetMyPlayerID()
 local _,_,_,myTeamID = Spring.GetPlayerInfo(myPlayerID) 
 local amNewbie
@@ -442,6 +447,7 @@ local pStates = {} --local copy of playerStates table
 function gadget:Initialize()
 	-- add function to receive when startpoints were chosen
 	gadgetHandler:AddSyncAction("StartPointChosen", StartPointChosen)
+	gadgetHandler:AddSyncAction("ReadyStateMessage", ReadyStateMessage)
 	
 	-- create ready button
 	readyButton = gl.CreateList(function()
@@ -470,10 +476,18 @@ function StartPointChosen(_,playerID)
 	end
 end
 
+-- ReadyButtonState
+-- 0: off (needs to be LuaUIs default state)
+-- 1: on
+-- 2: off & game is starting; display the 3.2.1 countdown
+
 function gadget:GameSetup(state,ready,playerStates)
 	-- check when the 3.2.1 countdown starts
 	if gameStarting==nil and ((Spring.GetPlayerTraffic(SYSTEM_ID, NETMSG_STARTPLAYING) or 0) > 0) then --ugly but effective (can also detect by parsing state string)
-		gameStarting = true
+        if Script.LuaUI("ReadyButtonState") then
+            Script.LuaUI.ReadyButtonState(2)
+        end
+        gameStarting = true
 	end
 
 	-- if we can't choose startpositions, no need for ready button etc
@@ -508,8 +522,16 @@ function gadget:GameSetup(state,ready,playerStates)
 	
 	if not ready and readied then -- check if we just readied
 		ready = true
-	elseif ready and not readied then	-- check if we just reconnected/dropped
+        -- tell LuaUI to hide the ready button
+        if Script.LuaUI("ReadyButtonState") then
+            Script.LuaUI.ReadyButtonState(0)
+        end
+    elseif ready and not readied then	-- check if we just reconnected/dropped
 		ready = false
+        -- tell LuaUI to hide the ready button
+        if Script.LuaUI("ReadyButtonState") then
+            Script.LuaUI.ReadyButtonState(1)
+        end
 	end
 	
 	return true, ready
@@ -535,42 +557,12 @@ function gadget:MousePress(sx,sy)
 	end
 end
 
-function gadget:MouseRelease(x,y)
-	return false
-end
-
-function gadget:DrawScreen()
-	if not readied and readyButton and Game.startPosType == 2 and gameStarting==nil then
-		-- draw 'ready' button
-		gl.CallList(readyButton)
-		
-		-- ready text
-		local x,y = Spring.GetMouseState()
-		if x > readyX and x < readyX+readyW and y > readyY and y < readyY+readyH then
-			colorString = "\255\255\230\0"
-		else
-			colorString = "\255\255\255\255"
-		end
-		gl.Text(colorString .. "Ready", readyX+10, readyY+9, 20, "o")
-		gl.Color(1,1,1,1)
-	end
-	
-	if gameStarting then
-		timer = timer + Spring.GetLastUpdateSeconds()
-		if timer % 0.75 <= 0.375 then
-			colorString = "\255\200\200\20"
-		else
-			colorString = "\255\255\255\255"
-		end
-		local text = colorString .. "Game starting in " .. math.max(1,3-math.floor(timer)) .. " seconds..."
-		gl.Text(text, vsx*0.5 - gl.GetTextWidth(text)/2*20, vsy*0.71, 20, "o")
-	end
-	
-	--remove if after gamestart
-	if Spring.GetGameFrame() > 0 or Spring.IsReplay() then 
-		gadgetHandler:RemoveGadget()
-		return
-	end
+function ReadyStateMessage(_, msg, playerID)
+    if playerID==myPlayerID and msg=='\157' then
+        -- LuaUI (via the forwarding in synced part of this gadget) says we just readied ourselves
+        -- we will receive other players messages too here, but its cleaner to use GameSetup for those 
+        readied = true
+    end
 end
 
 ----------------------------------------------------------------

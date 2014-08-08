@@ -381,7 +381,7 @@ function iPanelPress(obj,value)
     local h = 0
     
     -- share stuff 
-    if not players[myPlayerID].spec and not players[obj.pID].spec and iPanelpID~=myPlayerID and Spring.GetGameFrame()>0 then
+    if not players[myPlayerID].spec and not players[iPanelpID].spec and iPanelpID~=myPlayerID and Spring.GetGameFrame()>0 and Spring.AreTeamsAllied(players[myPlayerID].tID, players[iPanelpID].tID) then
         iPanelLayout:AddChild(shareres_panel)
         h = h + 2*iPanelItemHeight + 63
     end

@@ -4,9 +4,9 @@
 #include "exptype.h"
 
 piece  rflare, lflare, torso, pelvis, lleg, rleg, lbarrel,
-       rbarrel;
+       rbarrel,head;
 
-static-var  gun_3, notMoving, restore_delay, currentSpeed, moveSpeed;
+static-var  gun_3, notMoving, restore_delay, currentSpeed, moveSpeed, maxpitch;
 
 // Signal definitions
 #define SIG_MOVE			2
@@ -214,7 +214,7 @@ SweetSpot(piecenum)
 
 AimFromTertiary(piecenum)
 {
-	piecenum = torso;
+	piecenum = head;
 }
 
 QueryTertiary(piecenum)
@@ -234,6 +234,13 @@ AimTertiary(heading, pitch)
 	signal SIG_AIM_3;
 	set-signal-mask SIG_AIM_3;
 	turn torso to y-axis heading speed <225.000000>;
+	maxpitch=pitch;
+	if (maxpitch > <50>) 
+	{
+		maxpitch = <50>;
+	}
+	turn head to x-axis <0> - maxpitch speed <225>;
+	wait-for-turn head around x-axis;
 	wait-for-turn torso around y-axis;
 	start-script RestoreAfterDelay();
 	return (1);

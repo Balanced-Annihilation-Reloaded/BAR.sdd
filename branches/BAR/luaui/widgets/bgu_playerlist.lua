@@ -979,6 +979,8 @@ end
 --------------------------------------------------------------------------------
 
 function widget:Initialize()
+    Spring.SendCommands('unbind Any+h sharedialog')
+
     Chili = WG.Chili
     
     CalculateOffsets()
@@ -1004,6 +1006,10 @@ function widget:Initialize()
     iPanel:Hide()
     
     -- TODO: add option for flags and ranks into optionMenu, just need to change options.XXX and call OptionChange()
+end
+
+function widget:ShutDown()
+    Spring.SendCommands('bind Any+h sharedialog')
 end
 
 function widget:PlayerChanged(pID)

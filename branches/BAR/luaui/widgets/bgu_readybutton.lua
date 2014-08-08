@@ -20,7 +20,7 @@ local white = "\255\255\255\255"
 
 function widget:Initialize()
     amNewbie = (Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'isNewbie') == 1)
-    if amNewbie then
+    if amNewbie or Spring.GetGameFrame()>0 then
         widgetHandler:RemoveWidget()
     end
 

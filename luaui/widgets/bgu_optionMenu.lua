@@ -82,9 +82,7 @@ Settings['CursorName']       = 'ba'
 local wFilterString = ""
 local widgetList = {}
 local tabs = {}
-local credits = VFS.LoadFile('gamecredits.txt')
-if credits == '' then credits = 'credits is blank, normally this would read the credits.txt in the games base directory' end
-
+local credits = VFS.LoadFile('credits_game.txt')
 
 local wCategories = {
 	['unit']      = {label = 'Units',       list = {}, pos = 1,},

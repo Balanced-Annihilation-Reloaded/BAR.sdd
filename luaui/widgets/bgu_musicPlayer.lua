@@ -60,6 +60,8 @@ local labelVar         = 0
 local trackName        = ''
 local labelScrollSpeed = 10
 
+local music_credits = VFS.LoadFile('credits_music.txt')
+
 ----------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------
 -- Intialize --
@@ -112,6 +114,8 @@ local function loadOptions()
 		end
 	end
 	
+    local credits = Chili.TextBox:New{parent=trackList, width='100%',text= "\n\n\n" .. "\255\200\200\240" .. music_credits .. "\n\n"}
+    
 	Chili.ScrollPanel:New{
 		parent    = control,
 		x         = 0,

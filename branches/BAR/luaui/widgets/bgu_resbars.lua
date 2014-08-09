@@ -6,6 +6,7 @@ function widget:GetInfo()
 		author  = 'Funkencool',
 		date    = '2013',
 		license = 'GNU GPL v2',
+        layer = 0,
 		enabled = true,
 	}
 end

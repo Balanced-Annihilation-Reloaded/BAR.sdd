@@ -243,10 +243,10 @@ function widget:Update()
 		-- some error happened in select
 		if err=="timeout" then
 			-- nothing to do, return
-            Spring.Echo("Socket timed out")
+            --Spring.Echo("Socket timed out")
 			return
 		end
-		Spring.Echo("Error in socket.select: " .. error)
+		--Spring.Echo("Error in socket.select: " .. error)
 	end
     
     -- see if we received anything back

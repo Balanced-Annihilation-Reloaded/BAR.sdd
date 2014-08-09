@@ -135,6 +135,10 @@ function widget:Initialize()
     CreateGUI()
 end
 
+function widget:ShutDown()
+    window:Dispose()
+end
+
 function BattleType(battle) 
     if battle.passworded or (battle.locked and false) or battle.rankLimit>0 or battle.playerCount==0 then return nil end
     if battle.playerCount==0 then return nil end

@@ -141,6 +141,9 @@ function widget:GameStart()
 end
 
 function widget:Shutdown()
+    if window then
+        window:Dispose()
+    end
 	widgetHandler:DeregisterGlobal('ReadyButtonState')
 end
 

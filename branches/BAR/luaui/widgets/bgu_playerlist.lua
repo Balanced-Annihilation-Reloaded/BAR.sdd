@@ -1010,6 +1010,14 @@ function widget:Initialize()
 end
 
 function widget:ShutDown()
+    window:Dispose()
+    iPanel:Dispose()
+    for pID,_ in pairs(players) do
+        players[pID].playerPanel:Dispose()
+        players[pID].deadPanel:Dispose()
+        players[pID].specPanel:Dispose()
+    end
+    
     Spring.SendCommands('bind Any+h sharedialog')
 end
 

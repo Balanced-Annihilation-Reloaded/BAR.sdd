@@ -643,10 +643,12 @@ function widget:Update()
 		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 		teamColor = {r,g,b}
 
-		updateRequired = false
 		buildMenu.active = false
 		orderMenu.active = false
-		
+        if not orderBG.hidden then
+            orderBG:Hide()
+        end
+        
         loadDummyPanels(startUnitDefID)
         return
     end
@@ -683,6 +685,10 @@ function widget:Update()
 end
 
 function widget:GameStart()
+	for i=1,#catNames do
+		grid[i].active = false
+	end
+    gameStarted = true
     updateRequired = true
 end
 ---------------------------

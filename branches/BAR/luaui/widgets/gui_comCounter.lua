@@ -308,6 +308,9 @@ function widget:Update()
 	end	
 end
 
+function widget:ShutDown()
+    window:Dispose()
+end
 
 
 

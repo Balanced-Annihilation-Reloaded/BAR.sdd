@@ -18,7 +18,7 @@ end
 --------------------------------------------------------------------------------
 
 local myPlayerID = Spring.GetMyPlayerID()
-local myTeamID = Sprting.GetMyTeamID()
+local myTeamID = Spring.GetMyTeamID()
 
 function widget:Update()
   local t = Spring.GetGameSeconds()

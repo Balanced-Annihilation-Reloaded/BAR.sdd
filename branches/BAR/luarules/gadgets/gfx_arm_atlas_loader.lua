@@ -1,5 +1,5 @@
 
-function widget:GetInfo()
+function gadget:GetInfo()
 	return {
 		name	= 'Arm Atlas Loader',
 		desc	= 'Forces the arm atlas to be loaded',
@@ -13,10 +13,12 @@ end
 
 -- this is a bit of a hack!
 
+if gadgetHandler:IsSyncedCode() then return false end
+
 local n = 0
 local ARMCOM = UnitDefNames["armcom"].id
 
-function widget:DrawWorld()
+function gadget:DrawWorld()
     n  = n + 1
 
     if n==1 then
@@ -27,7 +29,7 @@ function widget:DrawWorld()
     end
     
     if n>1 then
-        widgetHandler:RemoveWidget()
+        gadgetHandler:RemoveGadget()
     end
 
 end

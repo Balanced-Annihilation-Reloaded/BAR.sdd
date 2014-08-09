@@ -20,8 +20,9 @@ local white = "\255\255\255\255"
 
 function widget:Initialize()
     amNewbie = (Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'isNewbie') == 1)
-    if amNewbie or Spring.GetGameFrame()>0 then
+    if amNewbie or Spring.GetGameFrame()>0 or Spring.GetSpectatingState() then
         widgetHandler:RemoveWidget()
+        return
     end
 
 	Chili = WG.Chili

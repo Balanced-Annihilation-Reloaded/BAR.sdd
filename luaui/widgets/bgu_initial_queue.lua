@@ -4,12 +4,10 @@ function widget:GetInfo()
 		name      = "Initial Queue",
 		desc      = "Allows you to queue buildings before game start",
 		author    = "Niobium",
-		version   = "1.5",
 		date      = "7 April 2010",
 		license   = "GNU GPL, v2 or later",
-		layer     = -1, -- Puts it above minimap_startboxes with layer 0
+		layer     = 1001, -- runs after chili, else it would intercept mouse clicks
 		enabled   = true,
-		handler   = true
 	}
 end
 -- 12 jun 2012: "uDef.isMetalExtractor" was replaced by "uDef.extractsMetal > 0" to fix "metal" mode map switching (by [teh]decay, thx to vbs and Beherith)
@@ -97,8 +95,6 @@ local CORDL = UnitDefNames["cordl"].id
 
 local ARMAP = UnitDefNames["armap"].id
 local CORAP = UnitDefNames["corap"].id
-
-
 
 
 
@@ -193,11 +189,6 @@ local totalTime
 ------------------------------------------------------------
 -- Local functions
 ------------------------------------------------------------
-local function TraceDefID(mx, my)
-	local overRow = cellRows[1 + math.floor((wt - my) / (iconSize + borderSize))]
-	if not overRow then return nil end
-	return overRow[1 + math.floor((mx - wl) / (iconSize + borderSize))]
-end
 local function GetBuildingDimensions(uDefID, facing)
 	local bDef = UnitDefs[uDefID]
 	if (facing % 2 == 1) then
@@ -272,14 +263,6 @@ local function DoBuildingsClash(buildData1, buildData2)
 	return math.abs(buildData1[2] - buildData2[2]) < w1 + w2 and
 	       math.abs(buildData1[4] - buildData2[4]) < h1 + h2
 end
-local function SetSelDefID(defID)
-
-	selDefID = defID
-
-	if (isMex[selDefID] ~= nil) ~= (Spring.GetMapDrawMode() == "metal") then
-		Spring.SendCommands("ShowMetalMap")
-	end
-end
 local function GetUnitCanCompleteQueue(uID)
 
 	local uDefID = Spring.GetUnitDefID(uID)
@@ -323,6 +306,16 @@ local function GetQueueCosts()
 	return mCost, eCost, bCost
 end
 
+-- this function is the "entry point", in that it is exposed to WG and is called by sMenu to tell us which unit the player has selected
+local function SetSelDefID(defID)
+
+	selDefID = defID
+
+	if (isMex[selDefID] ~= nil) ~= (Spring.GetMapDrawMode() == "metal") then
+		Spring.SendCommands("ShowMetalMap")
+	end
+end
+
 ------------------------------------------------------------
 -- Initialize/shutdown
 ------------------------------------------------------------
@@ -334,6 +327,10 @@ function widget:Initialize()
 		widgetHandler:RemoveWidget(self)
 		return
 	end
+    
+    -- expose out API to WG, its used by sMenu
+    WG.SetSelDefID = SetSelDefID
+    
 	-- Get our starting unit
 	local _, _, _, _, mySide = Spring.GetTeamInfo(myTeamID)
 	if mySide == "" then -- Don't run unless we know what faction the player is
@@ -342,68 +339,10 @@ function widget:Initialize()
 	else
 		local startUnitName = Spring.GetSideData(mySide)
 		sDefID = UnitDefNames[startUnitName].id
-		InitializeFaction(sDefID)
-		WG["faction_change"] = InitializeFaction
+        sDef = UnitDefs[sDefID]
 	end
-end
-
-function InitializeFaction(sDefID)
-	sDef = UnitDefs[sDefID]
-	-- Don't run if theres nothing to show
-	local sBuilds = sDef.buildOptions
-	if not sBuilds or (#sBuilds == 0) then
-		return
-	end
-
-
-	-- Set up cells
-	local numCols = math.min(#sBuilds, maxCols)
-	local numRows = math.ceil(#sBuilds / numCols)
-	for r = 1, numRows do
-		cellRows[r] = {}
-	end
-	for b = 0, #sBuilds - 1 do
-		cellRows[1 + math.floor(b / numCols)][1 + b % numCols] = sBuilds[b + 1]
-	end
-
-	-- Set up drawing function
-	local drawFunc = function()
-
-		gl.PushMatrix()
-			gl.Translate(0, borderSize, 0)
-
-			for r = 1, #cellRows do
-				local cellRow = cellRows[r]
-
-				gl.Translate(0, -iconSize - borderSize, 0)
-				gl.PushMatrix()
-
-					for c = 1, #cellRow do
-
-						gl.Color(0, 0, 0, 1)
-						gl.Rect(-borderSize, -borderSize, iconSize + borderSize, iconSize + borderSize)
-
-						gl.Color(1, 1, 1, 1)
-						gl.Texture("#" .. cellRow[c])
-							gl.TexRect(0, 0, iconSize, iconSize)
-						gl.Texture(false)
-
-						gl.Translate(iconSize + borderSize, 0, 0)
-					end
-				gl.PopMatrix()
-			end
-
-		gl.PopMatrix()
-	end
-
-	-- delete any pre-existing displaylist
-	if panelList then
-		gl.DeleteList(panelList)
-	end
-
-	panelList = gl.CreateList(drawFunc)
-
-	for uDefID, uDef in pairs(UnitDefs) do
+    
+    for uDefID, uDef in pairs(UnitDefs) do
 
 		if uDef.extractsMetal > 0 then
 			isMex[uDefID] = true
@@ -413,29 +352,12 @@ function InitializeFaction(sDefID)
 			weaponRange[uDefID] = uDef.maxWeaponRange
 		end
 	end
+
 end
 
 function widget:Shutdown()
-	if panelList then
-		gl.DeleteList(panelList)
-	end
-	WG["faction_change"] = nil
+    WG.SetSelDefID = nil
 end
-
-------------------------------------------------------------
--- Config
-------------------------------------------------------------
---[[
-function widget:GetConfigData()
-	local wWidth, wHeight = Spring.GetWindowGeometry()
-	return {wl / wWidth, wt / wHeight}
-end
-function widget:SetConfigData(data)
-	local wWidth, wHeight = Spring.GetWindowGeometry()
-	wl = math.floor(wWidth * (data[1] or 0.40))
-	wt = math.floor(wHeight * (data[2] or 0.10))
-end
-]]
 
 ------------------------------------------------------------
 -- Drawing
@@ -449,25 +371,20 @@ local queueTimeFormat = whiteColor .. 'Queued ' .. metalColor .. '%dm ' .. energ
 	-- Also, it is written like english and reads well, none of this colon stuff or figures stacked together
 
 
+-- string.format(queueTimeFormat, mCost, eCost, buildTime), 0, 0, fontSize, 'do')
 
-function widget:DrawScreen()
-	gl.PushMatrix()
-		gl.Translate(wl, wt, 0)
-		gl.CallList(panelList)
-		if #buildQueue > 0 then
-			local mCost, eCost, bCost = GetQueueCosts()
-			local buildTime = bCost / sDef.buildSpeed
-			totalTime = buildTime
-			gl.Text(string.format(queueTimeFormat, mCost, eCost, buildTime), 0, 0, fontSize, 'do')
-		end
-	gl.PopMatrix()
-end
 function widget:DrawWorld()
 	--don't draw anything once the game has started; after that engine can draw queues itself
 	if gameStarted then return end
 
 	-- Set up gl
 	gl.LineWidth(1.49)
+
+    -- check faction change
+    if WG.startUnit and sDefID ~= WG.startUnit then
+        sDefID = WG.startUnit
+        sDef = UnitDefs[sDefID]
+    end
 
 	-- We need data about currently selected building, for drawing clashes etc
 	local selBuildData
@@ -530,7 +447,7 @@ function widget:DrawWorld()
 	-- Draw queue lines
 	gl.Color(buildLinesColor)
 	gl.LineStipple("springdefault")
-		gl.Shape(GL.LINE_STRIP, queueLineVerts)
+	gl.Shape(GL.LINE_STRIP, queueLineVerts)
 	gl.LineStipple(false)
 
 	-- Draw selected building
@@ -614,16 +531,6 @@ end
 ------------------------------------------------------------
 -- Mouse
 ------------------------------------------------------------
-function widget:IsAbove(mx, my)
-	return TraceDefID(mx, my)
-end
-local tooltipFormat = 'Build %s\n%s\n' .. metalColor .. '%d m ' .. whiteColor .. '/ ' .. energyColor .. '%d e ' .. whiteColor .. '/ ' .. buildColor .. '%.1f sec'
-function widget:GetTooltip(mx, my)
-	local bDefID = TraceDefID(mx, my)
-	local bDef = UnitDefs[bDefID]
-	return string.format(tooltipFormat, bDef.humanName, bDef.tooltip, bDef.metalCost, bDef.energyCost, bDef.buildTime / sDef.buildSpeed)
-end
-
 function SetBuildFacing()
 	local wx,wy,_,_ = Spring.GetScreenGeometry()
 	local _, pos = Spring.TraceScreenRay(wx/2, wy/2, true)
@@ -652,68 +559,48 @@ needBuildFacing = true
 
 function widget:MousePress(mx, my, mButton)
 
-
-	local tracedDefID = TraceDefID(mx, my)
-	if tracedDefID then
+    if selDefID then
 		if mButton == 1 then
-		if needBuildFacing then
-			SetBuildFacing()
-			needBuildFacing = false
-		end
-			SetSelDefID(tracedDefID)
-			return true
-		elseif mButton == 3 then
-			areDragging = true
-			return true
-		end
-	else
-		if selDefID then
-			if mButton == 1 then
+			local mx, my = Spring.GetMouseState()
+			local _, pos = Spring.TraceScreenRay(mx, my, true)
+			if not pos then return end
+			local bx, by, bz = Spring.Pos2BuildPos(selDefID, pos[1], pos[2], pos[3])
+			local buildFacing = Spring.GetBuildFacing()
 
-				local mx, my = Spring.GetMouseState()
-				local _, pos = Spring.TraceScreenRay(mx, my, true)
-				if not pos then return end
-				local bx, by, bz = Spring.Pos2BuildPos(selDefID, pos[1], pos[2], pos[3])
-				local buildFacing = Spring.GetBuildFacing()
+            if Spring.TestBuildOrder(selDefID, bx, by, bz, buildFacing) ~= 0 then
+				local buildData = {selDefID, bx, by, bz, buildFacing}
+			local _, _, meta, shift = Spring.GetModKeyState()
+                if meta then
+                    table.insert(buildQueue, 1, buildData)
+                   elseif shift then
 
-				if Spring.TestBuildOrder(selDefID, bx, by, bz, buildFacing) ~= 0 then
-
-					local buildData = {selDefID, bx, by, bz, buildFacing}
-					local _, _, meta, shift = Spring.GetModKeyState()
-					if meta then
-						table.insert(buildQueue, 1, buildData)
-
-					elseif shift then
-
-						local anyClashes = false
-						for i = #buildQueue, 1, -1 do
-							if DoBuildingsClash(buildData, buildQueue[i]) then
-								anyClashes = true
-								table.remove(buildQueue, i)
-							end
+					local anyClashes = false
+					for i = #buildQueue, 1, -1 do
+						if DoBuildingsClash(buildData, buildQueue[i]) then
+							anyClashes = true
+							table.remove(buildQueue, i)
 						end
-
-						if not anyClashes then
-							buildQueue[#buildQueue + 1] = buildData
-						end
-					else
-						buildQueue = {buildData}
 					end
 
-					if not shift then
-						SetSelDefID(nil)
+                    if not anyClashes then
+						buildQueue[#buildQueue + 1] = buildData
 					end
+				else
+					buildQueue = {buildData}
 				end
 
-				return true
-
-			elseif mButton == 3 then
-
-				SetSelDefID(nil)
-				return true
+                if not shift then
+                    SetSelDefID(nil)
+				end
 			end
+			return true
+            
+		elseif mButton == 3 then
+            SetSelDefID(nil)
+			return true
 		end
-	end
+
+    end
 end
 function widget:MouseMove(mx, my, dx, dy, mButton)
 	if areDragging then
@@ -726,7 +613,7 @@ function widget:MouseRelease(mx, my, mButton)
 end
 
 ------------------------------------------------------------
--- Keyboard -- This will only work with BA!
+-- Keyboard 
 ------------------------------------------------------------
 local ZKEY = 122
 local XKEY = 120

@@ -13,22 +13,23 @@ function widget:GetInfo()
     enabled   = true  --  loaded by default?
   }
 end
---bug with usage of "Spring.GetPlayerInfo" fixed by [teh]decay 27 may 2012
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+local myPlayerID = Spring.GetMyPlayerID()
+local myTeamID = Sprting.GetMyTeamID()
 
 function widget:Update()
   local t = Spring.GetGameSeconds()
-  _, _, spectator = Spring.GetPlayerInfo(Spring.GetMyPlayerID())
+  _, _, spectator = Spring.GetPlayerInfo(myPlayerID)
   if spectator or t > 10 or Game.gameVersion == "$VERSION" then
     widgetHandler:RemoveWidget()
     return
   end
   if (t > 0) then
-    local x, y, z = Spring.GetTeamStartPosition(Spring.GetMyTeamID())
-    local unitArray = Spring.GetTeamUnits(Spring.GetMyTeamID())
+    local x, y, z = Spring.GetTeamStartPosition(myTeamID)
+    local unitArray = Spring.GetTeamUnits(myTeamID)
     if (unitArray and #unitArray==1) then
       Spring.SelectUnitArray{unitArray[1]}
       x, y, z = Spring.GetUnitPosition(unitArray[1])

@@ -6,7 +6,7 @@ function widget:GetInfo()
 		author	= 'Niobium',
 		date	= 'May 2011',
 		license	= 'GNU GPL v2',
-		layer	= -1,
+		layer	= 1002, -- must go after initial queue, or depthtest is wrong
 		enabled	= true,
 	}
 end
@@ -26,21 +26,11 @@ local myTeamID = Spring.GetMyTeamID()
 local glTexCoord = gl.TexCoord
 local glVertex = gl.Vertex
 local glColor = gl.Color
-local glRect = gl.Rect
 local glTexture = gl.Texture
 local glTexRect = gl.TexRect
 local glDepthTest = gl.DepthTest
 local glBeginEnd = gl.BeginEnd
 local GL_QUADS = GL.QUADS
-local glPushMatrix = gl.PushMatrix
-local glPopMatrix = gl.PopMatrix
-local glTranslate = gl.Translate
-local glBeginText = gl.BeginText
-local glEndText = gl.EndText
-local glText = gl.Text
-local glCallList = gl.CallList
-local glCreateList = gl.CreateList
-local glDeleteList = gl.DeleteList
 
 local spGetTeamStartPosition = Spring.GetTeamStartPosition
 local spGetTeamRulesParam = Spring.GetTeamRulesParam
@@ -70,15 +60,62 @@ end
 --------------------------------------------------------------------------------
 -- Callins
 --------------------------------------------------------------------------------
+local Chili, window, panel, arm_button, core_button
+
 function widget:Initialize()
 	if spGetSpectatingState() or
-	   Spring.GetGameFrame() > 0 or
-	   amNewbie then
-		widgetHandler:RemoveWidget(self)
+	    Spring.GetGameFrame() > 0 or
+	    amNewbie then
+        widgetHandler:RemoveWidget(self)
+        return
 	end
+    
+    WG.startUnit = commanderDefID
+    
+    Chili = WG.Chili
+    
+    window = Chili.Window:New{
+        parent = Chili.Screen0,
+        x = '20%',
+        y = '60%',
+        width = 250,
+        height = 80,
+		padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+    }
+
+    panel = Chili.LayoutPanel:New{
+        parent = window,
+        height = '100%',
+        width = '100%',
+		padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+    }
+
+    arm_button = Chili.Button:New{
+        parent = panel,
+        height = '100%',
+        width = 125,
+        onclick = {SetArm},
+        caption = "",
+        children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/ARM.png'} }
+    }
+
+    core_button = Chili.Button:New{
+        parent = panel,
+        height = '100%',
+        width = 125,
+        onclick = {SetCore},
+        caption = "",
+        children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/CORE.png'} }
+    }
+    
 end
 
 function widget:DrawWorld()
+    -- draw faction baseplate onto startpos
 	glColor(1, 1, 1, 0.5)
 	glDepthTest(GL.ALWAYS)
 	for i = 1, #teamList do
@@ -97,111 +134,27 @@ function widget:DrawWorld()
 	glTexture(false)
 end
 
-function widget:DrawScreen()
-
-	-- Spectator check
-	if spGetSpectatingState() then
-		widgetHandler:RemoveWidget(self)
-		return
-	end
-
-	-- Positioning
-	glPushMatrix()
-	glTranslate(px, py, 0)
-	--call list
-	if factionChangeList then
-		glCallList(factionChangeList)
-	else 
-		factionChangeList = glCreateList(FactionChangeList)
-	end
-	glPopMatrix()
-
-	
+function SetArm()
+    SetFaction(armcomDefID)
+    return true
 end
 
-function FactionChangeList()
-	-- Panel
-	glColor(0, 0, 0, 0.5)
-	glRect(0, 0, 128, 80)
-		-- Highlight
-	glColor(1, 1, 0, 0.5)
-	if commanderDefID == armcomDefID then
-		glRect(1, 1, 63, 63)
-	else
-		glTexRect(65, 1, 127, 63)
-	end
-		-- Icons
-	glColor(1, 1, 1, 1)
-	glTexture('LuaUI/Images/ARM.png')
-	glTexRect(8, 8, 56, 56)
-	glTexture('LuaUI/Images/CORE.png')
-	glTexRect(72, 8, 120, 56)
-	glTexture(false)
-		-- Text
-	glBeginText()
-		glText('Choose Your Faction', 64, 64, 12, 'cd')
-		glText('ARM', 32, 0, 12, 'cd')
-		glText('CORE', 96, 0, 12, 'cd')
-	glEndText()
+function SetCore()
+    SetFaction(corcomDefID)
+    return true
 end
 
-
-
-function widget:MousePress(mx, my, mButton)
-
-	-- Check 3 of the 4 sides
-	if mx >= px and my >= py and my < py + 80 then
-
-		-- Check buttons
-		if mButton == 1 then
-
-			-- Spectator check before any action
-			if spGetSpectatingState() then
-				widgetHandler:RemoveWidget(self)
-				return false
-			end
-
-			local newCom
-			-- Which button?
-			if mx < px + 64 then
-				newCom = armcomDefID
-			elseif mx < px + 128 then
-				newCom = corcomDefID
-			end
-			if newCom then
-				commanderDefID = newCom
-				-- tell initial_spawn
-				spSendLuaRulesMsg('\138' .. tostring(commanderDefID)) 
-				-- tell initial_queue
-				if WG["faction_change"] then 
-					WG["faction_change"](commanderDefID)
-				end
-				
-				--Remake gui
-				if factionChangeList then
-					glDeleteList(factionChangeList)
-				end
-				factionChangeList = glCreateList(FactionChangeList)
-			
-				return true
-			end
-			
-		elseif (mButton == 2 or mButton == 3) and mx < px + 128 then
-			-- Dragging
-			return true
-		end
-	end
+function SetFaction(commanderDefID)
+	-- tell initial_spawn
+	spSendLuaRulesMsg('\138' .. tostring(commanderDefID)) 
+	-- tell sMenu and initial queue
+    WG.startUnit = commanderDefID
 end
 
-function widget:MouseMove(mx, my, dx, dy, mButton)
-	-- Dragging
-	if mButton == 2 or mButton == 3 then
-		px = px + dx
-		py = py + dy
-	end
-end
-
-function widget:GameStart()
-	widgetHandler:RemoveWidget(self)
+function widget:GameFrame(n)
+    if n>0 then
+        window:Dispose()
+        widgetHandler:RemoveWidget(self)
+    end
 end
 

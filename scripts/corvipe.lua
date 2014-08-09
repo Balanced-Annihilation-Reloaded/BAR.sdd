@@ -1,5 +1,5 @@
 --Piece definitions
-local base, turret, flare, door1, door2, exhaust = piece("base", "turret", "flare", "door1", "door2", "exhaust");
+local base, turret, flare, door1, door2, exhaust,aimpoint = piece("base", "turret", "flare", "door1", "door2", "exhaust","aimpoint");
 
 --Variable definitions
 local is_open = true;
@@ -69,7 +69,7 @@ function script.QueryWeapon1()
 end
 
 function script.AimFromWeapon1()
-	return flare;
+	return aimpoint;
 end
 
 function script.Killed(recentDamage, maxHealth)

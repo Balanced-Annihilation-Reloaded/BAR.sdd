@@ -6,7 +6,7 @@ function widget:GetInfo()
 		author	= 'Bluestone',
 		date	= '',
 		license	= 'GNU GPL v3',
-		layer	= 0, -- must go after initial queue, or depthtest is wrong
+		layer	= 0, 
 		enabled	= true,
 	}
 end

@@ -28,6 +28,8 @@ local Chili, mainMenu, menuTabs, menuBtn
 local Settings = {}
 local DefaultSettings = {}
 
+local white = '\255\255\255\255'
+
 -- Defaults ---  
 -- DefaultSettings can only contain things from springsettings
 -- not all settings appear here, only ones for which we actually want to overwrite the defaults when "reset to defaults" is clicked
@@ -587,6 +589,45 @@ local slider = function(obj)
 	return trackbar
 end
 
+-----INFO PANEL HELPERS------
+-----------------------------
+local function InfoTextBox(y, text1, text2, size) --hack because something to do with padding is broken here, likely Chili bug
+    if not size then size = 20 end
+    return Chili.LayoutPanel:New{width = 300, y = y*25, x = '10%', height = size+5, autosize = false, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0}, children = {
+            Chili.TextBox:New{right='95%',text=" "..text1,font={size=size,color={0.8,0.8,1,1}},padding = {0,0,0,0}},
+            Chili.TextBox:New{right='20%',text=text2,font={size=size,color={0.7,0.7,1,1}},padding = {0,0,0,0}},   
+        }        
+    }
+end
+
+local function InfoLineBox(y, text1, size)
+    if not size then size = 20 end
+    return Chili.LayoutPanel:New{width = 300, y = y*25, x = '10%', height = size+5, autosize = false, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0}, children = {
+            Chili.TextBox:New{right='95%',text=" "..text1,font={size=size,color={0.8,0.8,1,1}},padding = {0,0,0,0}},
+        }        
+    }
+end
+
+local armageddonTime = 60 * (tonumber((Spring.GetModOptions() or {}).mo_armageddontime) or 0)
+
+local gameEndMode    
+if Spring.GetModOptions().deathmode=="com" then
+    gameEndMode = "Kill all enemy Commanders"
+elseif Spring.GetModOptions().deathmode=="killall" then
+    gameEndMode = "Kill all enemy units"
+elseif Spring.GetModOptions().deathmode=="neverend" then
+    gameEndMode = "Never end"
+end
+
+local changeLog, gameInfo
+
+local function ParseChangelog(changelog)
+    -- parse the changelog and add a small amount of colour
+    -- TODO once we have a changelog!
+
+    return changelog
+end
+    
 -----OPTIONS-----------------
 -----------------------------
 local function Options()
@@ -655,26 +696,7 @@ local function Options()
 		}
 	}
 
-    local function ResignMe()
-        spSendCommands{'Spectator'}
-        showHide('Graph') 
-        tabs.Info:GetChildByName('ResignButton'):Hide() 
-    end
-    
-    resignButton = 	Chili.Button:New{caption = 'Resign and Spectate', name = "ResignButton", height = '8%', width = '28%', right = '1%', y = '40%', OnMouseUp = {ResignMe}}
-
-	-- Info --
-	tabs.Info = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
-		children = {
-			Chili.Label:New{caption='-- Changelog --',x='0%',width='70%',align = 'center'},
-			Chili.ScrollPanel:New{width = '70%', x=0, y=20, bottom=0, children ={Chili.TextBox:New{width='100%',text=changelog}}},
-			resignButton,
-            Chili.Button:New{caption = 'Exit To Desktop',height = '8%',width = '28%',right = '1%', y = '52%',
-				OnMouseUp = {function() spSendCommands{'quit'} end }},
-		}
-	}
-
-	-- Info --
+	-- Credits --
 	tabs.Credits = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
 		children = {
 			Chili.Label:New{caption='-- Credits --',x='0%',width='70%',align = 'center'},
@@ -683,7 +705,66 @@ local function Options()
             -- TODO: insert logo on right hand side of this panel!
 		}
 	}
-	
+
+    local function ResignMe()
+        spSendCommands{'Spectator'}
+        showHide('Graph') 
+        tabs.Info:GetChildByName('ResignButton'):Hide() 
+    end
+    
+
+    changeLog = Chili.ScrollPanel:New{width = '100%', height='100%', children = {
+            Chili.TextBox:New{width='100%',text=ParseChangelog(changelog)} --TODO add colour
+        }
+    }
+    
+    gameInfo = Chili.Panel:New{width = '100%', height = '100%', autosize = true, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0}, children = {
+                    InfoTextBox(1, "Map:",      Game.mapName),    
+                    InfoTextBox(2, "",          "(" .. Game.mapX .. " x " .. Game.mapY .. ")", 15),    
+                    InfoTextBox(3, "Wind:",     Game.windMin .. " - " .. Game.windMax),    
+                    InfoTextBox(4, "Tidal:",    Game.tidal),    
+                    InfoTextBox(5, "Acidity:",  Game.waterDamage),    
+                    InfoTextBox(6, "Gravity:",  math.floor(Game.gravity)),    
+                    Chili.Line:New{width='100%',y=7*25+5},
+                    InfoTextBox(8, "Game End:", gameEndMode, 15),
+                    InfoLineBox(9.5, (armageddonTime>0) and "Armageddon at " .. "1" .. " minutes" or ""),
+        }
+    }
+    
+    local function SetInfoChild(_, listID)
+        local child
+        if listID==1 then child=gameInfo elseif listID==2 then child=changeLog end
+        if not child or not tabs.Info then return end --avoids a nil error when this function is called on setup of the comboBox
+        tabs.Info:GetChildByName('info_layoutpanel'):ClearChildren()
+        tabs.Info:GetChildByName('info_layoutpanel'):AddChild(child)
+    end
+    
+    resignButton = 	Chili.Button:New{caption = 'Resign and Spectate', name = "ResignButton", height = '8%', width = '28%', right = '1%', y = '40%', OnMouseUp = {ResignMe}}
+
+	-- Info --
+	tabs.Info = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
+		children = {
+			Chili.LayoutPanel:New{name = 'info_layoutpanel', width = '70%', x=0, y=0, bottom=0},
+            
+			Chili.ComboBox:New{
+                height   = '8%',
+                y        = '10%',
+                width    = '28%',
+                right    = '1%',
+                text     = "",
+                selected = 1,
+                items  = {"game info", "changelog"},
+                OnSelect = {SetInfoChild},
+            },
+         
+            resignButton,
+            Chili.Button:New{caption = 'Exit To Desktop',height = '8%',width = '28%',right = '1%', y = '52%',
+				OnMouseUp = {function() spSendCommands{'quit'} end }},
+		}
+	}
+
+    SetInfoChild(_,1)
+    
 end
 
 -----------------------------
@@ -790,12 +871,14 @@ function widget:Initialize()
 	local openMenu    = function() showHide('Info') end
 	local openWidgets = function() if mainMenu.visible then mainMenu:Hide() return end; showHide('Interface') end
 	local hideMenu    = function() if mainMenu.visible then mainMenu:Hide() end end
-	
+    
 	spSendCommands('unbindkeyset f11')
+	spSendCommands('unbindkeyset Any+i gameinfo')
 	spSendCommands('unbind S+esc quitmenu','unbind esc quitmessage')
 	widgetHandler.actionHandler:AddAction(widget,'openMenu', openMenu, nil, 't')
 	widgetHandler.actionHandler:AddAction(widget,'openWidgets', openWidgets, nil, 't')
 	widgetHandler.actionHandler:AddAction(widget,'hideMenu', hideMenu, nil, 't')
+	spSendCommands('bind i openMenu')
 	spSendCommands('bind S+esc openMenu')
 	spSendCommands('bind f11 openWidgets')
 	spSendCommands('bind esc hideMenu')
@@ -816,5 +899,6 @@ function widget:Shutdown()
 	spSendCommands('unbind f11 openWidgets')
 	spSendCommands('unbind esc hideMenu')
 	spSendCommands('bind f11 luaui selector') -- if the default one is removed or crashes, then have the backup one take over.
+	spSendCommands('bind Any+i gameinfo')
 end
 

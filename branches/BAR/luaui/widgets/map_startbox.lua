@@ -297,6 +297,7 @@ function widget:DrawWorld()
   DrawStartboxes3dWithStencil()
 
   -- show the team start positions
+  --[[
   for _, teamID in ipairs(Spring.GetTeamList()) do
     local _,leader = Spring.GetTeamInfo(teamID)
     local _,_,spec = Spring.GetPlayerInfo(leader)
@@ -314,6 +315,7 @@ function widget:DrawWorld()
       end
     end
   end
+  ]]
 
   gl.Fog(true)
 end

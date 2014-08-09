@@ -94,6 +94,7 @@ local sUnits = {}
 local oldTimer = spGetTimer()
 local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
+local gameStarted = (Spring.GetGameFrame()>0)
 ----------------
 
 local function getInline(r,g,b)
@@ -107,7 +108,11 @@ end
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
 	if obj.disabled then return end
-	local index = spGetCmdDescIndex(obj.cmdId)
+	if not gameStarted then
+        WG.SetSelDefID(-obj.cmdId)
+        return true
+    end
+    local index = spGetCmdDescIndex(obj.cmdId)
 	if (index) then
 		local left, right = (button == 1), (button == 3)
 		local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
@@ -223,33 +228,39 @@ local function addOrder(cmd)
 	orderMenu:SetLayer(2)
 end
 
+local function getMenuCat(ud)
+	if (ud.speed > 0 and ud.canMove) or ud.isFactory then
+        -- factories, and the units they can build
+        menuCat = 3
+	elseif (ud.radarRadius > 1 or ud.sonarRadius > 1 or 
+        ud.jammerRadius > 1 or ud.sonarJamRadius > 1 or
+        ud.seismicRadius > 1 or ud.name=='coreyes') and #ud.weapons<=0 then
+        -- Intel
+		menuCat = 2
+    elseif #ud.weapons > 0 or ud.shieldWeaponDef or ud.isFeature then
+		-- Defence
+		menuCat = 2
+	else
+		-- Economy
+		menuCat = 1
+	end
+
+    return menuCat
+end
+
 local function parseCmds()
 	local menuCat
 	local cmdList = spGetActiveCmdDescs()
-	-- Parses through each active cmd and gives it its own button
+    
+	-- Parses through each cmd and gives it its own button
 	for i = 1, #cmdList do
 		local cmd = cmdList[i]
 		if cmd.name ~= '' and not (ignoreCMDs[cmd.name] or ignoreCMDs[cmd.action]) then
 			-- Is it a unit and if so what kind?
 			if UnitDefNames[cmd.name] then
 				local ud = UnitDefNames[cmd.name]
-				
-				if (ud.speed > 0 and ud.canMove) or ud.isFactory then
-					-- factories, and the units they can build
-					menuCat = 3
-				elseif (ud.radarRadius > 1 or ud.sonarRadius > 1 or 
-				        ud.jammerRadius > 1 or ud.sonarJamRadius > 1 or
-				        ud.seismicRadius > 1 or ud.name=='coreyes') and #ud.weapons<=0 then
-					-- Intel
-					menuCat = 2
-				elseif #ud.weapons > 0 or ud.shieldWeaponDef or ud.isFeature then
-					-- Defence
-					menuCat = 2
-				else
-					-- Economy
-					menuCat = 1
-				end
-			end
+                menuCat = getMenuCat(ud)    
+            end
 
 			if menuCat and #grid[menuCat].children < (nRow*nCol) then
 				buildMenu.active     = true
@@ -284,6 +295,32 @@ local function parseCmds()
     end
     
 end
+
+local function parseUnitDef(uDID)
+    -- load the build menu for the given unitDefID
+    -- don't load the state/cmd menus
+ 
+	buildMenu.active = true
+    orderMenu.active = false
+    
+    local buildDefIDs = UnitDefs[uDID].buildOptions
+ 
+    for _,bDID in pairs(buildDefIDs) do
+        local ud = UnitDefs[bDID]
+        local menuCat = getMenuCat(ud)
+		grid[menuCat].active = true
+        local cmd = {name=ud.name, id=bDID, disabled=false} --fake cmd desc muahahah
+		addBuild(cmd,menuCat)    
+    end
+    
+    for i=1,#catNames do
+        grid[i].columns = 3
+    end
+    
+end
+
+
+
 --------------------------------------------------------------
 --------------------------------------------------------------
 
@@ -355,6 +392,25 @@ local function loadPanels()
 	if menuTab[menuTabs.choice] then selectTab(menuTab[menuTabs.choice]) end
 end
 
+local function loadDummyPanels(unitDefID)
+    -- load the build menu panels as though this unitDefID were selected, even though it is not
+	orderMenu:ClearChildren()
+	stateMenu:ClearChildren()
+
+    orderArray = {}
+	stateArray = {}
+
+	menuTabs.choice = 1
+	for i=1,#catNames do
+		grid[i]:ClearChildren()
+		grid[i].active = false
+	end
+
+	parseUnitDef(unitDefID)
+	makeMenuTabs()
+	if menuTab[menuTabs.choice] then selectTab(menuTab[menuTabs.choice]) end
+end
+
 ---------------------------
 --
 local function queueHandler()
@@ -367,7 +423,7 @@ local function queueHandler()
 	end
 end
 ---------------------------
--- Including LayoutHandler causes CommandsChanged to be called twice?
+-- Including LayoutHandler causes CommandsChanged to be called twice? 
 local function LayoutHandler(xIcons, yIcons, cmdCount, commands)
         widgetHandler.commands   = commands
         widgetHandler.commands.n = cmdCount
@@ -570,7 +626,31 @@ end
 --------------------------- 
 -- If update is required this Loads the panel and queue for the new unit or hides them if none exists
 --  There is an offset to prevent the panel disappearing right after a command has changed (for fast clicking)
+local startUnitDefID
+
 function widget:Update()
+    if not gameStarted and not Spring.GetSpectatingState() then        
+        -- game hasn't started, so we are dealing only with initial_queue at this point
+        -- check that initial_queue is present
+        if not WG.SetSelDefID then return end
+        
+        -- check if we just changed faction
+        local uDID = WG.startUnit or spGetTeamRulesParam(myTeamID, 'startUnit')
+        if uDID==startUnitDefID then return end 
+        
+        -- now act as though unitDefID is selected for building
+        startUnitDefID = uDID
+		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
+		teamColor = {r,g,b}
+
+		updateRequired = false
+		buildMenu.active = false
+		orderMenu.active = false
+		
+        loadDummyPanels(startUnitDefID)
+        return
+    end
+
 	if updateRequired then
 		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 		teamColor = {r,g,b}
@@ -591,15 +671,19 @@ function widget:Update()
 		if not buildMenu.active and buildMenu.visible then
 			buildMenu:Hide()
 			if WG.ShowFacBar then
-					WG.ShowFacBar()
+                WG.ShowFacBar()
 			end
 		elseif buildMenu.active and buildMenu.hidden then
 			buildMenu:Show()
 			if WG.HideFacBar then
-					WG.HideFacBar()
+				WG.HideFacBar()
 			end
 		end
 	end
+end
+
+function widget:GameStart()
+    updateRequired = true
 end
 ---------------------------
 --

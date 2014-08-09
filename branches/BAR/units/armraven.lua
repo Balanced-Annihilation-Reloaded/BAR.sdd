@@ -104,6 +104,7 @@ return {
 				avoidfeature = false,
 				burst = 20,
 				burstrate = 0.11999999731779,
+				cegTag = [[Raven_Rocket]],
 				craterboost = 0,
 				cratermult = 0,
 				dance = 30,

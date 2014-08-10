@@ -38,6 +38,7 @@ local green        = {0.2, 1.0, 0.2, 1.0}
 local red          = {1.0, 0.2, 0.2, 1.0}
 local greenOutline = {0.2, 1.0, 0.2, 0.2}
 local redOutline   = {1.0, 0.2, 0.2, 0.2}
+local fullyLoaded = false -- to stop making "set X to Y" remarks when we are just reloading the config on init
 --
 
 -------------------------------------------
@@ -205,17 +206,23 @@ local function makeConversionPanel()
     local function SetConversion(obj, value)
         local alterLevelFormat = string.char(137) .. '%i'
         Spring.SendLuaRulesMsg(string.format(alterLevelFormat, value))
-        Spring.Echo("Conversion of energy to metal will only occur when energy is above " .. value .. "% full")
+        if fullyLoaded then
+            Spring.Echo("Conversion of energy to metal will only occur when energy is above " .. value .. "% full")
+        end
     end
     
     local function SetEShare (obj, value)
         Spring.SetShareLevel('energy', value)
-        Spring.Echo("Energy will be shared to allies when over " .. value .. "% full")
+        if fullyLoaded then
+            Spring.Echo("Energy will be shared to allies when over " .. value .. "% full")
+        end
     end
 
     local function SetMShare (obj, value)
         Spring.SetShareLevel('metal', value)        
-        Spring.Echo("Metal will be shared to allies when over " .. value .. "% full")
+        if fullyLoaded then
+            Spring.Echo("Metal will be shared to allies when over " .. value .. "% full")
+        end
     end
     
     conversionSlider = Chili.Trackbar:New{
@@ -332,6 +339,8 @@ function widget:Initialize()
         meter['energy']:SetColor(0.0,0.6,0.9,.8)        
     end
     SetValues()
+    
+    fullyLoaded = true
 end
 
 function widget:KeyPress()

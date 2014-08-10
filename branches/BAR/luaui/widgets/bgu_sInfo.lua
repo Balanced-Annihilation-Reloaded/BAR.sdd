@@ -269,23 +269,25 @@ local function updateUnitInfo()
 		local Mmake,Muse,Emake,Euse = 0,0,0,0
 		for a = 1, #healthBars do
 			local health,max = 0,0
-				for b = 1, #healthBars[a].unitIDs do
-					local unitID = healthBars[a].unitIDs[b]
-					local defID = spGetUnitDefID(unitID)
-					local h, m = spGetUnitHealth(unitID)
-					max   = max + m
-					health = health + h
-					local Mm, Mu, Em, Eu = spGetUnitResources(unitID)
-					local Ec = UnitDefs[defID].energyCost
-					local Mc = UnitDefs[defID].metalCost
-					Mmake = Mmake + Mm
-					Emake = Emake + Em
-					Muse = Muse + Mu
-					Euse = Euse + Eu
-					if not UnitDefs[defID].customParams.iscommander then
-							Mcost = Mcost + Mc
-							Ecost = Ecost + Ec                
-					end
+			for b = 1, #healthBars[a].unitIDs do
+				local unitID = healthBars[a].unitIDs[b]
+				local defID = spGetUnitDefID(unitID)
+                if defID then
+                    local h, m = spGetUnitHealth(unitID)
+                    max   = max + (m or 0)
+                    health = health + (h or 0)
+                    local Mm, Mu, Em, Eu = spGetUnitResources(unitID)
+                    local Ec = UnitDefs[defID].energyCost
+                    local Mc = UnitDefs[defID].metalCost
+                    Mmake = Mmake + (Mm or 0)
+                    Emake = Emake + (Em or 0)
+                    Muse = Muse + (Mu or 0)
+                    Euse = Euse + (Eu or 0)
+                    if not UnitDefs[defID].customParams.iscommander then
+                        Mcost = Mcost + Mc
+                        Ecost = Ecost + Ec                
+                    end
+                end
 			end
 			healthBars[a].max = max
 			healthBars[a]:SetValue(health)

@@ -100,7 +100,7 @@ function widget:Initialize()
 		padding   = {5,5,5,5}, 
 		draggable = true,
 		resizable = false,
-        onClick   = MarkComs,
+        onClick   = {MarkComs},
 		children  = {
             Chili.Image:New {
                 color       = {1,1,1,0.3},

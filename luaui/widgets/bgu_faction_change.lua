@@ -69,16 +69,20 @@ function widget:Initialize()
         widgetHandler:RemoveWidget(self)
         return
 	end
-    
+        
     WG.startUnit = commanderDefID
     
     Chili = WG.Chili
     
+    -- match sMenu
+    local scrH = Chili.Screen0.height
+	local winW = scrH * 0.25
+
     window = Chili.Window:New{
         parent = Chili.Screen0,
-        x = '20%',
-        y = '60%',
-        width = 250,
+        x = 0,
+        y = scrH*0.2-80,
+        width = winW,
         height = 80,
 		padding     = {0,0,0,0},
 		itemPadding = {0,0,0,0},
@@ -97,7 +101,7 @@ function widget:Initialize()
     arm_button = Chili.Button:New{
         parent = panel,
         height = '100%',
-        width = 125,
+        width = winW/2,
         onclick = {SetArm},
         caption = "",
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/ARM.png'} }
@@ -106,7 +110,7 @@ function widget:Initialize()
     core_button = Chili.Button:New{
         parent = panel,
         height = '100%',
-        width = 125,
+        width = winW/2,
         onclick = {SetCore},
         caption = "",
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/CORE.png'} }

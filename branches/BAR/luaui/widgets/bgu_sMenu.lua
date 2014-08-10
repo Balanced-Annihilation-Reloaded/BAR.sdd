@@ -249,7 +249,6 @@ local function getMenuCat(ud)
 end
 
 local function parseCmds()
-	local menuCat
 	local cmdList = spGetActiveCmdDescs()
     
 	-- Parses through each cmd and gives it its own button
@@ -257,6 +256,7 @@ local function parseCmds()
 		local cmd = cmdList[i]
 		if cmd.name ~= '' and not (ignoreCMDs[cmd.name] or ignoreCMDs[cmd.action]) then
 			-- Is it a unit and if so what kind?
+            local menuCat
 			if UnitDefNames[cmd.name] then
 				local ud = UnitDefNames[cmd.name]
                 menuCat = getMenuCat(ud)    
@@ -268,8 +268,7 @@ local function parseCmds()
 				addBuild(cmd,menuCat)
 			elseif #cmd.params > 1 then
 				addState(cmd)
-			elseif cmd.id > 0 and not WG.OpenHostsList then -- hide the order menu if the oen host list is showing (it shows to specs who have it enabled)
-
+			elseif cmd.id > 0 and not WG.OpenHostsList then -- hide the order menu if the open host list is showing (it shows to specs who have it enabled)
 				orderMenu.active = true
 				addOrder(cmd)
 			end

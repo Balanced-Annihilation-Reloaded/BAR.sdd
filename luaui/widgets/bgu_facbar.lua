@@ -684,11 +684,15 @@ function widget:MousePress(x, y, button)
 end
 
 function ShowFacBar()
-    window_facbar:Show()
+    if window_facbar.hidden then
+        window_facbar:Show()
+    end
 end
 
 function HideFacBar()
-    window_facbar:Hide()
+    if not window_facbar.hidden then
+        window_facbar:Hide()
+    end
 end
 
 function widget:Initialize()

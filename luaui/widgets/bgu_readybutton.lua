@@ -79,7 +79,6 @@ function widget:Initialize()
         children = {text},
     }
     
-    window:Show()
     panel:Hide()
         
 	widgetHandler:RegisterGlobal('ReadyButtonState', ReadyButtonState)

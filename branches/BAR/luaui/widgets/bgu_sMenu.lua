@@ -637,7 +637,7 @@ function widget:Update()
         if not WG.SetSelDefID then return end
         
         -- check if we just changed faction
-        local uDID = WG.startUnit or spGetTeamRulesParam(myTeamID, 'startUnit')
+        local uDID = WG.startUnit or Spring.GetTeamRulesParam(myTeamID, 'startUnit')
         if uDID==startUnitDefID then return end 
         
         -- now act as though unitDefID is selected for building

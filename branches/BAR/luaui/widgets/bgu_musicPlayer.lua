@@ -31,8 +31,11 @@ local destruction	  = 0
 local totalHealth   = 0
 
 local musicVolume 	= Spring.GetConfigInt('snd_volmusic')
-local generalVolume = Spring.GetConfigInt('snd_volgeneral')
+local battleVolume = Spring.GetConfigInt('snd_volbattle')
 local masterVolume	= Spring.GetConfigInt('snd_volmaster')
+
+local notePic  = "LuaUI/Images/musical_note.png"
+local tankPic  = "LuaUI/Images/small_tank.png"
 
 
 local tracks = VFS.Include('Music/music.lua') or false
@@ -132,15 +135,78 @@ end
 local function createUI()
 	
 	local screen0 = Chili.Screen0
+    
+    -- extra sliders for individual battle/music volumes
+    
+	battle_volume = Chili.Trackbar:New{
+		right    = 45,
+		height   = 15, 
+		bottom   = 0, 
+		width    = 100, 
+		value    = battleVolume,
+		OnChange = {function(self)	Spring.SendCommands('set snd_volbattle ' .. self.value) end},
+	}
+
+	battle_pic = Chili.Image:New{
+        bottom = 1, 
+        right = 150,
+        width = 15,
+        height = 15,
+        file = tankPic,
+    }
+
+	music_volume = Chili.Trackbar:New{
+		right    = 45,
+		height   = 15, 
+		bottom   = 20, 
+		width    = 100, 
+		value    = musicVolume,
+		OnChange = {function(self)	Spring.SendCommands('set snd_volmusic ' .. self.value) end},
+	}
+
+	music_pic = Chili.Image:New{
+        bottom = 22, 
+        right = 150,
+        width = 15,
+        height = 15,
+        file = notePic,
+    }
+
+    extra_sliders = Chili.Control:New{
+		parent   = screen0,
+		right    = 0, 
+		y        = 105, 
+		height   = 45, 
+		width    = 200, 
+		children = {battle_pic, battle_volume, music_pic, music_volume},
+    }
+    
+    local function ToggleSepSliders()
+        if extra_sliders.hidden then
+            extra_sliders:Show()
+        else
+            extra_sliders:Hide()
+        end
+    end
 	
-	volumeLbl = Chili.Label:New{caption = 'Vol:',bottom=10, right = 150}
-	volume = Chili.Trackbar:New{
+	vol_button = Chili.Button:New{
+        caption = 'Vol',
+        bottom = 8, 
+        right = 150,
+        width = 35,
+        height = 22,
+        onclick = {ToggleSepSliders},
+    }
+    
+    -- normally displayed gui
+
+	master_volume = Chili.Trackbar:New{
 		right    = 85,
 		height   = 15, 
 		bottom   = 10, 
 		width    = 60, 
-		value    = musicVolume,
-		OnChange = {function(self)	Spring.SendCommands('set snd_volmusic ' .. self.value) end},
+		value    = masterVolume,
+		OnChange = {function(self)	Spring.SendCommands('set snd_volmaster ' .. self.value) end},
 	}
 	
 	playIcon = Chili.Image:New{
@@ -209,7 +275,7 @@ local function createUI()
 		y        = 75, 
 		height   = 40, 
 		width    = 300, 
-		children = {skipButton,playButton,volume,volumeLbl},
+		children = {skipButton, playButton, master_volume, vol_button},
 	}
 	
 	songLabel = Chili.Label:New{x = 0, caption = 'No Song'}
@@ -245,7 +311,7 @@ local function playNewTrack()
 	-- I set it 3 times in case two are the same ( and it goes full volume :/ )
 	Spring.SendCommands('set snd_volmusic 0')
 	Spring.SendCommands('set snd_volmusic 1')
-	Spring.SendCommands('set snd_volmusic ' .. volume.value)
+	Spring.SendCommands('set snd_volmusic ' .. master_volume.value)
 	spPlaySoundStream('music/'..musicType..'/'..curTrack.filename)
 end	
 

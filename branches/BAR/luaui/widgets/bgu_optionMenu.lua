@@ -86,6 +86,8 @@ local widgetList = {}
 local tabs = {}
 local credits = VFS.LoadFile('credits_game.txt')
 local changelog = VFS.LoadFile('changelog.txt')
+local NewbieInfo = include('configs/NewbieInfo.lua')
+local amNewbie = (Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'isNewbie') == 1)
 
 local wCategories = {
 	['unit']      = {label = 'Units',       list = {}, pos = 1,},
@@ -411,20 +413,24 @@ local function loadMainMenu()
 		}
 	}
 		
-		menuTabs = Chili.TabBar:New{
-			parent       = mainMenu,
-			x            = 0, 
-			y            = 0, 
-			width        = '100%', 
-			height       = 20, 
-			minItemWidth = 70,
-			selected     = Settings.tabSelected or 'Info',
-			tabs         = {'Info','Interface', 'Graphics','Credits'},
-			itemPadding  = {1,0,1,0},
-			OnChange     = {sTab}
-		}
-		
-		showHide()
+	menuTabs = Chili.TabBar:New{
+		parent       = mainMenu,
+		x            = 0, 
+		y            = 0, 
+		width        = '100%', 
+		height       = 20, 
+		minItemWidth = 70,
+		selected     = Settings.tabSelected or 'Info',
+		tabs         = {'Info','Interface', 'Graphics','Credits'},
+		itemPadding  = {1,0,1,0},
+		OnChange     = {sTab}
+	}
+	
+    if amNewbie then
+   		menuTabs:Select('Info')  
+    else
+        showHide()
+    end
 end
 
 ---------------------------- 
@@ -619,7 +625,7 @@ elseif Spring.GetModOptions().deathmode=="neverend" then
     gameEndMode = "Never end"
 end
 
-local changeLog, gameInfo
+local changeLog, gameInfo, introText
 
 local function ParseChangelog(changelog)
     -- parse the changelog and add a small amount of colour
@@ -714,7 +720,12 @@ local function Options()
     
 
     changeLog = Chili.ScrollPanel:New{width = '100%', height='100%', children = {
-            Chili.TextBox:New{width='100%',text=ParseChangelog(changelog)} --TODO add colour
+            Chili.TextBox:New{width='100%',text=ParseChangelog(changelog)} 
+        }
+    }
+    
+    introText = Chili.ScrollPanel:New{width = '100%', height='100%', children = {
+            Chili.TextBox:New{width='100%',text=NewbieInfo} 
         }
     }
     
@@ -733,7 +744,7 @@ local function Options()
     
     local function SetInfoChild(_, listID)
         local child
-        if listID==1 then child=gameInfo elseif listID==2 then child=changeLog end
+        if listID==1 then child=gameInfo elseif listID==2 then child=changeLog elseif listID==3 then child=introText end
         if not child or not tabs.Info then return end --avoids a nil error when this function is called on setup of the comboBox
         tabs.Info:GetChildByName('info_layoutpanel'):ClearChildren()
         tabs.Info:GetChildByName('info_layoutpanel'):AddChild(child)
@@ -747,13 +758,14 @@ local function Options()
 			Chili.LayoutPanel:New{name = 'info_layoutpanel', width = '70%', x=0, y=0, bottom=0},
             
 			Chili.ComboBox:New{
+                name     = 'text_select',
                 height   = '8%',
                 y        = '10%',
                 width    = '28%',
                 right    = '1%',
                 text     = "",
-                selected = 1,
-                items  = {"game info", "changelog"},
+                selected = amNewbie and 3 or 1,
+                items  = {"game info", "changelog", "intro"},
                 OnSelect = {SetInfoChild},
             },
          
@@ -763,7 +775,11 @@ local function Options()
 		}
 	}
 
-    SetInfoChild(_,1)
+    if amNewbie then
+        SetInfoChild(_,3)
+    else
+        SetInfoChild(_,1)
+    end
     
 end
 

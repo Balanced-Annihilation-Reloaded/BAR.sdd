@@ -436,6 +436,8 @@ function widget:Initialize()
 	widgetHandler:ConfigLayoutHandler(LayoutHandler)
 	Spring.ForceLayoutUpdate()
 	spSendCommands({'tooltip 0'})
+    
+    if Spring.GetGameFrame()>0 then gameStarted = true end
 
 	if (not WG.Chili) then
 		widgetHandler:RemoveWidget()

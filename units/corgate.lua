@@ -105,7 +105,6 @@ return {
 		},
 		weapondefs = {
 			repulsor = {
-				isshield = true,
 				name = "PlasmaRepulsor",
 				range = 500,
 				shield = {

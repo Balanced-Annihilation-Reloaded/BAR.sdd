@@ -760,7 +760,7 @@ local function Options()
 			Chili.ComboBox:New{
                 name     = 'text_select',
                 height   = '8%',
-                y        = '10%',
+                y        = '8%',
                 width    = '28%',
                 right    = '1%',
                 text     = "",

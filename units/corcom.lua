@@ -49,7 +49,7 @@ return {
 		radardistance = 700,
 		radaremitheight = 40,
 		reclaimable = false,
-		script = "corcom_script.lua",
+		--script = "corcom_script.lua",
 		seismicsignature = 0,
 		selfdestructas = "COMMANDER_BLAST",
 		selfdestructcountdown = 5,

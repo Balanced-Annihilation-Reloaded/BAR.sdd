@@ -114,7 +114,10 @@ local GetSelectedUnits  = Spring.GetSelectedUnits
 local GetFullBuildQueue = Spring.GetFullBuildQueue
 local GetUnitIsBuilding = Spring.GetUnitIsBuilding
 
-local push        = table.insert
+local insert        = table.insert
+local remove        = table.remove
+
+local MAX_FACS = 8
 
 -------------------------------------------------------------------------------
 
@@ -352,13 +355,13 @@ local function MakeButton(unitDefID, facID, facIndex)
 					if not (lb or rb) then return end
 					
 					local opt = {}
-					if alt   then push(opt,"alt")   end
-					if ctrl  then push(opt,"ctrl")  end
-					if meta  then push(opt,"meta")  end
-					if shift then push(opt,"shift") end
+					if alt   then insert(opt,"alt")   end
+					if ctrl  then insert(opt,"ctrl")  end
+					if meta  then insert(opt,"meta")  end
+					if shift then insert(opt,"shift") end
 					
 					if rb then
-						push(opt,"right")
+						insert(opt,"right")
 					end
 					
 					Spring.GiveOrderToUnit(facID, -(unitDefID), {}, opt)
@@ -428,10 +431,10 @@ local function WaypointHandler(x,y,button)
 
   local alt, ctrl, meta, shift = Spring.GetModKeyState()
   local opt = {"right"}
-  if alt   then push(opt,"alt")   end
-  if ctrl  then push(opt,"ctrl")  end
-  if meta  then push(opt,"meta")  end
-  if shift then push(opt,"shift") end
+  if alt   then insert(opt,"alt")   end
+  if ctrl  then insert(opt,"ctrl")  end
+  if meta  then insert(opt,"meta")  end
+  if shift then insert(opt,"shift") end
 
   local type,param = Spring.TraceScreenRay(x,y)
   if type=='ground' then
@@ -447,6 +450,8 @@ local function WaypointHandler(x,y,button)
 end
 
 RecreateFacbar = function()
+    -- recreate our chili controls from scratch, based on facs[]
+
 	enteredTweak = false
 	if inTweak then return end
 	
@@ -485,7 +490,7 @@ RecreateFacbar = function()
 			boStack:AddChild( MakeButton(unitDefIDb, facInfo.unitID, i) )
 			qStore[i .. '|' .. unitDefIDb] = MakeButton(unitDefIDb, facInfo.unitID, i)
 		end
-		
+        
 	end
 
 	stack_main:Invalidate()
@@ -493,29 +498,33 @@ RecreateFacbar = function()
 end
 
 local function UpdateFactoryList()
+  -- recreate our table of our own factories from scratch (without touching chili)
 
   facs = {}
 
   local teamUnits = Spring.GetTeamUnits(myTeamID)
   local totalUnits = #teamUnits
 
+  local t = 0
+  
   for num = 1, totalUnits do
     local unitID = teamUnits[num]
     local unitDefID = GetUnitDefID(unitID)
     if UnitDefs[unitDefID].isFactory then
-		local bo =  UnitDefs[unitDefID] and UnitDefs[unitDefID].buildOptions
+		local bo =  UnitDefs[unitDefID] and UnitDefs[unitDefID].buildOptions or {}
 		if bo and #bo > 0 then	
-		  push(facs,{ unitID=unitID, unitDefID=unitDefID, buildList=UnitDefs[unitDefID].buildOptions })
+		  insert(facs,{ unitID=unitID, unitDefID=unitDefID, buildList=bo })
 		  local _, _, _, _, buildProgress = GetUnitHealth(unitID)
 		  if (buildProgress)and(buildProgress<1) then
 			unfinished_facs[unitID] = true
 		  end
 		end
+        t = t + 1
+        if t>=MAX_FACS then break end
     end
   end
-  
-	
-	needsRecreate = true
+
+  needsRecreate = true
 end
 
 ------------------------------------------------------
@@ -538,8 +547,11 @@ function widget:UnitCreated(unitID, unitDefID, unitTeam)
 
   if UnitDefs[unitDefID].isFactory then
 	local bo =  UnitDefs[unitDefID] and UnitDefs[unitDefID].buildOptions
+    if #facs>=MAX_FACS then
+        remove(facs,1)
+    end
 	if bo and #bo > 0 then
-		push(facs,{ unitID=unitID, unitDefID=unitDefID, buildList=UnitDefs[unitDefID].buildOptions })
+		insert(facs,{ unitID=unitID, unitDefID=unitDefID, buildList=UnitDefs[unitDefID].buildOptions })
 		--UpdateFactoryList()
 		needsRecreate = true
 	end
@@ -714,11 +726,10 @@ function widget:Initialize()
 	}
 	window_facbar = Window:New{
 		padding = {3,3,3,3,},
-		dockable = true,
 		name = "facbar",
-		x = 0, y = "30%",
+		x = 0, y = "20%",
 		width  = 600,
-		height = 200,
+		height = 450, --enough for max 5 factories
 		parent = Chili.Screen0,
 		draggable = false,
 		tweakDraggable = true,
@@ -726,7 +737,7 @@ function widget:Initialize()
 		resizable = false,
 		dragUseGrip = false,
 		minWidth = 200,
-		minHeight = 200,
+		minHeight = 450,
 		color = {0,0,0,0},
 		children = {
 			Label:New{ caption='Factories', fontShadow = true, },

@@ -401,6 +401,7 @@ function widget:Initialize()
 		loadOptions()
 	end
 	
+    extra_sliders:Hide()
 end
 
 function widget:UnitCreated(_, unitDefID, teamID)

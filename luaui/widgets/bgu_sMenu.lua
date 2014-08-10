@@ -223,6 +223,19 @@ local function addOrder(cmd)
 			}
 		}
 	}
+    
+    if cmd.id==CMD.STOCKPILE then
+        local units = Spring.GetSelectedUnits()
+        for _,uID in ipairs(units) do -- we just pick the first unit that can stockpile
+            local n,q = Spring.GetUnitStockpile(uID)
+            if n and q then
+                local stockpile_q = Chili.Label:New{right=0,bottom=0,caption=n.."/"..q, font={size=14,shadow=false,outline=true,autooutlinecolor=true,outlineWidth=4,outlineWeight=6}}
+                button.children[1]:AddChild(stockpile_q)
+                break
+            end
+        end
+    end
+    
 	orderMenu:AddChild(button)
 	orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height)
 	orderMenu:SetLayer(2)

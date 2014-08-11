@@ -564,6 +564,11 @@ function widget:Initialize()
 	local Menu = WG.MainMenu
 	if not Menu then return end
 	
+	local items = {}
+	for i = 1, table.getn(OPTIONS) do
+		table.insert(items, OPTIONS[i].name)
+	end
+	
 	Menu.AddOption{
 		tab      = 'Interface',
 		children = {
@@ -571,14 +576,7 @@ function widget:Initialize()
 			Chili.ComboBox:New{
 				x        = '10%',
 				width    = '80%',
-				items    = {
-					OPTIONS[1].name,
-					OPTIONS[2].name,
-					OPTIONS[3].name,
-					OPTIONS[4].name,
-					OPTIONS[5].name,
-					OPTIONS[6].name,
-				},
+				items    = items,
 				selected = currentOption,
 				OnSelect = {
 					function(_,sel)

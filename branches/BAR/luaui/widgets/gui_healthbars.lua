@@ -33,14 +33,14 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local barHeight                 = 2.2
+local barHeight                 = 2.3
 local barWidth                  = 11.5         --// (barWidth)x2 total width!!!
 local barAlpha                  = 0.85
 local barOutlineAlpha           = 0.8
 local barInnerAlpha             = 0.5
 local barValueAlpha             = 0.9	      -- alpha of the colored part
 
-local featureBarHeight          = 1.5
+local featureBarHeight          = 1.6
 local featureBarWidth           = 7
 local featureBarAlpha           = 0.6
 
@@ -59,7 +59,7 @@ local featureTitlesAlpha        = featureBarAlpha * titlesAlpha/barAlpha
 local featureHpThreshold        = 0.85
 
 local featureResurrectVisibility= true      -- draw feature bars for resurrected features on same distance as normal unit bars
-local featureReclaimVisibility  = true      -- draw feature bars for reclaimed features on same distance as normal unit bars
+local featureReclaimVisibility  = false      -- draw feature bars for reclaimed features on same distance as normal unit bars
 
 local addGlow                   = true      -- adds a small subtle glow to the bar´s value
 local glowSize					= outlineSize*7
@@ -1330,8 +1330,8 @@ do
     --gl.Fog(false)
     gl.DepthTest(true)
     glDepthMask(true)
-
     cx, cy, cz = GetCameraPosition()
+
 
     
     --if the camera is too far up, higher than maxDistance on smoothmesh, dont even call any visibility checks or nothing 
@@ -1354,7 +1354,6 @@ do
           DrawUnitInfos(unitID, unitDefID, unitDef)
         end
       end
-
       --// draw bars for features
       local drawFeatureInfo = false
       if ((cy-smoothheight)^2 < maxFeatureDistance) then
@@ -1448,7 +1447,6 @@ do
         end
       end
     end
-
   end
 
 end --//end do

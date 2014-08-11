@@ -139,6 +139,19 @@ function WatchRes()
     iPanel:Hide()
 end
 
+function WatchLos()
+    local teamToSpec = 0 --TODO
+    local _,fullView,fullSelect = Spring.GetSpectatingState()
+    if not fullView then
+        Spring.SendCommands("specteam "..teamToSpec)
+        Spring.SendCommands("specfullview")
+    else
+        Spring.SendCommands("specfullview")
+    end
+
+    iPanel:Hide()
+end
+
 function Ignore()
     if WG.ignoredPlayers[players[iPanelpID].plainName] then
         Spring.SendCommands("unignoreplayer "..players[pID].plainName)    
@@ -349,6 +362,13 @@ function iPanel()
         onclick ={WatchRes},
     }
 
+    watchlos = Chili.Button:New{
+        minheight = iPanelItemHeight,
+        width = '100%',
+        caption = 'watch los',
+        onclick ={WatchLos},
+    }
+
     ignore = Chili.Button:New{
         minheight = iPanelItemHeight,
         width = '100%',
@@ -398,6 +418,18 @@ function iPanelPress(obj,value)
         h = h + iPanelItemHeight
     end
     
+    -- watch los (specfullview)
+    if not players[iPanelpID].spec and players[myPlayerID].spec then
+        iPanelLayout:AddChild(watchlos)
+        local _,fullView,_ = Spring.GetSpectatingState()
+        if fullView then
+            watchlos:SetCaption("un-watch los")
+        else
+            watchlos:SetCaption("watch los")
+        end
+        h = h + iPanelItemHeight
+    end
+
     -- ignore
     if obj.pID~=myPlayerID and not players[iPanelpID].isAI then
         if WG.ignoredPlayers[players[obj.pID].plainName] then

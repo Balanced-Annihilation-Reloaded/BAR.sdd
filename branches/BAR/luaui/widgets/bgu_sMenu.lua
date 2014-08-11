@@ -657,6 +657,7 @@ function widget:Update()
 		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 		teamColor = {r,g,b}
 
+        WG.HideFacBar()
 		buildMenu.active = false
 		orderMenu.active = false
         if not orderBG.hidden then
@@ -686,14 +687,10 @@ function widget:Update()
 		
 		if not buildMenu.active and buildMenu.visible then
 			buildMenu:Hide()
-			if WG.ShowFacBar then
-                WG.ShowFacBar()
-			end
+            WG.ShowFacBar()
 		elseif buildMenu.active and buildMenu.hidden then
 			buildMenu:Show()
-			if WG.HideFacBar then
-				WG.HideFacBar()
-			end
+            WG.HideFacBar()
 		end
 	end
 end

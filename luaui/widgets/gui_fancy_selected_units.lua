@@ -82,7 +82,7 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	showNoOverlap					= false,	-- set true for no line overlapping
 	showBase						= true,
 	showFirstLine					= true,
-	showSecondLine					= true,
+	showSecondLine					= false,
 	showExtraComLine				= true,		-- extra circle lines for the commander unit
 	showExtraBuildingWeaponLine		= true,
 	showUnitHighlight				= false,	-- default off, eats performance
@@ -164,6 +164,15 @@ OPTIONS[4] = {
 	rotationSpeed					= 1.8,
 }
 OPTIONS[5] = {
+	name							= "Solid lines",
+	circlePieces					= 5,
+	circlePieceDetail				= 7,
+	circleSpaceUsage				= 1,
+	circleInnerOffset				= 0,
+	
+	rotationSpeed					= 0,
+}
+OPTIONS[6] = {
 	name							= "Teamcolor highlight",
 	showNoOverlap					= false,
 	showBase						= false,
@@ -174,7 +183,7 @@ OPTIONS[5] = {
 	
 	unitHighlightOpacity			= 0.28,
 }
-OPTIONS[6] = {
+OPTIONS[7] = {
 	name							= "Health color highlight",
 	showNoOverlap					= false,
 	showBase						= false,
@@ -185,6 +194,17 @@ OPTIONS[6] = {
 	
 	unitHighlightOpacity			= 0.22,
 }
+
+
+function table.shallow_copy(t)
+	local t2 = {}
+	for k,v in pairs(t) do
+		t2[k] = v
+	end
+	return t2
+end
+OPTIONS_original = table.shallow_copy(OPTIONS)
+OPTIONS_original.defaults = nil
 
 ------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------
@@ -203,10 +223,11 @@ local function updateSelectedUnitsData()
 	
 	-- remove deselected units 
 	local os_clock = os.clock()
+	local clockDifference
 	for teamID,_ in pairs(selectedUnits) do
 		for unitID,_ in pairs(selectedUnits[teamID]) do
 			if not spIsUnitSelected(unitID) and selectedUnits[teamID][unitID]['selected'] then
-				local clockDifference = OPTIONS[currentOption].selectionStartAnimationTime - (os_clock - selectedUnits[teamID][unitID]['new'])
+				clockDifference = OPTIONS[currentOption].selectionStartAnimationTime - (os_clock - selectedUnits[teamID][unitID]['new'])
 				if clockDifference < 0 then
 					clockDifference = 0
 				end
@@ -220,11 +241,12 @@ local function updateSelectedUnitsData()
 	-- add selected units
 	if spGetSelectedUnitsCount() > 0 then
 		local units = spGetSelectedUnitsSorted()
+		local clockDifference, unit, unitID
 		for uDID,_ in pairs(units) do
 			if uDID ~= 'n' then --'n' returns table size
 				for i=1,#units[uDID] do
-					local unitID = units[uDID][i]
-					local unit = UNITCONF[uDID]
+					unitID = units[uDID][i]
+					unit = UNITCONF[uDID]
 					if (unit) then
 						teamID = spGetUnitTeam(unitID)
 						if not selectedUnits[teamID] then
@@ -234,7 +256,7 @@ local function updateSelectedUnitsData()
 							selectedUnits[teamID][unitID]			= {}
 							selectedUnits[teamID][unitID]['new']	= os_clock
 						elseif selectedUnits[teamID][unitID]['old'] then
-							local clockDifference = OPTIONS[currentOption].selectionEndAnimationTime - (os_clock - selectedUnits[teamID][unitID]['old'])
+							clockDifference = OPTIONS[currentOption].selectionEndAnimationTime - (os_clock - selectedUnits[teamID][unitID]['old'])
 							if clockDifference < 0 then
 								clockDifference = 0
 							end
@@ -292,6 +314,7 @@ end
 
 local function DrawCircleLine(innersize, outersize)
 	gl.BeginEnd(GL.QUADS, function()
+		local detailPartWidth, a1,a2,a3,a4
 		local width = OPTIONS[currentOption].circleSpaceUsage
 		local detail = OPTIONS[currentOption].circlePieceDetail
 		
@@ -299,11 +322,11 @@ local function DrawCircleLine(innersize, outersize)
 		for i = 1, OPTIONS[currentOption].circlePieces do
 			for d = 1, detail do
 				
-				local detailPartWidth = ((width / detail) * d)
-				local a1 = ((i+detailPartWidth - (width / detail)) * radstep)
-				local a2 = ((i+detailPartWidth) * radstep)
-				local a3 = ((i+OPTIONS[currentOption].circleInnerOffset+detailPartWidth - (width / detail)) * radstep)
-				local a4 = ((i+OPTIONS[currentOption].circleInnerOffset+detailPartWidth) * radstep)
+				detailPartWidth = ((width / detail) * d)
+				a1 = ((i+detailPartWidth - (width / detail)) * radstep)
+				a2 = ((i+detailPartWidth) * radstep)
+				a3 = ((i+OPTIONS[currentOption].circleInnerOffset+detailPartWidth - (width / detail)) * radstep)
+				a4 = ((i+OPTIONS[currentOption].circleInnerOffset+detailPartWidth) * radstep)
 				
 				--outer (fadein)
 				gl.Vertex(math.sin(a4)*innersize, 0, math.cos(a4)*innersize)
@@ -320,12 +343,13 @@ local function DrawCircleSolid(size)
 	gl.BeginEnd(GL.TRIANGLE_FAN, function()
 		local pieces = (OPTIONS[currentOption].circlePieces * math.ceil(OPTIONS[currentOption].circlePieceDetail/ OPTIONS[currentOption].circleSpaceUsage))
 		local radstep = (2.0 * math.pi) / pieces
+		local a1
 		if (color) then
 			gl.Color(color)
 		end
 		gl.Vertex(0, 0, 0)
 		for i = 0, pieces do
-			local a1 = (i * radstep)
+			a1 = (i * radstep)
 			gl.Vertex(math.sin(a1)*size, 0, math.cos(a1)*size)
 		end
 	end)
@@ -352,13 +376,13 @@ local function DrawSquareLine(innersize, outersize)
 	gl.BeginEnd(GL.QUADS, function()
 		local parts = 4
 		local radstep = (2.0 * math.pi) / parts
-		
+		local width, a1,a2,a2_2
 		for i = 1, parts do
 			-- straight piece
-			local width = 0.7
+			width = 0.7
 			i = i + 0.65
-			local a1 = (i * radstep)
-			local a2 = ((i+width) * radstep)
+			a1 = (i * radstep)
+			a2 = ((i+width) * radstep)
 			
 			gl.Vertex(math.sin(a2)*innersize, 0, math.cos(a2)*innersize)
 			gl.Vertex(math.sin(a1)*innersize, 0, math.cos(a1)*innersize)
@@ -372,7 +396,7 @@ local function DrawSquareLine(innersize, outersize)
 			a1 = (i * radstep)
 			a2 = ((i+width) * radstep)
 			i = i -0.6
-			local a2_2 = ((i+width) * radstep)
+			a2_2 = ((i+width) * radstep)
 			
 			gl.Vertex(math.sin(a2_2)*innersize, 0, math.cos(a2_2)*innersize)
 			gl.Vertex(math.sin(a1)*innersize, 0, math.cos(a1)*innersize)
@@ -385,7 +409,7 @@ end
 
 local function DrawSquareSolid(size)
 	gl.BeginEnd(GL.TRIANGLE_FAN, function()
-		
+		local width, a1,a2,a2_2
 		local parts = 4
 		local radstep = (2.0 * math.pi) / parts
 		
@@ -393,10 +417,10 @@ local function DrawSquareSolid(size)
 		
 		for i = 1, parts do
 			--straight piece
-			local width = 0.7
+			width = 0.7
 			i = i + 0.65
-			local a1 = (i * radstep)
-			local a2 = ((i+width) * radstep)
+			a1 = (i * radstep)
+			a2 = ((i+width) * radstep)
 			
 			gl.Vertex(math.sin(a2)*size, 0, math.cos(a2)*size)
 			gl.Vertex(math.sin(a1)*size, 0, math.cos(a1)*size)
@@ -407,7 +431,7 @@ local function DrawSquareSolid(size)
 			a1 = (i * radstep)
 			a2 = ((i+width) * radstep)
 			i = i -0.6
-			local a2_2 = ((i+width) * radstep)
+			a2_2 = ((i+width) * radstep)
 			
 			gl.Vertex(math.sin(a2_2)*size, 0, math.cos(a2_2)*size)
 			gl.Vertex(math.sin(a1)*size, 0, math.cos(a1)*size)
@@ -434,16 +458,16 @@ end
 
 local function DrawTriangleLine(innersize, outersize)
 	gl.BeginEnd(GL.QUADS, function()
-		
+		local width, a1,a2,a2_2
 		local parts = 3
 		local radstep = (2.0 * math.pi) / parts
 		
 		for i = 1, parts do
 			--straight piece
-			local width = 0.7
+			width = 0.7
 			i = i + 0.65
-			local a1 = (i * radstep)
-			local a2 = ((i+width) * radstep)
+			a1 = (i * radstep)
+			a2 = ((i+width) * radstep)
 			
 			gl.Vertex(math.sin(a2)*innersize, 0, math.cos(a2)*innersize)
 			gl.Vertex(math.sin(a1)*innersize, 0, math.cos(a1)*innersize)
@@ -457,7 +481,7 @@ local function DrawTriangleLine(innersize, outersize)
 			a1 = (i * radstep)
 			a2 = ((i+width) * radstep)
 			i = i -0.6
-			local a2_2 = ((i+width) * radstep)
+			a2_2 = ((i+width) * radstep)
 			
 			gl.Vertex(math.sin(a2_2)*innersize, 0, math.cos(a2_2)*innersize)
 			gl.Vertex(math.sin(a1)*innersize, 0, math.cos(a1)*innersize)
@@ -473,6 +497,7 @@ local function DrawTriangleSolid(size)
 	
 	gl.BeginEnd(GL.TRIANGLE_FAN, function()
 		
+		local width, a1,a2,a2_2
 		local parts = 3
 		local radstep = (2.0 * math.pi) / parts
 		
@@ -480,10 +505,10 @@ local function DrawTriangleSolid(size)
 		
 		for i = 1, parts do
 			-- straight piece
-			local width = 0.7
+			width = 0.7
 			i = i + 0.65
-			local a1 = (i * radstep)
-			local a2 = ((i+width) * radstep)
+			a1 = (i * radstep)
+			a2 = ((i+width) * radstep)
 			
 			gl.Vertex(math.sin(a2)*size, 0, math.cos(a2)*size)
 			gl.Vertex(math.sin(a1)*size, 0, math.cos(a1)*size)
@@ -494,7 +519,7 @@ local function DrawTriangleSolid(size)
 			a1 = (i * radstep)
 			a2 = ((i+width) * radstep)
 			i = i -0.6
-			local a2_2 = ((i+width) * radstep)
+			a2_2 = ((i+width) * radstep)
 			
 			gl.Vertex(math.sin(a2_2)*size, 0, math.cos(a2_2)*size)
 			gl.Vertex(math.sin(a1)*size, 0, math.cos(a1)*size)
@@ -585,18 +610,21 @@ function widget:Initialize()
 					end
 				}
 			},
+			Chili.Checkbox:New{
+				caption='Enable second line',x='10%',width='80%',
+				checked=OPTIONS.defaults.showSecondLine,
+				setting=OPTIONS.defaults.showSecondLine,
+				OnChange={function() OPTIONS.defaults.showSecondLine = not OPTIONS.defaults.showSecondLine; if OPTIONS_original[currentOption].showSecondLine == nil then OPTIONS[currentOption].showSecondLine = OPTIONS.defaults.showSecondLine; end end}
+			},
+			Chili.Checkbox:New{
+				caption='Enable unit highlight',x='10%',width='80%',
+				checked=OPTIONS.defaults.showUnitHighlight,
+				setting=OPTIONS.defaults.showUnitHighlight,
+				OnChange={function() OPTIONS.defaults.showUnitHighlight = not OPTIONS.defaults.showUnitHighlight; if OPTIONS_original[currentOption].showUnitHighlight == nil then OPTIONS[currentOption].showUnitHighlight = OPTIONS.defaults.showUnitHighlight; end end}
+			},
 			Chili.Line:New{width='100%'},
 		}
 	}
-end
-
-
-function table.shallow_copy(t)
-	local t2 = {}
-	for k,v in pairs(t) do
-		t2[k] = v
-	end
-	return t2
 end
 
 
@@ -624,10 +652,10 @@ end
 
 
 function SetUnitConf()
+	local shape, xscale, zscale, scale, xsize, zsize
 	for udid, unitDef in pairs(UnitDefs) do
-		local xsize, zsize = unitDef.xsize, unitDef.zsize
-		local scale = OPTIONS[currentOption].scaleFactor*( xsize^2 + zsize^2 )^0.5
-		local shape, xscale, zscale
+		xsize, zsize = unitDef.xsize, unitDef.zsize
+		scale = OPTIONS[currentOption].scaleFactor*( xsize^2 + zsize^2 )^0.5
 		
 		if (unitDef.isBuilding or unitDef.isFactory or unitDef.speed==0) then
 			shape = shapes.square
@@ -692,7 +720,7 @@ function widget:GameFrame(frame)
 end
 
 
-
+local usedRotationAngle
 function GetUsedRotationAngle(unitID, unitUnitDefs, opposite)
 	if (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
 		usedRotationAngle = degrot[unitID]
@@ -709,141 +737,146 @@ function GetUsedRotationAngle(unitID, unitUnitDefs, opposite)
 end
 
 
-function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relativeScaleSchrinking, changeOpacity, drawUnitStyles)
-	
+do
 	local camX, camY, camZ = spGetCameraPosition()
+	local udid, unitUnitDefs, unit, draw, unitPosX, unitPosY, unitPosZ, camHeightDifference, changedScale, usedAlpha, usedScale, usedXScale, usedZScale
+	local health,maxHealth,paralyzeDamage,captureProgress,buildProgress
 	
-	for unitID in pairs(selectedUnits[teamID]) do
-		local udid = spGetUnitDefID(unitID)
-		local unitUnitDefs = UnitDefs[udid]
-		local unit = UNITCONF[udid]
-		local draw = true
+	function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relativeScaleSchrinking, changeOpacity, drawUnitStyles)
 		
-		if (unit) then
-			local unitPosX, unitPosY, unitPosZ = spGetUnitViewPosition(unitID, true)
-			local camHeightDifference = camY - unitPosY
+		
+		for unitID in pairs(selectedUnits[teamID]) do
+			udid = spGetUnitDefID(unitID)
+			unitUnitDefs = UnitDefs[udid]
+			unit = UNITCONF[udid]
+			draw = true
 			
-			local changedScale = 1
-			local usedAlpha = a
+			if (unit) then
+				unitPosX, unitPosY, unitPosZ = spGetUnitViewPosition(unitID, true)
+				camHeightDifference = camY - unitPosY
 				
-			if not selectedUnits[teamID][unitID] then return end 
-			
-			if (OPTIONS[currentOption].selectionEndAnimation  or  OPTIONS[currentOption].selectionStartAnimation) then
-				if changeOpacity then
-					gl.Color(r,g,b,a)
-				end
-				-- check if the unit is deselected
-				if (OPTIONS[currentOption].selectionEndAnimation and not selectedUnits[teamID][unitID]['selected']) then
-					if (maxDeselectedTime < selectedUnits[teamID][unitID]['old']) then
-						changedScale = OPTIONS[currentOption].selectionEndAnimationScale + (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS[currentOption].selectionEndAnimationTime)) * (1 - OPTIONS[currentOption].selectionEndAnimationScale)
+				changedScale = 1
+				usedAlpha = a
+					
+				if not selectedUnits[teamID][unitID] then return end 
+				
+				if (OPTIONS[currentOption].selectionEndAnimation  or  OPTIONS[currentOption].selectionStartAnimation) then
+					if changeOpacity then
+						gl.Color(r,g,b,a)
+					end
+					-- check if the unit is deselected
+					if (OPTIONS[currentOption].selectionEndAnimation and not selectedUnits[teamID][unitID]['selected']) then
+						if (maxDeselectedTime < selectedUnits[teamID][unitID]['old']) then
+							changedScale = OPTIONS[currentOption].selectionEndAnimationScale + (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS[currentOption].selectionEndAnimationTime)) * (1 - OPTIONS[currentOption].selectionEndAnimationScale)
+							if (changeOpacity) then
+								if type == 'unit highlight' then
+									usedAlpha = (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS[currentOption].selectionEndAnimationTime) * a)
+								else
+									usedAlpha = 1 - (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS[currentOption].selectionEndAnimationTime) * (1-a))
+								end
+								gl.Color(r,g,b,usedAlpha)
+							end
+						else
+							selectedUnits[teamID][unitID] = nil
+						end
+					-- check if the unit is newly selected
+					elseif (OPTIONS[currentOption].selectionStartAnimation and selectedUnits[teamID][unitID]['new'] > maxSelectTime) then
+						--spEcho(selectedUnits[teamID][unitID]['new'] - maxSelectTime)
+						changedScale = OPTIONS[currentOption].selectionStartAnimationScale + (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS[currentOption].selectionStartAnimationTime)) * (1 - OPTIONS[currentOption].selectionStartAnimationScale)
 						if (changeOpacity) then
 							if type == 'unit highlight' then
-								usedAlpha = (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS[currentOption].selectionEndAnimationTime) * a)
+								usedAlpha = (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS[currentOption].selectionStartAnimationTime) * a)
 							else
-								usedAlpha = 1 - (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS[currentOption].selectionEndAnimationTime) * (1-a))
+								usedAlpha = 1 - (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS[currentOption].selectionStartAnimationTime) * (1-a))
 							end
 							gl.Color(r,g,b,usedAlpha)
 						end
-					else
-						selectedUnits[teamID][unitID] = nil
-					end
-				-- check if the unit is newly selected
-				elseif (OPTIONS[currentOption].selectionStartAnimation and selectedUnits[teamID][unitID]['new'] > maxSelectTime) then
-					--spEcho(selectedUnits[teamID][unitID]['new'] - maxSelectTime)
-					changedScale = OPTIONS[currentOption].selectionStartAnimationScale + (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS[currentOption].selectionStartAnimationTime)) * (1 - OPTIONS[currentOption].selectionStartAnimationScale)
-					if (changeOpacity) then
-						if type == 'unit highlight' then
-							usedAlpha = (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS[currentOption].selectionStartAnimationTime) * a)
-						else
-							usedAlpha = 1 - (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS[currentOption].selectionStartAnimationTime) * (1-a))
-						end
-						gl.Color(r,g,b,usedAlpha)
 					end
 				end
-			end
-			
-			if selectedUnits[teamID][unitID] then
-			
-				local usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs ,opposite)
-				if type == 'normal solid'  or  type == 'normal alpha' then
-					
-					-- special style for coms
-					if drawUnitStyles and OPTIONS[currentOption].showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
-						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
-						gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.22)
-						local usedScale = scale * 1.25
-						glDrawListAtUnit(unitID, unit.shape.inner, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
-						usedScale = scale * 1.23
-						usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs , true)
-						gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.08)
-						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
-					else
-						-- adding style for buildings with weapons
-						if drawUnitStyles and OPTIONS[currentOption].showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
-							if (#unitUnitDefs.weapons > 0) then
-								usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
-								gl.Color(r,g,b,usedAlpha*(usedAlpha+0.2))
-								local usedScale = scale * 1.11
-								glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
+				
+				if selectedUnits[teamID][unitID] then
+				
+					usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs ,opposite)
+					if type == 'normal solid'  or  type == 'normal alpha' then
+						
+						-- special style for coms
+						if drawUnitStyles and OPTIONS[currentOption].showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
+							usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
+							gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.22)
+							usedScale = scale * 1.25
+							glDrawListAtUnit(unitID, unit.shape.inner, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
+							usedScale = scale * 1.23
+							usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs , true)
+							gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.08)
+							glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
+						else
+							-- adding style for buildings with weapons
+							if drawUnitStyles and OPTIONS[currentOption].showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
+								if (#unitUnitDefs.weapons > 0) then
+									usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
+									gl.Color(r,g,b,usedAlpha*(usedAlpha+0.2))
+									usedScale = scale * 1.11
+									glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
+								end
+								gl.Color(r,g,b,usedAlpha)
 							end
-							gl.Color(r,g,b,usedAlpha)
+							
+							if relativeScaleSchrinking then
+								glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/10), usedRotationAngle, 0, degrot[unitID], 0)
+							else
+								glDrawListAtUnit(unitID, unit.shape.select, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+							end
 						end
 						
+					elseif type == 'solid overlap' then
+						
 						if relativeScaleSchrinking then
-							glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/10), usedRotationAngle, 0, degrot[unitID], 0)
+							glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/50), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/50), usedRotationAngle, 0, degrot[unitID], 0)
 						else
-							glDrawListAtUnit(unitID, unit.shape.select, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+							glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)+((unit.xscale-15)/15), 1.0, (unit.zscale*scale*changedScale)+((unit.zscale-15)/15), usedRotationAngle, 0, degrot[unitID], 0)
 						end
-					end
-					
-				elseif type == 'solid overlap' then
-					
-					if relativeScaleSchrinking then
-						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/50), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/50), usedRotationAngle, 0, degrot[unitID], 0)
-					else
-						glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)+((unit.xscale-15)/15), 1.0, (unit.zscale*scale*changedScale)+((unit.zscale-15)/15), usedRotationAngle, 0, degrot[unitID], 0)
-					end
-					
-				elseif type == 'alphabuffer1' then
-					
-					glDrawListAtUnit(unitID, unit.shape.shape, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
-					glDrawListAtUnit(unitID, unit.shape.inner, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
-					
-				elseif type == 'alphabuffer2' then
-					
-					glDrawListAtUnit(unitID, unit.shape.large, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
-					
-				elseif type == 'base solid'  or  type == 'base alpha' then
-					local usedXScale = unit.xscale
-					local usedZScale = unit.zscale
-					if OPTIONS[currentOption].showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
-						usedXScale = usedXScale * 1.23
-						usedZScale = usedZScale * 1.23
-					elseif OPTIONS[currentOption].showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
-						if (#unitUnitDefs.weapons > 0) then
-							usedXScale = usedXScale * 1.14
-							usedZScale = usedZScale * 1.14
+						
+					elseif type == 'alphabuffer1' then
+						
+						glDrawListAtUnit(unitID, unit.shape.shape, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+						glDrawListAtUnit(unitID, unit.shape.inner, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+						
+					elseif type == 'alphabuffer2' then
+						
+						glDrawListAtUnit(unitID, unit.shape.large, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+						
+					elseif type == 'base solid'  or  type == 'base alpha' then
+						usedXScale = unit.xscale
+						usedZScale = unit.zscale
+						if OPTIONS[currentOption].showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
+							usedXScale = usedXScale * 1.23
+							usedZScale = usedZScale * 1.23
+						elseif OPTIONS[currentOption].showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
+							if (#unitUnitDefs.weapons > 0) then
+								usedXScale = usedXScale * 1.14
+								usedZScale = usedZScale * 1.14
+							end
 						end
-					end
-					glDrawListAtUnit(unitID, unit.shape.large, false, (usedXScale*scale*changedScale)-((usedXScale*changedScale-10)/10), 1.0, (usedZScale*scale*changedScale)-((usedZScale*changedScale-10)/10), degrot[unitID], 0, degrot[unitID], 0)
+						glDrawListAtUnit(unitID, unit.shape.large, false, (usedXScale*scale*changedScale)-((usedXScale*changedScale-10)/10), 1.0, (usedZScale*scale*changedScale)-((usedZScale*changedScale-10)/10), degrot[unitID], 0, degrot[unitID], 0)
+						
+					elseif type == 'unit highlight'then
 					
-				elseif type == 'unit highlight'then
-				
-					if OPTIONS[currentOption].showUnitHighlightHealth then
-						local health,maxHealth,paralyzeDamage,captureProgress,buildProgress = spGetUnitHealth(unitID)
-						gl.Color(
-							health>maxHealth/2 and 2-2*health/maxHealth or 1,
-							health>maxHealth/2 and 1 or 2*health/maxHealth,
-							paralyzeDamage/maxHealth,
-							usedAlpha
-						)
-					end
-					gl.Unit(unitID, true)
-				end	
+						if OPTIONS[currentOption].showUnitHighlightHealth then
+							health,maxHealth,paralyzeDamage,captureProgress,buildProgress = spGetUnitHealth(unitID)
+							gl.Color(
+								health>maxHealth/2 and 2-2*health/maxHealth or 1,
+								health>maxHealth/2 and 1 or 2*health/maxHealth,
+								paralyzeDamage/maxHealth,
+								usedAlpha
+							)
+						end
+						gl.Unit(unitID, true)
+					end	
+				end
 			end
-		end
-	end	
-end
+		end	
+	end
+end --// end do
 
 
 
@@ -937,11 +970,12 @@ function widget:DrawWorldPreUnit()
 	end
 	
 	-- loop teams
+	local baseR, baseG, baseB, r, g, b, scale, scaleBase, scaleOuter
 	for teamID,_ in pairs(selectedUnits) do
 		
-		local r,g,b = 1,1,1
-		local scale = 1 * OPTIONS[currentOption].scaleMultiplier * animationMultiplierInner
-		local scaleBase = scale * 1.133
+		r,g,b = 1,1,1
+		scale = 1 * OPTIONS[currentOption].scaleMultiplier * animationMultiplierInner
+		scaleBase = scale * 1.133
 		if OPTIONS[currentOption].showSecondLine then 
 			scaleOuter = (1 * OPTIONS[currentOption].scaleMultiplier * animationMultiplier) * 1.17
 			scaleBase = scaleOuter * 1.07
@@ -954,7 +988,7 @@ function widget:DrawWorldPreUnit()
 		
 		-- draw base background layer
 		if OPTIONS[currentOption].showBase then
-			local baseR, baseG, baseB = r,g,b
+			baseR, baseG, baseB = r,g,b
 			baseR,baseG,baseB = spGetTeamColor(teamID)
 			
 			gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
@@ -992,16 +1026,16 @@ end
 
 
 function widget:DrawWorld()
-	
 	-- draw unit highlight
 	if OPTIONS[currentOption].unitHighlightOpacity > 0  and (OPTIONS[currentOption].showUnitHighlight or OPTIONS[currentOption].showUnitHighlightHealth) then
 		gl.DepthTest(true)
 		gl.PolygonOffset(-2, -2)
 		gl.Blending(GL.SRC_ALPHA, GL.ONE)
 		local opacity = OPTIONS[currentOption].unitHighlightOpacity
+		local r,g,b
 		-- loop teams
 		for teamID,_ in pairs(selectedUnits) do
-			local r,g,b = spGetTeamColor(teamID)
+			r,g,b = spGetTeamColor(teamID)
 			DrawSelectionSpottersPart(teamID, 'unit highlight', r,g,b,opacity,0, false, false, true, false)
 		end
 		gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
@@ -1018,16 +1052,21 @@ end
 
 function widget:GetConfigData(data)
     savedTable = {}
-    savedTable.currentOption		= currentOption
-    savedTable.spotterOpacity		= OPTIONS[currentOption].spotterOpacity
-    savedTable.baseOpacity			= OPTIONS[currentOption].baseOpacity
+    savedTable.currentOption					= currentOption
+    savedTable.spotterOpacity					= OPTIONS[currentOption].spotterOpacity
+    savedTable.baseOpacity						= OPTIONS[currentOption].baseOpacity
+    savedTable.showSecondLine					= OPTIONS.defaults.showSecondLine
+    savedTable.showUnitHighlight				= OPTIONS.defaults.showUnitHighlight
+    
     return savedTable
 end
 
 function widget:SetConfigData(data)
     currentOption								= data.currentOption		or currentOption
     OPTIONS[currentOption].spotterOpacity		= data.spotterOpacity		or OPTIONS[currentOption].spotterOpacity
-    OPTIONS[currentOption].baseOpacity			= data.baseOpacity		or OPTIONS[currentOption].baseOpacity
+    OPTIONS[currentOption].baseOpacity			= data.baseOpacity			or OPTIONS[currentOption].baseOpacity
+    OPTIONS.defaults.showSecondLine				= data.showSecondLine		or OPTIONS.defaults.showSecondLine
+    OPTIONS.defaults.showUnitHighlight			= data.showUnitHighlight	or OPTIONS.defaults.showUnitHighlight
 end
 
 function widget:TextCommand(command)

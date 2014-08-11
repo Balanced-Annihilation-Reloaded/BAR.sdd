@@ -132,13 +132,22 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	secondLineOpacity				= 0.35,
 }
 OPTIONS[1] = {
+	name							= "Solid lines",
+	circlePieces					= 5,
+	circlePieceDetail				= 7,
+	circleSpaceUsage				= 1,
+	circleInnerOffset				= 0,
+	
+	rotationSpeed					= 0,
+}
+OPTIONS[2] = {
 	name							= "Tilted blocky dots",
 	circlePieces					= 36,
 	circlePieceDetail				= 1,
 	circleSpaceUsage				= 0.7,
 	circleInnerOffset				= 0.45,
 }
-OPTIONS[2] = {
+OPTIONS[3] = {
 	name							= "Blocky dots",
 	circlePieces					= 42,
 	circlePieceDetail				= 1,
@@ -147,14 +156,14 @@ OPTIONS[2] = {
 
 	rotationSpeed					= 1,
 }
-OPTIONS[3] = {
+OPTIONS[4] = {
 	name							= "Stretched blocky dots",
 	circlePieces					= 22,
 	circlePieceDetail				= 4,
 	circleSpaceUsage				= 0.28,
 	circleInnerOffset				= 1,
 }
-OPTIONS[4] = {
+OPTIONS[5] = {
 	name							= "Curvy lines",
 	circlePieces					= 5,
 	circlePieceDetail				= 7,
@@ -162,15 +171,6 @@ OPTIONS[4] = {
 	circleInnerOffset				= 0,
 	
 	rotationSpeed					= 1.8,
-}
-OPTIONS[5] = {
-	name							= "Solid lines",
-	circlePieces					= 5,
-	circlePieceDetail				= 7,
-	circleSpaceUsage				= 1,
-	circleInnerOffset				= 0,
-	
-	rotationSpeed					= 0,
 }
 OPTIONS[6] = {
 	name							= "Teamcolor highlight",
@@ -181,7 +181,7 @@ OPTIONS[6] = {
 	showUnitHighlight				= true,
 	showUnitHighlightHealth			= false,
 	
-	unitHighlightOpacity			= 0.28,
+	unitHighlightOpacity			= 0.4,
 }
 OPTIONS[7] = {
 	name							= "Health color highlight",
@@ -192,7 +192,7 @@ OPTIONS[7] = {
 	showUnitHighlight				= true,
 	showUnitHighlightHealth			= true,
 	
-	unitHighlightOpacity			= 0.22,
+	unitHighlightOpacity			= 0.3,
 }
 
 
@@ -612,7 +612,7 @@ function widget:Initialize()
 			},
 			Chili.Checkbox:New{
 				caption='Enable second line',x='10%',width='80%',
-				checked=OPTIONS.defaults.showSecondLine,
+				checked=OPTIONS[currentOption].showSecondLine,
 				setting=OPTIONS.defaults.showSecondLine,
 				OnChange={function() OPTIONS.defaults.showSecondLine = not OPTIONS.defaults.showSecondLine; if OPTIONS_original[currentOption].showSecondLine == nil then OPTIONS[currentOption].showSecondLine = OPTIONS.defaults.showSecondLine; end end}
 			},
@@ -621,6 +621,16 @@ function widget:Initialize()
 				checked=OPTIONS.defaults.showUnitHighlight,
 				setting=OPTIONS.defaults.showUnitHighlight,
 				OnChange={function() OPTIONS.defaults.showUnitHighlight = not OPTIONS.defaults.showUnitHighlight; if OPTIONS_original[currentOption].showUnitHighlight == nil then OPTIONS[currentOption].showUnitHighlight = OPTIONS.defaults.showUnitHighlight; end end}
+			},
+			Chili.Label:New{caption='Opacity'},
+			Chili.Trackbar:New{
+				x        = '10%',
+				width    = '80%',
+				min      = 0,
+				max      = 6,
+				step     = 0.05,
+				value    = OPTIONS[currentOption].spotterOpacity,
+				OnChange = {function(_,value) OPTIONS[currentOption].spotterOpacity=value; OPTIONS.defaults.spotterOpacity=value; end}
 			},
 			Chili.Line:New{width='100%'},
 		}
@@ -996,7 +1006,7 @@ function widget:DrawWorldPreUnit()
 			
 			--  Here the inner of the selected spotters are removed
 			gl.BlendFunc(GL.ONE, GL.ZERO)
-			DrawSelectionSpottersPart(teamID, 'base alpha', baseR,baseG,baseB,OPTIONS[currentOption].baseOpacity * OPTIONS[currentOption].spotterOpacity,scaleBase, false, false, true, false)
+			DrawSelectionSpottersPart(teamID, 'base alpha', baseR,baseG,baseB,OPTIONS[currentOption].baseOpacity + (OPTIONS[currentOption].baseOpacity * (OPTIONS[currentOption].spotterOpacity/50)),scaleBase, false, false, true, false)
 			
 			--  Really draw the spotters now  (This could be optimised if we could say Draw as much as DST_ALPHA * SRC_ALPHA is)
 			-- (without protecting form drawing them twice)
@@ -1009,12 +1019,12 @@ function widget:DrawWorldPreUnit()
 		
 		-- draw 1st line layer
 		if OPTIONS[currentOption].showFirstLine then
-			DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].firstLineOpacity * OPTIONS[currentOption].spotterOpacity,scale,false,false,false)
+			DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].firstLineOpacity + (OPTIONS[currentOption].firstLineOpacity * OPTIONS[currentOption].spotterOpacity),scale,false,false,false)
 		end
 		
 		-- draw 2nd line layer
 		if OPTIONS[currentOption].showSecondLine then
-			DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].secondLineOpacity * OPTIONS[currentOption].spotterOpacity,scaleOuter, true, true, true)
+			DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].secondLineOpacity + (OPTIONS[currentOption].secondLineOpacity * OPTIONS[currentOption].spotterOpacity),scaleOuter, true, true, true)
 		end
 	end
 	
@@ -1031,7 +1041,7 @@ function widget:DrawWorld()
 		gl.DepthTest(true)
 		gl.PolygonOffset(-2, -2)
 		gl.Blending(GL.SRC_ALPHA, GL.ONE)
-		local opacity = OPTIONS[currentOption].unitHighlightOpacity
+		local opacity = OPTIONS[currentOption].unitHighlightOpacity - (OPTIONS[currentOption].unitHighlightOpacity * (OPTIONS[currentOption].spotterOpacity/10))
 		local r,g,b
 		-- loop teams
 		for teamID,_ in pairs(selectedUnits) do

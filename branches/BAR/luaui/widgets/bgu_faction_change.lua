@@ -101,7 +101,7 @@ function widget:Initialize()
     arm_button = Chili.Button:New{
         parent = panel,
         height = '100%',
-        width = winW/2,
+        width = winW/2-1,
         onclick = {SetArm},
         caption = "",
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/ARM.png'} }
@@ -110,7 +110,7 @@ function widget:Initialize()
     core_button = Chili.Button:New{
         parent = panel,
         height = '100%',
-        width = winW/2,
+        width = winW/2-1,
         onclick = {SetCore},
         caption = "",
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/CORE.png'} }

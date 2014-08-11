@@ -62,7 +62,7 @@ local spIsGUIHidden           = Spring.IsGUIHidden
 local spGetTimer              = Spring.GetTimer
 local spDiffTimers            = Spring.DiffTimers
           
-local myTeamID                = Spring.GetLocalTeamID()
+--local myTeamID                = Spring.GetLocalTeamID()
 local myAllyID                = Spring.GetMyAllyTeamID()
 --local gaiaTeamID			  = Spring.GetGaiaTeamID()
 

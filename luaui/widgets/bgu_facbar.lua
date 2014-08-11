@@ -684,7 +684,7 @@ function widget:MousePress(x, y, button)
 end
 
 function ShowFacBar()
-    if window_facbar.hidden then
+    if window_facbar.hidden and not Spring.GetSpectatingState() then
         window_facbar:Show()
     end
 end
@@ -754,4 +754,8 @@ function widget:Initialize()
 
     local viewSizeX, viewSizeY = widgetHandler:GetViewSizes()
     self:ViewResize(viewSizeX, viewSizeY)
+    
+    if Spring.GetSpectatingState() then
+        HideFacBar()
+    end
 end

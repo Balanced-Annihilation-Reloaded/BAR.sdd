@@ -62,7 +62,7 @@ local spIsGUIHidden           = Spring.IsGUIHidden
 local spGetTimer              = Spring.GetTimer
 local spDiffTimers            = Spring.DiffTimers
           
---local myTeamID                = Spring.GetLocalTeamID()
+local myTeamID                = Spring.GetLocalTeamID()
 local myAllyID                = Spring.GetMyAllyTeamID()
 --local gaiaTeamID			  = Spring.GetGaiaTeamID()
 
@@ -296,11 +296,15 @@ function widget:PlayerChanged()
     CreateSpotterLists()
 end
 
+
+local visibleUnits, n_visibleUnits
 function widget:DrawWorldPreUnit()
+
     if (drawPlatter or drawXRayShader) and updateTime < spDiffTimers(spGetTimer(),prevUpdate) then 
-        visibleUnits = spGetVisibleUnits()    
+        visibleUnits = spGetVisibleUnits(-1,nil,false)    
         n_visibleUnits = #visibleUnits
     end
+    prevUpdate = spGetTimer()
     
     if spIsGUIHidden() then 
         guiHidden = true

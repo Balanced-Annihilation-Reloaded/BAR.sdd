@@ -695,6 +695,12 @@ function HideFacBar()
     end
 end
 
+function widget:PlayerChanged()
+    if Spring.GetSpectatingState() then
+        HideFacBar()
+    end
+end
+
 function widget:Initialize()
     if (not WG.Chili) then
         widgetHandler:RemoveWidget(widget)

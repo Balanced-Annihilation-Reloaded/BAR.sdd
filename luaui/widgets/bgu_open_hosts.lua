@@ -355,7 +355,7 @@ function NewBattle(battle)
         font = {
             outline          = true,
             autoOutlineColor = true,
-            outlineWidth     = 4,
+            outlineWidth     = 3,
             outlineWeight    = 6,
             size             = 14,        
         }
@@ -473,7 +473,7 @@ function CreateGUI()
 		resizeItems = false,
         autosize = true,
         minHeight = 1,
-		padding     = {0,0,0,0},
+		padding     = {0,2,0,0},
 		itemPadding = {10,0,0,0},
 		itemMargin  = {0,0,0,0},
         orientation = 'vertical',

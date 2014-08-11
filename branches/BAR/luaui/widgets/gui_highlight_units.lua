@@ -297,14 +297,15 @@ function widget:PlayerChanged()
 end
 
 
-local visibleUnits, n_visibleUnits
+local visibleUnits = {}
 function widget:DrawWorldPreUnit()
 
-    if (drawPlatter or drawXRayShader) and updateTime < spDiffTimers(spGetTimer(),prevUpdate) then 
-        visibleUnits = spGetVisibleUnits(-1,nil,false)    
+    local timer = spGetTimer()
+    if (drawPlatter or drawXRayShader) and updateTime < spDiffTimers(timer,prevUpdate) then 
+        visibleUnits = spGetVisibleUnits()
         n_visibleUnits = #visibleUnits
+        prevUpdate = timer
     end
-    prevUpdate = spGetTimer()
     
     if spIsGUIHidden() then 
         guiHidden = true

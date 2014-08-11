@@ -85,7 +85,7 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	showSecondLine					= true,
 	showExtraComLine				= true,		-- extra circle lines for the commander unit
 	showExtraBuildingWeaponLine		= true,
-	showUnitHighlight				= true,
+	showUnitHighlight				= false,	-- default off, eats performance
 	showUnitHighlightHealth			= false,	-- (overrides showUnitHighlight)
 	
 	-- opacity
@@ -95,13 +95,13 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	
 	-- animation
 	selectionStartAnimation			= true,
-	selectionStartAnimationTime		= 0.15, 	--high so as visible while developing
+	selectionStartAnimationTime		= 0.15,
 	selectionStartAnimationScale	= 0.8,
 	-- selectionStartAnimationScale	= 1.17,
 	selectionEndAnimation			= true,
-	selectionEndAnimationTime		= 0.2, 	--high so as visible while developing
+	selectionEndAnimationTime		= 0.2,
 	selectionEndAnimationScale		= 0.9,
-	-- selectionEndAnimationScale	= 1.17,
+	--selectionEndAnimationScale	= 1.17,
 	
 	-- animation
 	rotationSpeed					= 0.8,
@@ -567,7 +567,7 @@ function widget:Initialize()
 	Menu.AddOption{
 		tab      = 'Interface',
 		children = {
-			Chili.Label:New{caption='Fancy Units',x='0%',fontsize=18},
+			Chili.Label:New{caption='Fancy Selected Units',x='0%',fontsize=18},
 			Chili.ComboBox:New{
 				x        = '10%',
 				width    = '80%',
@@ -579,7 +579,7 @@ function widget:Initialize()
 					OPTIONS[5].name,
 					OPTIONS[6].name,
 				},
-				selected = 1,
+				selected = currentOption,
 				OnSelect = {
 					function(_,sel)
 						currentOption = sel

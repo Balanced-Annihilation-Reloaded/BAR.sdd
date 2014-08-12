@@ -222,18 +222,17 @@ end
 local function updateSelectedUnitsData()
 	
 	-- remove deselected units 
-	local os_clock = os.clock()
 	local clockDifference
 	for teamID,_ in pairs(selectedUnits) do
 		for unitID,_ in pairs(selectedUnits[teamID]) do
 			if not spIsUnitSelected(unitID) and selectedUnits[teamID][unitID]['selected'] then
-				clockDifference = OPTIONS[currentOption].selectionStartAnimationTime - (os_clock - selectedUnits[teamID][unitID]['new'])
+				clockDifference = OPTIONS[currentOption].selectionStartAnimationTime - (currentClock - selectedUnits[teamID][unitID]['new'])
 				if clockDifference < 0 then
 					clockDifference = 0
 				end
 				selectedUnits[teamID][unitID]['selected'] = false 
 				selectedUnits[teamID][unitID]['new'] = false
-				selectedUnits[teamID][unitID]['old'] = os_clock - clockDifference
+				selectedUnits[teamID][unitID]['old'] = currentClock - clockDifference
 			end
 		end
 	end
@@ -254,13 +253,13 @@ local function updateSelectedUnitsData()
 						end
 						if not selectedUnits[teamID][unitID] then
 							selectedUnits[teamID][unitID]			= {}
-							selectedUnits[teamID][unitID]['new']	= os_clock
+							selectedUnits[teamID][unitID]['new']	= currentClock
 						elseif selectedUnits[teamID][unitID]['old'] then
-							clockDifference = OPTIONS[currentOption].selectionEndAnimationTime - (os_clock - selectedUnits[teamID][unitID]['old'])
+							clockDifference = OPTIONS[currentOption].selectionEndAnimationTime - (currentClock - selectedUnits[teamID][unitID]['old'])
 							if clockDifference < 0 then
 								clockDifference = 0
 							end
-							selectedUnits[teamID][unitID]['new']	= os_clock - clockDifference
+							selectedUnits[teamID][unitID]['new']	= currentClock - clockDifference
 							selectedUnits[teamID][unitID]['old']	= nil
 						end
 						selectedUnits[teamID][unitID]['selected']	= true
@@ -668,12 +667,15 @@ function SetUnitConf()
 		scale = OPTIONS[currentOption].scaleFactor*( xsize^2 + zsize^2 )^0.5
 		
 		if (unitDef.isBuilding or unitDef.isFactory or unitDef.speed==0) then
+			shapeName = 'square'
 			shape = shapes.square
 			xscale, zscale = OPTIONS[currentOption].rectangleFactor * xsize, OPTIONS[currentOption].rectangleFactor * zsize
 		elseif (unitDef.isAirUnit) then
+			shapeName = 'triangle'
 			shape = shapes.triangle
 			xscale, zscale = scale, scale
 		else
+			shapeName = 'circle'
 			shape = shapes.circle
 			xscale, zscale = scale, scale
 		end
@@ -681,7 +683,7 @@ function SetUnitConf()
 		weaponcount = table.getn(unitDef.weapons)
 			
 		
-		UNITCONF[udid] = {shape=shape, xscale=xscale, zscale=zscale, weaponcount=weaponcount}
+		UNITCONF[udid] = {shape=shape, xscale=xscale, zscale=zscale, weaponcount=weaponcount, shapeName=shapeName}
 	end
 end
 
@@ -733,21 +735,18 @@ function widget:GameFrame(frame)
 end
 
 
-function GetUsedRotationAngle(unitID, unitUnitDefs, opposite)
-	local usedRotationAngle
-	if (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
-		usedRotationAngle = degrot[unitID]
-	elseif (unitUnitDefs.isAirUnit) then
-		usedRotationAngle = degrot[unitID]
-	else
+function GetUsedRotationAngle(unitID, shapeName, opposite)
+	if (shapeName == 'circle') then
 		if opposite then 
-			usedRotationAngle = currentRotationAngleOpposite
+			return currentRotationAngleOpposite
 		else
-			usedRotationAngle = currentRotationAngle
+			return currentRotationAngle
 		end
+	else
+		return degrot[unitID]
 	end
-	return usedRotationAngle
 end
+
 
 
 do
@@ -758,7 +757,7 @@ do
 		
 		local OPTIONScurrentOption = OPTIONS[currentOption]
 		
-		for unitID in pairs(selectedUnits[teamID]) do
+		for unitID, unitSelectProperties in pairs(selectedUnits[teamID]) do
 			udid = spGetUnitDefID(unitID)
 			unitUnitDefs = UnitDefs[udid]
 			unit = UNITCONF[udid]
@@ -770,6 +769,7 @@ do
 				usedAlpha = a
 					
 				if not selectedUnits[teamID][unitID] then return end 
+				
 				
 				if (OPTIONScurrentOption.selectionEndAnimation  or  OPTIONScurrentOption.selectionStartAnimation) then
 					if changeOpacity then
@@ -790,6 +790,7 @@ do
 						else
 							selectedUnits[teamID][unitID] = nil
 						end
+						
 					-- check if the unit is newly selected
 					elseif (OPTIONScurrentOption.selectionStartAnimation and selectedUnits[teamID][unitID]['new'] > maxSelectTime) then
 						--spEcho(selectedUnits[teamID][unitID]['new'] - maxSelectTime)
@@ -805,56 +806,57 @@ do
 					end
 				end
 				
+				
 				if selectedUnits[teamID][unitID] then
 				
-					usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs ,opposite)
+					usedRotationAngle = GetUsedRotationAngle(unitID, unit.shapeName, opposite)
 					if type == 'normal solid'  or  type == 'normal alpha' then
 						
 						-- special style for coms
 						if drawUnitStyles and OPTIONScurrentOption.showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
-							usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
+							usedRotationAngle = GetUsedRotationAngle(unitID, unit.shapeName)
 							gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.22)
 							usedScale = scale * 1.25
-							glDrawListAtUnit(unitID, unit.shape.inner, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
+							--glDrawListAtUnit(unitID, unit.shape.inner, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), currentRotationAngleOpposite, 0, degrot[unitID], 0)
 							usedScale = scale * 1.23
-							usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs , true)
+							usedRotationAngle = GetUsedRotationAngle(unitID, unit.shapeName , true)
 							gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.08)
-							glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
+							--glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
 						else
 							-- adding style for buildings with weapons
 							if drawUnitStyles and OPTIONScurrentOption.showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
 								if (unit.weaponcount > 0) then
-									usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
+									usedRotationAngle = GetUsedRotationAngle(unitID, unit.shapeName)
 									gl.Color(r,g,b,usedAlpha*(usedAlpha+0.2))
 									usedScale = scale * 1.11
-									-glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
+									--glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
 								end
 								gl.Color(r,g,b,usedAlpha)
 							end
 							
 							if relativeScaleSchrinking then
-								glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/10), usedRotationAngle, 0, degrot[unitID], 0)
+								--glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/10), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/10), usedRotationAngle, 0, degrot[unitID], 0)
 							else
-								glDrawListAtUnit(unitID, unit.shape.select, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+								--glDrawListAtUnit(unitID, unit.shape.select, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
 							end
 						end
 						
 					elseif type == 'solid overlap' then
 						
 						if relativeScaleSchrinking then
-							glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/50), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/50), usedRotationAngle, 0, degrot[unitID], 0)
+							--glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)-((unit.xscale*changedScale-5)/50), 1.0, (unit.zscale*scale*changedScale)-((unit.zscale*changedScale-5)/50), usedRotationAngle, 0, degrot[unitID], 0)
 						else
-							glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)+((unit.xscale-15)/15), 1.0, (unit.zscale*scale*changedScale)+((unit.zscale-15)/15), usedRotationAngle, 0, degrot[unitID], 0)
+							--glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)+((unit.xscale-15)/15), 1.0, (unit.zscale*scale*changedScale)+((unit.zscale-15)/15), usedRotationAngle, 0, degrot[unitID], 0)
 						end
 						
 					elseif type == 'alphabuffer1' then
 						
-						glDrawListAtUnit(unitID, unit.shape.shape, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
-						glDrawListAtUnit(unitID, unit.shape.inner, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+						--glDrawListAtUnit(unitID, unit.shape.shape, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+						--glDrawListAtUnit(unitID, unit.shape.inner, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
 						
 					elseif type == 'alphabuffer2' then
 						
-						glDrawListAtUnit(unitID, unit.shape.large, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
+						--glDrawListAtUnit(unitID, unit.shape.large, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
 						
 					elseif type == 'base solid'  or  type == 'base alpha' then
 						usedXScale = unit.xscale
@@ -868,7 +870,7 @@ do
 								usedZScale = usedZScale * 1.14
 							end
 						end
-						glDrawListAtUnit(unitID, unit.shape.large, false, (usedXScale*scale*changedScale)-((usedXScale*changedScale-10)/10), 1.0, (usedZScale*scale*changedScale)-((usedZScale*changedScale-10)/10), degrot[unitID], 0, degrot[unitID], 0)
+						--glDrawListAtUnit(unitID, unit.shape.large, false, (usedXScale*scale*changedScale)-((usedXScale*changedScale-10)/10), 1.0, (usedZScale*scale*changedScale)-((usedZScale*changedScale-10)/10), degrot[unitID], 0, degrot[unitID], 0)
 						
 					elseif type == 'unit highlight'then
 					

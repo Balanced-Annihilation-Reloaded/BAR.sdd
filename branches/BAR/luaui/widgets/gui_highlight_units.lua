@@ -61,6 +61,7 @@ local spGetVisibleUnits       = Spring.GetVisibleUnits
 local spIsGUIHidden           = Spring.IsGUIHidden
 local spGetTimer              = Spring.GetTimer
 local spDiffTimers            = Spring.DiffTimers
+local spValidUnitID           = Spring.ValidUnitID
           
 --local myTeamID                = Spring.GetLocalTeamID()
 local myAllyID                = Spring.GetMyAllyTeamID()
@@ -296,7 +297,6 @@ function widget:PlayerChanged()
     CreateSpotterLists()
 end
 
-
 local visibleUnits = {}
 function widget:DrawWorldPreUnit()
 
@@ -323,13 +323,15 @@ function widget:DrawWorldPreUnit()
     gl.Blending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)     
     for i=1, n_visibleUnits do
         local unitID = visibleUnits[i]
-        local teamID = spGetUnitTeam(unitID)
-        local allyID = spGetUnitAllyTeam(unitID)
-        local unitDefID = spGetUnitDefID(unitID)
-        if circlePolys[teamID] ~= nil then
-            if highlightAllyTeam or amISpec or (allyID ~= myAllyID) then
-                local unitScale = unitConf[unitDefID].xscale*2
-                glDrawListAtUnit(unitID, circlePolys[teamID][12], false, unitScale, 1.0, unitScale) 
+        if spValidUnitID(unitID) then
+            local teamID = spGetUnitTeam(unitID)
+            local allyID = spGetUnitAllyTeam(unitID)
+            local unitDefID = spGetUnitDefID(unitID)
+            if circlePolys[teamID] ~= nil then
+                if highlightAllyTeam or amISpec or (allyID ~= myAllyID) then
+                    local unitScale = unitConf[unitDefID].xscale*2
+                    glDrawListAtUnit(unitID, circlePolys[teamID][12], false, unitScale, 1.0, unitScale) 
+                end
             end
         end
     end

@@ -1,7 +1,7 @@
 function widget:GetInfo()
    return {
       name      = "Fancy Selected Units",
-      desc      = "Switch styles with /selectedunits_style",
+      desc      = "Shows which units are selecte",
       author    = "Floris",
       date      = "04.04.2014",
       license   = "GNU GPL, v2 or later",

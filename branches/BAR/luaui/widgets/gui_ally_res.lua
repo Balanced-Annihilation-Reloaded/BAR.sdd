@@ -10,8 +10,8 @@
 
 function widget:GetInfo()
   return {
-    name      = "Ally Resource Bars",
-    desc      = "Shows your allies resources and allows quick resource transfer (v1.5)",
+    name      = "Ally Resource Bars", --  (v1.5)
+    desc      = "Shows your allies resources and allows quick resource transfer",
     author    = "TheFatController",
     date      = "Feb 7, 2010",
     license   = "MIT/x11",

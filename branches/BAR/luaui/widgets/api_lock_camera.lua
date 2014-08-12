@@ -2,9 +2,8 @@ local versionNumber = "v2.91"
 
 function widget:GetInfo()
 	return {
-		name = "LockCamera",
-		desc = versionNumber .. " Allows you to lock your camera to another player's camera.\n"
-				.. "/luaui lockcamera_interval to set broadcast interval (minimum 0.25 s).",
+		name = "Lock Camera",
+		desc = "Allows you to lock onto another player's camera\n",
 		author = "Evil4Zerggin, BrainDamage",
 		date = "16 January 2009",
 		license = "GNU LGPL, v2.1 or later",

@@ -13,8 +13,8 @@
 
 function widget:GetInfo()
   return {
-    name      = "NoDuplicateOrders",
-    desc      = "Blocks duplicate Attack and Repair/Build orders 1.1b",
+    name      = "No Duplicate Orders",
+    desc      = "Blocks duplicated Attack/Repair/Build orders",
     author    = "TheFatController",
     date      = "16 April, 2008",
     license   = "GNU GPL, v2 or later",

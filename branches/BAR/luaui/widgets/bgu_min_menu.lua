@@ -2,8 +2,8 @@
 function widget:GetInfo()
 	return {
 		name    = 'Min Menu',
-		desc    = 'Small Window to access Main Menu, as well as show time and FPS',
-		author  = 'Funkencool, BlueStone',
+		desc    = 'Small panel for main menu access and to show time and FPS',
+		author  = 'Funkencool, Bluestone',
 		date    = '2013',
 		license = 'GNU GPL v2',
 		layer   = 10,

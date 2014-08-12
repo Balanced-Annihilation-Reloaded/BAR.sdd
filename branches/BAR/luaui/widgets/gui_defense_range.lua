@@ -6,7 +6,7 @@ local versionNumber = "6.32"
 function widget:GetInfo()
 	return {
 		name      = "Defense Range",
-		desc      = "[v" .. string.format("%s", versionNumber ) .. "] Displays range of defenses (enemy and ally)",
+		desc      = "Displays range of enemy and ally defenses",
 		author    = "very_bad_soldier",
 		date      = "October 21, 2007",
 		license   = "GNU GPL v2",

@@ -4,7 +4,7 @@ local versionNumber = "1.34"
 function widget:GetInfo()
 	return {
 		name      = "Pause Screen",
-		desc      = "[v" .. string.format("%s", versionNumber ) .. "] Displays pause screen. Options: /pausescreen_autofade",
+		desc      = "Displays an overlay when the game is paused",
 		author    = "very_bad_soldier (enhanced by: Floris)",
 		date      = "2009.08.16",
 		license   = "GNU GPL v2",

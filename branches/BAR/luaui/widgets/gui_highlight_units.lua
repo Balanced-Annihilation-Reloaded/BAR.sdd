@@ -1,7 +1,7 @@
 function widget:GetInfo()
    return {
       name      = "Highlight Units",
-      desc      = "Highlights Units, with platters or shaders",
+      desc      = "Highlights units with glowing platters or x-ray shader",
       author    = "Dave Rodges, TradeMark, Floris, Bluestone",
       date      = "July 2014",
       license   = "GNU GPL, v2 or later",

@@ -11,9 +11,9 @@
 
 function widget:GetInfo()
   return {
-    name      = "HealthBars",
-    desc      = "Gives various informations about units in form of bars. options: /healthbars_style,  /healthbars_percentage,  /healthbars_glow",
-    author    = "jK, (all whistles and bells added by Floris)",
+    name      = "Health Bars",
+    desc      = "Gives various informations about units in form of bars",
+    author    = "jK, (whistles and bells added by Floris)",
     date      = "2009",
     license   = "GNU GPL, v2 or later",
     layer     = -10,

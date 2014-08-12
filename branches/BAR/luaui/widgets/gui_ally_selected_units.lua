@@ -5,7 +5,7 @@ local versionNumber = "2.03"
 function widget:GetInfo()
 	return {
 		name      = "Ally Selected Units",
-		desc      = "Shows units selected by teammates [v" .. string.format("%s", versionNumber ) .. "]",
+		desc      = "Shows which units are selected by teammates",
 		author    = "very_bad_soldier",
 		date      = "August 1, 2008",
 		license   = "GNU GPL v2",

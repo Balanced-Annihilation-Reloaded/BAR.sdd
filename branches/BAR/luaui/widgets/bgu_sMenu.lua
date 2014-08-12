@@ -3,7 +3,7 @@
 function widget:GetInfo()
 	return {
 		name      = 'Selection Menu',
-		desc      = 'Shows current selections build, order, and state options',
+		desc      = 'Interface for issuing build orders and unit commands',
 		author    = 'Funkencool',
 		date      = 'Sep 2013',
 		license   = 'GNU GPL v2',

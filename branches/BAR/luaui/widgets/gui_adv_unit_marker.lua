@@ -2,7 +2,7 @@ function widget:GetInfo()
 	return {
 		name      = "Adv. Unit Marker",
 		version   = "1.0",
-		desc      = "Marks spotted units of interest now with old-mark auto-remover",
+		desc      = "Marks spotted units of interest",
 		author    = "LEDZ",
 		date      = "2012.10.01",
 		license   = "GNU GPL v2",

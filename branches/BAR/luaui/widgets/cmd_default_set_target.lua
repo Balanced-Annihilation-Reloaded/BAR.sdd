@@ -1,7 +1,7 @@
 function widget:GetInfo()
 	return {
-	name	= "Set target default",
-	desc	= "replaces default click from attack to set target",
+	name	= "Set Target Default",
+	desc	= "Replaces attack commands with set target commands",
 	author	= "BD",
 	date	= "-",
 	license	= "WTFPL",

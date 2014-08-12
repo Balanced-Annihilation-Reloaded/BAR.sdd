@@ -2,8 +2,8 @@ local versionNumber = "0.5"
 
 function widget:GetInfo()
   return {
-    name      = "SmoothCam",
-    desc      = "[v" .. string.format("%s", versionNumber ) .. "] Moves camera smoothly",
+    name      = "Smooth Cam",
+    desc      = "Moves camera smoothly",
     author    = "very_bad_soldier",
     date      = "August, 8, 2010",
     license   = "GNU GPL, v2 or later",

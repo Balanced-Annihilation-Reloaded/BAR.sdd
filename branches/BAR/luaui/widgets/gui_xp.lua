@@ -5,7 +5,7 @@
 function widget:GetInfo()
   return {
     name      = "Rank Icons",
-    desc      = "Shows a rank icon depending on experience next to units",
+    desc      = "Shows rank icons for unit experience",
     author    = "trepan (idea quantum,jK)",
     date      = "Feb, 2008",
     license   = "GNU GPL, v2 or later",

@@ -1,7 +1,7 @@
 function widget:GetInfo()
   return {
     name      = "Minimap",
-    desc      = "Minimap",
+    desc      = "Displays the minimap",
     author    = "Funkencool",
     date      = "2014",
     license   = "GNU GPL, v2 or later",

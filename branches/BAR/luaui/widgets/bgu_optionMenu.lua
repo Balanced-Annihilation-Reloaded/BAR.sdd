@@ -9,7 +9,7 @@
 function widget:GetInfo()
 	return {
 		name    = 'Main Menu',
-		desc    = 'Graphics, Interface, and Sound Options Menu (WIP)',
+		desc    = 'The main menu; for information, settings, widgets, etc',
 		author  = 'Funkencool',
 		date    = '2013',
 		license = 'GNU GPL v2',

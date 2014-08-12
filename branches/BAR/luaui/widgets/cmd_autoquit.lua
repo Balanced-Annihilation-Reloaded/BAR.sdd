@@ -23,7 +23,7 @@ local GetMouseState = Spring.GetMouseState
 function widget:GetInfo()
   return {
     name      = "Autoquit",
-    desc      = versionNumber .. " Automatically quits "..delay.."s after the game ends. Move mouse to cancel.",
+    desc      = "Automatically quits "..delay.."s after the game ends. Move mouse to cancel.",
     author    = "Evil4Zerggin & zwzsg",
     date      = "25 December 2008",
     license   = "GNU LGPL, v2.1 or later",

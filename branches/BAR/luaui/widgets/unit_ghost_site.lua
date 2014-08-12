@@ -3,7 +3,7 @@ local versionNumber = "1.2"
 function widget:GetInfo()
 	return {
 		name      = "Ghost Site",
-		desc      = "[v" .. string.format("%s", versionNumber ) .. "] Displays ghosted buildings in progress and features",
+		desc      = "Displays ghosted buildings in progress and features",
 		author    = "very_bad_soldier",
 		date      = "April 7, 2009",
 		license   = "GNU GPL v2",

@@ -71,7 +71,7 @@ local unitlist={--- Human friendly list. Automatically converted to unitdef IDs 
 function widget:GetInfo()
 	return {
 		name = "Context Build",
-		desc = "Toggles buildings between buildings automagically" ,
+		desc = "Toggles buildings between sea/land equivalents automagically" ,
 		author = "dizekat and BD",
 		date = "30 July 2009",
 		license = "GNU LGPL, v2.1 or later",

@@ -3,7 +3,7 @@
 
 function widget:GetInfo()
   return {
-    name      = "ChiliProfiler",
+    name      = "Chili Profiler",
     desc      = "",
     author    = "",
     date      = "2013",

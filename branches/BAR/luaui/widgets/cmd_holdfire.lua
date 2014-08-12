@@ -1,8 +1,8 @@
 
 function widget:GetInfo()
 	return {
-		name      = "Holdfire Fix",
-		desc      = "Holdfire holds fire immediately",
+		name      = "Holdfire Instantly",
+		desc      = "Holdfire commands take effect immediately",
 		author    = "Niobium",
 		date      = "3 April 2010",
 		license   = "GNU GPL, v2 or later",

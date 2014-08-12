@@ -4,7 +4,7 @@ function widget:GetInfo()
   return {
     name      = "Deferred rendering",
     version   = 3,
-    desc      = "Deferred rendering widget",
+    desc      = "Does deferred rendering",
     author    = "beherith",
     date      = "2013 july",
     license   = "CC-BY-ND",

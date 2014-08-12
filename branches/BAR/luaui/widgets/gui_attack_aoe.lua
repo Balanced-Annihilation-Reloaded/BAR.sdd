@@ -6,7 +6,7 @@ local versionNumber = "v3.1c"
 function widget:GetInfo()
   return {
     name      = "Attack AoE",
-    desc      = versionNumber .. " Cursor indicator for area of effect and scatter when giving attack command.",
+    desc      = "Cursor indicator for area of effect when giving attack command",
     author    = "Evil4Zerggin",
     date      = "26 September 2008",
     license   = "GNU LGPL, v2.1 or later",

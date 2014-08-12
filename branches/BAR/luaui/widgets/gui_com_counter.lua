@@ -1,8 +1,8 @@
 function widget:GetInfo()
 	return {
 		name		= "Com Counter",
-		desc		= "Shows the number of coms left",
-		author		= "BD,Bluestone",
+		desc		= "Shows the number of bois left",
+		author		= "BrainDamage, Bluestone",
 		date		= "Feb, 2014",
 		license		= "GNU GPL, v2 or later",
 		layer		= 0,

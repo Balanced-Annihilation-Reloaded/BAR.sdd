@@ -3,7 +3,7 @@ local versionNumber = "v1.92"
 function widget:GetInfo()
 	return {
 		name = "Prospector",
-		desc = versionNumber .. " Tooltip for amount of metal extracted when placing metal extractors.",
+		desc = "Tooltip for amount of metal available when placing metal extractors.",
 		author = "Evil4Zerggin",
 		date = "9 January 2009",
 		license = "GNU LGPL, v2.1 or later",

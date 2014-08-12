@@ -1,7 +1,7 @@
 function widget:GetInfo()
    return {
       name      = "Fancy Selected Units",
-      desc      = "Shows which units are selected",
+      desc      = "Switch styles with /selectedunits_style",
       author    = "Floris",
       date      = "04.04.2014",
       license   = "GNU GPL, v2 or later",
@@ -53,7 +53,7 @@ local selectedUnits					= {}
 local maxSelectTime					= 0				--time at which units "new selection" animation will end
 local maxDeselectedTime				= -1			--time at which units deselection animation will end
 
-local currentOption					= 1
+local currentOption					= 2
 
 local glCallList					= gl.CallList
 local glDrawListAtUnit				= gl.DrawListAtUnit
@@ -89,7 +89,7 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	showUnitHighlightHealth			= false,	-- (overrides showUnitHighlight)
 	
 	-- opacity
-	spotterOpacity					= 1,		-- 0 is opaque
+	spotterOpacity					= 1,		
 	baseOpacity						= 0.78,		-- 0 is opaque
 	unitHighlightOpacity			= 0.08,		-- 0 is invisible
 	
@@ -151,7 +151,7 @@ OPTIONS[3] = {
 	name							= "Blocky dots",
 	circlePieces					= 42,
 	circlePieceDetail				= 1,
-	circleSpaceUsage				= 0.62,
+	circleSpaceUsage				= 0.55,
 	circleInnerOffset				= 0,
 
 	rotationSpeed					= 1,
@@ -611,13 +611,13 @@ function widget:Initialize()
 				}
 			},
 			Chili.Checkbox:New{
-				caption='Enable second line',x='10%',width='80%',
+				caption='Second line',x='10%',width='80%',
 				checked=OPTIONS[currentOption].showSecondLine,
 				setting=OPTIONS.defaults.showSecondLine,
 				OnChange={function() OPTIONS.defaults.showSecondLine = not OPTIONS.defaults.showSecondLine; if OPTIONS_original[currentOption].showSecondLine == nil then OPTIONS[currentOption].showSecondLine = OPTIONS.defaults.showSecondLine; end end}
 			},
 			Chili.Checkbox:New{
-				caption='Enable unit highlight',x='10%',width='80%',
+				caption='Unit highlight',x='10%',width='80%',
 				checked=OPTIONS.defaults.showUnitHighlight,
 				setting=OPTIONS.defaults.showUnitHighlight,
 				OnChange={function() OPTIONS.defaults.showUnitHighlight = not OPTIONS.defaults.showUnitHighlight; if OPTIONS_original[currentOption].showUnitHighlight == nil then OPTIONS[currentOption].showUnitHighlight = OPTIONS.defaults.showUnitHighlight; end end}
@@ -662,7 +662,7 @@ end
 
 
 function SetUnitConf()
-	local shape, xscale, zscale, scale, xsize, zsize
+	local shape, xscale, zscale, scale, xsize, zsize, weaponcount
 	for udid, unitDef in pairs(UnitDefs) do
 		xsize, zsize = unitDef.xsize, unitDef.zsize
 		scale = OPTIONS[currentOption].scaleFactor*( xsize^2 + zsize^2 )^0.5
@@ -678,7 +678,10 @@ function SetUnitConf()
 			xscale, zscale = scale, scale
 		end
 		
-		UNITCONF[udid] = {shape=shape, xscale=xscale, zscale=zscale}
+		weaponcount = table.getn(unitDef.weapons)
+			
+		
+		UNITCONF[udid] = {shape=shape, xscale=xscale, zscale=zscale, weaponcount=weaponcount}
 	end
 end
 
@@ -730,8 +733,8 @@ function widget:GameFrame(frame)
 end
 
 
-local usedRotationAngle
 function GetUsedRotationAngle(unitID, unitUnitDefs, opposite)
+	local usedRotationAngle
 	if (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
 		usedRotationAngle = degrot[unitID]
 	elseif (unitUnitDefs.isAirUnit) then
@@ -748,41 +751,39 @@ end
 
 
 do
-	local camX, camY, camZ = spGetCameraPosition()
-	local udid, unitUnitDefs, unit, draw, unitPosX, unitPosY, unitPosZ, camHeightDifference, changedScale, usedAlpha, usedScale, usedXScale, usedZScale
+	local udid, unitUnitDefs, unit, draw, unitPosX, unitPosY, unitPosZ, changedScale, usedAlpha, usedScale, usedXScale, usedZScale, usedRotationAngle
 	local health,maxHealth,paralyzeDamage,captureProgress,buildProgress
 	
 	function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relativeScaleSchrinking, changeOpacity, drawUnitStyles)
 		
+		local OPTIONScurrentOption = OPTIONS[currentOption]
 		
 		for unitID in pairs(selectedUnits[teamID]) do
 			udid = spGetUnitDefID(unitID)
 			unitUnitDefs = UnitDefs[udid]
 			unit = UNITCONF[udid]
-			draw = true
 			
 			if (unit) then
 				unitPosX, unitPosY, unitPosZ = spGetUnitViewPosition(unitID, true)
-				camHeightDifference = camY - unitPosY
 				
 				changedScale = 1
 				usedAlpha = a
 					
 				if not selectedUnits[teamID][unitID] then return end 
 				
-				if (OPTIONS[currentOption].selectionEndAnimation  or  OPTIONS[currentOption].selectionStartAnimation) then
+				if (OPTIONScurrentOption.selectionEndAnimation  or  OPTIONScurrentOption.selectionStartAnimation) then
 					if changeOpacity then
 						gl.Color(r,g,b,a)
 					end
 					-- check if the unit is deselected
-					if (OPTIONS[currentOption].selectionEndAnimation and not selectedUnits[teamID][unitID]['selected']) then
+					if (OPTIONScurrentOption.selectionEndAnimation and not selectedUnits[teamID][unitID]['selected']) then
 						if (maxDeselectedTime < selectedUnits[teamID][unitID]['old']) then
-							changedScale = OPTIONS[currentOption].selectionEndAnimationScale + (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS[currentOption].selectionEndAnimationTime)) * (1 - OPTIONS[currentOption].selectionEndAnimationScale)
+							changedScale = OPTIONScurrentOption.selectionEndAnimationScale + (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONScurrentOption.selectionEndAnimationTime)) * (1 - OPTIONScurrentOption.selectionEndAnimationScale)
 							if (changeOpacity) then
 								if type == 'unit highlight' then
-									usedAlpha = (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS[currentOption].selectionEndAnimationTime) * a)
+									usedAlpha = (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONScurrentOption.selectionEndAnimationTime) * a)
 								else
-									usedAlpha = 1 - (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONS[currentOption].selectionEndAnimationTime) * (1-a))
+									usedAlpha = 1 - (((selectedUnits[teamID][unitID]['old'] - maxDeselectedTime) / OPTIONScurrentOption.selectionEndAnimationTime) * (1-a))
 								end
 								gl.Color(r,g,b,usedAlpha)
 							end
@@ -790,14 +791,14 @@ do
 							selectedUnits[teamID][unitID] = nil
 						end
 					-- check if the unit is newly selected
-					elseif (OPTIONS[currentOption].selectionStartAnimation and selectedUnits[teamID][unitID]['new'] > maxSelectTime) then
+					elseif (OPTIONScurrentOption.selectionStartAnimation and selectedUnits[teamID][unitID]['new'] > maxSelectTime) then
 						--spEcho(selectedUnits[teamID][unitID]['new'] - maxSelectTime)
-						changedScale = OPTIONS[currentOption].selectionStartAnimationScale + (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS[currentOption].selectionStartAnimationTime)) * (1 - OPTIONS[currentOption].selectionStartAnimationScale)
+						changedScale = OPTIONScurrentOption.selectionStartAnimationScale + (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONScurrentOption.selectionStartAnimationTime)) * (1 - OPTIONScurrentOption.selectionStartAnimationScale)
 						if (changeOpacity) then
 							if type == 'unit highlight' then
-								usedAlpha = (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS[currentOption].selectionStartAnimationTime) * a)
+								usedAlpha = (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONScurrentOption.selectionStartAnimationTime) * a)
 							else
-								usedAlpha = 1 - (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONS[currentOption].selectionStartAnimationTime) * (1-a))
+								usedAlpha = 1 - (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONScurrentOption.selectionStartAnimationTime) * (1-a))
 							end
 							gl.Color(r,g,b,usedAlpha)
 						end
@@ -810,7 +811,7 @@ do
 					if type == 'normal solid'  or  type == 'normal alpha' then
 						
 						-- special style for coms
-						if drawUnitStyles and OPTIONS[currentOption].showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
+						if drawUnitStyles and OPTIONScurrentOption.showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
 							usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
 							gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.22)
 							usedScale = scale * 1.25
@@ -821,12 +822,12 @@ do
 							glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
 						else
 							-- adding style for buildings with weapons
-							if drawUnitStyles and OPTIONS[currentOption].showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
-								if (#unitUnitDefs.weapons > 0) then
+							if drawUnitStyles and OPTIONScurrentOption.showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
+								if (unit.weaponcount > 0) then
 									usedRotationAngle = GetUsedRotationAngle(unitID, unitUnitDefs)
 									gl.Color(r,g,b,usedAlpha*(usedAlpha+0.2))
 									usedScale = scale * 1.11
-									glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
+									-glDrawListAtUnit(unitID, unit.shape.select, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/7.5), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/7.5), usedRotationAngle, 0, degrot[unitID], 0)
 								end
 								gl.Color(r,g,b,usedAlpha)
 							end
@@ -858,11 +859,11 @@ do
 					elseif type == 'base solid'  or  type == 'base alpha' then
 						usedXScale = unit.xscale
 						usedZScale = unit.zscale
-						if OPTIONS[currentOption].showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
+						if OPTIONScurrentOption.showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
 							usedXScale = usedXScale * 1.23
 							usedZScale = usedZScale * 1.23
-						elseif OPTIONS[currentOption].showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
-							if (#unitUnitDefs.weapons > 0) then
+						elseif OPTIONScurrentOption.showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
+							if (unit.weaponcount > 0) then
 								usedXScale = usedXScale * 1.14
 								usedZScale = usedZScale * 1.14
 							end
@@ -871,7 +872,7 @@ do
 						
 					elseif type == 'unit highlight'then
 					
-						if OPTIONS[currentOption].showUnitHighlightHealth then
+						if OPTIONScurrentOption.showUnitHighlightHealth then
 							health,maxHealth,paralyzeDamage,captureProgress,buildProgress = spGetUnitHealth(unitID)
 							gl.Color(
 								health>maxHealth/2 and 2-2*health/maxHealth or 1,

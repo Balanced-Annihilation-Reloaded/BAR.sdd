@@ -14,7 +14,7 @@
 function widget:GetInfo()
   return {
     name      = "Group Label",
-    desc      = "Displays label on units in a group",
+    desc      = "Displays a label on units in a group",
     author    = "gunblob",
     date      = "June 12, 2008",
     license   = "GNU GPL, v2 or later",

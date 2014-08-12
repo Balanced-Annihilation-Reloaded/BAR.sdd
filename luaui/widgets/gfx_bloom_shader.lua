@@ -1,6 +1,6 @@
 function widget:GetInfo()
 	return {
-		name      = "BloomShader (v0.5)",
+		name      = "BloomShader", --(v0.5)
 		desc      = "Sets Spring In Bloom",
 		author    = "Kloot",
 		date      = "28-5-2008",

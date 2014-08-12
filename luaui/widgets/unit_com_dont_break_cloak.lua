@@ -1,7 +1,7 @@
 
 function widget:GetInfo()
 	return {
-		name      = 'Com DontBreakCloak',
+		name      = 'Com Dont Break Cloak',
 		desc      = 'Sets commanders to hold fire when cloaked',
 		author    = 'Niobium',
 		version   = '1.0',

@@ -1,7 +1,7 @@
 function widget:GetInfo()
 	return {
 		name	= "Map Draw Blocker",
-		desc	= "blocks map draws from spammers",
+		desc	= "Blocks drawings and map points made by spammers",
 		author	= "BD",
 		date	= "-",
 		license = "WTFPL",

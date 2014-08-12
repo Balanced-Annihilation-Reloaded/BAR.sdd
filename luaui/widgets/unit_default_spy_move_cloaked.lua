@@ -1,7 +1,7 @@
 function widget:GetInfo()
 	return {
 	name	= "Spy move/reclaim defaults",
-	desc	= "prevents accidental spy decloak\nmakes move the default command for spies when cloaked",
+	desc	= "Prevents accidental spy decloak\nmakes move the default command for spies when cloaked",
 	author	= "BD",
 	date	= "-",
 	license	= "WTFPL and horses",

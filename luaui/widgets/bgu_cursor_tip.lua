@@ -2,7 +2,7 @@
 function widget:GetInfo()
 	return {
 		name    = 'Cursor tooltip',
-		desc    = 'A simple tooltip to appear when hovering mouse',
+		desc    = 'Provides a tooltip whilst hovering the mouse',
 		author  = 'Funkencool',
 		date    = '2013',
 		license = 'GNU GPL v2',

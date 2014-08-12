@@ -1,7 +1,7 @@
 function widget:GetInfo()
   return {
     name      = "Persistent Build Spacing",
-    desc      = "Recalls last build spacing set for each building and game [v2.0]",
+    desc      = "Recalls last build spacing set for each building",
     author    = "Niobium & DrHash",
     date      = "Sep 6, 2011",
     license   = "GNU GPL, v3 or later",

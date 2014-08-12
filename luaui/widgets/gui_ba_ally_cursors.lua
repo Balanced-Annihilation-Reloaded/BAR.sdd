@@ -10,7 +10,7 @@
 function widget:GetInfo()
 	return {
 		name	= "Ally Cursors",
-		desc	= "Shows the mouse pos of allied players (also optionally with nicknames)",
+		desc	= "Shows the mouse position of allied players",
 		author	= "Floris,jK,TheFatController",
 		date	= "Apr,2009",
 		license	= "GNU GPL, v2 or later",
@@ -38,7 +38,7 @@ local cursorSize				= 11
 
 local hideSpecs					= false
 
-local drawNames					= true
+local drawNames					= false
 local drawNamesScaling			= true		-- scale up when camera is more distant
 local drawNamesFade				= false
 local NameFadeStartDistance		= 6600

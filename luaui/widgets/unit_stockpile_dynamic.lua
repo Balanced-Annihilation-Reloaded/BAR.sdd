@@ -17,8 +17,8 @@ local MaxStockpile = 5	-- set this to desired stockpile levels
 
 function widget:GetInfo()
   return {
-    name      = "Stockpiler (dynamic)",
-    desc      = "keeps stockpiled units at max " .. MaxStockpile .. " in storage",
+    name      = "Stockpiler",
+    desc      = "Keeps stockpiling units at max " .. MaxStockpile .. " in storage",
     author    = "BD",
     date      = "tomorrow",
     license   = "WTFPL",

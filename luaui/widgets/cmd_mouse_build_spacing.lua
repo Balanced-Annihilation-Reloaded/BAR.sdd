@@ -1,7 +1,7 @@
 function widget:GetInfo()
    return {
       name      = "Mouse Buildspacing",
-      desc      = "Use mosuebuttons 4 and 5 for buildspacing",
+      desc      = "Adds mousebuttons 4 and 5 for buildspacing",
       author    = "Auswaschbar",
       version   = "v1.0",
       date      = "Mar, 2010",

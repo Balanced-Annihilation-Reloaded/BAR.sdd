@@ -2,7 +2,7 @@
 function widget:GetInfo()
 	return {
 		name      = 'Armageddon Countdown',
-		desc      = '',
+		desc      = 'Counts down to armageddon, from five minutes before it happens',
 		author    = 'Niobium',
 		date      = 'May 2011',
 		license   = "GNU GPL, v2 or later",

@@ -1,7 +1,7 @@
 function widget:GetInfo()
 	return {
 		name = "Building Hotkeys",
-		desc = "Enables Building Hotkeys for ZXCV" ,
+		desc = "Adds hotkeys for buildings using Z X C  and V" ,
 		author = "Beherith",
 		date = "23 march 2012",
 		license = "GNU LGPL, v2.1 or later",

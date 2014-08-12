@@ -14,8 +14,8 @@
 
 function widget:GetInfo()
   return {
-    name      = "MinimapEvents",
-    desc      = "Display ally events and battle damages in the minimap",
+    name      = "Minimap Events",
+    desc      = "Displays events in the minimap",
     author    = "trepan",
     date      = "Jul 16, 2007",
     license   = "GNU GPL, v2 or later",

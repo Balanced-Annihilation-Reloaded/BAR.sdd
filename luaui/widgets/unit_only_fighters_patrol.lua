@@ -15,8 +15,8 @@
 
 function widget:GetInfo()
 	return {
-		name	= "OnlyFightersPatrol",
-		desc	= "Only fighters go on factory's patrol route after leaving airlab. Reduces lag.",
+		name	= "Only Fighters Patrol",
+		desc	= "Only fighters follow factorys patrol route after leaving the airlab",
 		author	= "dizekat",
 		date	= "2008-04-22",
 		license	= "GNU GPL, v2 or later",

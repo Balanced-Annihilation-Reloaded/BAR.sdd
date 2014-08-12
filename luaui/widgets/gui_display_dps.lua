@@ -14,7 +14,7 @@
 function widget:GetInfo()
   return {
     name      = "Display DPS",
-    desc      = "Displays damage per second done to your allies units v2.1",
+    desc      = "Displays damage per second done to your allies units",
     author    = "TheFatController",
     date      = "May 27, 2008",
     license   = "GNU GPL, v2 or later",

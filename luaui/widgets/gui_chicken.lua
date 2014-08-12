@@ -5,7 +5,7 @@
 function widget:GetInfo()
   return {
     name      = "Chicken Panel",
-    desc      = "Shows stuff",
+    desc      = "Shows stuff about chickens",
     author    = "quantum",
     date      = "May 04, 2008",
     license   = "GNU GPL, v2 or later",

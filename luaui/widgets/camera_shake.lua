@@ -13,8 +13,8 @@
 
 function widget:GetInfo()
   return {
-    name      = "CameraShake",
-    desc      = "Camera shakes",
+    name      = "Camera Shake",
+    desc      = "Makes the camera shake when explosions happen",
     author    = "trepan",
     date      = "Jun 15, 2007",
     license   = "GNU GPL, v2 or later",

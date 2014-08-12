@@ -12,8 +12,8 @@
 
 function widget:GetInfo()
   return {
-	name		= "ImmobileBuilder",
-	desc		= "Sets immobile builders to MANEUVER, with a FIGHT command",
+	name		= "Immobile Builders",
+	desc		= "Sets nanotowers to manoeuvre, with a fight command",
 	author		= "trepan",
 	date		= "Jan 8, 2007",
 	license		= "GNU GPL, v2 or later",

@@ -5,7 +5,7 @@ local versionNumber = "1.21"
 function widget:GetInfo()
 	return {
 		name      = "Ghost Radar",
-		desc      = "Allows ghosted radar blips [v" .. string.format("%s", versionNumber ) .. "]",
+		desc      = "Allows ghosted radar blips",
 		author    = "very_bad_soldier",
 		date      = "July 21, 2008",
 		license   = "GNU GPL v2",

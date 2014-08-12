@@ -2,7 +2,7 @@
 function widget:GetInfo()
 	return {
 		name      = 'Anti Range',
-		desc      = '',
+		desc      = 'Displays antinuke range',
 		author    = 'Niobium',
 		date      = 'May 2011',
 		license   = 'GNU GPL, v2 or later',

@@ -1,7 +1,7 @@
 function widget:GetInfo()
 	return {
 		name      = "Player List",
-		desc      = "Player list with shortcuts",
+		desc      = "Displays a player list with many shortcuts",
 		author    = "Bluestone", --based on Marmoth's Advanced Player List
 		date      = "July 2014",
 		license   = "GNU GPL, v3 or later",

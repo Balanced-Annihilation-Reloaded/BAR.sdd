@@ -4,7 +4,7 @@
 function widget:GetInfo()
   return {
     name      = "Unittexture Preloader",
-    desc      = "Preloads unittextures, so no lag on start (first built unit)",
+    desc      = "Preloads unittextures",
     author    = "beherith",
     date      = "2014 jan",
     license   = "GPLv2",

@@ -1,8 +1,8 @@
 -- v1.0
 function widget:GetInfo()
 	return {
-		name    = 'EndGame Graph',
-		desc    = 'Chili replacement for default EndGame Graph, v1.0',
+		name    = 'Game End Graphs',
+		desc    = 'Displays graphs about the game (after it ends)',
 		author  = 'Funkencool',
 		date    = '2013', -- 2014
 		license = 'GNU GPL v2',

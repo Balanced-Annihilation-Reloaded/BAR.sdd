@@ -14,8 +14,8 @@
 
 function widget:GetInfo()
   return {
-    name      = "GameTypeInfo",
-    desc      = "informs players of the game type at start",
+    name      = "Game Type Info",
+    desc      = "Informs players of the game type at start",
     author    = "Teutooni",
     date      = "Jul 6, 2008",
     license   = "GNU GPL, v2 or later",

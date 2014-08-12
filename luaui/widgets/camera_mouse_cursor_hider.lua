@@ -1,7 +1,7 @@
 function widget:GetInfo()
 return {
-     name      = "Mouse cursor hider",
-     desc      = "Hides the cursor",
+     name      = "Hide Mouse",
+     desc      = "Hides the cursor, it might be hard to get it back!",
      author    = "quantum",
      date      = "22 June 2007",
      license   = "GNU GPL, v2 or later",

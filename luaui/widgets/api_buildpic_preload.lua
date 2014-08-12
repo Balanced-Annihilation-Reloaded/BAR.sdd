@@ -4,7 +4,7 @@
 function widget:GetInfo()
   return {
     name      = "Image Preloader",
-    desc      = "Preloads images; fixes buildpic issues",
+    desc      = "Preloads all images",
     author    = "jK",
     date      = "@2009",
     license   = "GPLv2",

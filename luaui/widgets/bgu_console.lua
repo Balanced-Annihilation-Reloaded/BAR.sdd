@@ -2,7 +2,7 @@
 function widget:GetInfo()
 	return {
 		name    = 'Chat Console',
-		desc    = 'A simple chili chat console',
+		desc    = 'Lets you talk to other players',
 		author  = 'Funkencool, Bluestone',
 		date    = '2013',
 		license = 'GNU GPL v2',

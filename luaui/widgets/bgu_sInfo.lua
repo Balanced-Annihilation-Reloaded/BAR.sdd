@@ -2,7 +2,7 @@
 function widget:GetInfo()
 	return {
 		name      = 'Selection info',
-		desc      = 'Shows information about current selection',
+		desc      = 'Shows information about the current selection',
 		author    = 'Funkencool',
 		date      = '2013',
 		license   = 'GNU GPL v2',

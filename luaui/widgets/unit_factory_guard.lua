@@ -13,7 +13,7 @@
 
 function widget:GetInfo()
   return {
-    name      = "FactoryGuard",
+    name      = "Factory Guard",
     desc      = "Assigns new builders to assist their source factory",
     author    = "trepan",
     date      = "Jan 8, 2007",

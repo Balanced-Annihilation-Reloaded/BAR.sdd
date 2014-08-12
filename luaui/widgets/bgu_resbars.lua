@@ -2,7 +2,7 @@
 function widget:GetInfo()
 	return {
 		name    = 'Resource Bars',
-		desc    = 'Simple chili resource bars',
+		desc    = 'Displays resource and resource sharing bars',
 		author  = 'Funkencool',
 		date    = '2013',
 		license = 'GNU GPL v2',

@@ -11,7 +11,7 @@
 
 function widget:GetInfo()
   return {
-    name      = "LupsManager",
+    name      = "Lups Manager",
     desc      = "",
     author    = "jK",
     date      = "Feb, 2008",

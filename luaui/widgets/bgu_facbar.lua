@@ -2,8 +2,8 @@
 
 function widget:GetInfo()
   return {
-    name      = "FactoryBar", 
-    desc      = "v0.052 Chili buildmenu for factories.",
+    name      = "Factory Bar", 
+    desc      = "Always displays a build menu for factories",
     author    = "CarRepairer (converted from jK's Buildbar), Bluestone",
     date      = "2010-11-10",
     license   = "GNU GPL, v2 or later",

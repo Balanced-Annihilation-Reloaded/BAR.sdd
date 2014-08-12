@@ -71,6 +71,7 @@ local spIsGUIHidden					= Spring.IsGUIHidden
 local spGetTeamColor				= Spring.GetTeamColor
 local spGetUnitHealth 				= Spring.GetUnitHealth
 local spGetUnitIsCloaked			= Spring.GetUnitIsCloaked
+local spUnitInView                  = Spring.IsUnitInView
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -762,7 +763,7 @@ do
 			udid = spGetUnitDefID(unitID)
 			unit = UNITCONF[udid]
 			
-			if (unit) then
+			if (unit) and spUnitInView(unitID) then
 				unitPosX, unitPosY, unitPosZ = spGetUnitViewPosition(unitID, true)
 				
 				changedScale = 1
@@ -872,7 +873,7 @@ do
 						end
 						glDrawListAtUnit(unitID, unit.shape.large, false, (usedXScale*scale*changedScale)-((usedXScale*changedScale-10)/10), 1.0, (usedZScale*scale*changedScale)-((usedZScale*changedScale-10)/10), degrot[unitID], 0, degrot[unitID], 0)
 						
-					elseif type == 'unit highlight'then
+					elseif type == 'unit highlight' then
 					
 						if OPTIONScurrentOption.showUnitHighlightHealth then
 							health,maxHealth,paralyzeDamage,captureProgress,buildProgress = spGetUnitHealth(unitID)

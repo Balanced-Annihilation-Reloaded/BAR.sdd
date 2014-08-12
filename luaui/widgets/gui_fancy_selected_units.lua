@@ -661,10 +661,11 @@ end
 
 
 function SetUnitConf()
-	local shape, xscale, zscale, scale, xsize, zsize, weaponcount
+	local name, shape, xscale, zscale, scale, xsize, zsize, weaponcount
 	for udid, unitDef in pairs(UnitDefs) do
 		xsize, zsize = unitDef.xsize, unitDef.zsize
 		scale = OPTIONS[currentOption].scaleFactor*( xsize^2 + zsize^2 )^0.5
+		name = unitDef.name
 		
 		if (unitDef.isBuilding or unitDef.isFactory or unitDef.speed==0) then
 			shapeName = 'square'
@@ -683,7 +684,7 @@ function SetUnitConf()
 		weaponcount = table.getn(unitDef.weapons)
 			
 		
-		UNITCONF[udid] = {shape=shape, xscale=xscale, zscale=zscale, weaponcount=weaponcount, shapeName=shapeName}
+		UNITCONF[udid] = {name=name, shape=shape, shapeName=shapeName, xscale=xscale, zscale=zscale, weaponcount=weaponcount}
 	end
 end
 
@@ -750,7 +751,7 @@ end
 
 
 do
-	local udid, unitUnitDefs, unit, draw, unitPosX, unitPosY, unitPosZ, changedScale, usedAlpha, usedScale, usedXScale, usedZScale, usedRotationAngle
+	local udid, unit, draw, unitPosX, unitPosY, unitPosZ, changedScale, usedAlpha, usedScale, usedXScale, usedZScale, usedRotationAngle
 	local health,maxHealth,paralyzeDamage,captureProgress,buildProgress
 	
 	function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relativeScaleSchrinking, changeOpacity, drawUnitStyles)
@@ -759,7 +760,6 @@ do
 		
 		for unitID, unitSelectProperties in pairs(selectedUnits[teamID]) do
 			udid = spGetUnitDefID(unitID)
-			unitUnitDefs = UnitDefs[udid]
 			unit = UNITCONF[udid]
 			
 			if (unit) then
@@ -767,7 +767,7 @@ do
 				
 				changedScale = 1
 				usedAlpha = a
-					
+				
 				if not selectedUnits[teamID][unitID] then return end 
 				
 				
@@ -813,7 +813,7 @@ do
 					if type == 'normal solid'  or  type == 'normal alpha' then
 						
 						-- special style for coms
-						if drawUnitStyles and OPTIONScurrentOption.showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
+						if drawUnitStyles and OPTIONScurrentOption.showExtraComLine and (unit.name == 'corcom'  or  unit.name == 'armcom') then
 							usedRotationAngle = GetUsedRotationAngle(unitID, unit.shapeName)
 							gl.Color(r,g,b,(usedAlpha*usedAlpha)+0.22)
 							usedScale = scale * 1.25
@@ -824,7 +824,7 @@ do
 							glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*usedScale*changedScale)-((unit.xscale*changedScale-10)/10), 1.0, (unit.zscale*usedScale*changedScale)-((unit.zscale*changedScale-10)/10), 0, 0, degrot[unitID], 0)
 						else
 							-- adding style for buildings with weapons
-							if drawUnitStyles and OPTIONScurrentOption.showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
+							if drawUnitStyles and OPTIONScurrentOption.showExtraBuildingWeaponLine and unit.shapeName == 'square' then
 								if (unit.weaponcount > 0) then
 									usedRotationAngle = GetUsedRotationAngle(unitID, unit.shapeName)
 									gl.Color(r,g,b,usedAlpha*(usedAlpha+0.2))
@@ -861,10 +861,10 @@ do
 					elseif type == 'base solid'  or  type == 'base alpha' then
 						usedXScale = unit.xscale
 						usedZScale = unit.zscale
-						if OPTIONScurrentOption.showExtraComLine and (unitUnitDefs.name == 'corcom'  or  unitUnitDefs.name == 'armcom') then
+						if OPTIONScurrentOption.showExtraComLine and (unit.name == 'corcom'  or  unit.name == 'armcom') then
 							usedXScale = usedXScale * 1.23
 							usedZScale = usedZScale * 1.23
-						elseif OPTIONScurrentOption.showExtraBuildingWeaponLine and (unitUnitDefs.isBuilding or unitUnitDefs.isFactory or unitUnitDefs.speed==0) then
+						elseif OPTIONScurrentOption.showExtraBuildingWeaponLine and unit.shapeName == 'square' then
 							if (unit.weaponcount > 0) then
 								usedXScale = usedXScale * 1.14
 								usedZScale = usedZScale * 1.14

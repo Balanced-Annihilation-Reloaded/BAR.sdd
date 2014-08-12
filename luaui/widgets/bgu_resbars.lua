@@ -283,6 +283,16 @@ end
 -- Updates 
 local function setBar(res)
 	local currentLevel, storage, pull, income, expense, share = spGetTeamResources(myTeamID, res)
+    
+    -- set everything to 0 if nil (eg. we are a spec and not watching anyone)
+    currentLevel = currentLevel or 0
+    storage = storage or 0
+    pull = pull or 0
+    income = income or 0
+    expense = expense or 0
+    share = share or 0
+
+    
 	local net = income-expense
 	
 	-- if there is a net gain

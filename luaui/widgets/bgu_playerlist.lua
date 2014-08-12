@@ -141,8 +141,8 @@ end
 
 function WatchLos()
     local teamToSpec = 0 --TODO
-    local _,fullView,fullSelect = Spring.GetSpectatingState()
-    if not fullView then
+    local _,notFullView,fullSelect = Spring.GetSpectatingState()
+    if notFullView then
         Spring.SendCommands("specteam "..teamToSpec)
         Spring.SendCommands("specfullview")
     else
@@ -421,11 +421,11 @@ function iPanelPress(obj,value)
     -- watch los (specfullview)
     if not players[iPanelpID].spec and players[myPlayerID].spec then
         iPanelLayout:AddChild(watchlos)
-        local _,fullView,_ = Spring.GetSpectatingState()
-        if fullView then
-            watchlos:SetCaption("un-watch los")
-        else
+        local a,notFullView,c = Spring.GetSpectatingState()
+        if notFullView then
             watchlos:SetCaption("watch los")
+        else
+            watchlos:SetCaption("un-watch los")
         end
         h = h + iPanelItemHeight
     end

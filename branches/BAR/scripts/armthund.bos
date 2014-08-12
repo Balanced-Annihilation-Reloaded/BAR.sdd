@@ -7,8 +7,6 @@ piece  base, engines, enginec, wingl, wingr, doorl, doorr, thrustc, thrust1, thr
 
 static-var  statechg_DesiredState, statechg_StateChanging;
 
-lua_BombsAway() { return 0; }
-
 activatescr()
 {
 	if( TRUE )
@@ -132,7 +130,6 @@ SweetSpot(piecenum)
 
 FirePrimary()
 {
-	call-script lua_BombsAway();
 }
 
 Killed(severity, corpsetype)

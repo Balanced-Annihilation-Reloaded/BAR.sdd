@@ -111,7 +111,7 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	maxAnimationMultiplier			= 1.014,
 	minAnimationMultiplier			= 0.99,
 	
-	-- prefer not to change because other widgets use these values too  (enemyspotter, given_units, selfd_icons)
+	-- prefer not to change because other widgets use these values too  (highlight_units, given_units, selfd_icons, ...)
 	scaleFactor						= 2.9,			
 	rectangleFactor					= 3.3,
 	
@@ -272,20 +272,6 @@ local function updateSelectedUnitsData()
 end
 
 
-function KeyExists(tbl, key)
-	for k in pairs(tbl) do
-		if key == k then
-			return true
-		end
-	end
-	return false
-end
-
-function Round(num, idp)
-    local mult = 10^(idp or 0)
-    return math.floor(num * mult + 0.5) / mult
-end
-
 local function SetupCommandColors(state)
 	local alpha = state and 1 or 0
 	spLoadCmdColorsConfig('unitBox  0 1 0 ' .. alpha)
@@ -298,13 +284,9 @@ end
 local function CreateDisplayLists(callback)
 	local displayLists = {}
 	
-	local zeroColor = {0, 0, 0, 0}
-	
 	displayLists.select = callback.fading(OPTIONS[currentOption].outersize, OPTIONS[currentOption].selectinner)
-	displayLists.invertedSelect = callback.fading(OPTIONS[currentOption].outersize, OPTIONS[currentOption].selectinner)
-	displayLists.inner = callback.solid(zeroColor, OPTIONS[currentOption].innersize)
+	displayLists.inner = callback.solid({0, 0, 0, 0}, OPTIONS[currentOption].innersize)
 	displayLists.large = callback.solid(nil, OPTIONS[currentOption].selectinner)
-	displayLists.kill = callback.solid(nil, OPTIONS[currentOption].outersize)
 	displayLists.shape = callback.fading(OPTIONS[currentOption].innersize, OPTIONS[currentOption].selectinner)
 	
 	return displayLists
@@ -374,10 +356,9 @@ end
 local function DrawSquareLine(innersize, outersize)
 	
 	gl.BeginEnd(GL.QUADS, function()
-		local parts = 4
-		local radstep = (2.0 * math.pi) / parts
+		local radstep = (2.0 * math.pi) / 4
 		local width, a1,a2,a2_2
-		for i = 1, parts do
+		for i = 1, 4 do
 			-- straight piece
 			width = 0.7
 			i = i + 0.65
@@ -410,12 +391,11 @@ end
 local function DrawSquareSolid(size)
 	gl.BeginEnd(GL.TRIANGLE_FAN, function()
 		local width, a1,a2,a2_2
-		local parts = 4
-		local radstep = (2.0 * math.pi) / parts
+		local radstep = (2.0 * math.pi) / 4
 		
 		gl.Vertex(0, 0, 0)
 		
-		for i = 1, parts do
+		for i = 1, 4 do
 			--straight piece
 			width = 0.7
 			i = i + 0.65
@@ -459,10 +439,9 @@ end
 local function DrawTriangleLine(innersize, outersize)
 	gl.BeginEnd(GL.QUADS, function()
 		local width, a1,a2,a2_2
-		local parts = 3
-		local radstep = (2.0 * math.pi) / parts
+		local radstep = (2.0 * math.pi) / 3
 		
-		for i = 1, parts do
+		for i = 1, 3 do
 			--straight piece
 			width = 0.7
 			i = i + 0.65
@@ -498,12 +477,11 @@ local function DrawTriangleSolid(size)
 	gl.BeginEnd(GL.TRIANGLE_FAN, function()
 		
 		local width, a1,a2,a2_2
-		local parts = 3
-		local radstep = (2.0 * math.pi) / parts
+		local radstep = (2.0 * math.pi) / 3
 		
 		gl.Vertex(0, 0, 0)
 		
-		for i = 1, parts do
+		for i = 1, 3 do
 			-- straight piece
 			width = 0.7
 			i = i + 0.65
@@ -545,7 +523,7 @@ end
 
 
 local function highlightUnit(unitID, r,g,b,a)
-  local health,maxHealth,paralyzeDamage,captureProgress,buildProgress=spGetUnitHealth(unitID)
+  local health,maxHealth,paralyzeDamage,captureProgress,buildProgress = spGetUnitHealth(unitID)
   gl.Color(
     health>maxHealth/2 and 2-2*health/maxHealth or 1, -- red
     health>maxHealth/2 and 1 or 2*health/maxHealth, -- green
@@ -559,10 +537,8 @@ end
 
 local function DestroyShape(shape)
 	gl.DeleteList(shape.select)
-	gl.DeleteList(shape.invertedSelect)
 	gl.DeleteList(shape.inner)
 	gl.DeleteList(shape.large)
-	gl.DeleteList(shape.kill)
 	gl.DeleteList(shape.shape)
 end
 

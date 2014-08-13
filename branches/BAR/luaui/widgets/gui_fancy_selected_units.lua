@@ -49,6 +49,7 @@ local animationMultiplierInner		= 1
 local animationMultiplierAdd		= true
 
 local selectedUnits					= {}
+local perfSelectedUnits				= {}
 
 local maxSelectTime					= 0				--time at which units "new selection" animation will end
 local maxDeselectedTime				= -1			--time at which units deselection animation will end
@@ -268,6 +269,16 @@ local function updateSelectedUnitsData()
 				end
 			end
 		end
+	end
+	
+	-- create new table that has iterative keys instead of unitID (to speedup after about 300 different units have ever been selected)
+	perfSelectedUnits = {}
+	for teamID,_ in pairs(selectedUnits) do
+		perfSelectedUnits[teamID] = {}
+		for unitID,_ in pairs(selectedUnits[teamID]) do
+			table.insert(perfSelectedUnits[teamID], unitID)
+		end
+		perfSelectedUnits[teamID]['totalUnits'] = table.getn(perfSelectedUnits[teamID])
 	end
 end
 
@@ -697,8 +708,10 @@ function widget:GameFrame(frame)
 	if frame%1~=0 then return end
 	
 	-- logs current unit direction	(needs regular updates for air units, and for buildings only once)
-	for teamID,_ in pairs(selectedUnits) do
-		for unitID,_ in pairs(selectedUnits[teamID]) do
+	for teamID,_ in pairs(perfSelectedUnits) do
+	
+		for unitKey=1, perfSelectedUnits[teamID]['totalUnits'] do
+			unitID = perfSelectedUnits[teamID][unitKey]
 			local dirx, _, dirz = spGetUnitDirection(unitID)
 			if (dirz ~= nil) then
 				degrot[unitID] = 180 - math.acos(dirz) * rad_con
@@ -728,14 +741,15 @@ end
 
 
 do
-	local udid, unit, draw, unitPosX, unitPosY, unitPosZ, changedScale, usedAlpha, usedScale, usedXScale, usedZScale, usedRotationAngle
+	local unitID, udid, unit, draw, unitPosX, unitPosY, unitPosZ, changedScale, usedAlpha, usedScale, usedXScale, usedZScale, usedRotationAngle
 	local health,maxHealth,paralyzeDamage,captureProgress,buildProgress
 	
 	function DrawSelectionSpottersPart(teamID, type, r,g,b,a,scale, opposite, relativeScaleSchrinking, changeOpacity, drawUnitStyles)
 		
 		local OPTIONScurrentOption = OPTIONS[currentOption]
 		
-		for unitID, unitSelectProperties in pairs(selectedUnits[teamID]) do
+		for unitKey=1, perfSelectedUnits[teamID]['totalUnits'] do
+			unitID = perfSelectedUnits[teamID][unitKey]
 			udid = spGetUnitDefID(unitID)
 			unit = UNITCONF[udid]
 			
@@ -902,14 +916,6 @@ function DrawSelectionSpotters(teamID, r,g,b,a,scale, opposite, relativeScaleSch
 	
 	-- Does not need to be drawn per Unit anymore
 	glCallList(clearquad)
-	
-	--  Draw spotters to AlphaBuffer
-	gl.ColorMask(false, false, false, true)
-	gl.BlendFunc(GL.DST_ALPHA, GL.ZERO)
-	
-	DrawSelectionSpottersPart(teamID, 'alphabuffer1', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
-	
-	DrawSelectionSpottersPart(teamID, 'alphabuffer2', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
 end
 
 
@@ -1004,6 +1010,13 @@ function widget:DrawWorldPreUnit()
 		
 		-- draw 2nd line layer
 		if OPTIONS[currentOption].showSecondLine then
+		
+			--  Draw spotters to AlphaBuffer
+			gl.ColorMask(false, false, false, true)
+			gl.BlendFunc(GL.DST_ALPHA, GL.ZERO)
+			DrawSelectionSpottersPart(teamID, 'alphabuffer1', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
+			DrawSelectionSpottersPart(teamID, 'alphabuffer2', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
+			
 			DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].secondLineOpacity + (OPTIONS[currentOption].secondLineOpacity * OPTIONS[currentOption].spotterOpacity),scaleOuter, true, true, true)
 		end
 	end

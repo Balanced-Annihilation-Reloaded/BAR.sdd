@@ -289,46 +289,46 @@ local function parseCmds()
 		end
 	end
     
-    -- work out if we have too many buttons, widen the menu if so
-    local n = 0
-    for i=1,#catNames do
-        n = math.max(n,#grid[i].children)
-    end
-    
-    local cols
-    if n <=3*8 then 
-        cols = 3 
-    else 
-        cols = 4 --max 32 buttons displayed per cat
-    end
-    
-    for i=1,#catNames do
-        grid[i].columns = cols
-    end
-    
+	-- work out if we have too many buttons, widen the menu if so
+	local n = 0
+	for i=1,#catNames do
+		n = math.max(n,#grid[i].children)
+	end
+	
+	local cols
+	if n <=3*8 then 
+		cols = 3 
+	else 
+		cols = 4 --max 32 buttons displayed per cat
+	end
+	
+	for i=1,#catNames do
+		grid[i].columns = cols
+	end
+ 
 end
 
 local function parseUnitDef(uDID)
-    -- load the build menu for the given unitDefID
-    -- don't load the state/cmd menus
- 
+  -- load the build menu for the given unitDefID
+  -- don't load the state/cmd menus
+
 	buildMenu.active = true
-    orderMenu.active = false
-    
-    local buildDefIDs = UnitDefs[uDID].buildOptions
- 
-    for _,bDID in pairs(buildDefIDs) do
-        local ud = UnitDefs[bDID]
-        local menuCat = getMenuCat(ud)
+	orderMenu.active = false
+	
+	local buildDefIDs = UnitDefs[uDID].buildOptions
+	
+	for _,bDID in pairs(buildDefIDs) do
+		local ud = UnitDefs[bDID]
+		local menuCat = getMenuCat(ud)
 		grid[menuCat].active = true
-        local cmd = {name=ud.name, id=bDID, disabled=false} --fake cmd desc muahahah
+		local cmd = {name=ud.name, id=bDID, disabled=false} --fake cmd desc muahahah
 		addBuild(cmd,menuCat)    
-    end
-    
-    for i=1,#catNames do
-        grid[i].columns = 3
-    end
-    
+	end
+	
+	for i=1,#catNames do
+		grid[i].columns = 3
+	end
+
 end
 
 
@@ -405,11 +405,11 @@ local function loadPanels()
 end
 
 local function loadDummyPanels(unitDefID)
-    -- load the build menu panels as though this unitDefID were selected, even though it is not
+	-- load the build menu panels as though this unitDefID were selected, even though it is not
 	orderMenu:ClearChildren()
 	stateMenu:ClearChildren()
 
-    orderArray = {}
+	orderArray = {}
 	stateArray = {}
 
 	menuTabs.choice = 1
@@ -425,23 +425,93 @@ end
 
 ---------------------------
 --
+local function createButton(name, unitDef)
+	-- if it can attack and it's not a plane, get max range of weapons of unit
+	local range = 0
+	local rangeText = ""
+	for _,weapon in pairs(unitDef.weapons) do
+		local weaponDefID = weapon.weaponDef
+		range = math.max(range, WeaponDefs[weaponDefID].range)
+	end
+	if range > 0 and not unitDef.canFly then
+		rangeText = '\nRange: ' .. range
+	end
+	
+	-- make the tooltip for this unit
+	local tooltip = unitDef.humanName..' - '..unitDef.tooltip..
+		            '\nCost: '..getInline{0.6,0.6,0.8}..unitDef.metalCost..'\b Metal, '..getInline{1,1,0.3}..unitDef.energyCost..'\b Energy'..
+		            '\nBuild Time: '..unitDef.buildTime..
+	              rangeText
+
+	local raindrop = Chili.Image:New{
+		x = 1, bottom = 1,
+		height = 15, width = 15,
+		file   = imageDir..'raindrop.png',
+	}
+
+	-- make the button for this unit
+	unit[name] = Chili.Button:New{
+		name      = name,
+		cmdId     = -unitDef.id,
+		tooltip   = tooltip,
+		caption   = '',
+		disabled  = false,
+		padding   = {0,0,0,0},
+		margin    = {0,0,0,0},
+		OnMouseUp = {cmdAction},
+		children  = {
+			Chili.Image:New{
+				height = '100%', width = '100%',
+				file   = imageDir..'Units/'..name..'.dds',
+				children = {
+					Chili.Label:New{
+						caption = '',
+						right   = 2,
+						y       = 2,
+					},
+					Chili.Image:New{
+						color  = teamColor,
+						height = '100%', width = '100%',
+						file   = imageDir..'Overlays/'..name..'.dds',
+					},
+				}
+			}
+		}
+	}
+ 
+	local isWater = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>20) or (unitDef.minWaterDepth and unitDef.minWaterDepth>0)
+	if isWater then
+		-- Add raindrop to unit icon
+		Chili.Image:New{
+			parent = unit[name].children[1],
+			x = 1, bottom = 1,
+			height = 15, width = 15,
+			file   = imageDir..'raindrop.png',
+		}
+  end
+end
+
+---------------------------
+--	This should now take into account multiple queues
 local function queueHandler()
-	local unitID = Spring.GetSelectedUnits()
-	if unitID[1] then
-		local list = Spring.GetRealBuildQueue(unitID[1]) or {}
+	local unitIDs = Spring.GetSelectedUnits()
+	for i=1, #unitIDs do
+		local list = Spring.GetRealBuildQueue(unitIDs[i]) or {}
 		for i=1, #list do
-			for defID, count in pairs(list[i]) do queue[defID] = count end
+			for defID, count in pairs(list[i]) do 
+				queue[defID] = queue[defID] and (queue[defID] + count) or count
+			end
 		end
 	end
 end
 ---------------------------
 -- Including LayoutHandler causes CommandsChanged to be called twice? 
 local function LayoutHandler(xIcons, yIcons, cmdCount, commands)
-        widgetHandler.commands   = commands
-        widgetHandler.commands.n = cmdCount
-        widgetHandler:CommandsChanged()
-      
-        return "", xIcons, yIcons, {}, {}, {}, {}, {}, {}, {}, {[1337]=9001}
+	widgetHandler.commands   = commands
+	widgetHandler.commands.n = cmdCount
+	widgetHandler:CommandsChanged()
+	
+	return "", xIcons, yIcons, {}, {}, {}, {}, {}, {}, {}, {[1337]=9001}
 end
 ---------------------------
 function widget:Initialize()
@@ -528,7 +598,7 @@ function widget:Initialize()
 		padding = {0,0,0,0},
 	}
 
-	-- Creates a container for each category.
+	-- Creates a container for each category of build commands.
 	for i=1,#catNames do
 		grid[i] = Chili.Grid:New{
 			name     = catNames[i],
@@ -545,68 +615,13 @@ function widget:Initialize()
 	end
     
 
-	-- Creates a cache of buttons.
+	-- Create a cache of buttons stored in the unit array
 	for name, unitDef in pairs(UnitDefNames) do
-		-- if it can attack and it's not a plane, get max range of weapons of unit
-		local range = 0
-		local rangeText = ""
-		for _,weapon in pairs(unitDef.weapons) do
-			local weaponDefID = weapon.weaponDef
-			range = math.max(range, WeaponDefs[weaponDefID].range)
-		end
-		if range > 0 and not unitDef.canFly then
-			rangeText = '\nRange: ' .. range
-		end
-		
-		-- make the tooltip for this unit
-		local tooltip = unitDef.humanName..' - '..unitDef.tooltip..
-			            '\nCost: '..getInline{0.6,0.6,0.8}..unitDef.metalCost..'\b Metal, '..getInline{1,1,0.3}..unitDef.energyCost..'\b Energy'..
-			            '\nBuild Time: '..unitDef.buildTime..
-		              rangeText
-                        
-		-- make the button for this unit
-		unit[name] = Chili.Button:New{
-			name      = name,
-			cmdId     = -unitDef.id,
-			tooltip   = tooltip,
-			caption   = '',
-			disabled  = false,
-			padding   = {0,0,0,0},
-			margin    = {0,0,0,0},
-			OnMouseUp = {cmdAction},
-			children  = {
-				Chili.Image:New{
-					height = '100%', width = '100%',
-					file   = imageDir..'Units/'..name..'.dds',
-					children = {
-						Chili.Label:New{
-							caption = '',
-							right   = 2,
-							y       = 2,
-						},
-						Chili.Image:New{
-							color  = teamColor,
-							height = '100%', width = '100%',
-							file   = imageDir..'Overlays/'..name..'.dds',
-						},
-					}
-				}
-			}
-		}
-        
-        local isWater = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>20) or (unitDef.minWaterDepth and unitDef.minWaterDepth>0)
-        if isWater then
-            local raindrop = Chili.Image:New{
-                x = 1,
-                bottom = 1,
-                height = 15, width = 15,
-                file   = imageDir..'raindrop.png',
-            }
-            unit[name].children[1]:AddChild(raindrop)
-        end
-        
-    end
-
+		-- Skip BA units ( uses much less lua memory )
+		if not name:find('_ba') then
+			createButton(name,unitDef)
+		end      
+	end
 
 end
 --------------------------- 
@@ -644,30 +659,31 @@ end
 local startUnitDefID
 
 function widget:Update()
-    if not gameStarted and not Spring.GetSpectatingState() then        
-        -- game hasn't started, so we are dealing only with initial_queue at this point
-        -- check that initial_queue is present
-        if not WG.SetSelDefID then return end
-        
-        -- check if we just changed faction
-        local uDID = WG.startUnit or Spring.GetTeamRulesParam(myTeamID, 'startUnit')
-        if uDID==startUnitDefID then return end 
-        
-        -- now act as though unitDefID is selected for building
-        startUnitDefID = uDID
+
+	if not gameStarted and not Spring.GetSpectatingState() then        
+		-- game hasn't started, so we are dealing only with initial_queue at this point
+		-- check that initial_queue is present
+		if not WG.SetSelDefID then return end
+		
+		-- check if we just changed faction
+		local uDID = WG.startUnit or Spring.GetTeamRulesParam(myTeamID, 'startUnit')
+		if uDID==startUnitDefID then return end 
+		
+		-- now act as though unitDefID is selected for building
+		startUnitDefID = uDID
 		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 		teamColor = {r,g,b}
-
-        WG.HideFacBar()
+	
+		WG.HideFacBar()
 		buildMenu.active = false
 		orderMenu.active = false
-        if not orderBG.hidden then
-            orderBG:Hide()
-        end
-        
-        loadDummyPanels(startUnitDefID)
-        return
-    end
+		if not orderBG.hidden then
+			orderBG:Hide()
+		end
+		
+		loadDummyPanels(startUnitDefID)
+		return
+	end
 
 	if updateRequired then
 		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
@@ -688,27 +704,32 @@ function widget:Update()
 		
 		if not buildMenu.active and buildMenu.visible then
 			buildMenu:Hide()
-            WG.ShowFacBar()
+			WG.ShowFacBar()	
 		elseif buildMenu.active and buildMenu.hidden then
 			buildMenu:Show()
-            WG.HideFacBar()
+			WG.HideFacBar()		
 		end
 	end
 end
 
 function widget:GameStart()
+	-- Reverts initial queue behaviour
 	for i=1,#catNames do
 		grid[i].active = false
 	end
-    gameStarted = true
-    updateRequired = true
+	gameStarted = true
+	updateRequired = true
 end
 ---------------------------
 --
 function widget:Shutdown()
+	-- Let Chili know we're done with these
 	buildMenu:Dispose()
 	menuTabs:Dispose()
+	
+	-- Bring back stock Order Menu
 	widgetHandler:ConfigLayoutHandler(nil)
 	Spring.ForceLayoutUpdate()
+	
 	spSendCommands({'tooltip 1'})
 end

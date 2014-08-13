@@ -1013,10 +1013,6 @@ function widget:DrawWorldPreUnit()
 		
 			--  Draw spotters to AlphaBuffer
 			gl.ColorMask(false, false, false, true)
-			gl.BlendFunc(GL.DST_ALPHA, GL.ZERO)
-			DrawSelectionSpottersPart(teamID, 'alphabuffer1', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
-			DrawSelectionSpottersPart(teamID, 'alphabuffer2', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
-			
 			DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].secondLineOpacity + (OPTIONS[currentOption].secondLineOpacity * OPTIONS[currentOption].spotterOpacity),scaleOuter, true, true, true)
 		end
 	end

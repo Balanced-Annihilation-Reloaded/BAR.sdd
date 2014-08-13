@@ -840,15 +840,6 @@ do
 							glDrawListAtUnit(unitID, unit.shape.large, false, (unit.xscale*scale*changedScale)+((unit.xscale-15)/15), 1.0, (unit.zscale*scale*changedScale)+((unit.zscale-15)/15), usedRotationAngle, 0, degrot[unitID], 0)
 						end
 						
-					elseif type == 'alphabuffer1' then
-						
-						glDrawListAtUnit(unitID, unit.shape.shape, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
-						glDrawListAtUnit(unitID, unit.shape.inner, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
-						
-					elseif type == 'alphabuffer2' then
-						
-						glDrawListAtUnit(unitID, unit.shape.large, false, unit.xscale*scale*changedScale, 1.0, unit.zscale*scale*changedScale, usedRotationAngle, 0, degrot[unitID], 0)
-						
 					elseif type == 'base solid'  or  type == 'base alpha' then
 						usedXScale = unit.xscale
 						usedZScale = unit.zscale
@@ -1011,7 +1002,6 @@ function widget:DrawWorldPreUnit()
 		-- draw 2nd line layer
 		if OPTIONS[currentOption].showSecondLine then
 		
-			--  Draw spotters to AlphaBuffer
 			gl.ColorMask(false, false, false, true)
 			DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].secondLineOpacity + (OPTIONS[currentOption].secondLineOpacity * OPTIONS[currentOption].spotterOpacity),scaleOuter, true, true, true)
 		end

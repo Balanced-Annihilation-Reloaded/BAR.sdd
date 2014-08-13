@@ -29,7 +29,7 @@ return {
 		maxslope = 10,
 		maxwaterdepth = 0,
 		name = "Protector",
-		objectname = "ARMAMD2.s3o",
+		objectname = "ARMAMD.s3o",
 		radardistance = 50,
 		script="armamd2.cob",
 		seismicsignature = 0,

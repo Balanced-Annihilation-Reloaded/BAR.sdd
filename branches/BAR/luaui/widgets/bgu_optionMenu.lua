@@ -720,12 +720,12 @@ local function Options()
     
 
     changeLog = Chili.ScrollPanel:New{width = '100%', height='100%', children = {
-            Chili.TextBox:New{width='100%',text=ParseChangelog(changelog)} 
+            Chili.TextBox:New{width='100%',text=ParseChangelog(changelog)padding={0,5,0,0}} 
         }
     }
     
     introText = Chili.ScrollPanel:New{width = '100%', height='100%', children = {
-            Chili.TextBox:New{width='100%',text=NewbieInfo} 
+            Chili.TextBox:New{width='100%',text=NewbieInfo,padding={0,5,0,0}} 
         }
     }
     

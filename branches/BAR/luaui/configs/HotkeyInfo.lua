@@ -93,12 +93,12 @@ local Units_III = {
     {"right mouse",  "De-select build order"},
     {blankLine=true},    
     {"Group selection", title=true},
-    {"double left click",       "Select all units of targeted type within current view"},
-    {"ctrl + z",                "Select all units of same type as current selection"},
     {"ctrl + a",                "Select all units"},
     {"ctrl + b",                "Select all constructors"},
     {"ctrl + (num)",            "Add units to group (num=1,2,..)"},
     {"(num)",                   "Select all units assigned to group (num)"},
+    {"ctrl + z",                "Select all units of same type as current selection"},
+    {"double left click",       "Select all units of targeted type within current view"},
     
 }
 

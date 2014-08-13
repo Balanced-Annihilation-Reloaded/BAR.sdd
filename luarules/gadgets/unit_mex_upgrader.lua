@@ -66,7 +66,7 @@ local autoMexCmdDesc = {
   cursor  = 'AutoMex', 
   action  = 'automex', 
   tooltip = ONTooltip, 
-  params  = { '0', 'UpgMex OFF', 'UpgMex ON'} 
+  params  = { '0', 'UpgMex off', 'UpgMex on'} 
 } 
 
 local upgradeMexCmdDesc = { 

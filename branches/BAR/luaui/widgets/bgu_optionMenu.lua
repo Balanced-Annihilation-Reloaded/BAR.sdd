@@ -52,7 +52,7 @@ DefaultSettings['MapMarks']         = true
 DefaultSettings['DynamicSky']       = false
 DefaultSettings['DynamicSun']       = false
 
--- load relevant things from springsettings 
+-- Load relevant things from springsettings 
 Settings['DistIcon']                    = Spring.GetConfigInt('DistIcon', 200) -- number is used if no config is set
 Settings['DistDraw']                    = Spring.GetConfigInt('DistDraw', 200)
 Settings['MaxNanoParticles']            = Spring.GetConfigInt('MaxNanoParticles', 1000)
@@ -284,7 +284,7 @@ end
 
 ---------------------------- 
 -- Saves a variable in the settings array
-local function save(index, data)
+local function Save(index, data)
 
 	-- New behavior, Save{ key = value, key2 = value2 } 
 	if type(index)=='table' then
@@ -303,8 +303,8 @@ end
 
 ---------------------------- 
 -- Loads a variable from the settings array
-local function load(index)
-	if Settings[index] then
+local function Load(index)
+	if Settings[index] ~= nil then
 		return Settings[index]
 	else
 		Spring.Echo('[Main Menu]Could not find '..index)
@@ -386,7 +386,7 @@ end
 ---------------------------- 
 -- Creates the original window in which all else is contained
 local function loadMainMenu()
-	local sizeData = load('mainMenuSize') or {x=400,y=200,width=585,height=400}
+	local sizeData = Load('mainMenuSize') or {x=400,y=200,width=585,height=400}
 	
 	-- Detects and fixes menu being off-screen
 	local vsx,vsy = Spring.GetViewGeometry()
@@ -404,7 +404,7 @@ local function loadMainMenu()
 		resizable = true,
 		OnResize  = {
 			function(self) 
-				save{mainMenuSize = {x=self.x,y=self.y,width=self.width,height=self.height}} 
+				Save{mainMenuSize = {x=self.x,y=self.y,width=self.width,height=self.height}} 
 			end
 		},
 		children  = {
@@ -720,7 +720,7 @@ local function Options()
     
 
     changeLog = Chili.ScrollPanel:New{width = '100%', height='100%', children = {
-            Chili.TextBox:New{width='100%',text=ParseChangelog(changelog)padding={0,5,0,0}} 
+            Chili.TextBox:New{width='100%',text=ParseChangelog(changelog),padding={0,5,0,0}} 
         }
     }
     
@@ -810,8 +810,8 @@ local function globalize()
 	local Menu = {}
 	
 	Menu.UpdateList = makeWidgetList
-	Menu.Save       = save
-	Menu.Load       = load
+	Menu.Save       = Save
+	Menu.Load       = Load
 	Menu.AddControl = addControl
 	Menu.ShowHide   = showHide
 	

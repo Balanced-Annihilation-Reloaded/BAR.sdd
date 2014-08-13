@@ -87,7 +87,10 @@ local tabs = {}
 local credits = VFS.LoadFile('credits_game.txt')
 local changelog = VFS.LoadFile('changelog.txt')
 local NewbieInfo = include('configs/NewbieInfo.lua')
+local HotkeyInfo = include('configs/HotkeyInfo.lua')
+
 local amNewbie = (Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'isNewbie') == 1)
+
 
 local wCategories = {
 	['unit']      = {label = 'Units',       list = {}, pos = 1,},
@@ -718,6 +721,28 @@ local function Options()
         tabs.Info:GetChildByName('ResignButton'):Hide() 
     end
     
+    local hotkeyInfoBox = Chili.TextBox:New{width='100%',text=HotkeyInfo.General,padding={0,5,0,0}} 
+
+    local function SetHotkeyTab(_, tabName)
+        if tabName=='General' then hotkeyInfoBox:SetText(HotkeyInfo.General) 
+        elseif tabName=="Units I" then hotkeyInfoBox:SetText(HotkeyInfo.Units_I)
+        elseif tabName=="Units II" then hotkeyInfoBox:SetText(HotkeyInfo.Units_II)
+        elseif tabName=="Units III" then hotkeyInfoBox:SetText(HotkeyInfo.Units_III)
+        end
+    end
+
+    hotkeyInfo = Chili.Control:New{x = 0, y = 20, bottom = 0, width = '100%', children = {
+            Chili.TabBar:New{x = 0, y = 0,	width = '100%', height = 20, minItemWidth = 70, selected = 'General', itemPadding = {1,0,1,0}, OnChange = {SetHotkeyTab},
+                tabs = {'General', 'Units I', 'Units II', 'Units III'},
+            },
+            Chili.ScrollPanel:New{y = 20, width = '100%', bottom = 0, children = {
+                    hotkeyInfoBox 
+                }
+            }
+        }
+    }
+
+
 
     changeLog = Chili.ScrollPanel:New{width = '100%', height='100%', children = {
             Chili.TextBox:New{width='100%',text=ParseChangelog(changelog),padding={0,5,0,0}} 
@@ -744,7 +769,7 @@ local function Options()
     
     local function SetInfoChild(_, listID)
         local child
-        if listID==1 then child=gameInfo elseif listID==2 then child=changeLog elseif listID==3 then child=introText end
+        if listID==1 then child=gameInfo elseif listID==2 then child = hotkeyInfo elseif listID==3 then child=changeLog elseif listID==4 then child=introText end
         if not child or not tabs.Info then return end --avoids a nil error when this function is called on setup of the comboBox
         tabs.Info:GetChildByName('info_layoutpanel'):ClearChildren()
         tabs.Info:GetChildByName('info_layoutpanel'):AddChild(child)
@@ -765,7 +790,7 @@ local function Options()
                 right    = '1%',
                 text     = "",
                 selected = amNewbie and 3 or 1,
-                items  = {"game info", "changelog", "intro"},
+                items  = {"game info", "hotkeys", "changelog", "intro"},
                 OnSelect = {SetInfoChild},
             },
          

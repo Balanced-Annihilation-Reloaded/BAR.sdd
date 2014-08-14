@@ -93,7 +93,7 @@ local updateRequired = true
 local sUnits = {}
 local oldTimer = spGetTimer()
 local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
-local teamColor = {r,g,b}
+local teamColor = {r,g,b,0.8}
 local gameStarted = (Spring.GetGameFrame()>0)
 ----------------
 
@@ -177,7 +177,7 @@ local function resizeUI(scrH)
 	menuTabs:SetPos(winW,winY+20)
 	orderMenu:SetPos(minMapW,ordY,ordH*21,ordH)
 	orderBG:SetPos(minMapW,ordY,ordH*#orderMenu.children,ordH)
-	stateMenu:SetPos(winY,0,100,winY)
+	stateMenu:SetPos(winY*1.05,0,200,winY)
 end
 ---------------------------------------------------------------
 ---------------------------------------------------------------
@@ -678,7 +678,7 @@ function widget:Update()
 		-- now act as though unitDefID is selected for building
 		startUnitDefID = uDID
 		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
-		teamColor = {r,g,b}
+		teamColor = {r,g,b,0.8}
 	
 		WG.HideFacBar()
 		buildMenu.active = false
@@ -693,7 +693,7 @@ function widget:Update()
 
 	if updateRequired then
 		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
-		teamColor = {r,g,b}
+		teamColor = {r,g,b,0.8}
 		
 		updateRequired = false
 		buildMenu.active = false

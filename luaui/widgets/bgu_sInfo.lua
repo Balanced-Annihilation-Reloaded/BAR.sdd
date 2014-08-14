@@ -261,6 +261,10 @@ local function updateUnitInfo()
 		unitHealth:SetValue(health)
 
 		local Mmake, Muse, Emake, Euse = spGetUnitResources(curTip)
+        Mmake = Mmake or 0
+        Muse = Muse or 0
+        Emake = Emake or 0
+        Euse = Euse or 0
 		unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
 		
 	--multiple units, but not so many we cant fit pics

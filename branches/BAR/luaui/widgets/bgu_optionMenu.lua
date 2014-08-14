@@ -718,7 +718,9 @@ local function Options()
     local function ResignMe()
         spSendCommands{'Spectator'}
         showHide('Graph') 
-        tabs.Info:GetChildByName('ResignButton'):Hide() 
+        if not tabs.Info:GetChildByName('ResignButton').hidden then
+            tabs.Info:GetChildByName('ResignButton'):Hide() 
+        end
     end
     
     local hotkeyInfoBox = Chili.TextBox:New{width='100%',text=HotkeyInfo.General,padding={0,5,0,0}} 

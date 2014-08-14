@@ -309,7 +309,6 @@ local function Load(index)
 		return Settings[index]
 	else
 		Spring.Echo('[Main Menu]Could not find '..index)
-		return false
 	end
 end
 

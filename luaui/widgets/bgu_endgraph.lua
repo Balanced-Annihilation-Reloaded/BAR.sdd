@@ -45,6 +45,7 @@ local windowLoaded
 local curGraph = {}
 local button = {}
 local team = {}
+local gameOver
 
 -- Chili vars
 local Chili, control0
@@ -277,10 +278,17 @@ local function drawGraph(obj)
 	lineLabels:ClearChildren()
 
 	local graphLength = Spring.GetTeamStatsHistory(0) - 1 -- last index isn't complete
-
+    
 	if graphLength < 4 then
-		Spring.Echo("End game Stats is still collecting data")
-		return false
+        if not gameOver then
+            Spring.Echo("End game Stats is still collecting data")
+            return false
+        else
+            if not graphLabel.hidden then
+                graphLabel:Hide()
+            end
+            return true
+        end
 	end
 
 	local gameStats = Spring.GetTeamStatsHistory(0, 0, graphLength - 1)
@@ -547,16 +555,17 @@ function widget:GameStart()
 end
 
 function widget:GameOver()
-	
+    gameOver = true
+    
 	if not windowLoaded then
 		loadWindow()
 	end
-	
-	if WG.MainMenu then
-		WG.MainMenu.ShowHide('Graph')
-	end
-	-- Draw initial graph
-	drawGraph(button[1])
+
+    if WG.MainMenu then
+        WG.MainMenu.ShowHide('Graph')
+    end
+    
+    drawGraph(button[1])    
 end
 
 function widget:Shutdown()

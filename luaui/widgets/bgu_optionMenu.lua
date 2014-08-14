@@ -30,7 +30,7 @@ local DefaultSettings = {}
 
 local white = '\255\255\255\255'
 
--- Defaults ---  
+-- Defaults ---
 -- DefaultSettings can only contain things from springsettings
 -- not all settings appear here, only ones for which we actually want to overwrite the defaults when "reset to defaults" is clicked
 DefaultSettings['Water']            = 'Reflective'
@@ -52,7 +52,7 @@ DefaultSettings['MapMarks']         = true
 DefaultSettings['DynamicSky']       = false
 DefaultSettings['DynamicSun']       = false
 
--- Load relevant things from springsettings 
+-- Load relevant things from springsettings
 Settings['DistIcon']                    = Spring.GetConfigInt('DistIcon', 200) -- number is used if no config is set
 Settings['DistDraw']                    = Spring.GetConfigInt('DistDraw', 200)
 Settings['MaxNanoParticles']            = Spring.GetConfigInt('MaxNanoParticles', 1000)
@@ -88,9 +88,7 @@ local credits = VFS.LoadFile('credits_game.txt')
 local changelog = VFS.LoadFile('changelog.txt')
 local NewbieInfo = include('configs/NewbieInfo.lua')
 local HotkeyInfo = include('configs/HotkeyInfo.lua')
-
 local amNewbie = (Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'isNewbie') == 1)
-
 
 local wCategories = {
 	['unit']      = {label = 'Units',       list = {}, pos = 1,},
@@ -106,7 +104,7 @@ local wCategories = {
 	['test']      = {label = 'Test Widgets',list = {}, pos = 11,},
 	['ungrouped'] = {label = 'Ungrouped',   list = {}, pos = 12,},
 }
----------------------------- 
+----------------------------
 --
 local function setCursor(cursorSet)
 	local cursorNames = {
@@ -118,7 +116,7 @@ local function setCursor(cursorSet)
 		'cursorrepair','cursorrevive','cursorrepair','cursorrestore','cursorrepair',
 		'cursormove','cursorpatrol','cursorreclamate','cursorselfd','cursornumber',
 	}
-	
+
 	for i=1, #cursorNames do
 		local topLeft = (cursorNames[i] == 'cursornormal' and cursorSet ~= 'k_haos_girl')
 		if cursorSet == 'ba' then Spring.ReplaceMouseCursor(cursorNames[i], cursorNames[i], topLeft)
@@ -141,7 +139,7 @@ local function toggleWidget(self)
 	self:Invalidate()
 end
 
----------------------------- 
+----------------------------
 -- Adds widget to the appropriate groups list of widgets
 local function groupWidget(name,wData)
 
@@ -150,37 +148,37 @@ local function groupWidget(name,wData)
 
 	for cat_name,cat in pairs(wCategories) do
 		if category == cat_name then
-			cat.list[#cat.list+1] = {name = name, wData = wData} 
+			cat.list[#cat.list+1] = {name = name, wData = wData}
 		end
 	end
 
 end
 
----------------------------- 
+----------------------------
 -- Decides which group each widget goes into
 local function sortWidgetList()
 	local wFilterString = string.lower(wFilterString or '')
 	for name,wData in pairs(widgetHandler.knownWidgets) do
-	
+
 		-- Only adds widget to group if it matches an enabled filter
 		if (Settings.searchWidgetName and string.lower(name or ''):find(wFilterString))
 		or (Settings.searchWidgetDesc and string.lower(wData.desc or ''):find(wFilterString))
 		or (Settings.searchWidgetAuth and string.lower(wData.author or ''):find(wFilterString)) then
 			groupWidget(name,wData)
 		end
-		
+
 		-- Alphabetizes widgets by name in ascending order
 		for _,cat in pairs(wCategories) do
 			local ascendingName = function(a,b) return a.name<b.name end
 			table.sort(cat.list,ascendingName)
 		end
-		
+
 	end
 end
 
----------------------------- 
+----------------------------
 -- Creates widget list for interface tab
---  TODO create cache of chili objects on initialize 
+--  TODO create cache of chili objects on initialize
 --    (doesn't need to recreate everything unless /luaui reload is called)
 --  TODO detect widget failure, set color accordingly
 local function makeWidgetList()
@@ -197,7 +195,7 @@ local function makeWidgetList()
 			num_cats = num_cats + 1
 		end
 	end
-	
+
 	-- First loop adds group label
 	for i=1, num_cats do
 		-- Get group of pos i
@@ -206,11 +204,11 @@ local function makeWidgetList()
 		if #list>0 then
 			stack:AddChild(Chili.Label:New{caption  = cat.label,x='0%',fontsize=18})
 			-- Second loop adds each widget
-			for b=1,#list do	
+			for b=1,#list do
 				local green  = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
 				local orange = {color = {1,0.5,0,1}, outlineColor = {1,0.5,0,0.2}}
 				local red    = {color = {1,0,0,1}, outlineColor = {1,0,0,0.2}}
-				
+
 				local enabled = (widgetHandler.orderList[list[b].name] or 0)>0
 				local active  = list[b].wData.active
 				local author = list[b].wData.author or "Unkown"
@@ -225,7 +223,7 @@ local function makeWidgetList()
 					font      = (active and green) or (enabled and orange) or red,
 					checked   = enabled,
 					OnChange  = {toggleWidget},
-				
+
 				})
 			end
 		end
@@ -233,50 +231,50 @@ local function makeWidgetList()
 	end
 end
 
----------------------------- 
+----------------------------
 local function CheckSpec()
-    -- hide the resign button if we are a spec
-    if Spring.GetSpectatingState() and not tabs.Info:GetChildByName('ResignButton').hidden then
-        tabs.Info:GetChildByName('ResignButton'):Hide()
-    else
-        if tabs.Info:GetChildByName('ResignButton').hidden then
-            tabs.Info:GetChildByName('ResignButton'):Show()        
-        end
-    end
+	-- hide the resign button if we are a spec
+	local button = tabs.Info:GetChildByName('ResignButton')
+	local isSpec = Spring.GetSpectatingState()
+	if isSpec and button.visible then
+		button:Hide()
+	elseif not isSpec and button.hidden then
+		button:Show()
+	end
 end
 
 -- Toggles the menu visibility
 --  also handles tab selection (e.g. f11 was pressed and menu opens to 'Interface')
 local function showHide(tab)
 	local oTab = Settings.tabSelected
-	
-    
-	if tab then 
+
+
+	if tab then
 		menuTabs:Select(tab)
-        CheckSpec()
-    else
+	else
 		mainMenu:ToggleVisibility()
-        CheckSpec()
 		return
 	end
-	
+
 	if mainMenu.visible and oTab == tab then
 		mainMenu:Hide()
 	elseif mainMenu.hidden then
 		mainMenu:Show()
-        CheckSpec()	
-    end
+	end
+	
+	CheckSpec()
 end
 
----------------------------- 
+----------------------------
 -- Handles the selection of the tabs
 local function sTab(_,tabName)
+	if not tabs[tabName] then return end
   if Settings.tabSelected then mainMenu:RemoveChild(tabs[Settings.tabSelected]) end
   mainMenu:AddChild(tabs[tabName])
   Settings.tabSelected = tabName
 end
 
----------------------------- 
+----------------------------
 -- Rebuilds widget list with new filter
 local function addFilter()
 	local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
@@ -285,16 +283,16 @@ local function addFilter()
 	editbox:SetText('')
 end
 
----------------------------- 
+----------------------------
 -- Saves a variable in the settings array
 local function Save(index, data)
 
-	-- New behavior, Save{ key = value, key2 = value2 } 
+	-- New behavior, Save{ key = value, key2 = value2 }
 	if type(index)=='table' then
 		for key, value in pairs(index) do
 			Settings[key] = value
 		end
-		
+
 	-- Old behavior, Save('key', value)
 	else
 		Spring.Echo("Use Save{key=value,key2=value2,etc..} instead of Save('key', value)")
@@ -304,30 +302,31 @@ local function Save(index, data)
 	end
 end
 
----------------------------- 
+----------------------------
 -- Loads a variable from the settings array
 local function Load(index)
 	if Settings[index] ~= nil then
 		return Settings[index]
 	else
 		Spring.Echo('[Main Menu]Could not find '..index)
+		return false
 	end
 end
 
----------------------------- 
+----------------------------
 --
 local function addOption(obj)
 	local stack = tabs[obj.tab]:GetObjectByName(obj.stack or 'Stack')
-	
+
 	if obj.title then
 		-- Stays if widget fails, needs to be created in widget to work
 		stack:AddChild(Chili.Label:New{caption=obj.title,x='0%',fontsize=18})
 	end
-	
+
 	for i = 1, #obj.children do
 		stack:AddChild(obj.children[i])
-	end	
-	
+	end
+
 	if obj.bLine then
 		-- Stays if widget fails, needs to be created in widget to work
 		stack:AddChild(Chili.Line:New{width='100%'})
@@ -335,13 +334,13 @@ local function addOption(obj)
 
 end
 
----------------------------- 
+----------------------------
 --
 local function addToStack()
 	Spring.Echo('AddToStack() is depreciated, instead use AddOption{}')
 end
 
----------------------------- 
+----------------------------
 -- Creates a stack panel which can then be used as a parent to options
 local function addStack(obj)
 	local stack
@@ -386,28 +385,28 @@ local function addStack(obj)
 end
 
 
----------------------------- 
+----------------------------
 -- Creates the original window in which all else is contained
 local function loadMainMenu()
 	local sizeData = Load('mainMenuSize') or {x=400,y=200,width=585,height=400}
-	
+
 	-- Detects and fixes menu being off-screen
 	local vsx,vsy = Spring.GetViewGeometry()
 	if vsx < sizeData.x+sizeData.width-100 or sizeData.x < 100 then sizeData.x = 400 end
 	if vsy < sizeData.y+sizeData.height-100 or sizeData.y < 100 then sizeData.height = 500 end
-	
+
 	mainMenu = Chili.Window:New{
 		parent    = Chili.Screen0,
-		x         = sizeData.x, 
+		x         = sizeData.x,
 		y         = sizeData.y,
 		width     = sizeData.width,
 		height    = sizeData.height,
-		padding   = {5,8,5,5}, 
+		padding   = {5,8,5,5},
 		draggable = true,
 		resizable = true,
 		OnResize  = {
-			function(self) 
-				Save{mainMenuSize = {x=self.x,y=self.y,width=self.width,height=self.height}} 
+			function(self)
+				Save{mainMenuSize = {x=self.x,y=self.y,width=self.width,height=self.height}}
 			end
 		},
 		children  = {
@@ -415,29 +414,24 @@ local function loadMainMenu()
 			Chili.Line:New{parent = mainMenu,bottom = 15,width = '100%'},
 		}
 	}
-		
+
 	menuTabs = Chili.TabBar:New{
 		parent       = mainMenu,
-		x            = 0, 
-		y            = 0, 
-		width        = '100%', 
-		height       = 20, 
+		x            = 0,
+		y            = 0,
+		width        = '100%',
+		height       = 20,
 		minItemWidth = 70,
 		selected     = Settings.tabSelected or 'Info',
-		tabs         = {'Info','Interface', 'Graphics','Credits'},
+		tabs         = {'Info','Interface', 'Graphics'},
 		itemPadding  = {1,0,1,0},
 		OnChange     = {sTab}
 	}
-	
-    if amNewbie then
-   		menuTabs:Select('Info')  
-    else
-        showHide()
-    end
+
 end
 
----------------------------- 
--- TODO: Create different general defaults such as high, low, etc.. 
+----------------------------
+-- TODO: Create different general defaults such as high, low, etc..
 --   and possibly custom (maybe even make custom settings savable/loadable)
 
 local waterConvert_ID = {['Basic']=1,['Reflective']=2,['Dynamic']=3,['Refractive']=4,['Bump-Mapped']=5} -- name -> listID
@@ -447,30 +441,30 @@ local function applyDefaultSettings()
 	for setting,value in pairs(DefaultSettings) do
 		Settings[setting] = value
 		engineStack = tabs['Graphics']:GetObjectByName('EngineSettings')
-		
+
 		if type(value)=='boolean' then
 			local checkbox = engineStack:GetObjectByName(setting)
 			if checkbox.checked ~= value then checkbox:Toggle() end
 			spSendCommands(setting..' '..(value and 1 or 0))
-		elseif setting=='Water' then 
-			-- comboBox 
+		elseif setting=='Water' then
+			-- comboBox
 			engineStack:GetObjectByName(setting):Select(waterConvert_ID[value])
 		elseif setting=='Shadows' then
 			-- comboBox
-			engineStack:GetObjectByName(setting):Select(shadowConvert_ID[value])          
-		else 
+			engineStack:GetObjectByName(setting):Select(shadowConvert_ID[value])
+		else
 			--slider
-			engineStack:GetObjectByName(setting):SetValue(value)         
+			engineStack:GetObjectByName(setting):SetValue(value)
 		end
 	end
 end
-	
----------------------------- 
+
+----------------------------
 -- Creates a combobox style control
 local comboBox = function(obj)
 	local obj = obj
 	local options = obj.options or obj.labels
-	
+
 	local comboBox = Chili.Control:New{
 		y       = obj.y,
 		width   = obj.width or '100%',
@@ -478,40 +472,40 @@ local comboBox = function(obj)
 		x       = 0,
 		padding = {0,0,0,0}
 	}
-	
+
 	local selected
 	for i = 1, #obj.labels do
 		if obj.labels[i] == Settings[obj.name] then selected = i end
 	end
-	
-	
+
+
 	local function applySetting(obj, listID)
-		local value   = obj.options[listID] or '' 
+		local value   = obj.options[listID] or ''
 		local setting = obj.name or ''
-		
+
 		if setting == 'Skin' then
 			Chili.theme.skin.general.skinName = value
 			Spring.Echo('To see skin changes; \'/luaui reload\'')
-		elseif setting == 'Cursor' then 
+		elseif setting == 'Cursor' then
 			setCursor(value)
 			Settings['CursorName'] = value
 		elseif setting == 'ShowHealthBars' then
 			spSendCommands('luaui showhealthbars '..value)
-		else 
+		else
 			spSendCommands(setting..' '..value)
 		end
-		
+
 		-- Spring.Echo(setting.." set to "..value) --TODO: this is misleading, some settings require a restart to be applied
 		Settings[setting] =  obj.items[obj.selected]
 	end
-	
+
 	comboBox:AddChild(
 		Chili.Label:New{
 			x=0,
 			y=0,
 			caption=obj.title or obj.name,
 		})
-	
+
 	comboBox:AddChild(
 		Chili.ComboBox:New{
 			name     = obj.name,
@@ -525,20 +519,20 @@ local comboBox = function(obj)
 			items    = obj.labels,
 			OnSelect = {applySetting},
 		})
-	
+
 	return comboBox
 end
 
----------------------------- 
--- 
+----------------------------
+--
 local checkBox = function(obj)
 	local obj = obj
-	
+
 	local toggle = obj.OnChange or function(self)
 		Settings[obj.name] = obj.checked
 		spSendCommands(obj.name)
 	end
-	
+
 	local checkBox = Chili.Checkbox:New{
 		name      = obj.name,
 		caption   = obj.title or obj.name,
@@ -555,11 +549,11 @@ local checkBox = function(obj)
 	return checkBox
 end
 
----------------------------- 
--- 
+----------------------------
+--
 local slider = function(obj)
 	local obj = obj
-	
+
 	local trackbar = Chili.Control:New{
 		y       = obj.y or 0,
 		width   = obj.width or '100%',
@@ -567,20 +561,20 @@ local slider = function(obj)
 		x       = 0,
 		padding = {0,0,0,0}
 	}
-	
-	
+
+
 	local function applySetting(obj, value)
 		Settings[obj.name] = value
 		spSendCommands(obj.name..' '..value)
 	end
-	
+
 	trackbar:AddChild(
 		Chili.Label:New{
 			x       = 0,
 			y       = 0,
 			caption = obj.title or obj.name,
 		})
-	
+
 	trackbar:AddChild(
 		Chili.Trackbar:New{
 			name     = obj.name,
@@ -594,56 +588,168 @@ local slider = function(obj)
 			value    = Settings[obj.name] or 500,
 			OnChange = {applySetting},
 		})
-	
+
 	return trackbar
 end
 
------INFO PANEL HELPERS------
+
 -----------------------------
-local function InfoTextBox(y, text1, text2, size) --hack because something to do with padding is broken here, likely Chili bug
-    if not size then size = 20 end
-    return Chili.LayoutPanel:New{width = 300, y = y*25, x = '10%', height = size+5, autosize = false, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0}, children = {
-            Chili.TextBox:New{right='95%',text=" "..text1,font={size=size,color={0.8,0.8,1,1}},padding = {0,0,0,0}},
-            Chili.TextBox:New{right='20%',text=text2,font={size=size,color={0.7,0.7,1,1}},padding = {0,0,0,0}},   
-        }        
-    }
+-- Creates a tab, mostly as an auxillary function for addControl()
+local function createTab(tab)
+	tabs[tab.name] = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', children = tab.children or {} }
+	menuTabs:AddChild(Chili.TabBarItem:New{caption = tab.name})
 end
 
-local function InfoLineBox(y, text1, size)
-    if not size then size = 20 end
-    return Chili.LayoutPanel:New{width = 300, y = y*25, x = '10%', height = size+5, autosize = false, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0}, children = {
-            Chili.TextBox:New{right='95%',text=" "..text1,font={size=size,color={0.8,0.8,1,1}},padding = {0,0,0,0}},
-        }        
-    }
-end
-
-local armageddonTime = 60 * (tonumber((Spring.GetModOptions() or {}).mo_armageddontime) or 0)
-
-local gameEndMode    
-if Spring.GetModOptions().deathmode=="com" then
-    gameEndMode = "Kill all enemy Commanders"
-elseif Spring.GetModOptions().deathmode=="killall" then
-    gameEndMode = "Kill all enemy units"
-elseif Spring.GetModOptions().deathmode=="neverend" then
-    gameEndMode = "Never end"
-end
-
-local changeLog, gameInfo, introText
-
-local function ParseChangelog(changelog)
-    -- parse the changelog and add a small amount of colour
-    -- TODO once we have a changelog!
-
-    return changelog
-end
-    
 -----OPTIONS-----------------
 -----------------------------
-local function Options()
-	-- Each tab has its own control, which is shown when selected {Info,Interface,Graphics,etc..}
-	-- mainMenu = Chili.Window:New{parent=Chili.Screen0,x = 400, y = 200, width = 500, height = 400,padding = {5,8,5,5}, draggable = true,
-	--  Each graphical element is defined as a child of these controls and given a function to fullfill, when a certain event happens(i.e. OnClick)
+
+local function createInfoTab()
+	local armageddonTime = 60 * (tonumber((Spring.GetModOptions() or {}).mo_armageddontime) or 0)
+
+	local endModes = { com = "Kill all enemy Commanders", killall = "Kill all enemy units", neverend = "Never end"}
+	local gameEndMode = endModes[Spring.GetModOptions().deathmode]
 	
+	local changeLog, gameInfo, introText, hotkeyInfo
+	
+	local function ParseChangelog(changelog)
+		-- parse the changelog and add a small amount of colour
+		-- TODO once we have a changelog!
+		
+		return changelog
+	end
+	
+	local function InfoTextBox(obj)
+		obj.size = obj.size or 20
+		local Box = Chili.Control:New{width = '100%', y = obj.y*25, x = 0, height = obj.size +5, padding = {0,0,0,0},
+			children = {
+				Chili.Label:New{right='55%', caption=obj.name or '',font={size=obj.size,color={0.8,0.8,1,1}}},
+				Chili.Label:New{x='50%', caption=obj.value,font={size=obj.size,color={0.7,0.7,1,1}}},
+			}
+		}
+		return Box
+	end
+	
+	local function InfoLineBox(y, text1, size)
+		if not size then size = 20 end
+		return Chili.LayoutPanel:New{width = 300, y = y*25, x = '10%', height = size+5, autosize = false, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0}, children = {
+				Chili.TextBox:New{right='95%',text=" "..text1,font={size=size,color={0.8,0.8,1,1}},padding = {0,0,0,0}},
+			}        
+		}
+	end
+	
+	local function ResignMe(self)
+		spSendCommands{'Spectator'}
+		if self.visible then self:Hide() end
+	end
+
+	local hotkeyInfoBox = Chili.TextBox:New{width='100%',text=HotkeyInfo.General,padding={0,5,0,0}} 
+
+	local function SetHotkeyTab(_, tabName)
+		hotkeyInfoBox:SetText(HotkeyInfo[tabName])
+	end
+
+	local function SetInfoChild(_, ID)
+		if not tabs.Info then return end
+		local combobox = tabs.Info:GetChildByName('text_select')
+		tabs.Info:GetChildByName('info_layoutpanel'):ClearChildren()
+		tabs.Info:GetChildByName('info_layoutpanel'):AddChild(combobox.iPanels[ID])
+	end
+	
+	local hotkeyInfo = Chili.Control:New{x = 0, y = 20, bottom = 0, width = '100%', 
+		children = {
+			Chili.TabBar:New{x = 0, y = 0,	width = '100%', height = 20, minItemWidth = 70, selected = 'General', itemPadding = {1,0,1,0}, OnChange = {SetHotkeyTab},
+				tabs = {'General', 'Units I', 'Units II', 'Units III'},
+			},
+			Chili.ScrollPanel:New{y = 20, width = '100%', bottom = 0, children = {hotkeyInfoBox}}
+		}
+	}
+
+	local changeLog = Chili.ScrollPanel:New{width = '100%', height='100%',
+		children = {
+			Chili.TextBox:New{width='100%',text=ParseChangelog(changelog),padding={0,5,0,0}}
+		}
+	}
+
+	local introText = Chili.ScrollPanel:New{width = '100%', height='100%',
+		children = {
+			Chili.TextBox:New{width='100%',text=NewbieInfo,padding={0,5,0,0}}
+		}
+	}
+
+	gameInfo = Chili.Panel:New{width = '100%', height = '100%', autosize = true, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0},
+		children = {
+			InfoTextBox{y=1, name = "Map:", value = Game.mapName},
+			InfoTextBox{y=2, value = "(" .. Game.mapX .. " x " .. Game.mapY .. ")", size = 15},
+			InfoTextBox{y=3, name = "Wind:", value = Game.windMin .. " - " .. Game.windMax},
+			InfoTextBox{y=4, name = "Tidal:", value = Game.tidal},
+			InfoTextBox{y=5, name = "Acidity:", value = Game.waterDamage},
+			InfoTextBox{y=6, name = "Gravity:", value = math.floor(Game.gravity)},
+			Chili.Line:New{width='100%',y=7*25+5},-------------------------------
+			InfoTextBox{y=8, name = "Game End:", value = gameEndMode, size = 15},
+			--InfoLineBox(9.5, (armageddonTime>0) and "Armageddon at " .. "1" .. " minutes" or ""),
+		}
+	}
+
+	-- Info --
+	tabs.Info = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
+		children = {
+			Chili.LayoutPanel:New{name = 'info_layoutpanel', width = '70%', x=0, y=0, bottom=0},
+
+			Chili.ComboBox:New{
+				name     = 'text_select',
+				height   = '8%',
+				y        = '8%',
+				width    = '28%',
+				right    = '1%',
+				text     = "",
+				selected = amNewbie and 3 or 1,
+				iPanels  = {gameInfo, hotkeyInfo, changeLog, introText},
+				items    = {"game info", "hotkeys", "changelog", "intro"},
+				OnSelect = {SetInfoChild},
+			},
+
+			Chili.Button:New{caption = 'Resign and Spectate', name = "ResignButton", height = '8%', width = '28%', right = '1%', y = '40%', OnMouseUp = {ResignMe}},
+			Chili.Button:New{caption = 'Exit To Desktop',height = '8%',width = '28%',right = '1%', y = '52%',
+			OnMouseUp = {function() spSendCommands{'quit'} end }},
+		}
+	}
+
+	if amNewbie then
+		SetInfoChild(_,3)
+	else
+		SetInfoChild(_,1)
+	end
+end
+
+local function createInterfaceTab()
+	-- Interface --
+	tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', --Control attached to tab
+		children = {
+			addStack{name='widgetList',x='50%',scroll=true},
+			Chili.EditBox:New{name='widgetFilter',x=0,y=0,width = '35%',text=' Enter filter -> Hit Return,  or -->',OnMouseDown = {function(obj) obj.text = '' end}},
+			Chili.Button:New{right='50%',y=0,height=20,width='15%',caption='Search',OnMouseUp={addFilter}},
+			Chili.Checkbox:New{caption='Search Widget Name',x=0,y=40,width='35%',textalign='left',boxalign='right',checked=Settings.searchWidgetName,
+				OnChange = {function() Settings.searchWidgetName = not Settings.searchWidgetName end}},
+			Chili.Checkbox:New{caption='Search Description',x=0,y=20,width='35%',textalign='left',boxalign='right',checked=Settings.searchWidgetDesc,
+				OnChange = {function() Settings.searchWidgetDesc = not Settings.searchWidgetDesc end}},
+			Chili.Checkbox:New{caption='Search Author',x=0,y=60,width='35%',textalign='left',boxalign='right',checked=Settings.searchWidgetAuth,
+				OnChange = {function() Settings.searchWidgetAuth = not Settings.searchWidgetAuth end}},
+
+			Chili.Line:New{width='50%',y=80},
+
+			comboBox{name='Skin',y=90, width='45%',
+				labels=Chili.SkinHandler.GetAvailableSkins()},
+			comboBox{name='Cursor',y=125, width='45%',
+				labels={'Chili Default','Chili Static','Spring Default','CA Classic','CA Static','Erom','Masse','Lathan','K_haos_girl'},
+				options={'zk','zk_static','ba','ca','ca_static','erom','masse','Lathan','k_haos_girl'}},
+
+			Chili.Label:New{caption='-- Widget Settings --',x='2%',width='46%',align = 'center',y=175},
+			addStack{y=190,x='2%',width='46%',scroll=true},
+		}
+	}
+end
+
+local function createGraphicsTab()
 	-- Graphics --
 	tabs.Graphics = Chili.ScrollPanel:New{x = 0, y = 20, bottom = 20, width = '100%', borderColor = {0,0,0,0},backgroundColor = {0,0,0,0},
 		children = {
@@ -678,143 +784,24 @@ local function Options()
 			}
 		}
 	}
-
-	-- Interface --
-	tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', --Control attached to tab
-		children = {
-			addStack{name='widgetList',x='50%',scroll=true},
-			Chili.EditBox:New{name='widgetFilter',x=0,y=0,width = '35%',text=' Enter filter -> Hit Return,  or -->',OnMouseDown = {function(obj) obj.text = '' end}},
-			Chili.Button:New{right='50%',y=0,height=20,width='15%',caption='Search',OnMouseUp={addFilter}},
-			Chili.Checkbox:New{caption='Search Widget Name',x=0,y=40,width='35%',textalign='left',boxalign='right',checked=Settings.searchWidgetName,
-				OnChange = {function() Settings.searchWidgetName = not Settings.searchWidgetName end}},
-			Chili.Checkbox:New{caption='Search Description',x=0,y=20,width='35%',textalign='left',boxalign='right',checked=Settings.searchWidgetDesc,
-				OnChange = {function() Settings.searchWidgetDesc = not Settings.searchWidgetDesc end}},
-			Chili.Checkbox:New{caption='Search Author',x=0,y=60,width='35%',textalign='left',boxalign='right',checked=Settings.searchWidgetAuth,
-				OnChange = {function() Settings.searchWidgetAuth = not Settings.searchWidgetAuth end}},
-
-			Chili.Line:New{width='50%',y=80},
-			
-			comboBox{name='Skin',y=90, width='45%',
-				labels=Chili.SkinHandler.GetAvailableSkins()},
-			comboBox{name='Cursor',y=125, width='45%',
-				labels={'Chili Default','Chili Static','Spring Default','CA Classic','CA Static','Erom','Masse','Lathan','K_haos_girl'},
-				options={'zk','zk_static','ba','ca','ca_static','erom','masse','Lathan','k_haos_girl'}},
-			
-			Chili.Label:New{caption='-- Widget Settings --',x='2%',width='46%',align = 'center',y=175},
-			addStack{y=190,x='2%',width='46%',scroll=true},
-		}
-	}
-
-	-- Credits --
-	tabs.Credits = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
-		children = {
-			Chili.Label:New{caption='-- Credits --',x='0%',width='70%',align = 'center'},
-			Chili.ScrollPanel:New{width = '70%', x=0, y=20, bottom=0, children =
-                {Chili.TextBox:New{width='100%',text=credits}}}
-            -- TODO: insert logo on right hand side of this panel!
-		}
-	}
-
-    local function ResignMe()
-        spSendCommands{'Spectator'}
-        if not tabs.Info:GetChildByName('ResignButton').hidden then
-            tabs.Info:GetChildByName('ResignButton'):Hide() 
-        end
-    end
-    
-    local hotkeyInfoBox = Chili.TextBox:New{width='100%',text=HotkeyInfo.General,padding={0,5,0,0}} 
-
-    local function SetHotkeyTab(_, tabName)
-        if tabName=='General' then hotkeyInfoBox:SetText(HotkeyInfo.General) 
-        elseif tabName=="Units I" then hotkeyInfoBox:SetText(HotkeyInfo.Units_I)
-        elseif tabName=="Units II" then hotkeyInfoBox:SetText(HotkeyInfo.Units_II)
-        elseif tabName=="Units III" then hotkeyInfoBox:SetText(HotkeyInfo.Units_III)
-        end
-    end
-
-    hotkeyInfo = Chili.Control:New{x = 0, y = 20, bottom = 0, width = '100%', children = {
-            Chili.TabBar:New{x = 0, y = 0,	width = '100%', height = 20, minItemWidth = 70, selected = 'General', itemPadding = {1,0,1,0}, OnChange = {SetHotkeyTab},
-                tabs = {'General', 'Units I', 'Units II', 'Units III'},
-            },
-            Chili.ScrollPanel:New{y = 20, width = '100%', bottom = 0, children = {
-                    hotkeyInfoBox 
-                }
-            }
-        }
-    }
-
-
-
-    changeLog = Chili.ScrollPanel:New{width = '100%', height='100%', children = {
-            Chili.TextBox:New{width='100%',text=ParseChangelog(changelog),padding={0,5,0,0}} 
-        }
-    }
-    
-    introText = Chili.ScrollPanel:New{width = '100%', height='100%', children = {
-            Chili.TextBox:New{width='100%',text=NewbieInfo,padding={0,5,0,0}} 
-        }
-    }
-    
-    gameInfo = Chili.Panel:New{width = '100%', height = '100%', autosize = true, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0}, children = {
-                    InfoTextBox(1, "Map:",      Game.mapName),    
-                    InfoTextBox(2, "",          "(" .. Game.mapX .. " x " .. Game.mapY .. ")", 15),    
-                    InfoTextBox(3, "Wind:",     Game.windMin .. " - " .. Game.windMax),    
-                    InfoTextBox(4, "Tidal:",    Game.tidal),    
-                    InfoTextBox(5, "Acidity:",  Game.waterDamage),    
-                    InfoTextBox(6, "Gravity:",  math.floor(Game.gravity)),    
-                    Chili.Line:New{width='100%',y=7*25+5},
-                    InfoTextBox(8, "Game End:", gameEndMode, 15),
-                    InfoLineBox(9.5, (armageddonTime>0) and "Armageddon at " .. "1" .. " minutes" or ""),
-        }
-    }
-    
-    local function SetInfoChild(_, listID)
-        local child
-        if listID==1 then child=gameInfo elseif listID==2 then child = hotkeyInfo elseif listID==3 then child=changeLog elseif listID==4 then child=introText end
-        if not child or not tabs.Info then return end --avoids a nil error when this function is called on setup of the comboBox
-        tabs.Info:GetChildByName('info_layoutpanel'):ClearChildren()
-        tabs.Info:GetChildByName('info_layoutpanel'):AddChild(child)
-    end
-    
-    resignButton = 	Chili.Button:New{caption = 'Resign and Spectate', name = "ResignButton", height = '8%', width = '28%', right = '1%', y = '40%', OnMouseUp = {ResignMe}}
-
-	-- Info --
-	tabs.Info = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
-		children = {
-			Chili.LayoutPanel:New{name = 'info_layoutpanel', width = '70%', x=0, y=0, bottom=0},
-            
-			Chili.ComboBox:New{
-                name     = 'text_select',
-                height   = '8%',
-                y        = '8%',
-                width    = '28%',
-                right    = '1%',
-                text     = "",
-                selected = amNewbie and 3 or 1,
-                items  = {"game info", "hotkeys", "changelog", "intro"},
-                OnSelect = {SetInfoChild},
-            },
-         
-            resignButton,
-            Chili.Button:New{caption = 'Exit To Desktop',height = '8%',width = '28%',right = '1%', y = '52%',
-				OnMouseUp = {function() spSendCommands{'quit'} end }},
-		}
-	}
-
-    if amNewbie then
-        SetInfoChild(_,3)
-    else
-        SetInfoChild(_,1)
-    end
-    
 end
 
+
+local function createCreditsTab()
+	createTab{name = 'Credits',
+		children = {
+			Chili.ScrollPanel:New{width = '70%', x=0, y=0, bottom=0,
+				children = {Chili.TextBox:New{width='100%',text=credits}}
+			}
+		}-- TODO: find a logo and a place for it!
+	}
+end
 -----------------------------
--- Creates a tab, mostly as an auxillary function for addControl()
-local function createTab(tab)
-	tabs[tab] = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%'}
-	menuTabs:AddChild(Chili.TabBarItem:New{caption = tab})
+--
+local function AddChildren(control, children)
+	for i=1, #children do control:AddChild(children[i]) end
 end
+
 
 -----------------------------
 -- Adds a chili control to a tab
@@ -823,10 +810,11 @@ end
 --  this is useful if you want a widget to get it's own tab (endgraph is a good example)
 --  this function probably won't change
 local function addControl(tab,control)
-	if not tabs[tab] then createTab(tab) end
+	if not tabs[tab] then createTab{name = tab} end
 	tabs[tab]:AddChild(control)
 	tabs[tab]:Invalidate()
 end
+
 
 -----------------------------
 -- Makes certain functions global, extending their usage to other widgets
@@ -834,13 +822,13 @@ end
 --  look at relevant functions above for more info
 local function globalize()
 	local Menu = {}
-	
+
 	Menu.UpdateList = makeWidgetList
 	Menu.Save       = Save
 	Menu.Load       = Load
 	Menu.AddControl = addControl
 	Menu.ShowHide   = showHide
-	
+
 	-- This will be primary function for adding options to the menu
 	--  the name may change but the general usage should stay the same
 	Menu.AddOption  = addOption
@@ -863,18 +851,18 @@ local function globalize()
 	-- 		Chili.Line:New{width='100%'},
 	-- 	}
 	-- }
-	
-	
-	
+
+
+
 	-- This will likely be replaced ( but will remain for now as is)
 	Menu.AddToStack = addToStack
-	
+
 	-- These will more than likely be removed
 	Menu.AddChoice  = addChoice
 	Menu.Checkbox   = checkbox
 	Menu.Slider     = slider
 	------------------------
-	
+
 	WG.MainMenu = Menu
 end
 -----------------------------
@@ -897,23 +885,31 @@ function widget:KeyPress(key,mod)
 	end
 end
 
--------------------------- 
+--------------------------
 -- Initial function called by widget handler
 function widget:Initialize()
 	Chili = WG.Chili
 	Chili.theme.skin.general.skinName = Settings['Skin'] or 'Robocracy'
 	setCursor(Settings['CursorName'] or 'ba')
-	Options()
+
+	loadMainMenu()
+
+	createInfoTab()
+	createInterfaceTab()
+	createGraphicsTab()
+	createCreditsTab()
+
+	
+	if amNewbie then showHide('Info') else menuTabs:Select('Info') end
 	globalize()
 	makeWidgetList()
-	loadMainMenu()
-	
+
 	-----------------------
 	---     Hotkeys     ---
 	local openMenu    = function() showHide('Info') end
 	local openWidgets = function() if mainMenu.visible then mainMenu:Hide() return end; showHide('Interface') end
 	local hideMenu    = function() if mainMenu.visible then mainMenu:Hide() end end
-    
+
 	spSendCommands('unbindkeyset f11')
 	spSendCommands('unbindkeyset Any+i gameinfo')
 	spSendCommands('unbind S+esc quitmenu','unbind esc quitmessage')
@@ -926,7 +922,7 @@ function widget:Initialize()
 	spSendCommands('bind esc hideMenu')
 end
 
--------------------------- 
+--------------------------
 --
 function widget:Update()
 	if widgetHandler.knownChanged then

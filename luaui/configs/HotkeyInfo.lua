@@ -91,13 +91,17 @@ local Units_III = {
     {"Giving build orders", title=true},
     {"left mouse",   "Give build order"},
     {"right mouse",  "De-select build order"},
+    {"shift + (build order)", "Build in a line"},
+    {"shift + alt + (build order)", "Build in a square"},
+    {"b",           "Increase build spacing"},
+    {"n",           "Decrease build spacing"},
     {blankLine=true},    
     {"Group selection", title=true},
     {"ctrl + a",                "Select all units"},
     {"ctrl + b",                "Select all constructors"},
     {"ctrl + (num)",            "Add units to group (num=1,2,..)"},
     {"(num)",                   "Select all units assigned to group (num)"},
-    {"ctrl + z",                "Select all units of same type as current selection"},
+    {"ctrl + z",                "Select all units of same type as current"},
     {"double left click",       "Select all units of targeted type within current view"},
     
 }

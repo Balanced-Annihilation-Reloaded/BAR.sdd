@@ -93,9 +93,26 @@ local function loadOptions()
 		preserverChildrenOrder = true
 	}
 	
+	local toggleTrack = function(self)
+		if curTrack.title == self.caption then playNew = true end
+		disabledTracks[self.caption] = self.checked
+		Menu.Save{disabledTracks=disabledTracks}
+		
+		if self.checked then
+			self.font.color        = {1,0,0,1}
+			self.font.outlineColor = {1,0,0,0.2}
+		else
+			self.font.color        = {0.5,1,0,1}
+			self.font.outlineColor = {0.5,1,0,0.2}
+		end
+		self:Invalidate()
+	end 
+	
 	for trackType, list in pairs(tracks) do
-		Chili.Label:New{x='0%',fontsize=18,parent=trackList,caption=typeTitle[trackType]}
+		Chili.Label:New{x='0%',fontsize=18,height=25,parent=trackList,caption=typeTitle[trackType]}
 		for trackName,_ in pairs(list) do
+			local green  = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
+			local red    = {color = {1,0,0,1}, outlineColor = {1,0,0,0.2}}
 			local title = list[trackName].title
 			Chili.Checkbox:New{
 				caption   = title,
@@ -106,26 +123,23 @@ local function loadOptions()
 				textalign = 'left',
 				boxalign  = 'right',
 				checked   = not disabledTracks[title],
-				OnChange  = {
-					function(self)
-						if curTrack.title == title then playNew = true end
-						disabledTracks[title] = self.checked or nil
-						Menu.Save{disabledTracks=disabledTracks}
-					end
-				}
+				font      = disabledTracks[title] and red or green,
+				OnChange  = {toggleTrack}
 			}
 		end
 	end
 	
-    local credits = Chili.TextBox:New{parent=trackList, width='100%',text= "\n\n\n" .. "\255\200\200\240" .. music_credits .. "\n\n"}
-    
+	trackList:AddChild(Chili.TextBox:New{width='100%',text= "\n\n\n" .. "\255\200\200\240" .. music_credits .. "\n\n"})
+
 	Chili.ScrollPanel:New{
 		parent    = control,
 		x         = 0,
-		y         = 40,
+		y         = 0,
 		right     = 0,
 		bottom    = 0,
 		children  = {trackList},
+		borderColor = {0,0,0,0},
+		backgroundColor = {0,0,0,0}
 	}
 	
 	Menu.AddControl('Music',control)
@@ -135,9 +149,9 @@ end
 local function createUI()
 	
 	local screen0 = Chili.Screen0
-    
-    -- extra sliders for individual battle/music volumes
-    
+
+	-- extra sliders for individual battle/music volumes
+
 	battle_volume = Chili.Trackbar:New{
 		right    = 45,
 		height   = 15, 
@@ -148,12 +162,12 @@ local function createUI()
 	}
 
 	battle_pic = Chili.Image:New{
-        bottom = 1, 
-        right = 150,
-        width = 15,
-        height = 15,
-        file = tankPic,
-    }
+		bottom = 1, 
+		right  = 150,
+		width  = 15,
+		height = 15,
+		file   = tankPic,
+	}
 
 	music_volume = Chili.Trackbar:New{
 		right    = 45,
@@ -165,40 +179,36 @@ local function createUI()
 	}
 
 	music_pic = Chili.Image:New{
-        bottom = 22, 
-        right = 150,
-        width = 15,
-        height = 15,
-        file = notePic,
-    }
+		bottom = 22, 
+		right = 150,
+		width = 15,
+		height = 15,
+		file = notePic,
+	}
 
-    extra_sliders = Chili.Control:New{
+	extra_sliders = Chili.Control:New{
 		parent   = screen0,
 		right    = 0, 
 		y        = 105, 
 		height   = 45, 
 		width    = 200, 
 		children = {battle_pic, battle_volume, music_pic, music_volume},
-    }
-    
-    local function ToggleSepSliders()
-        if extra_sliders.hidden then
-            extra_sliders:Show()
-        else
-            extra_sliders:Hide()
-        end
-    end
+	}
+
+	local function ToggleSepSliders()
+		extra_sliders:ToggleVisibility()
+	end
 	
 	vol_button = Chili.Button:New{
-        caption = 'Vol',
-        bottom = 8, 
-        right = 150,
-        width = 35,
-        height = 22,
-        onclick = {ToggleSepSliders},
-    }
-    
-    -- normally displayed gui
+		caption = 'Vol',
+		bottom  = 8, 
+		right   = 150,
+		width   = 35,
+		height  = 22,
+		onclick = {ToggleSepSliders},
+	}
+
+	-- normally displayed gui
 
 	master_volume = Chili.Trackbar:New{
 		right    = 85,
@@ -400,8 +410,8 @@ function widget:Initialize()
 	if Menu then
 		loadOptions()
 	end
-	
-    extra_sliders:Hide()
+
+	extra_sliders:Hide()
 end
 
 function widget:UnitCreated(_, unitDefID, teamID)

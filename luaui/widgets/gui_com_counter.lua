@@ -98,8 +98,10 @@ function widget:Initialize()
 		width     = 55,
 		height    = 55,
 		padding   = {5,5,5,5}, 
-		draggable = true,
+		draggable = false,
+        tweakDraggable = true,
 		resizable = false,
+        tweakResizable = false,
         onClick   = {MarkComs},
 		children  = {
             Chili.Image:New {

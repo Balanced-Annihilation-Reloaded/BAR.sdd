@@ -717,7 +717,6 @@ local function Options()
 
     local function ResignMe()
         spSendCommands{'Spectator'}
-        showHide('Graph') 
         if not tabs.Info:GetChildByName('ResignButton').hidden then
             tabs.Info:GetChildByName('ResignButton'):Hide() 
         end

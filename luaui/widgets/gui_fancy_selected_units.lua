@@ -89,8 +89,7 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	showSecondLine					= false,
 	showExtraComLine				= true,		-- extra circle lines for the commander unit
 	showExtraBuildingWeaponLine		= true,
-	showUnitHighlight				= true,		
-	showUnitHighlightHealth			= false,	-- (overrides showUnitHighlight)
+	showUnitHighlightHealth			= false,
 	
 	-- opacity
 	spotterOpacity					= 0.9,
@@ -609,7 +608,7 @@ function widget:Initialize()
 			Chili.Checkbox:New{
 				caption='Use health color for highlight',x='10%',width='80%',
 				checked=OPTIONS.defaults.showUnitHighlightHealth,
-				setting=OPTIONS.defaults.showUnitHighlight,
+				setting=OPTIONS.defaults.showUnitHighlightHealth,
 				OnChange={function(_,value) OPTIONS.defaults.showUnitHighlightHealth = value;  OPTIONS[currentOption].showUnitHighlightHealth = value end}
 			},
 			Chili.Line:New{width='100%'},

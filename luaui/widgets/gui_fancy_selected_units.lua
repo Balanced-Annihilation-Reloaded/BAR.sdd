@@ -32,7 +32,6 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-
 local clearquad
 local shapes = {}
 
@@ -47,6 +46,8 @@ local previousOsClock				= os.clock()
 local animationMultiplier			= 1
 local animationMultiplierInner		= 1
 local animationMultiplierAdd		= true
+
+local defaultEngineSelection		= true
 
 local selectedUnits					= {}
 local perfSelectedUnits				= {}
@@ -88,14 +89,17 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	showSecondLine					= false,
 	showExtraComLine				= true,		-- extra circle lines for the commander unit
 	showExtraBuildingWeaponLine		= true,
-	showUnitHighlight				= false,	-- default off, eats performance
+	showUnitHighlight				= true,		
 	showUnitHighlightHealth			= false,	-- (overrides showUnitHighlight)
 	
 	-- opacity
-	spotterOpacity					= 1,
-	baseOpacity						= 0.8,		-- 0 is opaque
-	unitHighlightOpacity			= 0.08,		-- 0 is invisible
-	opacitySliderMultiplier			= 0.01,		-- the higher the value, the more transparant the slider can make it
+	spotterOpacity					= 0.9,
+	spotterOpacityMin				= 0.3,		-- minimum value before a platter will be added
+	baseOpacity						= 0.23,
+	firstLineOpacity				= 1,
+	secondLineOpacity				= 0.8,
+	unitHighlightOpacity			= 0,
+	unitHighlightOpacityMin			= 0.015,		-- minimum value before a highlight will be added
 	
 	-- animation
 	selectionStartAnimation			= true,
@@ -108,7 +112,7 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	--selectionEndAnimationScale	= 1.17,
 	
 	-- animation
-	rotationSpeed					= 0.8,
+	rotationSpeed					= 0,
 	animationSpeed					= 0.0006,	-- speed of scaling up/down inner and outer lines
 	animateSpotterSize				= true,
 	maxAnimationMultiplier			= 1.014,
@@ -118,9 +122,9 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	scaleFactor						= 2.9,			
 	rectangleFactor					= 3.3,
 	
-	
 	-- circle shape
-	circlePieces					= 36,		-- (1 or higher)
+	solidCirclePieces				= 32,
+	circlePieces					= 24,
 	circlePieceDetail				= 1,		-- smoothness of each piece (1 or higher)
 	circleSpaceUsage				= 0.7,		-- 1 = whole circle space gets filled
 	circleInnerOffset				= 0.45,
@@ -130,26 +134,12 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	innersize						= 1.7,
 	selectinner						= 1.66,
 	outersize						= 1.79,
-	
-	-- line opacity
-	firstLineOpacity				= 0.06,
-	secondLineOpacity				= 0.18,
 }
 table.insert(OPTIONS, {
 	name							= "Cheap Fill",
 	showFirstLineDetails			= false,
 	rotationSpeed					= 0,
-	baseOpacity						= 0.65,
-	opacitySliderMultiplier			= 0.07,
-})
-table.insert(OPTIONS, {
-	name							= "Solid Lines",
-	circlePieces					= 5,
-	circlePieceDetail				= 7,
-	circleSpaceUsage				= 1,
-	circleInnerOffset				= 0,
-	
-	rotationSpeed					= 0,
+	baseOpacity						= 0.4,
 })
 table.insert(OPTIONS, {
 	name							= "Tilted Blocky Dots",
@@ -160,11 +150,10 @@ table.insert(OPTIONS, {
 })
 table.insert(OPTIONS, {
 	name							= "Blocky Dots",
-	circlePieces					= 42,
+	circlePieces					= 40,
 	circlePieceDetail				= 1,
 	circleSpaceUsage				= 0.55,
 	circleInnerOffset				= 0,
-
 	rotationSpeed					= 1,
 })
 table.insert(OPTIONS, {
@@ -178,34 +167,18 @@ table.insert(OPTIONS, {
 	name							= "Curvy Lines",
 	circlePieces					= 5,
 	circlePieceDetail				= 7,
-	circleSpaceUsage				= 0.75,
+	circleSpaceUsage				= 0.7,
 	circleInnerOffset				= 0,
-	
 	rotationSpeed					= 1.8,
 })
 table.insert(OPTIONS, {
-	name							= "Teamcolor Highlight",
-	showNoOverlap					= false,
-	showBase						= false,
-	showFirstLine					= false,
-	showSecondLine					= false,
-	showUnitHighlight				= true,
-	showUnitHighlightHealth			= false,
-	
-	unitHighlightOpacity			= 0.4,
+	name							= "Curvy Lines 2",
+	circlePieces					= 7,
+	circlePieceDetail				= 4,
+	circleSpaceUsage				= 0.7,
+	circleInnerOffset				= 0,
+	rotationSpeed					= 2.5,
 })
-table.insert(OPTIONS, {
-	name							= "Health Color Highlight",
-	showNoOverlap					= false,
-	showBase						= false,
-	showFirstLine					= false,
-	showSecondLine					= false,
-	showUnitHighlight				= true,
-	showUnitHighlightHealth			= true,
-	
-	unitHighlightOpacity			= 0.3,
-})
-
 
 function table.shallow_copy(t)
 	local t2 = {}
@@ -345,7 +318,7 @@ end
 
 local function DrawCircleSolid(size)
 	gl.BeginEnd(GL.TRIANGLE_FAN, function()
-		local pieces = (OPTIONS[currentOption].circlePieces * math.ceil(OPTIONS[currentOption].circlePieceDetail/ OPTIONS[currentOption].circleSpaceUsage))
+		local pieces = OPTIONS[currentOption].solidCirclePieces
 		local radstep = (2.0 * math.pi) / pieces
 		local a1
 		if (color) then
@@ -579,7 +552,6 @@ function widget:Initialize()
 			gl.Vertex( -size,0, 			Game.mapSizeZ+size)
 		end)
 	end)
-	SetupCommandColors(false)
 	
 	currentClock = os.clock()
 	
@@ -609,26 +581,36 @@ function widget:Initialize()
 				}
 			},
 			Chili.Checkbox:New{
-				caption='Second line',x='10%',width='80%',
+				caption='Render extra platter line',x='10%',width='80%',
 				checked=OPTIONS[currentOption].showSecondLine,
 				setting=OPTIONS.defaults.showSecondLine,
-				OnChange={function() OPTIONS.defaults.showSecondLine = not OPTIONS.defaults.showSecondLine; if OPTIONS_original[currentOption].showSecondLine == nil then OPTIONS[currentOption].showSecondLine = OPTIONS.defaults.showSecondLine; end end}
+				OnChange={function(_, value) OPTIONS[currentOption].showSecondLine = value;  OPTIONS.defaults.showSecondLine = value end}
 			},
-			Chili.Checkbox:New{
-				caption='Unit highlight',x='10%',width='80%',
-				checked=OPTIONS.defaults.showUnitHighlight,
-				setting=OPTIONS.defaults.showUnitHighlight,
-				OnChange={function() OPTIONS.defaults.showUnitHighlight = not OPTIONS.defaults.showUnitHighlight; if OPTIONS_original[currentOption].showUnitHighlight == nil then OPTIONS[currentOption].showUnitHighlight = OPTIONS.defaults.showUnitHighlight; end end}
+			Chili.Label:New{caption='Platter Opacity'},
+			Chili.Trackbar:New{
+				x        = '10%',
+				width    = '80%',
+				min      = 0.25,
+				max      = 1,
+				step     = 0.01,
+				value    = OPTIONS.defaults.spotterOpacity,
+				OnChange = {function(_,value) OPTIONS[currentOption].spotterOpacity=value; OPTIONS.defaults.spotterOpacity=value; end}
 			},
-			Chili.Label:New{caption='Opacity'},
+			Chili.Label:New{caption='Highlight Opacity  (expensive)'},
 			Chili.Trackbar:New{
 				x        = '10%',
 				width    = '80%',
 				min      = 0,
-				max      = 6,
-				step     = 0.05,
-				value    = OPTIONS[currentOption].spotterOpacity,
-				OnChange = {function(_,value) OPTIONS[currentOption].spotterOpacity=value; OPTIONS.defaults.spotterOpacity=value; end}
+				max      = 0.30,
+				step     = 0.005,
+				value    = OPTIONS[currentOption].unitHighlightOpacity,
+				OnChange = {function(_,value) OPTIONS[currentOption].unitHighlightOpacity=value; OPTIONS.defaults.unitHighlightOpacity=value; end}
+			},
+			Chili.Checkbox:New{
+				caption='Use health color for highlight',x='10%',width='80%',
+				checked=OPTIONS.defaults.showUnitHighlightHealth,
+				setting=OPTIONS.defaults.showUnitHighlight,
+				OnChange={function(_,value) OPTIONS.defaults.showUnitHighlightHealth = value;  OPTIONS[currentOption].showUnitHighlightHealth = value end}
 			},
 			Chili.Line:New{width='100%'},
 		}
@@ -704,11 +686,21 @@ end
 
 
 function widget:Update()
-	currentClock = os.clock()
-	maxSelectTime = currentClock - OPTIONS[currentOption].selectionStartAnimationTime
-	maxDeselectedTime = currentClock - OPTIONS[currentOption].selectionEndAnimationTime
+	if OPTIONS[currentOption].spotterOpacity >= OPTIONS[currentOption].spotterOpacityMin or OPTIONS[currentOption].unitHighlightOpacity >= OPTIONS[currentOption].unitHighlightOpacityMin then
 	
-	updateSelectedUnitsData()		-- calling updateSelectedUnitsData() inside widget:CommandsChanged() will return in buggy behavior in combination with the 'smart-select' widget
+		if defaultEngineSelection then 
+			SetupCommandColors(false)
+			defaultEngineSelection = not defaultEngineSelection
+		end
+		currentClock = os.clock()
+		maxSelectTime = currentClock - OPTIONS[currentOption].selectionStartAnimationTime
+		maxDeselectedTime = currentClock - OPTIONS[currentOption].selectionEndAnimationTime
+		
+		updateSelectedUnitsData()		-- calling updateSelectedUnitsData() inside widget:CommandsChanged() will return in buggy behavior in combination with the 'smart-select' widget
+	elseif not defaultEngineSelection then 
+		SetupCommandColors(true)
+		defaultEngineSelection = not defaultEngineSelection
+	end
 end
 
 
@@ -716,21 +708,23 @@ end
 local degrot = {}
 function widget:GameFrame(frame)
 	
-	if frame%1~=0 then return end
-	
-	-- logs current unit direction	(needs regular updates for air units, and for buildings only once)	for teamID,_ in pairs(perfSelectedUnits) do
-	--for teamID,_ in pairs(perfSelectedUnits) do
-		--for unitKey=1, perfSelectedUnits[teamID]['totalUnits'] do
-		--unitID = perfSelectedUnits[teamID][unitKey]
-	for teamID,_ in pairs(selectedUnits) do
-		for unitID,_ in pairs(selectedUnits[teamID]) do
-			local dirx, _, dirz = spGetUnitDirection(unitID)
-			if (dirz ~= nil) then
-				degrot[unitID] = 180 - math.acos(dirz) * rad_con
-				if dirx < 0 then
+	if OPTIONS[currentOption].spotterOpacity > OPTIONS[currentOption].spotterOpacityMin then
+		if frame%1~=0 then return end
+		
+		-- logs current unit direction	(needs regular updates for air units, and for buildings only once)	for teamID,_ in pairs(perfSelectedUnits) do
+		--for teamID,_ in pairs(perfSelectedUnits) do
+			--for unitKey=1, perfSelectedUnits[teamID]['totalUnits'] do
+			--unitID = perfSelectedUnits[teamID][unitKey]
+		for teamID,_ in pairs(selectedUnits) do
+			for unitID,_ in pairs(selectedUnits[teamID]) do
+				local dirx, _, dirz = spGetUnitDirection(unitID)
+				if (dirz ~= nil) then
 					degrot[unitID] = 180 - math.acos(dirz) * rad_con
-				else
-					degrot[unitID] = 180 + math.acos(dirz) * rad_con
+					if dirx < 0 then
+						degrot[unitID] = 180 - math.acos(dirz) * rad_con
+					else
+						degrot[unitID] = 180 + math.acos(dirz) * rad_con
+					end
 				end
 			end
 		end
@@ -865,7 +859,7 @@ do
 								usedZScale = usedZScale * 1.14
 							end
 						end
-						glDrawListAtUnit(unitID, unit.shape.large, false, (usedXScale*scale*changedScale)-((usedXScale*changedScale-10)/10), 1.0, (usedZScale*scale*changedScale)-((usedZScale*changedScale-10)/10), degrot[unitID], 0, degrot[unitID], 0)
+						glDrawListAtUnit(unitID, unit.shape.large, false, (usedXScale*scale*changedScale)-((usedXScale*changedScale-10)/10), 1.0, (usedZScale*scale*changedScale)-((usedZScale*changedScale-10)/10), usedRotationAngle, 0, degrot[unitID], 0)
 						
 					elseif type == 'unit highlight' then
 					
@@ -887,169 +881,166 @@ do
 end --// end do
 
 
-
---  Draw selection circle (only one layer)
-function DrawSelectionSpotters(teamID, r,g,b,a,scale, opposite, relativeScaleSchrinking, drawUnitStyles)
-	
-	gl.ColorMask(false, false, false, true)
-	gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
-	if OPTIONS[currentOption].showFirstLineDetails then
-		if OPTIONS[currentOption].showNoOverlap then
-			-- draw normal spotters solid
-			gl.Color(r,g,b,0)
-			DrawSelectionSpottersPart(teamID, 'normal solid', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
-			
-			--  Here the spotters are given the alpha level (this step makes sure overlappings dont have different alpha level)
-			gl.BlendFunc(GL.ONE, GL.ZERO)
-			gl.Color(r,g,b,a)
-			DrawSelectionSpottersPart(teamID, 'normal alpha', r,g,b,a,scale, opposite, relativeScaleSchrinking, true, drawUnitStyles)
-		else
-			gl.Color(r,g,b,a)
-			DrawSelectionSpottersPart(teamID, 'normal alpha', r,g,b,a,scale, opposite, relativeScaleSchrinking, true, drawUnitStyles)
-		end
-	end
-	
-	--  Here the inner of the selected spotters are removed
-	gl.BlendFunc(GL.ONE, GL.ZERO)
-	gl.Color(r,g,b,1)
-	DrawSelectionSpottersPart(teamID, 'solid overlap', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
-	
-	--  Really draw the spotters now  (This could be optimised if we could say Draw as much as DST_ALPHA * SRC_ALPHA is)
-	-- (without protecting form drawing them twice)
-	gl.ColorMask(true, true, true, true)
-	gl.BlendFunc(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA)
-	
-	-- Does not need to be drawn per Unit anymore
-	glCallList(clearquad)
-end
-
-
 function widget:DrawWorldPreUnit()
 	
-	local clockDifference = (os.clock() - previousOsClock)
-	previousOsClock = os.clock()
-	
-	--if spIsGUIHidden() then return end
-	
-	gl.PushAttrib(GL.COLOR_BUFFER_BIT)
-	gl.DepthTest(false)
-	
-	-- animate rotation
-	if OPTIONS[currentOption].rotationSpeed > 0 then
-		local angleDifference = (OPTIONS[currentOption].rotationSpeed) * (clockDifference * 5)
-		currentRotationAngle = currentRotationAngle + (angleDifference*0.66)
-		if currentRotationAngle > 360 then
-		   currentRotationAngle = currentRotationAngle - 360
-		end
-	
-		currentRotationAngleOpposite = currentRotationAngleOpposite - angleDifference
-		if currentRotationAngleOpposite < -360 then
-		   currentRotationAngleOpposite = currentRotationAngleOpposite + 360
-		end
-	end
-	
-	-- animate scale 
-	if OPTIONS[currentOption].animateSpotterSize then
-		local addedMultiplierValue = OPTIONS[currentOption].animationSpeed * (clockDifference * 50)
-		if (animationMultiplierAdd  and  animationMultiplier < OPTIONS[currentOption].maxAnimationMultiplier) then
-			animationMultiplier = animationMultiplier + addedMultiplierValue
-			animationMultiplierInner = animationMultiplierInner - addedMultiplierValue
-			if (animationMultiplier > OPTIONS[currentOption].maxAnimationMultiplier) then
-				animationMultiplier = OPTIONS[currentOption].maxAnimationMultiplier
-				animationMultiplierInner = OPTIONS[currentOption].minAnimationMultiplier
-				animationMultiplierAdd = false
+	if OPTIONS[currentOption].spotterOpacity >= OPTIONS[currentOption].spotterOpacityMin then
+		
+		local clockDifference = (os.clock() - previousOsClock)
+		previousOsClock = os.clock()
+		
+		--if spIsGUIHidden() then return end
+		
+		gl.PushAttrib(GL.COLOR_BUFFER_BIT)
+		gl.DepthTest(false)
+		
+		-- animate rotation
+		if OPTIONS[currentOption].rotationSpeed > 0 then
+			local angleDifference = (OPTIONS[currentOption].rotationSpeed) * (clockDifference * 5)
+			currentRotationAngle = currentRotationAngle + (angleDifference*0.66)
+			if currentRotationAngle > 360 then
+			   currentRotationAngle = currentRotationAngle - 360
 			end
-		else
-			animationMultiplier = animationMultiplier - addedMultiplierValue
-			animationMultiplierInner = animationMultiplierInner + addedMultiplierValue
-			if (animationMultiplier < OPTIONS[currentOption].minAnimationMultiplier) then
-				animationMultiplier = OPTIONS[currentOption].minAnimationMultiplier
-				animationMultiplierInner = OPTIONS[currentOption].maxAnimationMultiplier
-				animationMultiplierAdd = true
+		
+			currentRotationAngleOpposite = currentRotationAngleOpposite - angleDifference
+			if currentRotationAngleOpposite < -360 then
+			   currentRotationAngleOpposite = currentRotationAngleOpposite + 360
 			end
 		end
-	end
-	
-	-- loop teams
-	local baseR, baseG, baseB, r, g, b, a, scale, scaleBase, scaleOuter
-	for teamID,_ in pairs(selectedUnits) do
 		
-		r,g,b = 1,1,1
-		scale = 1 * OPTIONS[currentOption].scaleMultiplier * animationMultiplierInner
-		scaleBase = scale * 1.133
-		if OPTIONS[currentOption].showSecondLine then 
-			scaleOuter = (1 * OPTIONS[currentOption].scaleMultiplier * animationMultiplier) * 1.18
-			scaleBase = scaleOuter * 1.08
+		-- animate scale 
+		if OPTIONS[currentOption].animateSpotterSize then
+			local addedMultiplierValue = OPTIONS[currentOption].animationSpeed * (clockDifference * 50)
+			if (animationMultiplierAdd  and  animationMultiplier < OPTIONS[currentOption].maxAnimationMultiplier) then
+				animationMultiplier = animationMultiplier + addedMultiplierValue
+				animationMultiplierInner = animationMultiplierInner - addedMultiplierValue
+				if (animationMultiplier > OPTIONS[currentOption].maxAnimationMultiplier) then
+					animationMultiplier = OPTIONS[currentOption].maxAnimationMultiplier
+					animationMultiplierInner = OPTIONS[currentOption].minAnimationMultiplier
+					animationMultiplierAdd = false
+				end
+			else
+				animationMultiplier = animationMultiplier - addedMultiplierValue
+				animationMultiplierInner = animationMultiplierInner + addedMultiplierValue
+				if (animationMultiplier < OPTIONS[currentOption].minAnimationMultiplier) then
+					animationMultiplier = OPTIONS[currentOption].minAnimationMultiplier
+					animationMultiplierInner = OPTIONS[currentOption].maxAnimationMultiplier
+					animationMultiplierAdd = true
+				end
+			end
 		end
 		
-		gl.ColorMask(false, false, false, true)
-		gl.BlendFunc(GL.ONE, GL.ONE)
-		gl.Color(r,g,b,1)
-		glCallList(clearquad)
-		
-		-- draw base background layer
-		if OPTIONS[currentOption].showBase then
-			baseR, baseG, baseB = r,g,b
-			baseR,baseG,baseB = spGetTeamColor(teamID)
+		-- loop teams
+		local baseR, baseG, baseB, r, g, b, a, scale, scaleBase, scaleOuter
+		for teamID,_ in pairs(selectedUnits) do
 			
-			gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
-			DrawSelectionSpottersPart(teamID, 'base solid', baseR,baseG,baseB,0,scaleBase, false, false, false, false)
+			r,g,b = 1,1,1
+			scale = 1 * OPTIONS[currentOption].scaleMultiplier * animationMultiplierInner
+			scaleBase = scale * 1.133
+			if OPTIONS[currentOption].showSecondLine then 
+				scaleOuter = (1 * OPTIONS[currentOption].scaleMultiplier * animationMultiplier) * 1.18
+				scaleBase = scaleOuter * 1.08
+			end
 			
-			--  Here the inner of the selected spotters are removed
-			gl.BlendFunc(GL.ONE, GL.ZERO)
-			a = OPTIONS[currentOption].baseOpacity + (OPTIONS[currentOption].baseOpacity * (OPTIONS[currentOption].spotterOpacity*OPTIONS[currentOption].opacitySliderMultiplier))
-			DrawSelectionSpottersPart(teamID, 'base alpha', baseR,baseG,baseB,a,scaleBase, false, false, true, false)
-			
-			--  Really draw the spotters now  (This could be optimised if we could say Draw as much as DST_ALPHA * SRC_ALPHA is)
-			-- (without protecting form drawing them twice)
-			gl.ColorMask(true,true,true,true)
-			gl.BlendFunc(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA)
-			glCallList(clearquad)
-		end
-		
-		-- draw 1st line layer
-		if OPTIONS[currentOption].showFirstLine then
-			a = OPTIONS[currentOption].firstLineOpacity + (OPTIONS[currentOption].firstLineOpacity * (OPTIONS[currentOption].spotterOpacity*(OPTIONS[currentOption].opacitySliderMultiplier*100)))
-			DrawSelectionSpotters(teamID, r,g,b,a,scale,false,false,false)
-		end
-		
-		-- draw 2nd line layer
-		if OPTIONS[currentOption].showSecondLine then
-			--DrawSelectionSpotters(teamID, r,g,b,OPTIONS[currentOption].secondLineOpacity + (OPTIONS[currentOption].secondLineOpacity * OPTIONS[currentOption].spotterOpacity),scaleOuter, true, true, true)
-			
-			a = OPTIONS[currentOption].secondLineOpacity + (OPTIONS[currentOption].secondLineOpacity * (OPTIONS[currentOption].spotterOpacity*(OPTIONS[currentOption].opacitySliderMultiplier*100)))
 			gl.ColorMask(false, false, false, true)
-			gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
-			
-			--  Here the inner of the selected spotters are removed
-			gl.BlendFunc(GL.ONE, GL.ZERO)
+			gl.BlendFunc(GL.ONE, GL.ONE)
 			gl.Color(r,g,b,1)
-			DrawSelectionSpottersPart(teamID, 'solid overlap', r,g,b,a,scaleOuter, true, true, false, true)
-			
-			--  Really draw the spotters now  (This could be optimised if we could say Draw as much as DST_ALPHA * SRC_ALPHA is)
-			-- (without protecting form drawing them twice)
-			gl.ColorMask(true, true, true, true)
-			gl.BlendFunc(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA)
-			
-			-- Does not need to be drawn per Unit anymore
 			glCallList(clearquad)
+			
+			
+			-- draw base background layer
+			if OPTIONS[currentOption].showBase then
+				baseR, baseG, baseB = r,g,b
+				baseR,baseG,baseB = spGetTeamColor(teamID)
+				
+				gl.Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA)
+				DrawSelectionSpottersPart(teamID, 'base solid', baseR,baseG,baseB,0,scaleBase, false, false, false, false)
+				
+				--  Here the inner of the selected spotters are removed
+				gl.BlendFunc(GL.ONE, GL.ZERO)
+				a = 1 - (OPTIONS[currentOption].baseOpacity * OPTIONS[currentOption].spotterOpacity)
+				DrawSelectionSpottersPart(teamID, 'base alpha', baseR,baseG,baseB,a,scaleBase, false, false, true, false)
+				
+				--  Really draw the spotters now  (This could be optimised if we could say Draw as much as DST_ALPHA * SRC_ALPHA is)
+				-- (without protecting form drawing them twice)
+				gl.ColorMask(true,true,true,true)
+				gl.BlendFunc(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA)
+				glCallList(clearquad)
+			end
+			
+			
+			-- draw 1st line layer
+			if OPTIONS[currentOption].showFirstLine then
+				a = 1 - (OPTIONS[currentOption].firstLineOpacity * OPTIONS[currentOption].spotterOpacity)
+						
+				gl.ColorMask(false, false, false, true)
+				gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
+				if OPTIONS[currentOption].showFirstLineDetails then
+					if OPTIONS[currentOption].showNoOverlap then
+						-- draw normal spotters solid
+						gl.Color(r,g,b,0)
+						DrawSelectionSpottersPart(teamID, 'normal solid', r,g,b,a,scale, false, false, false, false)
+						
+						--  Here the spotters are given the alpha level (this step makes sure overlappings dont have different alpha level)
+						gl.BlendFunc(GL.ONE, GL.ZERO)
+						gl.Color(r,g,b,a)
+						DrawSelectionSpottersPart(teamID, 'normal alpha', r,g,b,a,scale, false, false, true, false)
+					else
+						gl.Color(r,g,b,a)
+						DrawSelectionSpottersPart(teamID, 'normal alpha', r,g,b,a,scale, false, false, true, false)
+					end
+				end
+				
+				--  Here the inner of the selected spotters are removed
+				gl.BlendFunc(GL.ONE, GL.ZERO)
+				gl.Color(r,g,b,1)
+				DrawSelectionSpottersPart(teamID, 'solid overlap', r,g,b,a,scale, opposite, relativeScaleSchrinking, false, drawUnitStyles)
+				
+				--  Really draw the spotters now  (This could be optimised if we could say Draw as much as DST_ALPHA * SRC_ALPHA is)
+				-- (without protecting form drawing them twice)
+				gl.ColorMask(true, true, true, true)
+				gl.BlendFunc(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA)
+				
+				-- Does not need to be drawn per Unit anymore
+				glCallList(clearquad)
+			end
+			
+			
+			-- draw 2nd line layer
+			if OPTIONS[currentOption].showSecondLine then
+				a = 1 - (OPTIONS[currentOption].secondLineOpacity * OPTIONS[currentOption].spotterOpacity)
+				
+				gl.ColorMask(false, false, false, true)
+				gl.BlendFunc(GL.ONE_MINUS_SRC_ALPHA, GL.SRC_ALPHA)
+				
+				--  Here the inner of the selected spotters are removed
+				gl.BlendFunc(GL.ONE, GL.ZERO)
+				gl.Color(r,g,b,1)
+				DrawSelectionSpottersPart(teamID, 'solid overlap', r,g,b,a,scaleOuter, false, true, false, true)
+				
+				--  Really draw the spotters now  (This could be optimised if we could say Draw as much as DST_ALPHA * SRC_ALPHA is)
+				-- (without protecting form drawing them twice)
+				gl.ColorMask(true, true, true, true)
+				gl.BlendFunc(GL.ONE_MINUS_DST_ALPHA, GL.DST_ALPHA)
+				
+				-- Does not need to be drawn per Unit anymore
+				glCallList(clearquad)
+			end
 		end
-	end
-	
-	gl.ColorMask(false,false,false,false)
 		
-	gl.Color(1,1,1,1)
-	gl.PopAttrib()
+		gl.ColorMask(false,false,false,false)
+		gl.Color(1,1,1,1)
+		gl.PopAttrib()
+	end
 end
 
 
 function widget:DrawWorld()
 	-- draw unit highlight
-	if OPTIONS[currentOption].unitHighlightOpacity > 0  and (OPTIONS[currentOption].showUnitHighlight or OPTIONS[currentOption].showUnitHighlightHealth) then
+	if OPTIONS[currentOption].unitHighlightOpacity >= OPTIONS[currentOption].unitHighlightOpacityMin or OPTIONS[currentOption].unitHighlightOpacity >= OPTIONS[currentOption].unitHighlightOpacityMin then
 		gl.DepthTest(true)
 		gl.PolygonOffset(-2, -2)
 		gl.Blending(GL.SRC_ALPHA, GL.ONE)
-		local opacity = OPTIONS[currentOption].unitHighlightOpacity - (OPTIONS[currentOption].unitHighlightOpacity * (OPTIONS[currentOption].spotterOpacity/10))
+		local opacity = OPTIONS[currentOption].unitHighlightOpacity
 		local r,g,b
 		-- loop teams
 		for teamID,_ in pairs(selectedUnits) do
@@ -1071,18 +1062,20 @@ end
 function widget:GetConfigData(data)
     savedTable = {}
     savedTable.currentOption					= currentOption
-    savedTable.spotterOpacity					= OPTIONS[currentOption].spotterOpacity
+    savedTable.spotterOpacity					= OPTIONS.defaults.spotterOpacity
     savedTable.showSecondLine					= OPTIONS.defaults.showSecondLine
-    savedTable.showUnitHighlight				= OPTIONS.defaults.showUnitHighlight
+    savedTable.unitHighlightOpacity				= OPTIONS.defaults.unitHighlightOpacity
+    savedTable.showUnitHighlightHealth			= OPTIONS.defaults.showUnitHighlightHealth
     
     return savedTable
 end
 
 function widget:SetConfigData(data)
-    currentOption								= data.currentOption		or currentOption
-    OPTIONS[currentOption].spotterOpacity		= data.spotterOpacity		or OPTIONS[currentOption].spotterOpacity
-    OPTIONS.defaults.showSecondLine				= data.showSecondLine		or OPTIONS.defaults.showSecondLine
-    OPTIONS.defaults.showUnitHighlight			= data.showUnitHighlight	or OPTIONS.defaults.showUnitHighlight
+    currentOption								= data.currentOption			or currentOption
+    OPTIONS.defaults.spotterOpacity				= data.spotterOpacity			or OPTIONS.defaults.spotterOpacity
+    OPTIONS.defaults.showSecondLine				= data.showSecondLine			or OPTIONS.defaults.showSecondLine
+    OPTIONS.defaults.unitHighlightOpacity		= data.unitHighlightOpacity		or OPTIONS.defaults.unitHighlightOpacity
+    OPTIONS.defaults.showUnitHighlightHealth	= data.showUnitHighlightHealth	or OPTIONS.defaults.showUnitHighlightHealth
 end
 
 function widget:TextCommand(command)
@@ -1090,6 +1083,6 @@ function widget:TextCommand(command)
     if (string.find(command, "selectedunits_style") == 1  and  string.len(command) == 19) then 
 		toggleOptions()
 	end
-	if (string.find(command, "+selectedunits_opacity") == 1) then OPTIONS[currentOption].spotterOpacity = OPTIONS[currentOption].spotterOpacity - 0.03 end
-	if (string.find(command, "-selectedunits_opacity") == 1) then OPTIONS[currentOption].spotterOpacity = OPTIONS[currentOption].spotterOpacity + 0.03 end
+	if (string.find(command, "+selectedunits_opacity") == 1) then OPTIONS.defaults.spotterOpacity = OPTIONS.defaults.spotterOpacity - 0.03;  OPTIONS[currentOption].spotterOpacity = OPTIONS.defaults.spotterOpacity  end
+	if (string.find(command, "-selectedunits_opacity") == 1) then OPTIONS.defaults.spotterOpacity = OPTIONS.defaults.spotterOpacity + 0.03;  OPTIONS[currentOption].spotterOpacity = OPTIONS.defaults.spotterOpacity  end
 end

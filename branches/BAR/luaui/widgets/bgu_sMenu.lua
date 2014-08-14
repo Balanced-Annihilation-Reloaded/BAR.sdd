@@ -15,7 +15,7 @@ end
 --------------
 
 -- Config --
-local nCol, nRow = 4, 8
+local nRow, nCol, mCol = 8, 4, 4
 local catNames = {'ECONOMY', 'BATTLE', 'FACTORY'} -- order matters
 local imageDir = 'luaui/images/buildIcons/'
 
@@ -158,6 +158,27 @@ local function scrollMenus(self,x,y,up,value)
 	selectTab(menuTab[choice])
 	return true -- Prevents zooming
 end
+
+local function resizeUI(scrH)
+	local ordH = scrH * 0.05
+	local ordY = scrH - ordH
+	local winY = scrH * 0.2
+	local winH = scrH * 0.5
+	local winW = winH * nCol / nRow
+	local aspect = Game.mapX/Game.mapY
+	local minMapH = scrH * 0.3
+	local minMapW = minMapH * aspect
+	if aspect > 1 then
+		minMapW = minMapH * aspect^0.5
+		minMapH = minMapW / aspect
+	end
+	
+	buildMenu:SetPos(0, winY, winW, winH)
+	menuTabs:SetPos(winW,winY+20)
+	orderMenu:SetPos(minMapW,ordY,ordH*21,ordH)
+	orderBG:SetPos(minMapW,ordY,ordH*#orderMenu.children,ordH)
+	stateMenu:SetPos(winY,0,100,winY)
+end
 ---------------------------------------------------------------
 ---------------------------------------------------------------
 
@@ -275,7 +296,7 @@ local function parseCmds()
                 menuCat = getMenuCat(ud)    
             end
 
-			if menuCat and #grid[menuCat].children < (nRow*nCol) then
+			if menuCat and #grid[menuCat].children < (nRow*mCol) then
 				buildMenu.active     = true
 				grid[menuCat].active = true
 				addBuild(cmd,menuCat)
@@ -295,17 +316,17 @@ local function parseCmds()
 		n = math.max(n,#grid[i].children)
 	end
 	
-	local cols
 	if n <=3*8 then 
-		cols = 3 
+		nCol = 3 
 	else 
-		cols = 4 --max 32 buttons displayed per cat
+		nCol = 4 --max 32 buttons displayed per cat
+	end
+
+	for i=1,#catNames do
+		grid[i].columns = nCol
 	end
 	
-	for i=1,#catNames do
-		grid[i].columns = cols
-	end
- 
+	resizeUI(Chili.Screen0.height)
 end
 
 local function parseUnitDef(uDID)
@@ -378,6 +399,7 @@ local function loadPanels()
 		for i = 1, #units do
 			if units[i] ~= sUnits[i] then
 				newUnit = true
+				break
 			end
 		end
 	else
@@ -624,27 +646,11 @@ function widget:Initialize()
 	end
 
 end
+
 --------------------------- 
 -- quick and dirty fix for resizing (needs clean up, has copy/paste code etc..)
 function widget:ViewResize(_,scrH)
-	local ordH = scrH * 0.05
-	local ordY = scrH - ordH
-	local winY = scrH * 0.2
-	local winH = scrH * 0.5
-	local winW = winH * nCol / nRow
-	local aspect = Game.mapX/Game.mapY
-	local minMapH = scrH * 0.3
-	local minMapW = minMapH * aspect
-	if aspect > 1 then
-		minMapW = minMapH * aspect^0.5
-		minMapH = minMapW / aspect
-	end
-	
-	buildMenu:SetPos(0, winY, winW, winH)
-	menuTabs:SetPos(winW,winY+20)
-	orderMenu:SetPos(minMapW,ordY,ordH*21,ordH)
-	orderBG:SetPos(minMapW,ordY,ordH*#orderMenu.children,ordH)
-	stateMenu:SetPos(winY,0,100,winY)
+	resizeUI(scrH)
 	updateRequired = true
 end
 --------------------------- 

@@ -125,9 +125,9 @@ local function FormatTable(a)
 end
 
 local text = {}
-text.General = FormatTable(General)
-text.Units_I = FormatTable(Units_I)
-text.Units_II = FormatTable(Units_II)
-text.Units_III = FormatTable(Units_III)
+text['General'] = FormatTable(General)
+text['Units I'] = FormatTable(Units_I)
+text['Units II'] = FormatTable(Units_II)
+text['Units III'] = FormatTable(Units_III)
 
 return text 

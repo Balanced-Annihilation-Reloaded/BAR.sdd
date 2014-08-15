@@ -315,12 +315,7 @@ local function parseCmds()
 	for i=1,#catNames do
 		n = math.max(n,#grid[i].children)
 	end
-	
-	if n <=3*8 then 
-		nCol = 3 
-	else 
-		nCol = 4 --max 32 buttons displayed per cat
-	end
+	nCol = n/nRow >= mCol and mCol or math.floor((n-1)/nRow) + 1
 
 	for i=1,#catNames do
 		grid[i].columns = nCol

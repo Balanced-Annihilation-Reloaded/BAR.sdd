@@ -32,7 +32,7 @@ return {
 		metalstorage = 800,
 		minwaterdepth = 30,
 		name = "Experimental Gantry",
-		objectname = "ARMSHLTX",
+		objectname = "ARMSHLTX.s3o",
 		script = "armshltx.cob",
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",

@@ -426,6 +426,8 @@ local function loadMainMenu()
 		itemPadding  = {1,0,1,0},
 		OnChange     = {sTab}
 	}
+    
+    mainMenu:Hide()
 
 end
 

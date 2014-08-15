@@ -761,7 +761,7 @@ function widget:Initialize()
     local viewSizeX, viewSizeY = widgetHandler:GetViewSizes()
     self:ViewResize(viewSizeX, viewSizeY)
     
-    if Spring.GetSpectatingState() then
+    if Spring.GetSpectatingState() or Spring.GetSelectedUnitsCount()>0 then
         HideFacBar()
     end
 end

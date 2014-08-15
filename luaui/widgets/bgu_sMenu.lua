@@ -15,7 +15,6 @@ end
 --------------
 
 -- Config --
-local nRow, nCol, mCol = 8, 4, 4
 local catNames = {'ECONOMY', 'BATTLE', 'FACTORY'} -- order matters
 local imageDir = 'luaui/images/buildIcons/'
 
@@ -130,6 +129,35 @@ local function showGrid(num)
 	end
 end
 
+local maxCols = 6
+local maxRows = 8
+
+local function resizeUI(scrH,i)
+    -- ideally, our grid wants =3 columns, in which case we give it space for 4 & use wider buttons-
+    -- if our grid wants >3 cols, we use smaller buttons & possibly widen
+    -- we always display space for the maximum number of rows
+    local nCols = (i) and math.max(4, math.min(maxCols, grid[i].columns)) or 4 
+    
+	local ordH = scrH * 0.05
+	local ordY = scrH - ordH
+	local winY = scrH * 0.2
+	local winH = scrH * 0.5
+	local winW = winH * nCols / maxRows 
+	local aspect = Game.mapX/Game.mapY
+	local minMapH = scrH * 0.3
+	local minMapW = minMapH * aspect
+	if aspect > 1 then
+		minMapW = minMapH * aspect^0.5
+		minMapH = minMapW / aspect
+	end
+	
+	buildMenu:SetPos(0, winY, winW, winH) -- better to keep consistent layout & not use small buttons when possible
+	menuTabs:SetPos(winW,winY+20)
+	orderMenu:SetPos(minMapW,ordY,ordH*21,ordH)
+	orderBG:SetPos(minMapW,ordY,ordH*#orderMenu.children,ordH)
+	stateMenu:SetPos(winY*1.05,0,200,winY)
+end
+
 local function selectTab(self)
 	local choice = self.tabNum
 	showGrid(choice)
@@ -145,6 +173,11 @@ local function selectTab(self)
 	end
 
 	menuTabs.choice = choice
+    if choice ~= 3 or (choice==3 and (#grid[1].children>0 or #grid[1].children>0)) then
+        menuTabs.savedChoice = choice 
+    end
+
+    resizeUI(Chili.Screen0.height, choice)    
 end
 
 local function scrollMenus(self,x,y,up,value)
@@ -155,30 +188,11 @@ local function scrollMenus(self,x,y,up,value)
 	elseif choice < 1 then
 		choice = #menuTab
 	end
-	selectTab(menuTab[choice])
+    selectTab(menuTab[choice])
 	return true -- Prevents zooming
 end
 
-local function resizeUI(scrH)
-	local ordH = scrH * 0.05
-	local ordY = scrH - ordH
-	local winY = scrH * 0.2
-	local winH = scrH * 0.5
-	local winW = winH * nCol / nRow
-	local aspect = Game.mapX/Game.mapY
-	local minMapH = scrH * 0.3
-	local minMapW = minMapH * aspect
-	if aspect > 1 then
-		minMapW = minMapH * aspect^0.5
-		minMapH = minMapW / aspect
-	end
-	
-	buildMenu:SetPos(0, winY, winW, winH)
-	menuTabs:SetPos(winW,winY+20)
-	orderMenu:SetPos(minMapW,ordY,ordH*21,ordH)
-	orderBG:SetPos(minMapW,ordY,ordH*#orderMenu.children,ordH)
-	stateMenu:SetPos(winY*1.05,0,200,winY)
-end
+
 ---------------------------------------------------------------
 ---------------------------------------------------------------
 
@@ -282,6 +296,28 @@ local function getMenuCat(ud)
     return menuCat
 end
 
+local function SetGridDimensions()
+	for i=1,#catNames do
+        -- work out if we have too many buttons in a grid, request more columns if so
+        local n = #grid[i].children 
+        local neededColumns = math.floor((n-1)/maxRows)+1
+        local nCols = math.max(3, math.min(maxCols, neededColumns)) 
+		grid[i].columns = nCols
+        grid[i].rows = maxRows
+    end
+end
+
+local function ChooseTab()
+    -- use the most recent tab that wasn't the factory tab, if possible
+    for i=1,3 do
+        if #grid[i].children>0 and menuTabs.savedChoice==i then return i end
+    end
+    for i=1,3 do
+        if #grid[i].children>0 then return i end
+    end
+    return nil
+end
+
 local function parseCmds()
 	local cmdList = spGetActiveCmdDescs()
     
@@ -296,7 +332,7 @@ local function parseCmds()
                 menuCat = getMenuCat(ud)    
             end
 
-			if menuCat and #grid[menuCat].children < (nRow*mCol) then
+			if menuCat and #grid[menuCat].children<=maxRows*maxCols then
 				buildMenu.active     = true
 				grid[menuCat].active = true
 				addBuild(cmd,menuCat)
@@ -306,22 +342,8 @@ local function parseCmds()
 				orderMenu.active = true
 				addOrder(cmd)
 			end
-
 		end
 	end
-    
-	-- work out if we have too many buttons, widen the menu if so
-	local n = 0
-	for i=1,#catNames do
-		n = math.max(n,#grid[i].children)
-	end
-	nCol = n/nRow >= mCol and mCol or math.floor((n-1)/nRow) + 1
-
-	for i=1,#catNames do
-		grid[i].columns = nCol
-	end
-	
-	resizeUI(Chili.Screen0.height)
 end
 
 local function parseUnitDef(uDID)
@@ -340,14 +362,7 @@ local function parseUnitDef(uDID)
 		local cmd = {name=ud.name, id=bDID, disabled=false} --fake cmd desc muahahah
 		addBuild(cmd,menuCat)    
 	end
-	
-	for i=1,#catNames do
-		grid[i].columns = 3
-	end
-
 end
-
-
 
 --------------------------------------------------------------
 --------------------------------------------------------------
@@ -360,7 +375,7 @@ local function makeMenuTabs()
 	for i = 1, #catNames do
 		if grid[i].active then
 			tabCount = tabCount + 1
-			menuTab[tabCount] = Chili.Button:New{
+			menuTab[i] = Chili.Button:New{
 				tabNum  = i,
 				tooltip = 'You can scroll through the different categories with your mouse wheel!',
 				parent  = menuTabs,
@@ -375,12 +390,6 @@ local function makeMenuTabs()
 				},
 			}
 		end
-	end
-
-	if tabCount == 1 then
-		menuTab[1]:Hide()
-	elseif tabCount > 1 then
-		menuTab[menuTabs.choice].font.color = {1,1,1,1}
 	end
 end
 
@@ -409,7 +418,6 @@ local function loadPanels()
 
 	if newUnit then
 		sUnits = units
-		menuTabs.choice = 1
 		for i=1,#catNames do
 			grid[i]:ClearChildren()
 			grid[i].active = false
@@ -417,8 +425,10 @@ local function loadPanels()
 	end
 
 	parseCmds()
+    SetGridDimensions()
 	makeMenuTabs()
-	if menuTab[menuTabs.choice] then selectTab(menuTab[menuTabs.choice]) end
+    menuTabs.choice = ChooseTab()
+    if menuTabs.choice and buildMenu.active then selectTab(menuTab[menuTabs.choice]) end
 end
 
 local function loadDummyPanels(unitDefID)
@@ -436,8 +446,10 @@ local function loadDummyPanels(unitDefID)
 	end
 
 	parseUnitDef(unitDefID)
+    SetGridDimensions()   
 	makeMenuTabs()
-	if menuTab[menuTabs.choice] then selectTab(menuTab[menuTabs.choice]) end
+    menuTabs.choice = ChooseTab()
+    if menuTabs.choice and buildMenu.active then selectTab(menuTab[menuTabs.choice]) end
 end
 
 ---------------------------
@@ -496,7 +508,7 @@ local function createButton(name, unitDef)
 		}
 	}
  
-	local isWater = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>20) or (unitDef.minWaterDepth and unitDef.minWaterDepth>0)
+	local isWater = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25) or (unitDef.minWaterDepth and unitDef.minWaterDepth>0)
 	if isWater then
 		-- Add raindrop to unit icon
 		Chili.Image:New{
@@ -546,27 +558,10 @@ function widget:Initialize()
 	Chili = WG.Chili
 	screen0 = Chili.Screen0
 	
-	local scrH = screen0.height
-	local ordH = scrH * 0.05
-	local winY = scrH * 0.2
-	local winH = scrH * 0.5
-	local winW = winH * nCol / nRow
-	local aspect = Game.mapX/Game.mapY
-	local minMapH = scrH * 0.3
-	local minMapW = minMapH * aspect
-	if aspect > 1 then
-		minMapW = minMapH * aspect^0.5
-		minMapH = minMapW / aspect
-	end
-	
 	buildMenu = Chili.Window:New{
 		parent       = screen0,
 		name         = 'buildMenu',
 		active       = false,
-		x            = 0,
-		y            = winY,
-		width        = winW,
-		height       = winH,
 		padding      = {0,0,0,0},
 		OnMouseWheel = {scrollMenus},
 	}
@@ -574,8 +569,7 @@ function widget:Initialize()
 	menuTabs = Chili.Control:New{
 		parent  = screen0,
 		choice  = 1,
-		x       = winW,
-		y       = winY+20,
+        savedChoice = 1,
 		height  = 150,
 		width   = 100,
 		padding = {0,0,0,0},
@@ -587,19 +581,11 @@ function widget:Initialize()
 		active  = false,
 		columns = 21,
 		rows    = 1,
-		y       = scrH - ordH,
-		x       = minMapW,
-		height  = ordH,
-		width   = ordH*21,
 		padding = {0,0,0,0},
 	}
 	
 	orderBG = Chili.Window:New{
 		parent = screen0,
-		y      = scrH - ordH,
-		x      = minMapW,
-		height = ordH,
-		width  = ordH*21,
 	}
 
 
@@ -607,10 +593,6 @@ function widget:Initialize()
 		parent  = screen0,
 		columns = 2,
 		rows    = 8,
-		y       = 1,
-		x       = scrH * 0.2 * 1.05, --x and height match sInfo
-		height  = scrH * 0.2,
-		width   = 200,
         orientation = 'vertical',
 		padding = {0,0,0,0},
 	}
@@ -624,12 +606,12 @@ function widget:Initialize()
 			y        = 0,
 			right    = 0,
 			bottom   = 0,
-			rows     = nRow,
-			columns  = nCol,
 			padding  = {0,0,0,0},
 			margin   = {0,0,0,0},
 		}
 	end
+    
+    resizeUI(Chili.Screen0.height)
     
 
 	-- Create a cache of buttons stored in the unit array
@@ -689,13 +671,19 @@ function widget:Update()
 	if updateRequired then
 		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 		teamColor = {r,g,b,0.8}
-		
 		updateRequired = false
-		buildMenu.active = false
-		orderMenu.active = false
+
+        if Spring.GetSelectedUnitsCount()>0 then 
+            buildMenu.active = true
+            orderMenu.active = true
+        else
+            buildMenu.active = false
+            orderMenu.active = false       
+        end
+
 		queue = {}
 		queueHandler()
-		loadPanels()
+		loadPanels()        
 		
 		if not orderMenu.active and orderBG.visible then
 			orderBG:Hide()

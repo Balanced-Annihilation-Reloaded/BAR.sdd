@@ -36,7 +36,7 @@ local spGetMouseState           = Spring.GetMouseState
 local spTraceScreenRay          = Spring.TraceScreenRay
 local spGetGroundHeight         = Spring.GetGroundHeight
 local spGetUnitResources        = Spring.GetUnitResources
-
+local spGetSelectedUnitsCounts  = Spring.GetSelectedUnitsCounts
 local floor = math.floor
 
 local r,g,b     = Spring.GetTeamColor(Spring.GetMyTeamID())
@@ -52,6 +52,7 @@ local grey = '\255\150\150\150'
 local white = '\255\255\255\255'
 local mColour = '\255\153\153\204'
 local eColour = '\255\255\255\76'
+local blue = "\255\200\200\255"
 
 ----------------------------------
 local function refineSelection(obj)
@@ -123,16 +124,19 @@ local function ResToolTip(Mmake, Muse, Emake, Euse)
 end
 
 
-local function showUnitInfo(unitDefID, texture, overlay, description, humanName, health, maxHealth, Mmake, Muse, Emake, Euse, Mcost, Ecost)
+local function showUnitInfo(unitDefID, texture, overlay, description, humanName, health, maxHealth, Mmake, Muse, Emake, Euse, Mcost, Ecost, n)
+
+    local numText = ""
+    if n>1 then numText = "\n " .. blue .. "(x" .. tostring(n) .. ")" end
 	
 	unitName = Chili.TextBox:New{
 		x      = 0,
 		y      = 5,
 		right  = 0,
 		bottom = 0,
-		text   = " " .. humanName..'\n'.. " " .. description,
+		text   = " " .. humanName..'\n'.. " " .. description .. numText,
 	}
-	
+    
 	unitHealthText = Chili.TextBox:New{
 		x      = 5,
 		bottom = 21,
@@ -253,19 +257,26 @@ end
 local function updateUnitInfo()
 	
 	--single unit	
-	if curTip >= 0 then 
-		local health, maxHealth = spGetUnitHealth(curTip)
-		unitHealthText:SetText(math.floor(health) ..' / '.. math.floor(maxHealth)) 
-		unitHealthText:Invalidate() --not sure why this is needed here but it is
-		unitHealth.max = maxHealth
-		unitHealth:SetValue(health)
-
-		local Mmake, Muse, Emake, Euse = spGetUnitResources(curTip)
-        Mmake = Mmake or 0
-        Muse = Muse or 0
-        Emake = Emake or 0
-        Euse = Euse or 0
-		unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
+	if curTip >= 0 then 	
+        units = spGetSelectedUnits()
+        
+        local curHealth = 0
+        local maxHealth = 0
+        local Mmake, Muse, Emake, Euse = 0,0,0,0
+        for _, uID in pairs(units) do
+            c, m = spGetUnitHealth(uID)
+            mm, mu, em, eu = spGetUnitResources(uID)
+            curHealth = curHealth + (c or 0)
+            maxHealth = maxHealth + (m or 0)
+            Mmake = Mmake + (mm or 0)
+            Muse = Muse + (mu or 0)
+            Emake = Emake + (em or 0)
+            Euse = Euse + (eu or 0)
+        end
+		unitHealthText:SetText(math.floor(curHealth) ..' / '.. math.floor(maxHealth)) 
+        unitHealth:SetMinMax(0, maxHealth)
+		unitHealth:SetValue(curHealth) 
+  		unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
 		
 	--multiple units, but not so many we cant fit pics
 	elseif curTip == -1 then 
@@ -312,6 +323,7 @@ local function getInfo()
 	teamColor = {r,g,b}
 
 	units = spGetSelectedUnits()
+    sUnits = spGetSelectedUnitsCounts()
 
 	if #units == 0 then
 		--info about point on map corresponding to cursor (updated every other gameframe)
@@ -319,24 +331,36 @@ local function getInfo()
 		return
 	end    
 		
-	if #units == 1 then
+	if sUnits["n"] == 1 then
 		
 		--detailed info about a single unit
 		local unitID      = units[1]
-		curTip = unitID
-
 		local defID       = spGetUnitDefID(unitID)
+		curTip = defID
+
 		local description = UnitDefs[defID].tooltip or ''
 		local name        = UnitDefs[defID].name
 		local texture     = imageDir..'Units/' .. name .. '.dds'
 		local overlay     = imageDir..'Overlays/' .. name .. '.dds'
 		local humanName   = UnitDefs[defID].humanName
-		local curHealth, maxHealth = spGetUnitHealth(unitID)
-		local Mmake, Muse, Emake, Euse = spGetUnitResources(unitID)
 		local Ecost = UnitDefs[defID].energyCost
 		local Mcost = UnitDefs[defID].metalCost
+
+        local curHealth = 0
+        local maxHealth = 0
+        local Mmake, Muse, Emake, Euse = 0,0,0,0
+        for _, uID in pairs(units) do
+            c, m = spGetUnitHealth(uID)
+            mm, mu, em, eu = spGetUnitResources(uID)
+            curHealth = curHealth + (c or 0)
+            maxHealth = maxHealth + (m or 0)
+            Mmake = Mmake + (mm or 0)
+            Muse = Muse + (mu or 0)
+            Emake = Emake + (em or 0)
+            Euse = Euse + (eu or 0)
+        end
 				
-		showUnitInfo(defID, texture, overlay, description, humanName, curHealth or 0, maxHealth or 0, Mmake, Muse, Emake, Euse, Mcost, Ecost)		
+		showUnitInfo(defID, texture, overlay, description, humanName, curHealth, maxHealth, Mmake, Muse, Emake, Euse, Mcost, Ecost, #units)		
 	else
 		--broad info about lots of units
 		local sortedUnits = spGetSelectedUnitsSorted()

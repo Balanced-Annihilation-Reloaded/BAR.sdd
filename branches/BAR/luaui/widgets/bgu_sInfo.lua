@@ -263,7 +263,7 @@ local function updateUnitInfo()
         local curHealth = 0
         local maxHealth = 0
         local Mmake, Muse, Emake, Euse = 0,0,0,0
-        for _, uID in pairs(units) do
+        for _, uID in ipairs(units) do
             c, m = spGetUnitHealth(uID)
             mm, mu, em, eu = spGetUnitResources(uID)
             curHealth = curHealth + (c or 0)
@@ -349,7 +349,7 @@ local function getInfo()
         local curHealth = 0
         local maxHealth = 0
         local Mmake, Muse, Emake, Euse = 0,0,0,0
-        for _, uID in pairs(units) do
+        for _, uID in ipairs(units) do
             c, m = spGetUnitHealth(uID)
             mm, mu, em, eu = spGetUnitResources(uID)
             curHealth = curHealth + (c or 0)

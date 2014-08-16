@@ -160,8 +160,8 @@ function PostDistortion:EndDraw()
   if (pd.texRectangle) then glUniform(screenSizeLoc,vsx,vsy) end
   glTexture(0,jitterTex);
   glTexture(1,screenCopyTex); 
-  glTexture(2, "$model_gbuffer_zvaltex"); 
-  glTexture(3,"$map_gbuffer_zvaltex"); 
+  --glTexture(2, "$model_gbuffer_zvaltex"); 
+  --glTexture(3,"$map_gbuffer_zvaltex"); 
   glCallList(postDrawAndLeaveIdentity);
 end
 

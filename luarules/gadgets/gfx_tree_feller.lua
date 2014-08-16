@@ -42,7 +42,7 @@ if  (gadgetHandler:IsSyncedCode()) then
 			return Damage
 		end
 		if treesdying[featureID] then --dying trees dont take more damage, and will be removed later
-			Echo('damage removed',Damage,featureID)
+			--Echo('damage removed',Damage,featureID)
 			return 0.0
 		end
 		local fx,fy,fz=GetFeaturePosition(featureID)

@@ -428,7 +428,7 @@ local function loadPanels()
     SetGridDimensions()
 	makeMenuTabs()
     menuTabs.choice = ChooseTab()
-    if menuTabs.choice and buildMenu.active then selectTab(menuTab[menuTabs.choice]) end
+    if menuTabs.choice and buildMenu.active and menuTab[menuTabs.choice] then selectTab(menuTab[menuTabs.choice]) end
 end
 
 local function loadDummyPanels(unitDefID)

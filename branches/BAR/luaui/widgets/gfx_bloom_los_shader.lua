@@ -1,3 +1,5 @@
+--[[
+
 -- function widget:GetInfo()
 	-- return {
 		-- name      = "BloomShader and LOSshader",
@@ -760,3 +762,5 @@ function widget:DrawWorld()
 		-- return false
 	-- end
 -- end
+
+]]

@@ -693,10 +693,10 @@ function SetFaction(pID)
 		elseif startUDID == corcomDefID then
 			faction = "core"
 		else
-            _,_,_,_,faction = Spring_GetTeamInfo(team)
+            _,_,_,_,faction = Spring.GetTeamInfo(team)
         end
 	else
-		_,_,_,_,faction = Spring_GetTeamInfo(team)
+		_,_,_,_,faction = Spring.GetTeamInfo(team)
 	end
        
 	if faction then

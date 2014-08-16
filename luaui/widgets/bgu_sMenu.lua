@@ -674,10 +674,8 @@ function widget:Update()
 		updateRequired = false
 
         if Spring.GetSelectedUnitsCount()>0 then 
-            buildMenu.active = true
             orderMenu.active = true
         else
-            buildMenu.active = false
             orderMenu.active = false       
         end
 
@@ -685,6 +683,12 @@ function widget:Update()
 		queueHandler()
 		loadPanels()        
 		
+        if menuTabs.choice then 
+            buildMenu.active = true
+        else
+            buildMenu.active = false
+        end
+
 		if not orderMenu.active and orderBG.visible then
 			orderBG:Hide()
 		elseif orderMenu.active and orderBG.hidden then

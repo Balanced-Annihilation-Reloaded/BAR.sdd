@@ -93,7 +93,7 @@ end
 local function loadWindow()
 	
 	-- parent
-	window = Chili.Window:New{
+	window = Chili.Control:New{
 		parent  = screen,
 		width   = msgWidth,
 		color   = {0,0,0,0},
@@ -104,7 +104,7 @@ local function loadWindow()
 	}
 	
 	-- input text box
-	input = Chili.Window:New{
+	input = Chili.Panel:New{
 		parent    = window,
 		minHeight = 10,
 		width     = msgWidth,

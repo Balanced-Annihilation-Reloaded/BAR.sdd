@@ -446,7 +446,7 @@ function CreateGUI()
 		minMapH = minMapW / aspect
 	end
     
-    window = Chili.Window:New{
+    window = Chili.Panel:New{
         parent = Chili.Screen0,
         bottom = 0,
         minHeight = 25,

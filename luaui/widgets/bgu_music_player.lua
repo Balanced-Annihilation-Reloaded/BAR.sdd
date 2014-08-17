@@ -290,7 +290,7 @@ local function createUI()
 	
 	songLabel = Chili.Label:New{x = 0, caption = 'No Song'}
 	
-	window0	= Chili.Window:New{
+	window0	= Chili.Panel:New{
 		parent    = screen0,
 		minHeight = 0, 
 		right     = 0, 

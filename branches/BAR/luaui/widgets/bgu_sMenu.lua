@@ -58,6 +58,40 @@ local orderColors = {
 	capture     = {0.6, 0.0, 0.8, 1.0},
 	resurrect   = {0.0, 0.0, 1.0, 1.0},
 }
+
+local white = {1,1,1,1}
+local black = {0,0,0,1}
+local green = {0.5,1,0,1}
+local yellow = {0.5,0.5,0,1}
+local orange = {1,0.5,0,1}
+local red = {1,0,0,1}
+
+local paramColors = {
+	['Hold fire']    = red,
+	['Return fire']  = orange,
+	['Fire at will'] = green,
+	['Hold pos']     = red,
+	['Maneuver']     = orange,
+	['Roam']         = green,
+	['Repeat off']   = red,
+	['Repeat on']    = green,
+	['Active']       = green,
+	['Passive']      = red,
+	[' Fly ']        = green,
+	['Land']         = red,
+	[' Off ']        = red,
+	[' On ']         = green,
+	['UnCloaked']    = red,
+	['Cloaked']      = green,
+	['LandAt 0']     = green,
+	['LandAt 30']    = yellow,
+	['LandAt 50']    = orange,
+	['LandAt 80']    = red,
+	['UpgMex off']   = red,
+	['UpgMex on']    = green,
+	['Low traj']     = red,
+	['High traj']    = green,
+}
 ------------
 
 
@@ -106,6 +140,11 @@ end
 
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
+	if obj.params then
+		for key, value in ipairs(obj.params) do
+			Spring.Echo(value)
+		end
+	end
 	if obj.disabled then return end
 	if not gameStarted then
         WG.SetSelDefID(-obj.cmdId)
@@ -223,8 +262,9 @@ local function addBuild(cmd, category)
 end
 
 local function addState(cmd)
-	local button = Chili.Button:New{
-		caption   = cmd.params[cmd.params[1] + 2],
+	local param = cmd.params[cmd.params[1] + 2]
+	stateMenu:AddChild(Chili.Button:New{
+		caption   = param,
 		cmdName   = cmd.name,
 		tooltip   = cmd.tooltip,
 		cmdId     = cmd.id,
@@ -232,8 +272,12 @@ local function addState(cmd)
 		padding   = {0,0,0,0},
 		margin    = {0,0,0,0},
 		OnMouseUp = {cmdAction},
-	}
-	stateMenu:AddChild(button)
+		font      = {
+			color = paramColors[param] or white,
+			size  = 16
+		},
+		backgroundColor = black,
+	})
 end
 
 local function addOrder(cmd)
@@ -384,6 +428,7 @@ local function makeMenuTabs()
 				height  = 150/#catNames-1,
 				caption = catNames[i],
 				OnClick = {selectTab},
+				backgroundColor = black,
 				OnMouseWheel = {scrollMenus},
 				font    = {
 					color = {.5, .5, .5, 1}
@@ -558,7 +603,7 @@ function widget:Initialize()
 	Chili = WG.Chili
 	screen0 = Chili.Screen0
 	
-	buildMenu = Chili.Window:New{
+	buildMenu = Chili.Panel:New{
 		parent       = screen0,
 		name         = 'buildMenu',
 		active       = false,
@@ -584,7 +629,7 @@ function widget:Initialize()
 		padding = {0,0,0,0},
 	}
 	
-	orderBG = Chili.Window:New{
+	orderBG = Chili.Panel:New{
 		parent = screen0,
 	}
 

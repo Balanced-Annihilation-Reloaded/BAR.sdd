@@ -133,11 +133,11 @@ skin.imagelistviewitem = {
 --]]
 
 skin.panel = {
-  TileImageBK = ":cl:tech_button.png",
+  TileImageBK = ":c:tech_dragwindow.png",
   TileImageFG = ":cl:empty.png",
-  tiles = {22, 22, 22, 22},
-  backgroundColor = {0,0,0,1},
-  borderColor = {0,0,0,1},
+  tiles = {62, 62, 62, 62},
+  backgroundColor = {0.1, 0.1, 0.1, 0.7},
+  --borderColor = {0,0,0,1},
 
   DrawControl = DrawPanel,
 }

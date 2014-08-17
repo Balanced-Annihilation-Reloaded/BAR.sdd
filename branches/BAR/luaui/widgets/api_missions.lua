@@ -39,6 +39,7 @@ local to_unload = {
 
 
 local to_reload = {}
+local Chili
 
 function widget:SetConfigData(data)
     to_reload = data
@@ -56,6 +57,8 @@ function widget:Initialize()
         widgetHandler:RemoveWidget()
         return
     end
+    
+    Chili = WG.Chili
 
     -- if this game is a mission, unload unwanted widgets
     for name,w in pairs(widgetHandler.knownWidgets) do
@@ -66,12 +69,52 @@ function widget:Initialize()
         end   
     end
     
-    -- hide console
+    -- hide (engine) console, unless its $VERSION in which case assume we are developing and show it
+    if not string.find(Game.gameVersion, "VERSION") then
+        Spring.SendCommands('console 0')
+    end
     
     -- missions GUI
+    CreateMissionGUI()
+end
+
+function widget:ShutDown ()
+	Spring.SendCommands('console 1')
+	Spring.SetConfigString('InputTextGeo', '0.26 0.73 0.02 0.028') --default pos
 end
 
 function widget:GetConfigData()
     return to_reload
 end
+
+------------------------------------
+
+function CreateMissionGUI()
+
+    window = Chili.Panel:New{
+        parent = Chili.Screen0,
+		right  = 450+50,
+        y      = 0,
+		width  = 525,
+        minHeight = 25,
+		autosize = true,
+    }
+    
+    master_panel = Chili.LayoutPanel:New{
+        parent = window,
+        width = '100%',
+		resizeItems = false,
+        autosize = true,
+        minHeight = 25,
+		padding     = {0,0,0,0},
+		itemPadding = {0,0,0,0},
+		itemMargin  = {0,0,0,0},
+        orientation = 'vertical',
+    }   
+
+
+
+
+end
+
 

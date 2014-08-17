@@ -1,6 +1,12 @@
+--- Window module
+
+--- Window fields.
+-- Inherits from Control.
+-- @see control.Control
+-- @table Window
 Window = Control:Inherit{
   classname = 'window',
-  resizable = false,
+  resizable = true,
   draggable = true,
 
   minWidth  = 50,

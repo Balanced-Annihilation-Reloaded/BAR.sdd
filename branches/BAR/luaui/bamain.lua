@@ -128,12 +128,16 @@ function DrawScreen(vsx, vsy)
   return widgetHandler:DrawScreen()
 end
 
-function KeyPress(key, mods, isRepeat)
-  return widgetHandler:KeyPress(key, mods, isRepeat)
+function TextInput(utf8, ...)
+  return widgetHandler:TextInput(utf8)
 end
 
-function KeyRelease(key, mods)
-  return widgetHandler:KeyRelease(key, mods)
+function KeyPress(key, mods, isRepeat, label, unicode)
+  return widgetHandler:KeyPress(key, mods, isRepeat, label, unicode)
+end
+
+function KeyRelease(key, mods, label, unicode)
+  return widgetHandler:KeyRelease(key, mods, label, unicode)
 end
 
 function MouseMove(x, y, dx, dy, button)

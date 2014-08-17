@@ -198,6 +198,7 @@ local callInLists = {
   'AddConsoleLine',
   'ViewResize',
   'DrawScreen',
+  'TextInput',
   'KeyPress',
   'KeyRelease',
   'MousePress',
@@ -1357,6 +1358,15 @@ end
 --
 --  Keyboard call-ins
 --
+
+function widgetHandler:TextInput(utf8, ...)
+  for _,w in ipairs(self.TextInputList) do
+    if (w:TextInput(utf8, ...)) then
+      return true
+    end
+  end
+  return false
+end
 
 function widgetHandler:KeyPress(key, mods, isRepeat, label, unicode)
   if (self.tweakMode) then

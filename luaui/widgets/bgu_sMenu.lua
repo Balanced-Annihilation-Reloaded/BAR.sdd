@@ -699,6 +699,7 @@ function widget:Update()
 		
 		-- now act as though unitDefID is selected for building
 		startUnitDefID = uDID
+        sUnits[1] = uDID
 		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 		teamColor = {r,g,b,0.8}
 	

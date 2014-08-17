@@ -200,15 +200,21 @@ end
 local function selectTab(self)
 	local choice = self.tabNum
 	showGrid(choice)
-
-	if menuTab[menuTabs.choice] then
-		menuTab[menuTabs.choice].font.color = {.5,.5,.5,1}
-		menuTab[menuTabs.choice]:Invalidate()
+	
+	local highLight = menuTab[menuTabs.choice] 
+	if highLight then
+		highLight.font.color = {.5,.5,.5,1}
+		highLight.font.size  = 14
+		highLight.width = 100
+		highLight:Invalidate()
 	end
-
-	if menuTab[choice] then
-		menuTab[choice].font.color = {1,1,1,1}
-		menuTab[choice]:Invalidate()
+	
+	local old = menuTab[choice] 
+	if old then
+		old.font.color = {1,1,1,1}
+		old.width = 120
+		old.font.size  = 18
+		old:Invalidate()
 	end
 
 	menuTabs.choice = choice
@@ -423,7 +429,7 @@ local function makeMenuTabs()
 				tabNum  = i,
 				tooltip = 'You can scroll through the different categories with your mouse wheel!',
 				parent  = menuTabs,
-				width   = '100%',
+				width   = 100,
 				y       = (tabCount - 1) * 150 / #catNames + 1,
 				height  = 150/#catNames-1,
 				caption = catNames[i],
@@ -616,7 +622,7 @@ function widget:Initialize()
 		choice  = 1,
         savedChoice = 1,
 		height  = 150,
-		width   = 100,
+		width   = 120,
 		padding = {0,0,0,0},
 		margin  = {0,0,0,0}
 	}

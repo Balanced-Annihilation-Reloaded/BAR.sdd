@@ -11,11 +11,17 @@ local skin = {
 }
 
 
+local function GetTeamColor()
+	local teamID = Spring.GetLocalTeamID()
+	local r,g,b = Spring.GetTeamColor(teamID)
+	if r+g+b < 0.1 or r+g+b > 2.3 then r,g,b = 0.4,0.4,0.4 end
+	return {r,g,b,1}
+end
 
 skin.general = {
-  borderColor = {1, 1, 1, .8},
-  focusColor  = {r, g, b, 1},
-	draggable   = false,
+  borderColor = {1, 1, 1, 1},
+  focusColor  = GetTeamColor(),
+  draggable   = false,
   font        = {
     color        = {1,1,1,1},
     outlineColor = {0,0,0,0.9},
@@ -25,26 +31,12 @@ skin.general = {
   },
 }
 
-skin.window = {
-	TileImage = ":cl:flatbk.png",
-	
-  tiles      = {4, 4, 4, 4},
-  padding    = {14, 23, 14, 14},
-  hitpadding = {10, 4, 10, 10},
-  captionColor = {0, 0, 0, 0.55},
-
-  boxes = {
-    resize = {-25, -25, -14, -14},
-    drag = {0, 0, "100%", 24},
-  },
-
-  NCHitTest   = NCHitTestWithPadding,
-  NCMouseDown = WindowNCMouseDown,
-  NCMouseDownPostChildren = WindowNCMouseDownPostChildren,
-
-  DrawControl    = DrawWindow,
-  DrawDragGrip   = DrawDragGrip,
-  DrawResizeGrip = DrawResizeGrip,
+skin.panel = {
+	TileImageBK = ":cl:flatbk.png",
+	TileImageFG = ":cl:empty.png",
+	tiles = {4, 4, 4, 4},
+	backgroundColor = {1, 1, 1, 1},
+	DrawControl = DrawPanel,
 }
 
 skin.control = skin.general

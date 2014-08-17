@@ -15,7 +15,8 @@ local skin = {
 skin.general = {
   focusColor  = {1.0, 0.7, 0.1, 0.8},
   borderColor = {1.0, 1.0, 1.0, 1.0},
-	draggable   = false,
+  draggable   = false,
+  resizable   = false,
 
   font = {
     font    = SKINDIR .. "fonts/n019003l.pfb",
@@ -135,6 +136,8 @@ skin.panel = {
   TileImageBK = ":cl:tech_button.png",
   TileImageFG = ":cl:empty.png",
   tiles = {22, 22, 22, 22},
+  backgroundColor = {0,0,0,1},
+  borderColor = {0,0,0,1},
 
   DrawControl = DrawPanel,
 }

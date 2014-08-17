@@ -80,7 +80,7 @@ end
 local function initWindow()
 	local screen0 = Chili.Screen0
 	
-	window0 = Chili.Window:New{
+	window0 = Chili.Panel:New{
 		parent    = screen0,
 		right     = 0, 
 		y         = 0, 

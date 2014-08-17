@@ -28,7 +28,7 @@ local spGetFeatureResources     = Spring.GetFeatureResources
 local screenWidth, screenHeight = Spring.GetWindowGeometry()
 -----------------------------------
 local function initWindow()
-	tipWindow = Chili.Window:New{
+	tipWindow = Chili.Panel:New{
 		parent    = screen, 
 		skin      = 'Flat', 
 		width     = 75,

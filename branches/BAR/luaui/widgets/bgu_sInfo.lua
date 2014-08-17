@@ -403,7 +403,7 @@ function widget:Initialize()
 	local winSize = screen.height * 0.2
 	
 	--Main window, ancestor of everything
-	infoWindow = Chili.Window:New{
+	infoWindow = Chili.Panel:New{
 		padding = {6,6,6,6},
 		parent  = screen,
 		x       = 0,
@@ -412,7 +412,7 @@ function widget:Initialize()
 		height  = winSize,
 	}
 	
-	groundInfo = Chili.Window:New{
+	groundInfo = Chili.Panel:New{
 		padding = {6,6,6,6},
 		parent  = screen,
 		x       = 0,

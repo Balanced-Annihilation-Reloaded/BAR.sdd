@@ -95,7 +95,7 @@ local function loadMinMenu()
 		},
 	}
 	
-	minMenu = Chili.Window:New{
+	minMenu = Chili.Panel:New{
 		parent    = Chili.Screen0,
 		right     = 210, 
 		y         = 60, 

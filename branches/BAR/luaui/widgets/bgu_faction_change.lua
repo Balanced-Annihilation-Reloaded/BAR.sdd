@@ -78,7 +78,7 @@ function widget:Initialize()
     local scrH = Chili.Screen0.height
 	local winW = scrH * 0.25
 
-    window = Chili.Window:New{
+    window = Chili.Panel:New{
         parent = Chili.Screen0,
         x = 0,
         y = scrH*0.2-80,

@@ -6,7 +6,7 @@ function widget:GetInfo()
 		author    = 'Funkencool',
 		date      = '2013',
 		license   = 'GNU GPL v2',
-		layer     = math.huge,
+		layer     = 2000,
 		enabled   = true,
 		handler   = true,
 	}

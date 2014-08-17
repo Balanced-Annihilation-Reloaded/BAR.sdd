@@ -61,7 +61,7 @@ local orderColors = {
 
 local white = {1,1,1,1}
 local black = {0,0,0,1}
-local green = {0.5,1,0,1}
+local green = {0,1,0,1}
 local yellow = {0.5,0.5,0,1}
 local orange = {1,0.5,0,1}
 local red = {1,0,0,1}
@@ -140,22 +140,17 @@ end
 
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
-	if obj.params then
-		for key, value in ipairs(obj.params) do
-			Spring.Echo(value)
-		end
-	end
 	if obj.disabled then return end
 	if not gameStarted then
         WG.SetSelDefID(-obj.cmdId)
-        return true
+	else
+		local index = spGetCmdDescIndex(obj.cmdId)
+		if (index) then
+			local left, right = (button == 1), (button == 3)
+			local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
+			spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)
+		end  
     end
-    local index = spGetCmdDescIndex(obj.cmdId)
-	if (index) then
-		local left, right = (button == 1), (button == 3)
-		local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
-		spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)
-	end
 end
 
 local function showGrid(num)
@@ -219,20 +214,15 @@ local function selectTab(self)
 
 	menuTabs.choice = choice
     if choice ~= 3 or (choice==3 and (#grid[1].children>0 or #grid[1].children>0)) then
-        menuTabs.savedChoice = choice 
+        menuTabs.prevChoice = choice 
     end
 
     resizeUI(Chili.Screen0.height, choice)    
 end
 
-local function scrollMenus(self,x,y,up,value)
+local function scrollMenus(_,_,_,_,value)
 	local choice = menuTabs.choice
-	choice = choice - value
-	if choice > #menuTab then
-		choice = 1
-	elseif choice < 1 then
-		choice = #menuTab
-	end
+	choice = (choice - value - 1) % #menuTab + 1
     selectTab(menuTab[choice])
 	return true -- Prevents zooming
 end
@@ -308,10 +298,9 @@ local function addOrder(cmd)
 			}
 		}
 	}
-    
+
     if cmd.id==CMD.STOCKPILE then
-        local units = Spring.GetSelectedUnits()
-        for _,uID in ipairs(units) do -- we just pick the first unit that can stockpile
+        for _,uID in ipairs(sUnits) do -- we just pick the first unit that can stockpile
             local n,q = Spring.GetUnitStockpile(uID)
             if n and q then
                 local stockpile_q = Chili.Label:New{right=0,bottom=0,caption=n.."/"..q, font={size=14,shadow=false,outline=true,autooutlinecolor=true,outlineWidth=4,outlineWeight=6}}
@@ -320,7 +309,7 @@ local function addOrder(cmd)
             end
         end
     end
-    
+
 	orderMenu:AddChild(button)
 	orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height)
 	orderMenu:SetLayer(2)
@@ -351,16 +340,17 @@ local function SetGridDimensions()
         -- work out if we have too many buttons in a grid, request more columns if so
         local n = #grid[i].children 
         local neededColumns = math.floor((n-1)/maxRows)+1
-        local nCols = math.max(3, math.min(maxCols, neededColumns)) 
+        local nCols = math.max(3, math.min(maxCols, neededColumns))
+		local nRows = math.floor((n-1)/nCols)+1
 		grid[i].columns = nCols
-        grid[i].rows = maxRows
+        grid[i].rows = math.max(4, nRows)
     end
 end
 
 local function ChooseTab()
     -- use the most recent tab that wasn't the factory tab, if possible
     for i=1,3 do
-        if #grid[i].children>0 and menuTabs.savedChoice==i then return i end
+        if #grid[i].children>0 and menuTabs.prevChoice==i then return i end
     end
     for i=1,3 do
         if #grid[i].children>0 then return i end
@@ -523,12 +513,6 @@ local function createButton(name, unitDef)
 		            '\nBuild Time: '..unitDef.buildTime..
 	              rangeText
 
-	local raindrop = Chili.Image:New{
-		x = 1, bottom = 1,
-		height = 15, width = 15,
-		file   = imageDir..'raindrop.png',
-	}
-
 	-- make the button for this unit
 	unit[name] = Chili.Button:New{
 		name      = name,
@@ -620,7 +604,7 @@ function widget:Initialize()
 	menuTabs = Chili.Control:New{
 		parent  = screen0,
 		choice  = 1,
-        savedChoice = 1,
+		prevChoice = 1,
 		height  = 150,
 		width   = 120,
 		padding = {0,0,0,0},
@@ -661,9 +645,9 @@ function widget:Initialize()
 			margin   = {0,0,0,0},
 		}
 	end
-    
-    resizeUI(Chili.Screen0.height)
-    
+
+	resizeUI(Chili.Screen0.height)
+
 
 	-- Create a cache of buttons stored in the unit array
 	for name, unitDef in pairs(UnitDefNames) do
@@ -676,10 +660,9 @@ function widget:Initialize()
 end
 
 --------------------------- 
--- quick and dirty fix for resizing (needs clean up, has copy/paste code etc..)
+-- 
 function widget:ViewResize(_,scrH)
 	resizeUI(scrH)
-	updateRequired = true
 end
 --------------------------- 
 -- When Available Commands change this is called
@@ -688,58 +671,49 @@ function widget:CommandsChanged()
 	updateRequired = true
 end
 --------------------------- 
--- If update is required this Loads the panel and queue for the new unit or hides them if none exists
---  There is an offset to prevent the panel disappearing right after a command has changed (for fast clicking)
+-- Checks status of game and InitialQueue, handles InitialQueue if enabled
 local startUnitDefID
-
-function widget:Update()
-
-	if not gameStarted and not Spring.GetSpectatingState() then        
-		-- game hasn't started, so we are dealing only with initial_queue at this point
-		-- check that initial_queue is present
-		if not WG.SetSelDefID then return end
-		
-		-- check if we just changed faction
-		local uDID = WG.startUnit or Spring.GetTeamRulesParam(myTeamID, 'startUnit')
-		if uDID==startUnitDefID then return end 
-		
-		-- now act as though unitDefID is selected for building
-		startUnitDefID = uDID
-        sUnits[1] = uDID
-		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
-		teamColor = {r,g,b,0.8}
-	
-		WG.HideFacBar()
-		buildMenu.active = false
-		orderMenu.active = false
-		if not orderBG.hidden then
-			orderBG:Hide()
-		end
-		
-		loadDummyPanels(startUnitDefID)
-		return
+local function InitialQueue()
+	if not WG.SetSelDefID or gameStarted or Spring.GetSpectatingState() then 
+		return false 
 	end
 
+	-- check if we just changed faction
+	local uDID = WG.startUnit or Spring.GetTeamRulesParam(myTeamID, 'startUnit')
+	if uDID==startUnitDefID then return end 
+
+	-- now act as though unitDefID is selected for building
+	startUnitDefID = uDID
+    sUnits[1] = uDID
+	local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
+	teamColor = {r,g,b,0.8}
+
+	WG.HideFacBar()
+	buildMenu.active = false
+	orderMenu.active = false
+	if orderBG.visible then
+		orderBG:Hide()
+	end
+	
+	loadDummyPanels(startUnitDefID)
+	return true
+end
+--------------------------- 
+-- If update is required this Loads the panel and queue for the new unit or hides them if none exists
+--  There is an offset to prevent the panel disappearing right after a command has changed (for fast clicking)
+function widget:Update()
+	if InitialQueue() then return end
+	
 	if updateRequired then
 		local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 		teamColor = {r,g,b,0.8}
 		updateRequired = false
-
-        if Spring.GetSelectedUnitsCount()>0 then 
-            orderMenu.active = true
-        else
-            orderMenu.active = false       
-        end
+		orderMenu.active = false -- if order cmd is found during parse this will become true
+		buildMenu.active = false -- if build cmd is found during parse this will become true
 
 		queue = {}
 		queueHandler()
-		loadPanels()        
-		
-        if menuTabs.choice then 
-            buildMenu.active = true
-        else
-            buildMenu.active = false
-        end
+		loadPanels()
 
 		if not orderMenu.active and orderBG.visible then
 			orderBG:Hide()

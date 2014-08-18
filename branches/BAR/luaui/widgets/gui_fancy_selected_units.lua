@@ -74,6 +74,7 @@ local spGetTeamColor				= Spring.GetTeamColor
 local spGetUnitHealth 				= Spring.GetUnitHealth
 local spGetUnitIsCloaked			= Spring.GetUnitIsCloaked
 local spUnitInView                  = Spring.IsUnitInView
+local spIsUnitVisible				= Spring.IsUnitVisible
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -93,7 +94,7 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	
 	-- opacity
 	spotterOpacity					= 0.9,
-	spotterOpacityMin				= 0.3,		-- minimum value before a platter will be added
+	spotterOpacityMin				= 0.3,		-- minimum value before a platter will be rendered
 	baseOpacity						= 0.23,
 	firstLineOpacity				= 1,
 	secondLineOpacity				= 0.8,
@@ -111,14 +112,14 @@ OPTIONS.defaults = {	-- these will be loaded when switching style, but the style
 	--selectionEndAnimationScale	= 1.17,
 	
 	-- animation
-	rotationSpeed					= 0,
+	rotationSpeed					= 1,
 	animationSpeed					= 0.0006,	-- speed of scaling up/down inner and outer lines
 	animateSpotterSize				= true,
 	maxAnimationMultiplier			= 1.014,
 	minAnimationMultiplier			= 0.99,
 	
 	-- prefer not to change because other widgets use these values too  (highlight_units, given_units, selfd_icons, ...)
-	scaleFactor						= 2.9,			
+	scaleFactor						= 2.9,
 	rectangleFactor					= 3.3,
 	
 	-- circle shape
@@ -153,7 +154,6 @@ table.insert(OPTIONS, {
 	circlePieceDetail				= 1,
 	circleSpaceUsage				= 0.55,
 	circleInnerOffset				= 0,
-	rotationSpeed					= 1,
 })
 table.insert(OPTIONS, {
 	name							= "Stretched Blocky Dots",
@@ -251,18 +251,6 @@ local function updateSelectedUnitsData()
 			end
 		end
 	end
-	
-	-- creates has blinking problem
-	--[[ create new table that has iterative keys instead of unitID (to speedup after about 300 different units have ever been selected)
-	perfSelectedUnits = {}
-	for teamID,_ in pairs(selectedUnits) do
-		perfSelectedUnits[teamID] = {}
-		for unitID,_ in pairs(selectedUnits[teamID]) do
-			table.insert(perfSelectedUnits[teamID], unitID)
-		end
-		perfSelectedUnits[teamID]['totalUnits'] = table.getn(perfSelectedUnits[teamID])
-	end
-	]]--
 end
 
 
@@ -733,11 +721,7 @@ end
 
 function GetUsedRotationAngle(unitID, shapeName, opposite)
 	if (shapeName == 'circle') then
-		if opposite then 
-			return currentRotationAngleOpposite
-		else
-			return currentRotationAngle
-		end
+		return (opposite and currentRotationAngleOpposite or currentRotationAngle)
 	else
 		return degrot[unitID]
 	end
@@ -753,13 +737,11 @@ do
 		
 		local OPTIONScurrentOption = OPTIONS[currentOption]
 		
-		--for unitKey=1, perfSelectedUnits[teamID]['totalUnits'] do
-		--	unitID = perfSelectedUnits[teamID][unitKey]
 		for unitID in pairs(selectedUnits[teamID]) do
 			udid = spGetUnitDefID(unitID)
 			unit = UNITCONF[udid]
 			
-			if (unit) and spUnitInView(unitID) then
+			if (unit) and spUnitInView(unitID) then		 -- and spIsUnitVisible(unitID, unit.xscale*scale*1.3, false) 
 				unitPosX, unitPosY, unitPosZ = spGetUnitViewPosition(unitID, true)
 				
 				changedScale = 1
@@ -790,7 +772,6 @@ do
 						
 					-- check if the unit is newly selected
 					elseif (OPTIONScurrentOption.selectionStartAnimation and selectedUnits[teamID][unitID]['new'] > maxSelectTime) then
-						--spEcho(selectedUnits[teamID][unitID]['new'] - maxSelectTime)
 						changedScale = OPTIONScurrentOption.selectionStartAnimationScale + (((currentClock - selectedUnits[teamID][unitID]['new']) / OPTIONScurrentOption.selectionStartAnimationTime)) * (1 - OPTIONScurrentOption.selectionStartAnimationScale)
 						if (changeOpacity) then
 							if type == 'unit highlight' then

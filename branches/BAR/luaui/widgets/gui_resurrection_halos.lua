@@ -28,7 +28,7 @@ OPTIONS = {
 	skipBuildings			= true,
 	timeoutTime				= 90,
 	timeoutFadeTime			= 40,
-	dontTimeout				= false,
+	dontTimeout				= true,
 	dontTimeoutComs			= true,
 	onlyForComs				= false,
 	sizeVariation			= 0.11,
@@ -200,7 +200,7 @@ end
 
 
 -- for testing: draw halos on selected units
-if 1 == 2 then
+--[[
 function widget:CommandsChanged()
 	
 	if spGetSelectedUnitsCount() > 0 then
@@ -217,7 +217,7 @@ function widget:CommandsChanged()
 		end
 	end
 end
-end
+]]--
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

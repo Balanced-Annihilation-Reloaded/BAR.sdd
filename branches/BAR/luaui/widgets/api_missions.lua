@@ -21,7 +21,7 @@ end
     
 ]]
 
-local isMission = false
+local isMission 
 
 local to_unload = {
     ["Player List"]=true, 
@@ -46,6 +46,13 @@ function widget:SetConfigData(data)
 end
 
 function widget:Initialize()
+    Chili = WG.Chili
+end
+
+function widget:GamePreload()
+    isMission = WG.isMission
+    Spring.Echo("Missions: Activated")
+    
     -- reload any widgets that were disabled because the previous game was a mission
     if not isMission then 
         for name,_ in pairs(to_reload) do
@@ -58,7 +65,6 @@ function widget:Initialize()
         return
     end
     
-    Chili = WG.Chili
 
     -- if this game is a mission, unload unwanted widgets
     for name,w in pairs(widgetHandler.knownWidgets) do
@@ -79,8 +85,8 @@ function widget:Initialize()
 end
 
 function widget:ShutDown ()
-	Spring.SendCommands('console 1')
-	Spring.SetConfigString('InputTextGeo', '0.26 0.73 0.02 0.028') --default pos
+    Spring.SendCommands('console 1')
+    Spring.SetConfigString('InputTextGeo', '0.26 0.73 0.02 0.028') --default pos
 end
 
 function widget:GetConfigData()
@@ -93,27 +99,26 @@ function CreateMissionGUI()
 
     window = Chili.Panel:New{
         parent = Chili.Screen0,
-		right  = 450+50,
+        right  = 450+50,
         y      = 0,
-		width  = 525,
+        width  = 525,
         minHeight = 25,
-		autosize = true,
+        autosize = true,
     }
     
     master_panel = Chili.LayoutPanel:New{
         parent = window,
         width = '100%',
-		resizeItems = false,
+        resizeItems = false,
         autosize = true,
         minHeight = 25,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
         orientation = 'vertical',
     }   
 
-
-
+    --Spring.Echo(WG.MissionObjective)
 
 end
 

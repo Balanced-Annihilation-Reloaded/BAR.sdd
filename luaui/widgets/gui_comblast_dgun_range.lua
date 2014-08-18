@@ -207,7 +207,6 @@ end
 
 -- draw circles
 function widget:DrawWorldPreUnit()
-Spring.Echo(darkOpacity)
     if spIsGUIHidden() then return end
     glDepthTest(true)
     for _,center in pairs(comCenters) do

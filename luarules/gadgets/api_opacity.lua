@@ -38,7 +38,7 @@ function GetOpacityDark(cy,gy)
     return math.max(0.1, 0.5 - (cy-gy-3000) * (1/10000))
 end
 function GetOpacityLight(cy,gy)
-    return math.max(0.2, 0.8 - (cy-gy-3000) * (1/10000))
+    return math.max(0.2, 0.7 - (cy-gy-3000) * (1/10000))
 end
 
 local gy = math.max(0,mapBaseHeight)

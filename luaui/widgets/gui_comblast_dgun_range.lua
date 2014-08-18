@@ -36,7 +36,7 @@ local glDrawGroundCircle 	= gl.DrawGroundCircle
 local glColor				= gl.Color
 local GL_ALWAYS				= GL.ALWAYS
 
-local circleDivs = 32
+local circleDivs = 64
 local blastRadius = 360 -- com explosion
 local dgunRange = WeaponDefNames["armcom_arm_disintegrator"].range + 2*WeaponDefNames["armcom_arm_disintegrator"].damageAreaOfEffect
 
@@ -207,13 +207,15 @@ end
 
 -- draw circles
 function widget:DrawWorldPreUnit()
+Spring.Echo(darkOpacity)
     if spIsGUIHidden() then return end
     glDepthTest(true)
     for _,center in pairs(comCenters) do
         if center[4] then
-            glColor(1, 0.8, 0, min(center[5],lightOpacity))
+			gl.LineWidth(1.5)
+            glColor(1, 0.8, 0, min(center[5],darkOpacity))
             glDrawGroundCircle(center[1], center[2], center[3], dgunRange, circleDivs)
-            glColor(1, 0, 0, min(center[5],darkOpacity))
+            glColor(1, 0, 0, min(center[5],lightOpacity))
             glDrawGroundCircle(center[1], center[2], center[3], blastRadius, circleDivs)
         end
     end

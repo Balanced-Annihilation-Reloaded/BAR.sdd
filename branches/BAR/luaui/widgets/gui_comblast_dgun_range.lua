@@ -211,10 +211,9 @@ function widget:DrawWorldPreUnit()
     glDepthTest(true)
     for _,center in pairs(comCenters) do
         if center[4] then
-			gl.LineWidth(1.5)
-            glColor(1, 0.8, 0, min(center[5],darkOpacity))
+            glColor(1, 0.8, 0, min(center[5],lightOpacity))
             glDrawGroundCircle(center[1], center[2], center[3], dgunRange, circleDivs)
-            glColor(1, 0, 0, min(center[5],lightOpacity))
+            glColor(1, 0, 0, min(center[5],darkOpacity))
             glDrawGroundCircle(center[1], center[2], center[3], blastRadius, circleDivs)
         end
     end

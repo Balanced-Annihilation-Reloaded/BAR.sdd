@@ -16,12 +16,11 @@ end
     NOTES
         
     Missions have their own spawn/end behaviour and are single player only
-    The mission communicates with the missions GUI by calling functions exposed to WG
-    
-    
+    The mission gives instructions/data to this GUI via WG
+        
 ]]
 
-local isMission 
+local isMission --= true
 
 local to_unload = {
     ["Player List"]=true, 
@@ -35,6 +34,7 @@ local to_unload = {
     ["Center n Select"]=true,
     ["Game Type Info"]=true,
     ["Ally Selected Units"]=true,
+    ["Open Host List"] = true
 }
 
 
@@ -50,7 +50,7 @@ function widget:Initialize()
 end
 
 function widget:GamePreload()
-    isMission = WG.isMission
+    isMission = isMission or WG.isMission 
     Spring.Echo("Missions: Activated")
     
     -- reload any widgets that were disabled because the previous game was a mission
@@ -82,7 +82,18 @@ function widget:GamePreload()
     
     -- missions GUI
     CreateMissionGUI()
+    loadedGUI = true
 end
+
+--testing only - load the GUI on luaui reload if isMission has been forced true
+local loadedGUI = false
+function widget:GameFrame()
+    if not loadedGUI and isMission and Spring.GetGameFrame()>0 then --for testing only
+        CreateMissionGUI()
+        loadedGUI = true    
+    end
+end
+
 
 function widget:ShutDown ()
     Spring.SendCommands('console 1')
@@ -95,6 +106,13 @@ end
 
 ------------------------------------
 
+local turquoise = "\255\0\240\180"
+local red = "\255\255\20\20"
+local green = "\255\0\255\0"
+local white = "\255\255\255\255"
+local blue = "\255\170\170\255"
+local grey = "\255\150\150\150"
+
 function CreateMissionGUI()
 
     window = Chili.Panel:New{
@@ -106,19 +124,74 @@ function CreateMissionGUI()
         autosize = true,
     }
     
-    master_panel = Chili.LayoutPanel:New{
+    mission_name_window = Chili.Panel:New{
+        parent = window,
+        width = 525,
+        autosize = false,
+        height = 35,
+        padding     = {0,0,0,0},
+        itemPadding = {2,2,2,2},
+        itemMargin  = {0,0,0,0},
+    }   
+        
+    mission_name_text = Chili.TextBox:New{
+        parent = mission_name_window,
+        width = '100%',
+        height = 30,
+        y = 10,
+        x = 10,
+        text = white .. "Mission:  " .. green .. (WG.MissionName or "Test Mission"),  
+        font = {
+            size = 16,
+        }
+    }
+
+    mission_objective = Chili.LayoutPanel:New{
         parent = window,
         width = '100%',
-        resizeItems = false,
         autosize = true,
-        minHeight = 25,
-        padding     = {0,0,0,0},
-        itemPadding = {0,0,0,0},
+        height = 100,
+        y = 35,
+        padding     = {5,5,5,5},
+        itemPadding = {2,2,2,2},
         itemMargin  = {0,0,0,0},
-        orientation = 'vertical',
     }   
+    
+    mission_objective_text = Chili.TextBox:New{
+        parent = mission_objective,
+        width = '100%',
+        height = 1,
+        text = blue .. (WG.MissionObjective or "Test Mission Objective. Go forth and multiply! Type extra text so you get to see what happens with a linebreak."),  
+        font = {
+            outline          = true,
+            autoOutlineColor = true,
+            outlineWidth     = 3,
+            outlineWeight    = 8,
+            size             = 15,        
+        }
+    }
 
-    --Spring.Echo(WG.MissionObjective)
+    local function ShowHide()
+        if mission_objective.hidden then
+            showhide_button:SetCaption(grey .. "hide")
+            mission_objective:Show()
+            window:Invalidate()
+        else
+            showhide_button:SetCaption(grey .. "show")
+            mission_objective:Hide()
+            window:Invalidate()
+        end
+    
+    end
+
+    showhide_button = Chili.Button:New{
+        parent = mission_name_window,
+        y = 0,
+        right = 0,
+        height = 33,
+        caption = grey .. "hide",
+        onclick = {ShowHide},
+    }
 
 end
 

@@ -1337,7 +1337,7 @@ function SetupStack()
         minHeight   = 50,
 		resizeItems = false,
 		autosize    = true,
-		padding     = {0,0,0,0},
+		padding     = {0,5,0,0},
 		itemPadding = {0,0,0,0},
 		itemMargin  = {0,0,0,0},
 		children    = {},

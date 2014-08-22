@@ -474,7 +474,7 @@ function CreateGUI()
         autosize = true,
         minHeight = 1,
 		padding     = {0,2,0,0},
-		itemPadding = {10,0,0,0},
+		itemPadding = {10,5,0,0},
 		itemMargin  = {0,0,0,0},
         orientation = 'vertical',
     }   

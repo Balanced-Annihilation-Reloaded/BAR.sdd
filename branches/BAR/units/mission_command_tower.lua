@@ -29,7 +29,7 @@ return {
 		objectname = "mission_command_tower.s3o",
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
-		sightdistance = 1000,
+		sightdistance = 100,
 
 		yardmap = "oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo",
 		customparams = {

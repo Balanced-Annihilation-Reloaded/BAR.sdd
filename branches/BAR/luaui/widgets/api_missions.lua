@@ -34,12 +34,14 @@ local to_unload = {
     ["Center n Select"]=true,
     ["Game Type Info"]=true,
     ["Ally Selected Units"]=true,
-    ["Open Host List"] = true
+    ["Open Host List"]=true
 }
 
 
 local to_reload = {}
+
 local Chili
+local loadedGUI = false
 
 function widget:SetConfigData(data)
     to_reload = data
@@ -86,7 +88,6 @@ function widget:GamePreload()
 end
 
 --testing only - load the GUI on luaui reload if isMission has been forced true
-local loadedGUI = false
 function widget:GameFrame()
     if not loadedGUI and isMission and Spring.GetGameFrame()>0 then --for testing only
         CreateMissionGUI()
@@ -193,6 +194,20 @@ function CreateMissionGUI()
         onclick = {ShowHide},
     }
 
+    
+    local function NewMissionObjective(objective)
+        mission_objective_text:SetText(objective)
+        --Spring.PlaySoundStream('sounds/missions/NewObjective.wav') 
+        if mission_objective.hidden then
+            mission_objective:Show()
+        end
+        -- TODO: flashing indicator
+    end
+
+    WG.NewMissionObjective = NewMissionObjective -- make it callable by the mission
+    
 end
+
+
 
 

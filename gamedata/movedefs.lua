@@ -279,6 +279,34 @@ local moveDatas = {
 		maxslope = 18,
 		maxwaterdepth = 0,
 	},
+	CHICKQUEEN = {
+		footprintx=3,
+		footprintz=3,
+		maxwaterdepth=72,
+		maxslope=40,
+		crushstrength=15000,
+		avoidMobilesOnPath=false,
+	},
+	CHICKENHKBOT3 = {
+		footprintx=3,
+		footprintz=3,
+		maxwaterdepth=22,
+		maxslope=36,
+		crushstrength=1400,
+	},
+	CHICKENHKBOT4 = {
+		footprintx=4,
+		footprintz=4,
+		maxwaterdepth=22,
+		maxslope=36,
+		crushstrength=11000,
+	},
+	CHICKENHOVERDODO = {
+		footprintx = 1,
+		footprintz = 1,
+		maxslope = 30,
+		maxwaterslope = 255,
+	},
 }
 
 --------------------------------------------------------------------------------

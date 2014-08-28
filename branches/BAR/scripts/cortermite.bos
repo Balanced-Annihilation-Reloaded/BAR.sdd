@@ -3,12 +3,100 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  body, head, barrel1, barrel2, flare1, flare2, leg1, leg2, leg3, leg4, leg5, leg6 ;
+piece  body, head, barrel1, barrel2, flare1, flare2,  leg1a,leg1b,leg2a,leg2b,leg3a,leg3b,leg4a,leg4b,leg5a,leg5b,leg6a,leg6b;
 
-static-var  bMoving, Static_Var_2, restore_delay, gun_1;
+static-var  moving, Static_Var_2, restore_delay, gun_1,moveSpeed, currentSpeed,WALK_PERIOD;
 
 // Signal definitions
 #define SIG_AIM				2
+
+#define SIG_MOVE 8
+
+#define FRONT_RIGHT_UP\
+	turn leg6a to y-axis <70> speed <12.5> *1000/(WALK_PERIOD);\
+	turn leg6a to z-axis <20> speed <20> *1000/(WALK_PERIOD);
+
+#define FRONT_RIGHT_DOWN\
+	turn leg6a to z-axis <-10> speed <30> *1000/(WALK_PERIOD);\
+	turn leg6b to z-axis <85> speed <85> *1000/(WALK_PERIOD);
+
+#define FRONT_RIGHT_BACK\
+	turn leg6a to y-axis <45> speed <6.25> *1000/(WALK_PERIOD);\
+	turn leg6a to z-axis <0> speed <7.5> *1000/(WALK_PERIOD);\
+	turn leg6b to z-axis <0> speed <23.75> *1000/(WALK_PERIOD);
+
+
+#define FRONT_LEFT_UP\
+	turn leg1a to y-axis <-70> speed <12.5> *1000/(WALK_PERIOD);\
+	turn leg1a to z-axis <-20> speed <20> *1000/(WALK_PERIOD);
+
+#define FRONT_LEFT_DOWN\
+	turn leg1a to z-axis <10> speed <30> *1000/(WALK_PERIOD);\
+	turn leg1b to z-axis <-85> speed <85> *1000/(WALK_PERIOD);
+
+#define FRONT_LEFT_BACK\
+	turn leg1a to y-axis <-45> speed <6.25> *1000/(WALK_PERIOD);\
+	turn leg1a to z-axis <0> speed <7.5> *1000/(WALK_PERIOD);\
+	turn leg1b to z-axis <0> speed <23.75> *1000/(WALK_PERIOD);
+
+
+#define MIDDLE_RIGHT_UP\
+	turn leg5a to y-axis <22.5> speed <22.5> *1000/(WALK_PERIOD);\
+	turn leg5a to z-axis <20> speed <20> *1000/(WALK_PERIOD);
+
+#define MIDDLE_RIGHT_DOWN\
+	turn leg5a to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+
+#define MIDDLE_RIGHT_BACK\
+	turn leg5a to y-axis <-22.5> speed <12.5> *1000/(WALK_PERIOD);
+
+
+#define MIDDLE_LEFT_UP\
+	turn leg2a to y-axis <-22.5> speed <22.5> *1000/(WALK_PERIOD);\
+	turn leg2a to z-axis <-20> speed <20> *1000/(WALK_PERIOD);
+
+#define MIDDLE_LEFT_DOWN\
+	turn leg2a to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+
+#define MIDDLE_LEFT_BACK\
+	turn leg2a to y-axis <22.5> speed <12.5> *1000/(WALK_PERIOD);\
+
+
+#define REAR_RIGHT_UP\
+	turn leg4a to y-axis <-45> speed <12.5> *1000/(WALK_PERIOD);\
+	turn leg4a to z-axis <20> speed <50> *1000/(WALK_PERIOD);\
+	turn leg4b to z-axis <0> speed <55> *1000/(WALK_PERIOD);
+
+#define REAR_RIGHT_DOWN\
+	turn leg4a to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+
+#define REAR_RIGHT_BACK\
+	turn leg4a to y-axis <-70> speed <6.25> *1000/(WALK_PERIOD);\
+	turn leg4a to z-axis <-30> speed <7.5> *1000/(WALK_PERIOD);\
+	turn leg4b to z-axis <85> speed <23.75> *1000/(WALK_PERIOD);
+
+
+#define REAR_LEFT_UP\
+	turn leg3a to y-axis <45> speed <12.5> *1000/(WALK_PERIOD);\
+	turn leg3a to z-axis <-20> speed <50> *1000/(WALK_PERIOD);\
+	turn leg3b to z-axis <0> speed <55> *1000/(WALK_PERIOD);
+
+#define REAR_LEFT_DOWN\
+	turn leg3a to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+
+#define REAR_LEFT_BACK\
+	turn leg3a to y-axis <70> speed <6.25> *1000/(WALK_PERIOD);\
+	turn leg3a to z-axis <30> speed <7.5> *1000/(WALK_PERIOD);\
+	turn leg3b to z-axis <-85> speed <23.75> *1000/(WALK_PERIOD);
+
+
+#define WAIT_WALK\
+	sleep WALK_PERIOD;\
+	while(!moving)\
+	{\
+		sleep 111;\
+	}
+
 
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
@@ -39,126 +127,144 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	return (0);
 	// Build by COBBLER Ver4.0 Copyright @1998 DIGITAL CONCEPT SOFTWARE (MANU@inext.fr) / http://www.annihilationcenter.com/DCS/  
 }
-
-walk2()
+DoTheWalking()
 {
-	if( bMoving )
+	while(TRUE)
 	{
-		turn leg1 to y-axis <43.796703> now;
-		turn leg1 to y-axis <0.000000> speed <218.000000>;
-		turn leg1 to z-axis <0.598901> now;
-		turn leg1 to z-axis <0.000000> speed <3.000000>;
-		turn leg2 to z-axis <0.000000> now;
-		turn leg2 to z-axis <31.005495> speed <155.000000>;
-		turn leg3 to y-axis <34.653846> now;
-		turn leg3 to y-axis <34.005495> speed <3.000000>;
-		turn leg3 to z-axis <31.626374> now;
-		turn leg3 to z-axis <0.000000> speed <155.000000>;
-		turn leg4 to y-axis <-40.148352> now;
-		turn leg4 to y-axis <-40.005495> speed <0.000000>;
-		turn leg4 to z-axis <-31.016484> now;
-		turn leg4 to z-axis <0.000000> speed <152.000000>;
-		turn leg5 to y-axis <-37.098901> now;
-		turn leg5 to y-axis <0.000000> speed <185.000000>;
-		turn leg5 to z-axis <0.000000> now;
-		turn leg5 to z-axis <0.000000> speed <0.000000>;
-		turn leg6 to y-axis <0.000000> now;
-		turn leg6 to y-axis <-30.005495> speed <152.000000>;
-		turn leg6 to z-axis <-45.016484> now;
-		sleep 200;
+		WAIT_WALK
+		FRONT_RIGHT_UP
+		MIDDLE_RIGHT_BACK
+		REAR_LEFT_DOWN
+		WAIT_WALK
+		FRONT_RIGHT_DOWN
+		MIDDLE_LEFT_UP
+		REAR_LEFT_BACK
+		WAIT_WALK
+		FRONT_RIGHT_BACK
+		MIDDLE_LEFT_DOWN
+		REAR_RIGHT_UP
+		WAIT_WALK
+		MIDDLE_LEFT_BACK
+		REAR_RIGHT_DOWN
+		FRONT_LEFT_UP
+		WAIT_WALK
+		REAR_RIGHT_BACK
+		FRONT_LEFT_DOWN
+		MIDDLE_RIGHT_UP
+		WAIT_WALK
+		FRONT_LEFT_BACK
+		MIDDLE_RIGHT_DOWN
+		REAR_LEFT_UP
 	}
-	if( bMoving )
-	{
-		turn leg1 to z-axis <31.005495> speed <158.000000>;
-		turn leg2 to y-axis <34.005495> speed <173.000000>;
-		turn leg2 to z-axis <31.005495> speed <0.000000>;
-		turn leg3 to y-axis <0.000000> speed <170.000000>;
-		turn leg3 to z-axis <0.000000> speed <3.000000>;
-		turn leg4 to y-axis <0.000000> speed <200.000000>;
-		turn leg5 to z-axis <-31.005495> speed <155.000000>;
-		turn leg6 to z-axis <2.000000> speed <237.000000>;
-		sleep 200;
-	}
-	if( bMoving )
-	{
-		turn leg1 to y-axis <55.010989> speed <279.000000>;
-		turn leg1 to z-axis <31.005495> speed <3.000000>;
-		turn leg2 to y-axis <34.005495> speed <0.000000>;
-		turn leg2 to z-axis <0.000000> speed <152.000000>;
-		turn leg3 to z-axis <31.005495> speed <158.000000>;
-		turn leg4 to y-axis <0.000000> speed <3.000000>;
-		turn leg4 to z-axis <-31.005495> speed <152.000000>;
-		turn leg5 to y-axis <-31.005495> speed <158.000000>;
-		turn leg5 to z-axis <-31.005495> speed <0.000000>;
-		turn leg6 to y-axis <3.000000> speed <167.000000>;
-		sleep 200;
-	}
-	turn leg1 to y-axis <43.005495> speed <60.000000>;
-	turn leg1 to z-axis <0.000000> speed <152.000000>;
-	turn leg2 to y-axis <0.000000> speed <173.000000>;
-	turn leg2 to z-axis <0.000000> speed <3.000000>;
-	turn leg3 to y-axis <34.005495> speed <173.000000>;
-	turn leg3 to z-axis <31.005495> speed <0.000000>;
-	turn leg4 to y-axis <-40.005495> speed <197.000000>;
-	turn leg4 to z-axis <-31.005495> speed <0.000000>;
-	turn leg5 to y-axis <-37.005495> speed <27.000000>;
-	turn leg5 to z-axis <0.000000> speed <155.000000>;
-	turn leg6 to y-axis <0.000000> speed <15.000000>;
-	turn leg6 to z-axis <-45.010989> speed <237.000000>;
-	sleep 200;
 }
 
-Stop()
+StartMoving()
 {
-	turn leg1 to y-axis <0.000000> speed <237.000000>;
-	turn leg1 to z-axis <0.000000> speed <237.000000>;
-	turn leg2 to y-axis <0.000000> speed <237.000000>;
-	turn leg2 to z-axis <0.000000> speed <237.000000>;
-	turn leg3 to y-axis <0.000000> speed <237.000000>;
-	turn leg3 to z-axis <0.000000> speed <237.000000>;
-	turn leg4 to y-axis <0.000000> speed <237.000000>;
-	turn leg4 to z-axis <0.000000> speed <237.000000>;
-	turn leg5 to y-axis <0.000000> speed <237.000000>;
-	turn leg5 to z-axis <0.000000> speed <237.000000>;
-	turn leg6 to y-axis <0.000000> speed <237.000000>;
-	turn leg6 to z-axis <0.000000> speed <237.000000>;
+	signal SIG_MOVE;
+	set-signal-mask SIG_MOVE;
+	moving=TRUE;
 }
 
-MotionControl(Func_Var_1)
+StopMoving()
 {
-	while( TRUE )
+	signal SIG_MOVE;
+	set-signal-mask SIG_MOVE;
+	moving=FALSE;
+	sleep 20*(WALK_PERIOD);
+	
+	turn leg6a to z-axis <20> speed <50> *1000/(WALK_PERIOD);
+	turn leg6b to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg6a to y-axis <45> speed <25> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg6a to z-axis <0> speed <30> *1000/(WALK_PERIOD);
+	turn leg6b to z-axis <20> speed <20> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+
+	turn leg2a to z-axis <-20> speed <50> *1000/(WALK_PERIOD);
+	turn leg2b to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg2a to y-axis <0> speed <25> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg2a to z-axis <0> speed <10> *1000/(WALK_PERIOD);
+	turn leg2b to z-axis <20> speed <20> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	
+	turn leg4a to z-axis <20> speed <50> *1000/(WALK_PERIOD);
+	turn leg4b to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg4a to y-axis <-45> speed <25> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg4a to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	
+	turn leg1a to z-axis <-20> speed <50> *1000/(WALK_PERIOD);
+	turn leg1b to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg1a to y-axis <-45> speed <25> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg1a to z-axis <0> speed <30> *1000/(WALK_PERIOD);
+	turn leg1b to z-axis <-20> speed <20> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+
+	turn leg5a to z-axis <20> speed <50> *1000/(WALK_PERIOD);
+	turn leg5b to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg5a to y-axis <0> speed <25> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg5a to z-axis <0> speed <10> *1000/(WALK_PERIOD);
+	turn leg5b to z-axis <-20> speed <20> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+
+	turn leg3a to z-axis <-20> speed <50> *1000/(WALK_PERIOD);
+	turn leg3b to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg3a to y-axis <45> speed <25> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg3b to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+	sleep (WALK_PERIOD);
+	turn leg3a to z-axis <0> speed <20> *1000/(WALK_PERIOD);
+	
+}
+
+UnitSpeed()
+{
+	while(TRUE)
 	{
-		Func_Var_1 = bMoving;
-		if( Func_Var_1 )
+		if (moving)
 		{
-			call-script walk2();
+			currentSpeed = (moveSpeed * 80)/(get CURRENT_SPEED);
+			//if (currentSpeed>300) currentSpeed=300;
+			WALK_PERIOD=currentSpeed;
+			//get PRINT(1,WALK_PERIOD,moveSpeed);
+			WALK_PERIOD=98;
 		}
-		if( !Func_Var_1 )
-		{
-			call-script Stop();
-			sleep 100;
-		}
+		sleep 142;
+		get PRINT(moving, currentSpeed,0,0);
 	}
 }
 
 Create()
 {
-	bMoving = FALSE;
+	moving = FALSE;
 	gun_1 = 0;
 	restore_delay = 3000;
-	start-script MotionControl();
+	turn leg6a to y-axis <30> now;
+	turn leg4a to y-axis <-30> now;
+	turn leg1a to y-axis <-30> now;//2
+	turn leg3a to y-axis <30> now;//5
 	start-script SmokeUnit();
+	start-script DoTheWalking();
+	while(get BUILD_PERCENT_LEFT)
+	{
+		sleep 250;
+	}
+		
+	moveSpeed = (get MAX_SPEED);
+	WALK_PERIOD=400;
+	start-script UnitSpeed();
 }
 
-StartMoving()
-{
-	bMoving = TRUE;
-}
-
-StopMoving()
-{
-	bMoving = FALSE;
-}
 
 SweetSpot(piecenum)
 {
@@ -271,12 +377,6 @@ Killed(severity, corpsetype)
 		explode head type SHATTER | EXPLODE_ON_HIT | BITMAP3;
 		explode barrel1 type SHATTER | BITMAP4;
 		explode barrel2 type SHATTER | BITMAP5;
-		explode leg1 type BITMAPONLY | BITMAP4;
-		explode leg2 type BITMAPONLY | BITMAP3;
-		explode leg3 type BITMAPONLY | BITMAP5;
-		explode leg4 type BITMAPONLY | BITMAP3;
-		explode leg5 type FALL | EXPLODE_ON_HIT | BITMAP3;
-		explode leg6 type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 50 )
@@ -286,12 +386,6 @@ Killed(severity, corpsetype)
 		explode head type SHATTER | SMOKE | EXPLODE_ON_HIT | BITMAP3;
 		explode barrel1 type SHATTER | BITMAP4;
 		explode barrel2 type SHATTER | BITMAP5;
-		explode leg1 type SHATTER | BITMAP4;
-		explode leg2 type BITMAPONLY | BITMAP3;
-		explode leg3 type SHATTER | BITMAP5;
-		explode leg4 type BITMAPONLY | BITMAP3;
-		explode leg5 type FALL | EXPLODE_ON_HIT | BITMAP3;
-		explode leg6 type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	if( severity <= 99 )
@@ -301,12 +395,6 @@ Killed(severity, corpsetype)
 		explode head type SHATTER | EXPLODE_ON_HIT | BITMAP3;
 		explode barrel1 type SHATTER | BITMAP4;
 		explode barrel2 type SHATTER | BITMAP5;
-		explode leg1 type BITMAPONLY | BITMAP4;
-		explode leg2 type BITMAPONLY | BITMAP3;
-		explode leg3 type BITMAPONLY | BITMAP5;
-		explode leg4 type BITMAPONLY | BITMAP3;
-		explode leg5 type FALL | EXPLODE_ON_HIT | BITMAP3;
-		explode leg6 type BITMAPONLY | BITMAP5;
 		return (0);
 	}
 	corpsetype = 3;
@@ -314,10 +402,4 @@ Killed(severity, corpsetype)
 	explode head type SHATTER | EXPLODE_ON_HIT | BITMAP3;
 	explode barrel1 type SHATTER | BITMAP4;
 	explode barrel2 type SHATTER | BITMAP5;
-	explode leg1 type BITMAPONLY | BITMAP4;
-	explode leg2 type BITMAPONLY | BITMAP3;
-	explode leg3 type BITMAPONLY | BITMAP5;
-	explode leg4 type BITMAPONLY | BITMAP3;
-	explode leg5 type FALL | EXPLODE_ON_HIT | BITMAP3;
-	explode leg6 type BITMAPONLY | BITMAP5;
 }

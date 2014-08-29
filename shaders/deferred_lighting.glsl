@@ -38,8 +38,8 @@ uniform mat4 viewProjectionInv;
 	
 	#ifndef BEAM_LIGHT
 		float dist_light_here = length(lightpos.xyz - mappos4.xyz);
-		float cosphi = max(0.0 , dot (map_normals4.xyz, lightpos.xyz - mappos4.xyz) / dist_light_here);
-		float attentuation =  max( 0,( lightparams.r - lightparams.g * (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w) - lightparams.b*(dist_light_here)/(lightpos.w)) );
+		float cosphi = max(0.0 , dot (map_normals4.xyz, normalize(lightpos.xyz - mappos4.xyz)) / dist_light_here);
+		float attentuation =  max( 0,( 10*lightparams.r - lightparams.g * (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w) - lightparams.b*(dist_light_here)/(lightpos.w)) );
 	#endif
 	#ifdef BEAM_LIGHT
 		//def dist(x1,y1, x2,y2, x3,y3): # x3,y3 is the point
@@ -74,8 +74,8 @@ uniform mat4 viewProjectionInv;
 			v=mappos4.xyz;
 		}
 		float dist_light_here = length(v-w);
-		float cosphi = max(0.0 , dot (map_normals4.xyz, w.xyz - mappos4.xyz) / dist_light_here);
-		float attentuation =  max( 0,( lightparams.r - lightparams.g * (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w) - lightparams.b*(dist_light_here)/(lightpos.w)) );
+		float cosphi = max(0.0 , dot (map_normals4.xyz, normalize(w.xyz - mappos4.xyz)) / dist_light_here);
+		float attentuation =  max( 0,( 10*lightparams.r - lightparams.g * (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w) - lightparams.b*(dist_light_here)/(lightpos.w)) );
 	#endif
 
 	
@@ -83,7 +83,7 @@ uniform mat4 viewProjectionInv;
 	// linear funcion is (1,0,1)
 	//quadratic function is (1,1,0)
 	// tits function (for lasers, to avoid hotspotting) (0.5, 2, -1.5)
-	attentuation *=attentuation;
+	//attentuation *=attentuation;
 	
 	//TODO:
 	//add a specular highlight to the lighting with eyepos

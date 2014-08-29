@@ -21,14 +21,14 @@ local function DrawUnit(unitID, material,drawMode)
 	  glUniform(material.etcLoc, 2* maximum(0,sine((unitID%10)+GetGameFrame()/((unitID%7)+6))), health,0 )
 	  
 	 -- glUniform(material.healthLoc, 2*maximum(0, (-2*health)/(maxhealth)+1) )--inverse of health, 0 if health is 100%-50%, goes to 1 by 0 health
-	  local trimC=trimColors[GetUnitTeam(unitID) ]
+	 -- local trimC=trimColors[GetUnitTeam(unitID) ]
 	 
 	 -- Spring.Echo('trimcomgwwtf',to_string(trimColors[teamID]))
-	  if (trimC) then
-		glUniform(material.trimColor,trimC[1],trimC[2],trimC[3],trimC[4])
-	  else
-		glUniform(material.trimColor,1,1,1,0)
-	  end
+	 -- if (trimC) then
+		--	glUniform(material.trimColor,trimC[1],trimC[2],trimC[3],trimC[4])
+	 -- else
+		--	glUniform(material.trimColor,1,1,1,0)
+	--  end
 	end
 
   --// engine should still draw it (we just set the uniforms for the shader)

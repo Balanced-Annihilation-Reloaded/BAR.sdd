@@ -183,6 +183,8 @@ widget:ViewResize(widgetHandler:GetViewSizes())
 
 
 function widget:Initialize()
+	Spring.Echo('bloomshader allowdeferredmap',Spring.GetConfigString("AllowDeferredMapRendering")) 
+	Spring.Echo('bloomshader allowdeferredmodel',Spring.GetConfigString("AllowDeferredModelRendering")) 
 	if (glCreateShader == nil) then
 		RemoveMe("[BloomShader::Initialize] removing widget, no shader support")
 		return
@@ -259,7 +261,7 @@ function widget:Initialize()
 	})
 
 	if (blurShaderH71 == nil) then
-		RemoveMe("[BloomShader::Initialize] blurShaderH71 compilation failed"); print(glGetShaderLog()); return
+		RemoveMe("[BloomShader::Initialize] blurShaderH71 compilation failed"); Spring.Echo(glGetShaderLog()); return
 	end
 
 	blurShaderV71 = glCreateShader({
@@ -293,7 +295,7 @@ function widget:Initialize()
 	})
 
 	if (blurShaderV71 == nil) then
-		RemoveMe("[BloomShader::Initialize] blurShaderV71 compilation failed"); print(glGetShaderLog()); return
+		RemoveMe("[BloomShader::Initialize] blurShaderV71 compilation failed"); Spring.Echo(glGetShaderLog()); return
 	end
 
 

@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  torso, rthigh, lthigh, lleg, lfoot, rleg, rfoot, dish1,belt,dish2,cover1,cover2,cover3,lens1,lens2,lens3;
+piece  torso, rthigh, lthigh, lleg, lfoot, rleg, rfoot, dish1,belt,dish2,cover1,cover2,cover3,lens1,lens2,lens3, pelvis;
 
 static-var  bMoving, Static_Var_2;
 
@@ -13,127 +13,155 @@ static-var  bMoving, Static_Var_2;
 
 walkscr()
 {
-	if( TRUE )
-	{
-		move torso to y-axis [-1.125000] now;
-		move torso to y-axis [-0.875000] speed [3.048782];
-		move rthigh to x-axis [0.000000] speed <180>;
-		move lthigh to x-axis [0.000000] speed <180>;
-		move lleg to y-axis [0.000000] now;
-		move lleg to z-axis [0.000000] now;
-		move lfoot to z-axis [0.000000] now;
-		move rleg to y-axis [0.000000] now;
-		move rleg to z-axis [0.000000] now;
-		move rfoot to z-axis [0.000000] now;
-		turn torso to z-axis <-8.703297> now;
-		turn torso to z-axis <-5.538462> speed <38.604396>;
-		//turn rthigh to x-axis <-27.697802> now;
-		turn rthigh to x-axis <-11.076923> speed <202.675824>;
-		//turn lthigh to x-axis <20.302198> now;
-		turn lthigh to x-axis <14.593407> speed <69.560440>;
-		turn lleg to x-axis <0.538462> now;
-		turn lleg to x-axis <-13.989011> speed <177.225275>;
-		turn lfoot to x-axis <-2.884615> now;
-		turn lfoot to x-axis <12.164835> speed <183.532967>;
-		//turn rleg to x-axis <3.956044> now;
-		turn rleg to x-axis <2.373626> speed <19.302198>;
-		//turn rfoot to x-axis <22.950549> now;
-		turn rfoot to x-axis <7.120879> speed <193.021978>;
-		sleep 82;
-	}
-	if( TRUE )
-	{
-		move torso to y-axis [-0.750000] speed [1.358688];
-		turn torso to z-axis <-3.956044> speed <17.203297>;
-		turn rthigh to x-axis <2.373626> speed <146.236264>;
-		turn lthigh to x-axis <1.214286> speed <145.450549>;
-		turn lfoot to x-axis <19.697802> speed <81.890110>;
-		turn rleg to x-axis <4.747253> speed <25.802198>;
-		turn rfoot to x-axis <-6.329670> speed <146.236264>;
-		sleep 92;
-	}
-	if( TRUE )
-	{
-		move torso to y-axis [0.000000] speed [7.812500];
-		turn torso to z-axis <-0.791209> speed <32.972527>;
-		turn rthigh to x-axis <10.285714> speed <82.434066>;
-		turn lthigh to x-axis <-26.532967> speed <289.071429>;
-		turn lleg to x-axis <-10.335165> speed <38.010989>;
-		turn lfoot to x-axis <31.016484> speed <117.928571>;
-		turn rleg to x-axis <15.032967> speed <107.164835>;
-		turn rfoot to x-axis <-25.324176> speed <197.846154>;
-		sleep 96;
-	}
-	if( TRUE )
-	{
-		move torso to y-axis [-2.125000] speed [22.849472];
-		turn torso to z-axis <12.659341> speed <144.664835>;
-		turn rthigh to x-axis <21.362637> speed <119.131868>;
-		turn lthigh to x-axis <-58.043956> speed <338.835165>;
-		turn lleg to x-axis <21.115385> speed <338.274725>;
-		turn lfoot to x-axis <36.681319> speed <60.901099>;
-		turn rleg to x-axis <16.615385> speed <17.016484>;
-		turn rfoot to x-axis <-5.538462> speed <212.741758>;
-		sleep 93;
-	}
-	if( TRUE )
-	{
-		move torso to y-axis [-1.375000] speed [8.333344];
-		turn torso to z-axis <9.494505> speed <35.170330>;
-		turn rthigh to x-axis <18.197802> speed <35.170330>;
-		turn lthigh to x-axis <-40.631868> speed <193.450549>;
-		turn lleg to x-axis <12.412088> speed <96.725275>;
-		turn lfoot to x-axis <27.978022> speed <96.725275>;
-		turn rleg to x-axis <7.120879> speed <105.516484>;
-		turn rfoot to x-axis <-11.076923> speed <61.549451>;
-		sleep 90;
-	}
-	if( TRUE )
-	{
-		move torso to y-axis [-0.875000] speed [5.319122];
-		turn torso to z-axis <5.538462> speed <42.093407>;
-		turn rthigh to x-axis <9.494505> speed <92.609890>;
-		turn lthigh to x-axis <-17.681319> speed <244.153846>;
-		turn lleg to x-axis <3.703297> speed <92.609890>;
-		turn lfoot to x-axis <13.730769> speed <151.543956>;
-		turn rleg to x-axis <-4.747253> speed <126.285714>;
-		turn rfoot to x-axis <10.285714> speed <227.313187>;
-		sleep 94;
-	}
-	if( TRUE )
-	{
-		move torso to y-axis [-0.375000] speed [5.319153];
-		turn rthigh to x-axis <-11.868132> speed <227.313187>;
-		turn lthigh to x-axis <3.681319> speed <227.313187>;
-		turn lleg to x-axis <2.912088> speed <8.417582>;
-		turn lfoot to x-axis <-7.631868> speed <227.313187>;
-		turn rleg to x-axis <-4.747253> speed <0.000000>;
-		turn rfoot to x-axis <17.406593> speed <75.769231>;
-		sleep 94;
-	}
-	if( TRUE )
-	{
-		move torso to y-axis [0.000000] speed [4.032272];
-		turn torso to z-axis <0.000000> speed <59.565934>;
-		turn rthigh to x-axis <-27.697802> speed <170.192308>;
-		turn lthigh to x-axis <17.131868> speed <144.664835>;
-		turn lleg to x-axis <13.203297> speed <110.620879>;
-		turn lfoot to x-axis <-14.752747> speed <76.582418>;
-		turn rfoot to x-axis <23.741758> speed <68.076923>;
-		sleep 93;
-	}
-	if( TRUE )
-	{
-		move torso to y-axis [-2.125000] speed [22.606369];
-		turn torso to z-axis <-8.703297> speed <92.609890>;
-		turn rthigh to x-axis <-53.021978> speed <269.412088>;
-		turn lthigh to x-axis <22.675824> speed <58.934066>;
-		turn lfoot to x-axis <-11.587912> speed <33.675824>;
-		turn rleg to x-axis <17.406593> speed <235.736264>;
-		turn rfoot to x-axis <35.609890> speed <126.285714>;
-		sleep 94;
-	}
-	return (0);
+//maxvel=1.5 at 30 fps -> 45 elmos/sec movement, 48 elmos/cycle anim
+
+//step 0
+if (bMoving)
+{
+	turn rthigh to z-axis <0> speed <37.500000>;
+	turn rthigh to x-axis <0> speed <277.500000>;
+	turn rleg to x-axis <0> speed <67.500000>;
+	turn rfoot to x-axis <0> speed <210.000000>;
+	turn lthigh to z-axis <0> speed <37.500000>;
+	turn lthigh to x-axis <-45> speed <210.000000>;
+	turn lleg to x-axis <90> speed <75.000000>;
+	turn lfoot to x-axis <-45> speed <135.000000>;
+
+
+	move pelvis to y-axis [0] speed [9.000000];
+	turn pelvis to z-axis <0> speed <37.500000>;
+	turn torso to z-axis <0> speed <37.500000>;
+	sleep 125;
+}
+
+//step 1
+if (bMoving)
+{
+	turn rthigh to z-axis <5> speed <37.500000>;
+	turn rthigh to x-axis <33> speed <247.500000>;
+	turn rleg to x-axis <0> now;
+	turn rfoot to x-axis <-33> speed <247.500000>;
+	turn lthigh to z-axis <0> now;
+	turn lthigh to x-axis <-60> speed <112.500000>;
+	turn lleg to x-axis <50> speed <300.000000>;
+	turn lfoot to x-axis <0> speed <337.500000>;
+
+
+	move pelvis to y-axis [-1.2] speed [9.000000];
+	turn pelvis to z-axis <-5> speed <37.500000>;
+	turn torso to z-axis <-5> speed <37.500000>;
+	sleep 125;
+}
+
+//step 2
+if (bMoving)
+{
+	turn rthigh to z-axis <8> speed <22.500000>;
+	turn rthigh to x-axis <29> speed <30.000000>;
+	turn rleg to x-axis <36> speed <270.000000>;
+	turn rfoot to x-axis <-16> speed <127.500000>;
+	turn lthigh to z-axis <0> now;
+	turn lthigh to x-axis <-51> speed <67.500000>;
+	turn lleg to x-axis <0> speed <375.000000>;
+	turn lfoot to x-axis <6> speed <45.000000>;
+
+	move pelvis to y-axis [-1.2] now;
+	turn pelvis to z-axis <-8> speed <22.500000>;
+	turn torso to z-axis <-8> speed <22.500000>;
+	sleep 125;
+}
+
+//step 3
+if (bMoving)
+{
+	turn rthigh to z-axis <-5> speed <97.500000>;
+	turn rthigh to x-axis <-17> speed <345.000000>;
+	turn rleg to x-axis <80> speed <330.000000>;
+	turn rfoot to x-axis <-63> speed <352.500000>;
+	turn lthigh to z-axis <-5> speed <37.500000>;
+	turn lthigh to x-axis <-37> speed <105.000000>;
+	turn lleg to x-axis <9> speed <67.500000>;
+	turn lfoot to x-axis <28> speed <165.000000>;
+
+	move pelvis to y-axis [-1.2] now;
+	turn pelvis to z-axis <-5> speed <22.500000>;
+	turn torso to z-axis <-5> speed <22.500000>;
+	sleep 125;
+}
+
+//step 4
+if (bMoving)
+{
+	turn rthigh to z-axis <0> speed <37.500000>;
+	turn rthigh to x-axis <-45> speed <210.000000>;
+	turn rleg to x-axis <90> speed <75.000000>;
+	turn rfoot to x-axis <-45> speed <135.000000>;
+	turn lthigh to z-axis <0> speed <37.500000>;
+	turn lthigh to x-axis <0> speed <277.500000>;
+	turn lleg to x-axis <0> speed <67.500000>;
+	turn lfoot to x-axis <0> speed <210.000000>;
+
+	move pelvis to y-axis [0] speed [9.000000];
+	turn pelvis to z-axis <0> speed <37.500000>;
+	turn torso to z-axis <0> speed <37.500000>;
+	sleep 125;
+}
+
+//step 5
+if (bMoving)
+{
+	turn rthigh to z-axis <0> now;
+	turn rthigh to x-axis <-60> speed <112.500000>;
+	turn rleg to x-axis <50> speed <300.000000>;
+	turn rfoot to x-axis <0> speed <337.500000>;
+	turn lthigh to z-axis <5> speed <37.500000>;
+	turn lthigh to x-axis <33> speed <247.500000>;
+	turn lleg to x-axis <0> now;
+	turn lfoot to x-axis <-33> speed <247.500000>;
+
+
+	move pelvis to y-axis [-1.2] speed [9.000000];
+	turn pelvis to z-axis <5> speed <37.500000>;
+	turn torso to z-axis <5> speed <37.500000>;
+	sleep 125;
+}
+
+//step 6
+if (bMoving)
+{
+	turn rthigh to z-axis <0> now;
+	turn rthigh to x-axis <-51> speed <67.500000>;
+	turn rleg to x-axis <0> speed <375.000000>;
+	turn rfoot to x-axis <6> speed <45.000000>;
+	turn lthigh to z-axis <8> speed <22.500000>;
+	turn lthigh to x-axis <29> speed <30.000000>;
+	turn lleg to x-axis <36> speed <270.000000>;
+	turn lfoot to x-axis <-16> speed <127.500000>;
+
+	move pelvis to y-axis [-1.2] now;
+	turn pelvis to z-axis <8> speed <22.500000>;
+	turn torso to z-axis <8> speed <22.500000>;
+	sleep 125;
+}
+
+//step 7
+if (bMoving)
+{
+	turn rthigh to z-axis <-5> speed <37.500000>;
+	turn rthigh to x-axis <-37> speed <105.000000>;
+	turn rleg to x-axis <9> speed <67.500000>;
+	turn rfoot to x-axis <28> speed <165.000000>;
+	turn lthigh to z-axis <-5> speed <97.500000>;
+	turn lthigh to x-axis <-17> speed <345.000000>;
+	turn lleg to x-axis <80> speed <330.000000>;
+	turn lfoot to x-axis <-63> speed <352.500000>;
+
+	move pelvis to y-axis [-1.2] now;
+	turn pelvis to z-axis <5> speed <22.500000>;
+	turn torso to z-axis <5> speed <22.500000>;
+	sleep 25;
+}
+
 }
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
@@ -177,15 +205,19 @@ MotionControl(Func_Var_1, Func_Var_2)
 		}
 		if( !Func_Var_1 )
 		{
-			turn torso to z-axis <0.000000> speed <200.043956>;
-			move torso to y-axis [0.000000] speed [2.500000];
-			turn rleg to x-axis <0.000000> speed <200.043956>;
-			turn rfoot to x-axis <0.000000> speed <200.043956>;
-			turn lthigh to x-axis <0.000000> speed <200.043956>;
-			
-			turn rthigh to x-axis <0.000000> speed <200.043956>;
-			turn lleg to x-axis <0.000000> speed <200.043956>;
-			turn lfoot to x-axis <0.000000> speed <200.043956>;
+			turn rthigh to z-axis <0> speed <237.500000>;
+			turn rthigh to x-axis <0> speed <277.500000>;
+			turn rleg to x-axis <0> speed <267.500000>;
+			turn rfoot to x-axis <0> speed <210.000000>;
+			turn lthigh to z-axis <0> speed <237.500000>;
+			turn lthigh to x-axis <0> speed <210.000000>;
+			turn lleg to x-axis <0> speed <275.000000>;
+			turn lfoot to x-axis <0> speed <135.000000>;
+		
+		
+			move pelvis to y-axis [0] speed [9.000000];
+			turn pelvis to z-axis <0> speed <37.500000>;
+			turn torso to z-axis <0> speed <37.500000>;
 			Func_Var_2 = 0;
 		}
 		sleep 100;

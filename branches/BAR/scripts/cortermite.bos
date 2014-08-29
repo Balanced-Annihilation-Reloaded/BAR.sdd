@@ -240,7 +240,7 @@ UnitSpeed()
 			WALK_PERIOD=98;
 		}
 		sleep 142;
-		get PRINT(moving, currentSpeed,0,0);
+		//get PRINT(moving, currentSpeed,0,0);
 	}
 }
 

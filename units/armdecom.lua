@@ -46,7 +46,7 @@ return {
 		reclaimable = false,
 		seismicsignature = 0,
 		selfdestructas = "DECOY_COMMANDER_BLAST",
-		script = "armcom.bos",
+		script = "armcom.lua",
 		showplayername = true,
 		sightdistance = 377,
 		terraformspeed = 750,

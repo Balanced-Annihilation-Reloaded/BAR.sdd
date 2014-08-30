@@ -102,26 +102,10 @@ local UnitEffects = {
     {class='GroundFlash',options=groundFlashGreen},
   },
   [UnitDefNames["aafus"].id] = {
-  
-  --TOO EXPENSIVE:
-   --{class='SimpleParticles2', options=MergeTable(sparks,{pos={-36,82,-36}, delay=10, lifeSpread=30, partpos="0,0,0"})},
-    --{class='SimpleParticles2', options=MergeTable(sparks,{pos={36,82,-36}, delay=60, lifeSpread=30, partpos="0,0,0"})},
-    --{class='SimpleParticles2', options=MergeTable(sparks,{pos={36,82,36}, delay=30, lifeSpread=30, partpos="0,0,0"})},
-   --{class='SimpleParticles2', options=MergeTable(sparks,{pos={-36,82,36}, delay=90, lifeSpread=30, partpos="0,0,0"})},
-
-	--{class='Sphere', options=MergeTable(aafusGlowBallWhite,{pos={31.2,32.7,0}})},
-	--{class='Sphere', options=MergeTable(aafusGlowBallWhite,{pos={-31.2,32.7,0}})},
-	--{class='Sphere', options=MergeTable(aafusGlowBallWhite,{pos={0,32.7,31.2}})},
-	--{class='Sphere', options=MergeTable(aafusGlowBallWhite,{pos={0,32.7,-31.2}})},
-
-	--{class='Sphere', options=MergeTable(aafusGlowBallTeal,{pos={28.2,36,28.2}})},
-	--{class='Sphere', options=MergeTable(aafusGlowBallTeal,{pos={-28.2,36,28.2}})},
-	--{class='Sphere', options=MergeTable(aafusGlowBallTeal,{pos={-28.2,36,-28.2}})},
-	--{class='Sphere', options=MergeTable(aafusGlowBallTeal,{pos={28.2,36,-28.2}})},
-
-   -- {class='Bursts', options={pos={0,76,0}, size=35, sizeSpread=2, colormap={{1.0,0.2,0.2,0.4}}, life=20, arc=90, rotSpeed=0.7, rotSpread=1, count=43, directional=true, repeatEffect=true}},
-	{class='ShieldSphere', options={pos={0,76,0}, size=26, colormap1={ {1.0,0.0,0.0,0.5} }, colormap2={ {1.0,0.3,0.3,0.8},{1.0,0.0,0.0,0.5},{1.0,0.3,0.3,0.8} }, life=20, repeatEffect=true}},
-    {class='ShieldJitter', options={layer=-16, life=20, pos={0,76,0}, size=29.7, precision=22, repeatEffect=true}},
+    {class='SimpleParticles2', options=MergeTable({pos={0,76,0}, delay=0, lifeSpread=30},plasmaball_aafus)},
+    {class='SimpleParticles2', options=MergeTable({pos={0,76,0}, delay=40, lifeSpread=30},plasmaball_aafus)},
+    {class='ShieldJitter',options={layer=-16, life=math.huge, pos={0,76,0}, size=30, precision=22, repeatEffect=true}},
+    {class='GroundFlash',options=groundFlashBlue},
   },
   [UnitDefNames["corgate"].id] = {
     --{class='Bursts',options=corgateBursts},

@@ -158,8 +158,6 @@ end
 			Explode(barrel4, SFX.NONE)
 			Explode(barrel5, SFX.NONE)
 			Explode(barrel6, SFX.NONE)
-			Explode(lrecoil, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
-			Explode(rrecoil, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
 			return 1 -- corpsetype
 
 		elseif (severity <= .5) then

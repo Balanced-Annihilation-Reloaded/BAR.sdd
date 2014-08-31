@@ -41,35 +41,35 @@ DefaultSettings['AdvModelShading']  = true
 DefaultSettings['AllowDeferredMapRendering']   = true
 DefaultSettings['AllowDeferredModelRendering'] = true
 
-DefaultSettings['DistIcon']         = 200
-DefaultSettings['DistDraw']         = 200
+DefaultSettings['UnitIconDist']         = 200
+DefaultSettings['UnitLodDist']         = 200
 DefaultSettings['MaxParticles']     = 1000
 DefaultSettings['MaxNanoParticles'] = 1000
 DefaultSettings['MapBorder']        = true
-DefaultSettings['DrawTrees']        = true
-DefaultSettings['ShowHealthBars']   = true
+DefaultSettings['3DTrees']        = true
 DefaultSettings['MapMarks']         = true
 DefaultSettings['DynamicSky']       = false
 DefaultSettings['DynamicSun']       = false
 
--- Load relevant things from springsettings
-Settings['DistIcon']                    = Spring.GetConfigInt('DistIcon', 200) -- number is used if no config is set
-Settings['DistDraw']                    = Spring.GetConfigInt('DistDraw', 200)
-Settings['MaxNanoParticles']            = Spring.GetConfigInt('MaxNanoParticles', 1000)
-Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles', 1000)
-Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 -- turn 0/1 to bool
-Settings['AdvMapShading']               = Spring.GetConfigInt('AdvMapShading', 1) == 1
-Settings['AdvModelShading']             = Spring.GetConfigInt('AdvModelShading', 1) == 1
-Settings['AllowDeferredMapRendering']   = Spring.GetConfigInt('AllowDeferredMapRendering') == 1
-Settings['AllowDeferredModelRendering'] = Spring.GetConfigInt('AllowDeferredModelRendering') == 1
-Settings['DrawTrees']                   = Spring.GetConfigInt('DrawTrees') == 1
-Settings['MapMarks']                    = Spring.GetConfigInt('MapMarks') == 1
-Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSky') == 1
-Settings['DynamicSun']                  = Spring.GetConfigInt('DynamicSun') == 1
+function LoadSpringSettings()
+    -- Load relevant things from springsettings (overwrite our 'local' copy of these settings)
+    Settings['UnitIconDist']                = Spring.GetConfigInt('UnitIconDist', 200) -- number is used if no config is set
+    Settings['UnitLodDist']                 = Spring.GetConfigInt('UnitLodDist', 200)
+    Settings['MaxNanoParticles']            = Spring.GetConfigInt('MaxNanoParticles', 1000)
+    Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles', 1000)
+    Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 -- turn 0/1 to bool
+    Settings['AdvMapShading']               = Spring.GetConfigInt('AdvMapShading', 1) == 1
+    Settings['AdvModelShading']             = Spring.GetConfigInt('AdvModelShading', 1) == 1
+    Settings['AllowDeferredMapRendering']   = Spring.GetConfigInt('AllowDeferredMapRendering') == 1
+    Settings['AllowDeferredModelRendering'] = Spring.GetConfigInt('AllowDeferredModelRendering') == 1
+    Settings['3DTrees']                     = Spring.GetConfigInt('3DTrees') == 1
+    Settings['MapMarks']                    = Spring.GetConfigInt('MapMarks') == 1
+    Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSky') == 1
+    Settings['DynamicSun']                  = Spring.GetConfigInt('DynamicSun') == 1
 
-Settings['Water']   = 'Reflective'
-Settings['Shadows'] = 'Medium'
--- I don't know how to check if luaui healthbars is set to 1 or not!
+    Settings['Water']   = 'Reflective' --TODO
+    Settings['Shadows'] = 'Medium' --TODO
+end
 
 Settings['searchWidgetDesc'] = true
 Settings['searchWidgetAuth'] = true
@@ -529,11 +529,13 @@ end
 local checkBox = function(obj)
 	local obj = obj
 
-	local toggle = obj.OnChange or function(self)
-		Settings[obj.name] = obj.checked
-		spSendCommands(obj.name)
+	local toggle = function(self)
+        Settings[self.name] = self.checked
+		spSendCommands(self.name)
 	end
-
+    
+    Spring.Echo(obj.name, Settings[obj.name])
+    
 	local checkBox = Chili.Checkbox:New{
 		name      = obj.name,
 		caption   = obj.title or obj.name,
@@ -763,28 +765,28 @@ local function createGraphicsTab()
 					comboBox{y=40,name='Shadows',
 						labels={'Off','Very Low','Low','Medium','High','Very High'},
 						options={'0','2 1024','1 1024','2 2048','1 2048','1 4096'},},
-					slider{name='DistDraw',title='Unit Draw Distance', max = 600, step = 1},
-					slider{name='DistIcon',title='Unit Icon Distance', max = 600, step = 1},
+					slider{name='UnitLodDist',title='Unit Draw Distance', max = 600, step = 1},
+					slider{name='UnitIconDist',title='Unit Icon Distance', max = 600, step = 1},
 					slider{name='MaxParticles',title='Max Particles', max = 5000},
 					slider{name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
 					checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},
 					checkBox{title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
 					checkBox{title = 'Deferred Map Shading', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
 					checkBox{title = 'Deferred Model Shading', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
-					checkBox{title = 'Draw Engine Trees', name = 'DrawTrees', tooltip = "Enable/Disable rendering of engine trees"},
+					checkBox{title = 'Draw Engine Trees', name = '3DTrees', tooltip = "Enable/Disable rendering of engine trees"},
 					checkBox{title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
 					checkBox{title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
-					checkBox{title = 'Show Health Bars', name = 'ShowHealthBars', tooltip = "Enable/Disable rendering of health-bars for units"},
 					checkBox{title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
 					checkBox{title = 'Show Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"},
-					checkBox{title = 'Hardware Cursor', name = 'HardwareCursor', tooltip = "Enables/Disables hardware mouse-cursor support"},
+					--checkBox{title = 'Hardware Cursor', name = 'HardwareCursor', tooltip = "Enables/Disables hardware mouse-cursor support"},
 					checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},
-					checkBox{title = 'OpenGL safe-mode', name = 'SafeGL', tooltip = "Enables/Disables OpenGL safe-mode"}, --does this actually do anything?!
 					Chili.Button:New{name="ResetDefaults",height=20,width='100%',caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},
 				}
 			}
 		}
 	}
+    
+    --TODO: OnSelect for this tab that reloads options from the springsettings values (in case they have been changed elswhere by e.g. other widgets whilst ingame)
 end
 
 
@@ -894,13 +896,14 @@ function widget:Initialize()
 	setCursor(Settings['CursorName'] or 'ba')
 
 	loadMainMenu()
-
+    
+    LoadSpringSettings()
+    
 	createInfoTab()
 	createInterfaceTab()
 	createGraphicsTab()
 	createCreditsTab()
-
-	
+    
 	if amNewbie then showHide('Info') else menuTabs:Select('Info') end
 	globalize()
 	makeWidgetList()

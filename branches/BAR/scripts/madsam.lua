@@ -138,24 +138,24 @@
 		if (severity <= .25) then
 			--Explode(base, SFX.SHATTER)
 			Explode(turret, SFX.EXPLODE)
-			--Explode(sleeves, SFX.EXPLODE)
-			--Explode(barrel1, SFX.EXPLODE)
-			--Explode(barrel2, SFX.EXPLODE)
+			Explode(sleeves, SFX.EXPLODE)
+			Explode(barrel1, SFX.EXPLODE)
+			Explode(barrel2, SFX.EXPLODE)
 			return 1 -- corpsetype
 
 		elseif (severity <= .5) then
 			--Explode(base, SFX.SHATTER)
 			Explode(turret, SFX.EXPLODE)
-			--Explode(sleeves, SFX.EXPLODE)
-			--Explode(barrel1, SFX.EXPLODE)
-			--Explode(barrel2, SFX.EXPLODE)
+			Explode(sleeves, SFX.EXPLODE)
+			Explode(barrel1, SFX.EXPLODE)
+			Explode(barrel2, SFX.EXPLODE)
 			return 2 -- corpsetype
 		else
 			--Explode(base, SFX.SHATTER)
 			Explode(turret, SFX.EXPLODE)
-			--Explode(sleeves, SFX.EXPLODE)
-			--Explode(barrel1, SFX.EXPLODE)
-			--Explode(barrel2, SFX.EXPLODE)
+			Explode(sleeves, SFX.EXPLODE)
+			Explode(barrel1, SFX.EXPLODE)
+			Explode(barrel2, SFX.EXPLODE)
 			return 3 -- corpsetype
 		end
 	end

@@ -79,42 +79,44 @@ SweetSpot(piecenum)
 
 Killed(severity, corpsetype)
 {
-	hide flare1;
-	hide flare2;
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode flare1 type BITMAPONLY | BITMAP2;
-		explode flare2 type BITMAPONLY | BITMAP3;
-		explode gunl type BITMAPONLY | BITMAP4;
-		explode turret type BITMAPONLY | BITMAP5;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode gunl type FIRE | SMOKE | FALL;
+		explode flare1 type BITMAPONLY;
+		explode gunr type BITMAPONLY;
+		explode flare2 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode flare1 type FALL | BITMAP2;
-		explode flare2 type FALL | BITMAP3;
-		explode gunr type BITMAPONLY | BITMAP4;
-		explode turret type SHATTER | BITMAP5;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode turret type FIRE | SMOKE | FALL;
+		explode gunl type FIRE | SMOKE | FALL;
+		explode flare1 type FIRE | SMOKE | FALL;
+		explode gunr type FIRE | SMOKE | FALL;
+		explode flare2 type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode gunl type BITMAPONLY | BITMAP4;
-		explode turret type SHATTER | BITMAP5;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turret type FIRE | SMOKE | FALL;
+		explode gunl type FIRE | SMOKE | FALL;
+		explode flare1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode gunr type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode flare2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode gunr type BITMAPONLY | BITMAP4;
-	explode turret type SHATTER | EXPLODE_ON_HIT | BITMAP5;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode gunl type EXPLODE_ON_HIT | FIRE | FALL;
+		explode flare1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode gunr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode flare2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

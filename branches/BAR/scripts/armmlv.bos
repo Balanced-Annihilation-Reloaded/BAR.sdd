@@ -234,42 +234,46 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode nano type BITMAPONLY | BITMAP2;
-		explode rfwheel type BITMAPONLY | BITMAP3;
-		explode lfwheel type BITMAPONLY | BITMAP4;
-		explode rbwheel type BITMAPONLY | BITMAP5;
-		explode lbwheel type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode turret type FIRE | SMOKE | FALL;
+		explode nano type BITMAPONLY;
+		explode lbwheel type BITMAPONLY;
+		explode rfwheel type BITMAPONLY;
+		explode lfwheel type BITMAPONLY;
+		explode rbwheel type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode nano type FALL | BITMAP2;
-		explode rfwheel type FALL | BITMAP3;
-		explode lfwheel type FALL | BITMAP4;
-		explode rbwheel type FALL | BITMAP5;
-		explode lbwheel type FALL | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode turret type FIRE | SMOKE | FALL;
+		explode nano type FALL;
+		explode lbwheel type FIRE | SMOKE | FALL;
+		explode rfwheel type FALL;
+		explode lfwheel type FALL;
+		explode rbwheel type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode nano type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
-		explode rfwheel type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP3;
-		explode lfwheel type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP4;
-		explode rbwheel type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP5;
-		explode lbwheel type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode turret type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode nano type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lbwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rfwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lfwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rbwheel type FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode nano type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
-	explode rfwheel type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP3;
-	explode lfwheel type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP4;
-	explode rbwheel type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP5;
-	explode lbwheel type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP1;
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lbwheel type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rfwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lfwheel type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rbwheel type EXPLODE_ON_HIT | FIRE | FALL;
 }

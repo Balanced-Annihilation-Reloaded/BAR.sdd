@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, wheel;
+piece  base, wheel,wheel2,frame;
 
 static-var  statechg_DesiredState, statechg_StateChanging;
 
@@ -126,26 +126,33 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode wheel type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode frame type BITMAPONLY;
+		explode wheel type BITMAPONLY;
+		explode wheel2 type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode wheel type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode wheel type FALL;
+		explode wheel2 type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode wheel type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode frame type BITMAPONLY;
+		explode wheel type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode wheel2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode wheel type SHATTER | EXPLODE_ON_HIT | BITMAP2;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode frame type EXPLODE_ON_HIT | FIRE | FALL;
+		explode wheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wheel2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

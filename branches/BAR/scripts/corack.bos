@@ -352,29 +352,66 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-
-		explode pelvis type BITMAPONLY | BITMAP4;
-
-		return (0);
+		corpsetype = 1 ;
+		explode pelvis type BITMAPONLY;
+		explode lforeleg type BITMAPONLY;
+		explode lhindleg type BITMAPONLY;
+		explode rforeleg type BITMAPONLY;
+		explode rhindleg type BITMAPONLY;
+		explode torso type BITMAPONLY;
+		explode lbeamhinge type BITMAPONLY;
+		explode lbeamcase type FIRE | SMOKE | FALL;
+		explode lnano type BITMAPONLY;
+		explode rbeamhinge type BITMAPONLY;
+		explode rbeamcase type BITMAPONLY;
+		explode rnano type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-
-		explode pelvis type FALL | BITMAP4;
-		return (0);
+		corpsetype = 2 ;
+		explode pelvis type FALL;
+		explode lforeleg type FALL;
+		explode lhindleg type FIRE | SMOKE | FALL;
+		explode rforeleg type FIRE | SMOKE | FALL;
+		explode rhindleg type FALL;
+		explode torso type FIRE | SMOKE | FALL;
+		explode lbeamhinge type FIRE | SMOKE | FALL;
+		explode lbeamcase type FIRE | SMOKE | FALL;
+		explode lnano type FALL;
+		explode rbeamhinge type FIRE | SMOKE | FALL;
+		explode rbeamcase type FIRE | SMOKE | FALL;
+		explode rnano type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-
-		explode pelvis type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-
-		return (0);
+		corpsetype = 3 ;
+		explode pelvis type SMOKE | FALL;
+		explode lforeleg type SMOKE | FALL;
+		explode lhindleg type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rforeleg type FIRE | SMOKE | FALL;
+		explode rhindleg type SMOKE | FALL;
+		explode torso type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lbeamhinge type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode lbeamcase type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lnano type FIRE | SMOKE | FALL;
+		explode rbeamhinge type SMOKE | FALL;
+		explode rbeamcase type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode rnano type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-
-	explode pelvis type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-
+	corpsetype = 3 ;
+		explode pelvis type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lforeleg type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lhindleg type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rforeleg type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rhindleg type EXPLODE_ON_HIT | FIRE | FALL;
+		explode torso type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lbeamhinge type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lbeamcase type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lnano type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rbeamhinge type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rbeamcase type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rnano type EXPLODE_ON_HIT | FIRE | FALL;
 }

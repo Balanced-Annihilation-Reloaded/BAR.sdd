@@ -195,23 +195,74 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode eye type BITMAPONLY;
+		explode blthigh type BITMAPONLY;
+		explode blleg type BITMAPONLY;
+		explode blwheel type FIRE | SMOKE | FALL;
+		explode flthigh type BITMAPONLY;
+		explode flleg type BITMAPONLY;
+		explode flwheel type BITMAPONLY;
+		explode brthigh type BITMAPONLY;
+		explode brleg type BITMAPONLY;
+		explode brwheel type BITMAPONLY;
+		explode frthigh type BITMAPONLY;
+		explode frleg type BITMAPONLY;
+		explode frwheel type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode eye type FIRE | SMOKE | FALL;
+		explode blthigh type FALL;
+		explode blleg type FIRE | SMOKE | FALL;
+		explode blwheel type FIRE | SMOKE | FALL;
+		explode flthigh type FALL;
+		explode flleg type FIRE | SMOKE | FALL;
+		explode flwheel type FIRE | SMOKE | FALL;
+		explode brthigh type FIRE | SMOKE | FALL;
+		explode brleg type FIRE | SMOKE | FALL;
+		explode brwheel type FALL;
+		explode frthigh type FIRE | SMOKE | FALL;
+		explode frleg type FALL;
+		explode frwheel type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode eye type SMOKE | FALL;
+		explode blthigh type SMOKE | FALL;
+		explode blleg type FIRE | SMOKE | FALL;
+		explode blwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flthigh type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flleg type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode flwheel type SMOKE | FALL;
+		explode brthigh type FIRE | SMOKE | FALL;
+		explode brleg type SMOKE | FALL;
+		explode brwheel type SMOKE | FALL;
+		explode frthigh type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode frleg type FIRE | SMOKE | FALL;
+		explode frwheel type FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	return (0);
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode eye type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode blthigh type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode blleg type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode blwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flthigh type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flleg type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode brthigh type EXPLODE_ON_HIT | FIRE | FALL;
+		explode brleg type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode brwheel type EXPLODE_ON_HIT | FIRE | FALL;
+		explode frthigh type EXPLODE_ON_HIT | FIRE | FALL;
+		explode frleg type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode frwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

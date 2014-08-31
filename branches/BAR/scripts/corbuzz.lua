@@ -152,13 +152,33 @@ end
 
 		if (severity <= .25) then
 			Explode(base, SFX.EXPLODE)
+			Explode(barrel1, SFX.NONE)
+			Explode(barrel2, SFX.NONE)
+			Explode(barrel3, SFX.NONE)
+			Explode(barrel4, SFX.NONE)
+			Explode(barrel5, SFX.NONE)
+			Explode(barrel6, SFX.NONE)
+			Explode(lrecoil, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+			Explode(rrecoil, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
 			return 1 -- corpsetype
 
 		elseif (severity <= .5) then
 			Explode(base, SFX.EXPLODE)
+			Explode(barrel1,  SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+			Explode(barrel2,  SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+			Explode(barrel3,  SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+			Explode(barrel4,  SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+			Explode(barrel5,  SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+			Explode(barrel6,  SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
 			return 2 -- corpsetype
 		else
 			Explode(base, SFX.EXPLODE)
+			Explode(barrel1,  SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+			Explode(barrel2,  SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+			Explode(barrel3,  SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+			Explode(barrel4,  SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+			Explode(barrel5,  SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+			Explode(barrel6,  SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
 			return 3 -- corpsetype
 		end
 	end

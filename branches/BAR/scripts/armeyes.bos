@@ -62,8 +62,28 @@ SweetSpot(piecenum)
 
 Killed(severity, corpsetype)
 {
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode sphere type FALL | SMOKE | EXPLODE_ON_HIT | BITMAP2;
-	return (0);
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode sphere type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode sphere type FIRE | SMOKE | FALL;
+		return(0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode sphere type SMOKE | FALL;
+		return(0);
+	}
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode sphere type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

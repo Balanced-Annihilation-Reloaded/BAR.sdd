@@ -117,35 +117,34 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode turret type SHATTER | EXPLODE_ON_HIT | BITMAP3;
-		explode spinner1 type FALL | EXPLODE_ON_HIT | BITMAP3;
-		explode spinner2 type FALL | EXPLODE_ON_HIT | BITMAP3;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode spinner1 type FIRE | SMOKE | FALL;
+		explode spinner2 type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode turret type SHATTER | EXPLODE_ON_HIT | BITMAP3;
-		explode spinner1 type FALL | SMOKE | EXPLODE_ON_HIT | BITMAP3;
-		explode spinner2 type FALL | SMOKE | EXPLODE_ON_HIT | BITMAP3;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode spinner1 type FALL;
+		explode spinner2 type FALL;
+		explode turret type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
-		explode turret type SHATTER | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode spinner1 type FALL | SMOKE | EXPLODE_ON_HIT | BITMAP3;
-		explode spinner2 type FALL | SMOKE | EXPLODE_ON_HIT | BITMAP3;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode spinner1 type FIRE | SMOKE | FALL;
+		explode spinner2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type SHATTER | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode turret type SHATTER | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode spinner1 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP3;
-	explode spinner2 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP3;
-	return (0);
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode spinner1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode spinner2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | FALL;
 }

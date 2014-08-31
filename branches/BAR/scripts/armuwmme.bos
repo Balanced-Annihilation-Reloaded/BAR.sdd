@@ -19,7 +19,7 @@ fixGo()
 	set-signal-mask SIG_WORK;
 	
 	spin claw1 around z-axis speed Static_Var_1 accelerate Static_Var_1/100.0;
-	spin claw2 around z-axis speed -Static_Var_1 accelerate Static_Var_1/100.0;
+	spin claw2 around z-axis speed -1*Static_Var_1 accelerate Static_Var_1/100.0;
 	spin turret around y-axis speed Static_Var_1/3 accelerate Static_Var_1/300.0;
 	while(TRUE){
 		turn arm to z-axis <90> speed <45>;
@@ -117,28 +117,48 @@ SetSpeed(Func_Var_1)
 
 Killed(severity, corpsetype)
 {
-	if( severity <= 10 )
+	if( severity <= 25 )
 	{
-		corpsetype = 1;
-
-		explode base type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode arm type BITMAPONLY;
+		explode head1 type FIRE | SMOKE | FALL;
+		explode head2 type BITMAPONLY;
+		explode claw2 type BITMAPONLY;
+		explode claw1 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-
-		explode base type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode turret type FIRE | SMOKE | FALL;
+		explode arm type FALL;
+		explode head1 type FIRE | SMOKE | FALL;
+		explode head2 type FALL;
+		explode claw2 type FALL;
+		explode claw1 type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-
-		explode base type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turret type SMOKE | FALL;
+		explode arm type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode head1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode head2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode claw2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode claw1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-
-	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP2;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode arm type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode head1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode head2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode claw2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode claw1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

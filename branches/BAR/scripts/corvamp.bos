@@ -113,42 +113,42 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode missilea type BITMAPONLY | BITMAP3;
-		explode missileb type BITMAPONLY | BITMAP4;
-		explode thrustb1 type BITMAPONLY | BITMAP5;
-		explode thrustb2 type BITMAPONLY | BITMAP1;
-		explode thrusta type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode missilea type BITMAPONLY;
+		explode missileb type BITMAPONLY;
+		explode thrusta type BITMAPONLY;
+		explode thrustb1 type BITMAPONLY;
+		explode thrustb2 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode missilea type FALL | BITMAP3;
-		explode missileb type FALL | BITMAP4;
-		explode thrustb1 type FALL | BITMAP5;
-		explode thrustb2 type FALL | BITMAP1;
-		explode thrusta type FALL | BITMAP2;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode missilea type FALL;
+		explode missileb type FIRE | SMOKE | FALL;
+		explode thrusta type FIRE | SMOKE | FALL;
+		explode thrustb1 type FALL;
+		explode thrustb2 type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode missilea type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode missileb type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode thrustb1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode thrustb2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode thrusta type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode missilea type SMOKE | FALL;
+		explode missileb type FIRE | SMOKE | FALL;
+		explode thrusta type FIRE | SMOKE | FALL;
+		explode thrustb1 type SMOKE | FALL;
+		explode thrustb2 type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode missilea type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode missileb type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode thrustb1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode thrustb2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode thrusta type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode missilea type EXPLODE_ON_HIT | FIRE | FALL;
+		explode missileb type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrusta type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustb1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustb2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

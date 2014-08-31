@@ -427,7 +427,7 @@ end
 
 function script.Killed(recentDamage, maxHealth)
 		local severity = recentDamage/maxHealth
-	if severity < 0.5 then
+	if severity < 0.25 then
 
 		Explode(torso, SFX.NONE)
         Explode(tail, SFX.NONE)
@@ -451,7 +451,7 @@ function script.Killed(recentDamage, maxHealth)
         Explode(rffoot, SFX.NONE)
         
 		return 1
-	else
+	elseif severity<0.5 then
 
 		Explode(torso, SFX.SHATTER)
 		Explode(tail, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
@@ -475,6 +475,30 @@ function script.Killed(recentDamage, maxHealth)
         Explode(rffoot, SFX.SHATTER)
 
 		return 2
+	else
+
+		Explode(torso, SFX.SHATTER)
+		Explode(tail, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+
+		Explode(turret, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+        Explode(lbarrel, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+        Explode(rbarrel, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+
+		Explode(llaser, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+        Explode(rlaser, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+        Explode(toplaser, SFX.SMOKE + SFX.FIRE + SFX.EXPLODE)
+
+        Explode(lbleg, SFX.SHATTER)
+        Explode(lbfoot, SFX.SHATTER)
+        Explode(lfleg, SFX.SHATTER)
+        Explode(lffoot, SFX.SHATTER)
+
+        Explode(rbleg, SFX.SHATTER)
+        Explode(rbfoot, SFX.SHATTER)
+        Explode(rfleg, SFX.SHATTER)
+        Explode(rffoot, SFX.SHATTER)
+
+		return 3
 	end
 end
 

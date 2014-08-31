@@ -168,48 +168,49 @@ SweetSpot(piecenum)
 }
 
 Killed(severity, corpsetype)
-/*   268:*/{
-/*   26d:*/	if( severity <= 25 )
-/*   26f:*/	{
-/*   271:*/		corpsetype = 1;
-/*   278:*/		explode base type BITMAPONLY | BITMAP1;
-/*   27f:*/		explode dbl type BITMAPONLY | BITMAP2;
-/*   286:*/		explode dbr type BITMAPONLY | BITMAP3;
-/*   28d:*/		explode dtr type BITMAPONLY | BITMAP4;
-/*   294:*/		explode dtl type BITMAPONLY | BITMAP5;
-/*   29b:*/		explode turret type BITMAPONLY | BITMAP1;
-
-/*   29b:*/		explode dummy type BITMAPONLY | BITMAP1;
-/*   2b4:*/		return (0);
-/*   2b5:*/	}
-/*   2ba:*/	if( severity <= 50 )
-/*   2bc:*/	{
-/*   2be:*/		corpsetype = 2;
-/*   278:*/		explode base type BITMAPONLY | BITMAP1;
-/*   27f:*/		explode dbl type BITMAPONLY | BITMAP2;
-/*   286:*/		explode dbr type BITMAPONLY | BITMAP3;
-/*   28d:*/		explode dtr type BITMAPONLY | BITMAP4;
-/*   294:*/		explode dtl type BITMAPONLY | BITMAP5;
-/*   29b:*/		explode dummy type BITMAPONLY | BITMAP1;
-/*   301:*/		return (0);
-/*   302:*/	}
-/*   307:*/	if( severity <= 99 )
-/*   309:*/	{
-/*   30b:*/		corpsetype = 3;
-/*   278:*/		explode base type BITMAPONLY | BITMAP1;
-/*   27f:*/		explode dbl type BITMAPONLY | BITMAP2;
-/*   286:*/		explode dbr type BITMAPONLY | BITMAP3;
-/*   28d:*/		explode dtr type BITMAPONLY | BITMAP4;
-/*   294:*/		explode dtl type BITMAPONLY | BITMAP5;
-/*   29b:*/		explode dummy type BITMAPONLY | BITMAP1;
-/*   369:*/		return (0);
-/*   36a:*/	}
-/*   36c:*/	corpsetype = 3;
-/*   278:*/		explode base type BITMAPONLY | BITMAP1;
-/*   27f:*/		explode dbl type BITMAPONLY | BITMAP2;
-/*   286:*/		explode dbr type BITMAPONLY | BITMAP3;
-/*   28d:*/		explode dtr type BITMAPONLY | BITMAP4;
-/*   294:*/		explode dtl type BITMAPONLY | BITMAP5;
-/*   29b:*/		explode dummy type BITMAPONLY | BITMAP1;
-/*   3cd:*/	return (0);
-/*   3ce:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode dbl type FIRE | SMOKE | FALL;
+		explode turret type BITMAPONLY;
+		explode dummy type BITMAPONLY;
+		explode dbr type BITMAPONLY;
+		explode dtl type BITMAPONLY;
+		explode dtr type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode dbl type FIRE | SMOKE | FALL;
+		explode turret type FIRE | SMOKE | FALL;
+		explode dummy type FIRE | SMOKE | FALL;
+		explode dbr type FIRE | SMOKE | FALL;
+		explode dtl type FIRE | SMOKE | FALL;
+		explode dtr type FALL;
+		return(0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode dbl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode turret type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode dummy type FIRE | SMOKE | FALL;
+		explode dbr type SMOKE | FALL;
+		explode dtl type SMOKE | FALL;
+		explode dtr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
+	}
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode dbl type EXPLODE_ON_HIT | FIRE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode dummy type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dbr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dtl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dtr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+}

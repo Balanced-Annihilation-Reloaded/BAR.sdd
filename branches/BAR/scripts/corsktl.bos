@@ -201,27 +201,56 @@ SweetSpot(piecenum)
 
 Killed(severity, corpsetype)
 {
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode lbLeg type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode lbFoot type SHATTER | EXPLODE_ON_HIT | BITMAP3;
-	explode rbLeg type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-	explode rfFoot type SHATTER | EXPLODE_ON_HIT | BITMAP5;
-	explode lfLeg type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode lfFoot type SHATTER | EXPLODE_ON_HIT | BITMAP3;
-	explode rfFoot type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-	explode rfLeg type SHATTER | EXPLODE_ON_HIT | BITMAP5;
-}
-
-Go()
-{
-}
-
-Stop()
-{
-}
-
-FireWeapon1()
-{
-	emit-sfx 4096 + 1 from base; //Weapon2 detonates the crawling bomb once weapon1 fires
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode rfleg type BITMAPONLY;
+		explode rffoot type FIRE | SMOKE | FALL;
+		explode lfleg type BITMAPONLY;
+		explode lffoot type BITMAPONLY;
+		explode rbleg type BITMAPONLY;
+		explode rbfoot type BITMAPONLY;
+		explode lbleg type BITMAPONLY;
+		explode lbfoot type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode rfleg type FIRE | SMOKE | FALL;
+		explode rffoot type FIRE | SMOKE | FALL;
+		explode lfleg type FIRE | SMOKE | FALL;
+		explode lffoot type FALL;
+		explode rbleg type FALL;
+		explode rbfoot type FIRE | SMOKE | FALL;
+		explode lbleg type FIRE | SMOKE | FALL;
+		explode lbfoot type FIRE | SMOKE | FALL;
+		return(0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode rfleg type SMOKE | FALL;
+		explode rffoot type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode lfleg type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode lffoot type FIRE | SMOKE | FALL;
+		explode rbleg type FIRE | SMOKE | FALL;
+		explode rbfoot type FIRE | SMOKE | FALL;
+		explode lbleg type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode lbfoot type SMOKE | FALL;
+		return(0);
+	}
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rfleg type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rffoot type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lfleg type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lffoot type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rbleg type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rbfoot type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lbleg type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lbfoot type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

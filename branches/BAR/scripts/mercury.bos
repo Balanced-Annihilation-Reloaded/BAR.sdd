@@ -115,22 +115,42 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode gunl type FIRE | SMOKE | FALL;
+		explode flarel type BITMAPONLY;
+		explode gunr type BITMAPONLY;
+		explode flarer type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode turret type FIRE | SMOKE | FALL;
+		explode gunl type FALL;
+		explode flarel type FALL;
+		explode gunr type FIRE | SMOKE | FALL;
+		explode flarer type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turret type FIRE | SMOKE | FALL;
+		explode gunl type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode flarel type SMOKE | FALL;
+		explode gunr type FIRE | SMOKE | FALL;
+		explode flarer type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode gunl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flarel type EXPLODE_ON_HIT | FIRE | FALL;
+		explode gunr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flarer type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

@@ -147,27 +147,38 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode wake2 type BITMAPONLY;
+		explode nano1 type BITMAPONLY;
+		explode nano2 type BITMAPONLY;
+		explode wake1 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode wake2 type FIRE | SMOKE | FALL;
+		explode nano1 type FIRE | SMOKE | FALL;
+		explode nano2 type FALL;
+		explode wake1 type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode wake2 type SMOKE | FALL;
+		explode nano1 type SMOKE | FALL;
+		explode nano2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode wake1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-
-	return (0);
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode wake2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode wake1 type EXPLODE_ON_HIT | FIRE | FALL;
 }

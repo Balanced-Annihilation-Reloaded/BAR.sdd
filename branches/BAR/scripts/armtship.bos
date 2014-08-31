@@ -234,50 +234,77 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode arm1 type BITMAPONLY | BITMAP1;
-		explode arm2 type BITMAPONLY | BITMAP2;
-		explode arm3 type BITMAPONLY | BITMAP5;
-		explode base type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode link type BITMAPONLY | BITMAP1;
-		explode turret type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 1 ;
+		explode ground type BITMAPONLY;
+		explode base type BITMAPONLY;
+		explode door1 type BITMAPONLY;
+		explode door2 type BITMAPONLY;
+		explode door3 type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode arm1 type BITMAPONLY;
+		explode arm2 type BITMAPONLY;
+		explode arm3 type BITMAPONLY;
+		explode arm4 type BITMAPONLY;
+		explode arm5 type BITMAPONLY;
+		explode arm6 type BITMAPONLY;
+		explode arm7 type BITMAPONLY;
+		explode magnet type FIRE | SMOKE | FALL;
+		explode link type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode arm1 type BITMAPONLY | BITMAP1;
-		explode arm2 type SHATTER | BITMAP2;
-		explode arm3 type SHATTER | BITMAP4;
-		explode base type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode link type FALL | BITMAP1;
-		explode turret type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 2 ;
+		explode ground type FIRE | SMOKE | FALL;
+		explode door1 type FALL;
+		explode door2 type FIRE | SMOKE | FALL;
+		explode door3 type FIRE | SMOKE | FALL;
+		explode turret type FIRE | SMOKE | FALL;
+		explode arm1 type FALL;
+		explode arm2 type FIRE | SMOKE | FALL;
+		explode arm3 type FALL;
+		explode arm4 type FIRE | SMOKE | FALL;
+		explode arm5 type FALL;
+		explode arm6 type FIRE | SMOKE | FALL;
+		explode arm7 type FALL;
+		explode magnet type FALL;
+		explode link type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode arm1 type BITMAPONLY | BITMAP1;
-		explode arm2 type SHATTER | BITMAP2;
-		explode arm3 type SHATTER | BITMAP4;
-		explode base type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode link type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode turret type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 3 ;
+		explode ground type FIRE | SMOKE | FALL;
+		explode base type BITMAPONLY;
+		explode door1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode door2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode door3 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode turret type FIRE | SMOKE | FALL;
+		explode arm1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode arm2 type SMOKE | FALL;
+		explode arm3 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode arm4 type SMOKE | FALL;
+		explode arm5 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode arm6 type SMOKE | FALL;
+		explode arm7 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode magnet type FIRE | SMOKE | FALL;
+		explode link type FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode arm1 type BITMAPONLY | BITMAP1;
-	explode arm2 type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode arm3 type SHATTER | BITMAP4;
-	explode base type BITMAPONLY | BITMAP3;
-	explode door1 type BITMAPONLY | BITMAP4;
-	explode door2 type BITMAPONLY | BITMAP5;
-	explode link type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode turret type BITMAPONLY | BITMAP2;
+	corpsetype = 3 ;
+		explode ground type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode door1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode door2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode door3 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode arm1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode arm2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode arm3 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode arm4 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode arm5 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode arm6 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode arm7 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode magnet type EXPLODE_ON_HIT | FIRE | FALL;
+		explode link type EXPLODE_ON_HIT | FIRE | FALL;
 }

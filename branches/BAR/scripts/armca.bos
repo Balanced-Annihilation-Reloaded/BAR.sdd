@@ -6,7 +6,7 @@
 
 #define SIG_BUILD		4	
 
-piece  base, wingbr, wingbl, wingfr, wingfl, arm1, arm2, nano, emit, doorbl, doorbr;
+piece  base, wingbr, wingbl, wingfr, wingfl, arm1, arm2, nano, emit, doorbl, doorbr, doortl, doortr, thrust;
 
 static-var  statechg_DesiredState, statechg_StateChanging;
 
@@ -171,23 +171,74 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode wingbl type BITMAPONLY;
+		explode wingfr type BITMAPONLY;
+		explode wingfl type BITMAPONLY;
+		explode wingbr type BITMAPONLY;
+		explode doorbl type BITMAPONLY;
+		explode doorbr type BITMAPONLY;
+		explode doortl type BITMAPONLY;
+		explode doortr type BITMAPONLY;
+		explode thrust type BITMAPONLY;
+		explode arm1 type BITMAPONLY;
+		explode arm2 type BITMAPONLY;
+		explode nano type FIRE | SMOKE | FALL;
+		explode emit type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode wingbl type FALL;
+		explode wingfr type FIRE | SMOKE | FALL;
+		explode wingfl type FIRE | SMOKE | FALL;
+		explode wingbr type FIRE | SMOKE | FALL;
+		explode doorbl type FIRE | SMOKE | FALL;
+		explode doorbr type FIRE | SMOKE | FALL;
+		explode doortl type FALL;
+		explode doortr type FIRE | SMOKE | FALL;
+		explode thrust type FIRE | SMOKE | FALL;
+		explode arm1 type FALL;
+		explode arm2 type FIRE | SMOKE | FALL;
+		explode nano type FIRE | SMOKE | FALL;
+		explode emit type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode wingbl type FIRE | SMOKE | FALL;
+		explode wingfr type SMOKE | FALL;
+		explode wingfl type SMOKE | FALL;
+		explode wingbr type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode doorbl type SHATTER;
+		explode doorbr type SHATTER;
+		explode doortl type SHATTER;
+		explode doortr type SHATTER;
+		explode thrust type SMOKE | FALL;
+		explode arm1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode arm2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode emit type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP2;
-	return (0);
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wingbl type EXPLODE_ON_HIT | FIRE | FALL;
+		explode wingfr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wingfl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wingbr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode doorbl type SHATTER;
+		explode doorbr type SHATTER;
+		explode doortl type SHATTER;
+		explode doortr type SHATTER;
+		explode thrust type EXPLODE_ON_HIT | FIRE | FALL;
+		explode arm1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode arm2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode emit type EXPLODE_ON_HIT | FIRE | FALL;
 }

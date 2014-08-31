@@ -171,38 +171,38 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode dish1 type FALL | BITMAP1;
-		explode dish2 type FALL | BITMAP2;
-		explode dish3 type FALL | BITMAP3;
-		explode dish4 type FALL | BITMAP4;
-		explode base type BITMAPONLY | BITMAP5;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode dish4 type FIRE | SMOKE | FALL;
+		explode dish1 type BITMAPONLY;
+		explode dish2 type BITMAPONLY;
+		explode dish3 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode dish1 type FALL | BITMAP1;
-		explode dish2 type FALL | BITMAP2;
-		explode dish3 type FALL | BITMAP3;
-		explode dish4 type FALL | BITMAP4;
-		explode base type BITMAPONLY | BITMAP5;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode dish4 type FIRE | SMOKE | FALL;
+		explode dish1 type FIRE | SMOKE | FALL;
+		explode dish2 type FIRE | SMOKE | FALL;
+		explode dish3 type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode dish1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode dish2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode dish3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode dish4 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode base type BITMAPONLY | BITMAP5;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode dish4 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dish1 type FIRE | SMOKE | FALL;
+		explode dish2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dish3 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode dish1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode dish2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode dish3 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode dish4 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP5;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode dish4 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dish1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dish2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode dish3 type EXPLODE_ON_HIT | FIRE | FALL;
 }

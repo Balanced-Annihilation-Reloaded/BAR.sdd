@@ -102,21 +102,86 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode thrustb type BITMAPONLY;
+		explode thrusta type BITMAPONLY;
+		explode wingl type BITMAPONLY;
+		explode cowl type BITMAPONLY;
+		explode fan type BITMAPONLY;
+		explode wingr type BITMAPONLY;
+		explode finl type BITMAPONLY;
+		explode doorl type BITMAPONLY;
+		explode arml type BITMAPONLY;
+		explode bombl2 type FIRE | SMOKE | FALL;
+		explode bombl1 type BITMAPONLY;
+		explode finr type BITMAPONLY;
+		explode doorr type BITMAPONLY;
+		explode armr type BITMAPONLY;
+		explode bombr2 type BITMAPONLY;
+		explode bombr1 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode thrustb type FIRE | SMOKE | FALL;
+		explode thrusta type FIRE | SMOKE | FALL;
+		explode wingl type FALL;
+		explode cowl type FALL;
+		explode fan type FIRE | SMOKE | FALL;
+		explode wingr type FIRE | SMOKE | FALL;
+		explode finl type FALL;
+		explode doorl type FIRE | SMOKE | FALL;
+		explode arml type FALL;
+		explode bombl2 type FIRE | SMOKE | FALL;
+		explode bombl1 type FIRE | SMOKE | FALL;
+		explode finr type FIRE | SMOKE | FALL;
+		explode doorr type FALL;
+		explode armr type FIRE | SMOKE | FALL;
+		explode bombr2 type FIRE | SMOKE | FALL;
+		explode bombr1 type FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
 	if( severity <= 99 )
 	{
-		explode base type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode thrustb type FIRE | SMOKE | FALL;
+		explode thrusta type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode wingl type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode cowl type FIRE | SMOKE | FALL;
+		explode fan type FIRE | SMOKE | FALL;
+		explode wingr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode finl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode doorl type SHATTER;
+		explode arml type SMOKE | FALL;
+		explode bombl2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode bombl1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode finr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode doorr type SHATTER;
+		explode armr type SMOKE | FALL;
+		explode bombr2 type SMOKE | FALL;
+		explode bombr1 type SMOKE | FALL;
+		return(0);
 	}
-	explode base type BITMAPONLY | BITMAP3;
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrustb type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrusta type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wingl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode cowl type EXPLODE_ON_HIT | FIRE | FALL;
+		explode fan type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wingr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode finl type EXPLODE_ON_HIT | FIRE | FALL;
+		explode doorl type SHATTER;
+		explode arml type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode bombl2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode bombl1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode finr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode doorr type SHATTER;
+		explode armr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode bombr2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode bombr1 type EXPLODE_ON_HIT | FIRE | FALL;
 }

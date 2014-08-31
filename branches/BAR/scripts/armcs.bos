@@ -217,46 +217,50 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP2;
-		explode doorlf type BITMAPONLY | BITMAP4;
-		explode doorlb type BITMAPONLY | BITMAP5;
-		explode nano type BITMAPONLY | BITMAP1;
-		explode turret type BITMAPONLY | BITMAP3;
-		explode doorrf type BITMAPONLY | BITMAP4;
-		explode doorrb type BITMAPONLY | BITMAP5;
-		return (0);
+		corpsetype = 1 ;
+		explode ground type BITMAPONLY;
+		explode base type BITMAPONLY;
+		explode doorlb type FIRE | SMOKE | FALL;
+		explode doorrf type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode nano type FIRE | SMOKE | FALL;
+		explode doorrb type BITMAPONLY;
+		explode doorlf type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP2;
-		explode doorlf type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-		explode doorlb type SHATTER | EXPLODE_ON_HIT | BITMAP5;
-		explode nano type FALL | EXPLODE_ON_HIT | BITMAP1;
-		explode turret type FALL | EXPLODE_ON_HIT | BITMAP3;
-		explode doorrf type FALL | EXPLODE_ON_HIT | BITMAP4;
-		explode doorrb type FALL | EXPLODE_ON_HIT | BITMAP5;
-		return (0);
+		corpsetype = 2 ;
+		explode ground type FALL;
+		explode base type BITMAPONLY;
+		explode doorlb type FIRE | SMOKE | FALL;
+		explode doorrf type FIRE | SMOKE | FALL;
+		explode turret type FIRE | SMOKE | FALL;
+		explode nano type FIRE | SMOKE | FALL;
+		explode doorrb type FIRE | SMOKE | FALL;
+		explode doorlf type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP2;
-		explode doorlf type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-		explode doorlb type SHATTER | EXPLODE_ON_HIT | BITMAP5;
-		explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode doorrf type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode doorrb type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		return (0);
+		corpsetype = 3 ;
+		explode ground type FIRE | SMOKE | FALL;
+		explode base type BITMAPONLY;
+		explode doorlb type SMOKE | FALL;
+		explode doorrf type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano type FIRE | SMOKE | FALL;
+		explode doorrb type FIRE | SMOKE | FALL;
+		explode doorlf type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP2;
-	explode doorlf type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-	explode doorlb type SHATTER | EXPLODE_ON_HIT | BITMAP5;
-	explode nano type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode doorrf type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode doorrb type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+	corpsetype = 3 ;
+		explode ground type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode base type BITMAPONLY;
+		explode doorlb type EXPLODE_ON_HIT | FIRE | FALL;
+		explode doorrf type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode doorrb type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode doorlf type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

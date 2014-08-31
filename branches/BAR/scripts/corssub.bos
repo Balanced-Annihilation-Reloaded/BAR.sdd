@@ -79,38 +79,42 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode bubbles1 type BITMAPONLY | BITMAP2;
-		explode bubbles2 type BITMAPONLY | BITMAP3;
-		explode torp1 type BITMAPONLY | BITMAP4;
-		explode torp2 type BITMAPONLY | BITMAP5;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode torp1 type BITMAPONLY;
+		explode torp2 type BITMAPONLY;
+		explode bubbles1 type BITMAPONLY;
+		explode bubbles2 type BITMAPONLY;
+		explode bubbles3 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode bubbles1 type FALL | BITMAP2;
-		explode bubbles2 type FALL | BITMAP3;
-		explode torp1 type BITMAPONLY | BITMAP4;
-		explode torp2 type BITMAPONLY | BITMAP5;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode torp1 type FALL;
+		explode torp2 type FIRE | SMOKE | FALL;
+		explode bubbles1 type FIRE | SMOKE | FALL;
+		explode bubbles2 type FIRE | SMOKE | FALL;
+		explode bubbles3 type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode bubbles1 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
-		explode bubbles2 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP3;
-		explode torp1 type BITMAPONLY | BITMAP4;
-		explode torp2 type BITMAPONLY | BITMAP5;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode torp1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode torp2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode bubbles1 type FIRE | SMOKE | FALL;
+		explode bubbles2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode bubbles3 type FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode bubbles1 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP2;
-	explode bubbles2 type FALL | FIRE | SMOKE | EXPLODE_ON_HIT | BITMAP3;
-	explode torp1 type BITMAPONLY | BITMAP4;
-	explode torp2 type BITMAPONLY | BITMAP5;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode torp1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode torp2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode bubbles1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode bubbles2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode bubbles3 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

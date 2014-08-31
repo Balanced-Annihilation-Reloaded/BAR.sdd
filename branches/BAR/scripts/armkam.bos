@@ -121,5 +121,60 @@ SweetSpot(piecenum)
 
 Killed(severity, corpsetype)
 {
-	corpsetype = 1;
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode rfin type FIRE | SMOKE | FALL;
+		explode engines type BITMAPONLY;
+		explode thrustb type BITMAPONLY;
+		explode thrusta type BITMAPONLY;
+		explode rturret type BITMAPONLY;
+		explode rflare type BITMAPONLY;
+		explode lfin type BITMAPONLY;
+		explode lturret type BITMAPONLY;
+		explode lflare type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode rfin type FIRE | SMOKE | FALL;
+		explode engines type FIRE | SMOKE | FALL;
+		explode thrustb type FIRE | SMOKE | FALL;
+		explode thrusta type FIRE | SMOKE | FALL;
+		explode rturret type FIRE | SMOKE | FALL;
+		explode rflare type FALL;
+		explode lfin type FIRE | SMOKE | FALL;
+		explode lturret type FIRE | SMOKE | FALL;
+		explode lflare type FIRE | SMOKE | FALL;
+		return(0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode rfin type FIRE | SMOKE | FALL;
+		explode engines type SMOKE | FALL;
+		explode thrustb type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode thrusta type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rturret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rflare type FIRE | SMOKE | FALL;
+		explode lfin type FIRE | SMOKE | FALL;
+		explode lturret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lflare type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
+	}
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rfin type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode engines type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrustb type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrusta type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rturret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rflare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lfin type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lturret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lflare type EXPLODE_ON_HIT | FIRE | FALL;
 }

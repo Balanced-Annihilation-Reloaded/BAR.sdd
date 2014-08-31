@@ -267,21 +267,78 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode barrell type BITMAPONLY;
+		explode hotl type BITMAPONLY;
+		explode barrelr type BITMAPONLY;
+		explode hotr type BITMAPONLY;
+		explode fan type BITMAPONLY;
+		explode arm1 type BITMAPONLY;
+		explode arm2 type BITMAPONLY;
+		explode arm3 type BITMAPONLY;
+		explode clamp1 type FIRE | SMOKE | FALL;
+		explode clamp2 type BITMAPONLY;
+		explode smoke1 type BITMAPONLY;
+		explode smoke2 type BITMAPONLY;
+		explode smoke3 type BITMAPONLY;
+		explode smoke4 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode barrell type FIRE | SMOKE | FALL;
+		explode hotl type FIRE | SMOKE | FALL;
+		explode barrelr type FIRE | SMOKE | FALL;
+		explode hotr type FIRE | SMOKE | FALL;
+		explode fan type FIRE | SMOKE | FALL;
+		explode arm1 type FIRE | SMOKE | FALL;
+		explode arm2 type FALL;
+		explode arm3 type FIRE | SMOKE | FALL;
+		explode clamp1 type FALL;
+		explode clamp2 type FIRE | SMOKE | FALL;
+		explode smoke1 type FALL;
+		explode smoke2 type FIRE | SMOKE | FALL;
+		explode smoke3 type FIRE | SMOKE | FALL;
+		explode smoke4 type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode barrell type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode hotl type FIRE | SMOKE | FALL;
+		explode barrelr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode hotr type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode fan type SMOKE | FALL;
+		explode arm1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode arm2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode arm3 type FIRE | SMOKE | FALL;
+		explode clamp1 type SMOKE | FALL;
+		explode clamp2 type FIRE | SMOKE | FALL;
+		explode smoke1 type SMOKE | FALL;
+		explode smoke2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode smoke3 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode smoke4 type FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode barrell type EXPLODE_ON_HIT | FIRE | FALL;
+		explode hotl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrelr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode hotr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode fan type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode arm1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode arm2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode arm3 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode clamp1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode clamp2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode smoke1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode smoke2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode smoke3 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode smoke4 type EXPLODE_ON_HIT | FIRE | FALL;
 }

@@ -250,23 +250,62 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode standl type BITMAPONLY;
+		explode nanol type FIRE | SMOKE | FALL;
+		explode emitl type BITMAPONLY;
+		explode doorr2 type BITMAPONLY;
+		explode doorr1 type BITMAPONLY;
+		explode doorl2 type BITMAPONLY;
+		explode doorl1 type BITMAPONLY;
+		explode standr type BITMAPONLY;
+		explode nanor type BITMAPONLY;
+		explode emitr type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode standl type FIRE | SMOKE | FALL;
+		explode nanol type FALL;
+		explode emitl type FALL;
+		explode doorr2 type FIRE | SMOKE | FALL;
+		explode doorr1 type FALL;
+		explode doorl2 type FALL;
+		explode doorl1 type FIRE | SMOKE | FALL;
+		explode standr type FIRE | SMOKE | FALL;
+		explode nanor type FIRE | SMOKE | FALL;
+		explode emitr type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode standl type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode nanol type FIRE | SMOKE | FALL;
+		explode emitl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode doorr2 type SMOKE | FALL;
+		explode doorr1 type SMOKE | FALL;
+		explode doorl2 type FIRE | SMOKE | FALL;
+		explode doorl1 type SMOKE | FALL;
+		explode standr type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode nanor type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode emitr type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	return (0);
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode standl type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nanol type EXPLODE_ON_HIT | FIRE | FALL;
+		explode emitl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode doorr2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode doorr1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode doorl2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode doorl1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode standr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nanor type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode emitr type EXPLODE_ON_HIT | FIRE | FALL;
 }

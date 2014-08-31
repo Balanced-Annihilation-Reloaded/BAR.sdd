@@ -264,65 +264,36 @@ SweetSpot(piecenum)
 
 Killed(severity, corpsetype)
 {
-	if( Static_Var_2 == 1 )
-	{
-		if( severity <= 50 )
-		{
-			corpsetype = 2;
-			explode base type BITMAPONLY | BITMAP1;
-			explode flare type FALL | BITMAP2;
-			explode box type SHATTER | BITMAP3;
-			return (0);
-		}
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode box type SHATTER | BITMAP3;
-		return (0);
-	}
-	if( Static_Var_2 == 2 )
-	{
-		if( severity <= 50 )
-		{
-			corpsetype = 2;
-			explode base type BITMAPONLY | BITMAP1;
-			explode flare type FALL | BITMAP2;
-			explode box type SHATTER | BITMAP3;
-			return (0);
-		}
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode box type SHATTER | BITMAP3;
-		return (0);
-	}
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode flare type BITMAPONLY | BITMAP2;
-		explode box type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode box type FIRE | SMOKE | FALL;
+		explode flare type BITMAPONLY;
+		explode wake type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode flare type FALL | BITMAP2;
-		explode box type SHATTER | BITMAP3;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode box type FIRE | SMOKE | FALL;
+		explode flare type FIRE | SMOKE | FALL;
+		explode wake type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode box type SHATTER | BITMAP3;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode box type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flare type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode wake type FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode box type SHATTER | EXPLODE_ON_HIT | BITMAP3;
-	return (0);
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode box type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flare type EXPLODE_ON_HIT | FIRE | FALL;
+		explode wake type EXPLODE_ON_HIT | FIRE | FALL;
 }

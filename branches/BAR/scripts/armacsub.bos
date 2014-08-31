@@ -147,23 +147,54 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode rfin type BITMAPONLY;
+		explode door type BITMAPONLY;
+		explode prop type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode gun type FIRE | SMOKE | FALL;
+		explode nano1 type BITMAPONLY;
+		explode nano2 type BITMAPONLY;
+		explode lfin type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode rfin type FIRE | SMOKE | FALL;
+		explode door type FIRE | SMOKE | FALL;
+		explode prop type FALL;
+		explode turret type FIRE | SMOKE | FALL;
+		explode gun type FIRE | SMOKE | FALL;
+		explode nano1 type FALL;
+		explode nano2 type FIRE | SMOKE | FALL;
+		explode lfin type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode rfin type FIRE | SMOKE | FALL;
+		explode door type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode prop type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode turret type SMOKE | FALL;
+		explode gun type FIRE | SMOKE | FALL;
+		explode nano1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano2 type FIRE | SMOKE | FALL;
+		explode lfin type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode rfin type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode door type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode prop type EXPLODE_ON_HIT | FIRE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode gun type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lfin type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

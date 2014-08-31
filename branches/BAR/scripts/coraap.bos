@@ -238,35 +238,73 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode dish1 type BITMAPONLY | BITMAP3;
-		explode dish2 type BITMAPONLY | BITMAP3;
-		explode pad type BITMAPONLY | BITMAP3;
-
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode pad type BITMAPONLY;
+		explode nano1 type BITMAPONLY;
+		explode nano2 type BITMAPONLY;
+		explode nano3 type BITMAPONLY;
+		explode nano4 type BITMAPONLY;
+		explode nano5 type BITMAPONLY;
+		explode nano6 type BITMAPONLY;
+		explode nano7 type BITMAPONLY;
+		explode nano8 type BITMAPONLY;
+		explode dishbase1 type BITMAPONLY;
+		explode dish1 type FIRE | SMOKE | FALL;
+		explode dishbase2 type BITMAPONLY;
+		explode dish2 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode dish1 type FALL | BITMAP3;
-		explode dish2 type FALL | BITMAP3;
-		explode pad type FALL | BITMAP3;
-		return (0);
+		corpsetype = 2 ;
+		explode pad type FIRE | SMOKE | FALL;
+		explode nano1 type FIRE | SMOKE | FALL;
+		explode nano2 type FIRE | SMOKE | FALL;
+		explode nano3 type FIRE | SMOKE | FALL;
+		explode nano4 type FALL;
+		explode nano5 type FALL;
+		explode nano6 type FIRE | SMOKE | FALL;
+		explode nano7 type FIRE | SMOKE | FALL;
+		explode nano8 type FIRE | SMOKE | FALL;
+		explode dishbase1 type FIRE | SMOKE | FALL;
+		explode dish1 type FIRE | SMOKE | FALL;
+		explode dishbase2 type FIRE | SMOKE | FALL;
+		explode dish2 type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode dish1 type FALL | BITMAP3;
-		explode dish2 type FALL | BITMAP3;
-		explode pad type FALL | BITMAP3;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode pad type FIRE | SMOKE | FALL;
+		explode nano1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode nano2 type SMOKE | FALL;
+		explode nano3 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode nano4 type FIRE | SMOKE | FALL;
+		explode nano5 type FIRE | SMOKE | FALL;
+		explode nano6 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano7 type FIRE | SMOKE | FALL;
+		explode nano8 type SMOKE | FALL;
+		explode dishbase1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode dish1 type FIRE | SMOKE | FALL;
+		explode dishbase2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode dish2 type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode dish1 type FALL | BITMAP3;
-		explode dish2 type FALL | BITMAP3;
-		explode pad type FALL | BITMAP3;
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | FALL;
+		explode pad type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano3 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano4 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano5 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano6 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano7 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano8 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode dishbase1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dish1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode dishbase2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dish2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

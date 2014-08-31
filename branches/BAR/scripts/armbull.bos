@@ -157,22 +157,66 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode raxle type BITMAPONLY;
+		explode rwheel type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode rsleeve type BITMAPONLY;
+		explode rbarrel type FIRE | SMOKE | FALL;
+		explode rflare type BITMAPONLY;
+		explode lsleeve type BITMAPONLY;
+		explode lbarrel type BITMAPONLY;
+		explode lflare type BITMAPONLY;
+		explode laxle type BITMAPONLY;
+		explode lwheel type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode raxle type FIRE | SMOKE | FALL;
+		explode rwheel type FIRE | SMOKE | FALL;
+		explode turret type FIRE | SMOKE | FALL;
+		explode rsleeve type FALL;
+		explode rbarrel type FIRE | SMOKE | FALL;
+		explode rflare type FALL;
+		explode lsleeve type FALL;
+		explode lbarrel type FALL;
+		explode lflare type FIRE | SMOKE | FALL;
+		explode laxle type FALL;
+		explode lwheel type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode raxle type FIRE | SMOKE | FALL;
+		explode rwheel type SMOKE | FALL;
+		explode turret type FIRE | SMOKE | FALL;
+		explode rsleeve type FIRE | SMOKE | FALL;
+		explode rbarrel type SMOKE | FALL;
+		explode rflare type SMOKE | FALL;
+		explode lsleeve type SMOKE | FALL;
+		explode lbarrel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lflare type SMOKE | FALL;
+		explode laxle type FIRE | SMOKE | FALL;
+		explode lwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP3;
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode raxle type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rwheel type EXPLODE_ON_HIT | FIRE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rsleeve type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rbarrel type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rflare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lsleeve type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lbarrel type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lflare type EXPLODE_ON_HIT | FIRE | FALL;
+		explode laxle type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lwheel type EXPLODE_ON_HIT | FIRE | FALL;
 }

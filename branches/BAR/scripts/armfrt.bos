@@ -148,38 +148,42 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode sleeve type BITMAPONLY | BITMAP1;
-		explode base type BITMAPONLY | BITMAP2;
-		explode flare type BITMAPONLY | BITMAP3;
-		explode launcher type BITMAPONLY | BITMAP4;
-		explode turret type BITMAPONLY | BITMAP5;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode launcher type BITMAPONLY;
+		explode sleeve type BITMAPONLY;
+		explode barrel type FIRE | SMOKE | FALL;
+		explode flare type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode sleeve type FALL | BITMAP1;
-		explode base type BITMAPONLY | BITMAP2;
-		explode flare type FALL | BITMAP3;
-		explode launcher type SHATTER | BITMAP4;
-		explode turret type FALL | BITMAP5;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode turret type FIRE | SMOKE | FALL;
+		explode launcher type FIRE | SMOKE | FALL;
+		explode sleeve type FIRE | SMOKE | FALL;
+		explode barrel type FIRE | SMOKE | FALL;
+		explode flare type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode sleeve type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode base type BITMAPONLY | BITMAP2;
-		explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode launcher type SHATTER | BITMAP4;
-		explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turret type SMOKE | FALL;
+		explode launcher type SMOKE | FALL;
+		explode sleeve type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrel type SMOKE | FALL;
+		explode flare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode sleeve type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode base type BITMAPONLY | BITMAP2;
-	explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode launcher type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-	explode turret type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode launcher type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode sleeve type EXPLODE_ON_HIT | FIRE | FALL;
+		explode barrel type EXPLODE_ON_HIT | FIRE | FALL;
+		explode flare type EXPLODE_ON_HIT | FIRE | FALL;
 }

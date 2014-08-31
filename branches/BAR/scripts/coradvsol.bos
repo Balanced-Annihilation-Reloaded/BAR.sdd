@@ -86,30 +86,29 @@ HitByWeapon(Func_Var_1, Func_Var_2)
 /*    89:*/}
 
 Killed(severity, corpsetype)
-/*    8b:*/{
-/*    90:*/	if( severity <= 25 )
-/*    92:*/	{
-/*    94:*/		corpsetype = 1;
-/*    9b:*/		explode base type BITMAPONLY | BITMAP2;
-/*    b7:*/		explode fan type BITMAPONLY | BITMAP4;
-/*    bb:*/		return (0);
-/*    bc:*/	}
-/*    c1:*/	if( severity <= 50 )
-/*    c3:*/	{
-/*    c5:*/		corpsetype = 2;
-/*    cc:*/		explode base type BITMAPONLY | BITMAP2;
-/*    e8:*/		explode fan type BITMAPONLY | BITMAP4;
-/*    ec:*/		return (0);
-/*    ed:*/	}
-/*    f2:*/	if( severity <= 99 )
-/*    f4:*/	{
-/*    f6:*/		corpsetype = 3;
-/*    fd:*/		explode base type BITMAPONLY | BITMAP2;
-/*   119:*/		explode fan type BITMAPONLY | BITMAP4;
-/*   11d:*/		return (0);
-/*   11e:*/	}
-/*   120:*/	corpsetype = 3;
-/*   127:*/	explode base type BITMAPONLY | BITMAP2;
-/*   143:*/	explode fan type BITMAPONLY | BITMAP5;
-/*   147:*/	return (0);
-/*   148:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode fan type FIRE | SMOKE | FALL;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode fan type FIRE | SMOKE | FALL;
+		return(0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode fan type SMOKE | FALL;
+		return(0);
+	}
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | FALL;
+		explode fan type EXPLODE_ON_HIT | FIRE | FALL;
+}

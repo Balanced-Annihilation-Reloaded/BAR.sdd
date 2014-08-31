@@ -218,54 +218,54 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode nano1 type BITMAPONLY | BITMAP2;
-		explode nano2 type BITMAPONLY | BITMAP3;
-		explode nano3 type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode crane1 type BITMAPONLY | BITMAP1;
-		explode crane2 type BITMAPONLY | BITMAP2;
-		explode pad type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode door2 type FIRE | SMOKE | FALL;
+		explode crane2 type BITMAPONLY;
+		explode door1 type BITMAPONLY;
+		explode crane1 type BITMAPONLY;
+		explode nano1 type BITMAPONLY;
+		explode nano2 type BITMAPONLY;
+		explode nano3 type BITMAPONLY;
+		explode pad type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode nano1 type BITMAPONLY | BITMAP2;
-		explode nano2 type BITMAPONLY | BITMAP3;
-		explode nano3 type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode crane1 type BITMAPONLY | BITMAP1;
-		explode crane2 type BITMAPONLY | BITMAP2;
-		explode pad type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode door2 type FALL;
+		explode crane2 type FIRE | SMOKE | FALL;
+		explode door1 type FALL;
+		explode crane1 type FIRE | SMOKE | FALL;
+		explode nano1 type FIRE | SMOKE | FALL;
+		explode nano2 type FIRE | SMOKE | FALL;
+		explode nano3 type FIRE | SMOKE | FALL;
+		explode pad type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode nano1 type BITMAPONLY | BITMAP2;
-		explode nano2 type BITMAPONLY | BITMAP3;
-		explode nano3 type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode crane1 type BITMAPONLY | BITMAP1;
-		explode crane2 type BITMAPONLY | BITMAP2;
-		explode pad type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode door2 type SMOKE | FALL;
+		explode crane2 type FIRE | SMOKE | FALL;
+		explode door1 type FIRE | SMOKE | FALL;
+		explode crane1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode nano1 type FIRE | SMOKE | FALL;
+		explode nano2 type FIRE | SMOKE | FALL;
+		explode nano3 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode pad type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode nano1 type BITMAPONLY | BITMAP2;
-		explode nano2 type BITMAPONLY | BITMAP3;
-		explode nano3 type BITMAPONLY | BITMAP3;
-		explode door1 type BITMAPONLY | BITMAP4;
-		explode door2 type BITMAPONLY | BITMAP5;
-		explode crane1 type BITMAPONLY | BITMAP1;
-		explode crane2 type BITMAPONLY | BITMAP2;
-		explode pad type BITMAPONLY | BITMAP3;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode door2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode crane2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode door1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode crane1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano3 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode pad type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

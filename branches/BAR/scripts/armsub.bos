@@ -95,23 +95,38 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode prop type FIRE | SMOKE | FALL;
+		explode doorl type BITMAPONLY;
+		explode doorr type BITMAPONLY;
+		explode flare type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode prop type FIRE | SMOKE | FALL;
+		explode doorl type FALL;
+		explode doorr type FIRE | SMOKE | FALL;
+		explode flare type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode prop type FIRE | SMOKE | FALL;
+		explode doorl type FIRE | SMOKE | FALL;
+		explode doorr type FIRE | SMOKE | FALL;
+		explode flare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type SHATTER | EXPLODE_ON_HIT | BITMAP1;
-	return (0);
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode prop type EXPLODE_ON_HIT | FIRE | FALL;
+		explode doorl type EXPLODE_ON_HIT | FIRE | FALL;
+		explode doorr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode flare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

@@ -242,54 +242,63 @@ SweetSpot(piecenum)
 
 Killed(severity, corpsetype)
 {
-	hide flare1;
-	hide flare2;
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode barrel1 type BITMAPONLY | BITMAP1;
-		explode barrel2 type BITMAPONLY | BITMAP2;
-		explode base type BITMAPONLY | BITMAP3;
-		explode flare1 type BITMAPONLY | BITMAP4;
-		explode flare2 type BITMAPONLY | BITMAP5;
-		explode turret type BITMAPONLY | BITMAP2;
-		explode sleeve1 type BITMAPONLY | BITMAP3;
-		explode sleeve2 type BITMAPONLY | BITMAP4;
-		return (0);
+		corpsetype = 1 ;
+		explode ground type BITMAPONLY;
+		explode base type BITMAPONLY;
+		explode depthturret type BITMAPONLY;
+		explode depthflare type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode sleeve2 type BITMAPONLY;
+		explode barrel2 type FIRE | SMOKE | FALL;
+		explode flare2 type BITMAPONLY;
+		explode sleeve1 type BITMAPONLY;
+		explode barrel1 type BITMAPONLY;
+		explode flare1 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode barrel1 type FALL | BITMAP1;
-		explode barrel2 type FALL | BITMAP2;
-		explode base type BITMAPONLY | BITMAP3;
-		explode flare1 type FALL | BITMAP4;
-		explode flare2 type FALL | BITMAP5;
-		explode turret type BITMAPONLY | BITMAP2;
-		explode sleeve1 type FALL | BITMAP3;
-		explode sleeve2 type FALL | BITMAP4;
-		return (0);
+		corpsetype = 2 ;
+		explode ground type FALL;
+		explode depthturret type FALL;
+		explode depthflare type FALL;
+		explode turret type FIRE | SMOKE | FALL;
+		explode sleeve2 type FALL;
+		explode barrel2 type FIRE | SMOKE | FALL;
+		explode flare2 type FIRE | SMOKE | FALL;
+		explode sleeve1 type FALL;
+		explode barrel1 type FIRE | SMOKE | FALL;
+		explode flare1 type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode barrel1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode barrel2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode base type BITMAPONLY | BITMAP3;
-		explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode turret type SHATTER | BITMAP2;
-		explode sleeve1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode sleeve2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		return (0);
+		corpsetype = 3 ;
+		explode ground type FIRE | SMOKE | FALL;
+		explode base type BITMAPONLY;
+		explode depthturret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode depthflare type FIRE | SMOKE | FALL;
+		explode turret type FIRE | SMOKE | FALL;
+		explode sleeve2 type FIRE | SMOKE | FALL;
+		explode barrel2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flare2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode sleeve1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrel1 type SMOKE | FALL;
+		explode flare1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode barrel1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode barrel2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode base type BITMAPONLY | BITMAP3;
-	explode flare1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode flare2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode turret type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode sleeve1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode sleeve2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+	corpsetype = 3 ;
+		explode ground type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode depthturret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode depthflare type EXPLODE_ON_HIT | FIRE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode sleeve2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrel2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode flare2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode sleeve1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrel1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode flare1 type EXPLODE_ON_HIT | FIRE | FALL;
 }

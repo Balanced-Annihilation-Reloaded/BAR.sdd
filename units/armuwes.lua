@@ -67,7 +67,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 74,
-				object = "armarm4x4b.s3o.s3o",
+				object = "arm4x4b.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

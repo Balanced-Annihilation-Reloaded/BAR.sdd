@@ -170,40 +170,58 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-	explode base type BITMAPONLY | BITMAP4;
-		explode thrustrr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustrl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode thrustfl type FIRE | SMOKE | FALL;
+		explode thrustfla type BITMAPONLY;
+		explode thrustfr type BITMAPONLY;
+		explode thrustfra type BITMAPONLY;
+		explode thrustrl type BITMAPONLY;
+		explode thrustrla type BITMAPONLY;
+		explode thrustrr type BITMAPONLY;
+		explode thrustrra type BITMAPONLY;
+		explode link type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP4;
-		explode thrustrr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustrl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode thrustfl type FIRE | SMOKE | FALL;
+		explode thrustfla type FIRE | SMOKE | FALL;
+		explode thrustfr type FIRE | SMOKE | FALL;
+		explode thrustfra type FIRE | SMOKE | FALL;
+		explode thrustrl type FALL;
+		explode thrustrla type FIRE | SMOKE | FALL;
+		explode thrustrr type FIRE | SMOKE | FALL;
+		explode thrustrra type FIRE | SMOKE | FALL;
+		explode link type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP4;
-		explode thrustrr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustrl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode thrustfl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrustfla type SMOKE | FALL;
+		explode thrustfr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrustfra type FIRE | SMOKE | FALL;
+		explode thrustrl type SMOKE | FALL;
+		explode thrustrla type FIRE | SMOKE | FALL;
+		explode thrustrr type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode thrustrra type FIRE | SMOKE | FALL;
+		explode link type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP4;
-		explode thrustrr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustrl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode thrustfl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrustfla type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustfr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrustfra type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustrl type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustrla type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrustrr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrustrra type EXPLODE_ON_HIT | FIRE | FALL;
+		explode link type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

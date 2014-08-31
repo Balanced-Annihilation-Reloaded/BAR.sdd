@@ -583,56 +583,84 @@ FirePrimary()
 
 Killed(severity, corpsetype)
 {
-	hide rflare;
-	hide lflare;
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode lflare type BITMAPONLY | BITMAP4;
-		explode lfoot type BITMAPONLY | BITMAP5;
-		explode lleg type BITMAPONLY | BITMAP1;
-		explode lthigh type BITMAPONLY | BITMAP3;
-		explode pelvis type BITMAPONLY | BITMAP4;
-		explode rflare type BITMAPONLY | BITMAP2;
-		explode rfoot type BITMAPONLY | BITMAP3;
-		explode rleg type BITMAPONLY | BITMAP4;
-		explode rthigh type BITMAPONLY | BITMAP1;
-		explode torso type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 1 ;
+		explode pelvis type BITMAPONLY;
+		explode lthigh type BITMAPONLY;
+		explode lleg type BITMAPONLY;
+		explode lfoot type FIRE | SMOKE | FALL;
+		explode rthigh type BITMAPONLY;
+		explode rleg type BITMAPONLY;
+		explode rfoot type BITMAPONLY;
+		explode torso type BITMAPONLY;
+		explode rarm type BITMAPONLY;
+		explode rbarrel type BITMAPONLY;
+		explode rflare type BITMAPONLY;
+		explode rvent type BITMAPONLY;
+		explode larm type BITMAPONLY;
+		explode lvent type BITMAPONLY;
+		explode lbarrel type BITMAPONLY;
+		explode lflare type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode lflare type FALL | BITMAP4;
-		explode lfoot type FALL | BITMAP5;
-		explode lleg type FALL | BITMAP1;
-		explode lthigh type FALL | BITMAP3;
-		explode pelvis type FALL | BITMAP4;
-		explode rflare type FALL | BITMAP1;
-		explode rfoot type FALL | BITMAP2;
-		explode rleg type FALL | BITMAP3;
-		explode rthigh type FALL | BITMAP5;
-		explode torso type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode pelvis type BITMAPONLY;
+		explode lthigh type FIRE | SMOKE | FALL;
+		explode lleg type FALL;
+		explode lfoot type FIRE | SMOKE | FALL;
+		explode rthigh type FIRE | SMOKE | FALL;
+		explode rleg type FIRE | SMOKE | FALL;
+		explode rfoot type FIRE | SMOKE | FALL;
+		explode torso type FIRE | SMOKE | FALL;
+		explode rarm type FIRE | SMOKE | FALL;
+		explode rbarrel type FIRE | SMOKE | FALL;
+		explode rflare type FIRE | SMOKE | FALL;
+		explode rvent type FALL;
+		explode larm type FALL;
+		explode lvent type FIRE | SMOKE | FALL;
+		explode lbarrel type FALL;
+		explode lflare type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode rflare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode rfoot type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode rleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode rthigh type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		explode torso type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode pelvis type FIRE | SMOKE | FALL;
+		explode lthigh type SMOKE | FALL;
+		explode lleg type FIRE | SMOKE | FALL;
+		explode lfoot type FIRE | SMOKE | FALL;
+		explode rthigh type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode rleg type FIRE | SMOKE | FALL;
+		explode rfoot type SMOKE | FALL;
+		explode torso type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rarm type FIRE | SMOKE | FALL;
+		explode rbarrel type SMOKE | FALL;
+		explode rflare type SMOKE | FALL;
+		explode rvent type SHATTER;
+		explode larm type FIRE | SMOKE | FALL;
+		explode lvent type SHATTER;
+		explode lbarrel type SMOKE | FALL;
+		explode lflare type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode lflare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode lfoot type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode lthigh type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode pelvis type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode rflare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode rfoot type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode rleg type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode rthigh type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	explode torso type BITMAPONLY | BITMAP1;
+	corpsetype = 3 ;
+		explode pelvis type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lthigh type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lleg type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lfoot type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rthigh type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rleg type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rfoot type EXPLODE_ON_HIT | FIRE | FALL;
+		explode torso type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rarm type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rbarrel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rflare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rvent type SHATTER;
+		explode larm type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lvent type SHATTER;
+		explode lbarrel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lflare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

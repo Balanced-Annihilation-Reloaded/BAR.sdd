@@ -120,39 +120,38 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode collar1 type BITMAPONLY | BITMAP2;
-		explode ball1 type SHATTER | BITMAP3;
-		explode collar2 type BITMAPONLY | BITMAP4;
-		explode ball2 type SHATTER | BITMAP5;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode collar1 type FIRE | SMOKE | FALL;
+		explode ball1 type BITMAPONLY;
+		explode collar2 type BITMAPONLY;
+		explode ball2 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode collar1 type BITMAPONLY | BITMAP2;
-		explode ball1 type SHATTER | BITMAP3;
-		explode collar2 type BITMAPONLY | BITMAP4;
-		explode ball2 type SHATTER | BITMAP5;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode collar1 type FIRE | SMOKE | FALL;
+		explode ball1 type FALL;
+		explode collar2 type FALL;
+		explode ball2 type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode collar1 type BITMAPONLY | BITMAP2;
-		explode ball1 type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode collar2 type BITMAPONLY | BITMAP4;
-		explode ball2 type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode collar1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode ball1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode collar2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode ball2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode collar1 type BITMAPONLY | BITMAP2;
-	explode ball1 type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode collar2 type BITMAPONLY | BITMAP4;
-	explode ball2 type SHATTER | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP5;
-	return (0);
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode collar1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode ball1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode collar2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode ball2 type EXPLODE_ON_HIT | FIRE | FALL;
 }

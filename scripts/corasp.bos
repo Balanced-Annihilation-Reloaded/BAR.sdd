@@ -78,46 +78,45 @@ QueryNanoPiece(piecenum)
 /*    a5:*/}
 
 Killed(severity, corpsetype)
-/*    a7:*/{
-/*    ac:*/	if( severity <= 25 )
-/*    ae:*/	{
-/*    b0:*/		corpsetype = 1;
-/*    b7:*/		explode base type BITMAPONLY | BITMAP1;
-/*    e8:*/		explode land1 type BITMAPONLY | BITMAP4;
-/*    ef:*/		explode land2 type BITMAPONLY | BITMAP3;
-/*    f6:*/		explode land3 type BITMAPONLY | BITMAP4;
-/*    fd:*/		explode land4 type BITMAPONLY | BITMAP3;
-/*   104:*/		explode nano type BITMAPONLY | BITMAP5;
-/*   108:*/		return (0);
-/*   109:*/	}
-/*   10e:*/	if( severity <= 50 )
-/*   110:*/	{
-/*   112:*/		corpsetype = 2;
-/*    b7:*/		explode base type BITMAPONLY | BITMAP1;
-/*    e8:*/		explode land1 type BITMAPONLY | BITMAP4;
-/*    ef:*/		explode land2 type BITMAPONLY | BITMAP3;
-/*    f6:*/		explode land3 type BITMAPONLY | BITMAP4;
-/*    fd:*/		explode land4 type BITMAPONLY | BITMAP3;
-/*   104:*/		explode nano type BITMAPONLY | BITMAP5;
-/*   16a:*/		return (0);
-/*   16b:*/	}
-/*   170:*/	if( severity <= 99 )
-/*   172:*/	{
-/*   174:*/		corpsetype = 3;
-/*    b7:*/		explode base type BITMAPONLY | BITMAP1;
-/*    e8:*/		explode land1 type BITMAPONLY | BITMAP4;
-/*    ef:*/		explode land2 type BITMAPONLY | BITMAP3;
-/*    f6:*/		explode land3 type BITMAPONLY | BITMAP4;
-/*    fd:*/		explode land4 type BITMAPONLY | BITMAP3;
-/*   104:*/		explode nano type BITMAPONLY | BITMAP5;
-/*   205:*/		return (0);
-/*   206:*/	}
-/*   208:*/	corpsetype = 3;
-/*    b7:*/		explode base type BITMAPONLY | BITMAP1;
-/*    e8:*/		explode land1 type BITMAPONLY | BITMAP4;
-/*    ef:*/		explode land2 type BITMAPONLY | BITMAP3;
-/*    f6:*/		explode land3 type BITMAPONLY | BITMAP4;
-/*    fd:*/		explode land4 type BITMAPONLY | BITMAP3;
-/*   104:*/		explode nano type BITMAPONLY | BITMAP5;
-/*   299:*/	return (0);
-/*   29a:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode land1 type BITMAPONLY;
+		explode land2 type BITMAPONLY;
+		explode land3 type BITMAPONLY;
+		explode land4 type BITMAPONLY;
+		explode nano type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode land1 type FIRE | SMOKE | FALL;
+		explode land2 type FIRE | SMOKE | FALL;
+		explode land3 type FIRE | SMOKE | FALL;
+		explode land4 type FIRE | SMOKE | FALL;
+		explode nano type FIRE | SMOKE | FALL;
+		return(0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode land1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode land2 type FIRE | SMOKE | FALL;
+		explode land3 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode land4 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano type SMOKE | FALL;
+		return(0);
+	}
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode land1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode land2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode land3 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode land4 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+}

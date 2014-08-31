@@ -195,30 +195,42 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode head1 type BITMAPONLY | BITMAP2;
-		explode head2 type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode head1 type FIRE | SMOKE | FALL;
+		explode nano1 type BITMAPONLY;
+		explode head2 type BITMAPONLY;
+		explode nano2 type BITMAPONLY;
+		explode pad type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode head1 type BITMAPONLY | BITMAP2;
-		explode head2 type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode head1 type FIRE | SMOKE | FALL;
+		explode nano1 type FIRE | SMOKE | FALL;
+		explode head2 type FALL;
+		explode nano2 type FIRE | SMOKE | FALL;
+		explode pad type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode head1 type BITMAPONLY | BITMAP2;
-		explode head2 type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode head1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano1 type SMOKE | FALL;
+		explode head2 type SMOKE | FALL;
+		explode nano2 type SMOKE | FALL;
+		explode pad type FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode head1 type BITMAPONLY | BITMAP2;
-		explode head2 type BITMAPONLY | BITMAP3;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode head1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode head2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode pad type EXPLODE_ON_HIT | FIRE | FALL;
 }

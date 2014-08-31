@@ -245,38 +245,49 @@ SweetSpot(piecenum)
 /*   2e5:*/}
 
 Killed(severity, corpsetype)
-/*   2e7:*/{
-/*   2ec:*/	if( severity <= 25 )
-/*   2ee:*/	{
-/*   2f0:*/		corpsetype = 1;
-/*   2f7:*/		explode base type BITMAPONLY | BITMAP1;
-/*   2fe:*/		explode head type BITMAPONLY | BITMAP2;
-/*   305:*/		explode pad type BITMAPONLY | BITMAP3;
-/*   30c:*/		explode dish type BITMAPONLY | BITMAP4;
-/*   333:*/		return (0);
-/*   334:*/	}
-/*   339:*/	if( severity <= 50 )
-/*   33b:*/	{
-/*   33d:*/		corpsetype = 2;
-/*   2f7:*/		explode base type BITMAPONLY | BITMAP1;
-/*   2fe:*/		explode head type BITMAPONLY | BITMAP2;
-/*   305:*/		explode pad type BITMAPONLY | BITMAP3;
-/*   30c:*/		explode dish type BITMAPONLY | BITMAP4;
-/*   380:*/		return (0);
-/*   381:*/	}
-/*   386:*/	if( severity <= 99 )
-/*   388:*/	{
-/*   38a:*/		corpsetype = 3;
-/*   2f7:*/		explode base type BITMAPONLY | BITMAP1;
-/*   2fe:*/		explode head type BITMAPONLY | BITMAP2;
-/*   305:*/		explode pad type BITMAPONLY | BITMAP3;
-/*   30c:*/		explode dish type BITMAPONLY | BITMAP4;
-/*   3fa:*/		return (0);
-/*   3fb:*/	}
-/*   3fd:*/	corpsetype = 3;
-/*   2f7:*/		explode base type BITMAPONLY | BITMAP1;
-/*   2fe:*/		explode head type BITMAPONLY | BITMAP2;
-/*   305:*/		explode pad type BITMAPONLY | BITMAP3;
-/*   30c:*/		explode dish type BITMAPONLY | BITMAP4;
-/*   470:*/	return (0);
-/*   471:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode head type FIRE | SMOKE | FALL;
+		explode nano1 type BITMAPONLY;
+		explode nano2 type BITMAPONLY;
+		explode pad type BITMAPONLY;
+		explode blink type BITMAPONLY;
+		explode dish type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode head type FALL;
+		explode nano1 type FALL;
+		explode nano2 type FIRE | SMOKE | FALL;
+		explode pad type FALL;
+		explode blink type FIRE | SMOKE | FALL;
+		explode dish type FIRE | SMOKE | FALL;
+		return(0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode head type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode nano1 type FIRE | SMOKE | FALL;
+		explode nano2 type FIRE | SMOKE | FALL;
+		explode pad type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode blink type SMOKE | FALL;
+		explode dish type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
+	}
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode head type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode pad type EXPLODE_ON_HIT | FIRE | FALL;
+		explode blink type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dish type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+}

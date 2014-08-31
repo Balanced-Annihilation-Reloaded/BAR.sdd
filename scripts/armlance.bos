@@ -127,36 +127,42 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode bombdrop type BITMAPONLY | BITMAP2;
-
-		explode wing1 type BITMAPONLY | BITMAP1;
-		explode wing2 type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode wing1 type FIRE | SMOKE | FALL;
+		explode wing2 type BITMAPONLY;
+		explode bombdrop type BITMAPONLY;
+		explode thrust1 type BITMAPONLY;
+		explode thrust2 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode bombdrop type FALL | BITMAP2;
-
-		explode wing1 type FALL | BITMAP1;
-		explode wing2 type FALL | BITMAP2;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode wing1 type FIRE | SMOKE | FALL;
+		explode wing2 type FIRE | SMOKE | FALL;
+		explode bombdrop type FIRE | SMOKE | FALL;
+		explode thrust1 type FIRE | SMOKE | FALL;
+		explode thrust2 type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode bombdrop type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode wing1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode wing2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode wing1 type SMOKE | FALL;
+		explode wing2 type SMOKE | FALL;
+		explode bombdrop type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrust1 type SMOKE | FALL;
+		explode thrust2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode bombdrop type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode wing1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode wing2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode wing1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wing2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode bombdrop type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrust1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrust2 type EXPLODE_ON_HIT | FIRE | FALL;
 }

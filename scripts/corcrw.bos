@@ -189,32 +189,104 @@ FireTertiary()
 
 Killed(severity, corpsetype)
 {
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode turretf type BITMAPONLY;
+		explode sleevef type BITMAPONLY;
+		explode barrelf type FIRE | SMOKE | FALL;
+		explode flaref type BITMAPONLY;
+		explode turretr type BITMAPONLY;
+		explode sleever type BITMAPONLY;
+		explode barrelr type BITMAPONLY;
+		explode flarer type BITMAPONLY;
+		explode turretl type BITMAPONLY;
+		explode sleevel type BITMAPONLY;
+		explode barrell type BITMAPONLY;
+		explode flarel type BITMAPONLY;
+		explode thrustrl type BITMAPONLY;
+		explode thrustrla type BITMAPONLY;
+		explode thrustfl type BITMAPONLY;
+		explode thrustfla type BITMAPONLY;
+		explode thrustfr type BITMAPONLY;
+		explode thrustfra type BITMAPONLY;
+		explode thrustrr type BITMAPONLY;
+		explode thrustrra type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode turretf type FIRE | SMOKE | FALL;
+		explode sleevef type FIRE | SMOKE | FALL;
+		explode barrelf type FALL;
+		explode flaref type FIRE | SMOKE | FALL;
+		explode turretr type FIRE | SMOKE | FALL;
+		explode sleever type FIRE | SMOKE | FALL;
+		explode barrelr type FIRE | SMOKE | FALL;
+		explode flarer type FIRE | SMOKE | FALL;
+		explode turretl type FIRE | SMOKE | FALL;
+		explode sleevel type FALL;
+		explode barrell type FIRE | SMOKE | FALL;
+		explode flarel type FIRE | SMOKE | FALL;
+		explode thrustrl type FIRE | SMOKE | FALL;
+		explode thrustrla type FIRE | SMOKE | FALL;
+		explode thrustfl type FIRE | SMOKE | FALL;
+		explode thrustfla type FALL;
+		explode thrustfr type FIRE | SMOKE | FALL;
+		explode thrustfra type FALL;
+		explode thrustrr type FALL;
+		explode thrustrra type FIRE | SMOKE | FALL;
+		return(0);
+	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode turretl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode sleevel type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode barrell type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode turretr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode sleever type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode barrelr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustrr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustrl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turretf type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode sleevef type FIRE | SMOKE | FALL;
+		explode barrelf type SMOKE | FALL;
+		explode flaref type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode turretr type SMOKE | FALL;
+		explode sleever type FIRE | SMOKE | FALL;
+		explode barrelr type FIRE | SMOKE | FALL;
+		explode flarer type SMOKE | FALL;
+		explode turretl type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode sleevel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrell type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode flarel type SMOKE | FALL;
+		explode thrustrl type FIRE | SMOKE | FALL;
+		explode thrustrla type FIRE | SMOKE | FALL;
+		explode thrustfl type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode thrustfla type FIRE | SMOKE | FALL;
+		explode thrustfr type SMOKE | FALL;
+		explode thrustfra type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode thrustrr type SMOKE | FALL;
+		explode thrustrra type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-		explode base type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode turretl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode sleevel type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode barrell type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode turretr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode sleever type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode barrelr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustrr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustrl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfr type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
-		explode thrustfl type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAPNUKE;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turretf type EXPLODE_ON_HIT | FIRE | FALL;
+		explode sleevef type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrelf type EXPLODE_ON_HIT | FIRE | FALL;
+		explode flaref type EXPLODE_ON_HIT | FIRE | FALL;
+		explode turretr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode sleever type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrelr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode flarer type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode turretl type EXPLODE_ON_HIT | FIRE | FALL;
+		explode sleevel type EXPLODE_ON_HIT | FIRE | FALL;
+		explode barrell type EXPLODE_ON_HIT | FIRE | FALL;
+		explode flarel type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustrl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrustrla type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustfl type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustfla type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustfr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustfra type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustrr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustrra type EXPLODE_ON_HIT | FIRE | FALL;
 }

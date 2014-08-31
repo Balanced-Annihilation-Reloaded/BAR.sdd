@@ -98,23 +98,38 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode wing1 type FIRE | SMOKE | FALL;
+		explode jet1 type BITMAPONLY;
+		explode wing2 type BITMAPONLY;
+		explode jet2 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode wing1 type FIRE | SMOKE | FALL;
+		explode jet1 type FIRE | SMOKE | FALL;
+		explode wing2 type FIRE | SMOKE | FALL;
+		explode jet2 type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode wing1 type FIRE | SMOKE | FALL;
+		explode jet1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wing2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode jet2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	return (0);
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wing1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode jet1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode wing2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode jet2 type EXPLODE_ON_HIT | FIRE | FALL;
 }

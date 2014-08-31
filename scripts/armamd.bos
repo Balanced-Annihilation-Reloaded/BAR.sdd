@@ -18,7 +18,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, rocket, spinner1, spinner2, turret, door1, door2;
+piece  base, flare, door1, door2;
 
 static-var  Static_Var_1, restore_delay, gun_1, statechg_DesiredState, statechg_StateChanging;
 
@@ -30,18 +30,13 @@ activatescr()
 /*     0:*/{
 /*     2:*/	if( TRUE )
 /*     4:*/	{
-/*     6:*/		turn door1 to x-axis <0.000000> now;
-/*     d:*/		turn door1 to x-axis <-90> speed <73.000000>;
-/*    12:*/		turn door2 to x-axis <0.000000> now;
-/*    19:*/		turn door2 to x-axis <90> speed <74.000000>;
-/*    36:*/		sleep 1768;
+/*     6:*/		turn door1 to z-axis <0.000000> now;
+/*     d:*/		turn door1 to z-axis <40> speed <73.000000>;
+/*    12:*/		turn door2 to z-axis <0.000000> now;
+/*    19:*/		turn door2 to z-axis <-40> speed <74.000000>;
+/*    36:*/		sleep 768;
 /*    3e:*/	}
-			if (TRUE)
-			{
-				turn turret to z-axis <0> now;
-				turn turret to z-axis <-90> speed <180>;
-				sleep 500;
-			}
+
 /*    40:*/	sleep 3;
 /*    43:*/	return (0);
 /*    44:*/}
@@ -50,18 +45,13 @@ deactivatescr()
 /*    44:*/{
 /*    46:*/	if( TRUE )
 /*    48:*/	{
-/*    4a:*/		turn door1 to x-axis <-90> now;
-/*    51:*/		turn door1 to x-axis <0.000000> speed <73.000000>;
-/*    56:*/		turn door2 to x-axis <90> now;
-/*    5d:*/		turn door2 to x-axis <0.000000> speed <74.000000>;
-/*    7a:*/		sleep 1762;
+/*    4a:*/		turn door1 to z-axis <-90> now;
+/*    51:*/		turn door1 to z-axis <0.000000> speed <73.000000>;
+/*    56:*/		turn door2 to z-axis <90> now;
+/*    5d:*/		turn door2 to z-axis <0.000000> speed <74.000000>;
+/*    7a:*/		sleep 762;
 /*    7b:*/	}
-			if (TRUE)
-			{
-				turn turret to z-axis <-90> now;
-				turn turret to z-axis <0> speed <180>;
-				sleep 500;
-			}
+
 /*    7d:*/	sleep 14;
 /*    80:*/	return (0);
 /*    81:*/}
@@ -154,13 +144,11 @@ RequestState(requestedstate, currentstate)
 Create()
 /*   188:*/{
 /*   19a:*/	Static_Var_1 = 0;
-/*   19e:*/	gun_1 = rocket;
+/*   19e:*/	gun_1 = flare;
 /*   1a2:*/	restore_delay = 3000;
 /*   1a4:*/	call-script InitState();
 /*   1a7:*/	start-script SmokeUnit();
-			spin spinner1 around z-axis speed <30>;
-			spin spinner2 around z-axis speed <30>;
-/*   1ac:*/	return (0);
+			return (0);
 /*   1ad:*/}
 
 Activate()
@@ -191,19 +179,19 @@ AimPrimary(heading, pitch)
 
 FirePrimary()
 /*   1d8:*/{
-		gun_1 = rocket;
+		gun_1 = flare;
 /*   213:*/	return (0);
 /*   214:*/}
 
 QueryPrimary(piecenum)
 /*   215:*/{
-/*   21a:*/	piecenum = rocket;
+/*   21a:*/	piecenum = flare;
 /*   238:*/	return (0);
 /*   239:*/}
 
 AimFromPrimary(piecenum)
 		{
-		piecenum = rocket;
+		piecenum = flare;
 /*   25d:*/	return (0);
 /*   25e:*/}
 
@@ -221,8 +209,7 @@ Killed(severity, corpsetype)
 /*   278:*/		explode base type BITMAPONLY | BITMAP1;
 /*   27f:*/		explode door1 type BITMAPONLY | BITMAP2;
 /*   286:*/		explode door2 type BITMAPONLY | BITMAP3;
-/*   29b:*/		explode rocket type BITMAPONLY | BITMAP1;
-/*   2b0:*/		explode turret type BITMAPONLY | BITMAP4;
+/*   29b:*/		explode flare type BITMAPONLY | BITMAP1;
 /*   2b4:*/		return (0);
 /*   2b5:*/	}
 /*   2ba:*/	if( severity <= 50 )
@@ -231,8 +218,7 @@ Killed(severity, corpsetype)
 /*   2c5:*/		explode base type BITMAPONLY | BITMAP1;
 /*   2cc:*/		explode door1 type BITMAPONLY | BITMAP2;
 /*   2d3:*/		explode door2 type BITMAPONLY | BITMAP3;
-/*   2e8:*/		explode rocket type FALL | BITMAP1;
-/*   2fd:*/		explode turret type SHATTER | BITMAP4;
+/*   2e8:*/		explode flare type FALL | BITMAP1;
 /*   301:*/		return (0);
 /*   302:*/	}
 /*   307:*/	if( severity <= 99 )
@@ -241,15 +227,13 @@ Killed(severity, corpsetype)
 /*   312:*/		explode base type BITMAPONLY | BITMAP1;
 /*   319:*/		explode door1 type BITMAPONLY | BITMAP2;
 /*   320:*/		explode door2 type BITMAPONLY | BITMAP3;
-/*   33e:*/		explode rocket type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-/*   365:*/		explode turret type SHATTER | BITMAP4;
+/*   33e:*/		explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 /*   369:*/		return (0);
 /*   36a:*/	}
 /*   36c:*/	corpsetype = 3;
 /*   373:*/	explode base type BITMAPONLY | BITMAP1;
 /*   37a:*/	explode door1 type BITMAPONLY | BITMAP2;
 /*   381:*/	explode door2 type BITMAPONLY | BITMAP3;
-/*   39f:*/	explode rocket type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-/*   3c9:*/	explode turret type SHATTER | EXPLODE_ON_HIT | BITMAP4;
+/*   39f:*/	explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
 /*   3cd:*/	return (0);
 /*   3ce:*/}

@@ -63,26 +63,25 @@ SweetSpot(piecenum)
 /*    86:*/}
 
 Killed(severity, corpsetype)
-/*    88:*/{
-/*    8d:*/	if( severity <= 25 )
-/*    8f:*/	{
-/*    91:*/		corpsetype = 1;
-/*    98:*/		explode base type BITMAPONLY | BITMAP1;
-/*    a6:*/		return (0);
-/*    a7:*/	}
-/*    ac:*/	if( severity <= 50 )
-/*    ae:*/	{
-/*    b0:*/		corpsetype = 2;
-/*    b7:*/		explode base type BITMAPONLY | BITMAP1;
-/*    c5:*/		return (0);
-/*    c6:*/	}
-/*    cb:*/	if( severity <= 99 )
-/*    cd:*/	{
-/*    cf:*/		corpsetype = 3;
-/*    d6:*/		explode base type BITMAPONLY | BITMAP1;
-/*    e4:*/		return (0);
-/*    e5:*/	}
-/*    e7:*/	corpsetype = 3;
-/*    ee:*/	explode base type BITMAPONLY | BITMAP1;
-/*    fc:*/	return (0);
-/*    fd:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		return(0);
+	}
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+}

@@ -141,26 +141,46 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode drop type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode doorr type FIRE | SMOKE | FALL;
+		explode doorl type BITMAPONLY;
+		explode thrusta type BITMAPONLY;
+		explode thrustb type BITMAPONLY;
+		explode thrustc type BITMAPONLY;
+		explode drop type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode drop type FALL | BITMAP2;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode doorr type FIRE | SMOKE | FALL;
+		explode doorl type FALL;
+		explode thrusta type FIRE | SMOKE | FALL;
+		explode thrustb type FIRE | SMOKE | FALL;
+		explode thrustc type FALL;
+		explode drop type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode drop type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode doorr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode doorl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrusta type FIRE | SMOKE | FALL;
+		explode thrustb type SMOKE | FALL;
+		explode thrustc type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode drop type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode drop type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode doorr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode doorl type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrusta type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrustb type EXPLODE_ON_HIT | FIRE | FALL;
+		explode thrustc type EXPLODE_ON_HIT | FIRE | FALL;
+		explode drop type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

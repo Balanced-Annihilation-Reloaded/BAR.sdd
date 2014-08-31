@@ -262,44 +262,72 @@ SweetSpot(piecenum)
 
 Killed(severity, corpsetype)
 {
-	hide flare1;
-	hide flare2;
-	hide foreflare;
-	hide aftflare;
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode sleeve type BITMAPONLY | BITMAP2;
-		explode base type BITMAPONLY | BITMAP3;
-		explode turret type BITMAPONLY | BITMAP2;
-		explode foreturret type BITMAPONLY | BITMAP2;
-		explode aftturret type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode sleeve type BITMAPONLY;
+		explode barrel1 type FIRE | SMOKE | FALL;
+		explode flare1 type BITMAPONLY;
+		explode barrel2 type BITMAPONLY;
+		explode flare2 type BITMAPONLY;
+		explode foreturret type BITMAPONLY;
+		explode foreflare type BITMAPONLY;
+		explode aftturret type BITMAPONLY;
+		explode aftflare type BITMAPONLY;
+		explode wake type BITMAPONLY;
+		explode chrgflare type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP3;
-		explode turret type BITMAPONLY | BITMAP2;
-		explode sleeve type BITMAPONLY | BITMAP3;
-		explode foreturret type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-		explode aftturret type SHATTER | EXPLODE_ON_HIT | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode turret type FALL;
+		explode sleeve type FIRE | SMOKE | FALL;
+		explode barrel1 type FIRE | SMOKE | FALL;
+		explode flare1 type FIRE | SMOKE | FALL;
+		explode barrel2 type FIRE | SMOKE | FALL;
+		explode flare2 type FIRE | SMOKE | FALL;
+		explode foreturret type FALL;
+		explode foreflare type FALL;
+		explode aftturret type FIRE | SMOKE | FALL;
+		explode aftflare type FIRE | SMOKE | FALL;
+		explode wake type FIRE | SMOKE | FALL;
+		explode chrgflare type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP3;
-		explode turret type BITMAPONLY | BITMAP2;
-		explode sleeve type BITMAPONLY | BITMAP3;
-		explode foreturret type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-		explode aftturret type SHATTER | EXPLODE_ON_HIT | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turret type FIRE | SMOKE | FALL;
+		explode sleeve type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrel1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode flare1 type SMOKE | FALL;
+		explode barrel2 type FIRE | SMOKE | FALL;
+		explode flare2 type SMOKE | FALL;
+		explode foreturret type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode foreflare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode aftturret type SMOKE | FALL;
+		explode aftflare type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode wake type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode chrgflare type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP3;
-	explode turret type BITMAPONLY | BITMAP2;
-	explode sleeve type BITMAPONLY | BITMAP3;
-	explode foreturret type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-	explode aftturret type SHATTER | EXPLODE_ON_HIT | BITMAP1;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode sleeve type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrel1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode flare1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrel2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flare2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode foreturret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode foreflare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode aftturret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode aftflare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wake type EXPLODE_ON_HIT | FIRE | FALL;
+		explode chrgflare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

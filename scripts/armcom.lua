@@ -207,37 +207,38 @@ end
 -- death stuffs
 -----------------------------------------------------------------------	
 function script.Killed(recentDamage, maxHealth)
+	return 1 --cause commdeath does nothing but.
 	-- fall over
-	Turn(cod, x_axis, math.rad(270), 5)	
+--	Turn(cod, x_axis, math.rad(270), 5)	
 	-- reset parts
-	Turn(base, y_axis, 0, 8)	
-	Turn(r_arm, z_axis, 4, 3)
-	Turn(l_arm, z_axis, -4, 3)
+	-- Turn(base, y_axis, 0, 8)	
+	-- Turn(r_arm, z_axis, 4, 3)
+	-- Turn(l_arm, z_axis, -4, 3)
 	-- fall
-	Move(cod, y_axis, -30, 100)
-	Turn(base, x_axis, 0.5, 8)
-	Turn(right_l, x_axis, -0.5, 8)
-	Turn(left_l, x_axis, -0.5, 8)			
-	WaitForMove(cod, y_axis)
+	-- Move(cod, y_axis, -30, 100)
+	-- Turn(base, x_axis, 0.5, 8)
+	-- Turn(right_l, x_axis, -0.5, 8)
+	-- Turn(left_l, x_axis, -0.5, 8)			
+	-- WaitForMove(cod, y_axis)
 	-- land
-	Turn(r_forearm, x_axis, 0, 5)
-	Turn(l_forearm, x_axis, 0, 5)
-	Move(cod, y_axis, -35, 200)	
-	Turn(base, x_axis, 0, 10)
-	Turn(right_l, x_axis, 0, 10)
-	Turn(left_l, x_axis, 0, 10)
-	WaitForMove(cod, y_axis)
+	-- Turn(r_forearm, x_axis, 0, 5)
+	-- Turn(l_forearm, x_axis, 0, 5)
+	-- Move(cod, y_axis, -35, 200)	
+	-- Turn(base, x_axis, 0, 10)
+	-- Turn(right_l, x_axis, 0, 10)
+	-- Turn(left_l, x_axis, 0, 10)
+	-- WaitForMove(cod, y_axis)
 	
-	local severity = recentDamage/maxHealth
-	if (severity <= 99) then
-		Explode(l_arm, SFX.FALL)
-		Explode(r_arm, SFX.FALL)
-		Explode(l_arm, SFX.FALL)
-		Explode(l_forearm, SFX.FALL)
-		Explode(r_arm, SFX.FALL)
-		Explode(r_forearm, SFX.FALL)
-		return 3
-	else
-		return 0
-	end
+	-- local severity = recentDamage/maxHealth
+	-- if (severity <= 99) then
+		-- Explode(l_arm, SFX.FALL)
+		-- Explode(r_arm, SFX.FALL)
+		-- Explode(l_arm, SFX.FALL)
+		-- Explode(l_forearm, SFX.FALL)
+		-- Explode(r_arm, SFX.FALL)
+		-- Explode(r_forearm, SFX.FALL)
+		-- return 3
+	-- else
+		-- return 0
+	-- end
 end

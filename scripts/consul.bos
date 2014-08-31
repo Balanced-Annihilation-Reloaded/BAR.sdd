@@ -195,23 +195,70 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode ltracks type BITMAPONLY;
+		explode larm1 type BITMAPONLY;
+		explode larm2 type BITMAPONLY;
+		explode larm3 type BITMAPONLY;
+		explode lturret type FIRE | SMOKE | FALL;
+		explode lnano type BITMAPONLY;
+		explode rtracks type BITMAPONLY;
+		explode rarm1 type BITMAPONLY;
+		explode rarm2 type BITMAPONLY;
+		explode rarm3 type BITMAPONLY;
+		explode rturret type BITMAPONLY;
+		explode rnano type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode ltracks type FALL;
+		explode larm1 type FIRE | SMOKE | FALL;
+		explode larm2 type FALL;
+		explode larm3 type FIRE | SMOKE | FALL;
+		explode lturret type FIRE | SMOKE | FALL;
+		explode lnano type FIRE | SMOKE | FALL;
+		explode rtracks type FIRE | SMOKE | FALL;
+		explode rarm1 type FIRE | SMOKE | FALL;
+		explode rarm2 type FIRE | SMOKE | FALL;
+		explode rarm3 type FIRE | SMOKE | FALL;
+		explode rturret type FIRE | SMOKE | FALL;
+		explode rnano type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode ltracks type FIRE | SMOKE | FALL;
+		explode larm1 type SMOKE | FALL;
+		explode larm2 type FIRE | SMOKE | FALL;
+		explode larm3 type FIRE | SMOKE | FALL;
+		explode lturret type SMOKE | FALL;
+		explode lnano type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rtracks type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rarm1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode rarm2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rarm3 type FIRE | SMOKE | FALL;
+		explode rturret type FIRE | SMOKE | FALL;
+		explode rnano type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	return (0);
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode ltracks type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode larm1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode larm2 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode larm3 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lturret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lnano type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rtracks type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rarm1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rarm2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rarm3 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rturret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rnano type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

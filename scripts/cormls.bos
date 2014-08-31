@@ -204,22 +204,46 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode door1 type BITMAPONLY;
+		explode door2 type BITMAPONLY;
+		explode neck type BITMAPONLY;
+		explode boom type FIRE | SMOKE | FALL;
+		explode nano type BITMAPONLY;
+		explode wake type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode door1 type FIRE | SMOKE | FALL;
+		explode door2 type FALL;
+		explode neck type FIRE | SMOKE | FALL;
+		explode boom type FALL;
+		explode nano type FALL;
+		explode wake type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type SHATTER | BITMAP4;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode door1 type SHATTER;
+		explode door2 type SHATTER;
+		explode neck type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode boom type SMOKE | FALL;
+		explode nano type FIRE | SMOKE | FALL;
+		explode wake type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type SHATTER | BITMAP4;
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode door1 type SHATTER;
+		explode door2 type SHATTER;
+		explode neck type EXPLODE_ON_HIT | FIRE | FALL;
+		explode boom type EXPLODE_ON_HIT | FIRE | FALL;
+		explode nano type EXPLODE_ON_HIT | FIRE | FALL;
+		explode wake type EXPLODE_ON_HIT | FIRE | FALL;
 }

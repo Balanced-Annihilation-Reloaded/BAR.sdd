@@ -64,38 +64,25 @@ SweetSpot(piecenum)
 /*    61:*/}
 
 Killed(severity, corpsetype)
-/*    63:*/{
-/*    68:*/	if( severity <= 25 )
-/*    6a:*/	{
-/*    6c:*/		corpsetype = 1;
-/*    73:*/		explode base type BITMAPONLY | BITMAP2;
-/*    7a:*/		explode base type BITMAPONLY | BITMAP2;
-/*    81:*/		explode base type BITMAPONLY | BITMAP3;
-/*    88:*/		explode base type BITMAPONLY | BITMAP3;
-/*    8c:*/		return (0);
-/*    8d:*/	}
-/*    92:*/	if( severity <= 50 )
-/*    94:*/	{
-/*    96:*/		corpsetype = 2;
-/*    9d:*/		explode base type BITMAPONLY | BITMAP2;
-/*    a4:*/		explode base type BITMAPONLY | BITMAP2;
-/*    ab:*/		explode base type BITMAPONLY | BITMAP3;
-/*    b2:*/		explode base type BITMAPONLY | BITMAP3;
-/*    b6:*/		return (0);
-/*    b7:*/	}
-/*    bc:*/	if( severity <= 99 )
-/*    be:*/	{
-/*    c0:*/		corpsetype = 3;
-/*    c7:*/		explode base type BITMAPONLY | BITMAP2;
-/*    ce:*/		explode base type BITMAPONLY | BITMAP2;
-/*    d5:*/		explode base type BITMAPONLY | BITMAP3;
-/*    dc:*/		explode base type BITMAPONLY | BITMAP3;
-/*    e0:*/		return (0);
-/*    e1:*/	}
-/*    e3:*/	corpsetype = 3;
-/*    ea:*/	explode base type BITMAPONLY | BITMAP2;
-/*    f1:*/	explode base type BITMAPONLY | BITMAP2;
-/*    f8:*/	explode base type BITMAPONLY | BITMAP3;
-/*    ff:*/	explode base type BITMAPONLY | BITMAP3;
-/*   103:*/	return (0);
-/*   104:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		return(0);
+	}
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+}

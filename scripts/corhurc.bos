@@ -117,34 +117,38 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP2;
-		explode bombs type BITMAPONLY | BITMAP3;
-		explode thrusta1 type BITMAPONLY | BITMAP3;
-		explode thrusta2 type BITMAPONLY | BITMAP4;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode bombs type BITMAPONLY;
+		explode thrustb type BITMAPONLY;
+		explode thrusta1 type BITMAPONLY;
+		explode thrusta2 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP2;
-		explode bombs type FALL | BITMAP3;
-		explode thrusta1 type FALL | BITMAP3;
-		explode thrusta2 type FALL | BITMAP4;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode bombs type FIRE | SMOKE | FALL;
+		explode thrustb type FIRE | SMOKE | FALL;
+		explode thrusta1 type FIRE | SMOKE | FALL;
+		explode thrusta2 type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP2;
-		explode bombs type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode thrusta1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode thrusta2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode bombs type SMOKE | FALL;
+		explode thrustb type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrusta1 type SMOKE | FALL;
+		explode thrusta2 type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP2;
-	explode bombs type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode thrusta1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode thrusta2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode bombs type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrustb type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrusta1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrusta2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

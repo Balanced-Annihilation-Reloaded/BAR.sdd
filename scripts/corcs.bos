@@ -145,38 +145,46 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode beam type BITMAPONLY | BITMAP2;
-		explode door1 type BITMAPONLY | BITMAP3;
-		explode door2 type BITMAPONLY | BITMAP4;
-		explode wake type BITMAPONLY | BITMAP3;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode door2 type FIRE | SMOKE | FALL;
+		explode beam type BITMAPONLY;
+		explode nano1 type BITMAPONLY;
+		explode nano2 type BITMAPONLY;
+		explode door1 type BITMAPONLY;
+		explode wake type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode beam type FALL | BITMAP2;
-		explode door1 type FALL | BITMAP3;
-		explode door2 type FALL | BITMAP4;
-		explode wake type FALL | BITMAP3;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode door2 type FIRE | SMOKE | FALL;
+		explode beam type FALL;
+		explode nano1 type FALL;
+		explode nano2 type FALL;
+		explode door1 type FIRE | SMOKE | FALL;
+		explode wake type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode beam type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode door1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode door2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-		explode wake type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode door2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode beam type FIRE | SMOKE | FALL;
+		explode nano1 type FIRE | SMOKE | FALL;
+		explode nano2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode door1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode wake type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode beam type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode door1 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode door2 type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP4;
-	explode wake type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode door2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode beam type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode door1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wake type EXPLODE_ON_HIT | FIRE | FALL;
 }

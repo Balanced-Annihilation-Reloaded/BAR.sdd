@@ -171,26 +171,29 @@ SweetSpot(piecenum)
 /*   23a:*/}
 
 Killed(severity, corpsetype)
-/*   23c:*/{
-/*   241:*/	if( severity <= 25 )
-/*   243:*/	{
-/*   245:*/		corpsetype = 1;
-/*   24c:*/		explode base type BITMAPONLY | BITMAP1;
-/*   26c:*/		return (0);
-/*   26d:*/	}
-/*   272:*/	if( severity <= 50 )
-/*   274:*/	{
-/*   276:*/		corpsetype = 2;
-/*   27d:*/		explode base type BITMAPONLY | BITMAP1;
-/*   29d:*/		return (0);
-/*   29e:*/	}
-/*   2a3:*/	if( severity <= 99 )
-/*   2a5:*/	{
-/*   2a7:*/		corpsetype = 3;
-/*   2ae:*/		explode base type BITMAPONLY | BITMAP1;
-/*   2f6:*/		return (0);
-/*   2f7:*/	}
-/*   2f9:*/	corpsetype = 3;
-/*   300:*/	explode base type BITMAPONLY | BITMAP1;
-/*   354:*/	return (0);
-/*   355:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode flare type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode flare type FIRE | SMOKE | FALL;
+		return(0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode flare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
+	}
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode flare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+}

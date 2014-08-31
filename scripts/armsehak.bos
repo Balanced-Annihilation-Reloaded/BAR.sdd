@@ -198,23 +198,70 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode cowlfr type BITMAPONLY;
+		explode fanfr type FIRE | SMOKE | FALL;
+		explode cowlbr type BITMAPONLY;
+		explode fanbr type BITMAPONLY;
+		explode wingr type BITMAPONLY;
+		explode wing1 type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode dish type BITMAPONLY;
+		explode cowlbl type BITMAPONLY;
+		explode fanbl type BITMAPONLY;
+		explode cowlfl type BITMAPONLY;
+		explode fanfl type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode cowlfr type FALL;
+		explode fanfr type FALL;
+		explode cowlbr type FALL;
+		explode fanbr type FALL;
+		explode wingr type FALL;
+		explode wing1 type FALL;
+		explode turret type FIRE | SMOKE | FALL;
+		explode dish type FIRE | SMOKE | FALL;
+		explode cowlbl type FIRE | SMOKE | FALL;
+		explode fanbl type FALL;
+		explode cowlfl type FALL;
+		explode fanfl type FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode cowlfr type SMOKE | FALL;
+		explode fanfr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode cowlbr type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode fanbr type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode wingr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wing1 type FIRE | SMOKE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dish type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode cowlbl type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode fanbl type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode cowlfl type FIRE | SMOKE | FALL;
+		explode fanfl type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	return (0);
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode cowlfr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode fanfr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode cowlbr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode fanbr type EXPLODE_ON_HIT | FIRE | FALL;
+		explode wingr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode wing1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | FALL;
+		explode dish type EXPLODE_ON_HIT | FIRE | FALL;
+		explode cowlbl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode fanbl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode cowlfl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode fanfl type EXPLODE_ON_HIT | FIRE | FALL;
 }

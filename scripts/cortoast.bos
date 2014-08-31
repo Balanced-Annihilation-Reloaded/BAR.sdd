@@ -310,68 +310,49 @@ SweetSpot(piecenum)
 /*   331:*/}
 
 Killed(severity, corpsetype)
-/*   333:*/{
-/*   333:*/	hide flare;
-/*   33a:*/	if( severity <= 25 )
-/*   33c:*/	{
-/*   33e:*/		if( Static_Var_1 )
-/*   340:*/		{
-/*   342:*/			corpsetype = 1;
-/*   344:*/		}
-/*   347:*/		if( !Static_Var_1 )
-/*   349:*/		{
-/*   34b:*/			corpsetype = 2;
-/*   34d:*/		}
-/*   352:*/		explode barrel type BITMAPONLY | BITMAP1;
-/*   359:*/		explode bore type BITMAPONLY | BITMAP2;
-/*   360:*/		explode door1 type BITMAPONLY | BITMAP3;
-/*   367:*/		explode door2 type BITMAPONLY | BITMAP4;
-/*   36e:*/		explode base type BITMAPONLY | BITMAP5;
-/*   37c:*/		explode turret type BITMAPONLY | BITMAP2;
-/*   39c:*/		return (0);
-/*   39d:*/	}
-/*   3a2:*/	if( severity <= 50 )
-/*   3a4:*/	{
-/*   3a6:*/		if( Static_Var_1 )
-/*   3a8:*/		{
-/*   3aa:*/			corpsetype = 2;
-/*   3ac:*/		}
-/*   3af:*/		if( !Static_Var_1 )
-/*   3b1:*/		{
-/*   3b3:*/			corpsetype = 3;
-/*   3b5:*/		}
-/*   352:*/		explode barrel type BITMAPONLY | BITMAP1;
-/*   359:*/		explode bore type BITMAPONLY | BITMAP2;
-/*   360:*/		explode door1 type BITMAPONLY | BITMAP3;
-/*   367:*/		explode door2 type BITMAPONLY | BITMAP4;
-/*   36e:*/		explode base type BITMAPONLY | BITMAP5;
-/*   37c:*/		explode turret type BITMAPONLY | BITMAP2;
-/*   412:*/		return (0);
-/*   413:*/	}
-/*   418:*/	if( severity <= 99 )
-/*   41a:*/	{
-/*   41c:*/		if( Static_Var_1 )
-/*   41e:*/		{
-/*   420:*/			corpsetype = 3;
-/*   422:*/		}
-/*   425:*/		if( !Static_Var_1 )
-/*   427:*/		{
-/*   429:*/			corpsetype = 4;
-/*   42b:*/		}
-/*   352:*/		explode barrel type BITMAPONLY | BITMAP1;
-/*   359:*/		explode bore type BITMAPONLY | BITMAP2;
-/*   360:*/		explode door1 type BITMAPONLY | BITMAP3;
-/*   367:*/		explode door2 type BITMAPONLY | BITMAP4;
-/*   36e:*/		explode base type BITMAPONLY | BITMAP5;
-/*   37c:*/		explode turret type BITMAPONLY | BITMAP2;
-/*   4d0:*/		return (0);
-/*   4d1:*/	}
-/*   4d3:*/	corpsetype = 4;
-/*   352:*/		explode barrel type BITMAPONLY | BITMAP1;
-/*   359:*/		explode bore type BITMAPONLY | BITMAP2;
-/*   360:*/		explode door1 type BITMAPONLY | BITMAP3;
-/*   367:*/		explode door2 type BITMAPONLY | BITMAP4;
-/*   36e:*/		explode base type BITMAPONLY | BITMAP5;
-/*   37c:*/		explode turret type BITMAPONLY | BITMAP2;
-/*   57d:*/	return (0);
-/*   57e:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode door1 type BITMAPONLY;
+		explode door2 type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode bore type BITMAPONLY;
+		explode barrel type FIRE | SMOKE | FALL;
+		explode flare type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode door1 type FALL;
+		explode door2 type FALL;
+		explode turret type FALL;
+		explode bore type FIRE | SMOKE | FALL;
+		explode barrel type FIRE | SMOKE | FALL;
+		explode flare type FALL;
+		return(0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode door1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode door2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode turret type FIRE | SMOKE | FALL;
+		explode bore type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode barrel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flare type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
+	}
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode door1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode door2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode turret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode bore type EXPLODE_ON_HIT | FIRE | FALL;
+		explode barrel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+}

@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, duct1, fan1, duct2, fan2, door1, door2, support, beam, nano;
+piece  base, duct1, fan1, duct2, fan2, door1, door2, support, beam, nano,thrust;
 
 static-var  Static_Var_1, Static_Var_2;
 
@@ -135,23 +135,62 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode duct1 type BITMAPONLY;
+		explode fan1 type FIRE | SMOKE | FALL;
+		explode support type BITMAPONLY;
+		explode beam type BITMAPONLY;
+		explode nano type BITMAPONLY;
+		explode door2 type BITMAPONLY;
+		explode door1 type BITMAPONLY;
+		explode duct2 type BITMAPONLY;
+		explode fan2 type BITMAPONLY;
+		explode thrust type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode duct1 type FIRE | SMOKE | FALL;
+		explode fan1 type FALL;
+		explode support type FALL;
+		explode beam type FIRE | SMOKE | FALL;
+		explode nano type FIRE | SMOKE | FALL;
+		explode door2 type FALL;
+		explode door1 type FALL;
+		explode duct2 type FIRE | SMOKE | FALL;
+		explode fan2 type FIRE | SMOKE | FALL;
+		explode thrust type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode duct1 type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode fan1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode support type SHATTER;
+		explode beam type FIRE | SMOKE | FALL;
+		explode nano type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode door2 type SHATTER;
+		explode door1 type SHATTER;
+		explode duct2 type FIRE | SMOKE | FALL;
+		explode fan2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrust type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	return (0);
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode duct1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode fan1 type EXPLODE_ON_HIT | FIRE | FALL;
+		explode support type SHATTER;
+		explode beam type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode nano type EXPLODE_ON_HIT | FIRE | FALL;
+		explode door2 type SHATTER;
+		explode door1 type SHATTER;
+		explode duct2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode fan2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode thrust type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

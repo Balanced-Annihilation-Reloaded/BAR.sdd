@@ -125,30 +125,29 @@ SweetSpot(piecenum)
 /*    da:*/}
 
 Killed(severity, corpsetype)
-/*    dc:*/{
-/*    e1:*/	if( severity <= 25 )
-/*    e3:*/	{
-/*    e5:*/		corpsetype = 1;
-/*    ec:*/		explode base type BITMAPONLY | BITMAP1;
-/*    f3:*/		explode dish type BITMAPONLY | BITMAP2;
-/*    f7:*/		return (0);
-/*    f8:*/	}
-/*    fd:*/	if( severity <= 50 )
-/*    ff:*/	{
-/*   101:*/		corpsetype = 2;
-/*   108:*/		explode base type BITMAPONLY | BITMAP1;
-/*   10f:*/		explode dish type BITMAPONLY | BITMAP2;
-/*   113:*/		return (0);
-/*   114:*/	}
-/*   119:*/	if( severity <= 99 )
-/*   11b:*/	{
-/*   11d:*/		corpsetype = 3;
-/*   124:*/		explode base type BITMAPONLY | BITMAP1;
-/*   12b:*/		explode dish type SHATTER | BITMAP2;
-/*   12f:*/		return (0);
-/*   130:*/	}
-/*   132:*/	corpsetype = 3;
-/*   139:*/	explode base type BITMAPONLY | BITMAP1;
-/*   143:*/	explode dish type SHATTER | EXPLODE_ON_HIT | BITMAP2;
-/*   147:*/	return (0);
-/*   148:*/}
+{
+	if( severity <= 25 )
+	{
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode dish type BITMAPONLY;
+		return(0);
+	}
+	if( severity <= 50 )
+	{
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode dish type FIRE | SMOKE | FALL;
+		return(0);
+	}
+	if( severity <= 99 )
+	{
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode dish type FIRE | SMOKE | FALL;
+		return(0);
+	}
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dish type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+}

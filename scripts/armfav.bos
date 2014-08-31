@@ -126,38 +126,52 @@ SweetSpot(piecenum)
 
 Killed(severity, corpsetype)
 {
-
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode base type BITMAPONLY | BITMAP1;
-		explode dish type BITMAPONLY | BITMAP2;
-		explode flare type BITMAPONLY | BITMAP3;
-		explode gun type BITMAPONLY | BITMAP4;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode gun type BITMAPONLY;
+		explode dish type FIRE | SMOKE | FALL;
+		explode flare type BITMAPONLY;
+		explode rfwheel type FIRE | SMOKE | FALL;
+		explode lfwheel type BITMAPONLY;
+		explode lbwheel type BITMAPONLY;
+		explode rbwheel type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode base type BITMAPONLY | BITMAP1;
-		explode flare type FALL | BITMAP2;
-		explode dish type FALL | BITMAP3;
-		explode gun type SHATTER | BITMAP4;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode gun type FALL;
+		explode dish type FALL;
+		explode flare type FIRE | SMOKE | FALL;
+		explode rfwheel type FIRE | SMOKE | FALL;
+		explode lfwheel type FIRE | SMOKE | FALL;
+		explode lbwheel type FIRE | SMOKE | FALL;
+		explode rbwheel type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode base type BITMAPONLY | BITMAP1;
-		explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-		explode dish type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-		explode gun type SHATTER | BITMAP4;
-		return (0);
+		corpsetype = 3 ;
+		explode base type FIRE | SMOKE | FALL;
+		explode gun type SMOKE | FALL;
+		explode dish type SMOKE | FALL;
+		explode flare type FIRE | SMOKE | FALL;
+		explode rfwheel type SMOKE | FALL;
+		explode lfwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lbwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rbwheel type SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode base type BITMAPONLY | BITMAP1;
-	explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP2;
-	explode dish type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP3;
-	explode gun type SHATTER | EXPLODE_ON_HIT | BITMAP4;
-	return (0);
+	corpsetype = 3 ;
+		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode gun type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode dish type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode rfwheel type EXPLODE_ON_HIT | FIRE | FALL;
+		explode lfwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode lbwheel type EXPLODE_ON_HIT | FIRE | FALL;
+		explode rbwheel type EXPLODE_ON_HIT | FIRE | FALL;
 }

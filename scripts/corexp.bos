@@ -177,38 +177,38 @@ Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode barrel1 type BITMAPONLY | BITMAP2;
-		explode barrel2 type BITMAPONLY | BITMAP1;
-		explode base type BITMAPONLY | BITMAP2;
-		explode turret type BITMAPONLY | BITMAP2;
-		explode column type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 1 ;
+		explode base type BITMAPONLY;
+		explode turret type BITMAPONLY;
+		explode barrel1 type FIRE | SMOKE | FALL;
+		explode barrel2 type BITMAPONLY;
+		explode column type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode barrel1 type BITMAPONLY | BITMAP2;
-		explode barrel2 type BITMAPONLY | BITMAP1;
-		explode base type BITMAPONLY | BITMAP2;
-		explode turret type BITMAPONLY | BITMAP2;
-		explode column type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 2 ;
+		explode base type BITMAPONLY;
+		explode turret type FIRE | SMOKE | FALL;
+		explode barrel1 type FIRE | SMOKE | FALL;
+		explode barrel2 type FIRE | SMOKE | FALL;
+		explode column type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode barrel1 type BITMAPONLY | BITMAP2;
-		explode barrel2 type BITMAPONLY | BITMAP1;
-		explode base type BITMAPONLY | BITMAP2;
-		explode turret type BITMAPONLY | BITMAP2;
-		explode column type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turret type FIRE | SMOKE | FALL;
+		explode barrel1 type SHATTER;
+		explode barrel2 type SHATTER;
+		explode column type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-		explode barrel1 type BITMAPONLY | BITMAP2;
-		explode barrel2 type BITMAPONLY | BITMAP1;
-		explode base type BITMAPONLY | BITMAP2;
-		explode turret type BITMAPONLY | BITMAP2;
-		explode column type BITMAPONLY | BITMAP2;
+	corpsetype = 3 ;
+		explode base type BITMAPONLY;
+		explode turret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrel1 type SHATTER;
+		explode barrel2 type SHATTER;
+		explode column type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

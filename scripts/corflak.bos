@@ -106,34 +106,40 @@ SweetSpot(piecenum)
 
 Killed(severity, corpsetype)
 {
-	hide flare1;
-	hide flare2;
 	if( severity <= 25 )
 	{
-		corpsetype = 1;
-		explode gun type BITMAPONLY | BITMAP1;
-		explode barrel type BITMAPONLY | BITMAP3;
-		explode turret type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 1 ;
+		explode turret type BITMAPONLY;
+		explode gun type BITMAPONLY;
+		explode barrel type FIRE | SMOKE | FALL;
+		explode flare1 type BITMAPONLY;
+		explode flare2 type BITMAPONLY;
+		return(0);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2;
-		explode gun type FALL | BITMAP1;
-		explode barrel type BITMAPONLY | BITMAP3;
-		explode turret type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 2 ;
+		explode turret type BITMAPONLY;
+		explode gun type FALL;
+		explode barrel type FIRE | SMOKE | FALL;
+		explode flare1 type FALL;
+		explode flare2 type FIRE | SMOKE | FALL;
+		return(0);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3;
-		explode gun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-		explode barrel type BITMAPONLY | BITMAP3;
-		explode turret type BITMAPONLY | BITMAP2;
-		return (0);
+		corpsetype = 3 ;
+		explode turret type SMOKE | FALL;
+		explode gun type SMOKE | FALL;
+		explode barrel type EXPLODE_ON_HIT | SMOKE | FALL;
+		explode flare1 type SMOKE | FALL;
+		explode flare2 type EXPLODE_ON_HIT | SMOKE | FALL;
+		return(0);
 	}
-	corpsetype = 3;
-	explode gun type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-	explode barrel type BITMAPONLY | BITMAP3;
-	explode turret type FALL | SMOKE | BITMAP2;
+	corpsetype = 3 ;
+		explode turret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode gun type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode barrel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flare1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+		explode flare2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

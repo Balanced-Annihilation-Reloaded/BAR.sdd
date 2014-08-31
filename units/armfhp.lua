@@ -61,7 +61,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 670,
-				object = "ARMFHP_DEAD",
+				object = "armfhp_dead.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

@@ -75,7 +75,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 392,
-				object = "cor3X3D.s3o",
+				object = "cor3x3d.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

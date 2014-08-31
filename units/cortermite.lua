@@ -66,7 +66,7 @@ return {
 				footprintz = 3,
 				hitdensity = 100,
 				metal = 209,
-				object = "cor3X3A.s3o",
+				object = "cor3x3a.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "all",

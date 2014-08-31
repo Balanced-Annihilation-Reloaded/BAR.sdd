@@ -66,7 +66,7 @@ return {
 				height = 5,
 				hitdensity = 100,
 				metal = 559,
-				object = "ASUBPEN_DEAD",
+				object = "asubpen_dead.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

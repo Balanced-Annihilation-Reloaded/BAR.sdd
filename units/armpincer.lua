@@ -55,7 +55,7 @@ return {
 				height = 9,
 				hitdensity = 100,
 				metal = 122,
-				object = "ARMPINCER_DEAD",
+				object = "armpincer_dead.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "all",

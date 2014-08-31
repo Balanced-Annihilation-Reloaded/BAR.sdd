@@ -31,7 +31,7 @@ return {
 		name = "Protector",
 		objectname = "ARMAMD.s3o",
 		radardistance = 50,
-		script="armamd2.cob",
+		script="armamd.cob",
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 201,

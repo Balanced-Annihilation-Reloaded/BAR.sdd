@@ -4,10 +4,6 @@ return {
 		brakerate = 0,
 		buildcostenergy = 16581,
 		buildcostmetal = 597,
-
-
-
-
 		buildpic = "AJUNO.DDS",
 		buildtime = 21833,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -72,7 +68,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 145,
-				object = "armarm4x4a.s3o.s3o",
+				object = "arm4x4a.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

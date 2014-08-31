@@ -52,7 +52,7 @@ return {
 				height = 40,
 				hitdensity = 100,
 				metal = 46,
-				object = "ARMFRT_DEAD",
+				object = "armfrt_dead.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

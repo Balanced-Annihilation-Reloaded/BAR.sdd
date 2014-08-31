@@ -31,6 +31,7 @@ return {
 		name = "Punisher",
 		nochasecategory = "MOBILE",
 		objectname = "CORPUN.s3o",
+		script="corpun.lua",
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 455,

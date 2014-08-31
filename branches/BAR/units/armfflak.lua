@@ -50,7 +50,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 525,
-				object = "ARMFFLAK_DEAD",
+				object = "armfflak_dead.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

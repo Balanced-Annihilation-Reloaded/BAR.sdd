@@ -31,7 +31,6 @@ return {
 		name = "Gaat Gun",
 		nochasecategory = "MOBILE",
 		objectname = "CORHLT.s3o",
-		script = "corhlt.lua",
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 455,

@@ -66,7 +66,7 @@ return {
 				height = 4,
 				hitdensity = 100,
 				metal = 400,
-				object = "ARMSY_DEAD",
+				object = "armsy_dead.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

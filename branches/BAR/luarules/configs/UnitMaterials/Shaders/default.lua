@@ -71,7 +71,7 @@ return {
 		}
 	#endif
 	 aoTerm= max(0.4,fract(gl_MultiTexCoord0.s*16384.0)*1.3); // great
-	  //aoTerm= max(0.5,fract(gl_MultiTexCoord0.s*16384.0)*1.3); // pretty good, if a bit heavy
+	  //aoTerm= max(0.5,min(1.0.fract(gl_MultiTexCoord0.s*16384.0)*1.3)); // pretty good, if a bit heavy
 	  //aoTerm=1.0; // pretty good, if a bit heavy
 	#ifndef use_treadoffset
 		gl_TexCoord[0].st = gl_MultiTexCoord0.st;

@@ -13,7 +13,7 @@ static-var gun_1, last_fire, firstaim;
 #define DELAY_UNIT_VAR 1024
 #define GAME_FRAME 134
 
-lua_TargetCheck() { return 0; }
+//lua_TargetCheck() { return 0; }
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
@@ -60,10 +60,10 @@ AimPrimary(heading, pitch)
 {
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
-	call-script lua_TargetCheck();
-	if ((get DELAY_UNIT_VAR) == 0) {
-	  return(0);
-	}
+//	call-script lua_TargetCheck();
+//	if ((get DELAY_UNIT_VAR) == 0) {
+//	  return(0);
+//	}
 	turn turret to y-axis heading speed <125.000000>;
 	turn gunr to x-axis <0.000000> - pitch speed <100.000000>;
 	turn gunl to x-axis <0.000000> - pitch speed <100.000000>;

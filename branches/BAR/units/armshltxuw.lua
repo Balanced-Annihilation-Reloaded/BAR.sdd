@@ -44,7 +44,6 @@ return {
 		buildoptions = {
 			[1] = "armbanth",
 			[2] = "marauder",
-            [3] = "armlun",
             [4] = "armcroc",
 		},
 		featuredefs = {

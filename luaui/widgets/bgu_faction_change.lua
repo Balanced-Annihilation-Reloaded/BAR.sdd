@@ -65,7 +65,6 @@ local Chili, window, panel, arm_button, core_button
 function widget:Initialize()
 	if spGetSpectatingState() or
         Spring.GetGameFrame() > 0 or
-        not WG.SetSelDefID or 
 	    amNewbie then
         widgetHandler:RemoveWidget(self)
         return

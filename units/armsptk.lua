@@ -111,7 +111,7 @@ return {
 				flighttime = 2,
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
-				model = "shipmissile",
+				model = "cormissile.s3o",
 				name = "HeavyRocket",
 				noselfdamage = true,
 				range = 550,

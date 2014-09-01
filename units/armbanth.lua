@@ -148,7 +148,7 @@ return {
 				firestarter = 70,
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
-				model = "exphvyrock",
+				model = "corkbmissl1.s3o",
 				name = "HeavyRockets",
 				noselfdamage = true,
 				proximitypriority = -1,

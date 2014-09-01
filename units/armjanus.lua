@@ -107,7 +107,7 @@ return {
 				explosiongenerator = "custom:VEHROCKET_EXPLOSION",
 				firestarter = 70,
 				impulsefactor = 1.015,
-				model = "megamisl",
+				model = "catapultmissile.s3o",
 				name = "HeavyRocket",
 				noselfdamage = true,
 				range = 380,

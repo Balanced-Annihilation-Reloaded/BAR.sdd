@@ -88,7 +88,7 @@ return {
                 flighttime = 2.0,
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
-				model = "Advtorpedo",
+				model = "torpedo.s3o",
 				name = "LongRangeTorpedo",
 				noselfdamage = true,
                 proximitypriority = -1.0,

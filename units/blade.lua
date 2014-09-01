@@ -71,7 +71,7 @@ return {
 				firestarter = 70,
 				impulseboost = 1,
 				impulsefactor = 0.12300000339746,
-				model = "missile",
+				model = "cormissile.s3o",
 				name = "Sabotrocket",
 				noselfdamage = true,
 				range = 420,

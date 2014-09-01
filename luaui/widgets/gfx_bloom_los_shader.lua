@@ -267,15 +267,19 @@ function widget:Initialize()
 		
 		vec3 info = texture2D(infotex, vec2(mappos4.x*mapxmul, mappos4.z*mapzmul));
 		vec3 color= texture2D(colortex,gl_TexCoord[0].st);
-		gl_FragColor=vec4( info.r,info.g,info.b,0.9);//infotex debugging
+		//gl_FragColor=vec4( info.r,info.g,info.b,0.9);//infotex debugging
 		//gl_FragColor = vec4(fract(mappos4.x/50),fract(mappos4.y/50),fract(mappos4.z/50), 1.0);
 		//return;
 		float rnd= 2*rand(gl_TexCoord[0].st,gameframe);
-		float noisefactor=clamp((1.0-info.g+info.b),0.0,1.0); //noise is applied to non-radar or jammed areas
-		float desatfactor=clamp((0.5-info.r)*2,0.0,1.0);  //desaturation is be applied to areas outside of airlos 
-		float darkenfactor=clamp((1.0-info.r)*0.4,0.0,1.0); //darkening is applied to areas outside of normal los
+		float noisefactor=min((1.0-info.g+info.b),1.0); //noise is applied to non-radar or jammed areas
+		float desatfactor=max(((0.5-info.r)*2),0.0)*(1.0-info.g)  //desaturation is to be applied to areas outside of airlos AND outside of radar
+		float darkenfactor=max((1.0-info.r)*0.4,0.0); //darkening is applied to areas outside of normal los
+		
+		
 		float gamestartfactor=min(1.0, gameframe);
-		if (mappos4.z>mapxmax || mappos4.z<0.0 || mappos4.x>mapxmax || mappos4.x<0.0 || mappos4.y>mapymax || mappos4.y<mapymin) gamestartfactor=0; // i hope to god that this isnt expensive, Ill have to check disassembly.
+		if ( any( lessThan(mappos4.xyz,vec3(0.0,mapymin,0.0))) || any (greaterThan(mappos4.xyz,vec3(mapxmax,mapymax,mapzmax))) gamestartfactor=0; //this is possibly cheaper than the one after it
+		
+		//if (mappos4.z>mapxmax || mappos4.z<0.0 || mappos4.x>mapxmax || mappos4.x<0.0 || mappos4.y>mapymax || mappos4.y<mapymin) gamestartfactor=0; // i hope to god that this isnt expensive, Ill have to check disassembly.
 		vec3 newcolor= mix(color, color*(0.95+0.1*rnd),(noisefactor*mapfragment)*(darkenfactor*1.5+0.5));
 		float desat=dot(vec3(0.2,0.7,0.1),newcolor);
 		newcolor = mix(newcolor, vec3(desat,desat,desat),desatfactor);
@@ -645,7 +649,7 @@ end
 
 
 local spGetGameFrame = Spring.GetGameFrame
-local cnt=0
+
 local function DrawLOS()
 	gl.Color(1,1,1,1)
 	glCopyToTexture(screenTexture, 0, 0, 0, 0, vsx, vsy, nil,0)
@@ -653,11 +657,8 @@ local function DrawLOS()
 	-- setup the shader and its uniform values
 	glUseShader(losShader)
 
-	-- set uniforms
-	cnt=cnt+1
-	-- Spring.Echo(cnt)
 	glUniformMatrix(losShaderViewPrjInvLoc,  "viewprojectioninverse")
-	glUniform(losShaderGameFrameLoc,  (math.max((spGetGameFrame()-60),0))/150.0)
+	glUniform(losShaderGameFrameLoc,  (math.max((spGetGameFrame()-150),0))/150.0)
 
 
 	-- render a full screen quad

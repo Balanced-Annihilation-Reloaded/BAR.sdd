@@ -57,7 +57,7 @@ local function loadOptions()
 							setRealTime(os.date('%I:%M %p'))
 							clockType = 'system'
 						end
-						Menu.Save('clockType', clockType)
+						Menu.Save{["clockType"]=clockType}
 					end
 				}
 			},

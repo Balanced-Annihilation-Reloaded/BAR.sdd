@@ -72,6 +72,7 @@ local music_credits = VFS.LoadFile('credits_music.txt')
 local function loadOptions()
 	local typeTitle = {peace = "Peace", coldWar = "Cold War", war = "War"}	
 	disabledTracks = Menu.Load('disabledTracks') or {}
+    Menu.Save{["disabledTracks"]=disabledTracks}
 
 	local control = Chili.Control:New{
 		x        = 0,

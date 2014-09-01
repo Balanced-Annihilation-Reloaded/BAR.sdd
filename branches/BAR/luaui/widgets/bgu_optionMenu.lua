@@ -295,7 +295,7 @@ local function Save(index, data)
 
 	-- Old behavior, Save('key', value)
 	else
-		Spring.Echo("Use Save{key=value,key2=value2,etc..} instead of Save('key', value)")
+		Spring.Echo("Use Save{key=value,key2=value2,etc..} instead of Save('key', value) [" .. (key or "") .. "]")
 		local old = Settings[index]
 		Settings[index] = data
 		return old
@@ -309,6 +309,7 @@ local function Load(index)
 		return Settings[index]
 	else
 		Spring.Echo('[Main Menu]Could not find '..index)
+        return nil
 	end
 end
 

@@ -721,6 +721,7 @@ function widget:ViewResize(viewSizeX, viewSizeY)
   state["screeny"] = viewSizeY
   
   UpdateButtons()
+  UpdateButtonList()
 end
 
 function widget:DrawScreen()	
@@ -904,7 +905,7 @@ function widget:Update()
 	if ( (timef - updateTimes["line"]) > 0.2 and timef ~= updateTimes["line"] ) then	
 		updateTimes["line"] = timef
 		
-		--adjust line width and alpha by camera height (old code, kept for refence)
+		--adjust line width and alpha by camera height (old code, kept for reference)
         --[[
 		_, camy, _ = spGetCameraPosition()
 		if ( camy < 700 ) and ( oldcamy >= 700 ) then

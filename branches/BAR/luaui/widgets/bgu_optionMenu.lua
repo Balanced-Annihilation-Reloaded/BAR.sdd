@@ -490,8 +490,6 @@ local comboBox = function(obj)
 		elseif setting == 'Cursor' then
 			setCursor(value)
 			Settings['CursorName'] = value
-		elseif setting == 'ShowHealthBars' then
-			spSendCommands('luaui showhealthbars '..value)
 		else
 			spSendCommands(setting..' '..value)
 		end

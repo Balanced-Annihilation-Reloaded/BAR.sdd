@@ -74,7 +74,7 @@ return {
 				flighttime = 1.5,
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
-				model = "torpedo",
+				model = "cortorpedo.s3o",
 				name = "TorpedoLauncher",
 				noselfdamage = true,
 				range = 660,

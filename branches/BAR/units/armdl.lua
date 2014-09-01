@@ -115,7 +115,7 @@ return {
 				groundbounce = true,
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
-				model = "depthcharge",
+				model = "cordepthcharge.s3o",
 				name = "DepthCharge",
 				noselfdamage = true,
 				numbounce = 1,

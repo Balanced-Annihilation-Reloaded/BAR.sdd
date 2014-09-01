@@ -71,7 +71,7 @@ return {
 				flighttime = 1.5,
 				impulseboost = 0.12300000339746,
 				impulsefactor = 2,
-				model = "plasmafire",
+				model = "catapultmissile.s3o",
 				name = "PlasmaImplosionDumpRocket",
 				noselfdamage = true,
 				range = 500,

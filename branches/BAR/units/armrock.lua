@@ -110,7 +110,7 @@ return {
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
 				metalpershot = 0,
-				model = "missile",
+				model = "cormissile.s3o",
 				name = "Rockets",
 				noselfdamage = true,
 				range = 475,

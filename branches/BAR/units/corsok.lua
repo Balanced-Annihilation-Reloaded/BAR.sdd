@@ -139,7 +139,7 @@ return {
                 flighttime = 5,
                 impulseboost = 0,
                 impulsefactor = 0,
-                model = "Advtorpedo",
+                model = "torpedo.s3o",
                 name = "Torpedo",
                 range = 700,
                 reloadtime = 2.6,

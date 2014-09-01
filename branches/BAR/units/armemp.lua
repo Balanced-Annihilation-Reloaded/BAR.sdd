@@ -115,7 +115,7 @@ return {
 				impulseboost = 0,
 				impulsefactor = 0,
 				metalpershot = 500,
-				model = "empmisl",
+				model = "cortronmissile.s3o",
 				name = "EMPMissile",
 				noselfdamage = true,
 				paralyzer = true,

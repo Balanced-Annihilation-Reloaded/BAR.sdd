@@ -73,7 +73,7 @@ return {
 				gravityaffected = "true",
 				impulseboost = 0.5,
 				impulsefactor = 0.5,
-				model = "bomb",
+				model = "bombyy.s3o",
 				name = "Bombs",
 				noselfdamage = true,
 				range = 1280,

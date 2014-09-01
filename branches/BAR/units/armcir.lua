@@ -112,7 +112,7 @@ return {
 				flighttime = 2.75,
 				impulseboost = 0,
 				impulsefactor = 0,
-				model = "missile",
+				model = "cormissile.s3o",
 				name = "ExplosiveRockets",
 				noselfdamage = true,
 				projectiles = 1,

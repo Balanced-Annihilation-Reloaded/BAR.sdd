@@ -149,7 +149,7 @@ return {
 				explosiongenerator = "custom:FLASH4",
 				impulseboost = 0.12300000339746,
 				impulsefactor = 0.12300000339746,
-				model = "DEPTHCHARGE",
+				model = "cordepthcharge.s3o",
 				name = "CruiserDepthCharge",
 				noselfdamage = true,
 				range = 500,

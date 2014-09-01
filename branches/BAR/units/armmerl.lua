@@ -117,7 +117,7 @@ return {
 				impulseboost = 0.2,
 				impulsefactor = 0.2,
 				metalpershot = 0,
-				model = "rocket",
+				model = "corshiprocket.s3o",
 				name = "Rocket",
 				noselfdamage = true,
 				range = 1215,

@@ -144,7 +144,10 @@ end
 local function loadOptions()
 	for key,_ in pairs(cfg) do
 		local value = Menu.Load(key)
-		if value or type(value)=='boolean' then cfg[key] = value end
+		if value or type(value)=='boolean' then 
+            cfg[key] = value 
+        end
+        Menu.Save(cfg)
 	end
 
 	Menu.AddOption{

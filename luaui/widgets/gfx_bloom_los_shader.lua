@@ -272,12 +272,12 @@ function widget:Initialize()
 		//return;
 		float rnd= 2*rand(gl_TexCoord[0].st,gameframe);
 		float noisefactor=min((1.0-info.g+info.b),1.0); //noise is applied to non-radar or jammed areas
-		float desatfactor=max(((0.5-info.r)*2),0.0)*(1.0-info.g)  //desaturation is to be applied to areas outside of airlos AND outside of radar
+		float desatfactor=max(((0.5-info.r)*2),0.0)*(1.0-info.g);  //desaturation is to be applied to areas outside of airlos AND outside of radar
 		float darkenfactor=max((1.0-info.r)*0.4,0.0); //darkening is applied to areas outside of normal los
 		
 		
 		float gamestartfactor=min(1.0, gameframe);
-		if ( any( lessThan(mappos4.xyz,vec3(0.0,mapymin,0.0))) || any (greaterThan(mappos4.xyz,vec3(mapxmax,mapymax,mapzmax))) gamestartfactor=0; //this is possibly cheaper than the one after it
+		if ( any( lessThan(mappos4.xyz,vec3(0.0,mapymin,0.0))) || any (greaterThan(mappos4.xyz,vec3(mapxmax,mapymax,mapzmax)))) gamestartfactor=0; //this is possibly cheaper than the one after it
 		
 		//if (mappos4.z>mapxmax || mappos4.z<0.0 || mappos4.x>mapxmax || mappos4.x<0.0 || mappos4.y>mapymax || mappos4.y<mapymin) gamestartfactor=0; // i hope to god that this isnt expensive, Ill have to check disassembly.
 		vec3 newcolor= mix(color, color*(0.95+0.1*rnd),(noisefactor*mapfragment)*(darkenfactor*1.5+0.5));

@@ -97,9 +97,15 @@ local function getFeatureTooltip(fID)
 	return tooltip
 end
 -----------------------------------
+local prevTipType, prevID
 local function getTooltip()
 	mousePosX, mousePosY   = spGetMouseState()
 	tipType, ID     = spTraceScreenRay(mousePosX, mousePosY)
+    
+    if tipType==prevTipType and ID==prevID then return end
+    prevTipType = tipType
+    prevID = ID
+    
 	if screen.currentTooltip    then tooltip = screen.currentTooltip
 	elseif tipType == 'unit'    then tooltip = getUnitTooltip(ID)
 	elseif tipType == 'feature' then tooltip = getFeatureTooltip(ID)

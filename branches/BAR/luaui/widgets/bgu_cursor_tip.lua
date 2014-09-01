@@ -25,7 +25,13 @@ local spGetMouseState           = Spring.GetMouseState
 local spGetUnitTooltip          = Spring.GetUnitTooltip
 local spGetUnitResources        = Spring.GetUnitResources
 local spGetFeatureResources     = Spring.GetFeatureResources
+local spGetFeatureDefID         = Spring.GetFeatureDefID
 local screenWidth, screenHeight = Spring.GetWindowGeometry()
+-----------------------------------
+function firstToUpper(str)
+    -- make the first char of a string into upperCase
+    return (str:gsub("^%l", string.upper))
+end
 -----------------------------------
 local function initWindow()
 	tipWindow = Chili.Panel:New{
@@ -34,7 +40,7 @@ local function initWindow()
 		width     = 75,
 		height    = 75,
 		minHeight = 1,
-		padding   = {5,2,2,2},
+		padding   = {5,4,4,4},
 	}
 	tip = Chili.TextBox:New{
 		parent = tipWindow, 
@@ -68,12 +74,12 @@ local function formatresource(description, res)
 	return color .. description .. res
 end
 -----------------------------------
-local function getUnitTooltip(ID)
-	local tooltip = spGetUnitTooltip(ID)
+local function getUnitTooltip(uID)
+	local tooltip = spGetUnitTooltip(uID)
 	if tooltip==nil then
 		tooltip=""
 	end
-	local metalMake, metalUse, energyMake, energyUse = spGetUnitResources(ID)
+	local metalMake, metalUse, energyMake, energyUse = spGetUnitResources(uID)
 	
 	local metal = ((metalMake or 0) - (MetalUse or 0))
 	local energy = ((energyMake or 0) - (energyUse or 0))
@@ -82,9 +88,12 @@ local function getUnitTooltip(ID)
 	return tooltip
 end
 -----------------------------------
-local function getFeatureTooltip(ID)
-	local rMetal, mMetal, rEnergy, mEnergy, reclaimLeft = spGetFeatureResources(ID)
+local function getFeatureTooltip(fID)
+	local rMetal, mMetal, rEnergy, mEnergy, reclaimLeft = spGetFeatureResources(fID)
+    local fDID = spGetFeatureDefID(fID)
+    local fName = FeatureDefs[fDID].tooltip
 	local tooltip = "Metal: "..rMetal..'\n'.."Energy: "..rEnergy
+    if fName then tooltip = firstToUpper(fName) .. '\n' .. tooltip end
 	return tooltip
 end
 -----------------------------------
@@ -114,7 +123,7 @@ local function setTooltip()
 		y = 14 * numLines + 2 + 20
 	end
 
-	tipWindow:SetPos(x + 20, screenHeight - y + 20, textwidth + 10, 14 * numLines + 2)
+	tipWindow:SetPos(x + 20, screenHeight - y + 20, textwidth + 10, 14 * numLines + 8)
    
 	if tipWindow.hidden then tipWindow:Show() end
 	tipWindow:BringToFront()

@@ -235,6 +235,7 @@ end
 local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
     tocontrol:AddChild(
         Button:New{
+            caption = "",
             width = options.buttonsize.value*1.2,
             height = options.buttonsize.value*1.0,
             tooltip = 			'Click - ' 			.. GreenStr .. 'Select \n' 					
@@ -340,7 +341,7 @@ local function MakeButton(unitDefID, facID, facIndex)
             name = unitDefID,
             tooltip=tooltip,
             x=0,
-            caption='',
+            caption="",
             width = options.buttonsize.value,
             height = options.buttonsize.value,
             padding = {4, 4, 4, 4},
@@ -373,14 +374,14 @@ local function MakeButton(unitDefID, facID, facIndex)
             children = {
                 Label:New {
                     name='count',
-                    autosize=false;
-                    width="100%";
-                    height="100%";
-                    align="right";
-                    valign="top";
-                    caption = '';
-                    fontSize = 14;
-                    fontShadow = true;
+                    autosize=false,
+                    width="100%",
+                    height="100%",
+                    align="right",
+                    valign="top",
+                    caption = "",
+                    fontSize = 14,
+                    fontShadow = true,
                 },
 
                 

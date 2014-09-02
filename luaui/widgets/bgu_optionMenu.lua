@@ -76,7 +76,7 @@ Settings['searchWidgetAuth'] = true
 Settings['searchWidgetName'] = true
 Settings['widget']           = {}
 Settings['UIwidget']         = {}
-Settings['Skin']             = 'Robofunk'
+Settings['Skin']             = 'Robocracy'
 Settings['Cursor']           = 'Default'
 Settings['CursorName']       = 'ba'
 

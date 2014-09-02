@@ -130,6 +130,7 @@ SweetSpot(piecenum)
 
 FirePrimary()
 {
+ 	sleep 11;
 }
 
 Killed(severity, corpsetype)

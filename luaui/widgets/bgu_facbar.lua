@@ -22,7 +22,7 @@ GreenStr   = "\255\092\255\092"
 
 local buttonColor = {0,0,0,0.5}
 local queueColor = {0.0,0.4,0.4,0.9}
-local progColor = {1,0.7,0,0.6}
+local progColor = {0,0.9,0.2,0.7}
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -170,8 +170,8 @@ local function UpdateFac(i, facInfo)
         local boButton = facs[i].boStack.childrenByName[unitDefIDb]
         local qButton = facs[i].qStore[i .. '|' .. unitDefIDb]
         
-        local boBar = boButton.childrenByName['bp'].childrenByName['prog']
-        local qBar = qButton.childrenByName['bp'].childrenByName['prog']
+        local boBar = boButton.childrenByName['prog']
+        local qBar = qButton.childrenByName['prog']
         
         local amount = buildQueue[unitDefIDb] or 0
         local boCount = boButton.childrenByName['count']
@@ -384,25 +384,23 @@ local function MakeButton(unitDefID, facID, facIndex)
                     fontShadow = true,
                 },
 
-                
+                Progressbar:New{
+                    value = 0.0,
+                    name    = 'prog';
+                    max     = 1;
+                    color   		= progColor,
+                    backgroundColor = {1,1,1,  0.01},
+                    x=2, y=2, height=3, right=2,
+                },
+                        
                 Label:New{ caption = ud.metalCost .. ' m', fontSize = 11, x=2, bottom=2, fontShadow = true, },
                 Image:New {
                     name = 'bp',
                     --file = "#"..unitDefID,
                     file = imageDir..'Units/'.. UnitDefs[unitDefID].name ..'.dds',
                     keepAspect = false;
-                    width = '100%',height = '80%',
+                    width = '100%', height = '80%', y = '5%',
                     children = {
-                        Progressbar:New{
-                            value = 0.0,
-                            name    = 'prog';
-                            max     = 1;
-                            color   		= progColor,
-                            backgroundColor = {1,1,1,  0.01},
-                            x=4,y=4, bottom=4,right=4,
-                            skin=nil,
-                            skinName='default',
-                        },
                         Chili.Image:New{
                             color  = teamColor,
                             height = '100%', width = '100%',

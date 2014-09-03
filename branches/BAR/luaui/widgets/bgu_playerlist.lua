@@ -133,14 +133,14 @@ function WatchCamera()
 end
 
 function WatchRes()
-    local teamToSpec = 0 --TODO
+    local teamToSpec = players[iPanelpID].tID
     Spring.SendCommands("specteam "..teamToSpec)
 
     iPanel:Hide()
 end
 
 function WatchLos()
-    local teamToSpec = 0 --TODO
+    local teamToSpec = players[iPanelpID].tID
     local _,notFullView,fullSelect = Spring.GetSpectatingState()
     if notFullView then
         Spring.SendCommands("specteam "..teamToSpec)

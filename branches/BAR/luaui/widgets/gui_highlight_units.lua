@@ -327,7 +327,7 @@ function widget:DrawWorldPreUnit()
             local teamID = spGetUnitTeam(unitID)
             local allyID = spGetUnitAllyTeam(unitID)
             local unitDefID = spGetUnitDefID(unitID)
-            if circlePolys[teamID] ~= nil then
+            if circlePolys[teamID] ~= nil and unitDefID then
                 if highlightAllyTeam or amISpec or (allyID ~= myAllyID) then
                     local unitScale = unitConf[unitDefID].xscale*2
                     glDrawListAtUnit(unitID, circlePolys[teamID][12], false, unitScale, 1.0, unitScale) 

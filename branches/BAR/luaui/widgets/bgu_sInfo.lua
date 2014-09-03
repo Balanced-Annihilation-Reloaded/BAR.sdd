@@ -260,7 +260,7 @@ end
 local function updateGroundInfo()
 	local mx, my    = spGetMouseState()
 	local focus,map = spTraceScreenRay(mx,my,true)
-	if map[1] then
+	if map and map[1] then
 		if groundInfo.hidden then groundInfo:Show() end
 		local px,pz = math.floor(map[1]),math.floor(map[3])
 		local py = math.floor(spGetGroundHeight(px,pz))

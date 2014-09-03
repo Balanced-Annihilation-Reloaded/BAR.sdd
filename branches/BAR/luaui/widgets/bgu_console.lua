@@ -340,26 +340,46 @@ local function processLine(line)
 	return color.misc .. line, false, dedup
 end
 
+local currentConsoleLine = ""
 function widget:AddConsoleLine(msg)
-	-- update chat with new line
+	-- parse the new line
 	local text, ignore, dedup = processLine(msg)
 	if ignore then return end
-    
+
+    -- check for duplicates
 	for i=0,dedup-1 do
 		local prevMsg = log.children[#log.children - i]
 		if prevMsg and (not system or i==0) and (text == prevMsg.text or text == prevMsg.origText) then
 			prevMsg.duplicates = prevMsg.duplicates + 1
 			prevMsg.origText = text
 			prevMsg:SetText(getInline{1,0,0}..(prevMsg.duplicates + 1)..'x \b'..text)
-			showChat()
 			return
 		end
 	end
-	
+    
+    -- add to buffer 
+    if currentConsoleLine=="" then
+        currentConsoleLine = text
+    else
+        currentConsoleLine = currentConsoleLine .. "\n" .. text
+    end
+end
+
+function widget:Update()
+    -- flush buffer into console
+    if currentConsoleLine ~= "" then
+        NewConsoleLine(currentConsoleLine)
+        currentConsoleLine = ""
+    end
+end
+
+function NewConsoleLine(text)
+    --	avoid creating insane numbers of children (chili can't handle it)
 	if #log.children > cfg.msgCap then
 		log:RemoveChild(log.children[1])
 	end
 	
+    -- print text into the console
 	Chili.TextBox:New{
 		parent      = log,
 		text        = text,

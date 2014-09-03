@@ -44,20 +44,21 @@ local fullyLoaded = false -- to stop making "set X to Y" remarks when we are jus
 -------------------------------------------
 -- Auxiliary functions
 -------------------------------------------
+function format(num, idp)
+  return string.format("%." .. (idp or 0) .. "f", num)
+end
 local function readable(num)
-	local s=''
+	local s = ""
 	if num < 0 then
-		s='-'
+		s = '-'
 	else
-		s='+'
+		s = '+'
 	end
-	num=math.abs(num)
-	if num<10 then
-		s= s .. math.floor(num) .. '.' .. math.floor((num*10)%10)
-	elseif num <1000 then
-		s= s .. math.floor(num)
-	else 
-		s=s .. math.floor(num%1000).. '.' .. math.floor((num%1000)/100)
+	num = math.abs(num)
+	if num < 100 then
+		s = s .. format(num,1)
+	else
+		s = s .. format(num,0)
 	end
 	return s
 end

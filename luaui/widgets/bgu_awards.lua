@@ -197,9 +197,18 @@ function ReceiveAwards( ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKillS
 	-- Create the chili element containing the awards
 	createContainer()
     --
+    
+    
+    
+    
+    -- WIP!!!
+    return
+
+
+    
 	if ecoKillAward > 0 then
 	
-		local ecoKill
+		local ecoKill = {}
 		ecoKill.title = "Most economy destroyed"
 		ecoKill.first = "This award goes to "..FindPlayerName(ecoKillAward)..", with a score of "..ecoKillScore
 		
@@ -216,7 +225,7 @@ function ReceiveAwards( ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKillS
     --
 	if fightKillAward > 0 then
 	
-		local fightKill
+		local fightKill = {}
 		fightKill.title = "Most enemy combantants destroyed"
 		fightKill.first = "This award goes to "..FindPlayerName(fightKillAward)..", with a score of "..fightKillScore
 		
@@ -233,7 +242,7 @@ function ReceiveAwards( ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKillS
     --
 	if effKillAward > 0 then
 	
-		local effKill
+		local effKill = {}
 		effKill.title = "Most efficient use of units"
 		effKill.first = "This award goes to "..FindPlayerName(effKillAward)..", with a score of "..effKillScore
 		

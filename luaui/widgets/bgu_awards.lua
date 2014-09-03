@@ -202,7 +202,7 @@ function ReceiveAwards( ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKillS
     
     
     -- WIP!!!
-    return
+    if true then return end
 
 
     

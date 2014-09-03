@@ -258,10 +258,9 @@ end
 ----------------------------------
 -- ground info (curTip = -3)
 local function updateGroundInfo()
-	
 	local mx, my    = spGetMouseState()
-	local focus,map = spTraceScreenRay(mx,my)
-	if focus == "ground" and map[1] then
+	local focus,map = spTraceScreenRay(mx,my,true)
+	if map[1] then
 		if groundInfo.hidden then groundInfo:Show() end
 		local px,pz = math.floor(map[1]),math.floor(map[3])
 		local py = math.floor(spGetGroundHeight(px,pz))
@@ -386,7 +385,7 @@ local function getInfo()
         local maxHealth = 0
         local Mmake, Muse, Emake, Euse = 0,0,0,0
         for _, uID in ipairs(units) do
-            Ecost = Ecost+ UnitDefs[defID].energyCost
+            Ecost = Ecost + UnitDefs[defID].energyCost
             Mcost = Mcost + UnitDefs[defID].metalCost 
             local c, m = spGetUnitHealth(uID)
             local mm, mu, em, eu = spGetUnitResources(uID)

@@ -55,7 +55,7 @@ local function readable(num)
 		s = '+'
 	end
 	num = math.abs(num)
-	if num < 100 then
+	if num < 10 then
 		s = s .. format(num,1)
 	else
 		s = s .. format(num,0)

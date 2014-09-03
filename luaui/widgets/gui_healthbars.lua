@@ -48,8 +48,8 @@ local drawBarTitles             = true          -- (I disabled the healthbar tex
 local titlesAlpha               = 0.3*barAlpha
 
 local drawBarPercentage         = 0		        -- wont draw heath percentage text above this percentage
-local alwaysDrawBarPercentageForComs = true
-local drawFeatureBarPercentage  = 0	            -- true:  commanders always will show health percentage number
+local alwaysDrawBarPercentageForComs = true     -- true:  commanders always will show health percentage number
+local drawFeatureBarPercentage  = 0	            
 local choppedCornerSize         = 0.44
 local outlineSize               = 0.63
 local drawFullHealthBars        = false

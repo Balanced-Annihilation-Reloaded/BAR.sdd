@@ -292,8 +292,8 @@ end
 ----------------------------------
 local function updateUnitInfo()
 	
-	--single unit	
 	if curTip >= 0 then 	
+        --single unit	
         units = spGetSelectedUnits()
         
         local curHealth = 0
@@ -314,8 +314,8 @@ local function updateUnitInfo()
 		unitHealth:SetValue(curHealth) 
   		unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
 		
-	--multiple units, but not so many we cant fit pics
 	elseif curTip == -1 then 
+        --multiple units, but not so many we cant fit pics
 		local Ecost,Mcost = 0,0
 		local Mmake,Muse,Emake,Euse = 0,0,0,0
 		for a = 1, #healthBars do
@@ -369,7 +369,7 @@ local function getInfo()
 		
 	if sUnits["n"] == 1 then
 		
-		--detailed info about a single unit
+		--detailed info about a single unitDefID
 		local unitID      = units[1]
 		local defID       = spGetUnitDefID(unitID)
 		curTip = defID
@@ -379,15 +379,17 @@ local function getInfo()
 		local texture     = imageDir..'Units/' .. name .. '.dds'
 		local overlay     = imageDir..'Overlays/' .. name .. '.dds'
 		local humanName   = UnitDefs[defID].humanName
-		local Ecost = UnitDefs[defID].energyCost
-		local Mcost = UnitDefs[defID].metalCost
 
+		local Ecost = 0
+		local Mcost = 0
         local curHealth = 0
         local maxHealth = 0
         local Mmake, Muse, Emake, Euse = 0,0,0,0
         for _, uID in ipairs(units) do
-            c, m = spGetUnitHealth(uID)
-            mm, mu, em, eu = spGetUnitResources(uID)
+            Ecost = Ecost+ UnitDefs[defID].energyCost
+            Mcost = Mcost + UnitDefs[defID].metalCost 
+            local c, m = spGetUnitHealth(uID)
+            local mm, mu, em, eu = spGetUnitResources(uID)
             curHealth = curHealth + (c or 0)
             maxHealth = maxHealth + (m or 0)
             Mmake = Mmake + (mm or 0)

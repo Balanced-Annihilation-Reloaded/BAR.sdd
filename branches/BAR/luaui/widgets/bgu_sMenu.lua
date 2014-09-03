@@ -687,8 +687,10 @@ local function InitialQueue()
     sUnits[1] = uDID
 	local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 	teamColor = {r,g,b,0.8}
-
-	WG.HideFacBar()
+    
+    if WG.HideFacBar then
+        WG.HideFacBar()
+    end
 	buildMenu.active = false
 	orderMenu.active = false
 	if orderBG.visible then
@@ -721,10 +723,10 @@ function widget:Update()
 			orderBG:Show()
 		end
 		
-		if not buildMenu.active and buildMenu.visible then
+		if not buildMenu.active and buildMenu.visible and WG.ShowFacBar then
 			buildMenu:Hide()
 			WG.ShowFacBar()	
-		elseif buildMenu.active and buildMenu.hidden then
+		elseif buildMenu.active and buildMenu.hidden and WG.HideFacBar then
 			buildMenu:Show()
 			WG.HideFacBar()		
 		end

@@ -56,7 +56,7 @@ local pairs = pairs
 local ipairs = ipairs
 
 -- read local widgets config?
-local localWidgetsFirst = false
+local localWidgetsFirst = true
 local localWidgets = true
 
 if VFS.FileExists(CONFIG_FILENAME) then

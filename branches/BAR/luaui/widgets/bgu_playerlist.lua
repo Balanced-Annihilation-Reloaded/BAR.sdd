@@ -781,9 +781,11 @@ function GetRankPic(rank)
 end
 
 function GetFlag(country)
-    local path = "LuaUI/Images/flags/"..string.upper(country)..".png"
-    -- TODO: check if exists, return _unknown.pgn o/w
-    return path
+    if country and country ~= "" then 
+        return "LuaUI/Images/flags/"..string.upper(country)..".png"
+    else
+        return "LuaUI/Images/flags/_unknown.png"
+    end
 end
 
 function cpuLevel(cpu)

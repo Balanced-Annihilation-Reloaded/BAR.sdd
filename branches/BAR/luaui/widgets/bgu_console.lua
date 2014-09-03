@@ -116,6 +116,8 @@ local function loadWindow()
 	-- chat box
 	msgWindow = Chili.ScrollPanel:New{
 		verticalSmartScroll = true,
+        scrollPosX  = 0,
+        scrollPosY  = 0,        
 		parent      = window,
 		x           = 0,
 		y           = 30,

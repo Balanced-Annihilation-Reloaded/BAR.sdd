@@ -35,6 +35,7 @@ local spGetSelectedUnitsSorted  = Spring.GetSelectedUnitsSorted
 local spGetMouseState           = Spring.GetMouseState
 local spTraceScreenRay          = Spring.TraceScreenRay
 local spGetGroundHeight         = Spring.GetGroundHeight
+local spGetGroundInfo           = Spring.GetGroundInfo
 local spGetUnitResources        = Spring.GetUnitResources
 local spGetSelectedUnitsCounts  = Spring.GetSelectedUnitsCounts
 local floor = math.floor
@@ -53,6 +54,11 @@ local white = '\255\255\255\255'
 local mColour = '\255\153\153\204'
 local eColour = '\255\255\255\76'
 local blue = "\255\200\200\255"
+
+function round(num, idp)
+  local mult = 10^(idp or 0)
+  return math.floor(num * mult + 0.5) / mult
+end
 
 ----------------------------------
 local function refineSelection(obj)
@@ -232,6 +238,24 @@ local function showBasicSelectionInfo(num, numTypes)
 end
 
 ----------------------------------
+local max = math.max
+local min = math.min
+local schar = string.char
+local modColScale = 2
+local function speedModCol(x)
+    x = (x-1)*modColScale + 1
+    local r,g,b = 1,1,1
+    if x<1 then
+        g = max(0.01,x)
+        b = max(0.01,x)
+    elseif x>1 then
+        x = min(x, 1.99)
+        r = min(0.99,2-x)
+        b = min(0.99,2-x)
+    end
+    return schar(255, r*255, g*255, b*255)
+end
+----------------------------------
 -- ground info (curTip = -3)
 local function updateGroundInfo()
 	
@@ -245,10 +269,22 @@ local function updateGroundInfo()
 			"Map Coordinates"..
 			"\n Height: " .. py ..
 			"\n X: ".. px ..
-			"\n Z: ".. pz
+			"\n Z: ".. pz .. "\n\n"
 		)
-		groundText:Invalidate()
-	elseif groundInfo.visible then
+
+        local _,_,_,veh,bot,hvr,ship,_ = spGetGroundInfo(px,pz)
+        vehCol = speedModCol(veh)
+        botCol = speedModCol(bot)
+        hvrCol = speedModCol(hvr)
+        shipCol = speedModCol(ship)
+        groundText2:SetText(
+            "Speeds" ..
+            "\n  Veh: " .. vehCol .. round(veh,2) .. white .. 
+            "  Bot: " .. botCol .. round(bot,2) .. white ..
+            "\n  Hvr: " .. hvrCol .. round(hvr,2) .. white ..
+            "  Ship: " .. shipCol .. round(ship,2) .. white           
+        )
+    elseif groundInfo.visible then
 		groundInfo:Hide()
 	end
 end
@@ -326,7 +362,7 @@ local function getInfo()
     sUnits = spGetSelectedUnitsCounts()
 
 	if #units == 0 then
-		--info about point on map corresponding to cursor (updated every other gameframe)
+		--info about point on map corresponding to cursor 
 		curTip = -3
 		return
 	end    
@@ -418,7 +454,7 @@ function widget:Initialize()
 		x       = 0,
 		y       = 0,
 		width   = 150,
-		height  = 70,
+		height  = 101,
 	}	
 	
 	selectionGrid = Chili.Grid:New{
@@ -446,10 +482,20 @@ function widget:Initialize()
 	groundText = Chili.TextBox:New{
 		parent = groundInfo,
 		x      = 0,
-		y      = 0,
+		y      = 1,
 		right  = 0,
 		bottom = 0,
-		text   = 'test',
+		text   = '',
+	}
+
+	groundText2 = Chili.TextBox:New{
+		parent = groundInfo,
+		x      = 0,
+		y      = 60,
+		right  = 0,
+		bottom = 0,
+		text   = '',
+        font   = {size=10},
 	}
 	
 	Spring.SetDrawSelectionInfo(false)

@@ -624,8 +624,8 @@ local function createInfoTab()
 		obj.size = obj.size or 20
 		local Box = Chili.Control:New{width = '100%', y = obj.y*25, x = 0, height = obj.size +5, padding = {0,0,0,0},
 			children = {
-				Chili.Label:New{right='55%', caption=obj.name or '',font={size=obj.size,color={0.8,0.8,1,1}}},
-				Chili.Label:New{x='50%', caption=obj.value,font={size=obj.size,color={0.7,0.7,1,1}}},
+				Chili.Label:New{right='70%', caption=obj.name or '',font={size=obj.size,color={0.8,0.8,1,1}}},
+				Chili.Label:New{x='35%', caption=obj.value,font={size=obj.size,color={0.7,0.7,1,1}}},
 			}
 		}
 		return Box
@@ -682,13 +682,13 @@ local function createInfoTab()
 		children = {
 			InfoTextBox{y=1, name = "Map:", value = Game.mapName},
 			InfoTextBox{y=2, value = "(" .. Game.mapX .. " x " .. Game.mapY .. ")", size = 15},
-			InfoTextBox{y=3, name = "Wind:", value = Game.windMin .. " - " .. Game.windMax},
-			InfoTextBox{y=4, name = "Tidal:", value = Game.tidal},
-			InfoTextBox{y=5, name = "Acidity:", value = Game.waterDamage},
+			InfoTextBox{y=3, name = "Wind:", value = math.floor(Game.windMin) .. " - " .. math.floor(Game.windMax)},
+			InfoTextBox{y=4, name = "Tidal:", value = math.floor(Game.tidal)},
+			InfoTextBox{y=5, name = "Acidity:", value = math.floor(Game.waterDamage)},
 			InfoTextBox{y=6, name = "Gravity:", value = math.floor(Game.gravity)},
 			Chili.Line:New{width='100%',y=7*25+5},-------------------------------
 			InfoTextBox{y=8, name = "Game End:", value = gameEndMode, size = 15},
-			--InfoLineBox(9.5, (armageddonTime>0) and "Armageddon at " .. "1" .. " minutes" or ""),
+			InfoLineBox(9.5, (armageddonTime>0) and "Armageddon at " .. math.floor(armageddonTime/60) .. " minutes" or ""),
 		}
 	}
 

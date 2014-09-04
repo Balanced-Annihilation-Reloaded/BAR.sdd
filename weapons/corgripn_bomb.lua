@@ -11,7 +11,7 @@ return {
 		firestarter = 90,
 		impulseboost = 0,
 		impulsefactor = 0,
-		model = "bomb",
+		model = "bombyy.s3o",
 		name = "EMPbomb",
 		noselfdamage = 1,
 		paralyzer = 1,

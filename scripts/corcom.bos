@@ -7,7 +7,7 @@ piece torso, lfirept, rbigflash, nanospray, nanolathe, luparm, ruparm, pelvis,
     rthigh, lthigh, biggun, lleg, l_foot, rleg, r_foot, head;
 
 static-var bMoving, bAiming, Busy, gun_3, gun_2,
-      bIsBuilding, buildPitch, buildHeading, maxSpeed, currentSpeed, animSpeed;
+      bIsBuilding, buildPitch, buildHeading, maxSpeed, currentSpeed, animSpeed, justMoved;
 
 // Signal definitions
 #define SIG_AIM				2
@@ -16,31 +16,6 @@ static-var bMoving, bAiming, Busy, gun_3, gun_2,
 walk()
 {
 
-	if (bMoving)
-	{
-		//step 0
-		turn rthigh to x-axis <0> speed <85.714286> *  animSpeed / 100;
-		turn rleg to x-axis <0> speed <98.571429> *  animSpeed / 100;
-		turn r_foot to x-axis <0> speed <184.285714> *  animSpeed / 100;
-
-		turn lthigh to x-axis <-35> speed <124.285714> *  animSpeed / 100;
-		turn lleg to x-axis <51> speed <55.714286> *  animSpeed / 100;
-		turn l_foot to x-axis <-7> speed <17.142857> *  animSpeed / 100;
-
-		turn luparm to x-axis <0> speed <107.142857> *  animSpeed / 100;
-		turn nanolathe to x-axis <0> now;
-
-		turn ruparm to x-axis <0> speed <21.428571> *  animSpeed / 100;
-		turn biggun to x-axis <0> speed <64.285714> *  animSpeed / 100;
-
-		move pelvis to y-axis [0] speed [8.571429] *  animSpeed / 100;
-		turn torso to x-axis <0> speed <8.571429> *  animSpeed / 100;
-		turn torso to y-axis <0> speed <12.857143> *  animSpeed / 100;
-		turn head to y-axis <0> speed <8.571429> *  animSpeed / 100;
-		turn pelvis to z-axis <0> speed <4.285714> *  animSpeed / 100;
-
-		sleep 215 * currentSpeed / 100;
-	}
 	if (bMoving)
 	{
 		//step 1
@@ -62,8 +37,9 @@ walk()
 		turn torso to y-axis <-3> speed <12.857143> *  animSpeed / 100;
 		turn head to y-axis <2> speed <8.571429> *  animSpeed / 100;
 		turn pelvis to z-axis <-1> speed <4.285714> *  animSpeed / 100;
-
-		sleep 215 * currentSpeed / 100;
+		
+		//sleep 215 * currentSpeed / 100;
+		sleep 215;// * currentSpeed / 100;
 	}
 	if (bMoving)
 	{
@@ -223,6 +199,31 @@ walk()
 
 	}
 
+	if (bMoving)
+	{
+		//step 0
+		turn rthigh to x-axis <0> speed <85.714286> *  animSpeed / 100;
+		turn rleg to x-axis <0> speed <98.571429> *  animSpeed / 100;
+		turn r_foot to x-axis <0> speed <184.285714> *  animSpeed / 100;
+
+		turn lthigh to x-axis <-35> speed <124.285714> *  animSpeed / 100;
+		turn lleg to x-axis <51> speed <55.714286> *  animSpeed / 100;
+		turn l_foot to x-axis <-7> speed <17.142857> *  animSpeed / 100;
+
+		turn luparm to x-axis <0> speed <107.142857> *  animSpeed / 100;
+		turn nanolathe to x-axis <0> now;
+
+		turn ruparm to x-axis <0> speed <21.428571> *  animSpeed / 100;
+		turn biggun to x-axis <0> speed <64.285714> *  animSpeed / 100;
+
+		move pelvis to y-axis [0] speed [8.571429] *  animSpeed / 100;
+		turn torso to x-axis <0> speed <8.571429> *  animSpeed / 100;
+		turn torso to y-axis <0> speed <12.857143> *  animSpeed / 100;
+		turn head to y-axis <0> speed <8.571429> *  animSpeed / 100;
+		turn pelvis to z-axis <0> speed <4.285714> *  animSpeed / 100;
+
+		sleep 215 * currentSpeed / 100;
+	}
 
 }
 
@@ -424,7 +425,7 @@ UnitSpeed()
 		animSpeed=currentSpeed;
 		
 		currentSpeed = 10000/currentSpeed; 
-		sleep 142;
+		sleep 60;
 	}
 	return (0);
 }
@@ -448,11 +449,20 @@ MotionControl(Func_Var_1, Func_Var_2)
 				Busy = 0;
 				call-script walk();
 			}
+			justmoved = TRUE;
 		}
 		else
 		{
 			Busy = 1;
-			call-script stand();
+			if( justmoved ) 
+			{
+			 	call-script stand();
+				justmoved=FALSE;
+			}
+			else
+			{
+				sleep 30;
+			}
 		}
 	}
 	return (0);

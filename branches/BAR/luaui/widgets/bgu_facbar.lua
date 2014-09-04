@@ -167,6 +167,7 @@ local function UpdateFac(i, facInfo)
     for j,unitDefIDb in ipairs(buildList) do
         local unitDefIDb = unitDefIDb
         
+        --DEBUG #780 Spring.Echo("BUILDLISTLOOP",i,j,unitDefIDb,facs[i],facs[i].boStack,facs[i].qStore)
         local boButton = facs[i].boStack.childrenByName[unitDefIDb]
         local qButton = facs[i].qStore[i .. '|' .. unitDefIDb]
         
@@ -219,6 +220,7 @@ local function UpdateFacQ(i, facInfo)
             
             local qButton = facs[i].qStore[i .. '|' .. unitDefIDb]
             
+            --DEBUG #780 Spring.Echo("BUILDQLOOP",i,n,unitDefIDb,qButton)
             if not facs[i].qStack:GetChildByName(qButton.name) then
                 facs[i].qStack:AddChild(qButton)
             end
@@ -477,6 +479,7 @@ RecreateFacbar = function()
         end
 
         local facStack, boStack, qStack, qStore = AddFacButton(facInfo.unitID, unitDefID, stack_main, i)
+        --DEBUG #780 Spring.Echo("ADDFACBUTTON", i, unitDefID, facStack, boStack, qStack, qStore)
         facs[i].facStack 	= facStack
         facs[i].boStack 	= boStack
         facs[i].qStack 		= qStack
@@ -596,24 +599,22 @@ function widget:Update()
     cycle_half_s = (cycle_half_s % 16) + 1
     cycle_2_s = (cycle_2_s % (32*2)) + 1
     
+    if needsRecreate then
+        RecreateFacbar()
+        needsRecreate = false
+    end
     
     if cycle_half_s == 1 then 
         for i,facInfo in ipairs(facs) do
             if Spring.ValidUnitID( facInfo.unitID ) then
-                if cycle_2_s == 1 then
+                if cycle_2_s == 1 then  
                     UpdateFac(i, facInfo)
                 end
                 UpdateFacQ(i, facInfo)
             end
         end
     end
-    
-    if needsRecreate then
-        RecreateFacbar()
-        needsRecreate = false
-    end
-    
-    
+        
     if inTweak and not enteredTweak then
         enteredTweak = true
         stack_main:ClearChildren()
@@ -694,10 +695,17 @@ function HideFacBar()
     end
 end
 
+local prevSpecState = Spring.GetSpectatingState()
 function widget:PlayerChanged()
-    if Spring.GetSpectatingState() then
+    local specState = Spring.GetSpectatingState()
+    if specState then
+        -- hide facbar if we are a spec
         HideFacBar()
+    elseif not specState and prevSpecState and Spring.GetSelectedUnitsCount()==0 then
+        -- activate facbar if we were previous and spec and now became a player
+        ShowFacBar()
     end
+    prevSpecState = specState
 end
 
 function widget:Initialize()
@@ -763,4 +771,11 @@ function widget:Initialize()
     if Spring.GetSpectatingState() or Spring.GetSelectedUnitsCount()>0 then
         HideFacBar()
     end
+end
+
+function widget:ShutDown()
+    stack_main:Dispose()
+    window_facbar:Dispose()
+    WG.ShowFacBar = nil
+    WG.HideFacBar =nil
 end

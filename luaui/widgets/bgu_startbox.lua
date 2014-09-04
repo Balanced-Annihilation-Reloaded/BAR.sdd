@@ -23,16 +23,6 @@ function widget:GetInfo()
   }
 end
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
-if (Game.startPosType ~= 2) then
-  return false
-end
-
-if (Spring.GetGameFrame() > 1) then
-  widgetHandler:RemoveWidget()
-end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -113,10 +103,11 @@ end
 
 function widget:Initialize()
   -- only show at the beginning
-  if (Spring.GetGameFrame() > 1) then
+  if (Spring.GetGameFrame() > 1) or (Game.startPosType ~= 2) or then
     widgetHandler:RemoveWidget()
     return
   end
+
 
   -- get the gaia teamID and allyTeamID
   gaiaTeamID = Spring.GetGaiaTeamID()

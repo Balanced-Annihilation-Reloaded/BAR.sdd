@@ -96,6 +96,7 @@ function script.QueryWeapon(weaponID)
 	end
 end
 
+
 -----------------------------------------------------------------------
 -- This coroutine is restarted with each time a unit reaims, 
 -- not the most efficient and should be optimized. Possible
@@ -182,6 +183,7 @@ end
 
 function script.StartBuilding(heading, pitch)
 --	Spring.Echo("StartBuilding")
+Spring.SetUnitNanoPieces( unitID, {nano} )
 	isBuilding		= true;
 	
 		

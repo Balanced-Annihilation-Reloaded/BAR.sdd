@@ -57,6 +57,10 @@ local function readable(num)
 	num = math.abs(num)
 	if num < 10 then
 		s = s .. format(num,1)
+	elseif num >10000 then
+		s = s .. format(num/1000,0)..'K'
+	elseif num >1000 then
+		s = s .. format(num/1000,1)..'K'
 	else
 		s = s .. format(num,0)
 	end
@@ -340,8 +344,8 @@ function widget:Initialize()
 	Spring.SendCommands('resbar 0')
 	Chili = WG.Chili
 	initWindow()
-	makeBar('metal',0,0)
-	makeBar('energy',30,30)
+	makeBar('metal',25,0)
+	makeBar('energy',25,30)
     makeConversionPanel()
     if Spring.GetGameFrame()>0 then
         SetBarColors()

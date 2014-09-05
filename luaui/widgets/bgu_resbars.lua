@@ -128,10 +128,12 @@ local function makeBar(res, barX, barY)
 	}
 	
 	netLabel[res] = Chili.Label:New{
-		caption = '',
-		x       = 7,
-		bottom  = 7,
+		caption = "",
+		right   = 380,
+        bottom  = 7,
 		parent  = control,
+        height  = 16,
+        font    = {size = 15}
 	}
 	
 	incomeLabel[res] = Chili.Label:New{
@@ -140,6 +142,7 @@ local function makeBar(res, barX, barY)
 		y        = 0,
 		parent   = control,
 		align    = 'right',
+        height   = 14,
 		font     = {
 			size         = 13,
 			color        = green,
@@ -153,6 +156,7 @@ local function makeBar(res, barX, barY)
 		bottom   = 0,
 		parent   = control,
 		align    = 'right',
+        height   = 14,
 		font     = {
 			size         = 13,
 			color        = red,
@@ -165,20 +169,20 @@ end
 local function makeConversionPanel()
     conversionButton = Chili.Button:New{ --for when window0 is shown
         parent = window0,
-        x = 0,
-        bottom = 0,
-        height = 35,
-        width = 35,
+        x = 1,
+        bottom = 30-1,
+        height = 30,
+        width = 30,
         onclick = {ToggleConversionPanel},
         caption = "",
-        padding = {7,7,7,7},
-        children = {Chili.Image:New{width='100%',height='100%',file=conversionPic}},
+        padding = {6,6,6,6},
+        children = {Chili.Image:New{width='100%',height='100%',file=conversionPic,keepAspect=false}},
     }
     
     conversionPanel = Chili.Window:New{
         parent = Chili.Screen0,
         height = 60,
-        width = 450-35,
+        width = 450-30,
         right = 0,
         y = 0,
         padding = {10,10,10,10}
@@ -186,14 +190,14 @@ local function makeConversionPanel()
     
     conversionButton2 = Chili.Button:New{ --for when conversionPanel is shown
         parent = Chili.Screen0,
-        right = 415, --450-35
-        y = 60-35,
-        height = 35,
-        width = 35,
+        right = 420-1, -- 450-
+        y = 1,
+        height = 30,
+        width = 30,
         onclick = {ToggleConversionPanel},
         caption = "",
-        padding = {7,7,7,7},
-        children = {Chili.Image:New{width='100%',height='100%',file=conversionPic}},
+        padding = {6,6,6,6},
+        children = {Chili.Image:New{width='100%',height='100%',file=conversionPic,keepAspect=false}},
     }
 
     conversionText = Chili.TextBox:New{

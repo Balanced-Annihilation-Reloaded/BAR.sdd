@@ -271,6 +271,7 @@ local Hotkey = {
     [CMD.MANUALFIRE] = "D",
     [CMD.CLOAK] = "K",
     [CMD.MOVE] = "M",
+    [CMD.RESURRECT] = "O",
     [34923] = "Y", --set target
     [34924] = "J", --cancel target
 }

@@ -23,7 +23,7 @@ local GetMouseState = Spring.GetMouseState
 function widget:GetInfo()
   return {
     name      = "Autoquit",
-    desc      = "Automatically quits "..delay.."s after the game ends. Move mouse to cancel.",
+    desc      = "Automatically quits "..delay.."s after the game ends. Move mouse to cancel",
     author    = "Evil4Zerggin & zwzsg",
     date      = "25 December 2008",
     license   = "GNU LGPL, v2.1 or later",
@@ -39,7 +39,7 @@ end
 function widget:GameOver()
   endTime = GetTimer()
   mx,my = GetMouseState()
-  Echo("Automatically exiting in " .. delay .. " seconds. Move mouse to cancel.")
+  Echo("Automatically exiting in " .. delay .. " seconds. Move mouse to cancel")
 end
 
 function widget:Update(dt)
@@ -50,7 +50,7 @@ function widget:Update(dt)
       endTime = false
       -- widgetHandler:RemoveWidget()
     elseif DiffTimers(GetTimer(), endTime) > delay then
-      Echo("Auto-quit.")
+      Echo("Auto-quit")
       SendCommands("quitforce")
     end
   end

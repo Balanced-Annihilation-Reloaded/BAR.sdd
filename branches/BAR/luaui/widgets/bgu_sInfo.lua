@@ -158,6 +158,13 @@ local function showUnitInfo(unitDefID, texture, overlay, description, humanName,
 		color   = {0.5,1,0,1},
 	}
 		
+	unitCostTextTitle = Chili.TextBox:New{
+		x      = '60%',
+		height = 10,
+		bottom = 35,
+		text   = 'Total:',
+	}
+
 	unitCostText = Chili.TextBox:New{
 		x      = '62%',
 		height = 28,
@@ -184,7 +191,7 @@ local function showUnitInfo(unitDefID, texture, overlay, description, humanName,
 				height   = '100%',
 				width    = '100%',
 				file     = overlay,
-				children = {unitName, unitHealthText, unitHealth, unitResText, unitCostText},
+				children = {unitName, unitHealthText, unitHealth, unitResText, unitCostTextTitle, unitCostText},
 			}
 		}
 	}
@@ -195,6 +202,7 @@ local function showUnitInfo(unitDefID, texture, overlay, description, humanName,
 	if UnitDefs[unitDefID].customParams.iscommander then
 		unitCostText:Hide()
 	end
+    if (n==1) then unitCostTextTitle:Hide() end
 		
 end
 

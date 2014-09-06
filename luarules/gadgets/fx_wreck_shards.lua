@@ -50,9 +50,13 @@ function gadget:FeatureDamaged(featureID, featureDefID, featureTeam, damage, wea
 				featureDefs = featureList[featureDefID]
 			end
 			local x,y,z = GetFeaturePosition(featureID)
-			x = x + random(featureDefs.minX,featureDefs.maxX)
-			z = z + random(featureDefs.minZ,featureDefs.maxZ)
-			y = y + (random() * featureDefs.y)
+            if featureDefs.minX+1 < featureDefs.minX then
+                x = x + random(featureDefs.minX,featureDefs.maxX)
+			end
+            if featureDefs.minZ+1 < featureDefs.minZ then
+                z = z + random(featureDefs.minZ,featureDefs.maxZ)
+			end
+            y = y + (random() * featureDefs.y)
 			cegList[featureID] = {ceg = cegs[random(1,3)],x=x,y=y,z=z, enabled = true}
 		end
 	end

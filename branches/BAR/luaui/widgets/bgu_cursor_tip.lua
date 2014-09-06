@@ -49,6 +49,12 @@ local function initWindow()
 		right  = 0, 
 		bottom = 0,
 		margin = {0,0,0,0},
+        font = {            
+            outline          = true,
+            autoOutlineColor = true,
+            outlineWidth     = 3,
+            outlineWeight    = 4,
+        }
 	}
 	
 	oldTime = spGetTimer()
@@ -125,8 +131,8 @@ local function setTooltip()
 	if (x + 20 + textwidth + 10) > screenWidth then
 		x = screenWidth - 20 - textwidth - 10
 	end
-	if (y - 20 - (14 * numLines + 2)) < 0 then
-		y = 14 * numLines + 2 + 20
+	if (y - 20 - (14 * numLines + 5)) < 0 then
+		y = 14 * numLines + 5 + 20 
 	end
 
 	tipWindow:SetPos(x + 20, screenHeight - y + 20, textwidth + 10, 14 * numLines + 8)

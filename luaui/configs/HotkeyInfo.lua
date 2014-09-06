@@ -49,6 +49,7 @@ local Units_I = {
     {blankLine=true},    
     {"Selecting orders", title=true},
     {white .. "The " .. green .. "default order" .. white .. " is move", noFormat=true},
+    {"m",   "move"},
     {"a",   "attack"},
     {"y",   "set priority target"},
     {"j",   "cancel priority target"},
@@ -58,6 +59,7 @@ local Units_I = {
     {"f",   "fight"},
     {"p",   "patrol"},
     {"w",   "wait (pause current command)"},
+    {"k",   "cloak"},
     {"d",   "dgun"},
     {"ctrl + d", "self-destruct"},
 }
@@ -65,11 +67,11 @@ local Units_I = {
 local Units_II ={
 
     {"Giving move orders", title=true},           
-    {"right mouse (single click)",   "Give move order to unit"},
+    {"right mouse (single click or drag)",   "Give move order to unit(s)"},
     {blankLine=true},    
     {"Giving all other orders", title=true},
     {"left mouse (single click)",    "Give order to unit(s)"},
-    {"right mouse (single click)",   "Revert back to default order"},
+    {"right mouse (single click)",   "Revert to default order"},
     {"right mouse + drag",           "Give formation order to unit(s)"},
     {blankLine=true},    
     {"Queueing orders", title=true},

@@ -514,6 +514,8 @@ function UnitDetected( unitID, allyTeam, teamId )
 	end
 	
 	local udef = UnitDefs[spGetUnitDefID(unitID)]
+    if not udef then return end
+
 	local key = tostring(unitID)
 	local x, y, z = spGetUnitPosition(unitID)
 					

@@ -99,8 +99,8 @@ local wCategories = {
 	['map']       = {label = 'Map',         list = {}, pos = 6,},
 	['bgu']       = {label = 'BAR GUI',     list = {}, pos = 7,},
 	['gfx']       = {label = 'GFX',         list = {}, pos = 8,},
-	['api']       = {label = 'API',         list = {}, pos = 9,},
-	['dbg']       = {label = 'Debugging',   list = {}, pos = 10,},
+	['dbg']       = {label = 'Debugging',   list = {}, pos = 9,},
+	['api']       = {label = 'API \255\255\200\200(Here be dragons!)',         list = {}, pos = 10,},
 	['test']      = {label = 'Test Widgets',list = {}, pos = 11,},
 	['ungrouped'] = {label = 'Ungrouped',   list = {}, pos = 12,},
 }

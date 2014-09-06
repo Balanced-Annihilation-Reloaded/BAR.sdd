@@ -705,6 +705,7 @@ local function HandleError(widget, funcName, status, ...)
   local error_message = select(1,...)
   Spring.Log(HANDLER_BASENAME, LOG.ERROR, 'Error in ' .. funcName ..'(): ' .. tostring(error_message))
   Spring.Log(HANDLER_BASENAME, LOG.ERROR, 'Removed widget: ' .. name)
+  widgetHandler.knownChanged = true
   return nil
 end
 
@@ -715,8 +716,6 @@ local function SafeWrapFuncNoGL(func, funcName)
 end
 
 local function SafeWrapFuncGL(func, funcName)
-  local wh = widgetHandler
-
   return function(w, ...)
 
     glPushAttrib(GL.ALL_ATTRIB_BITS)
@@ -735,6 +734,7 @@ local function SafeWrapFuncGL(func, funcName)
       local name = w.whInfo.name
       Spring.Log(HANDLER_BASENAME, LOG.ERROR, 'Error in ' .. funcName ..'(): ' .. tostring(r[2]))
       Spring.Log(HANDLER_BASENAME, LOG.ERROR, 'Removed widget: ' .. name)
+      widgetHandler.knownChanged = true
       return nil
     end
   end

@@ -118,8 +118,6 @@ local spGetFullBuildQueue = Spring.GetFullBuildQueue
 local spGetSelectedUnits  = Spring.GetSelectedUnits
 local spSendCommands      = Spring.SendCommands
 local spSetActiveCommand  = Spring.SetActiveCommand
-----------------------
-
 
 -- Local vars --
 local updateRequired = true
@@ -128,8 +126,8 @@ local oldTimer = spGetTimer()
 local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b,0.8}
 local gameStarted = (Spring.GetGameFrame()>0)
-----------------
 
+----------------
 local function getInline(r,g,b)
 	if type(r) == 'table' then
 		return string.char(255, (r[1]*255), (r[2]*255), (r[3]*255))
@@ -257,6 +255,34 @@ local function addBuild(cmd, category)
 	end
 end
 
+local Hotkey = {
+    [CMD.ATTACK] = "A",
+    [CMD.GUARD] = "G",
+    [CMD.FIGHT] = "F",
+    [CMD.PATROL] = "P",
+    [CMD.RECLAIM] = "E",
+    [CMD.LOAD_ONTO] = "L",
+    [CMD.LOAD_UNITS] = "L",
+    [CMD.UNLOAD_UNIT] = "U",
+    [CMD.UNLOAD_UNITS] = "U",
+    [CMD.STOP] = "S",
+    [CMD.WAIT] = "W",
+    [CMD.REPAIR] = "R",
+    [CMD.MANUALFIRE] = "D",
+    [CMD.CLOAK] = "K",
+    [CMD.MOVE] = "M",
+    [34923] = "Y", --set target
+    [34924] = "J", --cancel target
+}
+
+local function HotkeyString(cmdID)
+    if Hotkey[cmdID] then
+        return " " .. "[" .. Hotkey[cmdID] .. "]"
+    else
+        return ""
+    end
+end
+
 local function addState(cmd)
 	local param = cmd.params[cmd.params[1] + 2]
 	stateMenu:AddChild(Chili.Button:New{
@@ -280,7 +306,7 @@ local function addOrder(cmd)
 	local button = Chili.Button:New{
 		caption   = '',
 		cmdName   = cmd.name,
-		tooltip   = cmd.tooltip,
+		tooltip   = cmd.tooltip .. getInline(orderColors[cmd.action]) .. HotkeyString(cmd.id),
 		cmdId     = cmd.id,
 		cmdAName  = cmd.action,
 		padding   = {0,0,0,0},

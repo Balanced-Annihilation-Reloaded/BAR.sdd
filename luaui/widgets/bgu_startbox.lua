@@ -103,7 +103,7 @@ end
 
 function widget:Initialize()
   -- only show at the beginning
-  if (Spring.GetGameFrame() > 1) or (Game.startPosType ~= 2) or then
+  if (Spring.GetGameFrame() > 1) or (Game.startPosType ~= 2) then
     widgetHandler:RemoveWidget()
     return
   end

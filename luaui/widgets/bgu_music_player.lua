@@ -428,6 +428,7 @@ function widget:Initialize()
 	end
 
 	extra_sliders:Hide()
+    spSetSoundStreamVolume(1)
 end
 
 function widget:UnitCreated(_, unitDefID, teamID)

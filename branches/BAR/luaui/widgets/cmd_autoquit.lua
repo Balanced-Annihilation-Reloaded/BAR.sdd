@@ -39,7 +39,7 @@ end
 function widget:GameOver()
   endTime = GetTimer()
   mx,my = GetMouseState()
-  Echo("<autoquit> Automatically exiting in " .. delay .. " seconds. Move mouse to cancel.")
+  Echo("Automatically exiting in " .. delay .. " seconds. Move mouse to cancel.")
 end
 
 function widget:Update(dt)
@@ -50,7 +50,7 @@ function widget:Update(dt)
       endTime = false
       -- widgetHandler:RemoveWidget()
     elseif DiffTimers(GetTimer(), endTime) > delay then
-      Echo("<autoquit> Autoquit sending quit command.")
+      Echo("Auto-quit.")
       SendCommands("quitforce")
     end
   end

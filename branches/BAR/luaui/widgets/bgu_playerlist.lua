@@ -1011,6 +1011,45 @@ function ScheduledUpdate()
 end
 
 --------------------------------------------------------------------------------
+-- Options
+--------------------------------------------------------------------------------
+
+function SetupOptions()
+    if not WG.MainMenu then return end
+
+    -- add options into main menu, to show/hide flags, ranks and ts values
+    local function FlagState(_,show)
+        options.flags = show
+        OptionChange()
+    end
+    local function RankState(_,show)
+        options.ranks = show
+        OptionChange()
+    end
+    local function TSState(_,show)
+        options.ts = show
+        OptionChange()
+    end
+    
+    Menu = WG.MainMenu
+    Menu.AddOption{
+			tab = 'Interface',
+			children = {
+				Chili.Label:New{caption='Player List',x='0%',fontsize=18},
+				Chili.Checkbox:New{caption='Show Flags',x='10%',width='80%',
+						checked=options.flags,OnChange={FlagState}}, --toggle doesn't work
+				Chili.Checkbox:New{caption='Show Ranks',x='10%',width='80%',
+						checked=options.ranks,OnChange={RankState}},
+				Chili.Checkbox:New{caption='Show TrueSkill',x='10%',width='80%',
+						checked=options.ts,OnChange={TSState}},
+				Chili.Line:New{width='100%'}
+        }
+    }
+    
+     
+end
+
+--------------------------------------------------------------------------------
 -- Callins
 --------------------------------------------------------------------------------
 
@@ -1041,7 +1080,7 @@ function widget:Initialize()
     iPanel()
     iPanel:Hide()
     
-    -- TODO: add option for flags and ranks into optionMenu, just need to change options.XXX and call OptionChange()
+    SetupOptions()  
 end
 
 function widget:ShutDown()
@@ -1472,26 +1511,12 @@ function OptionChange()
     CalculateOffsets()
     window:Resize(offset.max,0)
     
-    -- set flag and rank visibility to match options
+    -- redraw all the player panels (with new offsets)
     for pID,_ in pairs(players) do
-        if options.flags then
-            if players[pID].playerPanel:GetChildByName('flag').hidden then
-                players[pID].playerPanel:GetChildByName('flag'):Show()
-            end
-        else
-            if not players[pID].playerPanel:GetChildByName('flag').hidden then
-                players[pID].playerPanel:GetChildByName('flag'):Hide()
-            end
-        end
-        if options.ranks then
-            if players[pID].playerPanel:GetChildByName('rank').hidden then
-                players[pID].playerPanel:GetChildByName('rank'):Show()
-            end
-        else
-            if not players[pID].playerPanel:GetChildByName('rank').hidden then
-                players[pID].playerPanel:GetChildByName('rank'):Hide()
-            end
-        end    
+        players[pID].playerPanel:Dispose()
+        players[pID].playerPanel = PlayerPanel(pID)
     end
+    
+    UpdateStack()
 end
 

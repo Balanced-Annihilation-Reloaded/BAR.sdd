@@ -651,10 +651,7 @@ function widget:Initialize()
 
 	-- Create a cache of buttons stored in the unit array
 	for name, unitDef in pairs(UnitDefNames) do
-		-- Skip BA units ( uses much less lua memory )
-		if not name:find('_ba') then
-			createButton(name,unitDef)
-		end      
+        createButton(name,unitDef)
 	end
 
 end

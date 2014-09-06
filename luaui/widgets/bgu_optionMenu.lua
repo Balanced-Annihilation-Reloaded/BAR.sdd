@@ -925,16 +925,14 @@ function widget:Initialize()
 	spSendCommands('bind esc hideMenu')
 end
 
---------------------------
---
 function widget:Update()
+    -- check if any widgets changed enabled/active state
 	if widgetHandler.knownChanged then
-		widgetHandler.knownChanged = false
-		-- Seems to update to quickly ( before widget is 'inactive' )
+		widgetHandler.knownChanged = false -- important note: widgetHandler.knownChanged=true was added by us to the widgetHandler, when a widget crashes (selector.lua polls each Drawframe)
 		makeWidgetList()
 	end
 end
--- Called by widget handler when this widget either crashes or is disabled
+
 function widget:Shutdown()
 	spSendCommands('unbind S+esc openMenu')
 	spSendCommands('unbind f11 openWidgets')

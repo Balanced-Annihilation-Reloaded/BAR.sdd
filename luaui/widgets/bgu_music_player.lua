@@ -41,8 +41,10 @@ local tankPic  = "LuaUI/Images/small_tank.png"
 
 local tracks = VFS.Include('Music/music.lua') or false
 local myTeamID  = Spring.GetMyTeamID()
-local isSpec 	  = false
-local playNew   = true
+local isSpec = false
+
+local playNew = true
+local fadeOut = false
 local musicType = 'peace'
 local curTrack = {}
 local disabledTracks = {}

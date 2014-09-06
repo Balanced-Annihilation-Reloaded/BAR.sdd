@@ -89,7 +89,6 @@ local function hideChat()
 	end
 end
 
-
 local function loadWindow()
 	
 	-- parent
@@ -107,7 +106,7 @@ local function loadWindow()
 	input = Chili.Panel:New{
 		parent    = window,
 		minHeight = 10,
-		width     = msgWidth,
+		width     = '100%',
 		height    = 30,
 		y         = 0,
 		x         = 0,

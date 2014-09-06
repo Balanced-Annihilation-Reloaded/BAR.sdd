@@ -14,22 +14,23 @@ end
 
 ------------------------------------------
 
-Spring.SetSoundStreamVolume(0)
-local musicfiles = VFS.DirList("Music/peace", "*.ogg")
-if (#musicfiles > 0) then
-	Spring.PlaySoundStream(musicfiles[ math.random(#musicfiles) ], 1)
-	Spring.SetSoundStreamVolume(0)
-end
+Spring.SetSoundStreamVolume(1)
+
+local sounds = VFS.DirList("luaintro/sounds", "*.ogg")
+local startedSound = false
 
 
 function addon.DrawLoadScreen()
 	local loadProgress = SG.GetLoadProgress()
 
-	-- fade in & out music with progress
-	if (loadProgress < 0.9) then
-		Spring.SetSoundStreamVolume(loadProgress)
-	else
-		Spring.SetSoundStreamVolume(0.9 + ((0.9 - loadProgress) * 9))
+    if not startedSound and (#sounds > 0) then
+        Spring.PlaySoundStream(sounds[math.random(#sounds)], 1)
+        startedSound = true
+    end
+    
+	-- fade out  with progress
+	if (loadProgress > 0.7) then
+		Spring.SetSoundStreamVolume(0.7 + ((0.7 - loadProgress) * 7))
 	end
 end
 

@@ -12,13 +12,14 @@ function widget:GetInfo()
 end
 
 
-local spGetGameSpeed       = Spring.GetGameSpeed
-local spStopSoundStream    = Spring.StopSoundStream
-local spPauseSoundStream   = Spring.PauseSoundStream
-local spPlaySoundStream    = Spring.PlaySoundStream
-local spGetSoundStreamTime = Spring.GetSoundStreamTime
-local spGetDrawFrame       = Spring.GetDrawFrame
-local spGetUnitHealth      = Spring.GetUnitHealth
+local spGetGameSpeed         = Spring.GetGameSpeed
+local spStopSoundStream      = Spring.StopSoundStream
+local spPauseSoundStream     = Spring.PauseSoundStream
+local spPlaySoundStream      = Spring.PlaySoundStream
+local spGetSoundStreamTime   = Spring.GetSoundStreamTime
+local spSetSoundStreamVolume = Spring.SetSoundStreamVolume
+local spGetDrawFrame         = Spring.GetDrawFrame
+local spGetUnitHealth        = Spring.GetUnitHealth
 
 local Chili, Menu
 local musicControl, playButton, skipButton, songLabel, window0, pauseIcon, playIcon,volumeLbl, volume
@@ -342,7 +343,7 @@ local function checkStatus()
 	if destruction > totalHealth * highThreshold then
 		if destruction > totalHealth * peakThreshold and musicType ~= 'war' then
 			destruction = totalHealth * highThreshold
-			playNew = true
+			fadeOut = Spring.GetGameFrame()
 		end	
 		musicType = 'war'
 	elseif destruction > totalHealth * lowThreshold then
@@ -385,6 +386,18 @@ end
 ----------------------------------------------------
 
 function widget:GameFrame(n)
+
+    -- Fade current track, then play another
+    if fadeOut then
+        local wantedVol = 1 - math.sqrt((n-fadeOut)/(30))
+        if wantedVol>=0 then
+            spSetSoundStreamVolume(wantedVol)
+        else
+            spStopSoundStream()
+            fadeOut = false
+            playNew = true
+        end    
+    end
 
 	-- Check battle status
 	if n % 30 == 0 then

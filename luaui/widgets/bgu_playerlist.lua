@@ -1,14 +1,14 @@
 function widget:GetInfo()
-	return {
-		name      = "Player List",
-		desc      = "Displays a player list with many shortcuts",
-		author    = "Bluestone", --based on Marmoth's Advanced Player List
-		date      = "July 2014",
-		license   = "GNU GPL, v3 or later",
-		layer     = 0,
-		enabled   = true,  
+    return {
+        name      = "Player List",
+        desc      = "Displays a player list with many shortcuts",
+        author    = "Bluestone", --based on Marmoth's Advanced Player List
+        date      = "July 2014",
+        license   = "GNU GPL, v3 or later",
+        layer     = 0,
+        enabled   = true,  
         handler   = true,
-	}
+    }
 end
 
 
@@ -93,11 +93,11 @@ function round(num, idp)
 end
 
 function InlineColour(r,g,b)
-	if type(r) == 'table' then
-		return string.char(255, (r[1]*255), (r[2]*255), (r[3]*255))
-	else
-		return string.char(255, (r*255), (g*255), (b*255))
-	end
+    if type(r) == 'table' then
+        return string.char(255, (r[1]*255), (r[2]*255), (r[3]*255))
+    else
+        return string.char(255, (r*255), (g*255), (b*255))
+    end
 end
 
 function CountTable(t)
@@ -109,9 +109,9 @@ function CountTable(t)
 end
 
 function IsDark(red,green,blue)                  	
-	-- Determines if the player color is dark (i.e. if a white outline for the sidePic is needed)
-	if red*1.2 + green*1.1 + blue*0.8 < 0.9 then return true end
-	return false
+    -- Determines if the player color is dark (i.e. if a white outline for the sidePic is needed)
+    if red*1.2 + green*1.1 + blue*0.8 < 0.9 then return true end
+    return false
 end
 
 --------------------------------------------------------------------------------
@@ -189,11 +189,11 @@ function ShareRes()
     Spring.ShareResources(tID,'metal',m)
     
     if e > 0 then
-		Spring.SendCommands("say a: I sent "..e.." energy to "..players[iPanelpID].plainName) 
-	end
+        Spring.SendCommands("say a: I sent "..e.." energy to "..players[iPanelpID].plainName) 
+    end
     if m > 0 then
-		Spring.SendCommands("say a: I sent "..m.." metal to "..players[iPanelpID].plainName)
-	end
+        Spring.SendCommands("say a: I sent "..m.." metal to "..players[iPanelpID].plainName)
+    end
     
     iPanel:Hide()
 end
@@ -210,21 +210,21 @@ function iPanel()
         autosize  = false,
         children  = {},
         padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
     }
     
     iPanelLayout = Chili.LayoutPanel:New{
         parent      = iPanel,
-		name        = 'stack',
-		width       = iPanelWidth,
-		resizeItems = false,
-		autosize    = true,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
-		children    = {},
-		preserveChildrenOrder = true,
+        name        = 'stack',
+        width       = iPanelWidth,
+        resizeItems = false,
+        autosize    = true,
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        children    = {},
+        preserveChildrenOrder = true,
     }
     
     -- setup children
@@ -269,12 +269,12 @@ function iPanel()
     }
 
     shareE_slider_panel = Chili.LayoutPanel:New{
-		height = 25,
+        height = 25,
         width = '100%',
         right = 0,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
         orientation = 'horizontal',
         children = {
             shareE_text,
@@ -307,12 +307,12 @@ function iPanel()
     }
 
     shareM_slider_panel = Chili.LayoutPanel:New{
-		height = 25,
+        height = 25,
         width = '100%',
         right = 0,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
         orientation = 'horizontal',
         children = {
             shareM_text,
@@ -321,26 +321,26 @@ function iPanel()
     }
         
     shareres_sliders = Chili.LayoutPanel:New{
-		height = 63,
+        height = 63,
         width = '100%',
         right = 0,
-		padding     = {8,10,8,3},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
-		children    = {
+        padding     = {8,10,8,3},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        children    = {
             shareE_slider_panel,
             shareM_slider_panel,
         },    
     }
 
     shareres_panel = Chili.LayoutPanel:New{
-		autosize    = true,
+        autosize    = true,
         width = '100%',
         right = 0,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
-		children    = {
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        children    = {
             shareres_sliders,
             shareres_button,
             shareunits,
@@ -489,18 +489,18 @@ local colourConv = {
 function PlayerPanel(pID)
 
     local panel = Chili.Button:New{
-		width       = '100%',
+        width       = '100%',
         minHeight   = 17,
-		resizeItems = false,
-		autosize    = true,
-		padding     = {5,0,0,0},
-		itemPadding = {0,0,0,0},
+        resizeItems = false,
+        autosize    = true,
+        padding     = {5,0,0,0},
+        itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},
         caption     = "",
         onclick     = {iPanelPress},
-		children    = {},
+        children    = {},
         pID         = pID,
-	}
+    }
    
     --children in order from R to L
     
@@ -600,15 +600,15 @@ end
 
 function DeadPanel(pID)
     local panel = Chili.Panel:New{
-		width       = '100%',
+        width       = '100%',
         minHeight   = 17,
-		resizeItems = false,
-		autosize    = true,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
-		children    = {},
-	}
+        resizeItems = false,
+        autosize    = true,
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        children    = {},
+    }
     
     local name = Chili.TextBox:New{
         parent      = panel,
@@ -634,30 +634,30 @@ end
 
 function SpecPanel(pID)
     local panel = Chili.LayoutPanel:New{
-		width       = '100%',
+        width       = '100%',
         minHeight   = 12,
-		resizeItems = false,
-		autosize    = true,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
-		children    = {},
-	}
+        resizeItems = false,
+        autosize    = true,
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        children    = {},
+    }
 
     local button = Chili.Button:New{
         name        = "button",
         parent      = panel,
-		width       = width.name,
+        width       = width.name,
         right       = offset.name,
         minHeight   = 12,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
-		children    = {},
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        children    = {},
         pID         = pID,
         caption     = "",
         onclick     = {iPanelPress},
-	}
+    }
     
     local name = Chili.TextBox:New{
         parent      = button,
@@ -686,25 +686,25 @@ end
 --------------------------------------------------------------------------------
 
 function SetFaction(pID) 
-	--set faction, from TeamRulesParam when possible and from initial info if not    
+    --set faction, from TeamRulesParam when possible and from initial info if not    
     local startUDID = Spring.GetTeamRulesParam(players[pID].tID, 'startUnit')
-	if startUDID then
-		if startUDID == armcomDefID then 
-			faction = "arm"
-		elseif startUDID == corcomDefID then
-			faction = "core"
-		else
+    if startUDID then
+        if startUDID == armcomDefID then 
+            faction = "arm"
+        elseif startUDID == corcomDefID then
+            faction = "core"
+        else
             _,_,_,_,faction = Spring.GetTeamInfo(players[pID].tID)
         end
-	else
-		_,_,_,_,faction = Spring.GetTeamInfo(players[pID].tID)
-	end
+    else
+        _,_,_,_,faction = Spring.GetTeamInfo(players[pID].tID)
+    end
        
-	if faction then
+    if faction then
         players[pID].faction = faction
         if players[pID].dark then
             players[pID].factionPic = "LuaUI/Images/playerlist/"..faction.."WO_default.png"
-		else
+        else
             players[pID].factionPic = "LuaUI/Images/playerlist/"..faction.."_default.png"
         end
     else
@@ -719,60 +719,60 @@ end
 function GetSkill(playerID)
     if players[playerID].isAI then return "" end 
     
-	local customtable = select(10,Spring.GetPlayerInfo(playerID)) -- player custom table
-	local tsMu = customtable.skill
-	local tsSigma = customtable.skilluncertainty
-	local tskill = ""
-	if tsMu then
-		tskill = tsMu and tonumber(tsMu:match("%d+%.?%d*")) or 0
-		tskill = round(tskill,0)
-		if string.find(tsMu, ")") then
-			tskill = "\255"..string.char(190)..string.char(140)..string.char(140) .. tskill -- ')' means inferred from lobby rank
-		else
-		
-			-- show privacy mode
-			local priv = ""
-			if string.find(tsMu, "~") then -- '~' means privacy mode is on
-				priv = "\255"..string.char(200)..string.char(200)..string.char(200) .. "*" 		
-			end
-			
-			--show sigma
-			if tsSigma then -- 0 is low sigma, 3 is high sigma
-				tsSigma=tonumber(tsSigma)
-				local tsRed, tsGreen, tsBlue 
-				if tsSigma > 2 then
-					tsRed, tsGreen, tsBlue = 190, 130, 130
-				elseif tsSigma == 2 then
-					tsRed, tsGreen, tsBlue = 140, 140, 140
-				elseif tsSigma == 1 then
-					tsRed, tsGreen, tsBlue = 195, 195, 195
-				elseif tsSigma < 1 then
-						tsRed, tsGreen, tsBlue = 250, 250, 250
-				end
-				tskill = priv .. "\255"..string.char(tsRed)..string.char(tsGreen)..string.char(tsBlue) .. tskill
-			else
-				tskill = priv .. "\255"..string.char(195)..string.char(195)..string.char(195) .. tskill --should never happen
-			end
-		end
-	else
-		tskill = "" --"\255"..string.char(160)..string.char(160)..string.char(160) .. "?"
-	end
-	return tskill, tsMu
+    local customtable = select(10,Spring.GetPlayerInfo(playerID)) -- player custom table
+    local tsMu = customtable.skill
+    local tsSigma = customtable.skilluncertainty
+    local tskill = ""
+    if tsMu then
+        tskill = tsMu and tonumber(tsMu:match("%d+%.?%d*")) or 0
+        tskill = round(tskill,0)
+        if string.find(tsMu, ")") then
+            tskill = "\255"..string.char(190)..string.char(140)..string.char(140) .. tskill -- ')' means inferred from lobby rank
+        else
+        
+            -- show privacy mode
+            local priv = ""
+            if string.find(tsMu, "~") then -- '~' means privacy mode is on
+                priv = "\255"..string.char(200)..string.char(200)..string.char(200) .. "*" 		
+            end
+            
+            --show sigma
+            if tsSigma then -- 0 is low sigma, 3 is high sigma
+                tsSigma=tonumber(tsSigma)
+                local tsRed, tsGreen, tsBlue 
+                if tsSigma > 2 then
+                    tsRed, tsGreen, tsBlue = 190, 130, 130
+                elseif tsSigma == 2 then
+                    tsRed, tsGreen, tsBlue = 140, 140, 140
+                elseif tsSigma == 1 then
+                    tsRed, tsGreen, tsBlue = 195, 195, 195
+                elseif tsSigma < 1 then
+                        tsRed, tsGreen, tsBlue = 250, 250, 250
+                end
+                tskill = priv .. "\255"..string.char(tsRed)..string.char(tsGreen)..string.char(tsBlue) .. tskill
+            else
+                tskill = priv .. "\255"..string.char(195)..string.char(195)..string.char(195) .. tskill --should never happen
+            end
+        end
+    else
+        tskill = "" --"\255"..string.char(160)..string.char(160)..string.char(160) .. "?"
+    end
+    return tskill, tsMu
 end
 
 function ReadyColour(readyState, isAI)
-	local ready = (readyState==1) or (readyState==2) or (readyState==-1)
-	local hasStartPoint = (readyState==4)
-	local readyColour
+    local ready = (readyState==1) or (readyState==2) or (readyState==-1)
+    local hasStartPoint = (readyState==4)
+    local readyColour
     if ready then
-		readyColour = {0.1,0.95,0.2,1}
-	else
-		if hasStartPoint then
-			readyColour = {1,0.65,0.1,1}
-		else
-			readyColour = {0.8,0.1,0.1,1}	
-		end
-	end
+        readyColour = {0.1,0.95,0.2,1}
+    else
+        if hasStartPoint then
+            readyColour = {1,0.65,0.1,1}
+        else
+            readyColour = {0.8,0.1,0.1,1}	
+        end
+    end
     return readyColour
 end
 
@@ -1033,16 +1033,16 @@ function SetupOptions()
     
     Menu = WG.MainMenu
     Menu.AddOption{
-			tab = 'Interface',
-			children = {
-				Chili.Label:New{caption='Player List',x='0%',fontsize=18},
-				Chili.Checkbox:New{caption='Show Flags',x='10%',width='80%',
-						checked=options.flags,OnChange={FlagState}}, --toggle doesn't work
-				Chili.Checkbox:New{caption='Show Ranks',x='10%',width='80%',
-						checked=options.ranks,OnChange={RankState}},
-				Chili.Checkbox:New{caption='Show TrueSkill',x='10%',width='80%',
-						checked=options.ts,OnChange={TSState}},
-				Chili.Line:New{width='100%'}
+        tab = 'Interface',
+        children = {
+            Chili.Label:New{caption='Player List',x='0%',fontsize=18},
+            Chili.Checkbox:New{caption='Show Flags',x='10%',width='80%',
+                    checked=options.flags,OnChange={FlagState}}, --toggle doesn't work
+            Chili.Checkbox:New{caption='Show Ranks',x='10%',width='80%',
+                    checked=options.ranks,OnChange={RankState}},
+            Chili.Checkbox:New{caption='Show TrueSkill',x='10%',width='80%',
+                    checked=options.ts,OnChange={TSState}},
+            Chili.Line:New{width='100%'}
         }
     }
     
@@ -1263,15 +1263,15 @@ end
 
 function Header(text)
     local panel = Chili.LayoutPanel:New{
-		width       = '100%',
+        width       = '100%',
         minHeight   = 18,
-		resizeItems = false,
-		autosize    = true,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
-		children    = {},
-	}
+        resizeItems = false,
+        autosize    = true,
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        children    = {},
+    }
     
     local name = Chili.TextBox:New{
         parent      = panel,
@@ -1374,59 +1374,59 @@ function SetupStack()
 
     stack = Chili.LayoutPanel:New{
         parent      = window,
-		name        = 'stack',
-		width       = '100%',
+        name        = 'stack',
+        width       = '100%',
         minHeight   = 50,
-		resizeItems = false,
-		autosize    = true,
-		padding     = {0,5,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
-		children    = {},
-		preserveChildrenOrder = true,
-	}
+        resizeItems = false,
+        autosize    = true,
+        padding     = {0,5,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        children    = {},
+        preserveChildrenOrder = true,
+    }
     
     alliesPanel = Chili.LayoutPanel:New{
         parent      = stack,
-		name        = 'allies',
-		width       = '100%',
+        name        = 'allies',
+        width       = '100%',
         minHeight   = 0,
-		resizeItems = false,
-		autosize    = true,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
-		children    = {},
-		preserveChildrenOrder = true,
-	}
+        resizeItems = false,
+        autosize    = true,
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        children    = {},
+        preserveChildrenOrder = true,
+    }
         
     enemiesPanel = Chili.LayoutPanel:New{
         parent      = stack,
-		name        = 'enemies',
-		width       = '100%',
+        name        = 'enemies',
+        width       = '100%',
         minHeight   = 0,
-		resizeItems = false,
-		autosize    = true,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
-		children    = {},
-		preserveChildrenOrder = true,
-	}
+        resizeItems = false,
+        autosize    = true,
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        children    = {},
+        preserveChildrenOrder = true,
+    }
     
     specsPanel = Chili.LayoutPanel:New{
         parent      = stack,
-		name        = 'specs',
-		width       = '100%',
+        name        = 'specs',
+        width       = '100%',
         minHeight   = 0,
-		resizeItems = false,
-		autosize    = true,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
-		children    = {},
-		preserveChildrenOrder = true,
-	}
+        resizeItems = false,
+        autosize    = true,
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        children    = {},
+        preserveChildrenOrder = true,
+    }
     
     UpdateStack()
 end

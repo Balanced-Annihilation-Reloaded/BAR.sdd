@@ -28,7 +28,8 @@ local sfind = string.find
 
 
 -- Config --
-local msgWidth  = 525 --width of the console
+local minChatWidth  = 500 --width of the console
+local maxChatWidth  = 625 --width of the console
 local cfg = {
 	msgTime  = 8, -- time to display messages in seconds
 	hideChat = true,
@@ -89,12 +90,22 @@ local function hideChat()
 	end
 end
 
+local function getChatWidth(viewSizeX)
+    local sx = viewSizeX or select(1,Spring.GetScreenGeometry())
+    return math.min(maxChatWidth, math.max(minChatWidth, sx * 0.4))
+end
+
+function widget:ViewResize(viewSizeX, viewSizeY)
+    local w = getChatWidth(viewSizeX)
+    window:Resize(w,_)
+end
+
 local function loadWindow()
 	
 	-- parent
 	window = Chili.Control:New{
 		parent  = screen,
-		width   = msgWidth,
+		width   = getChatWidth(),
 		color   = {0,0,0,0},
 		height  = 150,
 		padding = {0,0,0,0},

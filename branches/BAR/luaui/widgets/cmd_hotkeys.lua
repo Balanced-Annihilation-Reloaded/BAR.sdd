@@ -1,7 +1,7 @@
 function widget:GetInfo()
 	return {
-		name = "Building Hotkeys",
-		desc = "Adds hotkeys for buildings using Z X C  and V" ,
+		name = "Extra Hotkeys",
+		desc = "Adds hotkeys for buildings (Z,X,C,V), buildspacing (N,M), settarget (Y,J), resurrect (O)" ,
 		author = "Beherith",
 		date = "23 march 2012",
 		license = "GNU LGPL, v2.1 or later",
@@ -139,6 +139,10 @@ function widget:Initialize()
 	for k,v in ipairs(binds) do
 		Spring.SendCommands(v)
 	end
+    
+	Spring.SendCommands("bind y settarget")
+	Spring.SendCommands("bind j canceltarget")
+    Spring.SendCommands("bind o resurrect")
 end
 
 function widget:Shutdown()
@@ -148,4 +152,8 @@ function widget:Shutdown()
 	for k,v in ipairs(unbinds) do
 		Spring.SendCommands(v)
 	end
+
+    Spring.SendCommands("unbind y settarget")
+	Spring.SendCommands("unbind j canceltarget")
+    Spring.SendCommands("unbind o resurrect")
 end

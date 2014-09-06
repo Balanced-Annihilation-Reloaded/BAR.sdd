@@ -312,7 +312,6 @@ local function addOrder(cmd)
 
 	orderMenu:AddChild(button)
 	orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height)
-	orderMenu:SetLayer(2)
 end
 
 local function getMenuCat(ud)
@@ -569,8 +568,8 @@ local function queueHandler()
 	end
 end
 ---------------------------
--- Including LayoutHandler causes CommandsChanged to be called twice? 
 local function LayoutHandler(xIcons, yIcons, cmdCount, commands)
+    -- interaction with widgetHandler
 	widgetHandler.commands   = commands
 	widgetHandler.commands.n = cmdCount
 	widgetHandler:CommandsChanged()

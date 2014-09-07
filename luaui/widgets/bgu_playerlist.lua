@@ -97,7 +97,7 @@ function InlineColour(a,b,c)
     if type(a) == 'table' then
         r,g,b = math.max(1,a[1]*255),math.max(1,a[2]*255),math.max(1,a[3]*255)
     else
-        r,g,b = math.max(1,r*255),math.max(1,g*255),math.max(1,b*255)
+        r,g,b = math.max(1,a*255),math.max(1,b*255),math.max(1,c*255)
     end
     return string.char(255,r,g,b)
 end
@@ -1217,6 +1217,22 @@ function widget:GameFrame(n)
         end
             
         needUpdate = true
+    end
+    
+    -- make buttons for takeable players flash
+    if n%20==0 and not player[myPlayerID].spec then
+        local colour
+        if n%40==0 then
+            colour = {1,1,1,1}
+        else
+            colour = {1,0.8,0,1}
+        end
+        for pID,_ in pairs(players) do
+            if IsTakeable(players[pID].tID) then
+                players[pID].playerPanel.backgroundColor = colour
+            end
+        end
+    
     end
     
     if takeInfo and n >= takeInfo.onFrame+32 then --taking can take a while, not sure why

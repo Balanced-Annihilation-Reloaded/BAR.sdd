@@ -205,7 +205,7 @@ function TakeTeam()
     -- record info about the take
     -- effects of take can't be fully determined until after it happens, so we process this in widget:GameFrame
 	Spring.SendCommands("luarules take2 " .. iPaneltID)
-    takeInfo = {team=iPaneltID, name=iPaneltName, byPlayer=myPlayerID, onFrame=Spring.GetGameFrame()}
+    takeInfo = {team=iPaneltID, name=iPanelName, byPlayer=myPlayerID, onFrame=Spring.GetGameFrame()}
     
     iPanel:Hide()
 end

@@ -1100,6 +1100,7 @@ function ProcessTake()
 		end
 	end
 
+    Spring_SendCommands(toSay)
     takeInfo = nil
 end
 

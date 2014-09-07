@@ -120,7 +120,7 @@ end
 
 local iPanelWidth = 125
 local iPanelItemHeight = 25
-local iPanelpID -- pID with which iPanel was most recently invoked
+local iPanelpID, iPaneltID, iPanelName, iPanelDeadPlayer -- info from button with which iPanel was most recently invoked
 
 function WatchCamera()
     if WG.LockCamera then
@@ -133,17 +133,19 @@ function WatchCamera()
 end
 
 function WatchRes()
-    local teamToSpec = players[iPanelpID].tID
-    Spring.SendCommands("specteam "..teamToSpec)
+    local _,notFullView,fullSelect = Spring.GetSpectatingState()
+    if fullView then
+        Spring.SendCommands("specfullview")    
+    end
+    Spring.SendCommands("specteam "..iPaneltID)
 
     iPanel:Hide()
 end
 
 function WatchLos()
-    local teamToSpec = players[iPanelpID].tID
     local _,notFullView,fullSelect = Spring.GetSpectatingState()
     if notFullView then
-        Spring.SendCommands("specteam "..teamToSpec)
+        Spring.SendCommands("specteam "..iPaneltID)
         Spring.SendCommands("specfullview")
     else
         Spring.SendCommands("specfullview")
@@ -194,6 +196,16 @@ function ShareRes()
     if m > 0 then
         Spring.SendCommands("say a: I sent "..m.." metal to "..players[iPanelpID].plainName)
     end
+    
+    iPanel:Hide()
+end
+
+local takeInfo
+function TakeTeam()
+    -- record info about the take
+    -- effects of take can't be fully determined until after it happens, so we process this in widget:GameFrame
+	Spring.SendCommands("luarules take2 " .. iPaneltID)
+    takeInfo = {team=iPaneltID, name=iPaneltName, byPlayer=myPlayerID, onFrame=Spring.GetGameFrame()}
     
     iPanel:Hide()
 end
@@ -383,10 +395,15 @@ function iPanel()
         caption = 'slap',
         onclick ={Slap},
     }
-        
+
+    take = Chili.Button:New{
+        minheight = iPanelItemHeight,
+        width = '100%',
+        caption = 'take',
+        onclick ={TakeTeam},
+    }
+    
 end
-
-
 
 function iPanelPress(obj,value)   
     if not iPanel.hidden then 
@@ -395,6 +412,9 @@ function iPanelPress(obj,value)
     end
     
     iPanelpID = obj.pID
+    iPaneltID = obj.tID --nil for specs
+    iPanelName = obj.pName
+    iPanelDeadPlayer = obj.deadPlayer --true iff this is the iPanel of a dead player panel
         
     iPanelLayout:ClearChildren()
 
@@ -402,19 +422,25 @@ function iPanelPress(obj,value)
     local h = 0
     
     -- share stuff 
-    if not players[myPlayerID].spec and not players[iPanelpID].spec and iPanelpID~=myPlayerID and Spring.GetGameFrame()>0 and (Spring.IsCheatingEnabled() or Spring.AreTeamsAllied(players[myPlayerID].tID, players[iPanelpID].tID)) then
+    if not iPanelDeadPlayer and not IsTakeable(iPaneltID) and not players[myPlayerID].spec and not players[iPanelpID].spec and iPanelpID~=myPlayerID and Spring.GetGameFrame()>0 and (Spring.IsCheatingEnabled() or Spring.AreTeamsAllied(players[myPlayerID].tID, players[iPanelpID].tID)) then
         iPanelLayout:AddChild(shareres_panel)
         h = h + 2*iPanelItemHeight + 63
     end
 
+    -- take stuff
+    if IsTakeable(iPaneltID) and (true or not players[myPlayerID].spec) then
+        iPanelLayout:AddChild(take)
+        h = h + iPanelItemHeight    
+    end
+
     -- watch cam
-    if (players[myPlayerID].spec or Spring.ArePlayersAllied(myPlayerID, iPanelpID)) and not players[iPanelpID].isAI then
+    if not iPanelDeadPlayer  and (players[myPlayerID].spec or Spring.ArePlayersAllied(myPlayerID, iPanelpID)) and not players[iPanelpID].isAI then
         iPanelLayout:AddChild(watchcamera)
         h = h + iPanelItemHeight
     end
     
     -- watch res
-    if not players[iPanelpID].spec and players[myPlayerID].spec then
+    if iPaneltID and players[myPlayerID].spec then 
         iPanelLayout:AddChild(watchres)
         h = h + iPanelItemHeight
     end
@@ -432,7 +458,7 @@ function iPanelPress(obj,value)
     end
 
     -- ignore
-    if obj.pID~=myPlayerID and not players[iPanelpID].isAI then
+    if obj.pID~=myPlayerID and not players[iPanelpID].isAI and not iPanelDeadPlayer then
         if WG.ignoredPlayers[players[obj.pID].plainName] then
             ignore:SetCaption('un-ignore')
         else    
@@ -443,11 +469,12 @@ function iPanelPress(obj,value)
     end
     
     -- slap
-    if Spring.GetGameFrame()>2 and not players[iPanelpID].isAI then --because its a luarules action
+    if Spring.GetGameFrame()>2 and not players[iPanelpID].isAI and not iPanelDeadPlayer then --because its a luarules action
         iPanelLayout:AddChild(slap)
         h = h + iPanelItemHeight
     end
     
+
     if h==0 then --nothing to show
         if not iPanel.hidden then 
             iPanel:Hide()        
@@ -470,6 +497,7 @@ function iPanelPress(obj,value)
     stack:SetLayer(2)
     iPanel:Invalidate()
 end
+
 
 --------------------------------------------------------------------------------
 -- player/spec panels
@@ -500,6 +528,9 @@ function PlayerPanel(pID)
         onclick     = {iPanelPress},
         children    = {},
         pID         = pID,
+        tID         = players[pID].tID,
+        pName       = players[pID].name,
+        deadPlayer  = false,
     }
    
     --children in order from R to L
@@ -599,7 +630,7 @@ function PlayerPanel(pID)
 end
 
 function DeadPanel(pID)
-    local panel = Chili.Panel:New{
+    local panel = Chili.LayoutPanel:New{
         width       = '100%',
         minHeight   = 17,
         resizeItems = false,
@@ -610,8 +641,25 @@ function DeadPanel(pID)
         children    = {},
     }
     
-    local name = Chili.TextBox:New{
+    local button = Chili.Button:New{
+        name        = "button",
         parent      = panel,
+        width       = '100%',
+        minHeight   = 17,
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
+        children    = {},
+        caption     = "",
+        onclick     = {iPanelPress},
+        pID         = pID,
+        tID         = players[pID].tID, 
+        pName       = players[pID].deadname,
+        deadPlayer  = true,
+    }
+
+    local name = Chili.TextBox:New{
+        parent      = button,
         name        = "name",
         text        = players[pID].deadname,
         width       = width.name,
@@ -654,9 +702,12 @@ function SpecPanel(pID)
         itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},
         children    = {},
-        pID         = pID,
         caption     = "",
         onclick     = {iPanelPress},
+        pID         = pID,
+        tID         = nil,
+        pName       = players[pID].name,
+        deadPlayer  = false,
     }
     
     local name = Chili.TextBox:New{
@@ -714,6 +765,27 @@ function SetFaction(pID)
             players[pID].factionPic = "LuaUI/Images/playerlist/default.png"
         end
     end
+end
+
+function IsTakeable(tID) 
+    if not tID then return false end
+    local _,_,_,_,_,aID,_,_ = Spring.GetTeamInfo(tID)
+    if aID ~= Spring.GetMyAllyTeamID() then return false end
+    if tID == Spring.GetMyTeamID() then return false end
+    local spec,_ = Spring.GetSpectatingState()
+    if spec then return false end
+    
+	if Spring.GetTeamRulesParam(tID, "numActivePlayers") == 0 then
+		local units = Spring.GetTeamUnitCount(tID)
+		local energy = Spring.GetTeamResources(tID,"energy")
+		local metal = Spring.GetTeamResources(tID,"metal")
+		if units and energy and metal then
+			if (units > 0) or (energy > 1000) or (metal > 100) then			
+				return true
+			end
+		end
+    end
+    return false					
 end
 
 function GetSkill(playerID)
@@ -958,18 +1030,20 @@ function UpdatePlayer(pID)
     update, players[pID].tID = CheckChange(players[pID].tID, tID, update)
     update, players[pID].aID = CheckChange(players[pID].aID, aID, update)
     if update then
-        -- if the tID/aID changed, we need to update the name colour
+        -- if the tID/aID changed, we need to update the name colour & the team associated to the players DeadPanel
         if not spec then
             local r,g,b = Spring.GetTeamColor(tID)
             players[pID].colour = {r,g,b}
         end
         
-        players[pID].name = ((not spec) and InlineColour(players[pID].colour) or "") .. name --TODO use original colours
+        players[pID].name = ((not spec) and InlineColour(players[pID].colour) or "") .. name 
         players[pID].deadname = ((not spec) and InlineColour(players[pID].colour) or "") .. deadPlayerName    
         
         players[pID].playerPanel:GetChildByName('name'):SetText(players[pID].name)
         players[pID].deadPanel:GetChildByName('name'):SetText(players[pID].deadname)
-        players[pID].specPanel:GetChildByName('button'):GetChildByName('name'):SetText(players[pID].name)
+        players[pID].deadPanel.tID = players[pID].tID
+        players[pID].deadPanel.name = players[pID].deadname
+        players[pID].specPanel:GetChildByName('button'):GetChildByName('name'):SetText(players[pID].name)        
     end
     
     -- check if a player leaves/resigns/appears
@@ -1011,6 +1085,26 @@ function ScheduledUpdate()
 end
 
 --------------------------------------------------------------------------------
+-- Take
+--------------------------------------------------------------------------------
+
+function ProcessTake()
+	local afterE = Spring.GetTeamResources(takeInfo.team,"energy")
+	local afterM = Spring.GetTeamResources(takeInfo.team, "metal")
+	local afterU = Spring.GetTeamUnitCount(takeInfo.team)
+	local toSay = "say a: I took " .. takeInfo.name .. ". "
+
+	if afterE and afterM and afterU then
+		if afterE > 1.0 or afterM > 1.0 or  afterU > 0 then
+			toSay = toSay .. "Left  " .. math.floor(afterU) .. " units, " .. math.floor(afterE) .. " energy and " .. math.floor(afterM) .. " metal."
+		end
+	end
+
+    takeInfo = nil
+end
+
+
+--------------------------------------------------------------------------------
 -- Options
 --------------------------------------------------------------------------------
 
@@ -1044,9 +1138,7 @@ function SetupOptions()
                     checked=options.ts,OnChange={TSState}},
             Chili.Line:New{width='100%'}
         }
-    }
-    
-     
+    }   
 end
 
 --------------------------------------------------------------------------------
@@ -1123,6 +1215,10 @@ function widget:GameFrame(n)
             
         needUpdate = true
     end
+    
+    if takeInfo and n >= takeInfo.frame+32 then --taking can take a while, not sure why
+        ProcessTake()
+    end
 end
 
 local prevTimer = Spring.GetTimer()
@@ -1196,7 +1292,7 @@ function AssignPlayersToTeams()
         local isAI = players[pID].isAI
         
         if wasPlayer then 
-            -- live or dead player (panel creator will act appropriately)
+            -- live or dead player (panel assignment will act appropriately)
             table.insert(teams[tID],pID) 
             if active and spec and not isAI then
                 -- dead player, now a spec                    

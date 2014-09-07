@@ -14,6 +14,12 @@ function widget:GetInfo()
 end
 
 
+--new table version performance:
+--tested with 100 banshees at half screen firing at a point:
+--6.5% profiler load
+--old version array perf:
+--5.5% profiler load
+--conclusion: minor load increase for a huge boost in code readability/maintainability.
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -134,6 +140,9 @@ local projectileLightTypes = {}
 	--[6] squared
 	--[7] linear
 	--[8] BEAMTYPE, true if BEAM
+	----
+	--px,py,pz, 
+	--dx, dy, dz
 local lights = {}
 
 -- parameters for each light:
@@ -179,30 +188,30 @@ local function GetLightsFromUnitDefs()
 				if (WeaponDefs[weaponID]['type'] == 'Cannon') then
 					if verbose then Spring.Echo('Cannon',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={0.5,0.5,0.25,100*size, 1,1,0,false}
+					plighttable[WeaponDefs[weaponID]['name']]={r=0.5,g=0.5,b=0.25,radius=100*size,beam=false}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'Dgun') then
 					if verbose then Spring.Echo('Dgun',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={1,1,0.5,300,1,1,0,false}
+					plighttable[WeaponDefs[weaponID]['name']]={r=1,g=1,b=0.5,radius=300,beam=false}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'MissileLauncher') then
 					if verbose then Spring.Echo('MissileLauncher',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={0.5,0.5,0.6,100* size, 1,1, 0,false}
+					plighttable[WeaponDefs[weaponID]['name']]={r=0.5,g=0.5,b=0.6,radius=100* size, beam=false}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'StarburstLauncher') then
 					if verbose then Spring.Echo('StarburstLauncher',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={0.5,0.5,0.4,200,1,1,0,false}
+					plighttable[WeaponDefs[weaponID]['name']]={r=0.5,g=0.5,b=0.4,radius=200,beam=false}
 				elseif (WeaponDefs[weaponID]['type'] == 'LightningCannon') then
 					if verbose then Spring.Echo('LightningCannon',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={0.3,0.3,1.5,100,1,1,0,true}
+					plighttable[WeaponDefs[weaponID]['name']]={r=0.3,g=0.3,b=1.5,radius=100,beam=true}
 				elseif (WeaponDefs[weaponID]['type'] == 'BeamLaser') then
 					if verbose then Spring.Echo('BeamLaser',WeaponDefs[weaponID]['name'],'rgbcolor', WeaponDefs[weaponID]['visuals']['colorR']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={WeaponDefs[weaponID]['visuals']['colorR'],WeaponDefs[weaponID]['visuals']['colorG'],WeaponDefs[weaponID]['visuals']['colorB'],math.min(WeaponDefs[weaponID]['range'],600),1,1,0,true}
+					plighttable[WeaponDefs[weaponID]['name']]={r=WeaponDefs[weaponID]['visuals']['colorR'],g=WeaponDefs[weaponID]['visuals']['colorG'],b=WeaponDefs[weaponID]['visuals']['colorB'],radius=math.min(WeaponDefs[weaponID]['range'],600),beam=true}
 				end
 			end
 		end
@@ -334,7 +343,6 @@ function widget:Initialize()
 			else
 				lightposlocPoint=glGetUniformLocation(depthPointShader, "lightpos")
 				lightcolorlocPoint=glGetUniformLocation(depthPointShader, "lightcolor")
-				lightparamslocPoint=glGetUniformLocation(depthPointShader, "lightparams")
 				uniformEyePosPoint       = glGetUniformLocation(depthPointShader, 'eyePos')
 				uniformViewPrjInvPoint   = glGetUniformLocation(depthPointShader, 'viewProjectionInv')
 			end
@@ -359,7 +367,6 @@ function widget:Initialize()
 				lightposlocBeam=glGetUniformLocation(depthBeamShader, "lightpos")
 				lightpos2locBeam=glGetUniformLocation(depthBeamShader, "lightpos2")
 				lightcolorlocBeam=glGetUniformLocation(depthBeamShader, "lightcolor")
-				lightparamslocBeam=glGetUniformLocation(depthBeamShader, "lightparams")
 				uniformEyePosBeam       = glGetUniformLocation(depthBeamShader, 'eyePos')
 				uniformViewPrjInvBeam   = glGetUniformLocation(depthBeamShader, 'viewProjectionInv')
 			end
@@ -382,15 +389,25 @@ end
 
 
 --------------------------------------------------------------------------------
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- local function TableConcat(t1,t2)
+	-- tnew={}
+	-- for i=1,#t1 do
+		-- tnew[i]=t1[i]
+	-- end
+    -- for i=1,#t2 do
+        -- tnew[#t1+i] = t2[i]
+    -- end
+    -- return tnew
+-- end
 local function TableConcat(t1,t2)
 	tnew={}
-	for i=1,#t1 do
-		tnew[i]=t1[i]
+	for k,v in pairs(t1) do
+		tnew[k]=v
 	end
-    for i=1,#t2 do
-        tnew[#t1+i] = t2[i]
-    end
+	for k,v in pairs(t2) do
+		tnew[k]=v
+	end
     return tnew
 end
 local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
@@ -414,25 +431,28 @@ local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
 	
 	--f= Spring.GetGameFrame()
 	--f=f/50
-	for i=1, #lights do
-		local light=lights[i]
+	for key,value in pairs(lights) do
+		
+		-- Spring.Echo('light:',key,to_string(value))
+		local light=value
 		local inview=false
 		local lightradius=0
-		--Spring.Echo(light)
-		local px=light[9]+light[12]*0.5
-		local py=light[10]+light[13]*0.5
-		local pz=light[11]+light[14]*0.5
-		if lighttype==0 then 
-			lightradius=light[4]
-			inview=spIsSphereInView(light[9],light[10],light[11],light[4])
+		-- Spring.Echo('light:',to_string(light))
+	
+		local px=light.px+light.dx*0.5
+		local py=light.py+light.dy*0.5
+		local pz=light.pz+light.dz*0.5
+		if lighttype==0 then --point
+			lightradius=light.radius
+			inview=spIsSphereInView(light.px,light.py,light.pz,light.radius)
 		end
 		if lighttype==1 then 
-			lightradius=light[4]+math.sqrt(light[12]^2+light[13]^2+light[14]^2)*0.5
-			inview=spIsSphereInView(light[9]+light[12]*0.5,light[10]+light[13]*0.5,light[11]+light[14]*0.5,lightradius)
+			lightradius=light.radius+math.sqrt(light.dx^2+light.dy^2+light.dz^2)*0.5
+			inview=spIsSphereInView(light.px+light.dx*0.5,light.py+light.dy*0.5,light.pz+light.dz*0.5,lightradius)
 		end
 		if (inview) then
-			--Spring.Echo("Drawlighttype position=",light[9],light[10],light[11])
-			local sx,sy,sz = spWorldToScreenCoords(light[9]+light[12]*0.5,light[10]+light[13]*0.5,light[11]+light[14]*0.5) -- returns x,y,z, where x and y are screen pixels, and z is z buffer depth.
+			--Spring.Echo("Drawlighttype position=",light.px,light.py,light.pz)
+			local sx,sy,sz = spWorldToScreenCoords(light.px+light.dx*0.5,light.py+light.dy*0.5,light.pz+light.dz*0.5) -- returns x,y,z, where x and y are screen pixels, and z is z buffer depth.
 			--Spring.Echo('screencoords',sx,sy,sz)
 			sx = sx/vsx
 			sy = sy/vsy --since FOV is static in the Y direction, the Y ratio is the correct one
@@ -443,16 +463,15 @@ local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
 			local ratio= lightradius / math.sqrt(dist_sq)
 			ratio=ratio*2
 			if lighttype==0 then
-				glUniform(lightposlocPoint, light[9],light[10],light[11], light[4]) --IN world space
-				glUniform(lightcolorlocPoint, light[1],light[2],light[3], 1) 
-				glUniform(lightparamslocPoint, light[5],light[6],light[7], 1) 
+				glUniform(lightposlocPoint, light.px,light.py,light.pz, light.radius) --IN world space
+				glUniform(lightcolorlocPoint, light.r,light.g,light.b, 1) 
 			end
 			if lighttype==1 then
 				
-				glUniform(lightposlocBeam, light[9],light[10],light[11], light[4]) --IN world space
-				glUniform(lightpos2locBeam, light[9]+light[12],light[10]+light[13]+24,light[11]+light[14], light[4]) --IN world space,the magic constant of +24 in the Y pos is needed because of our beam distance calculator function in GLSL
-				glUniform(lightcolorlocBeam, light[1],light[2],light[3], 1) 
-				glUniform(lightparamslocBeam, light[5],light[6],light[7], 1) 
+				glUniform(lightposlocBeam, light.px,light.py,light.pz, light.radius) --IN world space
+				glUniform(lightpos2locBeam, light.px+light.dx,light.py+light.dy+24,light.pz+light.dz, light.radius) --IN world space,the magic constant of +24 in the Y pos is needed because of our beam distance calculator function in GLSL
+				glUniform(lightcolorlocBeam, light.r,light.g,light.b, 1) 
+				
 			end
 			
 			--Spring.Echo('screenratio',ratio,sx,sy)
@@ -488,21 +507,21 @@ function widget:DrawWorld()
 				local explosionflags = spGetPieceProjectileParams(pID)
 				if explosionflags and (explosionflags%32)>15  then --only stuff with the FIRE explode tag gets a light
 					--Spring.Echo('explosionflag=',explosionflags)
-					table.insert(pointlightprojectiles,{0.5,0.5,0.25,100,1,1,0,false,x,y,z,0,0,0})
-					--lightparams={0.5,0.5,0.25,100,1,1,0}
-				--else
-				--	lightparams=nil
+					table.insert(pointlightprojectiles,{r=0.5,g=0.5,b=0.25,radius=100,constant=1,squared=1,linear=0,beam=false,px=x,py=y,pz=z,dx=0,dy=0,dz=0})
 				end
 			else
 				lightparams=projectileLightTypes[spGetProjectileName(pID)]
 				if lightparams then
-					if lightparams[8] then --BEAM type
-						local dx,dy,dz=spGetProjectileVelocity(pID)
+					if lightparams.beam then --BEAM type
+						local deltax,deltay,deltaz=spGetProjectileVelocity(pID) -- for beam types, this returns the endpoint of the beam
 						--Spring.Echo({x,y,z,dx,dy,dz})
-						table.insert(beamlightprojectiles,TableConcat(lightparams,{x,y,z,dx,dy,dz}))
+						-- Spring.Echo('beamlightprojectiles',to_string(lightparams), 'concated',to_string(TableConcat(lightparams,{px=x,py=y,pz=z,dx=deltax,dy=deltay,dz=deltaz})))
+						
+						table.insert(beamlightprojectiles,TableConcat(lightparams,{px=x,py=y,pz=z,dx=deltax,dy=deltay,dz=deltaz}))
 						--Spring.Echo('GetFeatureVelocity=',dx,dy,dz)
 					else --point type
-						table.insert(pointlightprojectiles,TableConcat(lightparams,{x,y,z,0,0,0}))
+						--TODO: clip some lights based on height
+						table.insert(pointlightprojectiles,TableConcat(lightparams,{px=x,py=y,pz=z,dx=0,dy=0,dz=0}))
 						
 					end
 				end
@@ -511,18 +530,17 @@ function widget:DrawWorld()
 		end 
 		
 		
-		--//FIXME handle dualscreen correctly!
-		-- copy the depth buffer
+
 		
-		-- setup the shader and its uniform values
 		glBlending(GL.DST_COLOR,GL.ONE) -- ResultR=LightR*DestinationR+1*DestinationR
-			--glBlending(GL.SRC_ALPHA,GL.SRC_COLOR) 
+
 			--http://www.andersriggelsen.dk/glblendfunc.php
-			--glBlending(GL.ONE,GL.DST_COLOR) --http://www.andersriggelsen.dk/glblendfunc.php
-		--glBlending(GL.ONE,GL.ZERO)
+			
+		--glBlending(GL.ONE,GL.ZERO) --default
 		if #beamlightprojectiles>0 then DrawLightType(beamlightprojectiles, 1) end
 		if #pointlightprojectiles>0 then DrawLightType(pointlightprojectiles, 0) end
 		glBlending(false)
+		--if math.fmod(Spring.GetGameFrame(),120)==0 then Spring.Echo('Number of deferred lights=', #beamlightprojectiles+#pointlightprojectiles) end
 	else
 		Spring.Echo('Removing deferred rendering widget: failed to use GLSL shader')
 		widgetHandler:RemoveWidget()
@@ -531,3 +549,42 @@ end
 
 
 
+function to_string(data, indent)
+    local str = ""
+
+    if(indent == nil) then
+        indent = 0
+    end
+
+    -- Check the type
+    if(type(data) == "string") then
+        str = str .. ("	"):rep(indent) .. data .. "\n"
+    elseif(type(data) == "number") then
+        str = str .. ("	"):rep(indent) .. data .. "\n"
+    elseif(type(data) == "boolean") then
+        if(data == true) then
+            str = str .. "true"
+        else
+            str = str .. "false"
+        end
+    elseif(type(data) == "table") then
+        local i, v
+        for i, v in pairs(data) do
+            -- Check for a table in a table
+            if(type(v) == "table") then
+                str = str .. ("	"):rep(indent) .. i .. ":\n"
+                str = str .. to_string(v, indent + 2)
+            else
+                str = str .. ("	"):rep(indent) .. i .. ": " .. to_string(v, 0)
+            end
+        end
+    elseif (data ==nil) then
+		str=str..'nil'
+	else
+        --print_debug(1, "Error: unknown data type: %s", type(data))
+		str=str.. "Error: unknown data type:" .. type(data)
+		Spring.Echo('X data type')
+    end
+
+    return str
+end

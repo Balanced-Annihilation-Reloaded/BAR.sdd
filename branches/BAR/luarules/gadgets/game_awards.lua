@@ -136,12 +136,13 @@ function gadget:UnitCreated(unitID, unitDefID, teamID, builderID)
     --Spring.Echo(teamID, teamInfo[teamID].unitsCost)
 end
 
-function gadget:UnitTaken(unitID, unitDefID, unitTeam, newTeam)
+function gadget:UnitTaken(unitID, unitDefID, teamID, newTeam)
 	if not newTeam then return end 
     if newTeam==gaiaTeamID then return end
 	if not present[newTeam] then return end
 	if not unitDefID then return end --should never happen
-
+    if not teamID then return end
+    
 	local ud = UnitDefs[unitDefID]
 	local cost = ud.energyCost + 60 * ud.metalCost
 

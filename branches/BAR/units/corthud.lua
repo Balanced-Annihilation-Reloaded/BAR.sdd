@@ -11,7 +11,7 @@ return {
 		collisionvolumeoffsets = [[0 -2 3]],
 		collisionvolumescales = [[22 44 22]],
 		collisionvolumetest = 1,
-		collisionvolumetype = [[CylZ]],
+		collisionvolumetype = [[CylY]],
 		corpse = "DEAD",
 		description = "Light Plasma Kbot",
 		energymake = 0.60000002384186,

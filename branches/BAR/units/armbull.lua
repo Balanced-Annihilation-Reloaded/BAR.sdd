@@ -8,7 +8,7 @@ return {
 		buildtime = 17228,
 		canmove = true,
 		category = "ALL TANK MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
-		collisionVolumeScales		= [[43 23 43]],
+		collisionVolumeScales		= [[47 33 47]],
 		collisionVolumeOffsets	= [[0 0 2]],
 		collisionVolumeTest	    = 1,
 		collisionVolumeType	    = [[CylY]],

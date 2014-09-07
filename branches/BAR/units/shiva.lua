@@ -11,7 +11,7 @@ return {
 		collisionvolumeoffsets = "0 -4 -1",
 		collisionvolumescales = "54 45 50",
 		collisionvolumetest = 1,
-		collisionvolumetype = "Ell",
+		collisionvolumetype = "Box",
 		corpse = "DEAD",
 		description = "Amphibious Siege Mech",
 		explodeas = "MECH_BLASTSML",

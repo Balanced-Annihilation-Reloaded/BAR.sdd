@@ -434,7 +434,7 @@ function iPanelPress(obj,value)
     end
 
     -- watch cam
-    if not iPanelDeadPlayer  and (players[myPlayerID].spec or Spring.ArePlayersAllied(myPlayerID, iPanelpID)) and not players[iPanelpID].isAI then
+    if not iPanelDeadPlayer sand (players[myPlayerID].spec or Spring.ArePlayersAllied(myPlayerID, iPanelpID)) and not players[iPanelpID].isAI then
         iPanelLayout:AddChild(watchcamera)
         h = h + iPanelItemHeight
     end
@@ -1216,7 +1216,7 @@ function widget:GameFrame(n)
         needUpdate = true
     end
     
-    if takeInfo and n >= takeInfo.frame+32 then --taking can take a while, not sure why
+    if takeInfo and n >= takeInfo.onFrame+32 then --taking can take a while, not sure why
         ProcessTake()
     end
 end

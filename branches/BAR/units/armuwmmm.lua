@@ -36,7 +36,6 @@ return {
 		sightdistance = 156,
 
         yardmap = "oooooooooooooooooooo",
-        waterline = 5,
 		customparams = {
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",

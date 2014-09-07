@@ -428,7 +428,7 @@ function iPanelPress(obj,value)
     end
 
     -- take stuff
-    if IsTakeable(iPaneltID) and (true or not players[myPlayerID].spec) then
+    if IsTakeable(iPaneltID) and not players[myPlayerID].spec then 
         iPanelLayout:AddChild(take)
         h = h + iPanelItemHeight    
     end

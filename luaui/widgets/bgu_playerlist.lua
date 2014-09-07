@@ -1220,7 +1220,7 @@ function widget:GameFrame(n)
     end
     
     -- make buttons for takeable players flash
-    if n%20==0 and not player[myPlayerID].spec then
+    if n%20==0 and not players[myPlayerID].spec then
         local colour
         if n%40==0 then
             colour = {1,1,1,1}

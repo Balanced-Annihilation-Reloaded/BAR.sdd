@@ -10,7 +10,7 @@ return {
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		cloakcost = 100,
 		collisionvolumeoffsets = "0 0 0",
-		collisionvolumescales = "77 51 51",
+		collisionvolumescales = "97 42 51",
 		collisionvolumetest = 1,
 		collisionvolumetype = "Box",
 		corpse = "DEAD",

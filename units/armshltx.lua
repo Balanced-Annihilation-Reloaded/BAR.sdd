@@ -9,7 +9,7 @@ return {
 		buildtime = 61380,
 		canmove = true,
 		category = "ALL PLANT NOTSUB NOWEAPON NOTAIR NOTHOVER SURFACE",
-		collisionvolumeoffsets = "0 -26 0",
+		collisionvolumeoffsets = "0 0 0",
 		collisionvolumescales = "137 58 145",
 		collisionvolumetest = 1,
 		collisionvolumetype = "CylZ",

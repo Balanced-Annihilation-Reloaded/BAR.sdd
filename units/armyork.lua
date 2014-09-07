@@ -9,10 +9,7 @@ return {
 		buildtime = 9964,
 		canmove = true,
 		category = "ALL TANK MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
-		collisionvolumeoffsets = [[0 -2 0]],
-		collisionvolumescales = [[31.3 26.3 38.3]],
-		collisionvolumetest = 1,
-		collisionvolumetype = "CylZ",
+
 		corpse = "DEAD",
 		description = "Anti-Air Flak Vehicle",
 		energymake = 0.5,

@@ -43,7 +43,7 @@ return {
     MinWaterDepth=16,
     WaterLine=0,
     collisionVolumeType = [[cyly]],
-    collisionVolumeOffsets = [[0 -30 0]],
+    collisionVolumeOffsets = [[0 0 0]],
     collisionVolumeScales = [[53 65 53]],
 		customparams = {
 			normalmaps = "yes",

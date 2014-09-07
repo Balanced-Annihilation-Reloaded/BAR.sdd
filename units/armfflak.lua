@@ -10,7 +10,7 @@ return {
 		buildtime = 21855,
 		category = "ALL WEAPON NOTSUB SPECIAL NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -10 0",
-		collisionvolumescales = "42 44 42",
+		collisionvolumescales = "42 64 42",
 		collisionvolumetest = 1,
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",

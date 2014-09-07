@@ -9,10 +9,7 @@ return {
 		buildtime = 11112,
 		canmove = true,
 		category = "ALL PLANT NOTSUB NOWEAPON NOTAIR NOTHOVER SURFACE",
-		collisionvolumeoffsets = "0 0 0",
-		collisionvolumescales = "118 40 119",
-		collisionvolumetest = 1,
-		collisionvolumetype = "Box",
+
 		corpse = "DEAD",
 		description = "Produces Amphibious/Underwater Units",
 		energystorage = 150,

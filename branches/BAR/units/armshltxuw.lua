@@ -14,7 +14,7 @@ return {
 		canmove = true,
 		category = "ALL PLANT NOTSUB NOWEAPON NOTAIR NOTHOVER SURFACE",
 		collisionVolumeScales		= [[150 43 150]],
-		collisionVolumeOffsets	= [[0 -5 8]],
+		collisionVolumeOffsets	= [[0 10 8]],
 		collisionVolumeTest	    = 1,
 		collisionVolumeType	    = [[CylY]],
 		corpse = "ARMSHLT_DEAD",

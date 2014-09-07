@@ -15,7 +15,7 @@ return {
 		canrepair = false,
 		category = "ALL NOTLAND MOBILE NOTSUB NOWEAPON SHIP NOTAIR NOTHOVER SURFACE",
 		collisionVolumeScales		= [[64 64 155]],
-		collisionVolumeOffsets	= [[-1 -7 4]],
+		collisionVolumeOffsets	= [[-1 0 4]],
 		collisionVolumeTest	    = 1,
 		collisionVolumeType	    = [[CylZ]],
 		corpse = "DEAD",

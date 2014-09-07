@@ -12,7 +12,7 @@ return {
 		buildpic = "ARMLLT.DDS",
 		buildtime = 2662,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
-		collisionvolumeoffsets = "0 0 0",
+		collisionvolumeoffsets = "0 30 0",
 		collisionvolumescales = "32 73 32",
 		collisionvolumetest = 1,
 		collisionvolumetype = "CylY",

@@ -9,7 +9,10 @@ return {
 
 
 
-
+		collisionvolumeoffsets = "0 0 0",
+		collisionvolumescales = "48 80 48",
+		collisionvolumetest = 1,
+		collisionvolumetype = "CylY",
 		buildpic = "ARMMEX.DDS",
 		buildtime = 1800,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",

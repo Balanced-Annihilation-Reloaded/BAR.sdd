@@ -12,7 +12,7 @@ return {
 		collisionvolumeoffsets = "0 -5 -3",
 		collisionvolumescales = "43 45 108",
 		collisionvolumetest = 1,
-		collisionvolumetype = "CylY",
+		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
 		description = "Cruise Missile Ship",
 		energymake = 0.80000001192093,

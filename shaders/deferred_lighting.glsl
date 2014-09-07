@@ -2,6 +2,7 @@
 //License is CC-BY-ND 3.0
 // old version with calced normals is 67 fps for 10 beamers full screen at 1440p
 // new version with buffered normals is 88 fps for 10 beamers full screen at 1440p
+#define LIGHTRADIUS lightpos.w
 uniform sampler2D modelnormals;
 uniform sampler2D modeldepths;
 uniform sampler2D mapnormals;
@@ -13,19 +14,26 @@ uniform vec4 lightpos;
 	uniform vec4 lightpos2;
 #endif
 uniform vec4 lightcolor;
-uniform vec4 lightparams;
 uniform mat4 viewProjectionInv;
 // uniform mat4 viewProjection;
+
+	float attentuate(float dist, float radius)
+	{
+		//float att = clamp ( constant-linear * dist / radius - squared * dist * dist / (radius*radius),0.0,.5);
+		float att=clamp(1-0.3*dist/radius-1*dist*dist/(radius*radius),0.0,.5);
+		att*=att;
+		return att;
+	}
 
   void main(void)
   {
 	vec4 mappos4 =vec4(vec3(gl_TexCoord[0].st, texture2D( mapdepths,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
 	vec4 modelpos4 =vec4(vec3(gl_TexCoord[0].st, texture2D( modeldepths,gl_TexCoord[0].st ).x) * 2.0 - 1.0 ,1.0);
 	vec4 map_normals4= texture2D( mapnormals,gl_TexCoord[0].st ) *2.0 -1.0;
-	vec4 model_normals4= texture2D( modelnormals,gl_TexCoord[0].st ) *2.0 -1.0;
+	vec4 model_normals4= texture2D( modelnormals,gl_TexCoord[0].st );// this does not need the ( *2.0 -1.0) terms because it is already done on it through customunitshaders;
 	
 	
-	//gl_FragColor=vec4(fract(modelpos4.z*0.01),sign(mappos4.z-modelpos4.z),0,1);
+	//gl_FragColor=vec4(fract(modelpos4.z*0.01),sign(mappos4.z-modelpos4.z),0,1); //worldpos debugging
 	//return;
 	float model_lighting_multiplier=1;
 	if ((mappos4.z-modelpos4.z)> 0) { // this means we are processing a model fragment, not a map fragment
@@ -35,11 +43,13 @@ uniform mat4 viewProjectionInv;
 	}
 	mappos4 = viewProjectionInv * mappos4;
 	mappos4.xyz = mappos4.xyz / mappos4.w;
-	
+	//gl_FragColor=vec4(map_normals4.xyz,1); //world normals debugging
+	//return;
 	#ifndef BEAM_LIGHT
 		float dist_light_here = length(lightpos.xyz - mappos4.xyz);
-		float cosphi = max(0.0 , dot (map_normals4.xyz, normalize(lightpos.xyz - mappos4.xyz)) / dist_light_here);
-		float attentuation =  max( 0,( 10*lightparams.r - lightparams.g * (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w) - lightparams.b*(dist_light_here)/(lightpos.w)) );
+		float cosphi = max(0.0 , dot (normalize(map_normals4.xyz), normalize(lightpos.xyz - mappos4.xyz)));
+		//float reldist=dist_light_here/LIGHTRADIUS;
+		float attentuation=attentuate(dist_light_here,LIGHTRADIUS);
 	#endif
 	#ifdef BEAM_LIGHT
 		//def dist(x1,y1, x2,y2, x3,y3): # x3,y3 is the point
@@ -74,21 +84,15 @@ uniform mat4 viewProjectionInv;
 			v=mappos4.xyz;
 		}
 		float dist_light_here = length(v-w);
-		float cosphi = max(0.0 , dot (map_normals4.xyz, normalize(w.xyz - mappos4.xyz)) / dist_light_here);
-		float attentuation =  max( 0,( 10*lightparams.r - lightparams.g * (dist_light_here*dist_light_here)/(lightpos.w*lightpos.w) - lightparams.b*(dist_light_here)/(lightpos.w)) );
+		float cosphi = max(0.0 , dot (normalize(map_normals4.xyz), normalize(w.xyz - mappos4.xyz)));
+		//float attentuation =  max( 0,( 1*LIGHT_CONSTANT - LIGHT_SQUARED * (dist_light_here*dist_light_here)/(LIGHTRADIUS*LIGHTRADIUS) - LIGHT_LINEAR*(dist_light_here)/(LIGHTRADIUS)) );
+		float attentuation=attentuate(dist_light_here,LIGHTRADIUS);//
 	#endif
-
-	
-	//lightparams info:
-	// linear funcion is (1,0,1)
-	//quadratic function is (1,1,0)
-	// tits function (for lasers, to avoid hotspotting) (0.5, 2, -1.5)
-	//attentuation *=attentuation;
 	
 	//TODO:
 	//add a specular highlight to the lighting with eyepos
 	
-	//gl_FragColor=vec4(normalize(herenormal4.xyz), cosphi*(lightpos.w/(dist_light_here*dist_light_here)));
+	//gl_FragColor=vec4(normalize(herenormal4.xyz), cosphi*(LIGHTRADIUS/(dist_light_here*dist_light_here)));
 	//if (attentuation > 0.001) gl_FragColor(1,0,0,1);
 	//else gl_FragColor(0,1,0,1);
 	// gl_FragColor=vec4(1,1,0,0.5);
@@ -96,9 +100,10 @@ uniform mat4 viewProjectionInv;
 	
 	//OK, our blending func is the following: Rr=Lr*Dr+1*Dr, 
 	float lightalpha=cosphi*attentuation;
-	vec3 lc=lightcolor.rgb*lightalpha*model_lighting_multiplier +1.0;
-	gl_FragColor=vec4(lightcolor.rgb*lightalpha*model_lighting_multiplier,1);
-
+	gl_FragColor=vec4(lightcolor.rgb*lightalpha*model_lighting_multiplier,1.0);
+	//if (length(lightcolor.rgb*lightalpha*model_lighting_multiplier)<(1.0/256.0)){ //shows light boudaries
+		//gl_FragColor=vec4(vec3(0.5,0,0.5),0);
+	//}
 	
 	
 	return;

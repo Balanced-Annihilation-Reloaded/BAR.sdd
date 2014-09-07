@@ -12,7 +12,7 @@ return {
 		buildpic = "CORBUZZ.DDS",
 		buildtime = 1020945,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
-		collisionvolumeoffsets = "0 -14 0",
+		collisionvolumeoffsets = "0 14 0",
 		collisionvolumescales = "80 162 80",
 		collisionvolumetest = 1,
 		collisionvolumetype = "CylY",

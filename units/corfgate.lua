@@ -42,9 +42,6 @@ return {
     norestrict=1,
     MinWaterDepth=16,
     WaterLine=0,
-    collisionVolumeType = [[cyly]],
-    collisionVolumeOffsets = [[0 -25 0]],
-    collisionVolumeScales = [[60 70 60]],
 		customparams = {
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",

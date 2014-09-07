@@ -434,7 +434,7 @@ function iPanelPress(obj,value)
     end
 
     -- watch cam
-    if not iPanelDeadPlayer sand (players[myPlayerID].spec or Spring.ArePlayersAllied(myPlayerID, iPanelpID)) and not players[iPanelpID].isAI then
+    if not iPanelDeadPlayer and (players[myPlayerID].spec or Spring.ArePlayersAllied(myPlayerID, iPanelpID)) and not players[iPanelpID].isAI then
         iPanelLayout:AddChild(watchcamera)
         h = h + iPanelItemHeight
     end

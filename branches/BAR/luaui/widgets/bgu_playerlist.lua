@@ -92,12 +92,14 @@ function round(num, idp)
   return math.floor(num * mult + 0.5) / mult
 end
 
-function InlineColour(r,g,b)
-    if type(r) == 'table' then
-        return string.char(255, (r[1]*255), (r[2]*255), (r[3]*255))
+function InlineColour(a,b,c)
+    local r,g,b
+    if type(a) == 'table' then
+        r,g,b = math.max(1,a[1]*255),math.max(1,a[2]*255),math.max(1,a[3]*255)
     else
-        return string.char(255, (r*255), (g*255), (b*255))
+        r,g,b = math.max(1,r*255),math.max(1,g*255),math.max(1,b*255)
     end
+    return string.char(255,r,g,b)
 end
 
 function CountTable(t)

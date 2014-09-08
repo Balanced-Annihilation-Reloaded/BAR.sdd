@@ -33,8 +33,9 @@ local white = '\255\255\255\255'
 -- Defaults ---
 -- DefaultSettings can only contain things from springsettings
 -- not all settings appear here, only ones for which we actually want to overwrite the defaults when "reset to defaults" is clicked
-DefaultSettings['Water']            = 'Reflective'
-DefaultSettings['Shadows']          = 'Medium'
+DefaultSettings['ReflectiveWater']  = 1
+--DefaultSettings['ShadowMapSize']    = 2048
+DefaultSettings['Shadows']          = 2
 
 DefaultSettings['AdvMapShading']    = true
 DefaultSettings['AdvModelShading']  = true
@@ -53,22 +54,24 @@ DefaultSettings['DynamicSun']       = false
 
 function LoadSpringSettings()
     -- Load relevant things from springsettings (overwrite our 'local' copy of these settings)
+    Settings['ReflectiveWater']             = Spring.GetConfigInt('ReflectiveWater') 
+    --Settings['ShadowMapSize']               = Spring.GetConfigInt('ShadowMapSize')
+    Settings['Shadows']                     = Spring.GetConfigInt('Shadows')
+
+    Settings['AdvMapShading']               = Spring.GetConfigInt('AdvMapShading', 1) == 1
+    Settings['AdvModelShading']             = Spring.GetConfigInt('AdvModelShading', 1) == 1
+    Settings['AllowDeferredMapRendering']   = Spring.GetConfigInt('AllowDeferredMapRendering') == 1
+    Settings['AllowDeferredModelRendering'] = Spring.GetConfigInt('AllowDeferredModelRendering') == 1
+
     Settings['UnitIconDist']                = Spring.GetConfigInt('UnitIconDist', 200) -- number is used if no config is set
     Settings['UnitLodDist']                 = Spring.GetConfigInt('UnitLodDist', 200)
     Settings['MaxNanoParticles']            = Spring.GetConfigInt('MaxNanoParticles', 1000)
     Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles', 1000)
     Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 -- turn 0/1 to bool
-    Settings['AdvMapShading']               = Spring.GetConfigInt('AdvMapShading', 1) == 1
-    Settings['AdvModelShading']             = Spring.GetConfigInt('AdvModelShading', 1) == 1
-    Settings['AllowDeferredMapRendering']   = Spring.GetConfigInt('AllowDeferredMapRendering') == 1
-    Settings['AllowDeferredModelRendering'] = Spring.GetConfigInt('AllowDeferredModelRendering') == 1
     Settings['3DTrees']                     = Spring.GetConfigInt('3DTrees') == 1
     Settings['MapMarks']                    = Spring.GetConfigInt('MapMarks') == 1
     Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSky') == 1
     Settings['DynamicSun']                  = Spring.GetConfigInt('DynamicSun') == 1
-
-    Settings['Water']   = 'Reflective' --TODO
-    Settings['Shadows'] = 'Medium' --TODO
 end
 
 Settings['searchWidgetDesc'] = true
@@ -436,8 +439,9 @@ end
 -- TODO: Create different general defaults such as high, low, etc..
 --   and possibly custom (maybe even make custom settings savable/loadable)
 
-local waterConvert_ID = {['Basic']=1,['Reflective']=2,['Dynamic']=3,['Refractive']=4,['Bump-Mapped']=5} -- name -> listID
-local shadowConvert_ID = {['Off']=1,['Very Low']=2,['Low']=3,['Medium']=4,['High']=5,['Very High']=6}
+local reflectiveWaterConvert_ID = {['Basic']=1,['Reflective']=2,['Dynamic']=3,['Refractive']=4,['Bump-Mapped']=5} -- name -> listID
+local shadowConvert_ID = {['Off']=1,['On']=2,['Units Only']=3}
+local shadowMapSizeConvert_ID = {['Very Low']=1,['Low']=2,['Medium']=3,['High']=4}
 
 local function applyDefaultSettings()
 	for setting,value in pairs(DefaultSettings) do
@@ -448,12 +452,15 @@ local function applyDefaultSettings()
 			local checkbox = engineStack:GetObjectByName(setting)
 			if checkbox.checked ~= value then checkbox:Toggle() end
 			spSendCommands(setting..' '..(value and 1 or 0))
-		elseif setting=='Water' then
+		elseif setting=='ReflectiveWater' then
 			-- comboBox
-			engineStack:GetObjectByName(setting):Select(waterConvert_ID[value])
+			engineStack:GetObjectByName(setting):Select(reflectiveWaterConvert_ID[value])
 		elseif setting=='Shadows' then
 			-- comboBox
 			engineStack:GetObjectByName(setting):Select(shadowConvert_ID[value])
+		elseif setting=='ShadowMapSize' then
+			-- comboBox
+			engineStack:GetObjectByName(setting):Select(shadowMapSizeConvert_ID[value])
 		else
 			--slider
 			engineStack:GetObjectByName(setting):SetValue(value)
@@ -491,11 +498,12 @@ local comboBox = function(obj)
 		elseif setting == 'Cursor' then
 			setCursor(value)
 			Settings['CursorName'] = value
-		else
-			spSendCommands(setting..' '..value)
+        else 
+            --Spring.Echo(setting..' '..value)
+            spSendCommands(setting..' '..value)
 		end
 
-		-- Spring.Echo(setting.." set to "..value) --TODO: this is misleading, some settings require a restart to be applied
+		-- Spring.Echo(setting.." set to "..value) --TODO: this is misleading
 		Settings[setting] =  obj.items[obj.selected]
 	end
 
@@ -758,12 +766,15 @@ local function createGraphicsTab()
 			addStack{x='50%'},
 			addStack{x = 0, name = 'EngineSettings',
 				children = {
-					comboBox{y=0,name='Water',
+					comboBox{y=0,title='Water',name='Water', --'ReflectiveWater' doesn't work here due to weirdness
 						labels={'Basic','Reflective','Dynamic','Refractive','Bump-Mapped'},
 						options={0,1,2,3,4},},
-					comboBox{y=40,name='Shadows',
-						labels={'Off','Very Low','Low','Medium','High','Very High'},
-						options={'0','2 1024','1 1024','2 2048','1 2048','1 4096'},},
+					comboBox{y=40,title='Shadows',name='Shadows',
+						labels={'Off','On','Units Only'},
+						options={'0','1','2'},},
+					--[[comboBox{y=40,title='Shadow Resolution',name='ShadowMapSize',
+						labels={'Very Low','Low','Medium','High'},
+						options={'32','1024','2048','4096'},},]]
 					slider{name='UnitLodDist',title='Unit Draw Distance', max = 600, step = 1},
 					slider{name='UnitIconDist',title='Unit Icon Distance', max = 600, step = 1},
 					slider{name='MaxParticles',title='Max Particles', max = 5000},

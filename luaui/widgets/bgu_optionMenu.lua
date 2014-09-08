@@ -30,31 +30,9 @@ local DefaultSettings = {}
 
 local white = '\255\255\255\255'
 
--- Defaults ---
--- DefaultSettings can only contain things from springsettings
--- not all settings appear here, only ones for which we actually want to overwrite the defaults when "reset to defaults" is clicked
-DefaultSettings['ReflectiveWater']  = 1
---DefaultSettings['ShadowMapSize']    = 2048
-DefaultSettings['Shadows']          = 2
-
-DefaultSettings['AdvMapShading']    = 1
-DefaultSettings['AdvModelShading']  = 1
-DefaultSettings['AllowDeferredMapRendering']   = 1
-DefaultSettings['AllowDeferredModelRendering'] = 1
-
-DefaultSettings['UnitIconDist']         = 280
-DefaultSettings['UnitLodDist']         = 280
-DefaultSettings['MaxParticles']     = 1000
-DefaultSettings['MaxNanoParticles'] = 1000
-DefaultSettings['MapBorder']        = 1
-DefaultSettings['3DTrees']        = 1
-DefaultSettings['MapMarks']         = 1
-DefaultSettings['DynamicSky']       = 0
-DefaultSettings['DynamicSun']       = 0
-
 function LoadSpringSettings()
     -- Load relevant things from springsettings (overwrite our 'local' copy of these settings)
-    Settings['ReflectiveWater']             = Spring.GetConfigInt('ReflectiveWater') 
+    Settings['Water']                       = Spring.GetConfigInt('ReflectiveWater') 
     --Settings['ShadowMapSize']               = Spring.GetConfigInt('ShadowMapSize')
     Settings['Shadows']                     = Spring.GetConfigInt('Shadows')
 
@@ -436,36 +414,59 @@ local function loadMainMenu()
 end
 
 ----------------------------
--- TODO: Create different general defaults such as high, low, etc..
---   and possibly custom (maybe even make custom settings savable/loadable)
-
-local reflectiveWaterConvert_ID = {['Basic']=1,['Reflective']=2,['Dynamic']=3,['Refractive']=4,['Bump-Mapped']=5} -- name -> listID
-local shadowConvert_ID = {['Off']=1,['On']=2,['Units Only']=3}
-local shadowMapSizeConvert_ID = {['Very Low']=1,['Low']=2,['Medium']=3,['High']=4}
-
 local function applyDefaultSettings()
-	for setting,value in pairs(DefaultSettings) do
-		Settings[setting] = value
-		engineStack = tabs['Graphics']:GetObjectByName('EngineSettings')
+    local comboboxes = {
+        ['Water']            = 1,
+        ['Shadows']          = 2,
+    }
+    local reflectiveWaterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- name -> listID (ugh)
+    local shadowConvert_ID = {[0]=1,[1]=2,[2]=3}
+    local shadowMapSizeConvert_ID = {[32]=1,[1024]=2,[2048]=3,[4096]=4} 
+    
+    local sliders = {
+        ['UnitIconDist']      = 280,
+        ['UnitLodDist']       = 280,
+        ['MaxParticles']      = 1000,
+        ['MaxNanoParticles']  = 1000,
+    }
+    
+    local checkboxes = {
+        ['AdvMapShading']    = 1,
+        ['AdvModelShading']  = 1,
+        ['AllowDeferredMapRendering']   = 1,
+        ['AllowDeferredModelRendering'] = 1,
+        ['MapBorder']        = 1,
+        ['3DTrees']          = 1,
+        ['MapMarks']         = 1,
+        ['DynamicSky']       = 0,
+        ['DynamicSun']       = 0,
+    }
 
-		if type(value)=='boolean' then
-			local checkbox = engineStack:GetObjectByName(setting)
-			if checkbox.checked ~= value then checkbox:Toggle() end
-			spSendCommands(setting..' '..(value and 1 or 0))
-		elseif setting=='ReflectiveWater' then
-			-- comboBox
+    local engineStack = tabs['Graphics']:GetObjectByName('EngineSettings')
+    
+    for setting,value in pairs(comboboxes) do
+		Settings[setting] = value
+		if setting=='Water' then
 			engineStack:GetObjectByName(setting):Select(reflectiveWaterConvert_ID[value])
 		elseif setting=='Shadows' then
-			-- comboBox
 			engineStack:GetObjectByName(setting):Select(shadowConvert_ID[value])
-		elseif setting=='ShadowMapSize' then
-			-- comboBox
-			engineStack:GetObjectByName(setting):Select(shadowMapSizeConvert_ID[value])
-		else
-			--slider
-			engineStack:GetObjectByName(setting):SetValue(value)
-		end
-	end
+		--elseif setting=='ShadowMapSize' then
+			--engineStack:GetObjectByName(setting):Select(shadowMapSizeConvert_ID[value] or 2)
+        end
+    end
+    
+	for setting,value in pairs(sliders) do
+		Settings[setting] = value
+        engineStack:GetObjectByName(setting):SetValue(value)
+    end
+    
+	for setting,value in pairs(checkboxes) do
+		Settings[setting] = value
+        local checkbox = engineStack:GetObjectByName(setting)
+		if checkbox.checked ~= (value==1) then checkbox:Toggle() end
+		spSendCommands(setting..' '..(value and 1 or 0))    
+    end
+
 end
 
 ----------------------------
@@ -787,7 +788,6 @@ local function createGraphicsTab()
 					checkBox{title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
 					checkBox{title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
 					checkBox{title = 'Hide Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"}, --something is weird with parity here
-					--checkBox{title = 'Hardware Cursor', name = 'HardwareCursor', tooltip = "Enables/Disables hardware mouse-cursor support"},
 					checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},
 					Chili.Button:New{name="ResetDefaults",height=20,width='100%',caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},
 				}

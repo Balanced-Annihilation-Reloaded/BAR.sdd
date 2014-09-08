@@ -5,17 +5,13 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 27167,
 		buildcostmetal = 1501,
-
-
-
-
 		buildpic = "ARMEMP.DDS",
 		buildtime = 79247,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 6 0",
 		collisionvolumescales = "112 80 80",
 		collisionvolumetest = 1,
-		collisionvolumetype = "CylX,
+		collisionvolumetype = "CylX",
 		corpse = "DEAD",
 		description = "EMP Missile Launcher",
 		explodeas = "CORGRIPN_BOMB",

@@ -186,6 +186,7 @@ function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, _, _)
     if unitID and (CONFIG[cmdID] or cmdID==CMD_INSERT or cmdID<0) then
         local el = {ID=cmdID,time=os.clock(),unitID=unitID,draw=false} -- command queue is not updated until next gameframe
         maxCommand = maxCommand + 1
+        --Spring.Echo("Adding " .. maxCommand)
         commands[maxCommand] = el
     end
 end
@@ -214,9 +215,11 @@ function ExtractTargetLocation(a,b,c,d,cmdID)
 end
 
 function widget:GameFrame()
+    --Spring.Echo("GameFrame: minCommand " .. minCommand .. " minQueueCommand " .. minQueueCommand .. " maxCommand " .. maxCommand)
     local i = minQueueCommand
     while (i <= maxCommand) do
-        --Spring.Echo(CMD[commands[i].ID]) --debug
+        --Spring.Echo("Processing " .. i) --debug
+        
         local unitID = commands[i].unitID
         RemovePreviousCommand(unitID)
         unitCommand[unitID] = i
@@ -253,6 +256,8 @@ function widget:GameFrame()
             end
         end        
         
+        commands[i].processed = true
+        
         minQueueCommand = minQueueCommand + 1
         i = i + 1
     end
@@ -273,13 +278,14 @@ function widget:DrawWorldPreUnit()
     gl.DepthTest(false)
         
     local i = minCommand
-    while (i <= maxCommand) do
+    while (i <= maxCommand) do --only draw commands that have already been processed in GameFrame
         
         local progress = (osClock - commands[i].time) / duration
         local unitID = commands[i].unitID
         
-        if progress > 1 then
-            -- remove when duration has passed
+        if progress > 1 and commands[i].processed then
+            -- remove when duration has passed (also need to check if it was processed yet, because of pausing)
+            --Spring.Echo("Removing " .. i)
             commands[i] = nil
             minCommand = minCommand + 1
             

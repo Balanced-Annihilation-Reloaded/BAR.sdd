@@ -46,6 +46,10 @@ return {
 			[2] = "marauder",
             [4] = "armcroc",
 		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
+		},
 		featuredefs = {
 			armshlt_dead = {
 				blocking = true,

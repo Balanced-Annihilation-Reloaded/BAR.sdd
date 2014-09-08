@@ -42,6 +42,10 @@ return {
 		turnrate = 1320,
 		upright = true,
 		workertime = 50,
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

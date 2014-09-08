@@ -6,10 +6,6 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 22026,
 		buildcostmetal = 372,
-
-
-
-
 		buildpic = "ARMUWMMM.DDS",
 		buildtime = 38964,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -34,7 +30,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 156,
-
+        waterline = 32,
         yardmap = "oooooooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",

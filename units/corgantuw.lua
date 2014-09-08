@@ -45,6 +45,10 @@ return {
             [4] = "corseal",
             [5] = "corparrow",
         },
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

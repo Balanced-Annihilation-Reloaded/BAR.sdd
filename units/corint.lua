@@ -37,6 +37,8 @@ return {
 		yardmap = "ooooooooooooooooooooooooo",
 		customparams = {
 			canareaattack = 1,
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		featuredefs = {
 			dead = {

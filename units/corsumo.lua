@@ -38,6 +38,8 @@ return {
 		turnrate = 320,
 		customparams = {
 			paralyzemultiplier = 0.5,
+			normalmaps = "yes",
+			normaltex = "unittextures/Core_normal.dds",
 		},
 		featuredefs = {
 			dead = {

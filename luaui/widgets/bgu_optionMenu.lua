@@ -37,20 +37,20 @@ DefaultSettings['ReflectiveWater']  = 1
 --DefaultSettings['ShadowMapSize']    = 2048
 DefaultSettings['Shadows']          = 2
 
-DefaultSettings['AdvMapShading']    = true
-DefaultSettings['AdvModelShading']  = true
-DefaultSettings['AllowDeferredMapRendering']   = true
-DefaultSettings['AllowDeferredModelRendering'] = true
+DefaultSettings['AdvMapShading']    = 1
+DefaultSettings['AdvModelShading']  = 1
+DefaultSettings['AllowDeferredMapRendering']   = 1
+DefaultSettings['AllowDeferredModelRendering'] = 1
 
-DefaultSettings['UnitIconDist']         = 200
-DefaultSettings['UnitLodDist']         = 200
+DefaultSettings['UnitIconDist']         = 280
+DefaultSettings['UnitLodDist']         = 280
 DefaultSettings['MaxParticles']     = 1000
 DefaultSettings['MaxNanoParticles'] = 1000
-DefaultSettings['MapBorder']        = true
-DefaultSettings['3DTrees']        = true
-DefaultSettings['MapMarks']         = true
-DefaultSettings['DynamicSky']       = false
-DefaultSettings['DynamicSun']       = false
+DefaultSettings['MapBorder']        = 1
+DefaultSettings['3DTrees']        = 1
+DefaultSettings['MapMarks']         = 1
+DefaultSettings['DynamicSky']       = 0
+DefaultSettings['DynamicSun']       = 0
 
 function LoadSpringSettings()
     -- Load relevant things from springsettings (overwrite our 'local' copy of these settings)
@@ -63,8 +63,8 @@ function LoadSpringSettings()
     Settings['AllowDeferredMapRendering']   = Spring.GetConfigInt('AllowDeferredMapRendering') == 1
     Settings['AllowDeferredModelRendering'] = Spring.GetConfigInt('AllowDeferredModelRendering') == 1
 
-    Settings['UnitIconDist']                = Spring.GetConfigInt('UnitIconDist', 200) -- number is used if no config is set
-    Settings['UnitLodDist']                 = Spring.GetConfigInt('UnitLodDist', 200)
+    Settings['UnitIconDist']                = Spring.GetConfigInt('UnitIconDist', 280) -- number is used if no config is set
+    Settings['UnitLodDist']                 = Spring.GetConfigInt('UnitLodDist', 280)
     Settings['MaxNanoParticles']            = Spring.GetConfigInt('MaxNanoParticles', 1000)
     Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles', 1000)
     Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 -- turn 0/1 to bool
@@ -499,7 +499,6 @@ local comboBox = function(obj)
 			setCursor(value)
 			Settings['CursorName'] = value
         else 
-            --Spring.Echo(setting..' '..value)
             spSendCommands(setting..' '..value)
 		end
 
@@ -766,7 +765,7 @@ local function createGraphicsTab()
 			addStack{x='50%'},
 			addStack{x = 0, name = 'EngineSettings',
 				children = {
-					comboBox{y=0,title='Water',name='Water', --'ReflectiveWater' doesn't work here due to weirdness
+					comboBox{y=0,title='Water',name='Water', --not 'ReflectiveWater' because we use SendCommands instead of SetConfigInt
 						labels={'Basic','Reflective','Dynamic','Refractive','Bump-Mapped'},
 						options={0,1,2,3,4},},
 					comboBox{y=40,title='Shadows',name='Shadows',
@@ -787,7 +786,7 @@ local function createGraphicsTab()
 					checkBox{title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
 					checkBox{title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
 					checkBox{title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
-					checkBox{title = 'Show Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"},
+					checkBox{title = 'Hide Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"},
 					--checkBox{title = 'Hardware Cursor', name = 'HardwareCursor', tooltip = "Enables/Disables hardware mouse-cursor support"},
 					checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},
 					Chili.Button:New{name="ResetDefaults",height=20,width='100%',caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},

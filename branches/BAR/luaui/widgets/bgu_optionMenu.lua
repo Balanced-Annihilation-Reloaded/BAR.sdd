@@ -419,7 +419,7 @@ local function applyDefaultSettings()
         ['Water']            = 1,
         ['Shadows']          = 2,
     }
-    local reflectiveWaterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- name -> listID (ugh)
+    local reflectiveWaterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- value -> listID (ugh)
     local shadowConvert_ID = {[0]=1,[1]=2,[2]=3}
     local shadowMapSizeConvert_ID = {[32]=1,[1024]=2,[2048]=3,[4096]=4} 
     
@@ -772,7 +772,7 @@ local function createGraphicsTab()
 					comboBox{y=40,title='Shadows',name='Shadows',
 						labels={'Off','On','Units Only'},
 						options={'0','1','2'},},
-					--[[comboBox{y=40,title='Shadow Resolution',name='ShadowMapSize',
+					--[[comboBox{y=40,title='Shadow Resolution',name='ShadowMapSize', --disabled because it seems this can't be changed ingame
 						labels={'Very Low','Low','Medium','High'},
 						options={'32','1024','2048','4096'},},]]
 					slider{name='UnitLodDist',title='Unit Draw Distance', max = 600, step = 1},

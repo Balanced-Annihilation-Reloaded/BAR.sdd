@@ -40,7 +40,7 @@ local displayList
 local fontHandler     = loadstring(VFS.LoadFile(LUAUI_DIRNAME.."modfonts.lua", VFS.ZIP_FIRST))()
 local panelFont       = LUAUI_DIRNAME.."Fonts/FreeSansBold_14"
 local waveFont        = LUAUI_DIRNAME.."Fonts/Skrawl_40"
-local panelTexture    = ":n:"..LUAUI_DIRNAME.."Images/panel.tga"
+local panelTexture    = ":n:"..LUAUI_DIRNAME.."Images/chicken_panel.tga"
 
 local viewSizeX, viewSizeY = 0,0
 local w               = 300
@@ -333,7 +333,7 @@ function widget:Initialize()
   UpdateRules()
   viewSizeX, viewSizeY = gl.GetViewSizes()
   local x = math.abs(math.floor(viewSizeX - 320))
-  local y = math.abs(math.floor(viewSizeY - 300))
+  local y = math.abs(math.floor(viewSizeY - 350))
   updatePos(x, y)
 end
 

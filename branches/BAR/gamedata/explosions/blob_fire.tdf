@@ -6,7 +6,6 @@
 		[properties] {
 			sizegrowth=-.1;
 			sizemod=1;
-			size=0.1;
 			pos=0, 1.0, 0;
 			emitVector=0, 1, 0;
 			gravity=0, 0, 0;
@@ -34,7 +33,6 @@
 		[properties] {
 			sizegrowth=0.1;
 			sizemod=1;
-			size=0.1;
 			pos=0, 1.0, 0;
 			emitVector=0, 1, 0;
 			gravity=0, 0, 0;

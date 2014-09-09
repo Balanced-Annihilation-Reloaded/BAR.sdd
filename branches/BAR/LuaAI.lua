@@ -29,6 +29,10 @@ return {
     desc = 'Hardcore Games'
   },
   {
+    name = 'Chicken: Epic!',
+    desc = 'Extreme Survival Games'
+  },
+  {
     name = 'Chicken: Custom',
     desc = 'Settings in ModOptions'
   },

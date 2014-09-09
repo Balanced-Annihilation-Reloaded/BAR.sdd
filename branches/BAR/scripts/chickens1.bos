@@ -163,6 +163,10 @@ AimPrimary(heading,pitch)
 
 AimSecondary(heading,pitch)
 	{
+	if ( get IN_WATER(0) == 0 )
+    {
+     return (0);
+    }
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
 	turn head to y-axis heading speed <250>;

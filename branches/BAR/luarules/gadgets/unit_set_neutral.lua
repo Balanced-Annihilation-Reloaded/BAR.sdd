@@ -28,7 +28,7 @@ local armourTurrets = {}
   armourTurrets[UnitDefNames["cormaw"].id] = true
   armourTurrets[UnitDefNames["armclaw"].id] = true
 
-if (enabled == 1) then 
+if (enabled == 1) then -- these unit are only neutral in chicken def, to stop the chickens wasting time trying to kill closed stuff that has special dmg
   armourTurrets[UnitDefNames["corvipe"].id] = true
   armourTurrets[UnitDefNames["armpb"].id] = true
   armourTurrets[UnitDefNames["cortoast"].id] = true

@@ -18,7 +18,10 @@ Create()
 
 AimPrimary(heading, pitch)
 {
-	return (1);
+	signal SIG_AIM;
+	set-signal-mask SIG_AIM;
+	sleep 30;
+	return (TRUE);
 }
 
 AimFromPrimary(piecenum)
@@ -47,4 +50,17 @@ Killed( severity, corpsetype )
 	corpsetype = 1;
 	emit-sfx 1025 from body;
 	return( 0 );
+}
+
+StartBuilding(Func_Var_1, Func_Var_2)
+{
+}
+
+StopBuilding()
+{
+}
+
+QueryNanoPiece(piecenum)
+{
+	piecenum = firepoint;
 }

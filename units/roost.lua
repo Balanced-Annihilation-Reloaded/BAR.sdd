@@ -9,14 +9,15 @@ unitDef = {
   buildCostEnergy   = 25000,
   buildCostMetal    = 400,
   builder           = false,
-  buildTime         = 12500,
-  category          = "NOTAIR NOTSUB NOTSHIP ALL SURFACE",
+  buildTime         = 7000,
+  category          = "NOTAIR NOTSUB NOTSHIP NOTHOVER ALL SURFACE",
   explodeAs         = "ROOST_DEATH",
-  footprintX        = 3,
-  footprintZ        = 3,
+  footprintX        = 2,
+  footprintZ        = 2,
   iconType          = "special",
-  idleAutoHeal      = 0,
-  idleTime          = 1800,
+  idleAutoHeal      = 10,
+  idleTime          = 90,
+  autoHeal			= 1.8,
   levelGround       = false,
   mass              = 165.75,
   energystorage     = 1000,
@@ -26,6 +27,11 @@ unitDef = {
   noAutoFire        = false,
   objectName        = "roost.s3o",
   selfDestructAs    = "ROOST_DEATH",
+  
+  builder  		    = true,
+  workertime		= 1500,
+  isAirbase 		= true,
+  builddistance     = 90,
 
   sfxtypes          = {
 
@@ -63,7 +69,7 @@ unitDef = {
     WEAPON = {
       name = "Asteroid",
 	  rendertype=1,
-	  lineofsight=1,
+	  lineofsight=0,
 	  turret=1,
 
 	  model = "greyrock2.s3o",
@@ -88,6 +94,7 @@ unitDef = {
 	  smokedelay=0.1,
 	  selfprop=1,
 	  smoketrail=1,
+	  flighttime=100,
 
 	  startsmoke=1,
 	  CollideFriendly=0,

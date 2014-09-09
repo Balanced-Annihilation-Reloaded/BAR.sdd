@@ -1,20 +1,20 @@
 unitDef = {
   unitname            = "chickens2",
-  name                = "Spiker",
-  description         = "Advanced Spike Spitter",
+  name                = "Advanced Spiker",
+  description         = "Ghost Spiker",
   acceleration        = 3,
   bmcode              = "1",
   brakeRate           = 3,
   buildCostEnergy     = 174,
   buildCostMetal      = 174,
   builder             = false,
-  buildTime           = 1740,
+  buildTime           = 7000,
   canAttack           = true,
   canGuard            = true,
   canMove             = true,
   canPatrol           = true,
   canstop             = "1",
-  category            = "MOBILE WEAPON NOTAIR NOTSUB NOTSHIP ALL SURFACE",
+  category            = "MOBILE WEAPON NOTAIR NOTSUB NOTSHIP ALL NOTHOVER SURFACE",
   corpse              = "DEAD",
   defaultmissiontype  = "Standby",
   explodeAs           = "BUG_DEATH",
@@ -41,11 +41,7 @@ unitDef = {
   movementClass       = "AKBOT2",
   noChaseCategory     = "VTOL",
   noAutoFire          = false,
-  		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/chicken_normal.tga",
-		},
-		objectName          = "chickens2.s3o",
+  objectName          = "chickens2.s3o",
   selfDestructAs      = "BUG_DEATH",
   collisionVolumeType = "box",
   collisionVolumeOffsets = "0 -1 0",
@@ -125,7 +121,7 @@ unitDef = {
       propeller               = "1",
       avoidFeature            = 0,
       range                   = 470,
-      reloadtime              = 2.2,
+      reloadtime              = 3.25,
       renderType              = 1,
       selfprop                = true,
       smokedelay              = "0.1",
@@ -158,7 +154,7 @@ unitDef = {
 	
 	damage =
 	{
-		default=775,
+		default=1500,
 	},
 	
 	weaponvelocity=220,
@@ -182,6 +178,7 @@ unitDef = {
 	noselfdamage=1,
 	avoidfriendly=0,
 	collidefriendly=0,
+	interceptedByShieldType = 0,
 	},
 	
   },

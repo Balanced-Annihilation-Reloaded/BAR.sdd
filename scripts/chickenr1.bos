@@ -6,6 +6,7 @@ static-var aMoving, bMoving;
 #define SIG_AIM				2
 #define SIG_AIM_2			4
 #define SIG_MOVE			16
+#define CHANGE_TARGET       98 
 
 #include "sfxtype.h"
 #include "exptype.h"
@@ -166,6 +167,7 @@ Shot1()
 	move rsack to x-axis [-1] speed [9];
 	move lsack to x-axis [1] speed [9];;
 	wait-for-turn lsack around y-axis;
+	set CHANGE_TARGET to 1;
 	turn lsack to y-axis <0> speed <20>;
 	turn rsack to y-axis <0> speed <20>;
 	move rsack to x-axis [0] speed [0.3];

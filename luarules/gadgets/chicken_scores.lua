@@ -9,10 +9,10 @@ function gadget:GetInfo()
     enabled   = true --  loaded by default?
   }
 end
+
 if (gadgetHandler:IsSyncedCode()) then
 
-  local enabled = tonumber(Spring.GetModOptions().mo_chickengame) or 0
-
+local enabled = tonumber(Spring.GetModOptions().mo_chickengame) or 0
 if (enabled == 0) then 
   return false
 end
@@ -45,7 +45,7 @@ local function getTeams()
 		teams[teamID] =  name 
 
 	end
-	Spring.Echo(dump(teams))
+	--Spring.Echo(dump(teams))
 	return teams
 end
 

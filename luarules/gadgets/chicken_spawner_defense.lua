@@ -13,18 +13,17 @@ function gadget:GetInfo()
   }
 end
 
+local enabled = tonumber(Spring.GetModOptions().mo_chickengame) or 0
+if (enabled == 0) then 
+  return false
+end
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 if (gadgetHandler:IsSyncedCode()) then
 -- BEGIN SYNCED
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-
-local enabled = tonumber(Spring.GetModOptions().mo_chickengame) or 0
-
-if (enabled == 0) then 
-  return false
-end
   
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -32,6 +31,8 @@ end
 -- Speed-ups
 --
 
+local GetUnitHeading	   = Spring.GetUnitHeading
+local ValidUnitID          = Spring.ValidUnitID
 local GetUnitNeutral       = Spring.GetUnitNeutral
 local GetTeamList          = Spring.GetTeamList
 local GetTeamLuaAI         = Spring.GetTeamLuaAI
@@ -40,7 +41,6 @@ local SetGameRulesParam    = Spring.SetGameRulesParam
 local GetGameRulesParam    = Spring.GetGameRulesParam
 local GetTeamUnitsCounts   = Spring.GetTeamUnitsCounts
 local GetTeamUnitCount     = Spring.GetTeamUnitCount
-local GetGameSpeed         = Spring.GetGameSpeed
 local GetGameFrame         = Spring.GetGameFrame
 local GetPlayerList        = Spring.GetPlayerList
 local GetPlayerInfo        = Spring.GetPlayerInfo
@@ -75,13 +75,18 @@ local pairs               = pairs
 
 local MAPSIZEX = Game.mapSizeX
 local MAPSIZEZ = Game.mapSizeZ
+local DMAREA = 160
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+local survivalQueenMod    = 0.8
 local queenLifePercent    = 100
-local maxTries            = 100
+local maxTries            = 30
+local oldMaxChicken		  = 0
+local oldDamageMod        = 1
 local currentWave         = 1
+local lastWave            = 1
 local targetCache         = 1
 local minBurrows          = 1
 local timeOfLastSpawn     = 0
@@ -100,18 +105,21 @@ local queenAnger          = 0
 local burrowSpawnProgress = 0
 local queenMaxHP          = 0
 local chickenDebtCount    = 0
+local burrowAnger         = 0
 local firstSpawn          = true
-local showScoresOnce      = true
-local gameOver            = false
+local gameOver            = nil
 local qMove               = false
 local warningMessage      = false
+local ascendingQueen      = false
+local nextQueenSpawn      = nil
 local computerTeams       = {}
 local humanTeams          = {}
 local disabledUnits       = {}
 local spawnQueue          = {}
+local deathQueue          = {}
 local idleOrderQueue      = {}
-local endScores           = {}
 local queenResistance     = {}
+local stunList            = {}
 local queenID
 local chickenTeamID
 local luaAI
@@ -121,6 +129,9 @@ local chickenBirths       = {}
 local failChickens        = {}
 local chickenTargets      = {}
 local burrows             = {}
+local failBurrows		  = {}
+local heroChicken         = {}
+local defenseMap 		  = {}
 
 do -- load config file
   local CONFIG_FILE = "LuaRules/Configs/spawn_defs.lua"
@@ -143,8 +154,9 @@ local modes = {
     [3] = NORMAL,
     [4] = HARD,
     [5] = VERYHARD,
-    [6] = CUSTOM,
-    [7] = SURVIVAL,
+    [6] = EPIC,
+    [7] = CUSTOM,
+    [8] = SURVIVAL,
 }
 
 local function dump(o)
@@ -159,7 +171,7 @@ local function dump(o)
 			return tostring(o)
 	end
 end
-Spring.Echo(VERYEASY)
+--Spring.Echo(VERYEASY)
 
 for i, v in ipairs(modes) do -- make it bi-directional
   modes[v] = i
@@ -241,16 +253,31 @@ local function SetGlobals(difficulty)
   gadget.difficulties = nil
 end
 
-SetGlobals(luaAI or "Chicken: Custom") -- set difficulty
+SetGlobals(luaAI or "Chicken: Normal") -- set difficulty
+
+if (queenName == "asc") then
+	queenName = "ve_chickenq"
+	ascendingQueen = true
+end
 
 local expIncrement = ((SetCount(humanTeams) * expStep) / queenTime)
 if expStep < 0 then expIncrement = ((expStep * -1) / queenTime) end
-local nextWave = ((queenTime / 8) / 60)
-local gracePenalty = math.max(math.floor(((gracePeriod - 220) / burrowSpawnRate) + 0.5), 0)
+local nextWave = ((queenTime / 10) / 60)
+local gracePenalty = math.max(math.floor(((gracePeriod - 270) / burrowSpawnRate) + 0.5), 0)
 chickensPerPlayer = (chickensPerPlayer * SetCount(humanTeams))
 maxBurrows = maxBurrows + math.floor(SetCount(humanTeams) * 1.334) 
 queenTime = (queenTime + gracePeriod)
-chickenDebtCount = math.ceil((math.max((gracePeriod - 220),0) / 3)) 
+chickenDebtCount = math.ceil((math.max((gracePeriod - 270),0) / 3)) 
+-- eggChance scales - 20% at 0-300 grace, 10% at 400 grace, 0% at 500+ grace
+local eggChance = 0.20 * math.max(0, math.min(1, (500-gracePeriod)/200)) 
+local bonusEggs = math.ceil(24 * math.max(0, math.min(1, (500-gracePeriod)/200)))
+
+if (modes[highestLevel] == EPIC) then
+	gracePenalty = gracePenalty + 15
+	maxBurrows = math.max(maxBurrows * 1.5, 50)
+	chickenDebtCount = math.max(chickenDebtCount, 150)
+	expMod = 1
+end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -258,7 +285,7 @@ chickenDebtCount = math.ceil((math.max((gracePeriod - 220),0) / 3))
 -- Game Rules
 --
 
-local UPDATE = 10
+local UPDATE = 16
 
 local unitCounts = {}
 
@@ -293,7 +320,7 @@ end
 
 SetupUnit(burrowName)
 
-local difficulty = modes[luaAI] or 6
+local difficulty = modes[luaAI] or 3
 SetGameRulesParam("difficulty", difficulty)
 
 local function UpdateUnitCount()
@@ -329,20 +356,31 @@ EMP_GOO[WeaponDefNames['chickenr1_goolauncher'].id] = WeaponDefNames['chickenr1_
 EMP_GOO[WeaponDefNames['weaver_death'].id] = WeaponDefNames['weaver_death'].damages[1]
 local LOBBER = UnitDefNames["chickenr1"].id
 local SKIRMISH = { 
-  [UnitDefNames["chickens1"].id] = 270, 
-  [UnitDefNames["chickens2"].id] = 620, 
-  [UnitDefNames["chickenf2"].id] = 2000, 
-  [UnitDefNames["chickenw1b"].id] = 900 
- }
+  [UnitDefNames["chickens1"].id] = { distance = 270, chance = 0.33 },
+  [UnitDefNames["chickens2"].id] = { distance = 620, chance = 0.5 },
+  [UnitDefNames["chickenf2"].id] = { distance = 2000, chance = 0.5 },
+  [UnitDefNames["chickenw1b"].id] = { distance = 900, chance = 0.33 },
+  [UnitDefNames["chickens3"].id] = { distance = 440, chance = 0.1 },
+  [UnitDefNames["chickenh5"].id] = { distance = 300, chance = 0.5 }
+}
 local COWARD = { 
-  [UnitDefNames["chickenh1"].id] = 150,
-  [UnitDefNames["chickenr1"].id] = 300, 
-  [UnitDefNames["chickenw1c"].id] = 900 
- }
+  [UnitDefNames["chickenh1"].id] = { distance = 300, chance = 0.5 },
+  [UnitDefNames["chickenh1b"].id] = { distance = 15, chance = 0.1 },
+  [UnitDefNames["chickenr1"].id] = { distance = 300, chance = 0.33 },
+  [UnitDefNames["chickenw1c"].id] = { distance = 900, chance = 0.33 },
+  [UnitDefNames["chickenh5"].id] = { distance = 600, chance = 0.5 }
+}
+local EGG_DROPPER = {
+  [UnitDefNames["chicken1"].id] = "chicken_egg",
+  [UnitDefNames["chicken1b"].id] = "chicken_eggb",
+  [UnitDefNames["chicken1c"].id] = "chicken_eggc",
+  [UnitDefNames["chicken1d"].id] = "chicken_eggd",
+}
 local JUNO = { [WeaponDefNames["cjuno_juno_pulse"].id]= true, [WeaponDefNames["ajuno_juno_pulse"]] = true }
 local KROW_ID = UnitDefNames["corcrw"].id
+local OVERSEER_ID = UnitDefNames["chickenh5"].id
 local KROW_LASER = "krow_laser_index"
-local SMALL_UNIT = UnitDefNames["corllt"].id
+local SMALL_UNIT = UnitDefNames["cormaw"].id
 local MEDIUM_UNIT = UnitDefNames["armwin"].id
 local LARGE_UNIT = UnitDefNames["armsolar"].id
 
@@ -353,13 +391,18 @@ local LARGE_UNIT = UnitDefNames["armsolar"].id
 --
 
 local function KillOldChicken()
-  for unitID, birthDate in pairs(chickenBirths) do
-    local age = (t - birthDate)
-    if (age > maxAge) then
+  for unitID, defs in pairs(chickenBirths) do
+    if (t > defs.deathDate) then
       if (unitID ~= queenID) then 
-        DestroyUnit(unitID)
+        deathQueue[unitID] = { selfd = false, reclaimed = false }
         chickenCount = chickenCount - 1
         chickenDebtCount = chickenDebtCount + 1
+        local failCount = failBurrows[defs.burrowID]
+        if (failBurrows[defs.burrowID] == nil) then
+			failBurrows[defs.burrowID] = 5
+        else 
+			failBurrows[defs.burrowID] = failCount + 5
+        end
       end
     end
   end
@@ -421,13 +464,13 @@ end
 local function AttackNearestEnemy(unitID, unitDefID, unitTeam)
   local targetID = GetUnitNearestEnemy(unitID)
   if (targetID) and (not GetUnitIsDead(targetID)) and (not GetUnitNeutral(targetID)) then
---    Spring.Echo(t .. " AttackNearestEnemy " .. unitID .. " -> " .. targetID)
     local defID = GetUnitDefID(targetID)
-    if UnitDefs[defID] and (UnitDefs[defID].speed > 75) then
+    local myDefID = GetUnitDefID(unitID)
+    if UnitDefs[defID] and UnitDefs[myDefID] and (UnitDefs[myDefID].speed < (UnitDefs[defID].speed * 1.15)) then
       return false
     end
     local x,y,z = GetUnitPosition(targetID)
-    idleOrderQueue[unitID] = {cmd = CMD.FIGHT, params = {x,y,z}, opts = {}}
+	idleOrderQueue[unitID] = {cmd = CMD.FIGHT, params = {x,y,z}, opts = {}}
     addChickenTarget(unitID, targetID)
     return true
   else
@@ -530,6 +573,9 @@ local function SpawnTurret(burrowID, turret)
   
   local x, y, z
   local bx, by, bz    = GetUnitPosition(burrowID)
+  if (not bx) then
+	return
+  end
   local tries         = 0
   local s             = spawnSquare
 
@@ -544,10 +590,13 @@ local function SpawnTurret(burrowID, turret)
   
   y = GetGroundHeight(x,z)
   local unitID = CreateUnit(turret, x, y, z, "n", chickenTeamID)
-  idleOrderQueue[unitID] = {cmd = CMD.GUARD, params ={burrowID}, opts = {}}
-  SetUnitBlocking(unitID, false)
-  turrets[unitID] = {burrowID, t}
-  burrows[burrowID] = burrows[burrowID] + 1
+  if unitID then
+	  idleOrderQueue[unitID] = {cmd = CMD.PATROL, params = {bx, by, bz}, opts = { "meta" }}
+	  SetUnitBlocking(unitID, false, false)
+	  SetUnitExperience(unitID, mRandom() * expMod)
+	  turrets[unitID] = {burrowID, t}
+	  burrows[burrowID] = burrows[burrowID] + 1
+  end
    
 end
 
@@ -567,7 +616,14 @@ local function SpawnBurrow(number)
     if (burrowSpawnType == "initialbox") then 
       x = mRandom(lsx1, lsx2)
       z = mRandom(lsz1, lsz2)
-    elseif ((burrowSpawnType == "alwaysbox") and (tries < (maxTries / 2))) then
+    elseif ((burrowSpawnType == "alwaysbox") and (tries < maxTries)) then
+      x = mRandom(lsx1, lsx2)
+      z = mRandom(lsz1, lsz2)
+    elseif (burrowSpawnType == "initialbox_post") then 
+      lsx1 = math.max(lsx1 * 0.975, spawnSquare)
+      lsz1 = math.max(lsz1 * 0.975, spawnSquare)
+      lsx2 = math.min(lsx2 * 1.025, MAPSIZEX - spawnSquare)
+      lsz2 = math.min(lsz2 * 1.025, MAPSIZEZ - spawnSquare)
       x = mRandom(lsx1, lsx2)
       z = mRandom(lsz1, lsz2)
     else
@@ -578,7 +634,7 @@ local function SpawnBurrow(number)
     y = GetGroundHeight(x, z)
     tries = tries + 1
     local blocking = TestBuildOrder(MEDIUM_UNIT, x, y, z, 1)
-    if (blocking == 2) and (burrowSpawnType == "avoid") then
+    if (blocking == 2) and ((burrowSpawnType == "avoid") or (burrowSpawnType == "initialbox_post")) then
       local proximity = GetUnitsInCylinder(x, z, minBaseDistance)
       local vicinity = GetUnitsInCylinder(x, z, maxBaseDistance)
       local humanUnitsInVicinity = false
@@ -601,12 +657,13 @@ local function SpawnBurrow(number)
         blocking = 1
       end
     end
-  until (blocking == 2 or tries > maxTries)
+  until (blocking == 2 or tries > (maxTries * 2))
 
     local unitID = CreateUnit(burrowName, x, y, z, "n", chickenTeamID)
     if (unitID) then
       burrows[unitID] = 0
-      SetUnitBlocking(unitID, false)
+      SetUnitBlocking(unitID, false, false)
+      SetUnitExperience(unitID, mRandom() * expMod)
     end
   end
   
@@ -625,14 +682,42 @@ local function updateQueenLife()
 end
 
 local function stunUnit(unitID, seconds)
-	-- get current health and paralizeDamage
-	local health, _, paralizeDamage, _, _, _ = GetUnitHealth(unitID)
-	-- TODO: limit to max value?
-	local stunDamage = math.ceil( (health * seconds) + paralizeDamage)
-	SetUnitHealth(unitID, {paralyze=stunDamage})
+  local f = GetGameFrame()
+  seconds = f + (seconds * 30)
+  if stunList[unitID] then seconds = math.max(stunList[unitID], seconds) end
+  stunList[unitID] = seconds
+  SetUnitHealth(unitID, {paralyze=99999999})
 end
 
 local function SpawnQueen()
+  
+  if (nextQueenSpawn ~= nil) then
+	return CreateUnit(queenName, nextQueenSpawn.x, nextQueenSpawn.y, nextQueenSpawn.z, "n", chickenTeamID)
+  end
+  
+  local bestScore = 0
+  local sx,sy,sz
+  for burrowID, turretCount in pairs(burrows) do
+	-- Try to spawn the queen at the 'best' burrow
+	local x,y,z = GetUnitPosition(burrowID)
+	if x and y and z then
+		local score = 0
+		score = score + (mRandom() * turretCount)
+		if failBurrows[burrowID] then
+			score = score - (failBurrows[burrowID] * 5)
+		end
+		if (score>bestScore) then
+			bestScore = score
+			sx = x
+			sy = y
+			sz = z
+		end
+	end
+  end
+  
+  if sx and sy and sz then
+	return CreateUnit(queenName, sx, sy, sz, "n", chickenTeamID)
+  end
   
   local x, y, z
   local tries = 0
@@ -667,7 +752,7 @@ local function SpawnQueen()
       blocking = 1
     end
   
-  until (blocking == 2 or tries > maxTries)
+  until (blocking == 2 or tries > (maxTries * 3))
   
   return CreateUnit(queenName, x, y, z, "n", chickenTeamID)
  
@@ -679,13 +764,12 @@ local function Wave()
   
   if gameOver then return end
   
-  currentWave = math.min(math.ceil((((t-gracePeriod+queenAnger) / 60) / nextWave)), 8)
+  currentWave = math.min(math.ceil((((t-gracePeriod) / 60) / nextWave)), 10)
   
   if currentWave > #waves then currentWave = #waves end
   
-  if (currentWave == 8) then
-    COWARD[UnitDefNames["chickenc1"].id] = (150 + mRandom(1,150))
-    COWARD[UnitDefNames["chicken2"].id] = (200 + mRandom(1,200))
+  if (currentWave == 10) then
+    COWARD[UnitDefNames["chickenc1"].id] = { distance = 700, chance = 0.1 }
   end
   
   local cCount = 0
@@ -709,12 +793,16 @@ local function Wave()
   end
   
   for burrowID in pairs(burrows) do
-    if (t > (queenTime * 0.33)) then SpawnTurret(burrowID, bonusTurret) end
+    if (t > (queenTime * 0.15)) then SpawnTurret(burrowID, bonusTurret) end
     local squad = waves[currentWave][mRandom(1,#waves[currentWave])]
+    if ((lastWave ~= currentWave) and (newWaveSquad[currentWave])) then
+		squad = newWaveSquad[currentWave]
+		lastWave = currentWave
+    end
     for i,sString in pairs(squad) do
       local skipSpawn = false
       if (cCount > chickensPerPlayer) and (mRandom() > spawnChance) then skipSpawn = true end
-      if skipSpawn and (chickenDebtCount > 0) and (mRandom() > 0.5) then
+      if skipSpawn and (chickenDebtCount > 0) and (mRandom() > spawnChance) then
         chickenDebtCount = (chickenDebtCount - 1)
         skipSpawn = false
       end
@@ -732,6 +820,81 @@ local function Wave()
   return cCount
 end
 
+
+function removeFailChickens()
+	for unitID, failCount in pairs(failBurrows) do
+		if (failCount > 30) then
+			deathQueue[unitID] = { selfd = false, reclaimed = false }
+			burrows[unitID] = nil
+			failBurrows[unitID] = nil
+			for i,defs in pairs(spawnQueue) do
+			  if (defs.burrow == unitID) then
+				spawnQueue[i] = nil
+			  end
+			end
+			SpawnBurrow()
+		end
+	end
+	for unitID, failCount in pairs(failChickens) do
+		local checkedForDT = false
+		if (unitID ~= queenID) or (GetUnitTeam(unitID) ~= chickenTeamID) then
+			if (failCount > 5) then
+				local x,y,z = GetUnitPosition(unitID)
+				local yh = GetGroundHeight(x,z)
+				if y and yh and (y < (yh+1)) then
+					deathQueue[unitID] = { selfd = false, reclaimed = true }
+					chickenCount = chickenCount - 1
+					chickenDebtCount = chickenDebtCount + 1
+					if chickenBirths[unitID] then
+						local burrowFailCount = failBurrows[chickenBirths[unitID].burrowID]
+						if (burrowFailCount == nil) then
+							failBurrows[chickenBirths[unitID].burrowID] = 1
+						else 
+							failBurrows[chickenBirths[unitID].burrowID] = burrowFailCount + 1
+						end
+					end
+				end
+			elseif (failCount > 2) then
+				local x,y,z = GetUnitPosition(unitID)
+				local attackingFeature = false
+				if (not checkedForDT) then
+					checkedForDT = true
+					local nearFeatures = Spring.GetFeaturesInSphere(x,y,z,70)
+					for i,featureID in ipairs(nearFeatures) do
+						local featureDefID = Spring.GetFeatureDefID(featureID)
+						if (featureDefID) and (FeatureDefs[featureDefID].metal > 0) and (not FeatureDefs[featureDefID].autoReclaimable) then
+							local fx,fy,fz = Spring.GetFeaturePosition(featureID)
+							idleOrderQueue[unitID] = {cmd = CMD.ATTACK, params = {fx,fy,fz}, opts = {}}
+							attackingFeature = true
+							break
+						end
+					end
+				end
+				if (not attackingFeature) then
+					local dx,_,dz = GetUnitDirection(unitID)
+					local angle = math.atan2(dx,dz)
+					Spring.SpawnCEG("dirt2",x,y,z,0,0,0)
+					if (y < -15) then
+						deathQueue[unitID] = { selfd = false, reclaimed = false }
+						chickenCount = chickenCount - 1
+						chickenDebtCount = chickenDebtCount + 1
+						if chickenBirths[unitID] then
+							local burrowFailCount = failBurrows[chickenBirths[unitID].burrowID]
+							if (burrowFailCount == nil) then
+								failBurrows[chickenBirths[unitID].burrowID] = 3
+							else 
+								failBurrows[chickenBirths[unitID].burrowID] = burrowFailCount + 3
+							end
+						end
+					end
+					Spring.AddUnitImpulse(unitID, math.sin(angle) * 2, 2.5, math.cos(angle) * 2, 100)
+				end
+			end
+		end
+		failChickens = {}
+	end
+end
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
@@ -741,13 +904,15 @@ end
 local function DisableUnit(unitID)
   Spring.MoveCtrl.Enable(unitID)
   Spring.MoveCtrl.SetNoBlocking(unitID, true)
-  Spring.MoveCtrl.SetPosition(unitID, Game.mapSizeX+2450, 4000, Game.mapSizeZ+2450)
-  Spring.SetUnitCloak(unitID, true)
+  Spring.MoveCtrl.SetPosition(unitID, Game.mapSizeX+500, 2000, Game.mapSizeZ+500) --don't move too far out or prevent_aicraft_hax will explode it!
+  --Spring.SetUnitCloak(unitID, true)
   Spring.SetUnitHealth(unitID, {paralyze=99999999})
   Spring.SetUnitNoDraw(unitID, true)
   Spring.SetUnitStealth(unitID, true)
   Spring.SetUnitNoSelect(unitID, true)
   Spring.SetUnitNoMinimap(unitID, true)
+  Spring.GiveOrderToUnit(unitID, CMD.MOVE_STATE, { 0 }, {})
+  Spring.GiveOrderToUnit(unitID, CMD.FIRE_STATE, { 0 }, {})
   disabledUnits[unitID] = true
 end
 
@@ -767,34 +932,17 @@ end
 -- Call-ins
 --
 
-function gadget:UnitMoveFailed(unitID, unitDefID, unitTeam)
-  if gameOver then return end
-  if (unitTeam ~= chickenTeamID) or (unitID == queenID) or idleOrderQueue[unitID] then return end
-  local px,py,pz = GetUnitPosition(unitID)
-  if failChickens[unitID] then
-    if (getSqrDistance(failChickens[unitID].x,failChickens[unitID].z,px,pz) < 5000) then
-      failChickens[unitID].count = failChickens[unitID].count + 1
-      if (failChickens[unitID].count > 3) then
-        DestroyUnit(unitID, false, true)
-        chickenDebtCount = chickenDebtCount + 1
-        chickenCount = chickenCount - 1
-        return
-      end
-    else
-      failChickens[unitID].x = px
-      failChickens[unitID].z = pz
-    end
-  else
-    failChickens[unitID] = { x = px, z = pz, count = 1 }
-  end
-  if (mRandom(1,2) == 1) then px = px + mRandom(50,100) else px = px - mRandom(50,100) end
-  if (mRandom(1,2) == 1) then pz = pz + mRandom(50,100) else pz = pz - mRandom(50,100) end
-  idleOrderQueue[unitID] = {cmd = CMD.MOVE, params = {px,py,pz}, opts = {}}
-end
-
 function gadget:UnitIdle(unitID, unitDefID, unitTeam)
 	if (unitTeam ~= chickenTeamID) or (not chickenDefTypes[unitDefID]) then -- filter out non chicken units
 		return
+	end
+	local failCount = failChickens[unitID]
+	if (failCount == nil) then
+		if (unitID ~= queenID) then
+			failChickens[unitID] = 1
+		end
+	else
+		failChickens[unitID] = failCount + 1
 	end
 	-- Spring.Echo(t .. " unitIdle " .. unitID)
 	if AttackNearestEnemy(unitID, unitDefID, unitTeam) then
@@ -802,11 +950,7 @@ function gadget:UnitIdle(unitID, unitDefID, unitTeam)
 	end
 	local chickenParams = ChooseTarget()
 	if targetCache then
-		if (unitID ~= queenID) and (mRandom(1,10) == 5) then
-			idleOrderQueue[unitID] = {cmd = CMD.ATTACK, params = {targetCache}, opts = {}}
-		else
-			idleOrderQueue[unitID] = {cmd = CMD.FIGHT, params = chickenParams, opts = {}}
-		end
+		idleOrderQueue[unitID] = {cmd = CMD.FIGHT, params = chickenParams, opts = {}}
 		if GetUnitNeutral(targetCache) then
 			idleOrderQueue[unitID] = {cmd = CMD.ATTACK, params = {targetCache}, opts = {}}
 		end
@@ -824,11 +968,22 @@ function gadget:UnitCreated(unitID, unitDefID, unitTeam)
 end
 
 function gadget:UnitPreDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, 
-                            weaponID, attackerID, attackerDefID, attackerTeam)
+                            weaponID, projectileID, attackerID, attackerDefID, attackerTeam)
+
+  if disabledUnits[unitID] then
+	return 0,0
+  end
 
   if (attackerTeam == chickenTeamID) then
     return (damage * damageMod)
   end
+
+  if (heroChicken[unitID]) then
+	damage = (damage * heroChicken[unitID])
+	local x,y,z = GetUnitPosition(unitID)
+	Spring.SpawnCEG("CHICKENHERO", x,y,z,0,0,0)
+  end
+  
   if (unitID == queenID) then -- special case queen
     if (weaponID == -1) and (damage > 25000) then
 	  return 25000
@@ -853,8 +1008,12 @@ function gadget:UnitPreDamaged(unitID, unitDefID, unitTeam, damage, paralyzer,
           end
           Spring.Echo("Queen is becoming resistant to " .. UnitDefs[attackerDefID].humanName .. "'s attacks (" .. weaponName .. ")")
           queenResistance[weaponID].notify = 1
-          for i = 1,30,1 do
-            table.insert(spawnQueue, {burrow = queenID, unitName = "chickenh4", team = chickenTeamID})
+          for i = 1,12,1 do
+            table.insert(spawnQueue, {burrow = queenID, unitName = "chickenw2", team = chickenTeamID})
+          end
+          for i = 1,4,1 do
+            table.insert(spawnQueue, {burrow = queenID, unitName = "chickenh1", team = chickenTeamID})
+            table.insert(spawnQueue, {burrow = queenID, unitName = "chickenh1b", team = chickenTeamID})
           end
         end
         damage = damage - (damage * resistPercent)
@@ -867,31 +1026,31 @@ function gadget:UnitPreDamaged(unitID, unitDefID, unitTeam, damage, paralyzer,
 end
 
 function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, 
-                            weaponID, attackerID, attackerDefID, attackerTeam)
+                            weaponID, projectileID, attackerID, attackerDefID, attackerTeam)
                               
   if EMP_GOO[weaponID] and (unitTeam ~= chickenTeamID) and (lobberEMPTime > 0) then
     stunUnit(unitID, ((damage / EMP_GOO[weaponID]) * lobberEMPTime))
   end
      
-  if chickenBirths[attackerID] then chickenBirths[attackerID] = t end
+  if chickenBirths[attackerID] then chickenBirths[attackerID].deathDate = (t + maxAge) end
   if failChickens[attackerID] then failChickens[attackerID] = nil end
   if failChickens[unitID] then failChickens[unitID] = nil end
-  
-  if SKIRMISH[attackerDefID] and (unitTeam ~= chickenTeamID) and attackerID then
+    
+  if SKIRMISH[attackerDefID] and (unitTeam ~= chickenTeamID) and attackerID and (mRandom() < SKIRMISH[attackerDefID].chance) then
     local ux,_,uz = GetUnitPosition(unitID)
     local x,y,z = GetUnitPosition(attackerID)
     if x and ux then
 	  local angle = math.atan2(ux-x,uz-z)
-	  idleOrderQueue[attackerID] = {cmd = CMD.MOVE, params = {x - (math.sin(angle) * SKIRMISH[attackerDefID]),y,z - (math.cos(angle) * SKIRMISH[attackerDefID])}, opts = {}}
+	  idleOrderQueue[attackerID] = {cmd = CMD.MOVE, params = {x - (math.sin(angle) * SKIRMISH[attackerDefID].distance),y,z - (math.cos(angle) * SKIRMISH[attackerDefID].distance)}, opts = {}}
 	end
-  elseif COWARD[unitDefID] and (not idleOrderQueue[unitID]) and (unitTeam == chickenTeamID) and attackerID then
-    local curH, maxH = GetUnitHealth(attackerID)
-    if curH < (maxH * 0.8) then
+  elseif COWARD[unitDefID] and (not idleOrderQueue[unitID]) and (unitTeam == chickenTeamID) and attackerID and (mRandom() < COWARD[unitDefID].chance) then
+    local curH, maxH = GetUnitHealth(unitID)
+    if curH and maxH and curH < (maxH * 0.8) then
       local ax,_,az = GetUnitPosition(attackerID)
       local x,y,z = GetUnitPosition(unitID)
       if x and ax then
 	    local angle = math.atan2(ax-x,az-z)
-	    idleOrderQueue[unitID] = {cmd = CMD.MOVE, params = {x - (math.sin(angle) * COWARD[unitDefID]),y,z - (math.cos(angle) * COWARD[unitDefID])}, opts = {}}
+		idleOrderQueue[unitID] = {cmd = CMD.MOVE, params = {x - (math.sin(angle) * COWARD[unitDefID].distance),y,z - (math.cos(angle) * COWARD[unitDefID].distance)}, opts = {}}
 	  end
 	end
   end
@@ -902,20 +1061,20 @@ function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer,
     if ((JUNO[weaponID]) and (mRandom(1,2) == 1)) then nSpawn = true end
     if nSpawn then 
       local bx, by, bz = GetUnitPosition(unitID)
-      local h = Spring.GetUnitHeading(unitID)
-      SetUnitBlocking(unitID, false)
+      local h = GetUnitHeading(unitID)
+      SetUnitBlocking(unitID, false, false)
       local newUnitID = CreateUnit("chickenr2", bx, by, bz, "n", unitTeam)
       Spring.SetUnitNoDraw(newUnitID,true)
       Spring.MoveCtrl.Enable(newUnitID)
       Spring.MoveCtrl.SetHeading(newUnitID, h)
       Spring.MoveCtrl.Disable(newUnitID)
-      SetUnitExperience(newUnitID, expMod)
+      SetUnitExperience(newUnitID, mRandom() * expMod)
       Spring.SetUnitNoDraw(newUnitID,false)
-      DestroyUnit(unitID, false, true)
+      deathQueue[unitID] = { selfd = false, reclaimed = true }
       idleOrderQueue[newUnitID] = {cmd = CMD.STOP, params = {}, opts = {}}
     return
     end
-  elseif (unitID == queenID) then
+  elseif (unitID == queenID) then 
     if paralyzer then
       SetUnitHealth(unitID, {paralyze=0})
       return
@@ -925,24 +1084,27 @@ function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer,
       if qMove then
         idleOrderQueue[queenID] = {cmd = CMD.STOP, params = {}, opts = {}}
         qMove = false
-        qDamage = 0 - mRandom(1,25000)
+        qDamage = 0 - mRandom(0,100000)
       else
         local cC = ChooseTarget()
         local xQ, _, zQ = GetUnitPosition(queenID)
         if cC then
           local angle = math.atan2((cC[1]-xQ), (cC[3]-zQ))
           local dist = math.sqrt(((cC[1]-xQ)*(cC[1]-xQ))+((cC[3]-zQ)*(cC[3]-zQ))) * 0.75
-          if (dist < 1500) then
+          if (dist < 1700) then
             GiveOrderToUnit(queenID, CMD.MOVE, {(xQ + (math.sin(angle) * dist)), cC[2], (zQ + (math.cos(angle) * dist))}, {})
             GiveOrderToUnit(queenID, CMD.FIGHT, cC, {"shift"})
             if targetCache then addChickenTarget(queenID, targetCache) end
-            qDamage = (0 - mRandom(1,25000))
+            qDamage = 0 - mRandom(50000,250000)
             Wave()
             qMove = true
           else
             idleOrderQueue[queenID] = {cmd = CMD.STOP, params = {}, opts = {}}
             qDamage = 0
             Wave()
+          end
+          for i = 1,5,1 do
+			SpawnTurret(queenID, bonusTurret)
           end
         else
           idleOrderQueue[queenID] = {cmd = CMD.STOP, params = {}, opts = {}}
@@ -986,14 +1148,29 @@ local function SpawnChickens()
 		x, y, z = getChickenSpawnLoc(defs.burrow, SMALL_UNIT)
 	end
 	if not x or not y or not z then
+		spawnQueue[i] = nil
 		return
 	end
 	local unitID = CreateUnit(defs.unitName, x,y,z, "n", defs.team)
 	if unitID then
-		SetUnitExperience(unitID, expMod)
+		SetUnitExperience(unitID, mRandom() * expMod)
+		if (mRandom() < 0.1) then
+			local mod = 0.75 - (mRandom() * 0.25)
+			if (mRandom() < 0.1) then
+				mod = mod - (mRandom() * 0.2)
+				if (mRandom() < 0.1) then
+					mod = mod - (mRandom() * 0.2)
+				end
+			end
+			heroChicken[unitID] = mod
+		end
+		
+		if UnitDefs[GetUnitDefID(unitID)].canFly then
+			GiveOrderToUnit(unitID, CMD.IDLEMODE, { 0 }, { "shift" })
+		end
+		
 		if (queenID) then
-			local angle = math.rad(mRandom(1,360))
-			idleOrderQueue[unitID] = {cmd = CMD.MOVE, params = {x - (math.sin(angle) * 360),y,z - (math.cos(angle) * 360)}, opts = {}}          
+			idleOrderQueue[unitID] = {cmd = CMD.FIGHT, params = getRandomMapPos(), opts = {}}          
 		else
 			local chickenParams = ChooseTarget()
 			if targetCache and (unitID ~= queenID) and (mRandom(1,15) == 5) then
@@ -1011,7 +1188,7 @@ local function SpawnChickens()
 				end
 				addChickenTarget(unitID, targetCache)
 			end
-			chickenBirths[unitID] = t
+			chickenBirths[unitID] = { deathDate = t + (maxAges[defs.unitName] or maxAge), burrowID = defs.burrow }
 			chickenCount = chickenCount + 1
 		end
 	end
@@ -1022,26 +1199,77 @@ local function chickenEvent(type, num, tech)
 	SendToUnsynced("ChickenEvent", type, num, tech)
 end
 
+local function getMostDefendedArea()
+		table.sort(defenseMap, function(u1,u2) return u1 < u2; end)
+		local k = next(defenseMap)
+		if k then
+			local x,z = string.match(k, "(%d+),(%d+)")
+			x = x * DMAREA
+			z = z * DMAREA
+			local y = GetGroundHeight(x,z)
+			return x,y,z
+		else
+			return nil,nil,nil
+		end
+end
 
 local function updateSpawnQueen()
 	if (not queenID) and (not gameOver) then -- spawn queen if not exists
 		queenID = SpawnQueen()
-		idleOrderQueue[queenID] = {cmd = CMD.STOP, params = {}, opts = {}}
+		local x,y,z = getMostDefendedArea()
+		if x and y and z then
+			idleOrderQueue[queenID] = {cmd = CMD.MOVE, params = {x,y,z}, opts = {}}
+		else
+			idleOrderQueue[queenID] = {cmd = CMD.STOP, params = {}, opts = {}}
+		end
+		burrows[queenID] = 0
+		spawnQueue = {}
+		oldMaxChicken = maxChicken
+		oldDamageMod = damageMod
+		maxChicken = 75
 		chickenEvent("queen") -- notify unsynced about queen spawn
 		_,queenMaxHP = GetUnitHealth(queenID)
-		SetUnitExperience(queenID, (expMod*1.5))
+		SetUnitExperience(queenID, expMod)
 		timeOfLastWave = t
-		SKIRMISH[UnitDefNames["chickenc1"].id] = 150
-		SKIRMISH[UnitDefNames["chickenf1"].id] = 1200
-		SKIRMISH[UnitDefNames["chickenw1"].id] = 1800
-		COWARD[UnitDefNames["chicken2"].id] = nil
-		COWARD[UnitDefNames["chicken_dodo1"].id] = 300
-		for i = 1,80,1 do
-			table.insert(spawnQueue, {burrow = queenID, unitName = "chickenh4", team = chickenTeamID})
+		SKIRMISH[UnitDefNames["chickenc1"].id] = { distance = 150, chance = 0.5 }
+		SKIRMISH[UnitDefNames["chickenf1"].id] = { distance = 1200, chance = 0.25 }
+		SKIRMISH[UnitDefNames["chickenw1"].id] = { distance = 1800, chance = 0.5 }
+		COWARD[UnitDefNames["chicken_dodo1"].id] = { distance = 1100, chance = 0.33 }
+		
+		local chickenUnits = GetTeamUnits(chickenTeamID)
+		for _, unitID in pairs(chickenUnits) do
+			if (GetUnitDefID(unitID) == OVERSEER_ID) then
+				deathQueue[unitID] = { selfd = false, reclaimed = false }
+			end
+		end
+		
+		if (modes[highestLevel] == EPIC) then
+			table.insert(spawnQueue, {burrow = queenID, unitName = "ve_chickenq", team = chickenTeamID})
+			table.insert(spawnQueue, {burrow = queenID, unitName = "ve_chickenq", team = chickenTeamID})
+			table.insert(spawnQueue, {burrow = queenID, unitName = "ve_chickenq", team = chickenTeamID})
+			table.insert(spawnQueue, {burrow = queenID, unitName = "ve_chickenq", team = chickenTeamID})
+		end
+		
+		if (queenName == "epic_chickenq") then 
+			table.insert(spawnQueue, {burrow = queenID, unitName = "chickenr3", team = chickenTeamID})
+			table.insert(spawnQueue, {burrow = queenID, unitName = "chickenr3", team = chickenTeamID})
+		end
+		for i = 1,150,1 do
+			if (mRandom() < spawnChance) then
+				table.insert(spawnQueue, {burrow = queenID, unitName = "chickenh4", team = chickenTeamID})
+			end
+		end
+		for i = 1,10,1 do
+			if (mRandom() < spawnChance) then
+				table.insert(spawnQueue, {burrow = queenID, unitName = "chickenh1", team = chickenTeamID})
+				table.insert(spawnQueue, {burrow = queenID, unitName = "chickenh1b", team = chickenTeamID})
+			end
 		end
 	else
-		if (mRandom() < (spawnChance/5)) then
-			table.insert(spawnQueue, {burrow = queenID, unitName = "chickenh4", team = chickenTeamID})
+		if (mRandom() < (spawnChance/7.5)) then
+			for i = 1,mRandom(1,3),1 do
+				table.insert(spawnQueue, {burrow = queenID, unitName = "chickenh4", team = chickenTeamID})
+			end
 		end
 	end
 end
@@ -1050,15 +1278,38 @@ function gadget:GameFrame(n)
       
 	if gameOver then
 		chickenCount = UpdateUnitCount()
+		if (n > gameOver) then
+			Spring.KillTeam(chickenTeamID)
+		end
 		return
 	end
 
 	if n == 15 then
 		DisableComputerUnits()
 	end
-
+	
+	if ((n % 90) == 0) then
+		removeFailChickens()
+		if (queenAnger >= 100) then
+			damageMod = (damageMod + 0.005)
+		end
+	end
+		
 	if (chickenCount < maxChicken) then
 		SpawnChickens()
+	end
+
+	  for unitID in pairs(stunList) do
+		if (n > stunList[unitID]) then 
+		  SetUnitHealth(unitID, {paralyze=0})
+		  stunList[unitID] = nil
+		end
+	  end  
+
+	for unitID, defs in pairs(deathQueue) do
+		if ValidUnitID(unitID) and not GetUnitIsDead(unitID) then
+			DestroyUnit(unitID, defs.selfd or false, defs.reclaimed or false)
+		end
 	end
 
 	if (n >= timeCounter) then
@@ -1068,7 +1319,7 @@ function gadget:GameFrame(n)
 			if t < gracePeriod then
 				queenAnger = 0
 			else
-				queenAnger = math.ceil((t - gracePeriod) / (queenTime - gracePeriod) * 100 % 100)
+				queenAnger = math.ceil(math.min((t - gracePeriod) / (queenTime - gracePeriod) * 100 % 100) + burrowAnger, 100)
 			end
 			SetGameRulesParam("queenAnger", queenAnger)
 		end
@@ -1090,25 +1341,23 @@ function gadget:GameFrame(n)
       idleOrderQueue = {}
       for unitID,order in pairs(processOrderQueue) do
         GiveOrderToUnit(unitID, order.cmd, order.params, order.opts)
-        GiveOrderToUnit(unitID, CMD.MOVE_STATE, { mRandom(0,2) }, {})
+        GiveOrderToUnit(unitID, CMD.MOVE_STATE, { mRandom(0,2) }, { "shift" })
+        if UnitDefs[GetUnitDefID(unitID)].canFly then
+			GiveOrderToUnit(unitID, CMD.AUTOREPAIRLEVEL, { mRandom(0,3) }, { "shift" })
+        end
       end
     end
          
     if queenAnger >= 100 then -- check if the queen should be alive
-	updateSpawnQueen()
-	updateQueenLife()
+		updateSpawnQueen()
+		updateQueenLife()
     end
 
     local quicken = 0
     local burrowCount = SetCount(burrows)
-     
-    if (burrowTarget > 0) and (burrowTarget ~= burrowCount) then
-      quicken = (burrowSpawnRate * (1 - (burrowCount / burrowTarget)))
-    end
-        
-    local burrowSpawnTime = (burrowSpawnRate - quicken)
-             
-    if (burrowSpawnRate < (t - timeOfLastFakeSpawn) and burrowCount < maxBurrows) then
+         
+    if (burrowSpawnRate < (t - timeOfLastFakeSpawn) and burrowTarget < maxBurrows) then
+	  -- This block is all about setting the correct burrow target
       if firstSpawn then    
         minBurrows = SetCount(humanTeams)
         local hteamID = next(humanTeams)
@@ -1116,12 +1365,23 @@ function gadget:GameFrame(n)
         for i = 1,ranCount,1 do
           mRandom()
         end
-        burrowTarget = math.min(math.ceil(minBurrows * 1.5) + gracePenalty, 40)
+        burrowTarget = math.max(math.min(math.ceil(minBurrows * 1.5) + gracePenalty, 40), 1)
       else
         burrowTarget = burrowTarget + 1
       end
       timeOfLastFakeSpawn = t
     end
+    
+    if (burrowTarget > 0) and (burrowTarget ~= burrowCount) then
+      quicken = (burrowSpawnRate * (1 - (burrowCount / burrowTarget)))
+    end
+    
+    if (burrowTarget > 0) and ((burrowCount / burrowTarget) < 0.40) then
+      -- less than 40% of desired burrows, spawn one right away
+	  quicken = burrowSpawnRate
+    end
+			
+	local burrowSpawnTime = (burrowSpawnRate - quicken)
     
 	if (burrowCount < minBurrows) or (burrowSpawnTime <  (t - timeOfLastSpawn) and burrowCount < maxBurrows) then 
 		if firstSpawn then
@@ -1131,7 +1391,7 @@ function gadget:GameFrame(n)
 			timeOfLastWave = (t - (chickenSpawnRate - 6))
 			firstSpawn = false
 			if (burrowSpawnType == "initialbox") then
-				burrowSpawnType = "avoid" 
+				burrowSpawnType = "initialbox_post" 
 			end
 		else
 			SpawnBurrow()
@@ -1152,14 +1412,29 @@ function gadget:GameFrame(n)
 	end 
 end
 
-function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
-  --debug--Spring.Echo(t .. " UnitDestroyed " .. unitID)
---  if gameOver then return end
-   
+function gadget:UnitDestroyed(unitID, unitDefID, unitTeam, attackerID)
+
+  if (eggChance > 0) and ((bonusEggs > 0) or (EGG_DROPPER[unitDefID] and (mRandom() < eggChance))) then
+	local x,y,z = GetUnitPosition(unitID)
+	if x then
+		local h = GetUnitHeading(unitID)
+		if h then
+			Spring.CreateFeature(EGG_DROPPER[unitDefID],x,y,z,h)
+			bonusEggs = bonusEggs - 1
+		end
+	end
+  end
+
+  if heroChicken[unitID] then heroChicken[unitID] = nil end
+  if stunList[unitID] then stunList[unitID] = nil end
   if chickenBirths[unitID] then chickenBirths[unitID] = nil end
   if turrets[unitID] then turrets[unitID] = nil end
   if idleOrderQueue[unitID] then idleOrderQueue[unitID] = nil end
   if failChickens[unitID] then failChickens[unitID] = nil end
+  if failBurrows[unitID] then 
+	failBurrows[unitID] = nil
+	return
+  end
 
   if chickenTargets[unitID] then
     if (unitTeam ~= chickenTeamID) then
@@ -1187,20 +1462,56 @@ function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
     local kills = GetGameRulesParam(name.."Kills")
     SetGameRulesParam(name.."Kills", kills + 1)
     chickenCount = chickenCount - 1
+    if (attackerID) then
+		local x,_,z = GetUnitPosition(attackerID)
+		if x and z then
+			local area = math.floor(x/DMAREA) .. "," .. math.floor(z/DMAREA)
+			if defenseMap[area] == nil then
+				defenseMap[area] = 1
+			else
+				defenseMap[area] = defenseMap[area] + 1
+			end
+		end
+    end
   end
   
 	if (unitID == queenID) then -- queen destroyed
 		queenID = nil
-		if modes[highestLevel] == SURVIVAL then
-			queenTime = t + (Spring.GetModOptions().mo_queentime or 40) * 60
-			queenAnger = 0  -- reenable chicken spawning
-			SetGameRulesParam("queenAnger", queenAnger)
-			SpawnBurrow()
-			SpawnChickens() -- spawn new chickens (because queen could be the last one)
+		maxChicken = oldMaxChicken
+		damageMod = oldDamageMod
+		queenResistance = {}
+		if (ascendingQueen == true) then
+			local x,y,z = GetUnitPosition(unitID)
+			nextQueenSpawn = {x = x, y = y, z = z}
+			if (queenName == "ve_chickenq") then 
+				queenName = "e_chickenq"
+			elseif (queenName == "e_chickenq") then
+				queenName = "n_chickenq"
+			elseif (queenName == "n_chickenq") then
+				queenName = "h_chickenq"
+			elseif (queenName == "h_chickenq") then
+				queenName = "vh_chickenq"
+			elseif (queenName == "vh_chickenq") then
+				queenName = "epic_chickenq"
+				ascendingQueen = false
+				nextQueenSpawn = nil
+			end
+			updateSpawnQueen()
 		else
-			gameOver = true
-			KillAllComputerUnits()
-			KillAllChicken()
+			if modes[highestLevel] == SURVIVAL then
+				queenTime = t + (((Spring.GetModOptions().mo_queentime or 40) * 60) * survivalQueenMod)
+				survivalQueenMod = survivalQueenMod * 0.8
+				queenAnger = 0  -- reenable chicken spawning
+				burrowAnger = 0
+				SetGameRulesParam("queenAnger", queenAnger)
+				SpawnBurrow()
+				SpawnChickens() -- spawn new chickens (because queen could be the last one)
+			else
+				gameOver = GetGameFrame() + 120
+				spawnQueue = {}
+				KillAllComputerUnits()
+				KillAllChicken()
+			end
 		end
 	end
   
@@ -1211,14 +1522,21 @@ function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
     
     burrows[unitID] = nil
     if (addQueenAnger == 1) then
-      queenAnger = (queenAnger + angerBonus)
-      expMod = (expMod + (expIncrement * angerBonus))
-      SetGameRulesParam("queenAnger", queenAnger)
+      burrowAnger = (burrowAnger + angerBonus)
+      expMod = (expMod + angerBonus)
     end
     
     for turretID,v in pairs(turrets) do
       if (v[1] == unitID) then
-        DestroyUnit(turretID, true)
+        local x,y,z = GetUnitPosition(turretID)
+        if x and y and z then
+			Spring.SpawnCEG("blood_explode", x,y,z,0,0,0)
+			local h = Spring.GetUnitHealth(turretID)
+			if h then
+				Spring.SetUnitHealth(turretID, h * 0.333)
+			end
+        end
+        idleOrderQueue[turretID] = {cmd = CMD.STOP, params = {}, opts = {}}   
         turrets[turretID] = nil
       end
     end
@@ -1263,11 +1581,10 @@ end
 function gadget:GameOver()
 	if modes[highestLevel] ~= SURVIVAL then -- don't end game in survival mode
 --		Spring.Echo("Set Gameover")
-		gameOver=true
+		gameOver=GetGameFrame()
 	end
 end
 
-if ((difficulty == 5) and (gracePeriod < 61) and (queenName=="ve_chickenq") and (burrowSpawnType=="avoid")) then queenName = "epic_chickenq" end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 else

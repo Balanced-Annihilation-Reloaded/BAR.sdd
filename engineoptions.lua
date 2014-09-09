@@ -28,11 +28,12 @@
 local options =
 {
   {
-    key="ba_others",
-    name="Balanced Annihilation - Other Settings",
-    name="Balanced Annihilation - Other Settings",
+    key="bar_others",
+    name="BAR - Other Settings",
+    name="BAR - Other Settings",
     type="section",
   },
+  
   {
     key    = 'MaxUnits',
     name   = 'Max units',
@@ -43,7 +44,7 @@ local options =
     max    = 10000, --- engine caps at lower limit if more than 3 team are ingame
     step   = 1,  -- quantization is aligned to the def value
                     -- (step <= 0) means that there is no quantization
-    section= "ba_others",
+    section= "bar_others",
 
   },
   {
@@ -52,7 +53,7 @@ local options =
     desc    = "Switch Pathfinding System",
     type    = "list",
     def     = "normal",
-    section = "ba_others",
+    section = "bar_others",
 	items={
 	  {key="normal", name="Normal", desc="Spring vanilla pathfinder"},
 	  {key="qtpfs", name="QuadTree", desc="Experimental quadtree based pathfinder"},
@@ -64,7 +65,7 @@ local options =
 	desc   = "Gives you LOS of enemy wreckage",
 	type   = "bool",
 	def    = true,
-	section= "ba_others",
+	section= "bar_others",
   },
   {
 	key    = "mo_enemycomcount",
@@ -72,7 +73,7 @@ local options =
 	desc   = "Tells each team the total number of commanders alive in enemy teams",
 	type   = "bool",
 	def    = false,
-	section= "ba_others",
+	section= "bar_others",
   },
   {
     key    = 'FixedAllies',
@@ -80,7 +81,7 @@ local options =
     desc   = 'Disables the possibility of players to dynamically change alliances ingame',
     type   = 'bool',
     def    = false,
-    section= "ba_others",
+    section= "bar_others",
 
   },
 
@@ -123,7 +124,7 @@ local options =
     desc   = 'Prevents the map shape from being changed by weapons',
     type   = 'bool',
     def    = false,
-    section= "ba_others",
+    section= "bar_others",
 
   },
 --[[

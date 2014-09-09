@@ -13,15 +13,13 @@ function gadget:GetInfo()
   }
 end
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
 local enabled = tonumber(Spring.GetModOptions().mo_chickengame) or 0
-
 if (enabled == 0) then 
   return false
 end
 
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 if (gadgetHandler:IsSyncedCode()) then
 
@@ -33,7 +31,7 @@ local CreateUnit = Spring.CreateUnit
 local GiveOrderToUnit = Spring.GiveOrderToUnit
 local BOSS_WHITE1 = UnitDefNames["chickenh2"].id
 local BOSS_WHITE2 = UnitDefNames["chickenh3"].id
-local SMALLUNIT = UnitDefNames["corllt"].id
+local SMALLUNIT = UnitDefNames["cormaw"].id
 local progList = {}
 
 local function getChickenSpawnLoc(unitID)
@@ -52,7 +50,7 @@ local function getChickenSpawnLoc(unitID)
     s = s + 4
     tries = tries + 1
   until ((TestBuildOrder(SMALLUNIT, x, by, z, 1) == 2) and (not GetGroundBlocked(x, z))) 
-           or (tries > 25)
+           or (tries > 10)
    
   return x, by, z
    
@@ -90,8 +88,10 @@ end
 function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
   if (unitDefID == BOSS_WHITE1) then
     progList[unitID] = nil
+    Spring.SetUnitBlocking(unitID, false, false)
     spawnChicken(2, unitID, "chickenh3", unitTeam)
   elseif (unitDefID == BOSS_WHITE2) then
+    Spring.SetUnitBlocking(unitID, false, false)
     spawnChicken(2, unitID, "chickenh4", unitTeam)
   end
 end

@@ -10,27 +10,27 @@
 return {
   {
     name = 'Chicken: Very Easy',
-    desc = 'Trivial Games'
+    desc = 'Cluck'
   },
   {
     name = 'Chicken: Easy',
-    desc = 'Normal Games'
+    desc = 'Cluck-cluck'
   },
   {
     name = 'Chicken: Normal',
-    desc = 'Average Games'
+    desc = 'Squawk'
   },
   {
     name = 'Chicken: Hard',
-    desc = 'Large Games'
+    desc = 'Peck, cluck-cluck & squawk'
   },
   {
     name = 'Chicken: Very Hard',
-    desc = 'Hardcore Games'
+    desc = 'Running around with its head cut off'
   },
   {
     name = 'Chicken: Epic!',
-    desc = 'Extreme Survival Games'
+    desc = 'COCKADOODLEDOOOOOOOO'
   },
   {
     name = 'Chicken: Custom',
@@ -38,7 +38,7 @@ return {
   },
   {
     name = 'Chicken: Survival',
-    desc = 'Infinite Games'
+    desc = 'Never-ending chickens'
   },
 }
 

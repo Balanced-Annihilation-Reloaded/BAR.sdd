@@ -15,7 +15,7 @@ return {
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
 		damagemodifier = 0.30000001192093,
-		description = "Armed Advanced Metal Extractor"
+		description = "Armed Advanced Metal Extractor",
 		energyuse = 12,
 		explodeas = "SMALL_BUILDINGEX",
 		extractsmetal = 0.0040000001899898,

@@ -13,7 +13,7 @@ return {
 		buildpic = "CMGEO.DDS",
 		buildtime = 32078,
 		category = "ALL NOTSUB NOWEAPON NOTAIR NOTHOVER SURFACE",
-		description = "Hazardous Energy Source (1250E)"
+		description = "Hazardous Energy Source (1250E)",
 		energymake = 1250,
 		energystorage = 12000,
 		explodeas = "NUCLEAR_MISSILE",

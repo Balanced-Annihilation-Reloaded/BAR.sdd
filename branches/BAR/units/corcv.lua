@@ -11,7 +11,7 @@ return {
 		canmove = true,
 		category = "ALL TANK MOBILE NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Level 1 Construction Vehicle"
+		description = "Level 1 Construction Vehicle",
 		energymake = 10,
 		energystorage = 50,
 		energyuse = 10,

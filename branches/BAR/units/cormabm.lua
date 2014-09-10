@@ -11,7 +11,7 @@ return {
 		category = "ALL TANK MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
 		damagemodifier = 0.5,
-		description = "Mobile Anti-Nuke System"
+		description = "Mobile Anti-Nuke System",
 		energymake = 200,
 		energystorage = 1000,
 		explodeas = "LARGE_BUILDINGEX",

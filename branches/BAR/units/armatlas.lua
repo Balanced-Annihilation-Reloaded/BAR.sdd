@@ -11,7 +11,7 @@ return {
 		category = "ALL MOBILE WEAPON NOTLAND NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 70,
-		description = "Light Air Transport"
+		description = "Light Air Transport",
 		energymake = 0.60000002384186,
 		energyuse = 0.60000002384186,
 		explodeas = "SMALL_UNITEX",

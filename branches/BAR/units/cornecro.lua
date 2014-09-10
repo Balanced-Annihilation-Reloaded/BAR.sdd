@@ -13,7 +13,7 @@ return {
 		canresurrect = true,
 		category = "KBOT MOBILE ALL NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Stealthy Resurrection Kbot"
+		description = "Stealthy Resurrection Kbot",
 		energymake = 1.75,
 		energyuse = 1.75,
 		explodeas = "BIG_UNITEX",

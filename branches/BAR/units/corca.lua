@@ -13,7 +13,7 @@ return {
 		category = "ALL MOBILE NOTLAND NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOWEAPON NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 75,
-		description = "Level 1 Construction Aircraft"
+		description = "Level 1 Construction Aircraft",
 		energymake = 5,
 		energystorage = 25,
 		energyuse = 5,

@@ -10,7 +10,7 @@ return {
 		buildtime = 5312,
 		category = "ALL NOTSUB CONSTR NOWEAPON NOTAIR NOTHOVER SURFACE",
 		cantbetransported = false,
-		description = "Assists Construction and Repairs in Large Radius"
+		description = "Assists Construction and Repairs in Large Radius",
 		energyuse = 30,
 		explodeas = "NANOBOOM2",
 		footprintx = 3,

@@ -6,7 +6,7 @@ return {
     buildcostmetal=3672,
     buildtime=59060,
     category="ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR",
-		description = "Floating Plasma Deflector"
+		description = "Floating Plasma Deflector",
     footprintx=4,
     footprintz=4,
     maxdamage=3500,

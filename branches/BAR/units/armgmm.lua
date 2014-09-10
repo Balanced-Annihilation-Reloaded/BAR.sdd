@@ -13,7 +13,7 @@ return {
 		buildpic = "ARMGMM.DDS",
 		buildtime = 41347,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
-		description = "Safe Geothermal Powerplant (750E)"
+		description = "Safe Geothermal Powerplant (750E)",
 		energymake = 750,
 		energystorage = 1500,
 		explodeas = "BIG_BUILDINGEX",

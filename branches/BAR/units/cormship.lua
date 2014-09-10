@@ -14,7 +14,7 @@ return {
 		collisionvolumetest = 1,
 		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
-		description = "Cruise Missile Ship"
+		description = "Cruise Missile Ship",
 		energymake = 0.89999997615814,
 		energyuse = 0.89999997615814,
 		explodeas = "BIG_UNITEX",

@@ -632,18 +632,7 @@ function PlayerPanel(pID)
 end
 
 function DeadPanel(pID)
-    local panel = Chili.LayoutPanel:New{
-        width       = '100%',
-        minHeight   = 17,
-        resizeItems = false,
-        autosize    = true,
-        padding     = {0,0,0,0},
-        itemPadding = {0,0,0,0},
-        itemMargin  = {0,0,0,0},
-        children    = {},
-    }
-    
-    local button = Chili.Button:New{
+    local panel = Chili.Button:New{
         name        = "button",
         parent      = panel,
         width       = '100%',
@@ -661,7 +650,7 @@ function DeadPanel(pID)
     }
 
     local name = Chili.TextBox:New{
-        parent      = button,
+        parent      = panel,
         name        = "name",
         text        = players[pID].deadname,
         width       = width.name,
@@ -683,18 +672,7 @@ end
 
 
 function SpecPanel(pID)
-    local panel = Chili.LayoutPanel:New{
-        width       = '100%',
-        minHeight   = 12,
-        resizeItems = false,
-        autosize    = true,
-        padding     = {0,0,0,0},
-        itemPadding = {0,0,0,0},
-        itemMargin  = {0,0,0,0},
-        children    = {},
-    }
-
-    local button = Chili.Button:New{
+    local panel = Chili.Button:New{
         name        = "button",
         parent      = panel,
         width       = width.name,
@@ -713,7 +691,7 @@ function SpecPanel(pID)
     }
     
     local name = Chili.TextBox:New{
-        parent      = button,
+        parent      = panel,
         name        = "name",
         text        = players[pID].name,
         width       = '100%',
@@ -1045,7 +1023,11 @@ function UpdatePlayer(pID)
         players[pID].deadPanel:GetChildByName('name'):SetText(players[pID].deadname)
         players[pID].deadPanel.tID = players[pID].tID
         players[pID].deadPanel.name = players[pID].deadname
-        players[pID].specPanel:GetChildByName('button'):GetChildByName('name'):SetText(players[pID].name)        
+        players[pID].specPanel:GetChildByName('name'):SetText(players[pID].name)        
+
+        if players[pID].playerPanel:GetChildByName('faction') then
+            players[pID].playerPanel:GetChildByName('faction').color = players[pID].colour
+        end
     end
     
     -- check if a player leaves/resigns/appears

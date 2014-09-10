@@ -13,7 +13,7 @@ return {
 		collisionvolumescales = "137 58 145",
 		collisionvolumetest = 1,
 		collisionvolumetype = "CylZ",
-		corpse = "ARMSHLT_DEAD",
+		corpse = "ARMSHLTX_DEAD",
 		description = "Produces Level 3 Units",
 		energystorage = 1400,
 		explodeas = "LARGE_BUILDINGEX",
@@ -45,7 +45,7 @@ return {
 			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
-			armshlt_dead = {
+			armshltx_dead = {
 				blocking = true,
 				category = "corpses",
 				collisionvolumeoffsets = "0 -14 0",
@@ -55,19 +55,19 @@ return {
 				damage = 8640,
 				description = "Experimental Gantry Wreckage",
 				energy = 0,
-				featuredead = "ARMSHLT_HEAP",
+				featuredead = "ARMSHLTX_HEAP",
 				featurereclamate = "SMUDGE01",
 				footprintx = 9,
 				footprintz = 9,
 				height = 20,
 				hitdensity = 100,
 				metal = 4807,
-				object = "ARMSHLT_DEAD",
+				object = "ARMSHLTX_DEAD",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},
-			armshlt_heap = {
+			armshltx_heap = {
 				blocking = false,
 				category = "heaps",
 				damage = 4320,

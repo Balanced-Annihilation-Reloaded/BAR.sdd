@@ -21,7 +21,6 @@ local imageDir = 'luaui/images/buildIcons/'
 -- Not sure if these are wanted? plus they need icons
 --  Will probably ignore redundant units here (e.g. floating AA, umex, etc. which are interchangeable)
 local ignoreCMDs = {
-	settarget 	 = '',
 	canceltarget = '',
 	selfd 	     = '',
 	loadonto 	   = '',
@@ -43,9 +42,10 @@ local ignoreCMDs = {
 local orderColors = {
 	wait        = {0.8, 0.8, 0.8 ,1.0},
 	attack      = {1.0, 0.0, 0.0, 1.0},
+    settarget   = {1.0, 0.5, 0.0, 0.7},
 	fight       = {1.0, 0.3, 0.0, 1.0},
 	areaattack  = {0.8, 0.0, 0.0, 1.0},
-	manualfire  = {0.8, 0.4, 0.0, 1.0},
+	manualfire  = {0.8, 0.2, 0.0, 1.0},
 	move        = {0.2, 1.0, 0.0, 1.0},
 	reclaim     = {0.2, 0.6, 0.0, 1.0},
 	patrol      = {0.4, 0.4, 1.0, 1.0},
@@ -391,7 +391,7 @@ local function parseCmds()
 	for i = 1, #cmdList do
 		local cmd = cmdList[i]
 		if cmd.name ~= '' and not (ignoreCMDs[cmd.name] or ignoreCMDs[cmd.action]) then
-			-- Is it a unit and if so what kind?
+			-- Is it a unit and if so what kind?            
             local menuCat
 			if UnitDefNames[cmd.name] then
 				local ud = UnitDefNames[cmd.name]

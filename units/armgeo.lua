@@ -18,7 +18,7 @@ return {
 		collisionvolumetest = 1,
 		collisionvolumetype = "Box",
 		corpse = "dead",
-		description = "Produces Energy (300E)"
+		description = "Produces Energy (300E)",
 		energymake = 300,
 		energystorage = 1000,
 		explodeas = "ESTOR_BUILDING",

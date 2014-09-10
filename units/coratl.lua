@@ -11,7 +11,7 @@ return {
 		buildtime = 7475,
 		category = "ALL NOTLAND WEAPON NOTSHIP NOTAIR NOTHOVER NOTSUB SURFACE",
 		corpse = "DEAD",
-		description = "Advanced Torpedo Launcher"
+		description = "Advanced Torpedo Launcher",
 		energymake = 0.10000000149012,
 		energyuse = 0.10000000149012,
 		explodeas = "BIG_UNITEX",

@@ -15,7 +15,7 @@ return {
 		collisionVolumeTest	    = 1,
 		collisionVolumeType	    = [[CylZ]],
 		corpse = "DEAD",
-		description = "Level 2 Construction Submarine"
+		description = "Level 2 Construction Submarine",
 		energymake = 30,
 		energystorage = 150,
 		energyuse = 30,

@@ -11,7 +11,7 @@ return {
 		category = "ALL NOTSUB VTOL NOWEAPON NOTHOVER",
 		collide = false,
 		cruisealt = 150,
-		description = "Heavy Transport"
+		description = "Heavy Transport",
 		energymake = 3,
 		energyuse = 16,
 		explodeas = "SMALL_UNITEX",

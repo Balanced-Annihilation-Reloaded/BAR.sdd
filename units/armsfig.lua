@@ -13,7 +13,7 @@ return {
 		category = "ALL NOTLAND MOBILE WEAPON NOTSUB ANTIFLAME ANTIEMG ANTILASER VTOL NOTSHIP NOTHOVER",
 		collide = false,
 		cruisealt = 80,
-		description = "Seaplane Fighter"
+		description = "Seaplane Fighter",
 		explodeas = "BIG_UNITEX",
 		footprintx = 2,
 		footprintz = 2,

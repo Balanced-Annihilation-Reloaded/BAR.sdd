@@ -13,7 +13,7 @@ return {
 		buildtime = 181243,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Nuclear Missile Silo"
+		description = "Nuclear Missile Silo",
 		explodeas = "ATOMIC_BLAST",
 		footprintx = 7,
 		footprintz = 7,

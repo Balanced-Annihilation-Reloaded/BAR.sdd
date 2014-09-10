@@ -9,7 +9,7 @@ return {
 		canattack = false,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DRAGONSTEETH",
-		description = "Perimeter Barrier"
+		description = "Perimeter Barrier",
 		footprintx = 2,
 		footprintz = 2,
 		idleautoheal = 5,

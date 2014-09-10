@@ -14,7 +14,7 @@ return {
 		category = "ALL NOTSUB NOWEAPON SPECIAL NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
 		damagemodifier = 0.94999998807907,
-		description = "Enhanced Hazardous Energy Output (3000E)"
+		description = "Enhanced Hazardous Energy Output (3000E)",
 		energymake = 3000,
 		energystorage = 9000,
 		explodeas = "NUCLEAR_MISSILE",

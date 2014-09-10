@@ -20,7 +20,7 @@ return {
 		collisionvolumetest = 1,
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
-		description = "Automatic Aircraft Repair Pad"
+		description = "Automatic Aircraft Repair Pad",
 		explodeas = "LARGE_BUILDINGEX",
 		footprintx = 9,
 		footprintz = 9,

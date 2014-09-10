@@ -9,7 +9,7 @@ return {
 		buildtime = 1000,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "FLOATINGTEETH_CORE",
-		description = "Perimeter Barrier"
+		description = "Perimeter Barrier",
 		footprintx = 2,
 		footprintz = 2,
 		idleautoheal = 5,

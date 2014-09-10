@@ -9,7 +9,7 @@ return {
 		buildtime = 1065,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "FORTIFICATION",
-		description = "Hardened Perimeter Barrier"
+		description = "Hardened Perimeter Barrier",
 		footprintx = 2,
 		footprintz = 2,
 		idleautoheal = 5,

@@ -28,7 +28,6 @@ local ignoreCMDs = {
 	deathwait    = '',
 	squadwait	   = '',
 	gatherwait	 = '',
-	restore      = '',
 	--coruwms      = '',
 	--coruwes      = '',
 	--coruwadves   = '',
@@ -57,6 +56,8 @@ local orderColors = {
 	upgrademex  = {0.6, 0.6, 0.6, 1.0},
 	capture     = {0.6, 0.0, 0.8, 1.0},
 	resurrect   = {0.0, 0.0, 1.0, 1.0},
+    restore     = {0.5, 1.0, 0.2, 1.0},
+    stop        = {0.4, 0.0, 0.0, 1.0},
 }
 
 local white = {1,1,1,1}
@@ -410,6 +411,12 @@ local function parseCmds()
 			end
 		end
 	end
+    
+    -- Add stop command, if needed
+    if orderMenu.active then
+        local stop_cmd = {name="Stop", action='stop', id=CMD.STOP, tooltip="Clears the command queue"}
+        addOrder(stop_cmd)
+    end
 end
 
 local function parseUnitDef(uDID)

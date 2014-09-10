@@ -72,10 +72,10 @@ local units = {} -- data holds all unitID data
 
 local tooltipText = 'Sets a top priority attack target, to be used if within range (not removed by move commands)'
 
-local unitSetTargetRectangleCmdDesc = {
+local unitSetTargetRectangleCmdDesc = { --currently not used
 	id		= CMD_UNIT_SET_TARGET_RECTANGLE,
 	type	= CMDTYPE.ICON_UNIT_OR_RECTANGLE,
-	name	= 'Target',
+	name	= 'Set Target',
 	action	= 'settargetrectangle',
 	cursor	= 'settarget',
 	tooltip	= tooltipText,
@@ -85,7 +85,7 @@ local unitSetTargetRectangleCmdDesc = {
 local unitSetTargetCircleCmdDesc = {
 	id		= CMD_UNIT_SET_TARGET,
 	type	= CMDTYPE.ICON_UNIT_OR_AREA,
-	name	= '\n  Set\nTarget\n', --extra spaces center the 'Set' text
+	name	= 'Set Target', --extra spaces center the 'Set' text
 	action	= 'settarget',
 	cursor	= 'settarget',
 	tooltip	= tooltipText,

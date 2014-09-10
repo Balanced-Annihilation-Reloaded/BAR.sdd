@@ -18,7 +18,7 @@ return {
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
 		decoyfor = "armfus",
-		description = "Produces Energy / Storage",
+		description = "Decoy Fusion Reactor"
 		explodeas = "MEDIUM_BUILDINGEX",
 		footprintx = 6,
 		footprintz = 4,

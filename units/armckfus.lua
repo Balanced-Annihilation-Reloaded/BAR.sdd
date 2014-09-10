@@ -14,7 +14,7 @@ return {
 		collisionvolumetest = 1,
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
-		description = "Produces Energy / Storage",
+		description = ""Cloakable, Produces Energy (1000E) / Storage""
 		energymake = 1000,
 		energystorage = 2500,
 		explodeas = "ATOMIC_BLAST",

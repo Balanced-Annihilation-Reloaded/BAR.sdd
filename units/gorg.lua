@@ -13,7 +13,7 @@ return {
 		collisionvolumetest = 1,
 		collisionvolumetype = "Ell",
 		corpse = "DEAD",
-		description = "(barely) Mobile Heavy Turret",
+		description = "Barely Mobile Heavy Turret"
 		energymake = 35,
 		energystorage = 350,
 		explodeas = "CRAWL_BLASTSML",

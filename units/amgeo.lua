@@ -17,7 +17,7 @@ return {
 		collisionVolumeOffsets = [[-2 -2 6]],
 		collisionVolumeTest = 1,
 		collisionVolumeType = [[CylY]],
-		description = "Hazardous Energy Source",
+		description = "Hazardous Energy Source (1250E)"
 		energymake = 1250,
 		energystorage = 12000,
 		explodeas = "NUCLEAR_MISSILE",

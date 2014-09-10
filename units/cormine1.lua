@@ -31,7 +31,7 @@ return {
 		maxslope = 40,
 		maxwaterdepth = 0,
 		mincloakdistance = 8,
-		name = 11,
+		name = "11",
 		nochasecategory = "VTOL",
 		objectname = "CORMINE1.s3o",
 		seismicsignature = 0,

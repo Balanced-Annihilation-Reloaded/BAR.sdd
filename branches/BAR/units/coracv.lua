@@ -15,7 +15,7 @@ return {
 		collisionvolumetest = 1,
 		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
-		description = "Tech Level 2",
+		description = "Level 2 Construction Vehicle"
 		energymake = 20,
 		energystorage = 100,
 		energyuse = 20,

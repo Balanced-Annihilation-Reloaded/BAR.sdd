@@ -13,7 +13,7 @@ return {
 		buildtime = 58927,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Tactical Nuke Launcher",
+		description = "Tactical Nuclear Missile Launcher"
 		explodeas = "ATOMIC_BLAST",
 		footprintx = 4,
 		footprintz = 4,

@@ -14,7 +14,7 @@ return {
 		buildtime = 59640,
 		category = "ALL NOTLAND NOTSUB WEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "dead",
-		description = "Geothermal Plasma Battery",
+		description = "Geothermal Plasma Battery (450E)"
 		energymake = 450,
 		energystorage = 500,
 		explodeas = "LARGE_BUILDINGEX",

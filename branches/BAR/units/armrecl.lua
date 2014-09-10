@@ -17,7 +17,7 @@ return {
 		collisionVolumeOffsets	= [[0 -5 0]],
 		collisionVolumeTest	    = 1,
 		collisionVolumeType	    = [[box]],
-		description = "Ressurection Sub",
+		description = "Resurrection Submarine"
 		explodeas = "SMALL_UNITEX",
 		footprintx = 2,
 		footprintz = 2,

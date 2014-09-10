@@ -14,7 +14,7 @@ return {
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
 		damagemodifier = 0.5,
-		description = "Produces Energy",
+		description = "Produces Energy (20E)"
 		energystorage = 50,
 		energyuse = -20,
 		explodeas = "SMALL_BUILDINGEX",

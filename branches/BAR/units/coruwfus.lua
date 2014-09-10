@@ -14,7 +14,7 @@ return {
 		buildtime = 105004,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Produces Energy / Storage",
+		description = "Produces Energy (1220E)"
 		energymake = 1220,
 		energystorage = 2500,
 		explodeas = "ATOMIC_BLAST",

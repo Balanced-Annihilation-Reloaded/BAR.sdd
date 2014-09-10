@@ -15,7 +15,7 @@ return {
 		collisionVolumeTest	    = 1,
 		collisionVolumeType	    = [[box]],
 		corpse = "DEAD",
-		description = "Tech Level 2",
+		description = "Level 2 Construction Submarine"
 		energymake = 30,
 		energystorage = 150,
 		energyuse = 30,

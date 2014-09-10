@@ -17,7 +17,7 @@ return {
 		collisionvolumetest = 1,
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",
-		description = "Anti-Swarm Double LLT",
+		description = "Anti-Swarm Double Light Laser Tower"
 		energystorage = 60,
 		explodeas = "MEDIUM_BUILDINGEX",
 		footprintx = 2,

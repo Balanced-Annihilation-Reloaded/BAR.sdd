@@ -18,7 +18,7 @@ return {
 		cloakcost = 50,
 		cloakcostmoving = 100,
 		corpse = "DEAD",
-		description = "Radar-Invisible Spy Kbot",
+		description = ""Stealthy, Cloakable Spy Kbot""
 		energymake = 8,
 		energyuse = 8,
 		footprintx = 2,

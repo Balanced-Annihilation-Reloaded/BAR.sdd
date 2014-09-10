@@ -12,7 +12,7 @@ return {
 		canmove = true,
 		category = "ALL HOVER MOBILE NOTSUB NOWEAPON NOTSHIP NOTAIR SURFACE",
 		corpse = "DEAD",
-		description = "Tech Level 1",
+		description = "Level 1 Construction Hovercraft"
 		energymake = 11,
 		energystorage = 75,
 		energyuse = 11,

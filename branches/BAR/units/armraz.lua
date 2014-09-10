@@ -13,7 +13,7 @@ return {
 		collisionvolumetest = 1,
 		collisionvolumetype = "box",
 		corpse = "DEAD",
-		description = "Battle Mech",
+		description = "Assault Mech"
 		explodeas = "MECH_BLASTSML",
 		footprintx = 4,
 		footprintz = 4,

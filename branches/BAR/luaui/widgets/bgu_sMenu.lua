@@ -18,10 +18,9 @@ end
 local catNames = {'ECONOMY', 'BATTLE', 'FACTORY'} -- order matters
 local imageDir = 'luaui/images/buildIcons/'
 
--- Not sure if these are wanted? plus they need icons
 --  Will probably ignore redundant units here (e.g. floating AA, umex, etc. which are interchangeable)
 local ignoreCMDs = {
-	canceltarget = '',
+	canceltarget = '', --TODO
 	selfd 	     = '',
 	loadonto 	   = '',
 	timewait 	   = '',
@@ -60,12 +59,31 @@ local orderColors = {
     stop        = {0.4, 0.0, 0.0, 1.0},
 }
 
+local topOrders = {
+    [1] = "move",
+    [2] = "fight",
+    [3] = "attack",
+    [4] = "settarget",
+    [5] = "stop",
+    [6] = "wait",
+    [7] = "patrol",
+    [8] = "repair",
+    [9] = "guard",
+}
+
+local topStates = {
+    [1] = "movestate",
+    [2] = "firestate",
+    [3] = "repeat",
+}
+
 local white = {1,1,1,1}
 local black = {0,0,0,1}
 local green = {0,1,0,1}
 local yellow = {0.5,0.5,0,1}
 local orange = {1,0.5,0,1}
 local red = {1,0,0,1}
+local grey = {0.2,0.2,0.2,1}
 
 local paramColors = {
 	['Hold fire']    = red,
@@ -92,6 +110,27 @@ local paramColors = {
 	['UpgMex on']    = green,
 	['Low traj']     = red,
 	['High traj']    = green,
+}
+
+local Hotkey = {
+    ["attack"] = "A",
+    ["guard"] = "G",
+    ["fight"] = "F",
+    ["patrol"] = "P",
+    ["reclaim"] = "E",
+    ["loadonto"] = "L",
+    ["loadunits"] = "L",
+    ["unloadunit"] = "U",
+    ["unloadunits"] = "U",
+    ["stop"] = "S",
+    ["wait"] = "W",
+    ["repair"] = "R",
+    ["manualfire"] = "D",
+    ["cloak"] = "K",
+    ["move"] = "M",
+    ["resurrect"] = "O",
+    ["settarget"] = "Y", --set target
+    ["canceltarget"] = "J", --cancel target
 }
 ------------
 
@@ -226,7 +265,6 @@ local function scrollMenus(_,_,_,_,value)
 	return true -- Prevents zooming
 end
 
-
 ---------------------------------------------------------------
 ---------------------------------------------------------------
 
@@ -256,30 +294,9 @@ local function addBuild(cmd, category)
 	end
 end
 
-local Hotkey = {
-    [CMD.ATTACK] = "A",
-    [CMD.GUARD] = "G",
-    [CMD.FIGHT] = "F",
-    [CMD.PATROL] = "P",
-    [CMD.RECLAIM] = "E",
-    [CMD.LOAD_ONTO] = "L",
-    [CMD.LOAD_UNITS] = "L",
-    [CMD.UNLOAD_UNIT] = "U",
-    [CMD.UNLOAD_UNITS] = "U",
-    [CMD.STOP] = "S",
-    [CMD.WAIT] = "W",
-    [CMD.REPAIR] = "R",
-    [CMD.MANUALFIRE] = "D",
-    [CMD.CLOAK] = "K",
-    [CMD.MOVE] = "M",
-    [CMD.RESURRECT] = "O",
-    [34923] = "Y", --set target
-    [34924] = "J", --cancel target
-}
-
-local function HotkeyString(cmdID)
-    if Hotkey[cmdID] then
-        return " " .. "[" .. Hotkey[cmdID] .. "]"
+local function HotkeyString(action)
+    if Hotkey[action] then
+        return " " .. "[" .. Hotkey[action] .. "]"
     else
         return ""
     end
@@ -298,7 +315,22 @@ local function addState(cmd)
 		OnMouseUp = {cmdAction},
 		font      = {
 			color = paramColors[param] or white,
-			size  = 16
+			size  = 16,
+		},
+		backgroundColor = black,
+	})
+end
+
+local function addDummyState(cmd)
+	stateMenu:AddChild(Chili.Button:New{
+		caption   = cmd.action,
+		--tooltip   = cmd.tooltip, 
+		padding   = {0,0,0,0},
+		margin    = {0,0,0,0},
+		OnMouseUp = {},
+		font      = {
+			color = grey,
+			size  = 16,
 		},
 		backgroundColor = black,
 	})
@@ -308,7 +340,7 @@ local function addOrder(cmd)
 	local button = Chili.Button:New{
 		caption   = '',
 		cmdName   = cmd.name,
-		tooltip   = cmd.tooltip .. getInline(orderColors[cmd.action]) .. HotkeyString(cmd.id),
+		tooltip   = cmd.tooltip .. getInline(orderColors[cmd.action]) .. HotkeyString(cmd.action),
 		cmdId     = cmd.id,
 		cmdAName  = cmd.action,
 		padding   = {0,0,0,0},
@@ -342,6 +374,30 @@ local function addOrder(cmd)
 	orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height)
 end
 
+local function addDummyOrder(cmd)
+	local button = Chili.Button:New{
+		caption   = '',
+		--tooltip   = cmd.tooltip .. getInline(orderColors[cmd.action]) .. HotkeyString(cmd.action),
+		padding   = {0,0,0,0},
+		margin    = {0,0,0,0},
+		OnMouseUp = {},
+		Children  = {
+			Chili.Image:New{
+				parent  = button,
+				x       = 5,
+				bottom  = 5,
+				y       = 5,
+				right   = 5,
+				color   = grey,
+				file    = imageDir..'Commands/'..cmd.action..'.png',
+			}
+		}
+	}
+
+	orderMenu:AddChild(button)
+	orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height)
+end
+
 local function getMenuCat(ud)
 	if (ud.speed > 0 and ud.canMove) or ud.isFactory then
         -- factories, and the units they can build
@@ -361,6 +417,25 @@ local function getMenuCat(ud)
 
     return menuCat
 end
+
+local function AddInSequence(cmds, t, func, dummyFunc)
+    for _,k in ipairs(t) do
+        if cmds[k] then
+            -- add top cmd
+            func(cmds[k])
+            cmds[k] = nil
+        else
+            -- add dummy top cmd
+            dummy_cmd = {action=k}
+            dummyFunc(dummy_cmd)
+        end
+    end
+    
+    -- add the rest
+    for _,cmd in pairs(cmds) do
+        func(cmd)
+    end    
+end 
 
 local function SetGridDimensions()
 	for i=1,#catNames do
@@ -387,6 +462,8 @@ end
 
 local function parseCmds()
 	local cmdList = spGetActiveCmdDescs()
+    local orders = {}
+    local states = {}
     
 	-- Parses through each cmd and gives it its own button
 	for i = 1, #cmdList do
@@ -404,19 +481,25 @@ local function parseCmds()
 				grid[menuCat].active = true
 				addBuild(cmd,menuCat)
 			elseif #cmd.params > 1 then
-				addState(cmd)
+				states[cmd.action] = cmd
 			elseif cmd.id > 0 and not WG.OpenHostsList then -- hide the order menu if the open host list is showing (it shows to specs who have it enabled)
 				orderMenu.active = true
-				addOrder(cmd)
+				orders[cmd.action] = cmd
 			end
 		end
 	end
     
-    -- Add stop command, if needed
+    -- Include stop command, if needed
     if orderMenu.active then
         local stop_cmd = {name="Stop", action='stop', id=CMD.STOP, tooltip="Clears the command queue"}
-        addOrder(stop_cmd)
+        orders[stop_cmd.action] = stop_cmd
     end
+    
+    -- Add the orders/states in the wanted order, from L->R
+    if #cmdList>0 then
+        AddInSequence(orders, topOrders, addOrder, addDummyOrder)
+        AddInSequence(states, topStates, addState, addDummyState)
+    end    
 end
 
 local function parseUnitDef(uDID)

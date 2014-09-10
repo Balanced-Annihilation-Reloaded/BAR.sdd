@@ -27,11 +27,6 @@ function addon.DrawLoadScreen()
         Spring.PlaySoundStream(sounds[math.random(#sounds)], 1)
         startedSound = true
     end
-    
-	-- fade out  with progress
-	if (loadProgress > 0.7) then
-		Spring.SetSoundStreamVolume(0.7 + ((0.7 - loadProgress) * 7))
-	end
 end
 
 

@@ -377,7 +377,7 @@ local function MakeButton(unitDefID, facID, facIndex)
                 Label:New {
                     name='count',
                     autosize=false,
-                    width="100%",
+                    width="90%",
                     height="100%",
                     align="right",
                     valign="top",

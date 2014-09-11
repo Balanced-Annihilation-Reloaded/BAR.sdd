@@ -646,8 +646,8 @@ local function createButton(name, unitDef)
 				children = {
 					Chili.Label:New{
 						caption = '',
-						right   = 2,
-						y       = 2,
+						right   = 10,
+						y       = 10,
 					},
 					Chili.Image:New{
 						color  = teamColor,

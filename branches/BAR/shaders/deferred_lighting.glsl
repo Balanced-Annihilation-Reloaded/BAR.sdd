@@ -20,7 +20,7 @@ uniform mat4 viewProjectionInv;
 	float attentuate(float dist, float radius)
 	{
 		//float att = clamp ( constant-linear * dist / radius - squared * dist * dist / (radius*radius),0.0,.5);
-		float att=clamp(1-0.3*dist/radius-1*dist*dist/(radius*radius),0.0,.5);
+		float att=clamp(0.7-0.3*dist/radius-1*dist*dist/(radius*radius),0.0,1.0);
 		att*=att;
 		return att;
 	}

@@ -191,10 +191,10 @@ local function GetLightsFromUnitDefs()
 					size=WeaponDefs[weaponID]['size']
 					plighttable[WeaponDefs[weaponID]['name']]={r=0.5,g=0.5,b=0.25,radius=100*size,beam=false}
 					
-				elseif (WeaponDefs[weaponID]['type'] == 'Dgun') then
-					if verbose then Spring.Echo('Dgun',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
+				elseif (WeaponDefs[weaponID]['type'] == 'DGun') then
+					if verbose then Spring.Echo('DGun',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={r=1,g=1,b=0.5,radius=300,beam=false}
+					plighttable[WeaponDefs[weaponID]['name']]={r=2,g=2,b=1,radius=300,beam=false}
 					
 				elseif (WeaponDefs[weaponID]['type'] == 'MissileLauncher') then
 					if verbose then Spring.Echo('MissileLauncher',WeaponDefs[weaponID]['name'],'size', WeaponDefs[weaponID]['size']) end
@@ -212,7 +212,7 @@ local function GetLightsFromUnitDefs()
 				elseif (WeaponDefs[weaponID]['type'] == 'BeamLaser') then
 					if verbose then Spring.Echo('BeamLaser',WeaponDefs[weaponID]['name'],'rgbcolor', WeaponDefs[weaponID]['visuals']['colorR']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={r=WeaponDefs[weaponID]['visuals']['colorR'],g=WeaponDefs[weaponID]['visuals']['colorG'],b=WeaponDefs[weaponID]['visuals']['colorB'],radius=math.min(WeaponDefs[weaponID]['range'],600),beam=true}
+					plighttable[WeaponDefs[weaponID]['name']]={r=WeaponDefs[weaponID]['visuals']['colorR']*0.5,g=WeaponDefs[weaponID]['visuals']['colorG']*0.5,b=WeaponDefs[weaponID]['visuals']['colorB']*0.5,radius=math.min(WeaponDefs[weaponID]['range'],250),beam=true}
 				end
 			end
 		end
@@ -432,6 +432,9 @@ local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
 	
 	--f= Spring.GetGameFrame()
 	--f=f/50
+	local screenratio=vsy/vsx --so we dont overdraw and only always draw a square
+			
+	local cx,cy,cz = spGetCameraPosition()
 	for key,value in pairs(lights) do
 		
 		-- Spring.Echo('light:',key,to_string(value))
@@ -445,21 +448,18 @@ local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
 		local pz=light.pz+light.dz*0.5
 		if lighttype==0 then --point
 			lightradius=light.radius
-			inview=spIsSphereInView(light.px,light.py,light.pz,light.radius)
+			--inview=spIsSphereInView(light.px,light.py,light.pz,light.radius)
 		end
 		if lighttype==1 then 
 			lightradius=light.radius+math.sqrt(light.dx^2+light.dy^2+light.dz^2)*0.5
-			inview=spIsSphereInView(light.px+light.dx*0.5,light.py+light.dy*0.5,light.pz+light.dz*0.5,lightradius)
+			--inview=spIsSphereInView(light.px+light.dx*0.5,light.py+light.dy*0.5,light.pz+light.dz*0.5,lightradius)
 		end
-		if (inview) then
+		if true then
 			--Spring.Echo("Drawlighttype position=",light.px,light.py,light.pz)
 			local sx,sy,sz = spWorldToScreenCoords(light.px+light.dx*0.5,light.py+light.dy*0.5,light.pz+light.dz*0.5) -- returns x,y,z, where x and y are screen pixels, and z is z buffer depth.
 			--Spring.Echo('screencoords',sx,sy,sz)
 			sx = sx/vsx
 			sy = sy/vsy --since FOV is static in the Y direction, the Y ratio is the correct one
-			local screenratio=vsy/vsx --so we dont overdraw and only always draw a square
-			
-			local cx,cy,cz = spGetCameraPosition()
 			local dist_sq = (px-cx)^2 + (py-cy)^2 + (pz-cz)^2
 			local ratio= lightradius / math.sqrt(dist_sq)
 			ratio=ratio*2
@@ -524,7 +524,7 @@ function widget:DrawWorld()
 						--TODO: clip some lights based on height
 						if y > lightparams.radius then
 							local smoothheight=spGetSmoothMeshHeight(x, z)
-							if smoothheight  > y-lightparams.radius then 
+							if smoothheight + 50 > y-lightparams.radius then 
 								table.insert(pointlightprojectiles,TableConcat(lightparams,{px=x,py=y,pz=z,dx=0,dy=0,dz=0}))
 							end
 						end

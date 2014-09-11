@@ -71,6 +71,7 @@ local spGetDrawFrame         = Spring.GetDrawFrame
 local spIsSphereInView       = Spring.IsSphereInView
 local spWorldToScreenCoords  = Spring.WorldToScreenCoords
 local spTraceScreenRay       = Spring.TraceScreenRay
+local spGetSmoothMeshHeight  = Spring.GetSmoothMeshHeight
 
 local spGetProjectilesInRectangle = Spring.GetProjectilesInRectangle
 local spGetVisibleProjectiles     = Spring.GetVisibleProjectiles
@@ -521,8 +522,12 @@ function widget:DrawWorld()
 						--Spring.Echo('GetFeatureVelocity=',dx,dy,dz)
 					else --point type
 						--TODO: clip some lights based on height
-						table.insert(pointlightprojectiles,TableConcat(lightparams,{px=x,py=y,pz=z,dx=0,dy=0,dz=0}))
-						
+						if y > lightparams.radius then
+							local smoothheight=spGetSmoothMeshHeight(x, z)
+							if smoothheight  > y-lightparams.radius then 
+								table.insert(pointlightprojectiles,TableConcat(lightparams,{px=x,py=y,pz=z,dx=0,dy=0,dz=0}))
+							end
+						end
 					end
 				end
 			end
@@ -540,7 +545,7 @@ function widget:DrawWorld()
 		if #beamlightprojectiles>0 then DrawLightType(beamlightprojectiles, 1) end
 		if #pointlightprojectiles>0 then DrawLightType(pointlightprojectiles, 0) end
 		glBlending(false)
-		--if math.fmod(Spring.GetGameFrame(),120)==0 then Spring.Echo('Number of deferred lights=', #beamlightprojectiles+#pointlightprojectiles) end
+		--if math.fmod(Spring.GetDrawFrame(),120)==0 then Spring.Echo('Number of deferred lights=', #beamlightprojectiles+#pointlightprojectiles) end
 	else
 		Spring.Echo('Removing deferred rendering widget: failed to use GLSL shader')
 		widgetHandler:RemoveWidget()

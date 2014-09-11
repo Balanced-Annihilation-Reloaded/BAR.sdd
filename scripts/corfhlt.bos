@@ -18,7 +18,7 @@ RockOnWaves()
 	rockAng = <-0.1>;
 	while( TRUE )
 	{
-		while( get ABS(rockAng) < <1.31> )
+		while(( get ABS( rockAng ) )< <1.31> )
 		{
 			rockSpeed = <1.45> - get ABS(rockAng);
 			turn base to x-axis rockAng speed rockSpeed*5;
@@ -62,8 +62,8 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 HitByWeapon(anglex, anglez)
 {
-	turn base to z-axis anglez speed <105.000000>;
-	turn base to x-axis anglex speed <105.000000>;
+	turn base to z-axis <0> - anglez speed <105.000000>;
+	turn base to x-axis <0> - anglex speed <105.000000>;
 	wait-for-turn base around z-axis;
 	wait-for-turn base around x-axis;
 	turn base to z-axis <0.000000> speed <30.000000>;

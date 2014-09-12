@@ -29,7 +29,7 @@ walk()
 	turn lcalf to x-axis <-13> speed <78.000000>;
 	turn lfoot to x-axis <-23> speed <138.000000>;
 
-	turn torso to y-axis <0> speed <12.000000>;
+	turn pelvis to y-axis <0> speed <12.000000>;
 	move pelvis to y-axis [0] speed <12.000000>;
 	sleep 160;
 
@@ -44,7 +44,7 @@ walk()
 	turn lcalf to x-axis <-10> speed <18.000000>;
 	turn lfoot to x-axis <-9> speed <84.000000>;
 
-	turn torso to y-axis <4> speed <24.000000>;
+	turn pelvis to y-axis <4> speed <24.000000>;
 	move pelvis to y-axis [1] speed [6.000000];
 	sleep 160;
 
@@ -59,7 +59,7 @@ walk()
 	turn lcalf to x-axis <40> speed <300.000000>;
 	turn lfoot to x-axis <20> speed <174.000000>;
 
-	turn torso to y-axis <0> speed <24.000000>;
+	turn pelvis to y-axis <0> speed <24.000000>;
 	move pelvis to y-axis [0] speed [6.000000];
 	sleep 160;
 
@@ -74,7 +74,7 @@ walk()
 	turn lcalf to x-axis <0> speed <240.000000>;
 	turn lfoot to x-axis <0> speed <120.000000>;
 
-	turn torso to y-axis <0> speed <12.000000>;
+	turn pelvis to y-axis <0> speed <12.000000>;
 	move pelvis to y-axis [0] speed <12.000000>;
 	sleep 160;
 
@@ -89,7 +89,7 @@ walk()
 	turn lcalf to x-axis <1> speed <6.000000>;
 	turn lfoot to x-axis <-21> speed <126.000000>;
 
-	turn torso to y-axis <-4> speed <24.000000>;
+	turn pelvis to y-axis <-4> speed <24.000000>;
 	move pelvis to y-axis [1] speed [6.000000];
 	sleep 160;
 
@@ -104,7 +104,7 @@ walk()
 	turn lcalf to x-axis <-12> speed <78.000000>;
 	turn lfoot to x-axis <1> speed <132.000000>;
 
-	turn torso to y-axis <0> speed <24.000000>;
+	turn pelvis to y-axis <0> speed <24.000000>;
 	move pelvis to y-axis [0] speed [6.000000];
 	sleep 160;
 
@@ -127,7 +127,7 @@ stopwalk()
 		turn lfoot to x-axis <0> speed <120.000000>;
 
 
-		turn torso to y-axis <0> speed <48.000000>;
+		turn pelvis to y-axis <0> speed <48.000000>;
 		move pelvis to y-axis [0] speed <48.000000>;
 		wait-for-turn torso around y-axis;
 		sleep 160;
@@ -183,8 +183,8 @@ StartMoving()
 	if( !bAiming )
 	{
 		//Static_Var_8 = 0;
-		turn torso to y-axis <0.000000> speed <60.000000>;
 		turn pelvis to y-axis <0.000000> speed <60.000000>;
+		move pelvis to y-axis [0.000000] speed [6.000000];
 	}
 	while( TRUE )
 	{

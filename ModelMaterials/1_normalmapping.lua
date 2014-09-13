@@ -3,32 +3,20 @@
 --------------------------------------------------------------------------------
 local GetGameFrame=Spring.GetGameFrame
 local GetUnitHealth=Spring.GetUnitHealth
-local modulo=math.fmod
 local glUniform=gl.Uniform
 local sine =math.sin
 local maximum=math.max
-local GetUnitTeam = Spring.GetUnitTeam
 
 
-local GADGET_DIR = "LuaRules/Configs/"
 
 local function DrawUnit(unitID, material,drawMode)
 	--if unitID%100==0 then  Spring.Echo('drawmode',drawMode) end
 	if (drawMode ==1)then -- we can skip setting the uniforms as they only affect fragment color, not fragment alpha or vertex positions, so they dont have an effect on shadows, and drawmode 2 is shadows, 1 is normal mode.
-	  --Spring.Echo('drawing',UnitDefs[Spring.GetUnitDefID(unitID)].name,GetGameFrame())
-	local  health,maxhealth=GetUnitHealth(unitID)
-	health= 2*maximum(0, (-2*health)/(maxhealth)+1) --inverse of health, 0 if health is 100%-50%, goes to 1 by 0 health
-	  glUniform(material.etcLoc, 2* maximum(0,sine((unitID%10)+GetGameFrame()/((unitID%7)+6))), health,0 )
+		--Spring.Echo('drawing',UnitDefs[Spring.GetUnitDefID(unitID)].name,GetGameFrame())
+		local  health,maxhealth=GetUnitHealth(unitID)
+		health= 2*maximum(0, (-2*health)/(maxhealth)+1) --inverse of health, 0 if health is 100%-50%, goes to 1 by 0 health
+		glUniform(material.etcLoc, 2* maximum(0,sine((unitID%10)+GetGameFrame()/((unitID%7)+6))), health,0 )
 	  
-	 -- glUniform(material.healthLoc, 2*maximum(0, (-2*health)/(maxhealth)+1) )--inverse of health, 0 if health is 100%-50%, goes to 1 by 0 health
-	 -- local trimC=trimColors[GetUnitTeam(unitID) ]
-	 
-	 -- Spring.Echo('trimcomgwwtf',to_string(trimColors[teamID]))
-	 -- if (trimC) then
-		--	glUniform(material.trimColor,trimC[1],trimC[2],trimC[3],trimC[4])
-	 -- else
-		--	glUniform(material.trimColor,1,1,1,0)
-	--  end
 	end
 
   --// engine should still draw it (we just set the uniforms for the shader)
@@ -50,10 +38,12 @@ local materials = {
          "#define deferred_mode 1",
        },
 
-       shader    = include(GADGET_DIR .. "UnitMaterials/Shaders/default.lua"),
-       deferred  = include(GADGET_DIR .. "UnitMaterials/Shaders/default.lua"),
+       shader    = include("ModelMaterials/Shaders/default.lua"),
+       deferred  = include("ModelMaterials/Shaders/default.lua"),
        usecamera = false,
        culling   = GL.BACK,
+		predl  = nil,
+		postdl = nil,
        texunits  = {
          [0] = '%%UNITDEFID:0',
          [1] = '%%UNITDEFID:1',
@@ -116,7 +106,7 @@ for i=1,#UnitDefs do
 
   if ((udef.customParams.arm_tank == nil ) and udef.customParams.normaltex and VFS.FileExists(udef.customParams.normaltex)) then
     unitMaterials[udef.name] = {"normalMappedS3O", NORMALTEX = udef.customParams.normaltex}
-	--Spring.Echo('normalmapped',udef.name)
+	Spring.Echo('normalmapped',udef.name)
   end --elseif
 end --for
 

@@ -22,6 +22,8 @@ function gadget:GetInfo()
   }
 end
 
+local engineIsMin97 = (Script.IsEngineMinVersion and Script.IsEngineMinVersion(96,0,1))
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- Synced
@@ -31,22 +33,13 @@ end
 
 if (gadgetHandler:IsSyncedCode()) then
 
-function gadget:RecvLuaMsg(msg, id)
-    if (msg:find("trimColor",1,true)) then
-		--Spring.Echo('mgs here', msg, id)
-		SendToUnsynced("trimcolor_msg", msg,id)
-    end
- end
+if (not engineIsMin97) then
   function gadget:UnitFinished(unitID,unitDefID,teamID)
     SendToUnsynced("unitshaders_finished", unitID, unitDefID,teamID)
   end
 
   function gadget:UnitDestroyed(unitID,unitDefID,teamID)
     SendToUnsynced("unitshaders_destroyed", unitID, unitDefID,teamID)
-  end
-
-  function gadget:UnitReverseBuild(unitID,unitDefID,teamID)
-    SendToUnsynced("unitshaders_reverse", unitID, unitDefID,teamID)
   end
 
   function gadget:UnitGiven(unitID,unitDefID,teamID)
@@ -61,25 +54,6 @@ function gadget:RecvLuaMsg(msg, id)
     SendToUnsynced("unitshaders_decloak", unitID, unitDefID,teamID)
   end
 
-  --// block first try, so we have enough time to disable the lua UnitRendering
-  --// else the model would be invisible for 1 gameframe
-  local blockFirst = {}
-  -- function gadget:AllowUnitBuildStep(builderID, builderTeam, unitID, unitDefID, part)
-    -- if (part < 0) then
-      -- local inbuild = not select(3,Spring.GetUnitIsStunned(unitID))
-      -- if (not inbuild) then
-        -- gadget:UnitReverseBuild(unitID,unitDefID,Spring.GetUnitTeam(unitID))
-        -- if (not blockFirst[unitID]) then
-          -- blockFirst[unitID] = true
-          -- return false
-        -- end
-      -- end
-    -- else
-      -- blockFirst[unitID] = nil
-    -- end
-    -- return true
-  -- end
-
   function gadget:GameFrame()
     for i,uid in ipairs(Spring.GetAllUnits()) do
       if not select(3,Spring.GetUnitIsStunned(uid)) then --// inbuild?
@@ -88,6 +62,8 @@ function gadget:RecvLuaMsg(msg, id)
     end
     gadgetHandler:RemoveCallIn('GameFrame')
   end
+end
+
 
   return
 end
@@ -98,11 +74,15 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-VFS.Include("LuaRules/UnitRendering.lua")
-
 if (not gl.CreateShader) then
   return false
 end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+VFS.Include("luarules/utilities/unitrendering.lua", nil, VFS.BASE)
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -114,7 +94,7 @@ local drawUnitList = {}
 local unitMaterialInfos,bufMaterials = {},{}
 local materialDefs = {}
 local loadedTextures = {}
-trimColors={}
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -179,8 +159,6 @@ end
 
 local function CompileMaterialShaders()
   for _,mat_src in pairs(materialDefs) do
-    -- do not let engine compile shaders for us
-    -- we do this ourselves and supply the ID's
     if (mat_src.shaderSource) then
       local GLSLshader = CompileShader(mat_src.shaderSource, mat_src.shaderDefinitions, mat_src.shaderPlugins)
 
@@ -188,7 +166,6 @@ local function CompileMaterialShaders()
         if (mat_src.shader) then
           gl.DeleteShader(mat_src.shader)
         end
-
         mat_src.shader          = GLSLshader
         mat_src.cameraLoc       = gl.GetUniformLocation(GLSLshader,"camera")
         mat_src.cameraInvLoc    = gl.GetUniformLocation(GLSLshader,"cameraInv")
@@ -197,12 +174,10 @@ local function CompileMaterialShaders()
         mat_src.shadowParamsLoc = gl.GetUniformLocation(GLSLshader,"shadowParams")
         mat_src.sunLoc          = gl.GetUniformLocation(GLSLshader,"sunPos")
         mat_src.etcLoc        = gl.GetUniformLocation(GLSLshader,"etcLoc")
-        mat_src.speedLoc        = gl.GetUniformLocation(GLSLshader,"speed")
-        mat_src.trimColor       = gl.GetUniformLocation(GLSLshader,"trimColor")
-      end
-    end
-
-    if (mat_src.deferredSource) then
+		end
+	end
+	
+	if (mat_src.deferredSource) then
       local GLSLshader = CompileShader(mat_src.deferredSource, mat_src.deferredDefinitions, mat_src.deferredPlugins)
 
       if (GLSLshader) then
@@ -218,13 +193,10 @@ local function CompileMaterialShaders()
         mat_src.shadowParamsLoc = gl.GetUniformLocation(GLSLshader,"shadowParams")
         mat_src.sunLoc          = gl.GetUniformLocation(GLSLshader,"sunPos")
         mat_src.etcLoc        = gl.GetUniformLocation(GLSLshader,"etcLoc")
-        mat_src.speedLoc        = gl.GetUniformLocation(GLSLshader,"speed")
-        mat_src.trimColor       = gl.GetUniformLocation(GLSLshader,"trimColor")
       end
     end
   end
 end
-
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -270,19 +242,19 @@ function GetUnitMaterial(unitDefID)
   end
 
   local luaMat = Spring.UnitRendering.GetMaterial("opaque",{
-    shader          = mat.shader,
-    deferred        = mat.deferred,
-    cameraposloc    = mat.cameraPosLoc,
-    cameraloc       = mat.cameraLoc,
-    camerainvloc    = mat.cameraInvLoc,
-    shadowloc       = mat.shadowMatrixLoc,
-    shadowparamsloc = mat.shadowParamsLoc,
-    usecamera       = mat.usecamera,
-    culling         = mat.culling,
-    texunits        = texUnits,
-    prelist         = mat.predl,
-    postlist        = mat.postdl,
-  })
+                   shader          = mat.shader,
+					deferred        = mat.deferred,
+                   cameraposloc    = mat.cameraPosLoc,
+                   cameraloc       = mat.cameraLoc,
+                   camerainvloc    = mat.cameraInvLoc,
+                   shadowloc       = mat.shadowMatrixLoc,
+                   shadowparamsloc = mat.shadowParamsLoc,
+                   usecamera       = mat.usecamera,
+                   culling         = mat.culling,
+                   texunits        = texUnits,
+                   prelist         = mat.predl,
+                   postlist        = mat.postdl,
+                 })
 
   bufMaterials[unitDefID] = luaMat
 
@@ -356,7 +328,6 @@ function ToggleNormalmapping(_,_,_, playerID)
     --// reinitializes all shaders
     ToggleShadows()
   end
-  return true
 end
 
 
@@ -375,15 +346,7 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-function gadget:TrimColorChange(msg,teamID)
-	
-	if (msg:find("trimColor",0,true)) then
-		r,g,b,a=string.match(msg, ",([^,]+),([^,]+),([^,]+),([^,]+)")
-		--Spring.Echo('wuaaagh',r,g,b,a)
-		trimColors[teamID]={r,g,b,a}
-		--Spring.Echo('trimColor changed for ',teamID,to_string(trimColors[teamID]))
-	end
-end
+
 function gadget:UnitFinished(unitID,unitDefID,teamID)
   local unitMat = unitMaterialInfos[unitDefID]
   if (unitMat) then
@@ -419,6 +382,7 @@ function gadget:UnitDestroyed(unitID,unitDefID)
   end
 end
 
+
 ---------------------------
 -- DrawUnit(unitID,DrawMode)
 -- With enum DrawMode {
@@ -429,11 +393,10 @@ end
 -- refractionDraw = 4
 -- }; 
 -----------------
-function gadget:DrawUnit(unitID, drawMode)
-	--if unitID%100==0 then  Spring.Echo('drawmode',drawMode) end
+
+function gadget:DrawUnit(unitID,drawMode)
   local mat = drawUnitList[unitID]
   if (mat) then
-    --gl.Uniform(mat.frameLoc, math.random()) --nope
     return mat.DrawUnit(unitID, mat,drawMode)
   end
 end
@@ -461,6 +424,16 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+function gadget:GameFrame()
+	for i,uid in ipairs(Spring.GetAllUnits()) do
+		if not select(3,Spring.GetUnitIsStunned(uid)) then --// inbuild?
+			gadget:UnitFinished(uid,Spring.GetUnitDefID(uid),Spring.GetUnitTeam(uid))
+		end
+	end
+	gadgetHandler:RemoveCallIn('GameFrame')
+end
+
+
 --// Workaround: unsynced LuaRules doesn't receive Shutdown events
 Shutdown = Script.CreateScream()
 Shutdown.func = function()
@@ -468,9 +441,8 @@ Shutdown.func = function()
   for i=1,#loadedTextures do
     gl.DeleteTexture(loadedTextures[i])
   end
-  local units = Spring.GetAllUnits()
-  for _,unitID in pairs(units) do
-      Spring.UnitRendering.DeactivateMaterial(unitID,3)
+  for i,uid in ipairs(Spring.GetAllUnits()) do
+    Spring.UnitRendering.SetLODCount(uid,0)
   end
 end
 
@@ -484,16 +456,13 @@ function gadget:Initialize()
   --// load the materials config files
   local unitMaterialDefs = {}
   do
-    local GADGET_DIR = "LuaRules/Configs/"
-    local MATERIALS_DIR = GADGET_DIR .. "UnitMaterials/"
+    local MATERIALS_DIR = "ModelMaterials"
 
     local files = VFS.DirList(MATERIALS_DIR)
     table.sort(files)
 
-    -- files = {0_flags, 1_normalmapping, etc}
     for i=1,#files do
       local mats, unitMats = VFS.Include(files[i])
-
       tmerge(materialDefs, mats)
       tmerge(unitMaterialDefs, unitMats)
     end
@@ -504,8 +473,9 @@ function gadget:Initialize()
     for _,mat_src in pairs(materialDefs) do
       -- check if we have custom shaders for this material
       -- if so, copy their sources (so we can insert crap)
-      --
-      if (mat_src.shader) and (mat_src.shader ~= "3do") and (mat_src.shader ~= "s3o") then
+      if (mat_src.shader)and
+         (mat_src.shader ~= "3do")and(mat_src.shader ~= "s3o")
+      then
         mat_src.shaderSource = mat_src.shader
         mat_src.shader = nil
       end
@@ -524,24 +494,18 @@ function gadget:Initialize()
       unitMaterialInfos[(UnitDefNames[unitName] or {id=-1}).id] = materialInfo
     end
   end
-	--// Initialize the trim colors for each team
-	
-	--Spring.Echo(to_string(Spring.GetPlayerList()))
-	pl=Spring.GetPlayerList()
-	for k,v in pairs(pl) do
-		trimColors[v]={0,0,0,0}
-	end
-  --// insert synced actions
-  gadgetHandler:AddSyncAction("unitshaders_finished", UnitFinished)
-  gadgetHandler:AddSyncAction("unitshaders_destroyed", UnitDestroyed)
-  gadgetHandler:AddSyncAction("unitshaders_reverse", UnitReverseBuild)
-  gadgetHandler:AddSyncAction("unitshaders_given", UnitGiven)
-  gadgetHandler:AddSyncAction("unitshaders_cloak", UnitCloaked)
-  gadgetHandler:AddSyncAction("unitshaders_decloak", UnitDecloaked)
-  gadgetHandler:AddSyncAction("trimcolor_msg", TrimColorChange)
 
+  --// insert synced actions
+  if (not engineIsMin97) then
+    gadgetHandler:AddSyncAction("unitshaders_finished", UnitFinished)
+    gadgetHandler:AddSyncAction("unitshaders_destroyed", UnitDestroyed)
+    gadgetHandler:AddSyncAction("unitshaders_given", UnitGiven)
+    gadgetHandler:AddSyncAction("unitshaders_cloak", UnitCloaked)
+    gadgetHandler:AddSyncAction("unitshaders_decloak", UnitDecloaked)
+  end
   gadgetHandler:AddChatAction("normalmapping", ToggleNormalmapping)
 end
+
 
 function to_string(data, indent)
     local str = ""
@@ -578,6 +542,8 @@ function to_string(data, indent)
         --print_debug(1, "Error: unknown data type: %s", type(data))
 		str=str.. "Error: unknown data type:" .. type(data)
 		Spring.Echo('X data type')
+
+
     end
 
     return str

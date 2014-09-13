@@ -1709,7 +1709,6 @@ function gadgetHandler:MousePress(x, y, button)
     return true  --  already have an active press
   end
   for _,g in ipairs(self.MousePressList) do
-    Spring.Echo(g.ghInfo.name)
     if (g:MousePress(x, y, button)) then
       self.mouseOwner = g
       return true

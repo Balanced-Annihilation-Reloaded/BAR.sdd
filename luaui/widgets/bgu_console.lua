@@ -179,7 +179,8 @@ local function loadOptions()
 					end
 				}
 			},
-			Chili.Label:New{caption='Delay'},
+			
+            Chili.Label:New{caption='Delay'},
 			Chili.Trackbar:New{
 				x        = '10%',
 				width    = '80%',
@@ -189,27 +190,7 @@ local function loadOptions()
 				value    = cfg.msgTime,
 				OnChange = {function(_,value) cfg.msgTime=value; Menu.Save{msgTime=value} end}
 			},
-			Chili.Label:New{caption='Max Messages'},
-			Chili.Trackbar:New{
-				x        = '10%',
-				width    = '80%',
-				min      = 10,
-				max      = 100,
-				step     = 10,
-				value    = cfg.msgCap,
-				OnChange = {
-					function(_,value)
-						if log and #log.children > value then
-							for i=1, #log.children - value do
-								log:RemoveChild(log.children[1])
-							end
-						end
-						cfg.msgCap = value
-						Menu.Save{msgCap=value}
-					end	
-				}
-			},
-			
+            
 			Chili.Line:New{width='100%'}
 		}
 	}

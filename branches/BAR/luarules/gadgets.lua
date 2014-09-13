@@ -495,6 +495,7 @@ function gadgetHandler:RemoveGadget(gadget)
   for _,listname in ipairs(CALLIN_LIST) do
     ArrayRemove(self[listname..'List'], gadget)
   end
+  self.mouseOwner = nil
 
   for id,g in pairs(self.CMDIDs) do
     if (g == gadget) then
@@ -1708,6 +1709,7 @@ function gadgetHandler:MousePress(x, y, button)
     return true  --  already have an active press
   end
   for _,g in ipairs(self.MousePressList) do
+    Spring.Echo(g.ghInfo.name)
     if (g:MousePress(x, y, button)) then
       self.mouseOwner = g
       return true

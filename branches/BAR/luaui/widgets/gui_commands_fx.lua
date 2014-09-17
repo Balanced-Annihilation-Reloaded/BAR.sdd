@@ -154,7 +154,7 @@ end
 local function DrawDot(size, r,g,b,a, x,y,z)
     -- replace with texture and colour overlay?
     gl.Color(r,g,b,a)
-    gl.Vertex(x, y, z)
+    gl.Vertex(x,y,z)
     gl.Color(r,g,b,0)
     for i = 0,7 do
         gl.Vertex(x+circle[i][1]*size, y, z+circle[i][2]*size)
@@ -230,7 +230,7 @@ function widget:GameFrame()
         local gotHighlight = false
         for _,cmd in ipairs(q) do
             if CONFIG[cmd.id] or cmd.id < 0 then
-                if cmd.id < 0 then
+                if cmd.id < 0 and cmd.params[4] then
                     cmd.buildingID = -cmd.id;
                     cmd.id = BUILD
                 end

@@ -482,7 +482,7 @@ function widget:Initialize()
 	losShaderModelDepthTexLoc =glGetUniformLocation(losShader, 'modeldepthtex')
 	losShaderMapDepthTexLoc =glGetUniformLocation(losShader, 'mapdepthtex')
 	losShaderGameFrameLoc =glGetUniformLocation(losShader, 'gameframe')
-	
+	Spring.SetConfigInt("ExtraTextureUpdateRate", 15)
 
 end
 

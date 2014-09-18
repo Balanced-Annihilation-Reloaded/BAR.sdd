@@ -55,8 +55,7 @@ local FLOAT_TEXTURES   = gl.HasExtension("GL_ARB_texture_float")
 PostDistortion.texRectangle     = false
 PostDistortion.jitterformat     = GL_RGBA16F_ARB
 PostDistortion.depthformat      = GL_DEPTH_COMPONENT
-PostDistortion.screenUpdateSkip = 0
-PostDistortion.copyDepthBuffer  = (NVseries>=7)or(NVseries==0)
+PostDistortion.copyDepthBuffer  = true
 
 -----------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------
@@ -78,7 +77,6 @@ function PostDistortion.GetInfo()
     shader    = true,
     rtt       = true,
     ctt       = true,
-    atiseries = 2,
     ms        = -1,
   }
 end
@@ -87,7 +85,7 @@ end
 -----------------------------------------------------------------------------------------------------------------
 
 function PostDistortion.ViewResize()
-  --gl.DeleteTexture(depthTex)
+  gl.DeleteTexture(depthTex)
   if (gl.DeleteTextureFBO) then
     gl.DeleteTextureFBO(screenCopyTex)
     gl.DeleteTextureFBO(jitterTex)
@@ -95,14 +93,14 @@ function PostDistortion.ViewResize()
 
   local target = (pd.texRectangle and GL_TEXTURE_RECTANGLE)
 
-  -- depthTex = gl.CreateTexture(vsx,vsy, {
-    -- target = target,
-    -- format = PostDistortion.depthformat,
-    -- min_filter = GL.NEAREST,
-    -- mag_filter = GL.NEAREST,
-    -- wrap_s   = GL.CLAMP_TO_EDGE,
-    -- wrap_t   = GL.CLAMP_TO_EDGE,
-  -- })
+  depthTex = gl.CreateTexture(vsx,vsy, {
+    target = target,
+    format = PostDistortion.depthformat,
+    min_filter = GL.NEAREST,
+    mag_filter = GL.NEAREST,
+    wrap_s   = GL.CLAMP_TO_EDGE,
+    wrap_t   = GL.CLAMP_TO_EDGE,
+  })
 
   screenCopyTex = gl.CreateTexture(vsx,vsy, {
     target = target,
@@ -121,7 +119,7 @@ function PostDistortion.ViewResize()
     wrap_t   = GL.CLAMP_TO_EDGE,
   })
 
-  --fbo.depth  = depthTex
+  fbo.depth  = depthTex
   fbo.color0 = jitterTex
 end
 
@@ -136,23 +134,17 @@ local glCopyToTexture = gl.CopyToTexture
 local glCallList      = gl.CallList
 local glTexture       = gl.Texture
 
-local CLEAR_FBO = function() gl.Clear(GL_COLOR_BUFFER_BIT,0,0,0,0); end
 
-local screensUpdated = 0
 function PostDistortion:BeginDraw()
-  glActiveFBO(fbo,CLEAR_FBO) --//clear jitterTex
+  glActiveFBO(fbo, gl.Clear, GL_COLOR_BUFFER_BIT, 0,0,0,0) --//clear jitterTex
 
   --// copy depthbuffer to a seperated depth texture, so we can use it in the MRT
   if (pd.copyDepthBuffer) then
-    --glCopyToTexture(depthTex, 0, 0, vpx, vpy, vsx, vsy)
+    glCopyToTexture(depthTex, 0, 0, vpx, vpy, vsx, vsy)
   end
 
-  --// don't update the screen copies each frame (needed for gfxs with slow screen copies, geforce5 etc.)
-  --screensUpdated = screensUpdated + 1
-  --if (screensUpdated>pd.screenUpdateSkip) then
-    glCopyToTexture(screenCopyTex, 0, 0, vpx, vpy, vsx, vsy)
-   -- screensUpdated = 0
- -- end
+  --// update screen copy
+  glCopyToTexture(screenCopyTex, 0, 0, vpx, vpy, vsx, vsy)
 end
 
 function PostDistortion:EndDraw()
@@ -160,8 +152,6 @@ function PostDistortion:EndDraw()
   if (pd.texRectangle) then glUniform(screenSizeLoc,vsx,vsy) end
   glTexture(0,jitterTex);
   glTexture(1,screenCopyTex); 
-  --glTexture(2, "$model_gbuffer_zvaltex"); 
-  --glTexture(3,"$map_gbuffer_zvaltex"); 
   glCallList(postDrawAndLeaveIdentity);
 end
 
@@ -193,10 +183,6 @@ function PostDistortion.Initialize()
   ------------------------------------------------------------------------------------------
   ------------------------------------------------------------------------------------------
 
-  if (type(LupsConfig.distortionupdateskip)=="number") then
-    pd.screenUpdateSkip = LupsConfig.distortionupdateskip
-  end
-
   if (type(LupsConfig.distortioncopydepthbuffer)=="boolean") then
     pd.copyDepthBuffer = LupsConfig.distortioncopydepthbuffer
   end
@@ -209,50 +195,60 @@ function PostDistortion.Initialize()
   local defines = ""
   if (pd.copyDepthBuffer) then defines = defines .. "#define depthtexture\n" end
 
-	jitterShader = gl.CreateShader({
-		fragment = defines .. [[
+  jitterShader = gl.CreateShader({
+    fragment = defines .. [[
+      #ifdef texrect
+        #extension GL_ARB_texture_rectangle : enable
 
-			uniform sampler2D infoTex;
-			uniform sampler2D screenTex;
+        #define sampler2D sampler2DRect
+        #define texture2D texture2DRect
+        uniform vec2 ScreenSize;
+      #endif
 
-			#ifdef depthtexture
-				uniform sampler2D modeldepthTex;
-				uniform sampler2D mapdepthTex;
-			#endif
+        uniform sampler2D infoTex;
+        uniform sampler2D screenTex;
 
-			void main(void)
-			{
+      #ifdef depthtexture
+        uniform sampler2D depthTex;
+      #endif
 
-				vec2 texcoord  = gl_TexCoord[0].st;
+        void main(void)
+        {
 
-				vec4 offset  = texture2D(infoTex, texcoord );
-				if (offset.a>0.001) {
+      #ifdef texrect
+          vec2 texcoord  = gl_FragCoord.xy;
+      #else
+          vec2 texcoord  = gl_TexCoord[0].st;
+      #endif
 
-					vec2 texcoord2 = gl_TexCoord[0].st+offset.st;
+          vec4 offset  = texture2D(infoTex, texcoord );
+          if (offset.a>0.001) {
 
-					gl_FragColor = texture2D(screenTex, texcoord2 );
-					gl_FragColor.rgb += offset.b;
+      #ifdef texrect
+            vec2 texcoord2 = gl_FragCoord.xy+offset.st*ScreenSize;
+      #else
+            vec2 texcoord2 = gl_TexCoord[0].st+offset.st;
+      #endif
 
-					#ifdef depthtexture
-						gl_FragDepth = texture2D(mapdepthTex, texcoord ).z;
-						float modeldepth = texture2D(modeldepthTex, texcoord ).z;
-						if ((gl_FragDepth-modeldepth)> 0.0)
-							gl_FragDepth=modeldepth;
-					#endif
+            gl_FragColor = texture2D(screenTex, texcoord2 );
+            gl_FragColor.rgb += offset.b;
 
-				}else{
-					discard;
-				}
-			}
-		]],
-		uniformInt = {
-		infoTex   = 0,
-		screenTex = 1,
-		modeldepthTex  = 2,
-		mapdepthTex  = 3,
-		ScreenSize = {vsx,vsy},
-		},
-	})
+      #ifdef depthtexture
+           gl_FragDepth = texture2D(depthTex, texcoord ).z;
+      #endif
+
+          }else{
+            discard;
+          }
+        }
+    ]],
+    uniformInt = {
+      infoTex   = 0,
+      screenTex = 1,
+      depthTex  = 2,
+      ScreenSize = {vsx,vsy},
+    },
+  })
 
   if (jitterShader==nil) then
     print(PRIO_MAJOR,"LUPS->Distortion: Critical Shader Error: " ..gl.GetShaderLog())

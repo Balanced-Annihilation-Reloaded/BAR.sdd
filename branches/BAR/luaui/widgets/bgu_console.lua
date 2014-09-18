@@ -33,7 +33,7 @@ local maxChatWidth  = 625 --width of the console
 local cfg = {
 	msgTime  = 8, -- time to display messages in seconds
 	hideChat = true,
-	msgCap   = 100,
+	msgCap   = 500,
 }
 ------------
 

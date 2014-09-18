@@ -16,7 +16,7 @@ end
 if (gadgetHandler:IsSyncedCode()) then
 
   local hasShockwave = {} -- other gadgets can do Script.SetWatchWeapon and it is a global setting
-
+  
   --// find weapons which cause a shockwave
   for i=1,#WeaponDefs do
     local wd = WeaponDefs[i]

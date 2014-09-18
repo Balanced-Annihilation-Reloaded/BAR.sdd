@@ -106,7 +106,7 @@ for i=1,#UnitDefs do
 
   if ((udef.customParams.arm_tank == nil ) and udef.customParams.normaltex and VFS.FileExists(udef.customParams.normaltex)) then
     unitMaterials[udef.name] = {"normalMappedS3O", NORMALTEX = udef.customParams.normaltex}
-	Spring.Echo('normalmapped',udef.name)
+    --Spring.Echo('normalmapped',udef.name)
   end --elseif
 end --for
 

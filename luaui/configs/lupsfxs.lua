@@ -1,3 +1,4 @@
+VFS.Include("LuaRules/Utilities/tablefunctions.lua")
 -- $Id: lupsFXs.lua 3485 2008-12-19 23:06:30Z jk $
 
 ----------------------------------------------------------------------------

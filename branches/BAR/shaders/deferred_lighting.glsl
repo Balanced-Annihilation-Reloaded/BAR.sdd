@@ -100,6 +100,8 @@ uniform mat4 viewProjectionInv;
 	
 	//OK, our blending func is the following: Rr=Lr*Dr+1*Dr, 
 	float lightalpha=cosphi*attentuation;
+	//dont light underwater:
+	lightalpha = clamp(lightalpha, 0.0, lightalpha*((mappos4.y + 50.0 )* (0.02)));
 	gl_FragColor=vec4(lightcolor.rgb*lightalpha*model_lighting_multiplier,1.0);
 	//if (length(lightcolor.rgb*lightalpha*model_lighting_multiplier)<(1.0/256.0)){ //shows light boudaries
 		//gl_FragColor=vec4(vec3(0.5,0,0.5),0);

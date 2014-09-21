@@ -156,8 +156,9 @@ local function DrawDot(size, r,g,b,a, x,y,z)
     gl.Color(r,g,b,a)
     gl.Vertex(x,y,z)
     gl.Color(r,g,b,0)
+    local t = math.random(20)/20*(2*pi)
     for i = 0,7 do
-        gl.Vertex(x+circle[i][1]*size, y, z+circle[i][2]*size)
+        gl.Vertex(x+sin(i*radstep+t)*size, y, z+cos(i*radstep+t)*size)
     end
 end
 
@@ -230,9 +231,12 @@ function widget:GameFrame()
         local gotHighlight = false
         for _,cmd in ipairs(q) do
             if CONFIG[cmd.id] or cmd.id < 0 then
-                if cmd.id < 0 and cmd.params[4] then
+                if cmd.id < 0 then
                     cmd.buildingID = -cmd.id;
                     cmd.id = BUILD
+                    if not cmd.params[4] then
+                        cmd.params[4] = 0 --sometimes the facing param is missing (wtf)
+                    end
                 end
                 our_q[#our_q+1] = cmd
             end

@@ -144,11 +144,16 @@ local pi = math.pi
 local sin = math.sin
 local cos = math.cos
 local atan = math.atan 
+local random = math.random
 
 local circle = {}
 local radstep = (2*pi) / 7
-for i = 0,7 do
-    circle[i] = {[1]=sin(i*radstep), [2]=cos(i*radstep)}
+for j = 1,20 do
+    circle[j] = {}
+    local t = (j/20)*2*pi
+    for i = 0,7 do
+        circle[j][i] = {[1]=sin(i*radstep+t), [2]=cos(i*radstep+t)}
+    end
 end
 
 local function DrawDot(size, r,g,b,a, x,y,z)
@@ -156,9 +161,9 @@ local function DrawDot(size, r,g,b,a, x,y,z)
     gl.Color(r,g,b,a)
     gl.Vertex(x,y,z)
     gl.Color(r,g,b,0)
-    local t = math.random(20)/20*(2*pi)
+    local j = random(20)
     for i = 0,7 do
-        gl.Vertex(x+sin(i*radstep+t)*size, y, z+cos(i*radstep+t)*size)
+        gl.Vertex(x+circle[j][i][1]*size, y, z+circle[j][i][2]*size)
     end
 end
 

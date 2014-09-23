@@ -142,7 +142,7 @@ function script.AimWeapon(weaponID, heading, pitch)
 	if weaponID == 3 then
 		FixArms(true, false)
 		
-		Turn(base, y_axis, heading, math.rad(105))
+		Turn(base, y_axis, heading, math.rad(300))
 		Turn(l_forearm, x_axis, math.rad(-85), math.rad(390))
 		Turn(l_arm,	x_axis, math.rad(-5) - pitch, math.rad(390))
 				
@@ -159,7 +159,7 @@ function script.AimWeapon(weaponID, heading, pitch)
 	else
 		FixArms(false, true)
 		
-		Turn(base, y_axis, heading, math.rad(105))
+		Turn(base, y_axis, heading, math.rad(300))
 		Turn(r_forearm, x_axis, math.rad(-55), math.rad(390))
 		Turn(r_arm,	x_axis, math.rad(-45) - pitch, math.rad(390))
 				
@@ -190,7 +190,7 @@ Spring.SetUnitNanoPieces( unitID, {nano} )
 	Turn(base, x_axis, 0, math.rad(395))
 	Turn(cod, x_axis, 0, math.rad(395))
 	
-	Turn(base, y_axis, heading, math.rad(105))
+	Turn(base, y_axis, heading, math.rad(300))
 	Turn(r_forearm, x_axis, math.rad(-55), math.rad(390))
 	Turn(r_arm,	x_axis, math.rad(-55) - pitch, math.rad(390))
 
@@ -199,7 +199,7 @@ Spring.SetUnitNanoPieces( unitID, {nano} )
 end
 
 function script.StopBuilding()
-	Sleep(200)
+	--Sleep(200) --SLEEPING HERE WILL FUCK YOUR SHIT UP!
 	isBuilding		= false;
 	SetUnitValue(COB.INBUILDSTANCE, 0)
 --	Spring.Echo("Stop Building", isAiming, isBuilding, isMoving)

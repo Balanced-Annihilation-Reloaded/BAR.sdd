@@ -216,7 +216,7 @@ end
 ----------------------------
 local function CheckSpec()
 	-- hide the resign button if we are a spec
-	local button = tabs.Info:GetChildByName('ResignButton')
+	local button = tabs.General:GetChildByName('ResignButton')
 	local isSpec = Spring.GetSpectatingState()
 	if isSpec and button.visible then
 		button:Hide()
@@ -251,9 +251,9 @@ end
 -- Handles the selection of the tabs
 local function sTab(_,tabName)
 	if not tabs[tabName] then return end
-  if Settings.tabSelected then mainMenu:RemoveChild(tabs[Settings.tabSelected]) end
-  mainMenu:AddChild(tabs[tabName])
-  Settings.tabSelected = tabName
+	if Settings.tabSelected then mainMenu:RemoveChild(tabs[Settings.tabSelected]) end
+	mainMenu:AddChild(tabs[tabName])
+	Settings.tabSelected = tabName
 end
 
 ----------------------------
@@ -405,7 +405,7 @@ local function loadMainMenu()
 		height       = 20,
 		minItemWidth = 70,
 		selected     = Settings.tabSelected or 'Info',
-		tabs         = {'Info','Interface', 'Graphics'},
+		tabs         = {'General','Interface', 'Graphics'},
 		itemPadding  = {1,0,1,0},
 		OnChange     = {sTab}
 	}
@@ -620,7 +620,7 @@ local function createInfoTab()
 	local endModes = { com = "Kill all enemy Commanders", killall = "Kill all enemy units", neverend = "Never end"}
 	local gameEndMode = endModes[Spring.GetModOptions().deathmode]
 	
-	local changeLog, gameInfo, introText, hotkeyInfo
+	local changeLog, matchInfo, introText, hotkeyInfo
 	
 	local function ParseChangelog(changelog)
 		-- parse the changelog and add a small amount of colour
@@ -659,11 +659,11 @@ local function createInfoTab()
 		hotkeyInfoBox:SetText(HotkeyInfo[tabName])
 	end
 
-	local function SetInfoChild(_, ID)
-		if not tabs.Info then return end
-		local combobox = tabs.Info:GetChildByName('text_select')
-		tabs.Info:GetChildByName('info_layoutpanel'):ClearChildren()
-		tabs.Info:GetChildByName('info_layoutpanel'):AddChild(combobox.iPanels[ID])
+	local function SetInfoChild(obj)
+		if not tabs.General then return end
+		tabs.General:GetChildByName('info caption'):SetCaption(obj.caption)
+		tabs.General:GetChildByName('info_layoutpanel'):ClearChildren()
+		tabs.General:GetChildByName('info_layoutpanel'):AddChild(obj.iPanel)
 	end
 	
 	local hotkeyInfo = Chili.Control:New{x = 0, y = 20, bottom = 0, width = '100%', 
@@ -687,7 +687,7 @@ local function createInfoTab()
 		}
 	}
 
-	gameInfo = Chili.Panel:New{width = '100%', height = '100%', autosize = true, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0},
+	matchInfo = Chili.Panel:New{width = '100%', height = '100%', autosize = true, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0},
 		children = {
 			InfoTextBox{y=1, name = "Map:", value = Game.mapName},
 			InfoTextBox{y=2, value = "(" .. Game.mapX .. " x " .. Game.mapY .. ")", size = 15},
@@ -702,33 +702,26 @@ local function createInfoTab()
 	}
 
 	-- Info --
-	tabs.Info = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
+	tabs.General = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
 		children = {
-			Chili.LayoutPanel:New{name = 'info_layoutpanel', width = '70%', x=0, y=0, bottom=0},
+			Chili.Label:New{name = 'info caption', caption = 'test', x = 0, y = 2, width = '70%', fontsize = 20},
+			Chili.LayoutPanel:New{name  = 'info_layoutpanel', width = '70%', x=0, y=20, bottom=0},
 
-			Chili.ComboBox:New{
-				name     = 'text_select',
-				height   = '8%',
-				y        = '8%',
-				width    = '28%',
-				right    = '1%',
-				text     = "",
-				selected = amNewbie and 3 or 1,
-				iPanels  = {gameInfo, hotkeyInfo, changeLog, introText},
-				items    = {"game info", "hotkeys", "changelog", "intro"},
-				OnSelect = {SetInfoChild},
-			},
-
-			Chili.Button:New{caption = 'Resign and Spectate', name = "ResignButton", height = '8%', width = '28%', right = '1%', y = '40%', OnMouseUp = {ResignMe}},
-			Chili.Button:New{caption = 'Exit To Desktop',height = '8%',width = '28%',right = '1%', y = '52%',
-			OnMouseUp = {function() spSendCommands{'quit'} end }},
+			Chili.Button:New{caption = 'Match Info', iPanel = matchInfo, height = '7%', width = '28%', right = '1%', y = '7%', OnMouseUp = {SetInfoChild}},
+			Chili.Button:New{caption = 'Hotkey Info', iPanel = hotkeyInfo, height = '7%', width = '28%', right = '1%', y = '16%', OnMouseUp = {SetInfoChild}},
+			Chili.Button:New{caption = 'Changelog', iPanel = changeLog, height = '7%', width = '28%', right = '1%', y = '25%', OnMouseUp = {SetInfoChild}},
+			Chili.Button:New{caption = 'Intro', iPanel = introText, height = '7%', width = '28%', right = '1%', y = '34%', OnMouseUp = {SetInfoChild}},
+			
+			Chili.Button:New{caption = 'Resign and Spectate', name = "ResignButton", height = '9%', width = '28%', right = '1%', y = '72%', OnMouseUp = {ResignMe}},
+			Chili.Button:New{caption = 'Exit To Desktop',height = '9%',width = '28%',right = '1%', y = '82%',
+				OnMouseUp = {function() spSendCommands{'quit'} end }},
 		}
 	}
 
 	if amNewbie then
-		SetInfoChild(_,3)
+		SetInfoChild{iPanel = introText, caption = 'Intro'}
 	else
-		SetInfoChild(_,1)
+		SetInfoChild{iPanel = matchInfo, caption = 'Match Info'}
 	end
 end
 
@@ -914,7 +907,7 @@ function widget:Initialize()
 	createGraphicsTab()
 	createCreditsTab()
     
-	if amNewbie then showHide('Info') else menuTabs:Select('Info') end
+	if amNewbie then showHide('General') else menuTabs:Select('General') end
 	globalize()
 	makeWidgetList()
 

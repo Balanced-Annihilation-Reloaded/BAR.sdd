@@ -14,7 +14,7 @@ end
 local Chili, screen, tipWindow, tip
 local mousePosX, mousePosY
 local oldTime
-local tipType = 'none'
+local tipType = false
 local tooltip = ''
 local ID
 
@@ -35,8 +35,7 @@ end
 -----------------------------------
 local function initWindow()
 	tipWindow = Chili.Panel:New{
-		parent    = screen, 
-		skin      = 'Flat', 
+		parent    = screen,
 		width     = 75,
 		height    = 75,
 		minHeight = 1,
@@ -108,61 +107,61 @@ local function getTooltip()
 
 	-- This gives chili absolute priority
 	--  otherwise TraceSreenRay() would ignore the fact ChiliUI is underneath the mouse
-	if screen.currentTooltip then 
-		tooltip = screen.currentTooltip
+	if screen.currentTooltip then
 		tipType = 'chili'
+		return screen.currentTooltip
 	else
 		tipType, ID = spTraceScreenRay(spGetMouseState())
 
 		if tipType == prevTipType and ID==prevID then
-			return
+			return false
 		else
 			prevTipType = tipType; prevID = ID
 		end
-	
+
 		if tipType == 'unit'        then
-			tooltip = getUnitTooltip(ID)
+			return getUnitTooltip(ID)
 		elseif tipType == 'feature' then 
-			tooltip = getFeatureTooltip(ID)
+			return getFeatureTooltip(ID)
 		else
-			tooltip = ''
+			tipType = false
+			return ''
 		end
 	end
 end
 -----------------------------------
-local function setTooltip()
+local function setTooltip(text)
+	local text         = text or tip.text
+	local x,y          = spGetMouseState()
+	local _,_,numLines = tip.font:GetTextHeight(text)
+	local height       = numLines * 14 + 8
+	local width        = tip.font:GetTextWidth(text) + 10
+	
+	x = x + 20
+	y = screenHeight - y -- Spring y is from the bottom, chili is from the top
 
-	local tooltip               = tooltip
-	local x,y                   = spGetMouseState()
-	local textwidth             = tip.font:GetTextWidth(tooltip)
-	local textheight,_,numLines = tip.font:GetTextHeight(tooltip)
+	-- Making sure the tooltip is within the boundaries of the screen	
+	y = (y > screenHeight * .75) and (y - height) or (y + 20)
+	x = (x + width > screenWidth) and (screenWidth - width) or x
 
-	-- Making sure the tooltip is within the boundaries of the screen
-	if (x + 20 + textwidth + 10) > screenWidth then
-		x = screenWidth - 20 - textwidth - 10
-	end
-	if (y - 20 - (14 * numLines + 5)) < 0 then
-		y = 14 * numLines + 5 + 20 
-	end
-
-	tipWindow:SetPos(x + 20, screenHeight - y + 20, textwidth + 10, 14 * numLines + 8)
+	tipWindow:SetPos(x, y, width, height)
    
 	if tipWindow.hidden then tipWindow:Show() end
 	tipWindow:BringToFront()
 end
 -----------------------------------
 function widget:Update()
-	local showTip = tipType ~= 'unit' and tipType ~= 'feature' and tooltip ~= ''
 	local curTime = spGetTimer()
-	getTooltip()
-	if tip.text ~= tooltip then
-		tip:SetText(tooltip)
+	local text = getTooltip()
+	
+	if text and tip.text ~= text then
+		tip:SetText(text)
 		oldTime = spGetTimer()
 		if tipWindow.visible then 
 			tipWindow:Hide()
 		end
-	elseif (spDiffTimers(curTime, oldTime) > 1 and tooltip ~= '') or showTip then
-		setTooltip()
+	elseif tipType and (spDiffTimers(curTime, oldTime) > 1 or tipType == 'chili') then
+		setTooltip(text)
 	end
 end
 -----------------------------------

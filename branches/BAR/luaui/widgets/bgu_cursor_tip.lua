@@ -105,25 +105,35 @@ end
 -----------------------------------
 local prevTipType, prevID
 local function getTooltip()
-	mousePosX, mousePosY   = spGetMouseState()
-	tipType, ID     = spTraceScreenRay(mousePosX, mousePosY)
-    
-    if tipType==prevTipType and ID==prevID then return end
-    prevTipType = tipType
-    prevID = ID
-    
-	if screen.currentTooltip    then tooltip = screen.currentTooltip
-	elseif tipType == 'unit'    then tooltip = getUnitTooltip(ID)
-	elseif tipType == 'feature' then tooltip = getFeatureTooltip(ID)
-	else                             tooltip = ''
+
+	-- This gives chili absolute priority
+	--  otherwise TraceSreenRay() would ignore the fact ChiliUI is underneath the mouse
+	if screen.currentTooltip then 
+		tooltip = screen.currentTooltip
+		tipType = 'chili'
+	else
+		tipType, ID = spTraceScreenRay(spGetMouseState())
+
+		if tipType == prevTipType and ID==prevID then
+			return
+		else
+			prevTipType = tipType; prevID = ID
+		end
+	
+		if tipType == 'unit'        then
+			tooltip = getUnitTooltip(ID)
+		elseif tipType == 'feature' then 
+			tooltip = getFeatureTooltip(ID)
+		else
+			tooltip = ''
+		end
 	end
 end
 -----------------------------------
-
 local function setTooltip()
-	   
+
 	local tooltip               = tooltip
-	local x,y                   = mousePosX,mousePosY
+	local x,y                   = spGetMouseState()
 	local textwidth             = tip.font:GetTextWidth(tooltip)
 	local textheight,_,numLines = tip.font:GetTextHeight(tooltip)
 

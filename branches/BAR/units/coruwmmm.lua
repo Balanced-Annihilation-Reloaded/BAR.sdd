@@ -25,7 +25,7 @@ return {
 		maxdamage = 400,
 		maxslope = 16,
 		minwaterdepth = 15,
-		name = "Underwater Moho Energy Converter",
+		name = "Floating Moho Energy Converter",
 		objectname = "CORUWMMM.s3o",
 		seismicsignature = 0,
 		selfdestructas = "ATOMIC_BLAST",

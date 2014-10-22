@@ -1,12 +1,13 @@
 function widget:GetInfo()
 	return {
-	name      = "Ignore List", 
+	name      = "Ignore List API", --version 4.1
 	desc      = "Adds /ignoreplayer <name>, /unignoreplayer <name>, /ignorelist\n(puts ignoredPlayers table into WG)",
 	author    = "Bluestone",
-	date      = "June 2014", 
+	date      = "June 2014", --last change September 10,2009
 	license   = "GNU GPL, v3 or later",
 	layer     = 0,
-	enabled   = true, 
+	enabled   = true, --enabled by default
+	handler   = true, --can use widgetHandler:x()
 	}
 end
 
@@ -17,7 +18,6 @@ NOTE: This widget will block map draw commands from ignored players.
 
 local pID_table = {}
 local ignoredPlayers = {}
-WG.ignoredPlayers = ignoredPlayers
 local myName,_ = Spring.GetPlayerInfo(Spring.GetMyPlayerID())
 
 function CheckPIDs()
@@ -30,6 +30,7 @@ end
 
 function widget:Initialize()
     CheckPIDs()
+    WG.ignoredPlayers = ignoredPlayers
 end
 
 function widget:PlayerChanged()

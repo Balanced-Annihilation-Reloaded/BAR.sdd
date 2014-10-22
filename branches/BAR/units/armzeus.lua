@@ -103,6 +103,7 @@ return {
 		weapondefs = {
 			lightning = {
 				areaofeffect = 8,
+				beamttl = 10,
 				craterboost = 0,
 				cratermult = 0,
 				duration = 10,

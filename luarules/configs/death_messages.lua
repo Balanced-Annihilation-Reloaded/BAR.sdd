@@ -504,7 +504,7 @@ teamDeathMessages = {
 	"XX was smashed up by a sonically created power yeti",
 	"XX fell into a wood-chipper",
 	"XX accidentally turned a children's book into three three-hour-long movies",	
-	"XX was eaten by a gnu",
+	"It is pitch black. XX was eaten by a grue.",
 	"XX ate all the pies",
 	"XX trod on a mine",
 	"XX was relieved of its duty",
@@ -601,7 +601,7 @@ teamDeathMessages = {
 	"XX ate its last waterbiscuit",
 	"XX was torn apart by angry weasels",
 	"XX didn't want to play this silly game anyway",
-	"XX is a starman, waiting in the sky",
+	"There's a XX, waiting in the sky",
 	"Ground control to XX: your circuits gone, there's something wrong",
 	"XX put Basil in the ratatouille",
 	"XX was duck without orange or cherries",
@@ -628,7 +628,7 @@ teamDeathMessages = {
 	"XX was struck by the dreaded batter pudding hurler of Bexhill-on-sea",
 	"XX was punched up the conk",
 	"XX has the Spon Plague",
-	"XX rolled out the barrel",
+	"XX did a barrel roll",
 	"XX was ridden by the valkyries",
 	"XX was dropped into a pit of boiling tar",
 	"XX spent too long standing under a loose stalactite",
@@ -651,19 +651,33 @@ teamDeathMessages = {
     "XX painted matchstalk men and matchstalk cats and dogs",
     "XX went the same way as FPS mode",
     "XX didn't control the spice, or the dune",
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+    "Thank you XX! But our Princess is in another castle!",
+    "The right XX in the wrong place can make all the difference in the world",
+    "Boomshakalaka!",
+    "XX is the second biggest monkey head I have ever seen!",
+    "XX must construct additional pylons",
+    "XX reticulated its spline",
+    "All your XX are belong to us",
+    "XX was almost a Jill sandwich",
+    "XX prepared for unforeseen consequences",
+    "XX was all outta gum",
+    "Give it to XX baby, uhuh, uhuh",
+    "XX cannot DGun inside an enemy startbox",
+    "A problem has been detected and XX has been shut down to prevent damage to your computer",
+    "Shoot all the blue jays you want, if you can hit em, but remember that it's a sin to kill a XX",
+    "XX is no hot-house flower, but a wild plant, born of a wet night, born of an hour of sunshine",
+    "XX ran with scissors",
+    "XX screamed in agony as the potato slid deeper",
+    "XX left behind a small damp patch",
+    "XX had its clock cleaned",
+    "XX tossed its caber",
+    "XX gave its dog a bone",
+    "XX is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE",
+    "How to rotate XX?",
+    "XX, James XX",
+    "XX claims it was shooting blanks",
+    "XX stole Christmas",
+    
 }
 
 

@@ -20,6 +20,7 @@ return {
 		explodeas = "ATOMIC_BLAST",
 		footprintx = 6,
 		footprintz = 4,
+		hidedamage = true,
 		icontype = "building",
 		idleautoheal = 5,
 		idletime = 1800,
@@ -28,7 +29,6 @@ return {
 		minwaterdepth = 25,
 		name = "Underwater Fusion Plant",
 		objectname = "ARMUWFUS.s3o",
-		seismicsignature = 0,
 		selfdestructas = "MINE_NUKE",
 		sightdistance = 143,
 

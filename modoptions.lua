@@ -1,21 +1,21 @@
 --see engineoptions.lua for explanantion
 local options={
-    {
-       key="bar_modes",
-       name="BAR Game Modes",
-       desc="BAR Game Modes",
-       type="section",
-    },
 	{
-	   key    = "bar_starting_resources",
+	   key    = "StartingResources",
 	   name   = "Starting Resources",
 	   desc   = "Sets storage and amount of resources that players will start with",
 	   type   = "section",
 	},
     {
+       key="bar_modes",
+       name="BAR - Game Modes",
+       desc="BAR - Game Modes",
+       type="section",
+    },
+    {
        key="bar_options",
-       name="BAR Options",
-       desc="BAR Options",
+       name="BAR - Options",
+       desc="BAR - Options",
        type="section",
     },
     {
@@ -24,7 +24,7 @@ local options={
        desc="Chicken Options",
        type="section",
     },
-    
+
 	{
 		key="deathmode",
 		name="Game End Mode",
@@ -76,7 +76,7 @@ local options={
     },
     {
 		key    = "mo_preventcombomb",
-		name   = "Prevent Combombs",
+		name   = "1v1 Mode (Prevent Combombs)",
 		desc   = "Commanders survive DGuns and other commanders explosions",
 		type   = "bool",
 		def    = false,
@@ -88,23 +88,7 @@ local options={
 		desc   = "Commanders warp in at gamestart with a shiny teleport effect",
 		type   = "bool",
 		def    = false,
-		section= "bar_options",
-    },
-	{
-		key    = "mo_progmines",
-		name   = "Progressive Mining",
-		desc   = "New mines take some time to become fully established, death resets progress",
-		type   = "bool",
-		def    = false,
-		section= "ba_ooptions",
-    },
-	{
-		key    = "mo_nowrecks",
-		name   = "No Unit Wrecks",
-		desc   = "Removes all unit wrecks from the game",
-		type   = "bool",
-		def    = false,
-		section= "bar_options",
+		section= "bar_others",
     },
     {
 		key="mo_transportenemy",
@@ -118,30 +102,22 @@ local options={
 			{key="none", name="Disallow All", desc="No enemy units can be napped"},
 		}
 	},
-	{
-       key    = "startmetal",
-       name   = "Starting metal",
-       desc   = "Determines amount of metal and metal storage that each player will start with",
-       type   = "number",
-       section= "bar_starting_resources",
-       def    = 1000,
-       min    = 0,
-       max    = 10000,
-       step   = 1,  -- quantization is aligned to the def value
-                    -- (step <= 0) means that there is no quantization
-	},
-	{
-       key    = "startenergy",
-       name   = "Starting energy",
-       desc   = "Determines amount of energy and energy storage that each player will start with",
-       type   = "number",
-       section= "bar_starting_resources",
-       def    = 1000,
-       min    = 0,
-       max    = 10000,
-       step   = 1,  -- quantization is aligned to the def value
-                    -- (step <= 0) means that there is no quantization
-	},  
+    {
+        key    = "mo_enemycomcount",
+        name   = "Enemy Com Counter",
+        desc   = "Tells each team the total number of commanders alive in enemy teams",
+        type   = "bool",
+        def    = false,
+        section= "bar_others",
+    },
+    {
+        key    = 'FixedAllies',
+        name   = 'Fixed ingame alliances',
+        desc   = 'Disables the possibility of players to dynamically change alliances ingame',
+        type   = 'bool',
+        def    = false,
+        section= "bar_others",
+    },
     {
 		key    = "mo_no_close_spawns",
 		name   = "No close spawns",
@@ -157,19 +133,6 @@ local options={
 		type   = "bool",
 		def    = false,
 		section= "bar_options",
-    },
-    {
-		key    = 'LimitDgun',
-		name   = 'Limit D-Gun range',
-		desc   = "The commander's D-Gun weapon cannot be used near enemy start points",
-		type   = 'list',
-		def    = false,
-		section= "bar_options",
-		items={
-			{key="off", name="Off", desc="D-Gun works everywhere"},
-			{key="startpoints", name="Start Points", desc="D-Gun cannot be used near enemy startpoints"},
-			{key="startboxes", name="Start Boxes", desc="D-Gun cannot be used inside enemy startboxes"},
-		}
     },
     
     -- below here are the chickens options
@@ -351,6 +314,6 @@ local options={
 		max    = 250,
 		step   = 1,
 		section= "ba_cust",
-	},		
+	},	    
 }
 return options

@@ -13,11 +13,9 @@ function gadget:GetInfo()
 end
 
 ----------------------------------------------------------------
--- Synced only
+-- Synced
 ----------------------------------------------------------------
-if not gadgetHandler:IsSyncedCode() then
-    return false
-end
+if (gadgetHandler:IsSyncedCode()) then
 
 ----------------------------------------------------------------
 -- Config
@@ -56,4 +54,11 @@ function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, weap
         end
       end    
     end
+end
+
+else
+----------------------------------------------------------------
+-- Unsynced
+----------------------------------------------------------------
+
 end

@@ -3,9 +3,9 @@
 
 function widget:GetInfo()
   return {
-    name = "Command Insert",
-    desc = "When pressing spacebar, commands are inserted on front of queue. \nWhen pressing spacebar and shift, you can insert commands to arbitrary places in queue.",
-    author = "dizekat", --Based on FrontInsert by jK
+    name = "CommandInsert",
+    desc = "When pressing spacebar and shift, you can insert commands to arbitrary places in queue. When pressing spacebar alone, commands are inserted on front of queue. Based on FrontInsert by jK",
+    author = "dizekat",
     date = "Jan,2008",
     license = "GNU GPL, v2 or later",
     layer = 5,
@@ -97,7 +97,7 @@ function widget:CommandNotify(id, params, options)
     
     local units=Spring.GetSelectedUnits()
     for i, unit_id in ipairs(units) do
-      local commands=Spring.GetCommandQueue(unit_id)
+      local commands=Spring.GetCommandQueue(unit_id,100)
       local px,py,pz=Spring.GetUnitPosition(unit_id)
       local min_dlen=1000000
       local insert_tag=0

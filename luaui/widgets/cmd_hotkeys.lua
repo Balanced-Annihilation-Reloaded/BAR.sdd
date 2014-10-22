@@ -1,7 +1,7 @@
 function widget:GetInfo()
 	return {
-		name = "Extra Hotkeys",
-		desc = "Adds hotkeys for buildings (Z,X,C,V), buildspacing (N,M), settarget (Y,J), resurrect (O)" ,
+		name = "Building Hotkeys",
+		desc = "Enables Building Hotkeys for ZXCV,BN,O" ,
 		author = "Beherith",
 		date = "23 march 2012",
 		license = "GNU LGPL, v2.1 or later",
@@ -13,7 +13,6 @@ end
 local binds={
 	"bind any+b buildspacing inc",
 	"bind any+n buildspacing dec",
-	"bind any+q controlunit",
 	"bind z buildunit_armmex",
 	"bind shift+z buildunit_armmex",
 	"bind z buildunit_armamex",
@@ -120,7 +119,24 @@ local binds={
 	"bind shift+v buildunit_armsy",
 	"bind v buildunit_corsy",
 	"bind shift+v buildunit_corsy",
+    
+    -- numpad movement
+    "bind numpad2 moveback",
+    "bind numpad6 moveright",
+    "bind numpad4 moveleft",
+    "bind numpad8 moveforward",
+    "bind numpad9 moveup",
+    "bind numpad3 movedown",
+    "bind numpad1 movefast",
+    
+    -- hotfixes for 98.0
+    "bind f6 mutesound", --http://springrts.com/mantis/view.php?id=4576
+    "bind q drawinmap", --some keyboards don't have ` or \
+    "bind ,	buildfacing inc", --because some keyboards don't have [ and ] keys
+    "bind .	buildfacing dec",
+    "bind o buildfacing inc", --apparently some keyboards don't have , and . either...
 }
+    
 local unbinds={
 	"bind any+c controlunit",
 	"bind c controlunit",
@@ -131,7 +147,12 @@ local unbinds={
 	"bind z buildspacing inc",
 	"bindaction buildspacing inc",
 
+    -- hotfixes for 98.0
+    "bind backspace	mousestate", --http://springrts.com/mantis/view.php?id=4578
+    "bind , prevmenu",
+    "bind . nextmenu",
 }
+
 function widget:Initialize()
 	for k,v in ipairs(unbinds) do
 		Spring.SendCommands("un"..v)
@@ -139,10 +160,6 @@ function widget:Initialize()
 	for k,v in ipairs(binds) do
 		Spring.SendCommands(v)
 	end
-    
-	Spring.SendCommands("bind y settarget")
-	Spring.SendCommands("bind j canceltarget")
-    Spring.SendCommands("bind o resurrect")
 end
 
 function widget:Shutdown()
@@ -152,8 +169,19 @@ function widget:Shutdown()
 	for k,v in ipairs(unbinds) do
 		Spring.SendCommands(v)
 	end
+end
 
-    Spring.SendCommands("unbind y settarget")
-	Spring.SendCommands("unbind j canceltarget")
-    Spring.SendCommands("unbind o resurrect")
+-- hacky hotfix for http://springrts.com/mantis/view.php?id=4455
+-- see also https://github.com/spring/spring/blob/develop/rts/Game/UI/KeyCodes.cpp and https://github.com/spring/spring/blob/develop/cont/LuaUI/Headers/keysym.h.lua
+include('keysym.h.lua')
+local BACKQUOTE = KEYSYMS.BACKQUOTE
+local BACKSLASH = KEYSYMS.BACKSLASH
+local PAR = KEYSYMS.WORLD_23
+local Q = KEYSYMS.Q 
+local RETURN = KEYSYMS.RETURN
+local wasDrawKey = false
+function widget:KeyPress(key, mods, isRepeat)
+    if key==RETURN and (Spring.GetKeyState(BACKQUOTE) or Spring.GetKeyState(BACKSLASH) or Spring.GetKeyState(PAR) or Spring.GetKeyState(Q)) then
+        return true
+    end
 end

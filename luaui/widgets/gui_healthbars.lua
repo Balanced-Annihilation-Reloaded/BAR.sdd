@@ -122,16 +122,17 @@ local fbkTop          = { 0.06,0.06,0.06,featureBarAlpha }
 local fhpcolormap     = { {0.33, 0.33, 0.33, featureBarAlpha*1.5},  {0.33, 0.33, 0.33, featureBarAlpha*1.5}, {0.33,0.33,0.33,featureBarAlpha*1.5} }
 
 local barColors = {
-  emp     = { 0.50,0.50,1.00,barValueAlpha },
-  emp_p   = { 0.40,0.40,0.80,barValueAlpha },
-  emp_b   = { 0.60,0.60,0.90,barValueAlpha },
-  capture = { 1.00,0.50,0.00,barValueAlpha },
-  build   = { 0.75,0.75,0.75,barValueAlpha*0.9 },
-  stock   = { 0.50,0.50,0.50,barValueAlpha },
-  reload  = { 0.05,0.60,0.60,barValueAlpha*0.5 },
-  shield  = { 0.20,0.60,0.60,barValueAlpha*0.7 },
-  resurrect = { 1.00,0.50,0.00,barValueAlpha },
-  reclaim   = { 0.75,0.75,0.75,barValueAlpha*0.7 },
+  emp     = { 0.50,0.50,1.00,barAlpha },
+  emp_p   = { 0.40,0.40,0.80,barAlpha },
+  emp_b   = { 0.60,0.60,0.90,barAlpha },
+  capture = { 1.00,0.50,0.00,barAlpha },
+  build   = { 0.75,0.75,0.75,barAlpha },
+  stock   = { 0.50,0.50,0.50,barAlpha },
+  reload  = { 0.00,0.60,0.60,barAlpha },
+  shield  = { 0.20,0.60,0.60,barAlpha },
+  dguncharge = { 1.00,0.80,0.00,barAlpha },
+  resurrect = { 1.00,0.50,0.00,featureBarAlpha },
+  reclaim   = { 0.75,0.75,0.75,featureBarAlpha },
 }
 
 --------------------------------------------------------------------------------
@@ -1133,6 +1134,12 @@ do
           end
           AddBar("reload",reload,"reload",infoText or '')
         end
+      end
+      
+      --// DGUN CHARGE
+      local charge = GetUnitRulesParam(unitID,"charge")
+      if charge and charge<=99 then
+        AddBar("dgun charge",math.max(charge/100,0),"dguncharge",(fullText and floor(charge)..'%') or '')
       end
 
     if (barsN>0)or(numStockpiled) then

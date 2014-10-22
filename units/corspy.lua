@@ -39,6 +39,7 @@ return {
 		selfdestructcountdown = 1,
 		sightdistance = 550,
 		stealth = true,
+        sonarstealth = true,
 		turnrate = 1320,
 		upright = true,
 		workertime = 50,

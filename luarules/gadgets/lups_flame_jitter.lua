@@ -83,7 +83,8 @@ else
 
     local posx,posy,posz, dirx,diry,dirz = Spring.GetUnitWeaponVectors(unitID,weapon)
     local wd  = WeaponDefs[UnitDefs[unitDefID].weapons[weapon].weaponDef]
-    local weaponRange = wd.range*wd.duration*15
+    local weaponRange = wd.range * wd.duration 
+    local weaponVelocity = wd.projectilespeed * 30
 
     local speedx,speedy,speedz = Spring.GetUnitVelocity(unitID)
     local partpos = "x*delay,y*delay,z*delay|x="..speedx..",y="..speedy..",z="..speedz
@@ -93,8 +94,8 @@ else
     particleList[particleCnt] = {
       class        = 'JitterParticles2',
       colormap     = { {1,1,1,1},{1,1,1,1} },
-      count        = 6,
-      life         = weaponRange / 12,
+      count        = 3,
+      life         = weaponRange / 5,
       delaySpread  = 25,
       force        = {0,1.5,0},
       --forceExp     = 0.2,
@@ -105,7 +106,7 @@ else
       emitVector   = {dirx,diry,dirz},
       emitRotSpread= 10,
 
-      speed        = 10,
+      speed        = weaponVelocity / 50,
       speedSpread  = 0,
       speedExp     = 1.5,
 
@@ -126,9 +127,9 @@ else
                        {0.35, 0.15, 0.15, 0.25},
                        {0.1, 0.035, 0.01, 0.2},
                        {0, 0, 0, 0.01} },
-      count        = 4,
-      life         = weaponRange / 12,
-      delaySpread  = 25,
+      count        = 4, --4
+      life         = weaponRange / 5.25,
+      delaySpread  = 20,
 
       force        = {0,1,0},
       --forceExp     = 0.2,
@@ -143,7 +144,7 @@ else
       rotSpread    = 360,
       rotExp       = 9,
 
-      speed        = 10,
+      speed        = weaponVelocity / 70,
       speedSpread  = 0,
       speedExp     = 1.5,
 
@@ -159,9 +160,9 @@ else
     particleList[particleCnt] = {
       class        = 'SimpleParticles2',
       colormap     = { {1, 1, 1, 0.01}, {0, 0, 0, 0.01} },
-      count        = 20,
+      count        = 7, --7
       --delay        = 20,
-      life         = weaponRange / 48,
+      life         = weaponRange / 16,
       lifeSpread   = 20,
       delaySpread  = 15,
 
@@ -178,12 +179,12 @@ else
       rotSpread    = 360,
       rotExp       = 9,
 
-      speed        = 10,
+      speed        = weaponVelocity / 50,
       speedSpread  = 0,
 
-      size         = 2,
-      sizeGrowth   = 4.0,
-      sizeExp      = 0.65,
+      size         = 3,
+      sizeGrowth   = 5.0,
+      sizeExp      = 0.5,
 
       --texture     = "bitmaps/smoke/smoke06.tga",
       texture     = altFlameTexture and "bitmaps/GPL/flame_alt.png" or "bitmaps/GPL/flame.png",

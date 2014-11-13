@@ -6,7 +6,7 @@ return {
      date      = "22 June 2007",
      license   = "GNU GPL, v2 or later",
      layer     = 5,
-     enabled   = true  -- loaded by default?
+     enabled   = false  -- loaded by default?
    }
 end
 -------------------------------------------------------------------------------------

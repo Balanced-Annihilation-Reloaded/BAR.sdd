@@ -22,6 +22,7 @@ local spValidUnitID = Spring.ValidUnitID
 local spValidFeatureID = Spring.ValidFeatureID
 local spGetFeaturePosition = Spring.GetFeaturePosition
 local spIsUnitSelected = Spring.IsUnitSelected
+local spIsGUIHidden = Spring.IsGUIHidden
 
 local GL_SRC_ALPHA = GL.SRC_ALPHA
 local GL_ONE_MINUS_SRC_ALPHA = GL.ONE_MINUS_SRC_ALPHA
@@ -281,6 +282,7 @@ end
 
 function widget:DrawWorldPreUnit()
     --Spring.Echo(maxCommand-minCommand) --EXPENSIVE! often handling hundreds of command queues at once 
+    if spIsGUIHidden() then return end
     
     osClock = os.clock()
     gl.Blending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -358,6 +360,8 @@ function widget:DrawWorldPreUnit()
 end
 
 function widget:DrawWorld()
+    if spIsGUIHidden() then return end
+
     -- highlight unit 
     gl.DepthTest(true)
     gl.PolygonOffset(-2, -2)

@@ -1328,7 +1328,7 @@ do
 
   function widget:DrawWorld()
 
-    --if Spring.IsGUIHidden() then return end
+    if IsGUIHidden() then return end
 
     if (#visibleUnits+#visibleFeatures==0) then
       return

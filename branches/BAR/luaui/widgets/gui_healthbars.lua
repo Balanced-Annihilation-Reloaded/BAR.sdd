@@ -1323,6 +1323,7 @@ do
   local GetSmoothMeshHeight  = Spring.GetSmoothMeshHeight 
   local IsGUIHidden          = Spring.IsGUIHidden 
   local glDepthMask          = gl.DepthMask
+  local glDepthTest          = gl.DepthTest
   local GetFeatureHealth     = Spring.GetFeatureHealth
   local GetFeatureResources  = Spring.GetFeatureResources
 
@@ -1335,7 +1336,7 @@ do
     end
     
     --gl.Fog(false)
-    gl.DepthTest(true)
+    glDepthTest(true)
     glDepthMask(true)
     cx, cy, cz = GetCameraPosition()
 

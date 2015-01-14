@@ -1345,11 +1345,7 @@ do
     --if the camera is too far up, higher than maxDistance on smoothmesh, dont even call any visibility checks or nothing 
     local smoothheight=GetSmoothMeshHeight(cx,cz) --clamps x and z
     if ((cy-smoothheight)^2 < maxUnitDistance) then 
-            
-      --gl.Fog(false)
-      --gl.DepthTest(true)
-      glDepthMask(true)
-      
+                
       if (barShader) then gl.UseShader(barShader); glMyText(0); end
 
       --// draw bars of units

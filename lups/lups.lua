@@ -70,6 +70,7 @@ local next   = next
 
 local spGetUnitRadius        = Spring.GetUnitRadius
 local spIsUnitVisible        = Spring.IsUnitVisible
+local spIsUnitIcon           = Spring.IsUnitIcon
 local spIsSphereInView       = Spring.IsSphereInView
 local spGetUnitLosState      = Spring.GetUnitLosState
 local spGetUnitViewPosition  = Spring.GetUnitViewPosition
@@ -675,16 +676,21 @@ function IsPosInAirLos(x,y,z)
 end
 
 local function IsUnitFXVisible(fx)
-	local unitActive = true
-        local unitID = fx.unit
+	local unitIcon = false
+    local unitActive = true
+    local unitID = fx.unit
 	if fx.onActive then
 		unitActive = spGetUnitIsActive(unitID)
 		if (unitActive == nil) then
 			unitActive = true
 		end
+        unitIcon = spIsUnitIcon(unitID)
+        if (unitIcon == nil) then
+            unitIcon = false
+        end
 	end
 
-	if (not fx.onActive)or(unitActive) then
+	if (not fx.onActive)or(unitActive and not unitIcon) then
 		if fx.alwaysVisible then
 			return true
 		elseif (fx.Visible) then
@@ -692,7 +698,7 @@ local function IsUnitFXVisible(fx)
 		else
 			local unitRadius = (spGetUnitRadius(unitID) + 40)
 			local r = fx.radius or 0
-			return Spring.IsUnitVisible(unitID, unitRadius + r)
+			return spIsUnitVisible(unitID, unitRadius + r)
 		end
 	else
 		return fx.alwaysVisible

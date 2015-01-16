@@ -15,16 +15,37 @@ local Chili, button, panel, text
 local startTime, countDown, amNewbie
 local countText = 'Game is starting in 3 seconds...'
 
+local readyText = "Ready"
+local offerSubText = "Offer To Play"
+local withdrawSubText = "Withdraw Offer"
+local readyWidth = 100
+local offerWidth = 200
+local withdrawWidth = 200
+
+local myPlayerID = Spring.GetMyPlayerID()
+local amSpec = Spring.GetSpectatingState()
+local eligibleSub 
+local wantSub = false
+
 local yellow = "\255\255\230\0"
 local white = "\255\255\255\255"
 
 function widget:Initialize()
+    -- exit if newbie or game is already started
     amNewbie = (Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'isNewbie') == 1)
-    if amNewbie or Spring.GetGameFrame()>0 or Spring.GetSpectatingState() then
+    if amNewbie or Spring.GetGameFrame()>0 then
         widgetHandler:RemoveWidget()
         return
     end
-
+    
+    --- do the same eligibility check as in game_replace_afk_players
+    local customtable = select(10,Spring.GetPlayerInfo(myPlayerID)) -- player custom table
+    local tsMu = customtable.skill 
+    local tsSigma = customtable.skilluncertainty
+    ts = tsMu and tonumber(tsMu:match("%d+%.?%d*"))
+    tsSigma = tonumber(tsSigma)
+    eligibleSub = tsMu and tsSigma and (tsSigma<=2) and (not string.find(tsMu, ")")) and amSpec
+   
 	Chili = WG.Chili
     
     window = Chili.Panel:New{
@@ -33,19 +54,22 @@ function widget:Initialize()
         right = 300,
         y = 200,
         height = 50,
-        width = 100,
+        width = amSpec and offerWidth or readyWidth,
 		padding     = {0,0,0,0},
 		itemPadding = {0,0,0,0},
 		itemMargin  = {0,0,0,0},
     }
 
+    button_text = amSpec and offerSubText or readyText
+    
     button = Chili.Button:New{
-        name = 'readybutton',
+        name = 'button',
         parent = window,
         height = 50,
-        width = 100,
-        caption = "Ready",   
-        onclick = {ReadyUp},
+        minwidth = 100,
+        width = amSpec and offerWidth or readyWidth,
+        caption = button_text,   
+        onclick = {ButtonPress},
         font = {
             size = 22,
         }
@@ -121,6 +145,32 @@ function Update()
             text:SetText(white .. countText)
         else
             text:SetText(yellow .. countText)
+        end
+    end
+end
+
+function ButtonPress()
+    -- ready up
+    if not amSpec then
+        ReadyUp()
+        return
+    end
+    
+    -- toggle sub offer
+    if eligibleSub then
+        wantSub = not wantSub
+        if wantSub then
+            Spring.SendLuaRulesMsg('\144')
+            Spring.Echo("If player(s) are afk when the game starts, you might be used as a substitute")
+            button:SetCaption(withdrawSubText)
+            button:Resize(withdrawWidth,50)
+            window:Resize(withdrawWidth,50)
+        else
+            Spring.SendLuaRulesMsg('\145')
+            Spring.Echo("Your offer to substitute has been withdrawn")     
+            button:SetCaption(offerSubText)
+            button:Resize(offerWidth,50)
+            window:Resize(offerWidth,50)
         end
     end
 end

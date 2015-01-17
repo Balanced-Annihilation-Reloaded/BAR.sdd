@@ -46,6 +46,11 @@ unitDef = {
   canReclaim        = true,
   canRestore        = false,
 
+  customparams = { 
+    normalmaps = "yes", 
+    normaltex = "unittextures/chicken_normal.tga", 
+  },
+
   sfxtypes           = {
 
     explosiongenerators = {

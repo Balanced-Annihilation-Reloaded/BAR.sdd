@@ -46,6 +46,11 @@ unitDef = {
   collisionVolumeOffsets = "0 8 -2",
   collisionVolumeScales = "70 14 48",
 
+  customparams = { 
+    normalmaps = "yes", 
+    normaltex = "unittextures/chicken_normal.tga", 
+  },
+
   sfxtypes            = {
 
     explosiongenerators = {

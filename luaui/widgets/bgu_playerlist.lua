@@ -157,7 +157,6 @@ function WatchLos()
 end
 
 function Ignore()
-    Spring.Echo(iPanelpID)
     if WG.ignoredPlayers[players[iPanelpID].plainName] then
         Spring.SendCommands("unignoreplayer "..players[iPanelpID].plainName)    
     else    
@@ -407,7 +406,8 @@ function iPanel()
     
 end
 
-function iPanelPress(obj,value)   
+function iPanelPress(obj,value)  
+    -- show the iPanel & configure all the buttons to say the right stuff
     if not iPanel.hidden then 
         iPanel:ToggleVisibility()
         return 

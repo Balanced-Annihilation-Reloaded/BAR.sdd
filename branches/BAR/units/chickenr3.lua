@@ -44,6 +44,11 @@ unitDef = {
   collisionVolumeTest	    = 1,
   collisionVolumeType	    = [[CylY]],
 
+  customparams = { 
+    normalmaps = "yes", 
+    normaltex = "unittextures/chicken_normal.tga", 
+  },
+
   sfxtypes            = {
 
     explosiongenerators = {

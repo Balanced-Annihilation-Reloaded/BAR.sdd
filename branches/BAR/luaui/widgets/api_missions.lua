@@ -52,7 +52,7 @@ function widget:Initialize()
 end
 
 function widget:GamePreload()
-    isMission = isMission or WG.isMission 
+    isMission = isMission or WG.isMission
     Spring.Echo("Missions: Activated")
     
     -- reload any widgets that were disabled because the previous game was a mission
@@ -63,7 +63,7 @@ function widget:GamePreload()
             end
         end
         
-        widgetHandler:RemoveWidget()
+        widgetHandler:RemoveWidget(self)
         return
     end
     

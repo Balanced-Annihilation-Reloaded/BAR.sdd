@@ -1547,7 +1547,7 @@ function UpdateStack()
     alliesPanel:AddChild(Header("ALLIES"))
     for _,tID in ipairs(myAllyTeam) do
         for _,pID in ipairs(teams[tID]) do
-            if players[pID].spec then
+            if players[pID].spec or not players[pID].active then
                 alliesPanel:AddChild(players[pID].deadPanel)
             else
                 alliesPanel:AddChild(players[pID].playerPanel)            
@@ -1577,7 +1577,7 @@ function UpdateStack()
         
         for _,tID in ipairs(allyTeams[aID]) do
             for _,pID in ipairs(teams[tID]) do
-                if players[pID].spec then
+                if players[pID].spec or not players[pID].active then
                     enemyAllyTeamPanels[aID]:AddChild(players[pID].deadPanel)
                 else
                     enemyAllyTeamPanels[aID]:AddChild(players[pID].playerPanel)            
@@ -1592,8 +1592,8 @@ function UpdateStack()
     end
     enemiesPanel:AddChild(Separator())
 
-    specsPanel:AddChild(Header("SPECTATORS"))   
-    for _,pID in ipairs(deadPlayers) do
+    specsPanel:AddChild(Header("SPECTATORS")) --already filtered for being active
+    for _,pID in ipairs(deadPlayers) do 
         specsPanel:AddChild(players[pID].specPanel)
     end
     for _,pID in ipairs(specs) do

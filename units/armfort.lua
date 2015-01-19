@@ -7,6 +7,7 @@ return {
 		buildcostmetal = 37,
 		buildpic = "ARMFORT.DDS",
 		buildtime = 1065,
+		buildinggrounddecaltype = "armfort_aoplane.dds",
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "FORTIFICATION",
 		description = "Hardened Perimeter Barrier",

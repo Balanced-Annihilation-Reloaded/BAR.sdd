@@ -266,6 +266,11 @@ function widget:Initialize()
     visibleUnits = Spring.GetAllUnits()    
     n_visibleUnits = #visibleUnits
     
+    if not gl.CreateShader or not gl.DeleteShader or true then
+        Spring.Log("gui_highlight_units.lua", LOG.WARNING, "Your hardware does not support shaders, disabled")
+        widgetHandler:RemoveWidget(self)
+    end
+   
     Chili  = WG.Chili
     if not Chili then return end
     screen = Chili.Screen0

@@ -258,7 +258,16 @@ end
 -- Drawing
 --------------------------------------------------------------------------------
 
-function widget:Initialize()    
+local shadersupported = true
+
+function widget:Initialize()
+    if not gl.CreateShader or not gl.DeleteShader then
+        shadersupported = false
+        Spring.Log("gui_highlight_units.lua", LOG.WARNING, "Your hardware does not support shaders, disabled")
+        widgetHandler:RemoveWidget(self)
+	return
+    end
+
     SetUnitConf()
     CreateSpotterLists()
     CreateXRayShader()
@@ -266,10 +275,6 @@ function widget:Initialize()
     visibleUnits = Spring.GetAllUnits()    
     n_visibleUnits = #visibleUnits
     
-    if not gl.CreateShader or not gl.DeleteShader then
-        Spring.Log("gui_highlight_units.lua", LOG.WARNING, "Your hardware does not support shaders, disabled")
-        widgetHandler:RemoveWidget(self)
-    end
    
     Chili  = WG.Chili
     if not Chili then return end
@@ -292,7 +297,8 @@ function widget:Initialize()
     
 end
 
-function widget:Shutdown()    
+function widget:Shutdown()
+    if not shadersupported then return end
     DeleteSpotterLists()
     gl.DeleteShader(shader)
 end

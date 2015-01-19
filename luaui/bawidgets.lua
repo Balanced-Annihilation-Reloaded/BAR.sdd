@@ -849,6 +849,7 @@ function widgetHandler:RemoveWidget(widget)
     ArrayRemove(self[listname..'List'], widget)
   end
   self:UpdateCallIns()
+  widgetHandler.knownChanged = true
 end
 
 

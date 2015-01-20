@@ -514,7 +514,7 @@ function loadWindow()
 			height    = 25,
 			OnMouseUp = {
 				function()
-					Spring.SendCommands{'quit'}
+					Spring.SendCommands{'quitforce'}
 				end
 			},
 		}

@@ -714,7 +714,7 @@ local function createInfoTab()
 			
 			Chili.Button:New{caption = 'Resign and Spectate', name = "ResignButton", height = '9%', width = '28%', right = '1%', y = '72%', OnMouseUp = {ResignMe}},
 			Chili.Button:New{caption = 'Exit To Desktop',height = '9%',width = '28%',right = '1%', y = '82%',
-				OnMouseUp = {function() spSendCommands{'quit'} end }},
+				OnMouseUp = {function() spSendCommands{'quitforce'} end }},
 		}
 	}
 

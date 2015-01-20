@@ -47,6 +47,9 @@ local unitIncreaseThresh	= 0.85 -- We only increase maxUnits if the units are gr
 -- Alpha loss per second after releasing mouse
 local lineFadeRate = 2.0
 
+-- Draws a faint glow around each formation dot (in func: DrawFilledCircleOutFading)
+local drawDotGlow = true
+
 -- What commands are eligible for custom formations
 local CMD_SETTARGET = 34923
 
@@ -731,13 +734,28 @@ local function DrawFilledCircleOutFading(pos, size, cornerCount)
 		end
 	end)
 	glPopMatrix()
+	
+	-- draw an extra faint glow around the dot
+	if drawDotGlow then
+		glPushMatrix()
+		glTranslate(pos[1], pos[2], pos[3])
+		glBeginEnd(GL.TRIANGLE_FAN, function()
+			SetColor(usingCmd, 0.07)
+			glVertex(0,0,0)
+			SetColor(usingCmd, 0)
+			for t = 0, pi2, pi2 / cornerCount do
+				glVertex(sin(t) * (size*2.7), 0, cos(t) * (size*2.7))
+			end
+		end)
+		glPopMatrix()
+	end
 end
 
 local function DrawFormationDots(vertFunction, zoomY, unitCount)
 	local currentLength = 0
 	local lengthPerUnit = lineLength / (unitCount-1)
 	local lengthUnitNext = lengthPerUnit
-	local dotSize = sqrt(zoomY*0.1)
+	local dotSize = sqrt(zoomY*0.09)
 	if (#fNodes > 1) and (unitCount > 1) then
 		SetColor(usingCmd, 0.6)
 		DrawFilledCircleOutFading(fNodes[1], dotSize, 8)

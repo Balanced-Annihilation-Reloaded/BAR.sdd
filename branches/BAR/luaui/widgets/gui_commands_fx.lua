@@ -65,6 +65,9 @@ local duration      = 1.25
 local lineWidth	    = 6
 local dotRadius     = 28		
 
+local mapX = Game.mapSizeX
+local mapZ = Game.mapSizeZ
+
 local CONFIG = {  
     [CMD_ATTACK] = {
         sizeMult = 1.4,
@@ -169,7 +172,7 @@ local function DrawDot(size, r,g,b,a, x,y,z)
 end
 
 local function DrawLine(x1,y1,z1, x2,y2,z2, width) -- long thin rectangle
-    local theta	= atan((z2-z1)/(x2-x1))
+    local theta	= (x1~=x2) and atan((z2-z1)/(x2-x1)) or pi/2
     local zOffset = cos(pi-theta) * width / 2
     local xOffset = sin(pi-theta) * width / 2
     
@@ -323,8 +326,9 @@ function widget:DrawWorldPreUnit()
                 for j=1,commands[i].queueSize do
                     --Spring.Echo(CMD[commands[i].queue[j].id]) --debug
                     local X,Y,Z = ExtractTargetLocation(commands[i].queue[j].params[1], commands[i].queue[j].params[2], commands[i].queue[j].params[3], commands[i].queue[j].params[4], commands[i].queue[j].id)                                
+                    local validCoord = X and Z and X>=0 and X<=mapX and Z>=0 and Z<=mapZ
                     -- draw
-                    if X then
+                    if X and validCoord then
                         -- lines
                         local lineColour = CONFIG[commands[i].queue[j].id].colour
                         local lineAlpha = opacity * lineColour[4] * (1-progress)

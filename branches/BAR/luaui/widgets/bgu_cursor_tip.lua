@@ -18,6 +18,7 @@ local tipType = false
 local tooltip = ''
 local ID
 
+local spGetGameFrame            = Spring.GetGameFrame
 local spGetTimer                = Spring.GetTimer
 local spDiffTimers              = Spring.DiffTimers
 local spTraceScreenRay          = Spring.TraceScreenRay
@@ -86,7 +87,7 @@ local function getUnitTooltip(uID)
 	end
 	local metalMake, metalUse, energyMake, energyUse = spGetUnitResources(uID)
 	
-	local metal = ((metalMake or 0) - (MetalUse or 0))
+	local metal = ((metalMake or 0) - (metalUse or 0))
 	local energy = ((energyMake or 0) - (energyUse or 0))
 	
 	tooltip = tooltip..'\n'..formatresource("Metal: ", metal)..'/s\b\n' .. formatresource("Energy: ", energy)..'/s'
@@ -113,10 +114,11 @@ local function getTooltip()
 	else
 		tipType, ID = spTraceScreenRay(spGetMouseState())
 
-		if tipType == prevTipType and ID==prevID then
+        local gameFrame = spGetGameFrame()
+		if tipType == prevTipType and ID==prevID and not (tipType=='unit' and gameFrame<=prevGameFrame+3) then --need to update because units build costs change
 			return false
 		else
-			prevTipType = tipType; prevID = ID
+			prevTipType = tipType; prevID = ID; prevGameFrame = gameFrame
 		end
 
 		if tipType == 'unit'        then
@@ -130,7 +132,7 @@ local function getTooltip()
 	end
 end
 -----------------------------------
-local function setTooltip(text)
+local function setTooltipPos(text)
 	local text         = text or tip.text
 	local x,y          = spGetMouseState()
 	local _,_,numLines = tip.font:GetTextHeight(text)
@@ -154,14 +156,14 @@ function widget:Update()
 	local curTime = spGetTimer()
 	local text = getTooltip()
 	
-	if text and tip.text ~= text then
+	if text and (tip.text ~= text) then
 		tip:SetText(text)
 		oldTime = spGetTimer()
-		if tipWindow.visible then 
+		if not tipType and tipWindow.visible then 
 			tipWindow:Hide()
 		end
-	elseif tipType and (spDiffTimers(curTime, oldTime) > 1 or tipType == 'chili') then
-		setTooltip(text)
+	elseif tipType and (tipWindow.visible or spDiffTimers(curTime, oldTime) > 1 or tipType == 'chili') then
+		setTooltipPos(text)
 	end
 end
 -----------------------------------

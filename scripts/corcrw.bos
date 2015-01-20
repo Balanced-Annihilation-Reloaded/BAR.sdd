@@ -117,19 +117,12 @@ AimPrimary(heading, pitch)
 	var a;
 	p = get KTAN(pitch);
 	h = get KTAN(heading);
-	a= get ATAN(p*h,1000000);
+	a = get ATAN(h, p);
 	turn turretf to z-axis a speed <2000.000000>;
-	
-	var x;
-	p = get KCOS(pitch);
-	h = get KCOS(heading);
-	x= p*h;
-	a= get SQRT(1000000-x*x);
-	a=a/x;
-	
-	a=get ATAN(a,1000);
-	
-	turn sleevef to x-axis <0>-  a speed <2000.000000>;
+
+	a = get HYPOT(h, p);
+	a = get ATAN(a, 1000);
+	turn sleevef to x-axis <0> - a speed <2000.000000>;
 	wait-for-turn turretf around z-axis;
 	wait-for-turn sleevef around x-axis;
 	start-script RestoreAfterDelay();

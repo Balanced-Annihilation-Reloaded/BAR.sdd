@@ -11,8 +11,8 @@
 
 function widget:GetInfo()
   return {
-    name      = "Health Bars",
-    desc      = "Gives various informations about units in form of bars",
+    name      = "HealthBars",
+    desc      = "Gives various informations about units in form of bars. options: /healthbars_style,  /healthbars_percentage,  /healthbars_glow",
     author    = "jK, (whistles and bells added by Floris)",
     date      = "2009",
     license   = "GNU GPL, v2 or later",
@@ -33,38 +33,41 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local barHeight                 = 2.3
-local barWidth                  = 11.5         --// (barWidth)x2 total width!!!
+local barHeightOffset           = 34		 -- set value that healthbars for units that can unfold and become larger than its unitdef.height are still visible
+
+local barHeight                 = 2.4
+local barWidth                  = 12         --// (barWidth)x2 total width!!!
 local barAlpha                  = 0.85
 local barOutlineAlpha           = 0.8
 local barInnerAlpha             = 0.5
 local barValueAlpha             = 0.9	      -- alpha of the colored part
 
 local featureBarHeight          = 1.6
-local featureBarWidth           = 7
+local featureBarWidth           = 7.5
 local featureBarAlpha           = 0.6
 
 local drawBarTitles             = true          -- (I disabled the healthbar text, cause that one doesnt need an explanation)
 local titlesAlpha               = 0.3*barAlpha
 
 local drawBarPercentage         = 0		        -- wont draw heath percentage text above this percentage
-local alwaysDrawBarPercentageForComs = true     -- true:  commanders always will show health percentage number
-local drawFeatureBarPercentage  = 0	            
-local choppedCornerSize         = 0.44
-local outlineSize               = 0.63
-local drawFullHealthBars        = false
+local alwaysDrawBarPercentageForComs = true
+local drawFeatureBarPercentage  = 0	            -- true:  commanders always will show health percentage number
+local choppedCornerSize         = 0.45
+local outlineSize               = 0.75
+local drawFullHealthBars        = true
 
 local drawFeatureHealth         = true
 local featureTitlesAlpha        = featureBarAlpha * titlesAlpha/barAlpha
 local featureHpThreshold        = 0.85
 
 local featureResurrectVisibility= true      -- draw feature bars for resurrected features on same distance as normal unit bars
-local featureReclaimVisibility  = false      -- draw feature bars for reclaimed features on same distance as normal unit bars
+local featureReclaimVisibility  = true      -- draw feature bars for reclaimed features on same distance as normal unit bars
 
-local addGlow                   = true      -- adds a small subtle glow to the bar´s value
-local glowSize					= outlineSize*7
+local addGlow                   = false      -- adds a small subtle glow around the value of a bar	(has issues with overlapping bars)
+local glowSize					= outlineSize*6
+local glowAlpha					= 0.17
 
-local minPercentageDistance     = 80000     -- always show health percentage text below this distance
+local minPercentageDistance     = 110000     -- always show health percentage text below this distance
 local infoDistance              = 800000
 local maxFeatureInfoDistance    = 300000    --max squared distance at which text it drawn for features 
 local maxFeatureDistance        = 550000    --max squared distance at which any info is drawn for features 
@@ -89,20 +92,10 @@ OPTIONS[1] = {
 }
 OPTIONS[2] = {
   choppedCorners            = true,
-  showOutline               = false,
-  showInnerBg               = false,
-}
-OPTIONS[3] = {
-  choppedCorners            = true,
-  showOutline               = true,
-  showInnerBg               = false,
-}
-OPTIONS[4] = {
-  choppedCorners            = true,
   showOutline               = true,
   showInnerBg               = true,
 }
-local currentOption = 4
+local currentOption = 2
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -122,17 +115,16 @@ local fbkTop          = { 0.06,0.06,0.06,featureBarAlpha }
 local fhpcolormap     = { {0.33, 0.33, 0.33, featureBarAlpha*1.5},  {0.33, 0.33, 0.33, featureBarAlpha*1.5}, {0.33,0.33,0.33,featureBarAlpha*1.5} }
 
 local barColors = {
-  emp     = { 0.50,0.50,1.00,barAlpha },
-  emp_p   = { 0.40,0.40,0.80,barAlpha },
-  emp_b   = { 0.60,0.60,0.90,barAlpha },
-  capture = { 1.00,0.50,0.00,barAlpha },
-  build   = { 0.75,0.75,0.75,barAlpha },
-  stock   = { 0.50,0.50,0.50,barAlpha },
-  reload  = { 0.00,0.60,0.60,barAlpha },
-  shield  = { 0.20,0.60,0.60,barAlpha },
-  dguncharge = { 1.00,0.80,0.00,barAlpha },
-  resurrect = { 1.00,0.50,0.00,featureBarAlpha },
-  reclaim   = { 0.75,0.75,0.75,featureBarAlpha },
+  emp     = { 0.50,0.50,1.00,barValueAlpha },
+  emp_p   = { 0.40,0.40,0.80,barValueAlpha },
+  emp_b   = { 0.60,0.60,0.90,barValueAlpha },
+  capture = { 1.00,0.50,0.00,barValueAlpha },
+  build   = { 0.75,0.75,0.75,barValueAlpha*0.9 },
+  stock   = { 0.50,0.50,0.50,barValueAlpha },
+  reload  = { 0.05,0.60,0.60,barValueAlpha*0.5 },
+  shield  = { 0.20,0.60,0.60,barValueAlpha*0.7 },
+  resurrect = { 1.00,0.50,0.00,barValueAlpha },
+  reclaim   = { 0.75,0.75,0.75,barValueAlpha*0.7 },
 }
 
 --------------------------------------------------------------------------------
@@ -742,13 +734,12 @@ function init()
              }
              gl_Vertex.w  = 1.0;
            }
-
-           gl_Vertex.y += offset;
+		   gl_Vertex.y  += offset;
            gl_Position  = gl_ModelViewProjectionMatrix*gl_Vertex;
          }
       ]],
 		uniform = {
-			glowAlpha = 0.14,
+			glowAlpha = glowAlpha,
 		},
     });
 	
@@ -932,11 +923,11 @@ do
       local barInfo = bars[i]
       DrawUnitBar(yoffset,barInfo.progress,barInfo.color)
       if (fullText) then
-        if (barShader) then glMyText(1) end
-        if (drawBarPercentage > 0  or alwaysDrawBarPercentageForComs) then
-          glColor(1,1,1,barAlpha)
-          glText(barInfo.text,barStart,yoffset-outlineSize,4,"r")
+        if (barShader) then 
+          glMyText(1)
         end
+	    glColor(1,1,1,barAlpha)
+	    glText(barInfo.text,barStart,yoffset-outlineSize,4,"r")
         if (drawBarTitles and barInfo.title ~= "health") then
           glColor(1,1,1,titlesAlpha)
           glText(barInfo.title,0,yoffset-outlineSize,2.35,"cd")
@@ -1008,7 +999,7 @@ do
   function DrawUnitInfos(unitID,unitDefID, ud)
     if (not customInfo[unitDefID]) then
       customInfo[unitDefID] = {
-        height        = ud.height+14,
+        height        = ud.height+barHeightOffset,
         maxShield     = ud.shieldPower,
         canStockpile  = ud.canStockpile,
         reloadTime    = ud.reloadTime,
@@ -1135,12 +1126,6 @@ do
           AddBar("reload",reload,"reload",infoText or '')
         end
       end
-      
-      --// DGUN CHARGE
-      local charge = GetUnitRulesParam(unitID,"charge")
-      if charge and charge<=99 then
-        AddBar("dgun charge",math.max(charge/100,0),"dguncharge",(fullText and floor(charge)..'%') or '')
-      end
 
     if (barsN>0)or(numStockpiled) then
       glPushMatrix()
@@ -1192,7 +1177,7 @@ do
     if (not customInfo[featureDefID]) then
       local featureDef   = FeatureDefs[featureDefID or -1] or {height=0,name=''}
       customInfo[featureDefID] = {
-        height = featureDef.height+14,
+        height = featureDef.height+barHeightOffset,
         wall   = walls[featureDef.name],
       }
     end
@@ -1323,29 +1308,32 @@ do
   local GetSmoothMeshHeight  = Spring.GetSmoothMeshHeight 
   local IsGUIHidden          = Spring.IsGUIHidden 
   local glDepthMask          = gl.DepthMask
-  local glDepthTest          = gl.DepthTest
   local GetFeatureHealth     = Spring.GetFeatureHealth
   local GetFeatureResources  = Spring.GetFeatureResources
 
   function widget:DrawWorld()
 
-    if IsGUIHidden() then return end
+    --if Spring.IsGUIHidden() then return end
 
     if (#visibleUnits+#visibleFeatures==0) then
       return
     end
     
     --gl.Fog(false)
-    glDepthTest(true)
+    gl.DepthTest(true)
     glDepthMask(true)
-    cx, cy, cz = GetCameraPosition()
 
+    cx, cy, cz = GetCameraPosition()
 
     
     --if the camera is too far up, higher than maxDistance on smoothmesh, dont even call any visibility checks or nothing 
     local smoothheight=GetSmoothMeshHeight(cx,cz) --clamps x and z
     if ((cy-smoothheight)^2 < maxUnitDistance) then 
-                
+            
+      --gl.Fog(false)
+      --gl.DepthTest(true)
+      glDepthMask(true)
+      
       if (barShader) then gl.UseShader(barShader); glMyText(0); end
 
       --// draw bars of units
@@ -1358,6 +1346,7 @@ do
           DrawUnitInfos(unitID, unitDefID, unitDef)
         end
       end
+
       --// draw bars for features
       local drawFeatureInfo = false
       if ((cy-smoothheight)^2 < maxFeatureDistance) then
@@ -1451,6 +1440,7 @@ do
         end
       end
     end
+
   end
 
 end --//end do

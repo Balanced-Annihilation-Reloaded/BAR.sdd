@@ -63,7 +63,7 @@ local autoMexCmdDesc = {
   id      = CMD_AUTOMEX, 
   type    = CMDTYPE.ICON_MODE, 
   name    = 'Automatic Mex Upgrade', 
-  cursor  = 'AutoMex', 
+  cursor  = 'upgmex', 
   action  = 'automex', 
   tooltip = ONTooltip, 
   params  = { '0', 'UpgMex off', 'UpgMex on'} 
@@ -73,7 +73,7 @@ local upgradeMexCmdDesc = {
   id      = CMD_UPGRADEMEX, 
   type    = CMDTYPE.ICON_UNIT_OR_AREA, 
   name    = ' Upgrade \n      Mex', 
-  cursor  = 'Attack', 
+  cursor  = 'upgmex', 
   action  = 'upgrademex', 
   tooltip = 'Upgrade Mex', 
   hidden  = false, 
@@ -547,7 +547,10 @@ function gadget:CommandFallback(unitID, unitDefID, teamID, cmdID, cmdParams, cmd
   end 
 end 
 
-else 
+
+------------------
+else -- end synced
+------------------
 
 local bDefs = {} 
 
@@ -559,6 +562,8 @@ local function RegisterUpgradePairs(_, val)
 end
 
 function gadget:Initialize()
+    Spring.AssignMouseCursor("upgmex", "cursorupgmex", false)
+    
 	determine(UnitDefs, WeaponDefs)
 
 	for k,v in pairs(builderDefs) do 

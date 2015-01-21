@@ -149,6 +149,7 @@ local vertSrc = [[
 ]]
 
 local fragSrc = ([[
+        #version 120
 	const float mapxmul= 1/ %f;
 	const float mapzmul= 1/ %f;
   uniform sampler2D tex0; // r=los, g= radar, b=jammer

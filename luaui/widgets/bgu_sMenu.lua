@@ -20,7 +20,6 @@ local imageDir = 'luaui/images/buildIcons/'
 
 --  Will probably ignore redundant units here (e.g. floating AA, umex, etc. which are interchangeable)
 local ignoreCMDs = {
-	canceltarget = '', --TODO
 	selfd 	     = '',
 	loadonto 	   = '',
 	timewait 	   = '',
@@ -57,18 +56,20 @@ local orderColors = {
 	resurrect   = {0.0, 0.0, 1.0, 1.0},
     restore     = {0.5, 1.0, 0.2, 1.0},
     stop        = {0.4, 0.0, 0.0, 1.0},
+    canceltarget= {0.4, 0.0, 0.0, 1.0},
 }
 
 local topOrders = {
     [1] = "move",
     [2] = "fight",
     [3] = "attack",
-    [4] = "settarget",
+    [4] = "patrol",
     [5] = "stop",
-    [6] = "wait",
-    [7] = "patrol",
+    [6] = "settarget",
+    [7] = "canceltarget",
     [8] = "repair",
     [9] = "guard",
+    [10] = "wait",
 }
 
 local topStates = {

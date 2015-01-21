@@ -96,7 +96,7 @@ local function setCursor(cursorSet)
 		'cursorattack','cursorgather','cursorwait','cursordefend','cursorpickup',
 		'cursorrepair','cursorrevive','cursorrepair','cursorrestore','cursorrepair',
 		'cursormove','cursorpatrol','cursorreclamate','cursorselfd','cursornumber',
-        'cursorsettarget',
+        'cursorsettarget','cursorupgmex',
 	}
 
 	for i=1, #cursorNames do

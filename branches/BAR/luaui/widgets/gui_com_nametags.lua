@@ -14,7 +14,6 @@ end
 -- config
 --------------------------------------------------------------------------------
 
-local heightOffset			= 28
 local font = gl.LoadFont("Fonts/freesansbold.otf",14, 3, 6)
 
 --------------------------------------------------------------------------------
@@ -62,7 +61,7 @@ local function GetCommAttributes(unitID, unitDefID)
   if (r + g*1.35 + b*0.5) < 0.75 then  -- font:SetAutoOutlineColor(true) is broken (same for gl)
 	bgColor = {1,1,1,1}
   end
-  local height = UnitDefs[unitDefID].height
+  local height = UnitDefs[unitDefID].height + 36
   return {name = name or 'Commander', colour = {r, g, b, a}, height = height, bgColour = bgColor}
 end
 

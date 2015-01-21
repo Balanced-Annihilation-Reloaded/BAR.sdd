@@ -11,7 +11,7 @@
 
 function widget:GetInfo()
   return {
-    name      = "HealthBars",
+    name      = "Health Bars",
     desc      = "Gives various informations about units in form of bars. options: /healthbars_style,  /healthbars_percentage,  /healthbars_glow",
     author    = "jK, (whistles and bells added by Floris)",
     date      = "2009",
@@ -151,7 +151,8 @@ local barFeatureDList;
 local glColor         = gl.Color
 local glMyText        = gl.FogCoord
 local floor           = math.floor
-local GetUnitDefID         = Spring.GetUnitDefID 
+local GetUnitDefID    = Spring.GetUnitDefID
+local glDepthTest     = gl.DepthTest 
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -1248,7 +1249,6 @@ do
   local glTexCoord             = gl.TexCoord
   local glPolygonOffset        = gl.PolygonOffset
   local glBlending             = gl.Blending
-  local glDepthTest            = gl.DepthTest
   local glTexture              = gl.Texture
   local GetCameraVectors       = Spring.GetCameraVectors
   local abs                    = math.abs
@@ -1313,14 +1313,14 @@ do
 
   function widget:DrawWorld()
 
-    --if Spring.IsGUIHidden() then return end
+    if Spring.IsGUIHidden() then return end
 
     if (#visibleUnits+#visibleFeatures==0) then
       return
     end
     
     --gl.Fog(false)
-    gl.DepthTest(true)
+    glDepthTest(true)
     glDepthMask(true)
 
     cx, cy, cz = GetCameraPosition()
@@ -1331,7 +1331,7 @@ do
     if ((cy-smoothheight)^2 < maxUnitDistance) then 
             
       --gl.Fog(false)
-      --gl.DepthTest(true)
+      --glDepthTest(true)
       glDepthMask(true)
       
       if (barShader) then gl.UseShader(barShader); glMyText(0); end
@@ -1385,7 +1385,7 @@ do
     DrawOverlays()
 
     glColor(1,1,1,1)
-    --gl.DepthTest(false)
+    --glDepthTest(false)
   end
 end --//end do
 

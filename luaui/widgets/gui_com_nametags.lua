@@ -15,10 +15,7 @@ end
 --------------------------------------------------------------------------------
 
 local heightOffset			= 28
-local fontSize				= 13
-local scaleFontAmount		= 130
-
-local font = gl.LoadFont("Fonts/freesansbold.otf",50, 8, 8)
+local font = gl.LoadFont("Fonts/freesansbold.otf",14, 3, 6)
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -62,25 +59,22 @@ local function GetCommAttributes(unitID, unitDefID)
   local name,_,_,_,_,_,_,country,rank = GetPlayerInfo(player)
   local r, g, b, a = GetTeamColor(team)
   local bgColor = {0,0,0,1}
-  if (r + g*1.35 + b*0.5) < 0.75 then  -- not acurate (enough) with playerlist   but...   font:SetAutoOutlineColor(true)   doesnt seem to work
+  if (r + g*1.35 + b*0.5) < 0.75 then  -- font:SetAutoOutlineColor(true) is broken (same for gl)
 	bgColor = {1,1,1,1}
   end
-  local height = UnitDefs[unitDefID].height + heightOffset
-  return {name or 'Commander', {r, g, b, a}, height, bgColor}
+  local height = UnitDefs[unitDefID].height
+  return {name = name or 'Commander', colour = {r, g, b, a}, height = height, bgColour = bgColor}
 end
 
 
 local function DrawName(unitID, attributes)
-  
-  local iconHeight = (12.5+usedFontSize/1.6)
-  
-  glTranslate(0, attributes[3], 0 )
+  glTranslate(0, attributes.height, 0 )
   glBillboard()
    
   font:Begin()
-  font:SetTextColor(attributes[2])
-  font:SetOutlineColor(attributes[4])
-  font:Print(attributes[1], -0.3, 0, usedFontSize, "con")
+  font:SetTextColor(attributes.colour)
+  font:SetOutlineColor(attributes.bgColour)
+  font:Print(attributes.name, 0, 0, fontSize, "vcon")
   font:End()
 end
 
@@ -92,28 +86,14 @@ end
 
 
 function widget:DrawWorld()
-  --if Spring.IsGUIHidden() then return end
+  if Spring.IsGUIHidden() then return end
 
   glDepthTest(true)
   glAlphaTest(GL_GREATER, 0)
   glBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
    
-  local camX, camY, camZ = GetCameraPosition()
-  
   for unitID, attributes in pairs(comms) do
-    
-    -- calc opacity
-	if IsUnitInView(unitID) then
-		local x,y,z = GetUnitPosition(unitID)
-		local xDifference = camX - x
-		local yDifference = camY - y
-		local zDifference = camZ - z
-		camDistance = math.sqrt(xDifference*xDifference + yDifference*yDifference + zDifference*zDifference) 
-		
-	    usedFontSize = (fontSize*0.5) + (camDistance/scaleFontAmount)
-	    
-		glDrawFuncAtUnit(unitID, false, DrawName, unitID, attributes)
-	end
+    glDrawFuncAtUnit(unitID, false, DrawName, unitID, attributes)
   end
   
   glAlphaTest(false)

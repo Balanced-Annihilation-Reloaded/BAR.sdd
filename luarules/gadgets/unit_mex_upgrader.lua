@@ -355,8 +355,6 @@ function registerUnit(unitID, unitDefID, unitTeam)
     builder.teamID = unitTeam 
     builders[unitTeam][unitID] = builder 
     
-    addLayoutCommands(unitID) 
-    
   elseif mexDefs[unitDefID] then 
     local mex = {} 
     mex.unitDefID = unitDefID 
@@ -393,6 +391,8 @@ function assignClosestBuilder(mexID, mex, teamID)
 end 
 
 function gadget:UnitCreated(unitID, unitDefID, unitTeam, builderID) 
+  InsertUnitCmdDesc(unitID, autoMexCmdDesc) 
+  InsertUnitCmdDesc(unitID, upgradeMexCmdDesc) 
   registerUnit(unitID, unitDefID, unitTeam) 
 end 
 
@@ -438,30 +438,6 @@ end
 -- Gadget Button 
 --------------------------------------------------------------------------------------------------------------------------- 
 local ON, OFF = 1, 0 
-
-function addLayoutCommands(unitID) 
-  local insertID = 
-    FindUnitCmdDesc(unitID, CMD.CLOAK)      or 
-    FindUnitCmdDesc(unitID, CMD.ONOFF)      or 
-    FindUnitCmdDesc(unitID, CMD.TRAJECTORY) or 
-    FindUnitCmdDesc(unitID, CMD.REPEAT)     or 
-    FindUnitCmdDesc(unitID, CMD.MOVE_STATE) or 
-    FindUnitCmdDesc(unitID, CMD.FIRE_STATE) or 
-    123456 -- back of the pack 
-    
-  autoMexCmdDesc.params[1] = '0' 
-  updateCommand(unitID, insertID + 1, autoMexCmdDesc) 
-  updateCommand(unitID, insertID + 2, upgradeMexCmdDesc)  
-end 
-
-function updateCommand(unitID, insertID, cmd) 
-  local cmdDescId = FindUnitCmdDesc(unitID, cmd.id) 
-  if not cmdDescId then 
-    InsertUnitCmdDesc(unitID, insertID, cmd) 
-  else 
-    EditUnitCmdDesc(unitID, cmdDescId, cmd) 
-  end 
-end 
 
 function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, _) 
   --Echo("AC " .. cmdID) 

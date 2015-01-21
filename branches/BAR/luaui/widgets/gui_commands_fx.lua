@@ -235,7 +235,7 @@ function widget:GameFrame()
         unitCommand[unitID] = i
 
         -- get pruned command queue
-        local q = spGetUnitCommands(commands[i].unitID,20) or {} --limit to prevent mem leak, hax etc
+        local q = spGetUnitCommands(commands[i].unitID,50) or {} --limit to prevent mem leak, hax etc
         local our_q = {}
         local gotHighlight = false
         for _,cmd in ipairs(q) do
@@ -346,7 +346,7 @@ function widget:DrawWorldPreUnit()
                         end
                         prevX, prevY, prevZ = X, Y, Z
                         -- dot 
-                        if j==commands[i].queueSize and not spIsUnitIcon(unitID) and not spIsUnitSelected(unitID) then
+                        if j==commands[i].queueSize then
                             local size = dotRadius * CONFIG[commands[i].queue[j].id].sizeMult
                             gl.BeginEnd(GL.TRIANGLE_FAN, DrawDot, size, lineColour[1],lineColour[2],lineColour[4],lineAlpha, X,Y,Z)
                         end

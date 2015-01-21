@@ -18,7 +18,7 @@ local heightOffset			= 28
 local fontSize				= 13
 local scaleFontAmount		= 130
 
-local font = gl.LoadFont("Fonts/FreeSansBold.otf",50, 8, 8)
+local font = gl.LoadFont("Fonts/freesansbold.otf",50, 8, 8)
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -61,8 +61,12 @@ local function GetCommAttributes(unitID, unitDefID)
   local _, player = GetTeamInfo(team)
   local name,_,_,_,_,_,_,country,rank = GetPlayerInfo(player)
   local r, g, b, a = GetTeamColor(team)
+  local bgColor = {0,0,0,1}
+  if (r + g*1.35 + b*0.5) < 0.75 then  -- not acurate (enough) with playerlist   but...   font:SetAutoOutlineColor(true)   doesnt seem to work
+	bgColor = {1,1,1,1}
+  end
   local height = UnitDefs[unitDefID].height + heightOffset
-  return {name or 'Commander', {r, g, b, a}, height, country, rank}
+  return {name or 'Commander', {r, g, b, a}, height, bgColor}
 end
 
 
@@ -75,15 +79,8 @@ local function DrawName(unitID, attributes)
    
   font:Begin()
   font:SetTextColor(attributes[2])
-  
-  -- not acurate (enough)   but...   font:SetAutoOutlineColor(true)   doesnt seem to work
-  if (attributes[2][1] + attributes[2][2]*1.35 + attributes[2][3]*0.5) < 0.75 then
-    font:SetOutlineColor({1,1,1,1})
-  else
-    font:SetOutlineColor({0,0,0,1})
-  end
+  font:SetOutlineColor(attributes[4])
   font:Print(attributes[1], -0.3, 0, usedFontSize, "con")
-  
   font:End()
 end
 
@@ -141,7 +138,7 @@ end
 
 function CheckCom(unitID, unitDefID, unitTeam)
   if (unitDefID and UnitDefs[unitDefID] and UnitDefs[unitDefID].customParams.iscommander) then
-    comms[unitID] = CreateName(unitID, unitDefID)
+      comms[unitID] = GetCommAttributes(unitID, unitDefID)
   end
 end
 

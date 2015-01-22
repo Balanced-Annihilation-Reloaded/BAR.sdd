@@ -415,14 +415,16 @@ local function loadMainMenu()
 end
 
 ----------------------------
+local waterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- value -> listID (ugh)
+local shadowConvert_ID = {[0]=1,[1]=2,[2]=3}
+local shadowMapSizeConvert_ID = {[32]=1,[1024]=2,[2048]=3,[4096]=4} 
+----------------------------
+
 local function applyDefaultSettings()
     local comboboxes = {
         ['Water']            = 1,
         ['Shadows']          = 2,
     }
-    local reflectiveWaterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- value -> listID (ugh)
-    local shadowConvert_ID = {[0]=1,[1]=2,[2]=3}
-    local shadowMapSizeConvert_ID = {[32]=1,[1024]=2,[2048]=3,[4096]=4} 
     
     local sliders = {
         ['UnitIconDist']      = 280,
@@ -448,7 +450,7 @@ local function applyDefaultSettings()
     for setting,value in pairs(comboboxes) do
 		Settings[setting] = value
 		if setting=='Water' then
-			engineStack:GetObjectByName(setting):Select(reflectiveWaterConvert_ID[value])
+			engineStack:GetObjectByName(setting):Select(waterConvert_ID[value])
 		elseif setting=='Shadows' then
 			engineStack:GetObjectByName(setting):Select(shadowConvert_ID[value])
 		--elseif setting=='ShadowMapSize' then
@@ -485,9 +487,15 @@ local comboBox = function(obj)
 	}
 
 	local selected
-	for i = 1, #obj.labels do
-		if obj.labels[i] == Settings[obj.name] then selected = i end
-	end
+    if obj.name=='Shadows' then
+        selected = shadowConvert_ID[Settings['Shadows']] -- for shadows and water we store the value to match springsettings
+    elseif obj.name=='Water' then
+        selected = waterConvert_ID[Settings['Water']]
+    else
+        for i = 1, #obj.labels do
+            if obj.labels[i] == Settings[obj.name] then selected = i end
+        end
+    end
 
 
 	local function applySetting(obj, listID)
@@ -906,7 +914,7 @@ function widget:Initialize()
 	createInterfaceTab()
 	createGraphicsTab()
 	createCreditsTab()
-    
+        
 	if amNewbie then showHide('General') else menuTabs:Select('General') end
 	globalize()
 	makeWidgetList()

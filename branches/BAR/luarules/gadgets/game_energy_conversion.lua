@@ -95,7 +95,7 @@ local function AdjustTeamCapacity(teamID, adjustment, e)
     spSetTeamRulesParam(teamID, mmCapacityParamName, totalCapacity)
 end
 
-local function updateUnitCoversion(unitID, amount, e)
+local function updateUnitConversion(unitID, amount, e)
 	spSetUnitResourcing(unitID, "umm", amount * e)
 	spSetUnitResourcing(unitID, "uue", amount)
 end
@@ -107,7 +107,7 @@ local function UpdateMetalMakers(teamID, energyUse)
 				if (not defs.emped and energyUse > 0) then
 					amount = max(0,min(energyUse, defs.capacity))
 					energyUse = (energyUse - defs.capacity)
-					updateUnitCoversion(unitID, amount, eSteps[j])
+					updateUnitConversion(unitID, amount, eSteps[j])
 					
 					if (defs.status == 0) then
 						spSetUnitCOBValue(unitID,1024,1)
@@ -117,7 +117,7 @@ local function UpdateMetalMakers(teamID, energyUse)
 				else
 					if (teamActiveMM[teamID] == 0) then break end
 					if (defs.status == 1) then
-						updateUnitCoversion(unitID, 0, 0)
+						updateUnitConversion(unitID, 0, 0)
 						spSetUnitCOBValue(unitID,1024,0)
 						defs.status = 0
 						teamActiveMM[teamID] = (teamActiveMM[teamID] - 1)

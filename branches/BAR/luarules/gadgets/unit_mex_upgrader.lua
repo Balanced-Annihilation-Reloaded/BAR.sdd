@@ -391,8 +391,10 @@ function assignClosestBuilder(mexID, mex, teamID)
 end 
 
 function gadget:UnitCreated(unitID, unitDefID, unitTeam, builderID) 
-  InsertUnitCmdDesc(unitID, autoMexCmdDesc) 
-  InsertUnitCmdDesc(unitID, upgradeMexCmdDesc) 
+  if builderDefs[unitDefID] then
+    InsertUnitCmdDesc(unitID, autoMexCmdDesc) 
+    InsertUnitCmdDesc(unitID, upgradeMexCmdDesc)   
+  end
   registerUnit(unitID, unitDefID, unitTeam) 
 end 
 

@@ -267,7 +267,6 @@ local function processLine(line)
 	-------------------------------
 	
 	local name = ''
-	local system = false
 	local dedup = 1
     
 	if (names[ssub(line,2,(sfind(line,"> ") or 1)-1)] ~= nil) then
@@ -342,7 +341,7 @@ function widget:AddConsoleLine(msg)
     -- check for duplicates
 	for i=0,dedup-1 do
 		local prevMsg = log.children[#log.children - i]
-		if prevMsg and (not system or i==0) and (text == prevMsg.text or text == prevMsg.origText) then
+		if prevMsg and (text == prevMsg.text or text == prevMsg.origText) then
 			prevMsg.duplicates = prevMsg.duplicates + 1
 			prevMsg.origText = text
 			prevMsg:SetText(getInline{1,0,0}..(prevMsg.duplicates + 1)..'x \b'..text)
@@ -353,7 +352,7 @@ function widget:AddConsoleLine(msg)
     -- add to buffer 
     if currentConsoleLine=="" then
         currentConsoleLine = text
-    else
+    elseif text~= "" then
         currentConsoleLine = currentConsoleLine .. "\n" .. text
     end
 end
@@ -377,11 +376,9 @@ function NewConsoleLine(text)
 		parent      = log,
 		text        = text,
 		width       = '100%',
-		duplicates  = 0,
 		align       = "left",
 		valign      = "ascender",
 		padding     = {0,0,0,0},
-		duplicates  = 0,
 		lineSpacing = 0,
 		font        = {
 			outline          = true,

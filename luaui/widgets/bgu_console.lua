@@ -33,7 +33,7 @@ local maxChatWidth  = 625 --width of the console
 local cfg = {
 	msgTime  = 8, -- time to display messages in seconds
 	hideChat = true,
-	msgCap   = 500,
+	msgCap   = 50,
 }
 ------------
 
@@ -216,13 +216,6 @@ function widget:Initialize()
 	
 	loadWindow()
 	
-	-- load from console buffer
-	local buffer = getConsoleBuffer(40)
-	for i=1,#buffer do
-		line = buffer[i]
-		widget:AddConsoleLine(line.text,line.priority)
-	end
-	
 	-- disable engine console
 	sendCommands('console 0')
 	
@@ -332,7 +325,7 @@ local function processLine(line)
 	return color.misc .. line, false, dedup
 end
 
-local currentConsoleLine = ""
+local consoleBuffer = ""
 function widget:AddConsoleLine(msg)
 	-- parse the new line
 	local text, ignore, dedup = processLine(msg)
@@ -348,21 +341,8 @@ function widget:AddConsoleLine(msg)
 			return
 		end
 	end
-    
-    -- add to buffer 
-    if currentConsoleLine=="" then
-        currentConsoleLine = text
-    elseif text~= "" then
-        currentConsoleLine = currentConsoleLine .. "\n" .. text
-    end
-end
-
-function widget:Update()
-    -- flush buffer into console
-    if currentConsoleLine ~= "" then
-        NewConsoleLine(currentConsoleLine)
-        currentConsoleLine = ""
-    end
+	
+	NewConsoleLine(text)
 end
 
 function NewConsoleLine(text)
@@ -376,10 +356,12 @@ function NewConsoleLine(text)
 		parent      = log,
 		text        = text,
 		width       = '100%',
+		autoHeight  = true,
+		autoObeyLineHeight = true,
 		align       = "left",
 		valign      = "ascender",
 		padding     = {0,0,0,0},
-		lineSpacing = 0,
+		duplicates  = 0,
 		font        = {
 			outline          = true,
 			autoOutlineColor = true,
@@ -387,6 +369,7 @@ function NewConsoleLine(text)
 			outlineWeight    = 3,
 		},
 	}
+	
 	showChat()
 end
 

@@ -14,12 +14,20 @@ if (gadgetHandler:IsSyncedCode()) then
 	return
 end
 
-local slappingObjects = {
-    [1] = "wet fish",
-    [2] = "small inflatable willy",
-    [3] = "goat",
-    [4] = "severed hand",
-    [5] = "raw beefsteak",
+local slappingObjects_uncommon = {
+    [1] = "a wet fish",
+    [2] = "a leather glove",
+    [3] = "a goat",
+    [4] = "a severed hand",
+    [5] = "a raw beefsteak",
+}
+
+local slappingObjects_rare = {
+	[1] = "a long-eared bunny rabbit",
+	[2] = "a paddle",
+	[4] = "a sack of dead kittens",
+	[3] = "a pair of inflatable breasts",
+	[5] = "the interminable torment of mankind",
 }
 
 local myPlayerID = Spring.GetMyPlayerID()
@@ -48,14 +56,19 @@ function Slap(cmd,line,words,playerID)
 
     
     lastSlap = thisSlap    
-    local slapText = myName .. " slaps " .. theirName .. " around with a "
+    local slapText = myName .. " slaps " .. theirName .. " around with "
     
     if math.random() < 0.95 then
         slapText = slapText .. "large peewee"
     else
-        local n = math.random(1,#slappingObjects)
-        slapText = slapText .. slappingObjects[n]
-    end
+		if math.random() < 0.80 then
+			local n = math.random(1,#slappingObjects_uncommon)
+			slapText = slapText .. slappingObjects_uncommon[n]
+		else
+			local n = math.random(1,#slappingObjects_rare)
+			slapText = slapText .. slappingObjects_rare[n]		
+		end
+	end
 
     Spring.SendMessage(slapText)
 end

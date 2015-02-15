@@ -5,12 +5,63 @@
 
 piece  base, beam, nanogun, doorr, doorl, post, wake, turret;
 
-static-var  Static_Var_1, notBuilding, statechg_DesiredState, statechg_StateChanging;
+static-var  Static_Var_1, notBuilding, statechg_DesiredState, statechg_StateChanging, Wobble_status;
 
 // Signal definitions
 #define SIG_MOVE		2
 #define SIG_BUILD		4	
 
+WobbleUnit()
+{
+	while( TRUE )
+	{
+		if( Wobble_status)
+		{
+			if( get GROUND_WATER_HEIGHT(get UNIT_XZ) < 0 ) //Over Water
+			{
+				move base to y-axis [-0.500000] speed [0.50000];
+			}
+			else
+			{
+				move base to y-axis [-0.500000] speed [0.50000];
+			}
+		}
+		else
+		{
+			if( get GROUND_WATER_HEIGHT(get UNIT_XZ) < 0 ) //Over Water
+			{
+				move base to y-axis [0.500000] speed [0.50000];
+			}
+			else
+			{
+				move base to y-axis [0.000000] speed [0.50000];
+			}
+		}
+		Wobble_status = !Wobble_status;
+		sleep 260;
+	}
+}
+
+BankControl()
+{
+	var lastHeading, currHeading, diffHeading;
+	lastHeading = GET HEADING;
+	while (TRUE)
+	{
+		currHeading = GET HEADING;
+		diffHeading = currHeading - lastHeading;
+		// Set values for tilt
+
+		//Remove Extreme values
+		if ( diffHeading > 1500 ) diffHeading = 1500;
+		if ( diffHeading < -1500 ) diffHeading = -1500;
+		//get PRINT(diffHeading);
+		turn base to z-axis 1.0 * diffHeading speed <23>;
+		
+		lastHeading = currHeading;
+		sleep 67;
+	}
+}
 
 activatescr()
 {
@@ -60,6 +111,8 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	{
 		sleep 500;
 	}
+	start-script BankControl();
+	start-script WobbleUnit();
 	while( TRUE )
 	{
 		healthpercent = get HEALTH;

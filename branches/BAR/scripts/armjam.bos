@@ -5,7 +5,7 @@
 
 piece  base, eye, blwheel, blthigh, blleg, flwheel, flthigh, flleg, brwheel, brthigh, brleg, frwheel, frthigh, frleg;
 
-static-var  Static_Var_1, turnClock, turnCounter, wheelSpeed, currentSpeed, moveSpeed, pivotAngle;
+static-var  Static_Var_1, turnClock, turnCounter, wheelSpeed, currentSpeed, moveSpeed;
 
 TurnControl()
 {
@@ -19,9 +19,11 @@ TurnControl()
 		
 		if ( !get ACTIVATION )
 		{
-			//Smooth out values
-			if (diffHeading < 1000 AND diffHeading > -1000) pivotAngle = 0;
-			turn base to z-axis 1.3 * diffHeading speed <13>;
+	
+		//Remove Extreme values
+		if ( diffHeading > 1500 ) diffHeading = 1500;
+		if ( diffHeading < -1500 ) diffHeading = -1500;
+			turn base to z-axis 2 * diffHeading speed <13>;
 		}
 		// Set Values for differential system
 		if ( get ACTIVATION )

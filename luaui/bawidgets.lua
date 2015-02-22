@@ -417,11 +417,12 @@ function widgetHandler:Initialize()
   -- add the widgets  
   for _,w in ipairs(unsortedWidgets) do
     if (not w.whInfo.api) then
-      widgetHandler:InsertWidget(w)
-
       local name = w.whInfo.name
       local basename = w.whInfo.basename
-      Spring.Echo(string.format("Loaded widget:  %-18s  <%s>", name, basename))
+      local source = self.knownWidgets[name].fromZip and "mod: " or "user:"
+      Spring.Echo(string.format("Loading widget from %s  %-18s  <%s> ...", source, name, basename))
+
+      widgetHandler:InsertWidget(w)
     end
   end
 

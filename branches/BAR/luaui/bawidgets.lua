@@ -387,11 +387,18 @@ function widgetHandler:Initialize()
 
   -- sort the widgets
   table.sort(unsortedWidgets, function(w1, w2)
+    local a1 = w1.whInfo.api
+    local a2 = w2.whInfo.api
+    if (a1 ~= a2) then
+        return (a1 == true)
+    end
+    
     local l1 = w1.whInfo.layer
     local l2 = w2.whInfo.layer
     if (l1 ~= l2) then
       return (l1 < l2)
     end
+    
     local n1 = w1.whInfo.name
     local n2 = w2.whInfo.name
     local o1 = self.orderList[n1]
@@ -403,27 +410,15 @@ function widgetHandler:Initialize()
     end
   end)
 
-  -- first add the api widgets 
-  for _,w in ipairs(unsortedWidgets) do
-    if (w.whInfo.api) then
-      widgetHandler:InsertWidget(w)
-
-      local name = w.whInfo.name
-      local basename = w.whInfo.basename
-      Spring.Echo(string.format("Loaded API widget:  %-18s  <%s>", name, basename))
-    end
-  end
-
   -- add the widgets  
   for _,w in ipairs(unsortedWidgets) do
-    if (not w.whInfo.api) then
-      local name = w.whInfo.name
-      local basename = w.whInfo.basename
-      local source = self.knownWidgets[name].fromZip and "mod: " or "user:"
-      Spring.Echo(string.format("Loading widget from %s  %-18s  <%s> ...", source, name, basename))
+    local name = w.whInfo.name
+    local basename = w.whInfo.basename
+    local source = self.knownWidgets[name].fromZip and "mod: " or "user:"
+    local api = w.whInfo.api and " API" or ""
+    Spring.Echo(string.format("Loading%s widget from %s  %-18s  <%s> ...", api, source, name, basename))
 
-      widgetHandler:InsertWidget(w)
-    end
+    widgetHandler:InsertWidget(w)
   end
 
   -- save the active widgets, and their ordering

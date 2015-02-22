@@ -9,6 +9,7 @@ function widget:GetInfo()
 		license = "GNU LGPL, v2.1 or later",
 		layer = -5,
 		enabled = true
+        api = true,
 	}
 end
 

@@ -7,8 +7,8 @@ function widget:GetInfo()
 	license   = "GNU GPL, v3 or later",
 	layer     = 0,
 	enabled   = true, --enabled by default
-	handler   = true, --can use widgetHandler:x()
-	}
+    api       = true,
+    }
 end
 
 --[[

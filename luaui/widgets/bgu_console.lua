@@ -286,6 +286,10 @@ local function processLine(line)
 		-- Game Message
 		text = ssub(line,3)
         dedup = 1
+        if ssub(line,1,3) == "> <" then --player speaking in battleroom
+            local i = sfind(ssub(line,4,slen(line)), ">")
+            name = ssub(line,4,i+2)
+        end
 	elseif sfind(line,'-> Version') or sfind(line,'ClientReadNet') or sfind(line,'Address') or (gameOver and sfind(line,'left the game')) then --surplus info when user connects
 		-- Filter out unwanted engine messages
         return _, true, _ --ignore

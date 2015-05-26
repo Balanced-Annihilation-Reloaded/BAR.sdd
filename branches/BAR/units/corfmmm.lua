@@ -16,7 +16,7 @@ return {
 		corpse = "DEAD",
 		description = "Converts up to 650 energy into 13 metal per second",
 		explodeas = "ATOMIC_BLASTSML",
-        floater = true,
+		floater = true,
 		footprintx = 5,
 		footprintz = 5,
 		icontype = "building",
@@ -30,7 +30,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 143,
-        waterline = 20,
+		waterline = 20,
 		yardmap = "ooooooooooooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",

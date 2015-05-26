@@ -17,10 +17,8 @@ return {
 		category = "ALL WEAPON COMMANDER NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		cloakcost = 100,
 		cloakcostmoving = 1000,
-		collisionvolumetest = 1,
 		collisionvolumeoffsets = "0 -1 0",
 		collisionvolumescales = "36 44 26",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Ell",
 		commander = true,
 		corpse = "DEAD",
@@ -49,7 +47,6 @@ return {
 		radardistance = 700,
 		radaremitheight = 40,
 		reclaimable = false,
-		--script = "corcom_script.lua",
 		seismicsignature = 0,
 		selfdestructas = "COMMANDER_BLAST",
 		selfdestructcountdown = 5,
@@ -92,9 +89,9 @@ return {
 		},
 		customparams = {
 			iscommander = true,
-			paralyzemultiplier = 0.025,
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
+			paralyzemultiplier = 0.025,
 		},
 		featuredefs = {
 			dead = {

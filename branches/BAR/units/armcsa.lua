@@ -40,10 +40,6 @@ return {
 		turninplaceanglelimit = 360,
 		turnrate = 148,
 		workertime = 60,
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		buildoptions = {
 			[1] = "armap",
 			[2] = "armaap",
@@ -58,6 +54,10 @@ return {
 			[11] = "armfflak",
 			[12] = "armatl",
 			[13] = "armason",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		sounds = {
 			build = "nanlath1",

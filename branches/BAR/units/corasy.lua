@@ -11,7 +11,6 @@ return {
 		category = "ALL PLANT NOTLAND NOWEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 10 -2",
 		collisionvolumescales = "186 78 183",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
 		description = "Produces Level 2 Ships",

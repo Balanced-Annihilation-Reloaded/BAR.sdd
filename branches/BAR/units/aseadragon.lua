@@ -12,7 +12,6 @@ return {
 		category = "ALL WEAPON NOTSUB SHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -6 3",
 		collisionvolumescales = "150 75 150",
-		collisionvolumetest = 1,
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",
 		description = "Flagship",
@@ -46,9 +45,9 @@ return {
 		waterline = 0,
 		windgenerator = 0.001,
 		customparams = {
-			paralyzemultiplier = 0,
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
+			paralyzemultiplier = 0,
 		},
 		featuredefs = {
 			dead = {

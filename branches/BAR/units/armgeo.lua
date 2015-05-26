@@ -6,10 +6,10 @@ return {
 		buildangle = 2048,
 		buildcostenergy = 12568,
 		buildcostmetal = 520,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "armgeo_aoplane.dds",
 		buildpic = "ARMGEO.DDS",
 		buildtime = 13078,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -34,7 +34,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "ESTOR_BUILDING",
 		sightdistance = 273,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooo oGGo oGGo oooo",
 		customparams = {
 			normalmaps = "yes",
@@ -96,9 +96,5 @@ return {
 				[1] = "geothrm1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armgeo_aoplane.dds]],},
+	},
 }

@@ -12,7 +12,6 @@ return {
 		category = "ALL MOBILE WEAPON NOTLAND SHIP NOTSUB NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 3 0",
 		collisionvolumescales = "33 33 61",
-		collisionvolumetest = 1,
 		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
 		description = "Patrol Boat/Light Anti-Air",

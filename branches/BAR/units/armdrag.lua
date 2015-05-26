@@ -10,8 +10,6 @@ return {
 		canattack = false,
 		canrepeat = false,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
-		corpse = "DRAGONSTEETH",
-		description = "Perimeter Barrier",
 		corpse = "ROCKTEETH",
 		crushresistance = 250,
 		description = "Dragons Teeth",

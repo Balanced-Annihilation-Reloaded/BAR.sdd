@@ -11,7 +11,6 @@ return {
 		category = "ALL NOTLAND PLANT NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumescales = "100 40 90",
 		collisionvolumetype = "Box",
-		collisionvolumetest = 1,
 		corpse = "DEAD",
 		description = "Builds Hovercraft",
 		energystorage = 200,

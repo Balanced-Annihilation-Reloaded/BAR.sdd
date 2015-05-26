@@ -5,6 +5,10 @@ return {
 		buildcostenergy = 26986,
 		buildcostmetal = 3006,
 		builder = true,
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 9,
+		buildinggrounddecalsizey = 7,
+		buildinggrounddecaltype = "armaap_aoplane.dds",
 		buildpic = "ARMAAP.DDS",
 		buildtime = 20851,
 		canmove = true,
@@ -31,13 +35,9 @@ return {
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 312,
 		terraformspeed = 1000,
-
+		usebuildinggrounddecal = true,
 		workertime = 200,
 		yardmap = "oooooooooooooooooooooooooooooooooooooooooooooooo",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		buildoptions = {
 			[1] = "armaca",
 			[2] = "armbrawl",
@@ -49,6 +49,10 @@ return {
 			[8] = "blade",
 			[9] = "corgripn",
 			[10] = "armcybr",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {
@@ -113,9 +117,5 @@ return {
 				[1] = "pairactv",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=9,
-	buildingGroundDecalSizeY=7,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armaap_aoplane.dds]],},
+	},
 }

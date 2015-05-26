@@ -29,7 +29,6 @@ return {
 		nochasecategory = "ALL",
 		objectname = "ARMTHOVR.s3o",
 		releaseheld = true,
-		releaseheld = true,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 325,

@@ -39,10 +39,6 @@ return {
 		turnrate = 1100,
 		upright = true,
 		workertime = 80,
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		buildoptions = {
 			[1] = "armsolar",
 			[2] = "armadvsol",
@@ -74,6 +70,10 @@ return {
 			[28] = "armjamt",
 			[29] = "ajuno",
 			[30] = "armsy",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

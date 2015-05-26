@@ -113,7 +113,7 @@ return {
 				cratermult = 0,
 				duration = 10,
 				energypershot = 35,
-				explosionGenerator = "custom:zeus_explosion",
+				explosiongenerator = "custom:zeus_explosion",
 				firestarter = 50,
 				impactonly = 1,
 				impulseboost = 0,

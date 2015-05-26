@@ -6,10 +6,10 @@ return {
 		buildangle = 65536,
 		buildcostenergy = 8145,
 		buildcostmetal = 702,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "armcir_aoplane.dds",
 		buildpic = "ARMCIR.DDS",
 		buildtime = 12004,
 		category = "ALL WEAPON NOTSUB NOTAIR NOTHOVER SURFACE",
@@ -29,7 +29,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 350,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -159,9 +159,5 @@ return {
 				onlytargetcategory = "VTOL",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armcir_aoplane.dds]],},
+	},
 }

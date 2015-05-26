@@ -24,7 +24,7 @@ return {
 		minwaterdepth = 12,
 		name = "Urchin",
 		objectname = "CORTL.s3o",
-		script="cortl.cob",
+		script = "cortl.cob",
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 300,

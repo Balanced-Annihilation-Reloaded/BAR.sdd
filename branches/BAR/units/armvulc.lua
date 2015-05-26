@@ -5,10 +5,10 @@ return {
 		buildangle = 29096,
 		buildcostenergy = 503644,
 		buildcostmetal = 42363,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 11,
+		buildinggrounddecalsizey = 11,
+		buildinggrounddecaltype = "armvulc_aoplane.dds",
 		buildpic = "ARMVULC.DDS",
 		buildtime = 1009441,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -28,7 +28,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "RLRPC_DEATH",
 		sightdistance = 700,
-
+		usebuildinggrounddecal = true,
 		usepiececollisionvolumes = 1,
 		yardmap = "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
 		customparams = {
@@ -143,9 +143,5 @@ return {
 				onlytargetcategory = "SURFACE",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=11,
-	buildingGroundDecalSizeY=11,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armvulc_aoplane.dds]],},
+	},
 }

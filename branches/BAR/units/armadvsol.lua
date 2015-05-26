@@ -6,10 +6,10 @@ return {
 		buildangle = 4096,
 		buildcostenergy = 4725,
 		buildcostmetal = 343,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "armadvsol_aoplane.dds",
 		buildpic = "ARMADVSOL.DDS",
 		buildtime = 7945,
 		category = "ALL NOTSUB NOWEAPON NOTAIR NOTHOVER SURFACE",
@@ -32,9 +32,8 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 260,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooo oooo yooy yooy",
-		
 		customparams = {
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
@@ -97,9 +96,5 @@ return {
 				[1] = "solar1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armadvsol_aoplane.dds]],},
+	},
 }

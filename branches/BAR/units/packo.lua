@@ -6,10 +6,10 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 5357,
 		buildcostmetal = 338,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 5,
+		buildinggrounddecalsizey = 5,
+		buildinggrounddecaltype = "packo_aoplane.dds",
 		buildpic = "PACKO.DDS",
 		buildtime = 5810,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -33,6 +33,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 375,
+		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -154,9 +155,5 @@ return {
 				onlytargetcategory = "VTOL",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=5,
-	buildingGroundDecalSizeY=5,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[packo_aoplane.dds]],},
+	},
 }

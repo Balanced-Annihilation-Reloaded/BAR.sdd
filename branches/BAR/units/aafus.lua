@@ -5,10 +5,10 @@ return {
 		buildangle = 4096,
 		buildcostenergy = 64115,
 		buildcostmetal = 9109,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 8,
+		buildinggrounddecalsizey = 8,
+		buildinggrounddecaltype = "aafus_aoplane.dds",
 		buildpic = "AAFUS.DDS",
 		buildtime = 236294,
 		category = "ALL NOTSUB NOWEAPON SPECIAL NOTAIR NOTHOVER SURFACE",
@@ -31,7 +31,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "CRBLMSSL",
 		sightdistance = 273,
-
+		usebuildinggrounddecal = true,
 		yardmap = "ooooooooooooooooooooooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -93,9 +93,5 @@ return {
 				[1] = "fusion1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=8,
-	buildingGroundDecalSizeY=8,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[aafus_aoplane.dds]],},
+	},
 }

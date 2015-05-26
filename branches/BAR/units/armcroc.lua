@@ -38,7 +38,7 @@ return {
 		turninplacespeedlimit = 1.32,
 		turnrate = 433,
 		customparams = {
-			arm_tank= "yes",
+			arm_tank = "yes",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

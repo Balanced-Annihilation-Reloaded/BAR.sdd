@@ -6,10 +6,10 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 19350,
 		buildcostmetal = 358,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "armmmkr_aoplane.dds",
 		buildpic = "ARMMMKR.DDS",
 		buildtime = 34980,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -29,7 +29,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 273,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -94,9 +94,5 @@ return {
 				[1] = "metlon1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armmmkr_aoplane.dds]],},
+	},
 }

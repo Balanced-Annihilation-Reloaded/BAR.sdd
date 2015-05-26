@@ -6,10 +6,10 @@ return {
 		buildangle = 6092,
 		buildcostenergy = 1665,
 		buildcostmetal = 190,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 5,
+		buildinggrounddecalsizey = 5,
+		buildinggrounddecaltype = "armamex_aoplane.dds",
 		buildpic = "ARMAMEX.DDS",
 		buildtime = 1800,
 		category = "ALL NOTSUB NOWEAPON NOTAIR NOTHOVER SURFACE",
@@ -40,7 +40,7 @@ return {
 		selfdestructcountdown = 1,
 		sightdistance = 286,
 		stealth = true,
-
+		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -110,9 +110,5 @@ return {
 				[1] = "mexon2",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=5,
-	buildingGroundDecalSizeY=5,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armamex_aoplane.dds]],},
+	},
 }

@@ -6,16 +6,16 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 521,
 		buildcostmetal = 50,
-
-
-
-		collisionvolumeoffsets = "0 0 0",
-		collisionvolumescales = "48 80 48",
-		collisionvolumetest = 1,
-		collisionvolumetype = "CylY",
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 5,
+		buildinggrounddecalsizey = 5,
+		buildinggrounddecaltype = "armmex_aoplane.dds",
 		buildpic = "ARMMEX.DDS",
 		buildtime = 1800,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
+		collisionvolumeoffsets = "0 0 0",
+		collisionvolumescales = "48 80 48",
+		collisionvolumetype = "CylY",
 		corpse = "DEAD",
 		description = "Extracts Metal",
 		explodeas = "TINY_BUILDINGEX",
@@ -36,7 +36,7 @@ return {
 		selfdestructas = "TINY_BUILDINGEX",
 		selfdestructcountdown = 1,
 		sightdistance = 273,
-
+		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -104,9 +104,5 @@ return {
 				[1] = "mexon1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=5,
-	buildingGroundDecalSizeY=5,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armmex_aoplane.dds]],},
+	},
 }

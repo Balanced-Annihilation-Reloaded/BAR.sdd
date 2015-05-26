@@ -40,12 +40,11 @@ return {
 		turninplaceanglelimit = 140,
 		turninplacespeedlimit = 1.1946,
 		turnrate = 402,
-		
 		customparams = {
 			arm_tank = "1",
+			canareaattack = 1,
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
-			canareaattack = 1,
 		},
 		featuredefs = {
 			dead = {

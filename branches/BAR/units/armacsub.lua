@@ -10,10 +10,10 @@ return {
 		buildtime = 23900,
 		canmove = true,
 		category = "UNDERWATER ALL NOTLAND MOBILE NOWEAPON NOTAIR NOTHOVER",
-		collisionVolumeScales		= [[31 30 65]],
-		collisionVolumeOffsets	= [[0 0 2]],
-		collisionVolumeTest	    = 1,
-		collisionVolumeType	    = [[CylZ]],
+		collisionvolumeoffsets = "0 0 2",
+		collisionvolumescales = "31 30 65",
+		collisionvolumetest = 1,
+		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
 		description = "Level 2 Construction Submarine",
 		energymake = 30,
@@ -43,10 +43,6 @@ return {
 		turnrate = 382,
 		waterline = 35,
 		workertime = 300,
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		buildoptions = {
 			[1] = "armuwadves",
 			[2] = "armuwadvms",
@@ -62,6 +58,10 @@ return {
 			[12] = "armason",
 			[13] = "armfflak",
 			[14] = "armatl",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

@@ -5,10 +5,10 @@ return {
 		buildangle = 4096,
 		buildcostenergy = 100,
 		buildcostmetal = 342,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "armdf_aoplane.dds",
 		buildpic = "ARMDF.DDS",
 		buildtime = 7500,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -30,11 +30,11 @@ return {
 		maxwaterdepth = 0,
 		name = "Fusion Reactor",
 		objectname = "ARMFUS.s3o",
-		script= "armfus.cob",
+		script = "armfus.cob",
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 210,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -96,9 +96,5 @@ return {
 				[1] = "fusion1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armdf_aoplane.dds]],},
+	},
 }

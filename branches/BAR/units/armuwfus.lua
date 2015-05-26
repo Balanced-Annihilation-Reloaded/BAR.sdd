@@ -6,10 +6,10 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 31429,
 		buildcostmetal = 4908,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "armuwfus_aoplane.dds",
 		buildpic = "ARMUWFUS.DDS",
 		buildtime = 99870,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -31,7 +31,7 @@ return {
 		objectname = "ARMUWFUS.s3o",
 		selfdestructas = "MINE_NUKE",
 		sightdistance = 143,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -91,9 +91,5 @@ return {
 				[1] = "watfusn1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armuwfus_aoplane.dds]],},
+	},
 }

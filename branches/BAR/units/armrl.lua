@@ -5,10 +5,10 @@ return {
 		brakerate = 0,
 		buildcostenergy = 843,
 		buildcostmetal = 79,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 5,
+		buildinggrounddecalsizey = 5,
+		buildinggrounddecaltype = "armrl_aoplane.dds",
 		buildpic = "ARMRL.DDS",
 		buildtime = 1843,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -32,7 +32,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 455,
-
+		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -148,9 +148,5 @@ return {
 				onlytargetcategory = "VTOL",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=5,
-	buildingGroundDecalSizeY=5,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armrl_aoplane.dds]],},
+	},
 }

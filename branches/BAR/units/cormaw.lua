@@ -13,7 +13,6 @@ return {
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -24 0",
 		collisionvolumescales = "30 51 30",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Ell",
 		corpse = "DEAD",
 		damagemodifier = 0.15,

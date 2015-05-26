@@ -6,10 +6,10 @@ return {
 		buildangle = 16384,
 		buildcostenergy = 2358,
 		buildcostmetal = 270,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 4,
+		buildinggrounddecalsizey = 4,
+		buildinggrounddecaltype = "armdl_aoplane.dds",
 		buildpic = "ARMDL.DDS",
 		buildtime = 4180,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -32,8 +32,8 @@ return {
 		selfdestructas = "SMALL_UNIT",
 		sightdistance = 617,
 		sonardistance = 515,
-
-		yardmap = "oooo",		 
+		usebuildinggrounddecal = true,
+		yardmap = "oooo",
 		customparams = {
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
@@ -146,9 +146,5 @@ return {
 				onlytargetcategory = "NOTHOVER",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=4,
-	buildingGroundDecalSizeY=4,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armdl_aoplane.dds]],},
+	},
 }

@@ -11,7 +11,6 @@ return {
 		category = "ALL UNDERWATER MOBILE WEAPON NOTLAND NOTAIR NOTHOVER",
 		collisionvolumeoffsets = "0 -2 0",
 		collisionvolumescales = "52 16 67",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Ell",
 		corpse = "DEAD",
 		description = "Battle Submarine",

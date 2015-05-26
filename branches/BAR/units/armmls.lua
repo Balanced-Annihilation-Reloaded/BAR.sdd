@@ -12,7 +12,6 @@ return {
 		category = "ALL NOTSUB MINELAYER SHIP NOWEAPON NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 0 2",
 		collisionvolumescales = "36 36 66",
-		collisionvolumetest = 1,
 		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
 		description = "Naval Engineer",
@@ -39,14 +38,9 @@ return {
 		turninplaceanglelimit = 140,
 		turninplacespeedlimit = 1.584,
 		turnrate = 388,
-		waterline = 0,
 		waterline = 2,
 		windgenerator = 0.001,
 		workertime = 400,
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		buildoptions = {
 			[1] = "armtide",
 			[2] = "armuwmex",
@@ -66,6 +60,10 @@ return {
 			[16] = "armsub",
 			[17] = "armamph",
 			[18] = "armfmine3",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

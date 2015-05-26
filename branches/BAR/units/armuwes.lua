@@ -5,10 +5,10 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 2445,
 		buildcostmetal = 284,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "armuwes_aoplane.dds",
 		buildpic = "ARMUWES.DDS",
 		buildtime = 7085,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -29,7 +29,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "ESTOR_BUILDING",
 		sightdistance = 182,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -89,9 +89,5 @@ return {
 				[1] = "storngy1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armuwes_aoplane.dds]],},
+	},
 }

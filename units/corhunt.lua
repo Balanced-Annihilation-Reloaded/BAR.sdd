@@ -23,7 +23,7 @@ return {
 		idletime = 1800,
 		maxdamage = 660,
 		maxslope = 10,
-		maxvelocity = 10.810000419617,
+		maxvelocity = 10.81,
 		maxwaterdepth = 255,
 		name = "Hunter",
 		objectname = "CORHUNT.s3o",

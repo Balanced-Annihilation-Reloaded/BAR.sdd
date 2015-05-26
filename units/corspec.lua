@@ -1,8 +1,8 @@
 return {
 	corspec = {
-		acceleration = 0.10000000149012,
+		acceleration = 0.1,
 		activatewhenbuilt = true,
-		brakerate = 0.11999999731779,
+		brakerate = 0.36,
 		buildcostenergy = 1453,
 		buildcostmetal = 70,
 		buildpic = "corspec.jpg",
@@ -21,7 +21,7 @@ return {
 		idletime = 1800,
 		maxdamage = 310,
 		maxslope = 32,
-		maxvelocity = 1.2999999523163,
+		maxvelocity = 1.3,
 		maxwaterdepth = 112,
 		movementclass = "KBOT2",
 		name = "Spectre",
@@ -32,6 +32,8 @@ return {
 		radardistancejam = 450,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 250,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 0.858,
 		turnrate = 945,
 		upright = true,
 		customparams = {
@@ -72,6 +74,7 @@ return {
 				metal = 28,
 				object = "cor2x2b.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},
@@ -100,6 +103,8 @@ return {
 		weapondefs = {
 			bogus_ground_missile = {
 				areaofeffect = 48,
+				avoidfeature = false,
+				craterareaofeffect = 0,
 				craterboost = 0,
 				cratermult = 0,
 				impulseboost = 0,
@@ -108,12 +113,14 @@ return {
 				name = "Missiles",
 				range = 800,
 				reloadtime = 0.5,
+				soundhitwet = "splshbig",
+				soundhitwetvolume = 0.5,
 				startvelocity = 450,
 				tolerance = 9000,
 				turnrate = 33000,
 				turret = true,
 				weaponacceleration = 101,
-				weapontimer = 0.10000000149012,
+				weapontimer = 0.1,
 				weapontype = "Cannon",
 				weaponvelocity = 650,
 				damage = {

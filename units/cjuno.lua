@@ -13,7 +13,6 @@ return {
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -2 0",
 		collisionvolumescales = "50 88 50",
-		collisionvolumetest = 1,
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",
 		description = "Anti Radar/Jammer/Minefield/Scout Spam Weapon",
@@ -74,6 +73,7 @@ return {
 				metal = 192,
 				object = "cor4x4a.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},
@@ -107,7 +107,9 @@ return {
 		weapondefs = {
 			juno_pulse = {
 				areaofeffect = 1400,
+				avoidfeature = false,
 				commandfire = true,
+				craterareaofeffect = 1400,
 				craterboost = 0,
 				cratermult = 0,
 				edgeeffectiveness = 1,
@@ -134,7 +136,6 @@ return {
 				weapontype = "StarburstLauncher",
 				weaponvelocity = 500,
 				damage = {
-					["else"] = 1,
 					bombers = 1,
 					commanders = 1,
 					crawlingbombs = 1,

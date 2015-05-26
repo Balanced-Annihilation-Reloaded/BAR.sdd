@@ -19,7 +19,7 @@ return {
 		icontype = "air",
 		maxdamage = 140,
 		maxslope = 10,
-		maxvelocity = 9.9200000762939,
+		maxvelocity = 9.92,
 		maxwaterdepth = 0,
 		name = "Avenger",
 		nochasecategory = "NOTAIR",
@@ -56,7 +56,9 @@ return {
 		weapondefs = {
 			corvtol_missile_a2a = {
 				areaofeffect = 48,
+				avoidfeature = false,
 				collidefriendly = false,
+				craterareaofeffect = 0,
 				craterboost = 0,
 				cratermult = 0,
 				explosiongenerator = "custom:FLASH2",
@@ -71,6 +73,8 @@ return {
 				reloadtime = 0.9,
 				smoketrail = true,
 				soundhit = "xplosml2",
+				soundhitwet = "splshbig",
+				soundhitwetvolume = 0.5,
 				soundstart = "Rocklit3",
 				startvelocity = 600,
 				texture2 = "coresmoketrail",

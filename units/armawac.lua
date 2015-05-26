@@ -22,7 +22,7 @@ return {
 		idletime = 1800,
 		maxdamage = 800,
 		maxslope = 10,
-		maxvelocity = 10.579999923706,
+		maxvelocity = 10.58,
 		maxwaterdepth = 0,
 		name = "Eagle",
 		objectname = "ARMAWAC.s3o",

@@ -1,8 +1,8 @@
 return {
 	cormlv = {
-		acceleration = 0.070000000298023,
+		acceleration = 0.07,
 		activatewhenbuilt = true,
-		brakerate = 0.55000001192093,
+		brakerate = 1.65,
 		buildcostenergy = 1217,
 		buildcostmetal = 57,
 		builddistance = 96,
@@ -30,7 +30,7 @@ return {
 		mass = 1500,
 		maxdamage = 155,
 		maxslope = 16,
-		maxvelocity = 2.4579999446869,
+		maxvelocity = 2.458,
 		maxwaterdepth = 0,
 		movementclass = "TANK2",
 		name = "Spoiler",
@@ -46,6 +46,9 @@ return {
 		trackstrength = 5,
 		tracktype = "corwidetracks",
 		trackwidth = 17,
+		turninplace = 0,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 1.62228,
 		turnrate = 580,
 		workertime = 40,
 		buildoptions = {
@@ -94,6 +97,7 @@ return {
 				metal = 15,
 				object = "cor3x3f.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},
@@ -126,7 +130,9 @@ return {
 		weapondefs = {
 			minesweep = {
 				areaofeffect = 512,
+				avoidfeature = false,
 				collidefriendly = false,
+				craterareaofeffect = 512,
 				craterboost = 0,
 				cratermult = 0,
 				edgeeffectiveness = 0.25,
@@ -141,7 +147,7 @@ return {
 				thickness = 0,
 				tolerance = 100,
 				turret = true,
-				weapontimer = 0.10000000149012,
+				weapontimer = 0.1,
 				weapontype = "Cannon",
 				weaponvelocity = 3650,
 				damage = {

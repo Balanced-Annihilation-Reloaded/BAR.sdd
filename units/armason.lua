@@ -15,7 +15,7 @@ return {
 		canattack = false,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		damagemodifier = 0.46000000834465,
+		damagemodifier = 0.46,
 		description = "Extended Sonar",
 		energymake = 22,
 		energyuse = 22,

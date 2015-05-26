@@ -44,6 +44,7 @@ return {
 				damage = 145,
 				description = "Tidal Generator Wreckage",
 				energy = 0,
+				featuredead = "HEAP",
 				footprintx = 4,
 				footprintz = 4,
 				height = 4,
@@ -53,7 +54,6 @@ return {
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
-				featuredead = "HEAP",
 			},
 			heap = {
 				blocking = false,
@@ -69,6 +69,7 @@ return {
 				metal = 17,
 				object = "cor2x2d.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

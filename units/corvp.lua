@@ -16,7 +16,6 @@ return {
 		category = "ALL PLANT NOTLAND NOWEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "3 15 2",
 		collisionvolumescales = "101 40 106",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
 		description = "Produces Level 1 Vehicles",
@@ -43,7 +42,6 @@ return {
 		workertime = 100,
 		yardmap = "yyyyyyyyyoooyyooooooooocccoooocccoooocccoooocccoo",
 		buildoptions = {
-			[10] = "cormist",
 			[1] = "corcv",
 			[2] = "cormuskrat",
 			[3] = "cormlv",
@@ -53,6 +51,7 @@ return {
 			[7] = "corraid",
 			[8] = "corlevlr",
 			[9] = "corwolv",
+			[10] = "cormist",
 		},
 		customparams = {
 			normalmaps = "yes",
@@ -95,6 +94,7 @@ return {
 				metal = 188,
 				object = "cor7x7b.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

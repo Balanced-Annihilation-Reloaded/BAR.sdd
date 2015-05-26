@@ -1,8 +1,8 @@
 return {
 	corvoyr = {
-		acceleration = 0.0489999987185,
+		acceleration = 0.049,
 		activatewhenbuilt = true,
-		brakerate = 0.014999999664724,
+		brakerate = 0.045,
 		buildcostenergy = 1283,
 		buildcostmetal = 93,
 		buildpic = "CORVOYR.DDS",
@@ -31,6 +31,8 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 925,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 0.99,
 		turnrate = 583,
 		customparams = {
 			normalmaps = "yes",
@@ -72,6 +74,7 @@ return {
 				metal = 24,
 				object = "cor2x2a.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

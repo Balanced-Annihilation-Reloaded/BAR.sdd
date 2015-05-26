@@ -1,4 +1,42 @@
---NOTE: unitdefs_post does not deal with the normal lua UnitDefs table, it deals with the UnitDefs table built from unit definition files.
+--NOTE: unitdefs_post does not deal with the normal lua UnitDefs table, it deals with the UnitDefs table built from unit definition files
+
+-- process unitdef
+local function UnitDef_Post(name,ud)
+    -- slow update fix for 99.0
+    if ud.buildcostmetal then ud.buildcostmetal = ud.buildcostmetal * (16/15) end
+    if ud.buildcostenergy then ud.buildcostenergy = ud.buildcostenergy * (16/15) end
+    if ud.weapons then
+        for wname,wd in pairs(ud.weapons) do
+            if wd.energypershot then wd.energypershot = wd.energypershot * (16/15) end
+            if wd.metalpershot then wd.metalpershot = wd.metalpershot * (16/15) end        
+        end    
+    end
+end
+
+-- process weapondef
+local function WeaponDef_Post(wname,wd)
+
+end
+
+
+for name,ud in pairs(UnitDefs) do
+    UnitDef_Post(name,ud)  
+    if ud.weapondefs then
+        for wname,wd in pairs(ud.weapondefs) do
+            WeaponDef_Post(wname,wd)
+        end
+    end
+end
+
+-------------------------
+
+-- save raw unitdef tables to a string in custom params, can then be written to file by widget
+-- this allows stuff in unitdefs_post to be painlessly baked into unitdef files
+--VFS.Include("gamedata/unitdefs_post_save_to_customparams.lua")
+
+--------------------------
+
+-- implement various modoptions
 
 if (Spring.GetModOptions) then
 	local modOptions = Spring.GetModOptions()
@@ -15,76 +53,4 @@ if (Spring.GetModOptions) then
 		end
   end
   
-end
-
-
-
-local cons = {['armcv'] = true,
-	['armacv']  = true,
-	['consul'] = true,
-	['armbeaver'] = true,
-	['armch'] = true,
-	['corcv'] = true,
-	['coracv'] = true,
-	['cormuskrat'] = true,
-	['corch'] = true,}
-	
-local turninplacebots= {['corck'] = true,
-	['corack'] = true,
-	['corfast'] = true,
-	['armck'] = true,
-	['armack'] = true,
-	['armfark'] = true,}
-	
-	
-for name, ud in pairs(UnitDefs) do
-
-	if not ud.canfly then
-		if ud.maxvelocity then
-			ud.turninplacespeedlimit = (ud.maxvelocity*0.66) or 0
-			ud.turninplaceanglelimit = 140
-		end	
-		if ud.brakerate then
-			ud.brakerate = ud.brakerate * 3.0		
-		end
-	end
-	
-	if ud.movementclass and (ud.movementclass:find("TANK",1,true) or ud.movementclass:find("HOVER",1,true)) then
-		--Spring.Echo('tank or hover:',ud.name,ud.movementclass)
-		if cons[name] then
-			--Spring.Echo('tank or hover con:',ud.name,ud.moveData)
-			ud.turninplace=1
-			ud.turninplaceanglelimit=60
-			ud.acceleration=ud.acceleration*2
-			ud.brakerate=ud.brakerate*2
-		elseif (ud.maxvelocity) then 
-			ud.turninplace = 0
-			ud.turninplacespeedlimit = (ud.maxvelocity*0.66) or 0
-		end
-	elseif ud.movementclass and (ud.movementclass:find("KBOT",1,true)) then
-		if turninplacebots[name] then
-			--Spring.Echo('turninplacekbot:',ud.name)
-			ud.turninplace=1
-			ud.turninplaceanglelimit=60
-			ud.acceleration=ud.acceleration*2
-			ud.brakerate=ud.brakerate*2
-		elseif (ud.maxvelocity) then 
-			ud.turninplaceanglelimit = 140
-		end
-	end
-	
-	-- make all heaps non-rezzable
-	fDefs = ud.featuredefs
-	if fDefs then
-		for fName, fd in pairs(fDefs) do
-			if fd.category == "heaps" then
-				fd.resurrectable = false
-			end	
-		end
-	end	
-end
-
--- Setting collisionvolumetest true for all units
-for name, ud in pairs(UnitDefs) do
-		ud.collisionvolumetest = 1
 end

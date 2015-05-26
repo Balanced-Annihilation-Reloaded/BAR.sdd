@@ -43,6 +43,7 @@ return {
 			[3] = "gorg",
 			[4] = "shiva",
 			[5] = "armraven",
+			--[6] = "corsok",
 		},
 		customparams = {
 			normalmaps = "yes",
@@ -85,6 +86,7 @@ return {
 				metal = 2040,
 				object = "cor7x7b.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

@@ -6,20 +6,19 @@ function widget:GetInfo()
 		date = "",
 		license = "Anyone who uses this widget has to email me a horse",
 		layer = 0,
-		enabled = false
+		enabled = true
 	}
 end
 
 local binds={
 	"bind      Alt+backspace  fullscreen",
+
 	"bind          Alt+enter  chatally",
 	"bind          Alt+enter  chatswitchally",
 	"bind         Ctrl+enter  chatall",
 	"bind         Ctrl+enter  chatswitchall",
 	"bind        Shift+enter  chatspec",
 	"bind        Shift+enter  chatswitchspec",
-	--"bind          Any+enter  chat", --default, bound by engine
-	--"bind          Any+enter  edit_return", --default, bound by engine
 }
 
 local unbinds={

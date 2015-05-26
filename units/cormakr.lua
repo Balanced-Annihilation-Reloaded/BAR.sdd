@@ -15,7 +15,6 @@ return {
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 0 0",
 		collisionvolumescales = "30 27 30",
-		collisionvolumetest = 1,
 		collisionvolumetype = "CylY",
 		description = "Converts up to 60 energy into 1 metal per second",
 		explodeas = "ARMESTOR_BUILDINGEX",

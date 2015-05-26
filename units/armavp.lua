@@ -29,7 +29,7 @@ return {
 		radardistance = 50,
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
-		sightdistance = 283.39999389648,
+		sightdistance = 283.39999,
 		terraformspeed = 1000,
 		workertime = 300,
 		yardmap = "occcccoocccccoocccccoocccccoocccccooccccco",
@@ -38,9 +38,6 @@ return {
 			normaltex = "unittextures/Arm_normals.dds",
 		},
 		buildoptions = {
-			[10] = "armyork",
-			[11] = "armseer",
-			[12] = "armjam",
 			[1] = "armacv",
 			[2] = "consul",
 			[3] = "armcroc",
@@ -50,6 +47,9 @@ return {
 			[7] = "armmart",
 			[8] = "armmerl",
 			[9] = "armmanni",
+			[10] = "armyork",
+			[11] = "armseer",
+			[12] = "armjam",
 		},
 		featuredefs = {
 			dead = {
@@ -88,6 +88,7 @@ return {
 				metal = 877,
 				object = "arm6x6d.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

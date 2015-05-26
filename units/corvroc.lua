@@ -1,7 +1,7 @@
 return {
 	corvroc = {
 		acceleration = 0.025,
-		brakerate = 0.041799999773502,
+		brakerate = 0.1254,
 		buildcostenergy = 6270,
 		buildcostmetal = 827,
 		buildpic = "CORVROC.DDS",
@@ -10,7 +10,6 @@ return {
 		category = "ALL TANK MOBILE WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -14 0",
 		collisionvolumescales = "44 41 52",
-		collisionvolumetest = 1,
 		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
 		description = "Stealthy Rocket Launcher",
@@ -37,7 +36,10 @@ return {
 		trackstrength = 8,
 		tracktype = "corwidetracks",
 		trackwidth = 40,
-		turnrate = 520.29998779297,
+		turninplace = 0,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 0.792,
+		turnrate = 520.29999,
 		customparams = {
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
@@ -78,6 +80,7 @@ return {
 				metal = 215,
 				object = "cor3x3e.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},
@@ -106,6 +109,8 @@ return {
 		weapondefs = {
 			cortruck_rocket = {
 				areaofeffect = 150,
+				avoidfeature = false,
+				craterareaofeffect = 150,
 				craterboost = 0,
 				cratermult = 0,
 				edgeeffectiveness = 0.5,
@@ -122,11 +127,13 @@ return {
 				reloadtime = 16,
 				smoketrail = true,
 				soundhit = "xplomed4",
+				soundhitwet = "splslrg",
+				soundhitwetvolume = 0.5,
 				soundstart = "Rockhvy1",
 				tolerance = 4000,
 				turnrate = 24384,
-				weaponacceleration = 102.40000152588,
-				weapontimer = 3.2999999523163,
+				weaponacceleration = 102.4,
+				weapontimer = 3.3,
 				weapontype = "StarburstLauncher",
 				weaponvelocity = 415,
 				damage = {

@@ -1,6 +1,6 @@
 return {
 	corvalk = {
-		acceleration = 0.090000003576279,
+		acceleration = 0.09,
 		brakerate = 0.75,
 		buildcostenergy = 1347,
 		buildcostmetal = 69,
@@ -12,8 +12,8 @@ return {
 		collide = false,
 		cruisealt = 70,
 		description = "Light Air Transport",
-		energymake = 0.69999998807907,
-		energyuse = 0.69999998807907,
+		energymake = 0.7,
+		energyuse = 0.7,
 		explodeas = "BIG_UNITEX",
 		footprintx = 2,
 		footprintz = 3,

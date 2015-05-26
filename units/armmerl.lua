@@ -1,7 +1,7 @@
 return {
 	armmerl = {
 		acceleration = 0.026,
-		brakerate = 0.037399999797344,
+		brakerate = 0.1122,
 		buildcostenergy = 6146,
 		buildcostmetal = 862,
 		buildpic = "ARMMERL.DDS",
@@ -34,7 +34,9 @@ return {
 		trackstrength = 8,
 		tracktype = "StdTank",
 		trackwidth = 38,
-		turnrate = 520.29998779297,
+		turninplace = 0,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 0.792,
 		customparams = {
 			arm_tank = "1",
 			normalmaps = "yes",
@@ -76,6 +78,7 @@ return {
 				metal = 224,
 				object = "arm3x3f.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},
@@ -104,6 +107,8 @@ return {
 		weapondefs = {
 			armtruck_rocket = {
 				areaofeffect = 150,
+				avoidfeature = false,
+				craterareaofeffect = 150,
 				craterboost = 0,
 				cratermult = 0,
 				edgeeffectiveness = 0.5,
@@ -120,11 +125,13 @@ return {
 				reloadtime = 18,
 				smoketrail = true,
 				soundhit = "xplomed4",
+				soundhitwet = "splslrg",
+				soundhitwetvolume = 0.5,
 				soundstart = "Rockhvy1",
 				tolerance = 4000,
 				turnrate = 24384,
-				weaponacceleration = 102.40000152588,
-				weapontimer = 3.2999999523163,
+				weaponacceleration = 102.4,
+				weapontimer = 3.3,
 				weapontype = "StarburstLauncher",
 				weaponvelocity = 380,
 				damage = {

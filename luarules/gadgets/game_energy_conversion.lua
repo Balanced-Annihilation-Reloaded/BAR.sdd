@@ -21,19 +21,30 @@ end
 ----------------------------------------------------------------
 -- Config
 ----------------------------------------------------------------
+local convertCapacities = include("LuaRules/Configs/maker_defs.lua")
+
 local alterLevelRegex = '^' .. string.char(137) .. '(%d+)$'
 local mmLevelParamName = 'mmLevel'
 local mmCapacityParamName = 'mmCapacity'
 local mmUseParamName = 'mmUse'
 local mmAvgEfficiencyParamName = 'mmAvgEfficiency'
 local mmAvgEffiParamName = 'mmAvgEffi'
+local function SetMMRulesParams()
+    -- make convertCapacities accessible to all
+    for uDID,conv in pairs(convertCapacities) do
+        local unitName = UnitDefs[uDID].name or ""
+        local capacity = conv.c
+        local ratio = conv.e
+        Spring.SetGameRulesParam(unitName .. "_mm_capacity", capacity)
+        Spring.SetGameRulesParam(unitName .. "_mm_ratio", ratio)        
+    end
+end
 
 local frameRate = 32
 local resourceRefreshRate = 16 -- In Frames
 local resourceFraction = resourceRefreshRate / frameRate
 local resourceUpdatesPerGameSec = frameRate / resourceRefreshRate
 
-local convertCapacities = include("LuaRules/Configs/maker_defs.lua")
 local currentFrameStamp = 0
 
 ----------------------------------------------------------------
@@ -216,6 +227,7 @@ end
 -- Callins
 ----------------------------------------------------------------
 function gadget:Initialize()
+    SetMMRulesParams() 
     local i = 1
     for defid, defs in pairs(convertCapacities) do
 		local inTable = false

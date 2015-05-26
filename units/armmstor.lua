@@ -76,6 +76,7 @@ return {
 				metal = 79,
 				object = "arm4x4e.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

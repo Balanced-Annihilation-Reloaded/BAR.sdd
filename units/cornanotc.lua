@@ -1,15 +1,15 @@
 return {
 	cornanotc = {
 		acceleration = 0,
-		brakerate = 1.5,
+		brakerate = 4.5,
 		buildcostenergy = 3021,
 		buildcostmetal = 197,
 		builddistance = 400,
 		builder = true,
 		buildpic = "CORNANOTC.DDS",
 		buildtime = 5312,
-		category = "ALL NOTSUB CONSTR NOWEAPON NOTAIR NOTHOVER SURFACE",
 		cantbetransported = false,
+		category = "ALL NOTSUB CONSTR NOWEAPON NOTAIR NOTHOVER SURFACE",
 		description = "Assists Construction and Repairs in Large Radius",
 		energyuse = 30,
 		explodeas = "NANOBOOM2",

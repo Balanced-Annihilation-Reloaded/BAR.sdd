@@ -115,7 +115,7 @@ local options={
         name   = 'Fixed ingame alliances',
         desc   = 'Disables the possibility of players to dynamically change alliances ingame',
         type   = 'bool',
-        def    = false,
+        def    = true,
         section= "bar_others",
     },
     {

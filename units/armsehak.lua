@@ -23,7 +23,7 @@ return {
 		idletime = 1800,
 		maxdamage = 520,
 		maxslope = 10,
-		maxvelocity = 11.270000457764,
+		maxvelocity = 11.27,
 		maxwaterdepth = 255,
 		name = "Seahawk",
 		objectname = "ARMSEHAK.s3o",

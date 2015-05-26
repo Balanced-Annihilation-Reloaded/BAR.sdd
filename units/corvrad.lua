@@ -1,8 +1,8 @@
 return {
 	corvrad = {
-		acceleration = 0.029999999329448,
+		acceleration = 0.03,
 		activatewhenbuilt = true,
-		brakerate = 0.012000000104308,
+		brakerate = 0.036,
 		buildcostenergy = 1209,
 		buildcostmetal = 86,
 		buildpic = "corvrad.jpg",
@@ -39,6 +39,9 @@ return {
 		trackstrength = 10,
 		tracktype = "corwidetracks",
 		trackwidth = 23,
+		turninplace = 0,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 0.825,
 		turnrate = 210,
 		customparams = {
 			normalmaps = "yes",
@@ -80,6 +83,7 @@ return {
 				metal = 48,
 				object = "cor2x2f.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

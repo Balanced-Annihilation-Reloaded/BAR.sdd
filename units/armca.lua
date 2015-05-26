@@ -1,6 +1,6 @@
 return {
 	armca = {
-		acceleration = 0.071999996900558,
+		acceleration = 0.072,
 		brakerate = 0.4275,
 		buildcostenergy = 4320,
 		buildcostmetal = 105,
@@ -26,9 +26,9 @@ return {
 		idletime = 1800,
 		maxdamage = 140,
 		maxslope = 10,
-		maxvelocity = 7.9400000572205,
+		maxvelocity = 7.94,
 		maxwaterdepth = 0,
-		metalmake = 0.050000000745058,
+		metalmake = 0.05,
 		metalstorage = 25,
 		name = "Construction Aircraft",
 		objectname = "ARMCA.s3o",

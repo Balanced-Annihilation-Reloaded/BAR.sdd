@@ -6,10 +6,10 @@ return {
 		buildangle = 4096,
 		buildcostenergy = 62563,
 		buildcostmetal = 2985,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "armanni_aoplane.dds",
 		buildpic = "ARMANNI.DDS",
 		buildtime = 52071,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -36,7 +36,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 780,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -149,9 +149,5 @@ return {
 				onlytargetcategory = "SURFACE",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armanni_aoplane.dds]],},
+	},
 }

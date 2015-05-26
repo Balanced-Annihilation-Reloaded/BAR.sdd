@@ -10,7 +10,6 @@ return {
 		category = "ALL NOTSUB WEAPON NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 16 1",
 		collisionvolumescales = "55 65 53",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Ell",
 		corpse = "DEAD",
 		description = "All-Terrain Heavy Plasma Cannon",

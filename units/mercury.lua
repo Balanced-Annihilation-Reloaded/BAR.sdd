@@ -6,10 +6,10 @@ return {
 		brakerate = 0,
 		buildcostenergy = 30246,
 		buildcostmetal = 1522,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "mercury_aoplane.dds",
 		buildpic = "MERCURY.DDS",
 		buildtime = 30190,
 		category = "ALL WEAPON NOTSUB SPECIAL NOTAIR NOTHOVER SURFACE",
@@ -29,7 +29,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 350,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -158,9 +158,5 @@ return {
 				onlytargetcategory = "VTOL",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[mercury_aoplane.dds]],},
+	},
 }

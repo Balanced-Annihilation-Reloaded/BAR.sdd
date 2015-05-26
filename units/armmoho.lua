@@ -6,10 +6,10 @@ return {
 		buildangle = 2048,
 		buildcostenergy = 7214,
 		buildcostmetal = 582,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 8,
+		buildinggrounddecalsizey = 8,
+		buildinggrounddecaltype = "armmoho_aoplane.dds",
 		buildpic = "ARMMOHO.DDS",
 		buildtime = 14938,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -33,7 +33,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 273,
-
+		usebuildinggrounddecal = true,
 		yardmap = "ooooooooooooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -101,9 +101,5 @@ return {
 				[1] = "mohoon1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=8,
-	buildingGroundDecalSizeY=8,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armmoho_aoplane.dds]],},
+	},
 }

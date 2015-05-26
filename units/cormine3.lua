@@ -15,7 +15,6 @@ return {
 		collide = false,
 		collisionvolumeoffsets = "0 -2 0",
 		collisionvolumescales = "15 6 15",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Ell",
 		description = "Heavy Mine",
 		explodeas = "MINE_HEAVY",

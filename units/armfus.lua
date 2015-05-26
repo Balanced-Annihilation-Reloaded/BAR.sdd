@@ -6,10 +6,10 @@ return {
 		buildangle = 4096,
 		buildcostenergy = 19846,
 		buildcostmetal = 4004,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "armfus_aoplane.dds",
 		buildpic = "ARMFUS.DDS",
 		buildtime = 70014,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -35,7 +35,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "MINE_NUKE",
 		sightdistance = 273,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -97,9 +97,5 @@ return {
 				[1] = "fusion1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armfus_aoplane.dds]],},
+	},
 }

@@ -5,10 +5,10 @@ return {
 		brakerate = 0,
 		buildcostenergy = 162,
 		buildcostmetal = 35,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 5,
+		buildinggrounddecalsizey = 5,
+		buildinggrounddecaltype = "armwin_aoplane.dds",
 		buildpic = "ARMWIN.DDS",
 		buildtime = 1603,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -32,7 +32,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 273,
-
+		usebuildinggrounddecal = true,
 		windgenerator = 25,
 		yardmap = "ooooooooo",
 		customparams = {
@@ -95,9 +95,5 @@ return {
 				[1] = "windgen1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=5,
-	buildingGroundDecalSizeY=5,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armwin_aoplane.dds]],},
+	},
 }

@@ -6,10 +6,10 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 2469,
 		buildcostmetal = 163,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "armason_aoplane.dds",
 		buildpic = "ARMASON.DDS",
 		buildtime = 6152,
 		canattack = false,
@@ -35,7 +35,7 @@ return {
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 215,
 		sonardistance = 2400,
-
+		usebuildinggrounddecal = true,
 		yardmap = "yooy oooo oooo yooy",
 		customparams = {
 			normalmaps = "yes",
@@ -79,9 +79,5 @@ return {
 				[1] = "sonar1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armason_aoplane.dds]],},
+	},
 }

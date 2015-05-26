@@ -41,11 +41,6 @@ return {
 		turninplacespeedlimit = 0.9834,
 		turnrate = 311,
 		workertime = 80,
-		customparams = {
-			arm_tank = "1",
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		buildoptions = {
 			[1] = "armsolar",
 			[2] = "armadvsol",
@@ -89,6 +84,11 @@ return {
 			[40] = "armfhlt",
 			[41] = "armfrt",
 			[42] = "armptl",
+		},
+		customparams = {
+			arm_tank = "1",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

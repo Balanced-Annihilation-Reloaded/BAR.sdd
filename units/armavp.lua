@@ -6,6 +6,10 @@ return {
 		buildcostenergy = 13440,
 		buildcostmetal = 2698,
 		builder = true,
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 8,
+		buildinggrounddecalsizey = 8,
+		buildinggrounddecaltype = "armavp_aoplane.dds",
 		buildpic = "ARMAVP.DDS",
 		buildtime = 17940,
 		canmove = true,
@@ -31,12 +35,9 @@ return {
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 283.39999,
 		terraformspeed = 1000,
+		usebuildinggrounddecal = true,
 		workertime = 300,
 		yardmap = "occcccoocccccoocccccoocccccoocccccooccccco",
-		customparams = {
-			normalmaps = "yes",
-			normaltex = "unittextures/Arm_normals.dds",
-		},
 		buildoptions = {
 			[1] = "armacv",
 			[2] = "consul",
@@ -50,6 +51,10 @@ return {
 			[10] = "armyork",
 			[11] = "armseer",
 			[12] = "armjam",
+		},
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {
@@ -109,9 +114,5 @@ return {
 				[1] = "pvehactv",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=8,
-	buildingGroundDecalSizeY=8,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armavp_aoplane.dds]],},
+	},
 }

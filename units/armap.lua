@@ -5,14 +5,16 @@ return {
 		buildcostenergy = 1370,
 		buildcostmetal = 850,
 		builder = true,
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 10,
+		buildinggrounddecalsizey = 7,
+		buildinggrounddecaltype = "armap_aoplane.dds",
 		buildpic = "ARMAP.DDS",
 		buildtime = 7240,
 		canmove = true,
 		category = "ALL NOTLAND PLANT NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
-		collisionVolumeScales = [[134 49 82]],
-		collisionVolumeOffsets = [[0 8 1]],
-
-
+		collisionvolumeoffsets = "0 8 1",
+		collisionvolumescales = "134 49 82",
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
 		description = "Produces Level 1 Aircraft",
@@ -35,9 +37,9 @@ return {
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 292,
 		terraformspeed = 500,
+		usebuildinggrounddecal = true,
 		workertime = 100,
 		yardmap = "ooooooooo ooooooooo ooooooooo ooooooooo ooooooooo ooooooooo",
-
 		buildoptions = {
 			[1] = "armca",
 			[2] = "armpeep",
@@ -113,9 +115,5 @@ return {
 				[1] = "pairactv",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=10,
-	buildingGroundDecalSizeY=7,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armap_aoplane.dds]],},
+	},
 }

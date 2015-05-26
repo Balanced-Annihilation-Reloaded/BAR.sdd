@@ -17,7 +17,6 @@ return {
 		category = "ALL NOTLAND MOBILE NOTSUB SHIP NOWEAPON NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 5 0",
 		collisionvolumescales = "69 70 158",
-		collisionvolumetest = 1,
 		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
 		description = "Aircraft Carrier with Anti-Nuke",

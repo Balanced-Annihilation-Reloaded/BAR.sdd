@@ -10,7 +10,6 @@ return {
 		category = "KBOT WEAPON ALL NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -7 -5",
 		collisionvolumescales = "100 168 80",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Ell",
 		corpse = "DEAD",
 		description = "Experimental Assault Kbot",

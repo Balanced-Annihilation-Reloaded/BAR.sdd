@@ -6,10 +6,10 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 17501,
 		buildcostmetal = 119,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 4,
+		buildinggrounddecalsizey = 4,
+		buildinggrounddecaltype = "armveil_aoplane.dds",
 		buildpic = "ARMVEIL.DDS",
 		buildtime = 9080,
 		canattack = false,
@@ -33,7 +33,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 155,
-
+		usebuildinggrounddecal = true,
 		usepiececollisionvolumes = 1,
 		yardmap = "oooo",
 		customparams = {
@@ -102,9 +102,5 @@ return {
 				[1] = "radjam1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=4,
-	buildingGroundDecalSizeY=4,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armveil_aoplane.dds]],},
+	},
 }

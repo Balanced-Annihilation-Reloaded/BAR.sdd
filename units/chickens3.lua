@@ -1,130 +1,107 @@
-unitDef = {
-  unitname            = "chickens3",
-  name                = "Fang",
-  description         = "Spiker Air Assault",
-  acceleration        = 0.5,
-  brakeRate           = 3.5,
-  buildCostEnergy     = 2200,
-  buildCostMetal      = 72,
-  builder             = false,
-  buildPic            = "chicken_pidgeon.png",
-  buildTime           = 1700,
-  canFly              = true,
-  canGuard            = true,
-  canLand             = true,
-  canMove             = true,
-  canPatrol           = true,
-  canstop             = true,
-  category            = "VTOL MOBILE WEAPON NOTSUB NOTSHIP NOTHOVER ALL",
-  collide             = false,
-  cruiseAlt           = 150,
-  defaultmissiontype  = "VTOL_standby",
-  explodeAs           = "TALON_DEATH",
-  floater             = true,
-  footprintX          = 1,
-  footprintZ          = 1,
-  idleAutoHeal        = 2,
-  idleTime            = 0,
-  seismicSignature    = 0,
-  iconType            = "chickenf",
-  mass                = 280,
-  hidedamage          = 1,
-  autoheal            = 7,
-  maxDamage           = 1900,
-  maxVelocity         = 7,
-  hoverattack 		  = true,
-  airStrafe           = true,
-  noChaseCategory     = "VTOL",
-  objectName          = "spiker_gunship.s3o",
-  selfDestructAs      = "TALON_DEATH",
-  collisionVolumeType = "box",
-  collisionVolumeOffsets = "0 7 -6",
-  collisionVolumeScales = "48 12 22",
-
-  customparams = { 
-    normalmaps = "yes", 
-    normaltex = "unittextures/chicken_normal.tga", 
-  },
-
-  sfxtypes            = {
-
-    explosiongenerators = {
-      "custom:blood_spray",
-      "custom:blood_explode",
-      "custom:dirt",
-    },
-
-  },
-
-  side                = "THUNDERBIRDS",
-  sightDistance       = 550,
-  smoothAnim          = true,
-  steeringmode        = "1",
-  TEDClass            = "VTOL",
-  turnRate            = 900,
-
-    weapons             = {
-
-    {
-      def               = "WEAPON",
-      mainDir           = "0 0 1",
-      maxAngleDif       = 120,
-      badTargetCategory = "WEAPON",
-    },
-
-  },
-
-
-  weaponDefs          = {
-
-    WEAPON = {
-      name                    = "Spike",
-      areaOfEffect            = 24,
-      avoidFriendly           = false,
-      burnblow                = true,
-      collideFriendly         = false,
-      craterBoost             = 0,
-      craterMult              = 0,
-
-      damage                  = {
-        default = 200,
-      },
-
-      explosionGenerator      = "custom:dirt",
-      impulseBoost            = 0,
-      impulseFactor           = 0.4,
-      interceptedByShieldType = 0,
-      lineOfSight             = true,
-      model                   = "spike.s3o",
-      noSelfDamage            = true,
-      range                   = 350,
-      soundStart              = "talonattack",
-      reloadtime              = 1.95,
-      renderType              = 1,
-      selfprop                = true,
-      startVelocity           = 200,
-      subMissile              = 1,
-      turret                  = true,
-      accuracy		          = 1100,
-      weaponAcceleration      = 100,
-      weaponTimer             = 1,
-      weaponVelocity          = 350,
-    },
-
-  },
-
-
-  featureDefs         = {
-
-    DEAD = {
-    },
-
-
-    HEAP = {
-    },
-
-  },
-
+return {
+	chickens3 = {
+		acceleration = 0.5,
+		airstrafe = true,
+		autoheal = 7,
+		brakerate = 3.5,
+		buildcostenergy = 2200,
+		buildcostmetal = 72,
+		builder = false,
+		buildpic = "chicken_pidgeon.png",
+		buildtime = 1700,
+		canfly = true,
+		canguard = true,
+		canland = true,
+		canmove = true,
+		canpatrol = true,
+		canstop = true,
+		category = "VTOL MOBILE WEAPON NOTSUB NOTSHIP NOTHOVER ALL",
+		collide = false,
+		collisionvolumeoffsets = "0 7 -6",
+		collisionvolumescales = "48 12 22",
+		collisionvolumetype = "box",
+		cruisealt = 150,
+		defaultmissiontype = "VTOL_standby",
+		description = "Spiker Air Assault",
+		explodeas = "TALON_DEATH",
+		floater = true,
+		footprintx = 1,
+		footprintz = 1,
+		hidedamage = 1,
+		hoverattack = true,
+		icontype = "chickenf",
+		idleautoheal = 2,
+		idletime = 0,
+		mass = 280,
+		maxdamage = 1900,
+		maxvelocity = 7,
+		name = "Fang",
+		nochasecategory = "VTOL",
+		objectname = "spiker_gunship.s3o",
+		seismicsignature = 0,
+		selfdestructas = "TALON_DEATH",
+		side = "THUNDERBIRDS",
+		sightdistance = 550,
+		smoothanim = true,
+		steeringmode = "1",
+		tedclass = "VTOL",
+		turnrate = 900,
+		unitname = "chickens3",
+		customparams = {
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
+		},
+		featuredefs = {
+			dead = {},
+			heap = {},
+		},
+		sfxtypes = {
+			explosiongenerators = {
+				[1] = "custom:blood_spray",
+				[2] = "custom:blood_explode",
+				[3] = "custom:dirt",
+			},
+		},
+		weapondefs = {
+			weapon = {
+				accuracy = 1100,
+				areaofeffect = 24,
+				avoidfriendly = false,
+				burnblow = true,
+				collidefriendly = false,
+				craterboost = 0,
+				cratermult = 0,
+				explosiongenerator = "custom:dirt",
+				impulseboost = 0,
+				impulsefactor = 0.4,
+				interceptedbyshieldtype = 0,
+				lineofsight = true,
+				model = "spike.s3o",
+				name = "Spike",
+				noselfdamage = true,
+				range = 350,
+				reloadtime = 1.95,
+				rendertype = 1,
+				selfprop = true,
+				soundstart = "talonattack",
+				startvelocity = 200,
+				submissile = 1,
+				turret = true,
+				weaponacceleration = 100,
+				weapontimer = 1,
+				weaponvelocity = 350,
+				damage = {
+					default = 200,
+				},
+			},
+		},
+		weapons = {
+			[1] = {
+				badtargetcategory = "WEAPON",
+				def = "WEAPON",
+				maindir = "0 0 1",
+				maxangledif = 120,
+			},
+		},
+	},
 }
-
-return lowerkeys({ chickens3 = unitDef })

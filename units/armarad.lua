@@ -6,10 +6,10 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 17830,
 		buildcostmetal = 525,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 4,
+		buildinggrounddecalsizey = 4,
+		buildinggrounddecaltype = "armarad_aoplane.dds",
 		buildpic = "ARMARAD.DDS",
 		buildtime = 11800,
 		canattack = false,
@@ -36,7 +36,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 820,
-
+		usebuildinggrounddecal = true,
 		usepiececollisionvolumes = 1,
 		yardmap = "oooo",
 		customparams = {
@@ -102,9 +102,5 @@ return {
 				[1] = "radadvn1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=4,
-	buildingGroundDecalSizeY=4,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armarad_aoplane.dds]],},
+	},
 }

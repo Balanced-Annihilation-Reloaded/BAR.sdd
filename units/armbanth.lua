@@ -37,9 +37,9 @@ return {
 		turnrate = 1056,
 		upright = true,
 		customparams = {
-			paralyzemultiplier = 0.5,
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
+			paralyzemultiplier = 0.5,
 		},
 		featuredefs = {
 			dead = {

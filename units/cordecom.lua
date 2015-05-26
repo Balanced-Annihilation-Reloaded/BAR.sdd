@@ -17,7 +17,6 @@ return {
 		cloakcostmoving = 180,
 		collisionvolumeoffsets = "0 -1 0",
 		collisionvolumescales = "36 44 26",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Ell",
 		decoyfor = "corcom",
 		description = "Decoy Commander",
@@ -72,9 +71,9 @@ return {
 			[14] = "corfmkr",
 		},
 		customparams = {
-			paralyzemultiplier = 0.025,
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
+			paralyzemultiplier = 0.025,
 		},
 		sounds = {
 			build = "nanlath2",

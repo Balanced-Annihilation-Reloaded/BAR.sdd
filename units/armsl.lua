@@ -17,7 +17,7 @@ return {
 		explodeas = "SMALL_UNITEX",
 		footprintx = 4,
 		footprintz = 4,
-		hoverattack = true, -- so as armsl is recognized as a gunship and won't crashland (to match armdfly),
+		hoverattack = true,
 		icontype = "air",
 		idleautoheal = 5,
 		idletime = 1800,

@@ -6,10 +6,10 @@ return {
 		buildangle = 2048,
 		buildcostenergy = 62191,
 		buildcostmetal = 3532,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "armgate_aoplane.dds",
 		buildpic = "ARMGATE.DDS",
 		buildtime = 54139,
 		canattack = false,
@@ -32,7 +32,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "MINE_NUKE",
 		sightdistance = 273,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -147,9 +147,5 @@ return {
 				onlytargetcategory = "NOTSUB",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armgate_aoplane.dds]],},
+	},
 }

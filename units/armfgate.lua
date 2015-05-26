@@ -44,7 +44,6 @@ return {
 		waterline = 0,
 		workertime = 0,
 		featuredefs = {
-
 			dead = {
 				blocking = true,
 				category = "corpses",

@@ -42,7 +42,6 @@ return {
 		buildoptions = {
 			[1] = "corkrog",
 			[2] = "shiva",
-			--[3] = "corsok",
 			[3] = "corseal",
 			[4] = "corparrow",
 		},

@@ -1,17 +1,15 @@
 return {
 	mission_command_tower = {
-		buildingGroundDecalDecaySpeed=30,
-		buildingGroundDecalSizeX=15,
-		buildingGroundDecalSizeY=15,
-		useBuildingGroundDecal = true,
-		buildingGroundDecalType=[[mission_command_tower_aoplane.dds]],
 		acceleration = 0,
 		activatewhenbuilt = true,
 		brakerate = 0,
 		buildangle = 16384,
 		buildcostenergy = 100000,
 		buildcostmetal = 10000,
-		--buildpic = "ARMGMM.DDS",
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 15,
+		buildinggrounddecalsizey = 15,
+		buildinggrounddecaltype = "mission_command_tower_aoplane.dds",
 		buildtime = 100000,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		description = "Command Tower",
@@ -30,7 +28,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 100,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo oooooooooooo",
 		customparams = {
 			normalmaps = "yes",

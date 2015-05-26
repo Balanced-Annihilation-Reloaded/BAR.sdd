@@ -6,17 +6,17 @@ return {
 		buildangle = 0,
 		buildcostenergy = 24852,
 		buildcostmetal = 1520,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 11,
+		buildinggrounddecalsizey = 11,
+		buildinggrounddecaltype = "amgeo_aoplane.dds",
 		buildpic = "AMGEO.DDS",
 		buildtime = 33152,
 		category = "ALL NOTSUB NOWEAPON NOTAIR NOTHOVER SURFACE",
-		collisionVolumeScales = [[69 69 107]],
-		collisionVolumeOffsets = [[-2 -2 6]],
-		collisionVolumeTest = 1,
-		collisionVolumeType = [[CylY]],
+		collisionvolumeoffsets = "-2 -2 6",
+		collisionvolumescales = "69 69 107",
+		collisionvolumetest = 1,
+		collisionvolumetype = "CylY",
 		description = "Hazardous Energy Source (1250E)",
 		energymake = 1250,
 		energystorage = 12000,
@@ -34,7 +34,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "NUCLEAR_MISSILE",
 		sightdistance = 273,
-
+		usebuildinggrounddecal = true,
 		yardmap = "ooooo ooooo ooooo ooooo ooooo oGGGo oGGGo ooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -55,9 +55,5 @@ return {
 				[1] = "geothrm1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=11,
-	buildingGroundDecalSizeY=11,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[amgeo_aoplane.dds]],},
+	},
 }

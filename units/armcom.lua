@@ -19,7 +19,6 @@ return {
 		cloakcostmoving = 1000,
 		collisionvolumeoffsets = "0 -1 0",
 		collisionvolumescales = "36 44 26",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Ell",
 		commander = true,
 		corpse = "DEAD",
@@ -48,10 +47,10 @@ return {
 		radardistance = 700,
 		radaremitheight = 40,
 		reclaimable = false,
+		script = "armcom.lua",
 		seismicsignature = 0,
 		selfdestructas = "COMMANDER_BLAST",
 		selfdestructcountdown = 5,
-		script = "armcom.lua",
 		showplayername = true,
 		sightdistance = 450,
 		sonardistance = 300,
@@ -91,9 +90,9 @@ return {
 		},
 		customparams = {
 			iscommander = true,
-			paralyzemultiplier = 0.025,
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
+			paralyzemultiplier = 0.025,
 		},
 		featuredefs = {
 			dead = {

@@ -40,8 +40,8 @@ return {
 		turninplacespeedlimit = 1.29228,
 		turnrate = 393.79999,
 		customparams = {
-			canareaattack = 1,
 			arm_tank = "1",
+			canareaattack = 1,
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

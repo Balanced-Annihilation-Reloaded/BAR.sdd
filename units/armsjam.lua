@@ -11,7 +11,6 @@ return {
 		category = "ALL NOTLAND MOBILE NOTSUB NOWEAPON SHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -5 0",
 		collisionvolumescales = "23 27 64",
-		collisionvolumetest = 1,
 		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
 		description = "Radar Jammer Ship",

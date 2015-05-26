@@ -29,8 +29,8 @@ return {
 		name = "Sumo",
 		nochasecategory = "VTOL",
 		objectname = "CORSUMO.s3o",
-		script = 'corsumo.lua',
 		pushresistant = true,
+		script = "corsumo.lua",
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 510,
@@ -38,9 +38,9 @@ return {
 		turninplacespeedlimit = 0.495,
 		turnrate = 320,
 		customparams = {
-			paralyzemultiplier = 0.5,
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
+			paralyzemultiplier = 0.5,
 		},
 		featuredefs = {
 			dead = {

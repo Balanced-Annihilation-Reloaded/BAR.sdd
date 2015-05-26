@@ -74,7 +74,6 @@ return {
 			[28] = "armvp",
 			[29] = "armavp",
 		},
-		
 		customparams = {
 			arm_tank = "1",
 			normalmaps = "yes",

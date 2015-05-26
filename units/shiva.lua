@@ -137,10 +137,6 @@ return {
 				},
 			},
 			shiva_rocket = {
-				--explosiongenerator = "custom:STARFIRE",
-				--model = "corkbmissl1.s3o",
-				--soundhit = "xplomed4",
-				--soundstart = "Rockhvy1",
 				areaofeffect = 60,
 				avoidfeature = false,
 				craterareaofeffect = 0,

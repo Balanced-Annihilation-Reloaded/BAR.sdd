@@ -5,10 +5,10 @@ return {
 		buildangle = 32768,
 		buildcostenergy = 1434,
 		buildcostmetal = 176,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 4,
+		buildinggrounddecalsizey = 4,
+		buildinggrounddecaltype = "tawf001_aoplane.dds",
 		buildpic = "TAWF001.DDS",
 		buildtime = 5324,
 		category = "ALL WEAPON NOTSUB NOTAIR NOTHOVER SURFACE",
@@ -32,7 +32,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 475,
-
+		usebuildinggrounddecal = true,
 		yardmap = "oooo",
 		customparams = {
 			normalmaps = "yes",
@@ -151,9 +151,5 @@ return {
 				onlytargetcategory = "NOTSUB",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=4,
-	buildingGroundDecalSizeY=4,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[tawf001_aoplane.dds]],},
+	},
 }

@@ -6,10 +6,10 @@ return {
 		buildangle = 32768,
 		buildcostenergy = 9164,
 		buildcostmetal = 601,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 8,
+		buildinggrounddecalsizey = 8,
+		buildinggrounddecaltype = "armuwmme_aoplane.dds",
 		buildpic = "ARMUWMME.DDS",
 		buildtime = 35370,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -33,7 +33,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "SMALL_BUILDING",
 		sightdistance = 182,
-
+		usebuildinggrounddecal = true,
 		yardmap = "ooooooooooooooooooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -97,9 +97,5 @@ return {
 				[1] = "waterex1",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=8,
-	buildingGroundDecalSizeY=8,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armuwmme_aoplane.dds]],},
+	},
 }

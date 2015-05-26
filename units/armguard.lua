@@ -5,10 +5,10 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 11687,
 		buildcostmetal = 1398,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 5,
+		buildinggrounddecalsizey = 5,
+		buildinggrounddecaltype = "armguard_aoplane.dds",
 		buildpic = "ARMGUARD.DDS",
 		buildtime = 21377,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -30,7 +30,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 455,
-
+		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -126,12 +126,12 @@ return {
 				weaponvelocity = 450,
 				damage = {
 					bombers = 90,
+					chicken = 450,
 					commanders = 526,
 					default = 263,
-					chicken = 450,
-					tinychicken = 900,
 					fighters = 90,
 					subs = 5,
+					tinychicken = 900,
 					vtol = 90,
 				},
 			},
@@ -161,12 +161,12 @@ return {
 				weaponvelocity = 440,
 				damage = {
 					bombers = 90,
+					chicken = 800,
 					commanders = 922,
 					default = 553,
-					chicken = 800,
-					tinychicken = 1300,
 					fighters = 90,
 					subs = 5,
+					tinychicken = 1300,
 					vtol = 90,
 				},
 			},
@@ -184,9 +184,5 @@ return {
 				onlytargetcategory = "SURFACE",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=5,
-	buildingGroundDecalSizeY=5,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armguard_aoplane.dds]],},
+	},
 }

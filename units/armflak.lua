@@ -6,16 +6,15 @@ return {
 		buildangle = 8192,
 		buildcostenergy = 12198,
 		buildcostmetal = 769,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 5,
+		buildinggrounddecalsizey = 5,
+		buildinggrounddecaltype = "armflak_aoplane.dds",
 		buildpic = "ARMFLAK.DDS",
 		buildtime = 19005,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 -9 0",
 		collisionvolumescales = "29 40 29",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Ell",
 		corpse = "DEAD",
 		description = "Anti-Air Flak Gun",
@@ -34,7 +33,7 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 525,
-
+		usebuildinggrounddecal = true,
 		yardmap = "ooooooooo",
 		customparams = {
 			normalmaps = "yes",
@@ -159,9 +158,5 @@ return {
 				onlytargetcategory = "VTOL",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=5,
-	buildingGroundDecalSizeY=5,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armflak_aoplane.dds]],},
+	},
 }

@@ -8,10 +8,10 @@ return {
 		buildcostmetal = 374,
 		builddistance = 136,
 		builder = true,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 12,
+		buildinggrounddecalsizey = 12,
+		buildinggrounddecaltype = "armasp_aoplane.dds",
 		buildpic = "ARMASP.DDS",
 		buildtime = 9090,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -38,7 +38,7 @@ return {
 		selfdestructas = "LARGE_BUILDING",
 		sightdistance = 357.5,
 		terraformspeed = 5000,
-
+		usebuildinggrounddecal = true,
 		workertime = 1000,
 		yardmap = "ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
 		customparams = {
@@ -103,9 +103,5 @@ return {
 				[1] = "pairactv",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=12,
-	buildingGroundDecalSizeY=12,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armasp_aoplane.dds]],},
+	},
 }

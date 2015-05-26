@@ -14,7 +14,7 @@ return {
 		buildtime = 32500,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		damagemodifier = 0.30000001192093,
+		damagemodifier = 0.3,
 		description = "Armed Advanced Metal Extractor",
 		energyuse = 12,
 		explodeas = "SMALL_BUILDINGEX",

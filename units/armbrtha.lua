@@ -5,10 +5,10 @@ return {
 		buildangle = 32700,
 		buildcostenergy = 60680,
 		buildcostmetal = 4184,
-
-
-
-
+		buildinggrounddecaldecayspeed = 30,
+		buildinggrounddecalsizex = 6,
+		buildinggrounddecalsizey = 6,
+		buildinggrounddecaltype = "armbrtha_aoplane.dds",
 		buildpic = "ARMBRTHA.DDS",
 		buildtime = 85185,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
@@ -28,13 +28,13 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "ATOMIC_BLAST",
 		sightdistance = 273,
-
+		usebuildinggrounddecal = true,
 		usepiececollisionvolumes = 1,
 		yardmap = "oooooooooooooooo",
 		customparams = {
+			canareaattack = 1,
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
-			canareaattack = 1,
 		},
 		featuredefs = {
 			dead = {
@@ -142,9 +142,5 @@ return {
 				onlytargetcategory = "SURFACE",
 			},
 		},
-		buildingGroundDecalDecaySpeed=30,
-	buildingGroundDecalSizeX=6,
-	buildingGroundDecalSizeY=6,
-	useBuildingGroundDecal = true,
-	buildingGroundDecalType=[[armbrtha_aoplane.dds]],},
+	},
 }

@@ -22,7 +22,7 @@ return {
 		maxdamage = 500,
 		maxslope = 10,
 		maxwaterdepth = 0,
-movementclass = "NANO",
+		movementclass = "NANO",
 		name = "Nano Turret",
 		objectname = "CORNANOTC.s3o",
 		seismicsignature = 0,

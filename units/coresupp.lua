@@ -12,7 +12,6 @@ return {
 		category = "ALL WEAPON SHIP NOTSUB NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "0 5 -1",
 		collisionvolumescales = "31 31 75",
-		collisionvolumetest = 1,
 		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
 		description = "Corvette",

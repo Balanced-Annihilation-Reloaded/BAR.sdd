@@ -1,8 +1,8 @@
 return {
 	armseer = {
-		acceleration = 0.041799999773502,
+		acceleration = 0.0418,
 		activatewhenbuilt = true,
-		brakerate = 0.016499999910593,
+		brakerate = 0.0495,
 		buildcostenergy = 1941,
 		buildcostmetal = 115,
 		buildpic = "ARMSEER.DDS",
@@ -22,7 +22,7 @@ return {
 		leavetracks = true,
 		maxdamage = 880,
 		maxslope = 16,
-		maxvelocity = 2.0239999294281,
+		maxvelocity = 2.024,
 		maxwaterdepth = 0,
 		movementclass = "TANK3",
 		name = "Seer",
@@ -36,6 +36,9 @@ return {
 		trackstrength = 5,
 		tracktype = "StdTank",
 		trackwidth = 25,
+		turninplace = 0,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 1.33584,
 		turnrate = 605,
 		customparams = {
 			arm_tank = "1",
@@ -78,6 +81,7 @@ return {
 				metal = 48,
 				object = "arm3x3e.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

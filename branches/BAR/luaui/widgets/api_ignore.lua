@@ -20,6 +20,9 @@ local pID_table = {}
 local ignoredPlayers = {}
 local myName,_ = Spring.GetPlayerInfo(Spring.GetMyPlayerID())
 
+local specColStr = "\255\255\255\1"
+local whiteStr = "\255\255\255\1"
+
 function CheckPIDs()
     local playerList = Spring.GetPlayerList()
     for _,pID in ipairs(playerList) do
@@ -39,9 +42,10 @@ end
 
 function colourPlayer(playerName)
         local playerID = pID_table[playerName]
-        if not playerID then return "" end
+        if not playerID then return whiteStr end
         
-        local _,_,_,teamID = Spring.GetPlayerInfo(playerID)
+        local _,_,spec,teamID = Spring.GetPlayerInfo(playerID)
+        if spec then return specColStr end
     	nameColourR,nameColourG,nameColourB,nameColourA = Spring.GetTeamColor(teamID)
 		R255 = math.floor(nameColourR*255)  --the first \255 is just a tag (not colour setting) no part can end with a zero due to engine limitation (C)
         G255 = math.floor(nameColourG*255)
@@ -72,7 +76,7 @@ function widget:TextCommand(s)
 	 
 	 if (token[1] == "ignoreplayer" or token[1] == "ignoreplayers") then
 		 for i = 2,n do
-			ignorePlayer(token[i])
+			IgnorePlayer(token[i])
 		end
 	end
 	
@@ -83,6 +87,17 @@ function widget:TextCommand(s)
             for i=2,n do
                 UnignorePlayer(token[i])
             end
+        end
+    end
+    
+    if (token[1] == "toggleignore") and n>=2 then
+        for i=2,n do
+            local playerName = token[i]
+            if ignoredPlayers[playerName] then
+                UnignorePlayer(playerName)
+            else
+                IgnorePlayer(playerName)
+            end               
         end
     end
         
@@ -107,7 +122,7 @@ function ignoreList ()
     end
 end
 
-function ignorePlayer (playerName)
+function IgnorePlayer (playerName)
     if playerName==myName then
         Spring.Echo("You cannot ignore yourself")
         return

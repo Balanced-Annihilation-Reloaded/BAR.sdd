@@ -232,17 +232,27 @@ end
 ----------------------------------------------------------------
 
 function gadget:AllowStartPosition(x,y,z,playerID,readyState)
-	-- communicate readyState to all
-	-- 0: unready, 1: ready, 2: game forcestarted & player not ready, 3: game forcestarted & player absent
-	-- for some reason 2 is sometimes used in place of 1 and is always used for the last player to become ready
-	-- we also add (only used in Initialize) the following
+    -- readyState:
+	-- 0: player did not place startpoint, is unready 
+    -- 1: game starting, player is ready
+    -- 2: player pressed ready OR game is starting and player is forcibly readied (note: if the player chose a startpoint, reconnected and pressed ready without re-placing, this case will have the wrong x,z)
+    -- 3: game forcestarted & player absent
+
+	-- we also add the following
 	-- -1: players will not be allowed to place startpoints; automatically readied once ingame
 	--  4: player has placed a startpoint but is not yet ready
-	if Game.startPosType == 2 then -- choose in game mode
-		Spring.SetGameRulesParam("player_" .. playerID .. "_readyState" , readyState) 
-	end
 	
-	if Game.startPosType == 3 then return true end --choose before game mode
+	-- communicate readyState to all
+    Spring.SetGameRulesParam("player_" .. playerID .. "_readyState" , readyState) 
+    
+    --[[
+    -- for debugging
+    local name,_,_,tID = Spring.GetPlayerInfo(playerID) 
+    Spring.Echo(name,tID,x,z,readyState, (startPointTable[tID]~=nil))
+    Spring.MarkerAddPoint(x,y,z,name .. " " .. readyState)
+	]]
+    
+	if Game.startPosType ~= 2 then return true end -- accept blindly unless we are in choose-in-game mode
 	if useFFAStartPoints then return true end
 	
 	local _,_,_,teamID,allyTeamID,_,_,_,_,_ = Spring.GetPlayerInfo(playerID)
@@ -283,13 +293,18 @@ function gadget:AllowStartPosition(x,y,z,playerID,readyState)
 		
 	-- record table of starting points for startpoint assist to use
 	if readyState == 2 then 
-		startPointTable[teamID]={-5000,-5000} --player readied or game was forced started, but player did not place a startpoint.  make a point far away enough not to bother anything else
-	else		
-		startPointTable[teamID]={x,z} --player placed startpoint but has not clicked ready
-		if readyState ~= 1 then
-			Spring.SetGameRulesParam("player_" .. playerID .. "_readyState" , 4) --made startpoint but didn't click ready
+        -- player pressed ready (we have already recorded their startpoint when they placed it) OR game was force started and player is forcibly readied
+		if not startPointTable[teamID] then
+            startPointTable[teamID]={-5000,-5000} -- if the player was forcibly readied without having placed a startpoint, place an invalid one far away (thats what the StartPointGuesser wants)
+        end
+    else		
+        -- player placed startpoint OR game is starting and player is ready
+        startPointTable[teamID]={x,z} 
+		if readyState ~= 1 then 
+            -- game is not starting (therefore, player cannot yet have pressed ready)
+            Spring.SetGameRulesParam("player_" .. playerID .. "_readyState" , 4) 
+            SendToUnsynced("StartPointChosen", playerID)
 		end
-		SendToUnsynced("StartPointChosen", playerID)
 	end	
 	
 	return true
@@ -311,7 +326,6 @@ function gadget:GameStart()
 				SpawnFFAStartUnit(nAllyTeams, allyTeamID, allyTeamSpawn[allyTeamID], teamID) 
 			end
 			
-			gadgetHandler:RemoveGadget()
 			return
 		end
 	end
@@ -320,9 +334,11 @@ function gadget:GameStart()
 	-- cycle through teams and call spawn team starting unit 
 	for teamID, allyTeamID in pairs(spawnTeams) do
 		SpawnTeamStartUnit(teamID, allyTeamID) 
-	end
-	
-	gadgetHandler:RemoveGadget()
+	end	
+end
+
+function gadget:GameFrame()
+	gadgetHandler:RemoveGadget(self)
 end
 
 function SetFFASpawns()
@@ -374,15 +390,14 @@ function SpawnTeamStartUnit(teamID, allyTeamID)
 	local x,_,z = Spring.GetTeamStartPosition(teamID)
 	local xmin, zmin, xmax, zmax = spGetAllyTeamStartBox(allyTeamID) 
 
-	--pick location 
-	local isAIStartPoint = (Game.startPosType == 3) and ((x>0) or (z>0)) --AIs only place startpoints of their own with choose-before-game mode
-	if not isAIStartPoint then
+	-- if its choose-in-game mode, see if we need to autoplace anyone
+	if Game.startPosType==2 then
 		if ((not startPointTable[teamID]) or (startPointTable[teamID][1] < 0)) then
 			-- guess points for the ones classified in startPointTable as not genuine (newbies will not have a genuine startpoint)
 			x,z=GuessStartSpot(teamID, allyID, xmin, zmin, xmax, zmax, startPointTable)
 		else
 			--fallback 
-			if (x<=0) or (z<=0) then
+			if x<=0 or z<=0 then
 				x = (xmin + xmax) / 2
 				z = (zmin + zmax) / 2
 			end
@@ -430,6 +445,8 @@ local myPlayerID = Spring.GetMyPlayerID()
 local _,_,_,myTeamID = Spring.GetPlayerInfo(myPlayerID) 
 local amNewbie
 local ffaMode = (tonumber(Spring.GetModOptions().mo_noowner) or 0) == 1
+local isReplay = Spring.IsReplay()
+
 local readied = false --make sure we return true,true for newbies at least once
 local startPointChosen = false
 
@@ -437,40 +454,19 @@ local NETMSG_STARTPLAYING = 4 -- see BaseNetProtocol.h, packetID sent during the
 local SYSTEM_ID = -1 -- see LuaUnsyncedRead::GetPlayerTraffic, playerID to get hosts traffic from
 local gameStarting
 local timer = 0
+local timer2 = 0
 
 local vsx, vsy = Spring.GetViewGeometry()
 function gadget:ViewResize()
   vsx,vsy = Spring.GetViewGeometry()
 end
 
-local readyX = vsx * 0.8
-local readyY = vsy * 0.8 
-local readyH = 30
-local readyW = 80
-
 local pStates = {} --local copy of playerStates table
 
 function gadget:Initialize()
 	-- add function to receive when startpoints were chosen
 	gadgetHandler:AddSyncAction("StartPointChosen", StartPointChosen)
-	gadgetHandler:AddSyncAction("ReadyStateMessage", ReadyStateMessage)
-	
-	-- create ready button
-	readyButton = gl.CreateList(function()
-		-- draws background rectangle
-		gl.Color(0.1,0.1,.45,0.18)                              
-		gl.Rect(readyX,readyY+readyH, readyX+readyW, readyY)
-	
-		-- draws black border
-		gl.Color(0,0,0,1)
-		gl.BeginEnd(GL.LINE_LOOP, function()
-			gl.Vertex(readyX,readyY)
-			gl.Vertex(readyX,readyY+readyH)
-			gl.Vertex(readyX+readyW,readyY+readyH)
-			gl.Vertex(readyX+readyW,readyY)
-		end)
-		gl.Color(1,1,1,1)
-	end)
+	gadgetHandler:AddSyncAction("ReadyStateMessage", ReadyStateMessage)	
 end
 
 function StartPointChosen(_,playerID)
@@ -544,16 +540,6 @@ function gadget:GameSetup(state,ready,playerStates)
 end
 
 function gadget:MousePress(sx,sy)
-	-- pressing ready
-	if sx > readyX and sx < readyX+readyW and sy > readyY and sy < readyY+readyH and Spring.GetGameFrame() <= 0 and Game.startPosType == 2 and gameStarting==nil then
-		if startPointChosen then
-			readied = true
-			return true
-		else
-			Spring.Echo("Please choose a start point!")
-		end
-	end
-
 	-- message when trying to place startpoint but can't
 	if amNewbie then
 		local target,_ = Spring.TraceScreenRay(sx,sy)
@@ -569,6 +555,10 @@ function ReadyStateMessage(_, msg, playerID)
         -- we will receive other players messages too here, but its cleaner to use GameSetup for those 
         readied = true
     end
+end
+
+function gadget:ShutDown()
+    gl.DeleteList(replayButton)
 end
 
 ----------------------------------------------------------------

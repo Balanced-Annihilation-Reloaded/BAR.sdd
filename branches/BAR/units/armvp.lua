@@ -11,7 +11,6 @@ return {
 		canmove = true,
 		category = "ALL PLANT NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumescales = "120 34 92",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
 		description = "Produces Level 1 Vehicles",
@@ -37,7 +36,6 @@ return {
 		workertime = 100,
 		yardmap = "oooooooooooooooooooooooooccccooccccoocccco",
 		buildoptions = {
-			[10] = "armsam",
 			[1] = "armcv",
 			[2] = "armbeaver",
 			[3] = "armmlv",
@@ -47,6 +45,7 @@ return {
 			[7] = "armstump",
 			[8] = "tawf013",
 			[9] = "armjanus",
+			[10] = "armsam",
 		},
 		customparams = {
 			normalmaps = "yes",
@@ -89,6 +88,7 @@ return {
 				metal = 193,
 				object = "arm6x6a.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

@@ -41,7 +41,7 @@ include("savetable.lua")
 include("debug.lua")
 include("modfonts.lua")
 include("layout.lua")   -- contains a simple LayoutButtons()
-include("bawidgets.lua")  -- the widget handler
+VFS.Include(LUAUI_DIRNAME .. 'bawidgets.lua', nil, VFS.ZIP)
 
 --------------------------------------------------------------------------------
 --

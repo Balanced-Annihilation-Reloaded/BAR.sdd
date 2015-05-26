@@ -11,7 +11,6 @@ return {
 		category = "ALL PLANT NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		collisionvolumeoffsets = "-8 4 0",
 		collisionvolumescales = "130 70 70",
-		collisionvolumetest = 1,
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
 		description = "Produces Level 2 Aircraft",
@@ -40,7 +39,6 @@ return {
 			normaltex = "unittextures/Arm_normals.dds",
 		},
 		buildoptions = {
-			[10] = "armcybr",
 			[1] = "armaca",
 			[2] = "armbrawl",
 			[3] = "armpnix",
@@ -50,6 +48,7 @@ return {
 			[7] = "armdfly",
 			[8] = "blade",
 			[9] = "corgripn",
+			[10] = "armcybr",
 		},
 		featuredefs = {
 			dead = {
@@ -88,6 +87,7 @@ return {
 				metal = 977,
 				object = "arm6x6a.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

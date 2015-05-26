@@ -1,7 +1,8 @@
 return {
 	armtship = {
 		acceleration = 0.09,
-		brakerate = 0.09,
+		autoheal = 5,
+		brakerate = 0.27,
 		buildangle = 16384,
 		buildcostenergy = 6239,
 		buildcostmetal = 735,
@@ -13,10 +14,11 @@ return {
 		corpse = "DEAD",
 		description = "Armored Transport Ship",
 		explodeas = "BIG_UNITEX",
+		floater = true,
 		footprintx = 4,
 		footprintz = 4,
 		icontype = "sea",
-		autoheal = 5,
+		loadingradius = 250,
 		maxdamage = 11010,
 		maxvelocity = 3.34,
 		minwaterdepth = 0,
@@ -24,21 +26,20 @@ return {
 		name = "Hulk",
 		nochasecategory = "ALL",
 		objectname = "ARMTSHIP.s3o",
+		pushresistant = true,
+		releaseheld = false,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 550,
-		turnrate = 420,
-		waterline = 11,
-		floater = true,
-		windgenerator = 0.001,
-		pushResistant = true,
-		releaseheld = false,
 		transportcapacity = 40,
 		transportsize = 4,
-		loadingRadius = 250,
 		transportunloadmethod = 0,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 2.2044,
+		turnrate = 420,
 		unloadspread = 1,
-
+		waterline = 11,
+		windgenerator = 0.001,
 		customparams = {
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
@@ -77,8 +78,14 @@ return {
 				metal = 209,
 				object = "arm5x5a.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
+			},
+		},
+		sfxtypes = {
+			explosiongenerators = {
+				[1] = "custom:shallow_water_dirt",
 			},
 		},
 		sounds = {
@@ -100,11 +107,6 @@ return {
 			},
 			select = {
 				[1] = "sharmsel",
-			},
-		},
-		sfxtypes = {
-			explosiongenerators = {
-				[1] = "custom:shallow_water_dirt",
 			},
 		},
 	},

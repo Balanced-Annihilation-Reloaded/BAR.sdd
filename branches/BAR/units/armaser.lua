@@ -1,8 +1,8 @@
 return {
 	armaser = {
-		acceleration = 0.11999999731779,
+		acceleration = 0.12,
 		activatewhenbuilt = true,
-		brakerate = 0.15000000596046,
+		brakerate = 0.45,
 		buildcostenergy = 1326,
 		buildcostmetal = 73,
 		buildpic = "ARMASER.DDS",
@@ -21,7 +21,7 @@ return {
 		idletime = 1800,
 		maxdamage = 305,
 		maxslope = 32,
-		maxvelocity = 1.6100000143051,
+		maxvelocity = 1.61,
 		maxwaterdepth = 112,
 		movementclass = "KBOT2",
 		name = "Eraser",
@@ -32,6 +32,8 @@ return {
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 260,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 1.0626,
 		turnrate = 1045,
 		customparams = {
 			normalmaps = "yes",
@@ -73,6 +75,7 @@ return {
 				metal = 19,
 				object = "arm1x1a.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},
@@ -101,6 +104,8 @@ return {
 		weapondefs = {
 			bogus_ground_missile = {
 				areaofeffect = 48,
+				avoidfeature = false,
+				craterareaofeffect = 0,
 				craterboost = 0,
 				cratermult = 0,
 				impulseboost = 0,
@@ -109,12 +114,14 @@ return {
 				name = "Missiles",
 				range = 800,
 				reloadtime = 0.5,
+				soundhitwet = "splshbig",
+				soundhitwetvolume = 0.5,
 				startvelocity = 450,
 				tolerance = 9000,
 				turnrate = 33000,
 				turret = true,
 				weaponacceleration = 101,
-				weapontimer = 0.10000000149012,
+				weapontimer = 0.1,
 				weapontype = "Cannon",
 				weaponvelocity = 650,
 				damage = {

@@ -1,8 +1,8 @@
 return {
 	armjam = {
-		acceleration = 0.035000000149012,
+		acceleration = 0.035,
 		activatewhenbuilt = true,
-		brakerate = 0.012000000104308,
+		brakerate = 0.036,
 		buildcostenergy = 1621,
 		buildcostmetal = 97,
 		buildpic = "armjam.jpg",
@@ -22,7 +22,7 @@ return {
 		leavetracks = true,
 		maxdamage = 460,
 		maxslope = 16,
-		maxvelocity = 1.2000000476837,
+		maxvelocity = 1.2,
 		maxwaterdepth = 0,
 		movementclass = "TANK3",
 		name = "Jammer",
@@ -37,6 +37,9 @@ return {
 		trackstrength = 10,
 		tracktype = "StdTank",
 		trackwidth = 22,
+		turninplace = 0,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 0.792,
 		turnrate = 505,
 		customparams = {
 			normalmaps = "yes",
@@ -76,6 +79,7 @@ return {
 				metal = 39,
 				object = "arm3x3b.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},
@@ -104,6 +108,8 @@ return {
 		weapondefs = {
 			bogus_ground_missile = {
 				areaofeffect = 48,
+				avoidfeature = false,
+				craterareaofeffect = 0,
 				craterboost = 0,
 				cratermult = 0,
 				impulseboost = 0,
@@ -112,12 +118,14 @@ return {
 				name = "Missiles",
 				range = 800,
 				reloadtime = 0.5,
+				soundhitwet = "splshbig",
+				soundhitwetvolume = 0.5,
 				startvelocity = 450,
 				tolerance = 9000,
 				turnrate = 33000,
 				turret = true,
 				weaponacceleration = 101,
-				weapontimer = 0.10000000149012,
+				weapontimer = 0.1,
 				weapontype = "Cannon",
 				weaponvelocity = 650,
 				damage = {

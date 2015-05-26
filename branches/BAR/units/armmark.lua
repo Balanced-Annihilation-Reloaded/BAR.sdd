@@ -1,8 +1,8 @@
 return {
 	armmark = {
-		acceleration = 0.045000001788139,
+		acceleration = 0.045,
 		activatewhenbuilt = true,
-		brakerate = 0.01799999922514,
+		brakerate = 0.054,
 		buildcostenergy = 1152,
 		buildcostmetal = 95,
 		buildpic = "armmark.jpg",
@@ -21,7 +21,7 @@ return {
 		idletime = 1800,
 		maxdamage = 320,
 		maxslope = 16,
-		maxvelocity = 1.3500000238419,
+		maxvelocity = 1.35,
 		maxwaterdepth = 0,
 		movementclass = "KBOT2",
 		name = "Marky",
@@ -31,6 +31,8 @@ return {
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 900,
 		sonardistance = 0,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 0.891,
 		turnrate = 505,
 		customparams = {
 			normalmaps = "yes",
@@ -70,6 +72,7 @@ return {
 				metal = 38,
 				object = "arm2x2a.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

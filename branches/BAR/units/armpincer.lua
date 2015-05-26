@@ -1,7 +1,7 @@
 return {
 	armpincer = {
-		acceleration = 0.010999999940395,
-		brakerate = 0.010999999940395,
+		acceleration = 0.011,
+		brakerate = 0.033,
 		buildcostenergy = 1921,
 		buildcostmetal = 187,
 		buildpic = "ARMPINCER.DDS",
@@ -33,6 +33,9 @@ return {
 		trackstrength = 6,
 		tracktype = "StdTank",
 		trackwidth = 30,
+		turninplace = 0,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 1.485,
 		turnrate = 398,
 		customparams = {
 			arm_tank = "1",
@@ -85,16 +88,20 @@ return {
 		weapondefs = {
 			arm_pincer_gauss = {
 				areaofeffect = 8,
+				avoidfeature = false,
+				craterareaofeffect = 0,
 				craterboost = 0,
 				cratermult = 0,
 				explosiongenerator = "custom:LIGHT_PLASMA",
-				impulseboost = 0.12300000339746,
-				impulsefactor = 0.12300000339746,
+				impulseboost = 0.123,
+				impulsefactor = 0.123,
 				name = "PincerCannon",
 				noselfdamage = true,
 				range = 305,
 				reloadtime = 1.5,
 				soundhit = "xplomed2",
+				soundhitwet = "splshbig",
+				soundhitwetvolume = 0.5,
 				soundstart = "cannhvy1",
 				turret = true,
 				weapontype = "Cannon",

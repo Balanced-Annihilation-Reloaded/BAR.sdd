@@ -39,6 +39,7 @@ return {
 			[2] = "armraz",
 			[3] = "marauder",
 			[4] = "armshock",
+			--[5] = "armlun",
 		},
 		customparams = {
 			normalmaps = "yes",
@@ -81,6 +82,7 @@ return {
 				metal = 1923,
 				object = "arm7x7b.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

@@ -1,6 +1,6 @@
 return {
 	armatlas = {
-		acceleration = 0.090000003576279,
+		acceleration = 0.09,
 		brakerate = 0.75,
 		buildcostenergy = 1239,
 		buildcostmetal = 64,
@@ -12,8 +12,8 @@ return {
 		collide = false,
 		cruisealt = 70,
 		description = "Light Air Transport",
-		energymake = 0.60000002384186,
-		energyuse = 0.60000002384186,
+		energymake = 0.6,
+		energyuse = 0.6,
 		explodeas = "SMALL_UNITEX",
 		footprintx = 2,
 		footprintz = 3,

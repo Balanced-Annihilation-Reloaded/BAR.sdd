@@ -22,7 +22,7 @@ return {
 		idletime = 1800,
 		maxdamage = 890,
 		maxslope = 10,
-		maxvelocity = 10.699999809265,
+		maxvelocity = 10.7,
 		maxwaterdepth = 0,
 		name = "Vulture",
 		objectname = "CORAWAC.s3o",

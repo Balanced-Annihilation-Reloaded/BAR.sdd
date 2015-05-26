@@ -1,7 +1,7 @@
 return {
 	corsktl = {
-		acceleration = 0.11999999731779,
-		brakerate = 0.1879999935627,
+		acceleration = 0.12,
+		brakerate = 0.564,
 		buildcostenergy = 24723,
 		buildcostmetal = 506,
 		buildpic = "CORSKTL.DDS",
@@ -16,8 +16,8 @@ return {
 		collisionvolumetest = 1,
 		collisionvolumetype = [[ellipsoid]],
 		description = "Advanced Amphibious Crawling Bomb",
-		energymake = 0.20000000298023,
-		energyuse = 0.20000000298023,
+		energymake = 0.2,
+		energyuse = 0.2,
 		explodeas = "CRAWL_BLAST",
 		firestate = 2,
 		footprintx = 2,
@@ -39,6 +39,8 @@ return {
 		selfdestructcountdown = 0,
 		sightdistance = 260,
 		turninplace = 0,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 1.155,
 		turnrate = 1122,
 		upright = true,
 		customparams = {
@@ -69,6 +71,8 @@ return {
 		weapondefs = {
 			crawl_detonator = {
 				areaofeffect = 5,
+				avoidfeature = false,
+				craterareaofeffect = 0,
 				craterboost = 0,
 				cratermult = 0,
 				edgeeffectiveness = 0,
@@ -79,7 +83,9 @@ return {
 				impulsefactor = 0,
 				name = "Mine Detonator",
 				range = 1,
-				reloadtime = 0.10000000149012,
+				reloadtime = 0.1,
+				soundhitwet = "splshbig",
+				soundhitwetvolume = 0.5,
 				weapontype = "Cannon",
 				weaponvelocity = 1000,
 				damage = {
@@ -89,6 +95,8 @@ return {
 			},
 			crawl_dummy = {
 				areaofeffect = 0,
+				avoidfeature = false,
+				craterareaofeffect = 0,
 				craterboost = 0,
 				cratermult = 0,
 				edgeeffectiveness = 0,
@@ -98,7 +106,9 @@ return {
 				impulsefactor = 0,
 				name = "Crawlingbomb Dummy Weapon",
 				range = 80,
-				reloadtime = 0.10000000149012,
+				reloadtime = 0.1,
+				soundhitwet = "sizzle",
+				soundhitwetvolume = 0.5,
 				tolerance = 100000,
 				weapontype = "Melee",
 				weaponvelocity = 100000,

@@ -45,7 +45,8 @@ return {
 		buildoptions = {
 			[1] = "armbanth",
 			[2] = "marauder",
-            [4] = "armcroc",
+			--[3] = "armlun",
+			[3] = "armcroc",
 		},
 		customparams = {
 			normalmaps = "yes",
@@ -88,6 +89,7 @@ return {
 				metal = 1923,
 				object = "arm7X7B.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

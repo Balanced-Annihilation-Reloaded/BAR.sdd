@@ -1,6 +1,6 @@
 return {
 	armsl = {
-		acceleration = 0.15000000596046,
+		acceleration = 0.15,
 		brakerate = 0.5,
 		buildcostenergy = 6091,
 		buildcostmetal = 344,

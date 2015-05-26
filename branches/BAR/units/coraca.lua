@@ -1,6 +1,6 @@
 return {
 	coraca = {
-		acceleration = 0.065999999642372,
+		acceleration = 0.066,
 		brakerate = 0.4275,
 		buildcostenergy = 8824,
 		buildcostmetal = 231,
@@ -26,9 +26,9 @@ return {
 		idletime = 1800,
 		maxdamage = 185,
 		maxslope = 10,
-		maxvelocity = 8.0500001907349,
+		maxvelocity = 8.05,
 		maxwaterdepth = 0,
-		metalmake = 0.10000000149012,
+		metalmake = 0.1,
 		metalstorage = 50,
 		name = "Advanced Construction Aircraft",
 		objectname = "CORACA.s3o",

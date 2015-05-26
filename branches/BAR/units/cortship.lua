@@ -1,7 +1,8 @@
 return {
 	cortship = {
 		acceleration = 0.09,
-		brakerate = 0.085,
+		autoheal = 5,
+		brakerate = 0.255,
 		buildangle = 16384,
 		buildcostenergy = 6286,
 		buildcostmetal = 710,
@@ -17,11 +18,11 @@ return {
 		corpse = "DEAD",
 		description = "Armored Transport Ship",
 		explodeas = "BIG_UNITEX",
+		floater = true,
 		footprintx = 4,
 		footprintz = 4,
-		pushResistant = true,
 		icontype = "sea",
-		autoheal = 5,
+		loadingradius = 250,
 		maxdamage = 11420,
 		maxvelocity = 3.22,
 		minwaterdepth = 0,
@@ -29,21 +30,20 @@ return {
 		name = "Envoy",
 		nochasecategory = "ALL",
 		objectname = "CORTSHIP.s3o",
+		pushresistant = true,
+		releaseheld = false,
 		seismicsignature = 0,
 		selfdestructas = "BIG_UNIT",
 		sightdistance = 550,
-		turnrate = 410,
-		WaterLine = 1,
-		floater = true,
-		windgenerator = 0.001,
-		
-		releaseheld = false,
 		transportcapacity = 40,
 		transportsize = 4,
-		loadingRadius = 250,
 		transportunloadmethod = 0,
+		turninplaceanglelimit = 140,
+		turninplacespeedlimit = 2.1252,
+		turnrate = 410,
 		unloadspread = 1,
-						
+		waterline = 1,
+		windgenerator = 0.001,
 		customparams = {
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
@@ -82,8 +82,14 @@ return {
 				metal = 291,
 				object = "cor5x5a.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
+			},
+		},
+		sfxtypes = {
+			explosiongenerators = {
+				[1] = "custom:shallow_water_dirt",
 			},
 		},
 		sounds = {
@@ -105,11 +111,6 @@ return {
 			},
 			select = {
 				[1] = "shcorsel",
-			},
-		},
-		sfxtypes = {
-			explosiongenerators = {
-				[1] = "custom:shallow_water_dirt",
 			},
 		},
 	},

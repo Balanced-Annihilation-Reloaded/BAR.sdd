@@ -13,7 +13,6 @@ return {
 		collisionVolumeOffsets = [[0 8 1]],
 
 
-		collisionvolumetest = 1,
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
 		description = "Produces Level 1 Aircraft",
@@ -88,6 +87,7 @@ return {
 				metal = 221,
 				object = "arm6x6b.s3o",
 				reclaimable = true,
+				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
 			},

@@ -168,6 +168,9 @@ function MakeBindsTable (swapYZ)
         "bind ,	buildfacing inc", --because some ke"..Y.."boards don't have [ and ] ke"..Y.."s
         "bind .	buildfacing dec",
         "bind o buildfacing inc", --apparentl"..Y.." some ke"..Y.."boards don't have , and . either...
+        
+        -- clear map marks
+        "bind delete clearmapmarks",
 
         -- hotfixes for 98.0
         "bind f6 mutesound", --http://springrts.com/mantis/view.php?id=4576        

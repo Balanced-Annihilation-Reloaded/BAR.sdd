@@ -212,7 +212,10 @@ local function GetLightsFromUnitDefs()
 				elseif (WeaponDefs[weaponID]['type'] == 'BeamLaser') then
 					if verbose then Spring.Echo('BeamLaser',WeaponDefs[weaponID]['name'],'rgbcolor', WeaponDefs[weaponID]['visuals']['colorR']) end
 					--size=WeaponDefs[weaponID]['size']
-					plighttable[WeaponDefs[weaponID]['name']]={r=WeaponDefs[weaponID]['visuals']['colorR']*0.5,g=WeaponDefs[weaponID]['visuals']['colorG']*0.5,b=WeaponDefs[weaponID]['visuals']['colorB']*0.5,radius=math.min(WeaponDefs[weaponID]['range'],250),beam=true}
+                    local r = WeaponDefs[weaponID]['visuals']['colorR']
+                    local g = WeaponDefs[weaponID]['visuals']['colorG']
+                    local b = WeaponDefs[weaponID]['visuals']['colorB']
+					plighttable[WeaponDefs[weaponID]['name']]={r=r,g=g,b=b,radius=math.min(WeaponDefs[weaponID]['range'],250),beam=true}
 				end
 			end
 		end
@@ -471,7 +474,7 @@ local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
 				
 				glUniform(lightposlocBeam, light.px,light.py,light.pz, light.radius) --IN world space
 				glUniform(lightpos2locBeam, light.px+light.dx,light.py+light.dy+24,light.pz+light.dz, light.radius) --IN world space,the magic constant of +24 in the Y pos is needed because of our beam distance calculator function in GLSL
-				glUniform(lightcolorlocBeam, light.r,light.g,light.b, 1) 
+                glUniform(lightcolorlocBeam, light.r,light.g,light.b, 1) 
 				
 			end
 			
@@ -500,38 +503,42 @@ function widget:DrawWorld()
 		if #projectiles == 0 then return end
 		local beamlightprojectiles={}
 		local pointlightprojectiles={}
+        local prevpID
 		for i, pID in ipairs(projectiles) do
-			local x,y,z=spGetProjectilePosition(pID)
-			--Spring.Echo("projectilepos=",x,y,z)
-			local wep,piece=spGetProjectileType(pID)
-			if piece then
-				local explosionflags = spGetPieceProjectileParams(pID)
-				if explosionflags and (explosionflags%32)>15  then --only stuff with the FIRE explode tag gets a light
-					--Spring.Echo('explosionflag=',explosionflags)
-					table.insert(pointlightprojectiles,{r=0.5,g=0.5,b=0.25,radius=100,constant=1,squared=1,linear=0,beam=false,px=x,py=y,pz=z,dx=0,dy=0,dz=0})
-				end
-			else
-				lightparams=projectileLightTypes[spGetProjectileName(pID)]
-				if lightparams then
-					if lightparams.beam then --BEAM type
-						local deltax,deltay,deltaz=spGetProjectileVelocity(pID) -- for beam types, this returns the endpoint of the beam
-						--Spring.Echo({x,y,z,dx,dy,dz})
-						-- Spring.Echo('beamlightprojectiles',to_string(lightparams), 'concated',to_string(TableConcat(lightparams,{px=x,py=y,pz=z,dx=deltax,dy=deltay,dz=deltaz})))
-						
-						table.insert(beamlightprojectiles,TableConcat(lightparams,{px=x,py=y,pz=z,dx=deltax,dy=deltay,dz=deltaz}))
-						--Spring.Echo('GetFeatureVelocity=',dx,dy,dz)
-					else --point type
-						--TODO: clip some lights based on height
-						if y > lightparams.radius then
-							local smoothheight=spGetSmoothMeshHeight(x, z)
-							if smoothheight + 50 > y-lightparams.radius then 
-								table.insert(pointlightprojectiles,TableConcat(lightparams,{px=x,py=y,pz=z,dx=0,dy=0,dz=0}))
-							end
-						end
-					end
-				end
-			end
-			
+            if pID~=prevpID then -- hacky hotfix for https://springrts.com/mantis/view.php?id=4551
+                --Spring.Echo(Spring.GetDrawFrame(),i,pID)
+                prevpID = pID
+                local x,y,z=spGetProjectilePosition(pID)
+                --Spring.Echo("projectilepos=",x,y,z)
+                local wep,piece=spGetProjectileType(pID)
+                if piece then
+                    local explosionflags = spGetPieceProjectileParams(pID)
+                    if explosionflags and (explosionflags%32)>15  then --only stuff with the FIRE explode tag gets a light
+                        --Spring.Echo('explosionflag=',explosionflags)
+                        table.insert(pointlightprojectiles,{r=0.5,g=0.5,b=0.25,radius=100,constant=1,squared=1,linear=0,beam=false,px=x,py=y,pz=z,dx=0,dy=0,dz=0})
+                    end
+                else
+                    lightparams=projectileLightTypes[spGetProjectileName(pID)]
+                    if lightparams then
+                        if lightparams.beam then --BEAM type
+                            local deltax,deltay,deltaz=spGetProjectileVelocity(pID) -- for beam types, this returns the endpoint of the beam
+                            --Spring.Echo({x,y,z,dx,dy,dz})
+                            --Spring.Echo('beamlightprojectiles',to_string(lightparams), 'concated',to_string(TableConcat(lightparams,{px=x,py=y,pz=z,dx=deltax,dy=deltay,dz=deltaz})))
+                            
+                            table.insert(beamlightprojectiles,TableConcat(lightparams,{px=x,py=y,pz=z,dx=deltax,dy=deltay,dz=deltaz}))
+                            --Spring.Echo('GetFeatureVelocity=',dx,dy,dz)
+                        else --point type
+                            --TODO: clip some lights based on height
+                            if y > lightparams.radius then
+                                local smoothheight=spGetSmoothMeshHeight(x, z)
+                                if smoothheight + 50 > y-lightparams.radius then 
+                                    table.insert(pointlightprojectiles,TableConcat(lightparams,{px=x,py=y,pz=z,dx=0,dy=0,dz=0}))
+                                end
+                            end
+                        end
+                    end
+                end
+            end
 		end 
 		
 		

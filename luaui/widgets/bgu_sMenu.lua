@@ -798,7 +798,7 @@ function widget:CommandsChanged()
     end
 end
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
-    if cmdID and cmdID<0 then --build command
+    if cmdID and cmdID<0 and teamID==Spring.GetMyTeamID() then --build command
         updateRequired = true
     end
 end

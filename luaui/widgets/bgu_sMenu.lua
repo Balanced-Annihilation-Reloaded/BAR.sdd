@@ -779,10 +779,23 @@ function widget:ViewResize(_,scrH)
 	resizeUI(scrH)
 end
 --------------------------- 
--- When Available Commands change this is called
---  sets Updaterequired to true (checked in widget:Update)
+local selectedUnits = {}
 function widget:CommandsChanged()
-	updateRequired = true
+    -- see if selected units changed, cause an update if so
+    local newUnits = Spring.GetSelectedUnits()
+    if not newUnits then return end
+    if #selectedUnits ~= #newUnits then
+        updateRequired = true
+        selectedUnits = newUnits
+    else
+        for i,_ in ipairs(newUnits) do
+            if selectedUnits[i]~=newUnits[i] then
+                updateRequired = true
+                selectedUnits = newUnits
+                break
+            end
+        end
+    end
 end
 --------------------------- 
 -- Checks status of game and InitialQueue, handles InitialQueue if enabled

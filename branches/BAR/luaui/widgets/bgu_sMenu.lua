@@ -797,6 +797,11 @@ function widget:CommandsChanged()
         end
     end
 end
+function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
+    if cmdID and cmdID<0 then --build command
+        updateRequired = true
+    end
+end
 --------------------------- 
 -- Checks status of game and InitialQueue, handles InitialQueue if enabled
 local startUnitDefID

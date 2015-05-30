@@ -1590,16 +1590,18 @@ function UpdateStack()
             enemiesPanel:AddChild(HalfSeparator())
         end
     end
-    enemiesPanel:AddChild(Separator())
 
-    specsPanel:AddChild(Header("SPECTATORS")) --already filtered for being active
-    for _,pID in ipairs(deadPlayers) do 
-        specsPanel:AddChild(players[pID].specPanel)
+    if #deadPlayers + #specs >= 1 then
+        enemiesPanel:AddChild(Separator())
+        specsPanel:AddChild(Header("SPECTATORS")) --already filtered for being active
+        for _,pID in ipairs(deadPlayers) do 
+            specsPanel:AddChild(players[pID].specPanel)
+        end
+        for _,pID in ipairs(specs) do
+            specsPanel:AddChild(players[pID].specPanel)
+        end 
     end
-    for _,pID in ipairs(specs) do
-        specsPanel:AddChild(players[pID].specPanel)
-    end 
-
+    
     stack:Invalidate() -- without this the spectator panel doesn't resize, chili bug?
 end
 

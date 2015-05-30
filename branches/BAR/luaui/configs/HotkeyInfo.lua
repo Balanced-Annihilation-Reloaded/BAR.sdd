@@ -35,6 +35,7 @@ local General = {
     {"` + dbl click",       "Place marker on map"},
     {"` + drag left mouse", "Draw on map"},
     {"` + draw right mouse","Erase drawings and markers"},
+    {"delete",              "Erase all drawings and markers"},
     {blankLine=true},
     {"Other", title=true},
     {"alt -/+",             "Change replay speed"},

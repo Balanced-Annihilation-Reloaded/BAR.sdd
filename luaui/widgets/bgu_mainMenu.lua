@@ -41,12 +41,13 @@ function LoadSpringSettings()
     Settings['AllowDeferredMapRendering']   = Spring.GetConfigInt('AllowDeferredMapRendering') == 1
     Settings['AllowDeferredModelRendering'] = Spring.GetConfigInt('AllowDeferredModelRendering') == 1
 
-    Settings['UnitIconDist']                = Spring.GetConfigInt('UnitIconDist', 280) -- number is used if no config is set
+    Settings['UnitIconDist']                = Spring.GetConfigInt('UnitIconDist', 280) -- number is used if no config is set  
     Settings['UnitLodDist']                 = Spring.GetConfigInt('UnitLodDist', 280)
     Settings['MaxNanoParticles']            = Spring.GetConfigInt('MaxNanoParticles', 1000)
     Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles', 1000)
     Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 -- turn 0/1 to bool
     Settings['3DTrees']                     = Spring.GetConfigInt('3DTrees') == 1
+    Settings['GroundDecals']                = Spring.GetConfigInt('GroundDecals') == 1    
     Settings['MapMarks']                    = Spring.GetConfigInt('MapMarks') == 1
     Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSky') == 1
     Settings['DynamicSun']                  = Spring.GetConfigInt('DynamicSun') == 1
@@ -417,7 +418,7 @@ end
 ----------------------------
 local waterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- value -> listID (ugh)
 local shadowConvert_ID = {[0]=1,[1]=2,[2]=3}
-local shadowMapSizeConvert_ID = {[32]=1,[1024]=2,[2048]=3,[4096]=4} 
+--local shadowMapSizeConvert_ID = {[32]=1,[1024]=2,[2048]=3,[4096]=4} 
 ----------------------------
 
 local function applyDefaultSettings()
@@ -440,6 +441,7 @@ local function applyDefaultSettings()
         ['AllowDeferredModelRendering'] = 1,
         ['MapBorder']        = 1,
         ['3DTrees']          = 1,
+        ['GroundDecals']     = 0,
         ['MapMarks']         = 1,
         ['DynamicSky']       = 0,
         ['DynamicSun']       = 0,
@@ -497,6 +499,7 @@ local comboBox = function(obj)
         end
     end
 
+    Spring.Echo(obj.name, Settings[obj.name])    
 
 	local function applySetting(obj, listID)
 		local value   = obj.options[listID] or ''
@@ -581,6 +584,7 @@ local slider = function(obj)
 		padding = {0,0,0,0}
 	}
 
+    Spring.Echo(obj.name, Settings[obj.name])
 
 	local function applySetting(obj, value)
 		Settings[obj.name] = value
@@ -781,11 +785,13 @@ local function createGraphicsTab()
 					slider{name='UnitIconDist',title='Unit Icon Distance', max = 600, step = 1},
 					slider{name='MaxParticles',title='Max Particles', max = 5000},
 					slider{name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
-					checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},
+					checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},                    
 					checkBox{title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
+					--checkBox{title = 'Extra Model Shading', name = 'luarules togglecustomunitshaders', tooltip = "Toggle BARs special custom unit shader"}, --currently not implemented
 					checkBox{title = 'Deferred Map Shading', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
 					checkBox{title = 'Deferred Model Shading', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
 					checkBox{title = 'Draw Engine Trees', name = '3DTrees', tooltip = "Enable/Disable rendering of engine trees"},
+					checkBox{title = 'Ground Decals', name = 'GroundDecals', tooltip = "Enable/Disable rendering of ground decals"},
 					checkBox{title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
 					checkBox{title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
 					checkBox{title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},

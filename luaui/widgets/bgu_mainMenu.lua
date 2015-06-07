@@ -818,7 +818,7 @@ local function createGraphicsTab()
 					slider{name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
 					checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},                    
 					checkBox{title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
-					checkBox{title = 'Extra Model Shading', name = 'luarules cus_toggle', tooltip = "Toggle BAR extra model shaders"}, --currently not implemented
+					checkBox{title = 'Extra Model Shading', name = 'luarules cus_toggle', tooltip = "Toggle BAR extra model shaders"}, 
 					checkBox{title = 'Deferred Map Shading', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
 					checkBox{title = 'Deferred Model Shading', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
 					checkBox{title = 'Draw Engine Trees', name = '3DTrees', tooltip = "Enable/Disable rendering of engine trees"},

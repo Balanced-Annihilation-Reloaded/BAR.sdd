@@ -32,6 +32,8 @@ local white = '\255\255\255\255'
 
 function LoadSpringSettings()
     -- Load relevant things from springsettings (overwrite our 'local' copy of these settings)
+    -- Listed out because lua and Spring treat bool<->int conversion differently
+    
     Settings['Water']                       = Spring.GetConfigInt('ReflectiveWater') 
     --Settings['ShadowMapSize']               = Spring.GetConfigInt('ShadowMapSize')
     Settings['Shadows']                     = Spring.GetConfigInt('Shadows')
@@ -47,6 +49,7 @@ function LoadSpringSettings()
     Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles', 1000)
     Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 -- turn 0/1 to bool
     Settings['3DTrees']                     = Spring.GetConfigInt('3DTrees') == 1
+    --Settings['luarules cus_toggle'] --not a Spring setting         
     Settings['GroundDecals']                = Spring.GetConfigInt('GroundDecals') == 1    
     Settings['MapMarks']                    = Spring.GetConfigInt('MapMarks') == 1
     Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSky') == 1
@@ -105,6 +108,25 @@ local function setCursor(cursorSet)
 		if cursorSet == 'ba' then Spring.ReplaceMouseCursor(cursorNames[i], cursorNames[i], topLeft)
 		else Spring.ReplaceMouseCursor(cursorNames[i], cursorSet..'/'..cursorNames[i], topLeft) end
 	end
+end
+
+------------------------------------
+-- control custom unit shader gadget
+
+function SetCUSstate()
+    -- tell luarules if we want BARs customunitshader 
+    if Settings['luarules cus_toggle'] then
+        Spring.SendCommands('luarules cus_on')
+    else
+        Spring.SendCommands('luarules cus_off')        
+   end
+end
+
+function widget:GameFrame(n)
+    if n>=3 then -- because can't do it before...
+        SetCUSstate()
+        widgetHandler:RemoveWidgetCallIn("GameFrame", self)
+    end    
 end
 
 ----------------------------
@@ -437,6 +459,7 @@ local function applyDefaultSettings()
     local checkboxes = {
         ['AdvMapShading']    = 1,
         ['AdvModelShading']  = 1,
+        ['luarules cus_toggle'] = 1,
         ['AllowDeferredMapRendering']   = 1,
         ['AllowDeferredModelRendering'] = 1,
         ['MapBorder']        = 1,
@@ -467,9 +490,13 @@ local function applyDefaultSettings()
     
 	for setting,value in pairs(checkboxes) do
 		Settings[setting] = value
-        local checkbox = engineStack:GetObjectByName(setting)
-		if checkbox.checked ~= (value==1) then checkbox:Toggle() end
-		spSendCommands(setting..' '..(value and 1 or 0))    
+        if setting=='luarules cus_toggle' then
+            if Spring.GetGameFrame()>3 then SetCUSstate() end -- before means it will be set automatically from GameFrame
+        else
+            local checkbox = engineStack:GetObjectByName(setting)
+            if checkbox.checked ~= (value==1) then checkbox:Toggle() end
+            spSendCommands(setting..' '..(value and 1 or 0))    
+        end
     end
 
 end
@@ -549,7 +576,11 @@ local checkBox = function(obj)
 	local obj = obj
 
 	local toggle = function(self)
-        Settings[self.name] = self.checked
+        if string.find(self.name, "luarules") and Spring.GetGameFrame()<=2 then
+            Spring.Echo("Cannot change this setting until the game has started (luarules)")
+            return 
+        end
+        Settings[self.name] = not self.checked --self.checked hasn't changed yet!
 		spSendCommands(self.name)
 	end
     
@@ -787,7 +818,7 @@ local function createGraphicsTab()
 					slider{name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
 					checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},                    
 					checkBox{title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
-					--checkBox{title = 'Extra Model Shading', name = 'luarules togglecustomunitshaders', tooltip = "Toggle BARs special custom unit shader"}, --currently not implemented
+					checkBox{title = 'Extra Model Shading', name = 'luarules cus_toggle', tooltip = "Toggle BAR extra model shaders"}, --currently not implemented
 					checkBox{title = 'Deferred Map Shading', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
 					checkBox{title = 'Deferred Model Shading', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
 					checkBox{title = 'Draw Engine Trees', name = '3DTrees', tooltip = "Enable/Disable rendering of engine trees"},

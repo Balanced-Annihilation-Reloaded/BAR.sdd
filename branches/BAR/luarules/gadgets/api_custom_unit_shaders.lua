@@ -86,6 +86,7 @@ VFS.Include("luarules/utilities/unitrendering.lua", nil, VFS.BASE)
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+local isOn = false
 local shadows = false
 local advShading = false
 local normalmapping = false
@@ -333,6 +334,7 @@ end
 
 local n = -1
 function gadget:Update()
+  if not isOn then return end
   if (n<Spring.GetDrawFrame()) then
     n = Spring.GetDrawFrame() + Spring.GetFPS()
 
@@ -348,6 +350,7 @@ end
 --------------------------------------------------------------------------------
 
 function gadget:UnitFinished(unitID,unitDefID,teamID)
+  if not isOn then return end
   local unitMat = unitMaterialInfos[unitDefID]
   if (unitMat) then
     local mat = materialDefs[unitMat[1]]
@@ -371,6 +374,7 @@ function gadget:UnitFinished(unitID,unitDefID,teamID)
 end
 
 function gadget:UnitDestroyed(unitID,unitDefID)
+  if not isOn then return end
   Spring.UnitRendering.DeactivateMaterial(unitID,3)
 
   local mat = drawUnitList[unitID]
@@ -424,15 +428,25 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-function gadget:GameFrame()
+function TurnOn()
+    isOn = true
 	for i,uid in ipairs(Spring.GetAllUnits()) do
 		if not select(3,Spring.GetUnitIsStunned(uid)) then --// inbuild?
 			gadget:UnitFinished(uid,Spring.GetUnitDefID(uid),Spring.GetUnitTeam(uid))
 		end
 	end
-	gadgetHandler:RemoveCallIn('GameFrame')
+    --Spring.Echo("on")
 end
 
+function TurnOff()
+    isOn = false
+    drawUnitList = {}
+    --Spring.Echo("off")
+end
+
+function Toggle()
+    if isOn then TurnOff() else TurnOn() end
+end
 
 --// Workaround: unsynced LuaRules doesn't receive Shutdown events
 Shutdown = Script.CreateScream()
@@ -504,6 +518,9 @@ function gadget:Initialize()
     gadgetHandler:AddSyncAction("unitshaders_decloak", UnitDecloaked)
   end
   gadgetHandler:AddChatAction("normalmapping", ToggleNormalmapping)
+  gadgetHandler:AddChatAction("cus_toggle", Toggle)
+  gadgetHandler:AddChatAction("cus_on", TurnOn)
+  gadgetHandler:AddChatAction("cus_off", TurnOff)
 end
 
 

@@ -88,12 +88,15 @@ if  (gadgetHandler:IsSyncedCode()) then
 	function gadget:GameFrame(gf)
 		for featureID, featureinfo in pairs(treesdying) do
 			
-			local factor =  (gf-featureinfo.frame)/fallspeed
-			SetFeatureDirection( featureID, featureinfo.dirx , factor*factor , featureinfo.dirz/(gf-featureinfo.frame) ) 
-			--Odd things about SetFeatureDirection : X is spin around y axis, and so is Y :(
-			--TODO: make features rotate in the direction they were damaged from!
-			--SetFeatureDirection( featureID,  featureinfo.dirx , featureinfo.diry, factor*factor ) 
-			if (featureinfo.frame +falltime < gf) then
+            if gf-featureinfo.frame~= 0 then
+                local factor = (gf-featureinfo.frame)/fallspeed
+                SetFeatureDirection( featureID, featureinfo.dirx , factor*factor , featureinfo.dirz/(gf-featureinfo.frame) ) 
+                --Odd things about SetFeatureDirection : X is spin around y axis, and so is Y :(
+                --TODO: make features rotate in the direction they were damaged from!
+                --SetFeatureDirection( featureID,  featureinfo.dirx , featureinfo.diry, factor*factor ) 
+			end
+            
+            if (featureinfo.frame +falltime < gf) then
 				treesdying[featureID]=nil 
 				-- Echo('removing feature',featureID)
 				DestroyFeature(featureID)

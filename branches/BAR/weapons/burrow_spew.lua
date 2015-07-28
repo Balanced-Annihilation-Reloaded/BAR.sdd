@@ -9,7 +9,7 @@ return {
 		impulsefactor = 1,
 		name = "burrow_spew",
 		range = 60,
-		reloadtime = 3.5999999046326,
+		reloadtime = 3.6,
 		turret = 1,
 		weaponvelocity = 70,
 		damage = {

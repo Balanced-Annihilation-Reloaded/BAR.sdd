@@ -235,7 +235,8 @@ function CheckJoined()
 end
 
 function HandleJoinedPlayer(jID, aID)
-    SendToUnsynced("ForceSpec", jID)
+    -- ForceSpec(jID)
+    -- currently this is no use, because players who joinas see themselves as always having been present, so it doesn't get called...
 end
 
 -----------------------------
@@ -244,7 +245,7 @@ else -- begin unsynced section
 
 function gadget:Initialize()
     gadgetHandler:AddSyncAction("MarkStartPoint", MarkStartPoint)
-    gadgetHandler:AddSyncAction("ForceSpec", ForceSpec)
+    --gadgetHandler:AddSyncAction("ForceSpec", ForceSpec)
 end
 
 local revealed = false
@@ -283,13 +284,13 @@ function gadget:GameFrame(n)
     gadgetHandler:RemoveCallIn("GameFrame")
 end
 
-function ForceSpec(_,pID)
+--[[function ForceSpec(_,pID)
     local myID = Spring.GetMyPlayerID()
     if pID==myID then
 		Spring.Echo("You have been made a spectator - adding players is only allowed before the game starts!")
         Spring.SendCommands("spectator")
     end
-end
+end]]
 
 function gadget:ShutDown()
     gadgetHandler:RemoveSyncAction("MarkStartPoint")

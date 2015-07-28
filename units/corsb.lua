@@ -2,8 +2,8 @@ return {
 	corsb = {
 		acceleration = 0.0276,
 		brakerate = 0.015,
-		buildcostenergy = 27936,
-		buildcostmetal = 252,
+		buildcostenergy = 29798,
+		buildcostmetal = 269,
 		buildpic = "CORSB.DDS",
 		buildtime = 25022,
 		canfly = true,
@@ -81,7 +81,6 @@ return {
 				impulseboost = 0.123,
 				impulsefactor = 0.123,
 				intensity = 0.01,
-				landbounce = false,
 				mygravity = 0.4,
 				name = "CoreSeaAdvancedBombs",
 				noselfdamage = true,

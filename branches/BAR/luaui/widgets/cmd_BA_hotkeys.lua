@@ -24,10 +24,7 @@ local unbinds={
     "bindaction buildspacing inc",
 
     "bind , prevmenu",
-    "bind . nextmenu",
-    
-    -- hotfixes for 98.0
-    "bind backspace	mousestate", --http://springrts.com/mantis/view.php?id=4578
+    "bind . nextmenu",    
 }
 
 -- table of stuff that we bind on load
@@ -164,16 +161,14 @@ function MakeBindsTable (swapYZ)
         "bind "..Y.." settarget",
         "bind j canceltarget",
         
-        "bind q drawinmap", --some ke"..Y.."boards don't have ` or \
-        "bind ,	buildfacing inc", --because some ke"..Y.."boards don't have [ and ] ke"..Y.."s
+        "bind q drawinmap", --some keyboards don't have ` or \
+        "bind ,	buildfacing inc", --because some keyboards don't have [ and ] ke"..Y.."s
         "bind .	buildfacing dec",
-        "bind o buildfacing inc", --apparentl"..Y.." some ke"..Y.."boards don't have , and . either...
+        "bind o buildfacing inc", --apparently some keyboards don't have , and . either...
         
         -- clear map marks
         "bind delete clearmapmarks",
 
-        -- hotfixes for 98.0
-        "bind f6 mutesound", --http://springrts.com/mantis/view.php?id=4576        
     }
     
     binds = _binds

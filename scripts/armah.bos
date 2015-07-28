@@ -158,6 +158,16 @@ RestoreAfterDelay()
 	return (0);
 }
 
+AimFromPrimary(piecenum)
+{
+	piecenum = sleeve;
+}
+
+QueryPrimary(piecenum)
+{
+	piecenum = flare;
+}
+
 AimSecondary(heading, pitch)
 {
 

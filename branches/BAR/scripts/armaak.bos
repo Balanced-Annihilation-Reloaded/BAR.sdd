@@ -222,6 +222,16 @@ RestoreAfterDelay()
 	return (0);
 }
 
+QueryWeapon1(piecenum)
+{
+	piecenum = lflare1;
+}
+
+AimFromWeapon1(piecenum)
+{
+	piecenum = torso;
+}
+
 QueryWeapon2(piecenum)
 {
 	piecenum=lflare2;

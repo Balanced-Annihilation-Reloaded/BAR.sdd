@@ -503,13 +503,14 @@ function widget:DrawWorld()
 		if #projectiles == 0 then return end
 		local beamlightprojectiles={}
 		local pointlightprojectiles={}
-        local prevpID
+        local no_duplicate_projectileIDs_hackyfix={}
 		for i, pID in ipairs(projectiles) do
-            if pID~=prevpID then -- hacky hotfix for https://springrts.com/mantis/view.php?id=4551
+			
+            if no_duplicate_projectileIDs_hackyfix[pID] == nil then -- hacky hotfix for https://springrts.com/mantis/view.php?id=4551
                 --Spring.Echo(Spring.GetDrawFrame(),i,pID)
-                prevpID = pID
+                no_duplicate_projectileIDs_hackyfix[pID] = true
                 local x,y,z=spGetProjectilePosition(pID)
-                --Spring.Echo("projectilepos=",x,y,z)
+                --Spring.Echo("projectilepos=",x,y,z,'id',pID)
                 local wep,piece=spGetProjectileType(pID)
                 if piece then
                     local explosionflags = spGetPieceProjectileParams(pID)

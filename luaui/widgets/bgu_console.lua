@@ -91,13 +91,25 @@ local function hideChat()
 end
 
 local function getChatWidth(viewSizeX)
-    local sx = viewSizeX or select(1,Spring.GetScreenGeometry())
-    return math.min(maxChatWidth, math.max(minChatWidth, sx * 0.4))
+    return math.min(maxChatWidth, math.max(minChatWidth, viewSizeX * 0.4))
+end
+
+local function SetInputTextGeo(windowW, windowY, viewSizeX, viewSizeY)
+	-- move input to line up with new console
+    local windowX = viewSizeX - window.right - windowW
+    windowX = math.max(0, windowX)
+	sendCommands('inputtextgeo '
+		..((windowX+5) / viewSizeX)..' '
+		..(1 - (windowY + 30) / viewSizeY)
+		..' 0.1 '
+		..(windowW / viewSizeX) )
 end
 
 function widget:ViewResize(viewSizeX, viewSizeY)
     local w = getChatWidth(viewSizeX)
     window:Resize(w,_)
+    SetInputTextGeo(w, window.y, viewSizeX, viewSizeY) -- at this point, GetXXXGeometry and window.XXX both still return previous values
+    window:Invalidate() -- avoid mangling from chili bugs
 end
 
 local function loadWindow()
@@ -105,7 +117,7 @@ local function loadWindow()
 	-- parent
 	window = Chili.Control:New{
 		parent  = screen,
-		width   = getChatWidth(),
+		width   = minChatWidth,
 		color   = {0,0,0,0},
 		height  = 150,
 		padding = {0,0,0,0},
@@ -150,7 +162,8 @@ local function loadWindow()
 		itemMargin  = {3,0,3,2},
 		preserveChildrenOrder = true,
 	}
-
+    
+    widget:ViewResize(screen.width, screen.height)
 end
 
 local function loadOptions()
@@ -205,7 +218,6 @@ local function getInline(r,g,b)
 end
 
 function widget:Initialize()
-	
 	Chili  = WG.Chili
 	screen = Chili.Screen0
 	Menu   = WG.MainMenu
@@ -217,15 +229,7 @@ function widget:Initialize()
 	loadWindow()
 	
 	-- disable engine console
-	sendCommands('console 0')
-	
-	-- move input to line up with new console
-	sendCommands('inputtextgeo '
-		..((window.x+5)/screen.width)..' '
-		..(1 - (window.y + 30) / screen.height)
-		..' 0.1 '
-		..(window.width / screen.width) )
-	
+	sendCommands('console 0')    
 end
 
 

@@ -78,7 +78,7 @@ return {
 				collidefriendly = false,
 				craterboost = 0,
 				cratermult = 0,
-				edgeffeectiveness = 0,
+				edgeeffectiveness = 0,
 				explosiongenerator = "custom:dirt",
 				impulseboost = 1,
 				impulsefactor = 1,

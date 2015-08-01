@@ -152,9 +152,8 @@ function gadget:UnitTaken(unitID, unitDefID, teamID, newTeam)
     end
 end
 
-
-function gadget:GameOver(winningAllyTeams)
-	--calculate average damage dealt
+function GameOverTeamInfo()
+	-- calculate average damage dealt
 	local avgTeamDmg = 0 
 	local numTeams = 0
 	for teamID,_ in pairs(teamInfo) do
@@ -165,138 +164,93 @@ function gadget:GameOver(winningAllyTeams)
 	end
 	avgTeamDmg = avgTeamDmg / (math.max(1,numTeams))
 	
-	--get other stuff from engine stats
+	-- get other stuff from engine stats
 	for teamID,_ in pairs(teamInfo) do
 		local cur_max = Spring.GetTeamStatsHistory(teamID)
 		local stats = Spring.GetTeamStatsHistory(teamID, 0, cur_max)
 		teamInfo[teamID].dmgDealt = teamInfo[teamID].dmgDealt + stats[cur_max].damageDealt	
 		teamInfo[teamID].ecoUsed = teamInfo[teamID].ecoUsed + stats[cur_max].energyUsed + 60 * stats[cur_max].metalUsed
-		if teamInfo[teamID].unitsCost > 175000 then 
-			teamInfo[teamID].dmgRatio = teamInfo[teamID].dmgDealt / teamInfo[teamID].unitsCost * 100
-		else
-			teamInfo[teamID].dmgRatio = 0
-		end
 		teamInfo[teamID].dmgRec = stats[cur_max].damageReceived
 		teamInfo[teamID].ecoProd = stats[cur_max].energyProduced + 60 * stats[cur_max].metalProduced
 	end
 
-	--take account of coop
+	-- take account of coop
 	for teamID,_ in pairs(teamInfo) do
 		teamInfo[teamID].ecoDmg = teamInfo[teamID].ecoDmg / coopInfo[teamID].players
 		teamInfo[teamID].fightDmg = teamInfo[teamID].fightDmg / coopInfo[teamID].players
 		teamInfo[teamID].otherDmg = teamInfo[teamID].otherDmg / coopInfo[teamID].players
 		teamInfo[teamID].dmgRec = teamInfo[teamID].dmgRec / coopInfo[teamID].players 
-		teamInfo[teamID].dmgRatio = teamInfo[teamID].dmgRatio / coopInfo[teamID].players
-	end
-	
-	
-	--award awards
-	local ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKillScore, ecoKillScoreSec, ecoKillScoreThi = -1,-1,-1,0,0,0
-	local fightKillAward, fightKillAwardSec, fightKillAwardThi, fightKillScore, fightKillScoreSec, fightKillScoreThi = -1,-1,-1,0,0,0
-	local effKillAward, effKillAwardSec, effKillAwardThi, effKillScore, effKillScoreSec, effKillScoreThi = -1,-1,-1,0,0,0
-	local ecoAward, ecoScore = -1,0
-	local dmgRecAward, dmgRecScore = -1,0
-	local sleepAward, sleepScore = -1,0
-	for teamID,_ in pairs(teamInfo) do	
-		--deal with sleep times
-		local curTime = Spring.GetGameSeconds()
-		if (curTime - teamInfo[teamID].lastKill > teamInfo[teamID].sleepTime) then
-			teamInfo[teamID].sleepTime = curTime - teamInfo[teamID].lastKill
-		end
-		--eco killing award
-		if ecoKillScore < teamInfo[teamID].ecoDmg then
-			ecoKillScoreThi = ecoKillScoreSec
-			ecoKillAwardThi = ecoKillAwardSec
-			ecoKillScoreSec = ecoKillScore
-			ecoKillAwardSec = ecoKillAward
-			ecoKillScore = teamInfo[teamID].ecoDmg
-			ecoKillAward = teamID
-		elseif ecoKillScoreSec < teamInfo[teamID].ecoDmg then
-			ecoKillScoreThi = ecoKillScoreSec
-			ecoKillAwardThi = ecoKillAwardSec
-			ecoKillScoreSec = teamInfo[teamID].ecoDmg
-			ecoKillAwardSec = teamID
-		elseif ecoKillScoreThi < teamInfo[teamID].ecoDmg then
-			ecoKillScoreThi = teamInfo[teamID].ecoDmg
-			ecoKillAwardThi = teamID		
-		end
-		--fight killing award
-		if fightKillScore < teamInfo[teamID].fightDmg then
-			fightKillScoreThi = fightKillScoreSec
-			fightKillAwardThi = fightKillAwardSec
-			fightKillScoreSec = fightKillScore
-			fightKillAwardSec = fightKillAward
-			fightKillScore = teamInfo[teamID].fightDmg
-			fightKillAward = teamID
-		elseif fightKillScoreSec < teamInfo[teamID].fightDmg then
-			fightKillScoreThi = fightKillScoreSec
-			fightKillAwardThi = fightKillAwardSec
-			fightKillScoreSec = teamInfo[teamID].fightDmg
-			fightKillAwardSec = teamID
-		elseif fightKillScoreThi < teamInfo[teamID].fightDmg then
-			fightKillScoreThi = teamInfo[teamID].fightDmg
-			fightKillAwardThi = teamID		
-		end
-		--efficiency ratio award
-		if effKillScore < teamInfo[teamID].dmgRatio then
-			effKillScoreThi = effKillScoreSec
-			effKillAwardThi = effKillAwardSec
-			effKillScoreSec = effKillScore
-			effKillAwardSec = effKillAward
-			effKillScore = teamInfo[teamID].dmgRatio 
-			effKillAward = teamID
-		elseif effKillScoreSec < teamInfo[teamID].dmgRatio then
-			effKillScoreThi = effKillScoreSec
-			effKillAwardThi = effKillAwardSec
-			effKillScoreSec = teamInfo[teamID].dmgRatio 
-			effKillAwardSec = teamID
-		elseif effKillScoreThi < teamInfo[teamID].dmgRatio then
-			effKillScoreThi = teamInfo[teamID].dmgRatio 
-			effKillAwardThi = teamID		
-		end
-		
-		--eco prod award
-		if ecoScore < teamInfo[teamID].ecoProd then
-			ecoScore = teamInfo[teamID].ecoProd
-			ecoAward = teamID		
-		end
-		--most damage rec award
-		if dmgRecScore < teamInfo[teamID].dmgRec then
-			dmgRecScore = teamInfo[teamID].dmgRec
-			dmgRecAward = teamID		
-		end
-		--longest sleeper award
-		if sleepScore < teamInfo[teamID].sleepTime and teamInfo[teamID].sleepTime > 12*60 then
-			sleepScore = teamInfo[teamID].sleepTime
-			sleepAward = teamID		
-		end
-	end	
-	
-	--is the cow awarded?
-	local cowAward = -1
-	if ecoKillAward ~= -1 and (ecoKillAward == fightKillAward) and (fightKillAward == effKillAward) and ecoKillAward ~= -1 then --check if some team got all the awards
-		if winningAllyTeams and winningAllyTeams[1] then
-			local won = false
-			local _,_,_,_,_,cowAllyTeamID = Spring.GetTeamInfo(ecoKillAward)
-			for _,allyTeamID in pairs(winningAllyTeams) do
-				if cowAllyTeamID == allyTeamID then --check if this team won the game
-					cowAward = ecoKillAward 
-					break
-				end
-			end
-		end
 	end
 
+    -- sleep times
+	local curTime = Spring.GetGameSeconds()
+	for teamID,_ in pairs(teamInfo) do
+        if (curTime - teamInfo[teamID].lastKill > teamInfo[teamID].sleepTime) then
+            teamInfo[teamID].sleepTime = curTime - teamInfo[teamID].lastKill
+        end
+    end
+end
+
+function RankedTeams(Score)
+    local t = {}
+    for teamID,_ in pairs(teamInfo) do
+        t[#t+1] = {tID=teamID, score=Score(teamID)}
+    end
+    local function IS_IT_SO_BLOODY_DIFFICULT_TO_HAVE_STD_SET(i,j)
+        return t[i].score>t[j].score
+    end
+    table.sort(t, IS_IT_SO_BLOODY_DIFFICULT_TO_HAVE_STD_SET)
+    return t
+end
+
+function AwardAward(name, action, t)
+    for i=1,3 do
+        t[i] = t[i] or {}
+    end
+	SendToUnsynced("AwardAward", name, action, t[1].tID, t[1].score, t[2].tID, t[2].score, t[3].tID, t[3].score)
+end
+
+function gadget:GameOver(winningAllyTeams)
+    -- Finalize your info table, then award the awards
+    GameOverTeamInfo()
 	
-	--tell unsynced
-	SendToUnsynced("ReceiveAwards", ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKillScore, ecoKillScoreSec, ecoKillScoreThi, 
-									fightKillAward, fightKillAwardSec, fightKillAwardThi, fightKillScore, fightKillScoreSec, fightKillScoreThi, 
-									effKillAward, effKillAwardSec, effKillAwardThi, effKillScore, effKillScoreSec, effKillScoreThi, 
-									ecoAward, ecoScore, 
-									dmgRecAward, dmgRecScore, 
-									sleepAward, sleepScore,
-									cowAward)
-                                    	
+	-- ecoDmg, teamInfo[teamID].ecoDmg
+    local function ecoDmg(teamID)
+        return teamInfo[teamID].ecoDmg
+    end
+    local ecoDmgRanked = RankedTeams(ecoDmg)
+    AwardAward("ecoDmg", "Killing enemy economy", ecoDmgRanked)
+    
+    -- fightKill, teamInfo[teamID].fightDmg
+    local function fightDmg(teamID)
+        return teamInfo[teamID].fightDmg
+    end
+    local fightDmgRanked = RankedTeams(fightDmg)
+    AwardAward("fightDmg", "Killing enemy units and defences", fightDmgRanked)
+    
+    
+    -- teamInfo[teamID].ecoProd
+    local function ecoProd(teamID)
+        return teamInfo[teamID].ecoProd
+    end
+    local ecoProdRanked = RankedTeams(fightDmg)
+    AwardAward("ecoProd", "produced the most eco", ecoProdRanked)
+    
+    
+    -- teamInfo[teamID].dmgRec
+    local function dmgRec(teamID)
+        return teamInfo[teamID].dmgRec
+    end
+    local dmgRecRanked = RankedTeams(dmgRec)
+    AwardAward("ecoProd", "produced the most eco", dmgRecRanked)
+
+
+    -- teamInfo[teamID].sleepTime
+    local function sleepTime(teamID)
+        return teamInfo[teamID].sleepTime
+    end
+    local sleepTimeRanked = RankedTeams(sleepTime)
+    AwardAward("sleepTime", "slept longest", sleepTimeRanked)
 end
 
 
@@ -309,43 +263,31 @@ else  -- UNSYNCED
 -------------------------------------------------------------------------------------
 
 function gadget:Initialize()
-	gadgetHandler:AddSyncAction("ReceiveAwards", ReceiveAwards)	
+	gadgetHandler:AddSyncAction("AwardAward", AwardAward)	
 end
 
-function ReceiveAwards (_,ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKillScore, ecoKillScoreSec, ecoKillScoreThi, 
-						fightKillAward, fightKillAwardSec, fightKillAwardThi, fightKillScore, fightKillScoreSec, fightKillScoreThi, 
-						effKillAward, effKillAwardSec, effKillAwardThi, effKillScore, effKillScoreSec, effKillScoreThi, 
-						ecoAward, ecoScore, 
-						dmgRecAward, dmgRecScore, 
-						sleepAward, sleepScore,
-						cowAward)
-                        
+function AwardAward (_, name, action, first, first_score, second, second_score, third, third_score)
+    --Spring.Echo(name, action, first, first_score, second, second_score, third, third_score)
 
                         
     --record who won which awards in chat message (for demo parsing by replays.springrts.com)
 	--make all values positive, as unsigned ints are easier to parse
+    --[[
 	local ecoKillLine    = '\161' .. tostring(1+ecoKillAward) .. ':' .. tostring(ecoKillScore) .. '\161' .. tostring(1+ecoKillAwardSec) .. ':' .. tostring(ecoKillScoreSec) .. '\161' .. tostring(1+ecoKillAwardThi) .. ':' .. tostring(ecoKillScoreThi)  
 	local fightKillLine  = '\162' .. tostring(1+fightKillAward) .. ':' .. tostring(fightKillScore) .. '\162' .. tostring(1+fightKillAwardSec) .. ':' .. tostring(fightKillScoreSec) .. '\162' .. tostring(1+fightKillAwardThi) .. ':' .. tostring(fightKillScoreThi)
-	local effKillLine    = '\163' .. tostring(1+effKillAward) ..  ':' .. tostring(effKillScore) .. '\163' .. tostring(1+effKillAwardSec) .. ':' .. tostring(effKillScoreSec) .. '\163' .. tostring(1+effKillAwardThi) .. ':' .. tostring(effKillScoreThi)
-	local otherLine      = '\164' .. tostring(1+cowAward) .. '\165' ..  tostring(1+ecoAward) .. ':' .. tostring(ecoScore).. '\166' .. tostring(1+dmgRecAward) .. ':' .. tostring(dmgRecScore) ..'\167' .. tostring(1+sleepAward) .. ':' .. tostring(sleepScore)
-	local awardsMsg = ecoKillLine .. fightKillLine .. effKillLine .. otherLine
+	local awardsMsg = ecoKillLine .. fightKillLine
 	Spring.SendLuaRulesMsg(awardsMsg)
+    ]]
     
     ---tell widgetland
-    if Script.LuaUI("ReceiveAwards") then
-        Script.LuaUI.ReceiveAwards( ecoKillAward, ecoKillAwardSec, ecoKillAwardThi, ecoKillScore, ecoKillScoreSec, ecoKillScoreThi, 
-									fightKillAward, fightKillAwardSec, fightKillAwardThi, fightKillScore, fightKillScoreSec, fightKillScoreThi, 
-									effKillAward, effKillAwardSec, effKillAwardThi, effKillScore, effKillScoreSec, effKillScoreThi, 
-									ecoAward, ecoScore, 
-									dmgRecAward, dmgRecScore, 
-									sleepAward, sleepScore,
-									cowAward)
+    if Script.LuaUI("AwardAward") then
+        Script.LuaUI.AwardAward(name, action, first, first_score, second, second_score, third, third_score)
     end
 end
 
 
 function gadget:ShutDown()
-	gadgetHandler:RemoveSyncAction("ReceiveAwards")	
+	gadgetHandler:RemoveSyncAction("AwardAward")	
 end
 
 end

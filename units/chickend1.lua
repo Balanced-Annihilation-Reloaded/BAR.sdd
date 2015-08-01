@@ -22,7 +22,6 @@ return {
 		description = "Defense",
 		energystorage = 500,
 		explodeas = "custom:blood_explode",
-		extractsmetal = 0.001,
 		footprintx = 1,
 		footprintz = 1,
 		icontype = "defense",

@@ -139,6 +139,9 @@ function widget:Update(deltaTime)
 	if (not coords) then
 		return
 	end
+    if coords[1]<0 or coords[1]>Game.mapSizeX or coords[3]<0 or coords[3]>Game.mapSizeZ then
+        return
+    end
 
 	if TestBuildOrder(unitDefID, coords[1], coords[2], coords[3], 1) == 0 then
 		--Spring.Echo('cant build, looking for alternatives')

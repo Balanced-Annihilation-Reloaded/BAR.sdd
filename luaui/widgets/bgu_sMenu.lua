@@ -135,6 +135,19 @@ local Hotkey = {
 }
 ------------
 
+-- set target custom command IDs
+local CMD_UNIT_SET_TARGET = 34923
+local CMD_UNIT_CANCEL_TARGET = 34924
+local CMD_UNIT_SET_TARGET_RECTANGLE = 34925
+
+--export to CMD table
+CMD.UNIT_SET_TARGET = CMD_UNIT_SET_TARGET
+CMD[CMD_UNIT_SET_TARGET] = 'UNIT_SET_TARGET'
+CMD.UNIT_CANCEL_TARGET = CMD_UNIT_SET_TARGET
+CMD[CMD_UNIT_CANCEL_TARGET] = 'UNIT_CANCEL_TARGET'
+CMD.UNIT_SET_TARGET_RECTANGLE = CMD_UNIT_SET_TARGET_RECTANGLE
+CMD[CMD_UNIT_SET_TARGET_RECTANGLE] = 'UNIT_SET_TARGET_RECTANGLE'
+
 
 -- Chili vars --
 local Chili
@@ -161,12 +174,16 @@ local spSendCommands      = Spring.SendCommands
 local spSetActiveCommand  = Spring.SetActiveCommand
 
 -- Local vars --
+local gameStarted = (Spring.GetGameFrame()>0)
 local updateRequired = true
-local sUnits = {}
 local oldTimer = spGetTimer()
+local sUnits = {}
+local activeSelUDID, activeSelCmdID
+
 local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b,0.8}
-local gameStarted = (Spring.GetGameFrame()>0)
+local selectedColor = {1,1,1,1} -- colour overlay of unit icons for unit of selected build command
+local selectedBorderColor = {1,0,0,1} -- colour of outline of selected commands icon
 
 ----------------
 local function getInline(r,g,b)
@@ -284,7 +301,13 @@ local function addBuild(cmd, category)
 		overlay.color = {0.4,0.4,0.4}
 	else
 		button.focusColor[4] = 0.5
-		overlay.color = teamColor
+        if -cmd.id==activeSelUDID then
+            overlay.color = selectedColor
+            button.borderColor = selectedBorderColor
+        else
+            overlay.color = teamColor
+            button.borderColor = {1,1,1,0.1}        
+        end
 	end
 	button.disabled = cmd.disabled
 	
@@ -338,6 +361,8 @@ local function addDummyState(cmd)
 end
 
 local function addOrder(cmd)
+    local borderColor = (cmd.id==activeSelCmdID) and selectedBorderColor or {1,1,1,0.1}
+
 	local button = Chili.Button:New{
 		caption   = '',
 		cmdName   = cmd.name,
@@ -347,6 +372,7 @@ local function addOrder(cmd)
 		padding   = {0,0,0,0},
 		margin    = {0,0,0,0},
 		OnMouseUp = {cmdAction},
+        borderColor = borderColor,
 		Children  = {
 			Chili.Image:New{
 				parent  = button,
@@ -370,7 +396,7 @@ local function addOrder(cmd)
             end
         end
     end
-
+    
 	orderMenu:AddChild(button)
 	orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height)
 end
@@ -669,7 +695,7 @@ local function createButton(name, unitDef)
 			height = 15, width = 15,
 			file   = imageDir..'raindrop.png',
 		}
-  end
+    end    
 end
 
 ---------------------------
@@ -800,6 +826,33 @@ end
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
     if cmdID and cmdID<0 and teamID==Spring.GetMyTeamID() then --build command
         updateRequired = true
+    end
+end
+function GameFrame()
+    -- track the current active command
+    -- has to be GameFrame because CommandsChanged isn't called when an active build command changes
+    local _,cmdID,_ = Spring.GetActiveCommand()
+    if cmdID and cmdID<0 then
+        local uDID = -cmdID -- looking to build a unit of this uDID
+        if activeSelCmdID or activeSelUDID~=uDID then 
+            updateRequired = true
+            activeSelUDID = uDID
+            activeSelCmdID = nil
+        end
+    elseif cmdID then
+        -- looking to give this cmdID
+        if activeSelUDID or activeSelCmdID~=cmdID then 
+            updateRequired = true
+            activeSelUDID = nil
+            activeSelCmdID = cmdID
+        end
+    else
+        -- no active commands
+        if activeSelUDID or activeSelCmdID then 
+            updateRequired = true
+            activeSelUDID = nil
+            activeSelCmdID = nil
+        end
     end
 end
 --------------------------- 

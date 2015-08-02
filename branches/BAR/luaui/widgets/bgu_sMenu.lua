@@ -197,7 +197,7 @@ end
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
 	if obj.disabled then return end
-	if not gameStarted then
+	if not gameStarted and WG.SetSelDefID then 
         WG.SetSelDefID(-obj.cmdId)
 	else
 		local index = spGetCmdDescIndex(obj.cmdId)

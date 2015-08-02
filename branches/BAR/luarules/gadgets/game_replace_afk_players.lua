@@ -35,7 +35,7 @@ local SpIsCheatingEnabled = Spring.IsCheatingEnabled
 function gadget:RecvLuaMsg(msg, playerID)
     local checkChange = (msg=='\144' or msg=='\145')
 
-	if msg=='\145' then
+    if msg=='\145' then
         substitutes[playerID] = nil
         --Spring.Echo("received removal", playerID)
     end
@@ -130,7 +130,7 @@ function FindSubs(real)
                 if  math.abs(ts-subts)<=validDiff then 
                     validSubs[#validSubs+1] = subID
                 end
-				if math.abs(ts-subts)<=idealDiff then
+                if math.abs(ts-subts)<=idealDiff then
                     idealSubs[#idealSubs+1] = subID 
                 end
             end
@@ -258,8 +258,8 @@ function MarkStartPoint(_,x,y,z,name,tID)
 end
 
 function colourNames(teamID)
-    	nameColourR,nameColourG,nameColourB,nameColourA = Spring.GetTeamColor(teamID)
-		R255 = math.floor(nameColourR*255)  
+        nameColourR,nameColourG,nameColourB,nameColourA = Spring.GetTeamColor(teamID)
+        R255 = math.floor(nameColourR*255)  
         G255 = math.floor(nameColourG*255)
         B255 = math.floor(nameColourB*255)
         if ( R255%10 == 0) then
@@ -271,7 +271,7 @@ function colourNames(teamID)
         if ( B255%10 == 0) then
                 B255 = B255+1
         end
-	return "\255"..string.char(R255)..string.char(G255)..string.char(B255) --works thanks to zwzsg
+    return "\255"..string.char(R255)..string.char(G255)..string.char(B255) --works thanks to zwzsg
 end 
 
 function gadget:GameFrame(n)
@@ -287,7 +287,7 @@ end
 --[[function ForceSpec(_,pID)
     local myID = Spring.GetMyPlayerID()
     if pID==myID then
-		Spring.Echo("You have been made a spectator - adding players is only allowed before the game starts!")
+        Spring.Echo("You have been made a spectator - adding players is only allowed before the game starts!")
         Spring.SendCommands("spectator")
     end
 end]]

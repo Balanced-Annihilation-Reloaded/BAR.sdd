@@ -1,18 +1,18 @@
 
 if not (Spring.GetConfigInt("LuaSocketEnabled", 0) == 1) then
-	Spring.Echo("Lua Socket is disabled, Open Host List cannot run")
-	return false
+    Spring.Echo("Lua Socket is disabled, Open Host List cannot run")
+    return false
 end
 
 function widget:GetInfo()
 return {
-	name    = "Open Host List",
-	desc    = "Shows a list of open hosts",
-	author  = "Bluestone, dansan, abma, BrainDamage",
-	date    = "June 2014",
-	license = "GNU GPL, v2 or later",
-	layer   = -5,
-	enabled = false,
+    name    = "Open Host List",
+    desc    = "Shows a list of open hosts",
+    author  = "Bluestone, dansan, abma, BrainDamage",
+    date    = "June 2014",
+    license = "GNU GPL, v2 or later",
+    layer   = -5,
+    enabled = false,
 }
 end
 
@@ -47,10 +47,10 @@ local myPlayerID = Spring.GetMyPlayerID()
 local amISpec = Spring.GetSpectatingState()
 
 local function dumpConfig()
-	-- dump all luasocket related config settings to console
-	for _, conf in ipairs({"TCPAllowConnect", "TCPAllowListen", "UDPAllowConnect", "UDPAllowListen"  }) do
-		Spring.Echo(conf .. " = " .. Spring.GetConfigString(conf, ""))
-	end
+    -- dump all luasocket related config settings to console
+    for _, conf in ipairs({"TCPAllowConnect", "TCPAllowListen", "UDPAllowConnect", "UDPAllowListen"  }) do
+        Spring.Echo(conf .. " = " .. Spring.GetConfigString(conf, ""))
+    end
 
 end
 
@@ -114,24 +114,24 @@ end
 
 -- initiates a connection to host:port, returns true on success
 local function SocketConnect(host, port)
-	client=socket.tcp()
-	client:settimeout(0)
-	res, err = client:connect(host, port)
-	if not res and not res=="timeout" then
-		Spring.Echo("OpenHostList: Error in connect to " .. host .. ": " .. err)
+    client=socket.tcp()
+    client:settimeout(0)
+    res, err = client:connect(host, port)
+    if not res and not res=="timeout" then
+        Spring.Echo("OpenHostList: Error in connect to " .. host .. ": " .. err)
         widgetHandler:RemoveWidget() 
-		return false
-	end
-	set = newset()
-	set:insert(client)
-	return true
+        return false
+    end
+    set = newset()
+    set:insert(client)
+    return true
 end
 
 function widget:Initialize()
-	--dumpConfig() //use for debugging
-	--Spring.Echo(socket.dns.toip("localhost"))
-	--FIXME dns-request seems to block
-	SocketConnect(host, port)
+    --dumpConfig() //use for debugging
+    --Spring.Echo(socket.dns.toip("localhost"))
+    --FIXME dns-request seems to block
+    SocketConnect(host, port)
     CreateGUI()
 end
 
@@ -163,7 +163,7 @@ end
 -- called when data was received through socket
 local function SocketDataReceived(sock, data)
     -- load data into battleList
-	--Spring.Echo("data!")
+    --Spring.Echo("data!")
     --Spring.Echo(data)
     local line
     while data do
@@ -222,9 +222,9 @@ local function SocketClosed(sock)
 end
 
 function widget:Update()
-	if set==nil or #set<=0 then
-		return -- no sockets?
-	end
+    if set==nil or #set<=0 then
+        return -- no sockets?
+    end
     
     -- update every 10 seconds, and once at the start
     local timer = Spring.GetTimer()
@@ -234,39 +234,39 @@ function widget:Update()
     end
     prevTimer = timer
             
-	-- update socket state
-	local readable, writeable, err = socket.select(set, set, 0)
+    -- update socket state
+    local readable, writeable, err = socket.select(set, set, 0)
     --Spring.Echo(#readable, #writeable)
-	
+    
     -- check for error
     if err~=nil then
-		-- some error happened in select
-		if err=="timeout" then
-			-- nothing to do, return
+        -- some error happened in select
+        if err=="timeout" then
+            -- nothing to do, return
             --Spring.Echo("Socket timed out")
-			return
-		end
-		--Spring.Echo("Error in socket.select: " .. error)
-	end
+            return
+        end
+        --Spring.Echo("Error in socket.select: " .. error)
+    end
     
     -- see if we received anything back
-	for _, input in ipairs(readable) do
-		local s, status, partial = input:receive('*a') --try to read all data
-		if status == "timeout" or status == nil then
+    for _, input in ipairs(readable) do
+        local s, status, partial = input:receive('*a') --try to read all data
+        if status == "timeout" or status == nil then
             --Spring.Echo("Socket data:")
-			SocketDataReceived(input, s or partial)
+            SocketDataReceived(input, s or partial)
             if needUpdate then
                 needUpdate = false
             end
-		elseif status == "closed" then
+        elseif status == "closed" then
             --Spring.Echo("Socket closed")
-			SocketClosed(input)
-			input:close()
-			set:remove(input)
+            SocketClosed(input)
+            input:close()
+            set:remove(input)
         else
         --Spring.Echo(s, status, partial)
-		end
-	end
+        end
+    end
     
     -- ask for an update
     for __, output in ipairs(writeable) do
@@ -319,12 +319,12 @@ local battlesGL
 local show = false -- show the battles?
 
 local function DrawL()
-	local vertices = {
-		{v = {0, 1, 0}},
-		{v = {0, 0, 0}},
-		{v = {1, 0, 0}},
-	}
-	glShape(GL_LINE_STRIP, vertices)
+    local vertices = {
+        {v = {0, 1, 0}},
+        {v = {0, 0, 0}},
+        {v = {1, 0, 0}},
+    }
+    glShape(GL_LINE_STRIP, vertices)
 end
 
 function DrawButton()
@@ -438,44 +438,44 @@ function CreateGUI()
     
     -- dimensions of minimap
     local scrH = Chili.Screen0.height
-	local aspect = Game.mapX/Game.mapY
-	local minMapH = scrH * 0.3
-	local minMapW = minMapH * aspect
-	if aspect > 1 then
-		minMapW = minMapH * aspect^0.5
-		minMapH = minMapW / aspect
-	end
+    local aspect = Game.mapX/Game.mapY
+    local minMapH = scrH * 0.3
+    local minMapW = minMapH * aspect
+    if aspect > 1 then
+        minMapW = minMapH * aspect^0.5
+        minMapH = minMapW / aspect
+    end
     
     window = Chili.Panel:New{
         parent = Chili.Screen0,
         bottom = 0,
         minHeight = 25,
-		x      = minMapW,
-		autosize = true,
-		width  = 500,
+        x      = minMapW,
+        autosize = true,
+        width  = 500,
     }
     
     master_panel = Chili.LayoutPanel:New{
         parent = window,
         width = '100%',
-		resizeItems = false,
+        resizeItems = false,
         autosize = true,
         minHeight = 25,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
         orientation = 'vertical',
     }   
     
     panel = Chili.LayoutPanel:New{
         parent = master_panel,
         width = '100%',
-		resizeItems = false,
+        resizeItems = false,
         autosize = true,
         minHeight = 1,
-		padding     = {0,2,0,0},
-		itemPadding = {10,5,0,0},
-		itemMargin  = {0,0,0,0},
+        padding     = {0,2,0,0},
+        itemPadding = {10,5,0,0},
+        itemMargin  = {0,0,0,0},
         orientation = 'vertical',
     }   
     
@@ -489,9 +489,9 @@ function CreateGUI()
         width = '100%',
         height = 25,
         minHeight = 25,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
         orientation = 'horizontal',
     }   
 

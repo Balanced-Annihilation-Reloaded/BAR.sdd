@@ -59,7 +59,7 @@ options = {
         desc = "The maximum units to show in the factory's queue",
         min = 2, max = 14,
         value = 5,
-    },	
+    },    
     
     buttonsize = {
         type = 'number',
@@ -176,7 +176,7 @@ local function UpdateFac(i, facInfo)
         
         local amount = buildQueue[unitDefIDb] or 0
         local boCount = boButton.childrenByName['count']
-        local qCount = qButton.childrenByName['count']			
+        local qCount = qButton.childrenByName['count']            
         
         facs[i].qStack:RemoveChild(qButton)
         
@@ -230,7 +230,7 @@ local function UpdateFacQ(i, facInfo)
             n = n+1
         end
     end
-end				
+end                
 
 
 
@@ -240,9 +240,9 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
             caption = "",
             width = options.buttonsize.value*1.2,
             height = options.buttonsize.value*1.0,
-            tooltip = 			'Click - ' 			.. GreenStr .. 'Select \n' 					
-                .. WhiteStr .. 	'Middle click - ' 	.. GreenStr .. 'Go to \n'
-                .. WhiteStr .. 	'Right click - ' 	.. GreenStr .. 'Quick Rallypoint Mode' 
+            tooltip =             'Click - '             .. GreenStr .. 'Select \n'                     
+                .. WhiteStr ..     'Middle click - '     .. GreenStr .. 'Go to \n'
+                .. WhiteStr ..     'Right click - '     .. GreenStr .. 'Quick Rallypoint Mode' 
                 ,
             backgroundColor = buttonColor,
             
@@ -390,7 +390,7 @@ local function MakeButton(unitDefID, facID, facIndex)
                     value = 0.0,
                     name    = 'prog';
                     max     = 1;
-                    color   		= progColor,
+                    color           = progColor,
                     backgroundColor = {1,1,1,  0.01},
                     x=2, y=2, height=3, right=2,
                 },
@@ -480,10 +480,10 @@ RecreateFacbar = function()
 
         local facStack, boStack, qStack, qStore = AddFacButton(facInfo.unitID, unitDefID, stack_main, i)
         --DEBUG #780 Spring.Echo("ADDFACBUTTON", i, unitDefID, facStack, boStack, qStack, qStore)
-        facs[i].facStack 	= facStack
-        facs[i].boStack 	= boStack
-        facs[i].qStack 		= qStack
-        facs[i].qStore 		= qStore
+        facs[i].facStack     = facStack
+        facs[i].boStack     = boStack
+        facs[i].qStack         = qStack
+        facs[i].qStore         = qStore
         
         local buildList   = facInfo.buildList
         local buildQueue  = GetBuildQueue(facInfo.unitID)
@@ -514,7 +514,7 @@ local function UpdateFactoryList()
     local unitDefID = GetUnitDefID(unitID)
     if UnitDefs[unitDefID].isFactory then
         local bo =  UnitDefs[unitDefID] and UnitDefs[unitDefID].buildOptions or {}
-        if bo and #bo > 0 then	
+        if bo and #bo > 0 then    
           insert(facs,{ unitID=unitID, unitDefID=unitDefID, buildList=bo })
           local _, _, _, _, buildProgress = GetUnitHealth(unitID)
           if (buildProgress)and(buildProgress<1) then
@@ -665,7 +665,7 @@ end
 
 function widget:MouseRelease(x, y, button)
     if (waypointMode>0)and(not inTweak) and (waypointMode>0)and(waypointFac>0) then
-        WaypointHandler(x,y,button)	
+        WaypointHandler(x,y,button)    
     end
     return -1
 end

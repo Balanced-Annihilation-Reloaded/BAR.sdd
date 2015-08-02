@@ -60,7 +60,7 @@ local waveCount       = 0
 local waveTime
 local enabled
 local gotScore
-local scoreCount	  = 0
+local scoreCount      = 0
 local queenAnger     = 0
 
 local guiPanel --// a displayList
@@ -298,24 +298,24 @@ local function MakeLine(chicken, n)
 end
 
 function ChickenEvent(chickenEventArgs)
-	if (chickenEventArgs.type == "wave") then
-		if (gameInfo.roostCount < 1) then
-			return
-		end
-		waveMessage    = {}
-		waveCount      = waveCount + 1
-		waveMessage[1] = "Wave "..waveCount
-		waveMessage[2] = waveColors[chickenEventArgs.tech]..chickenEventArgs.number.." chickens!"
-		waveTime = Spring.GetTimer()
-	elseif (chickenEventArgs.type == "burrowSpawn") then
-		UpdateRules()
-	elseif (chickenEventArgs.type == "queen") then
-		waveMessage    = {}
-		waveMessage[1] = "The Queen is angered!"
-		waveTime = Spring.GetTimer()
-	elseif (chickenEventArgs.type == "score"..(Spring.GetMyTeamID())) then
-		gotScore = chickenEventArgs.number
-	end
+    if (chickenEventArgs.type == "wave") then
+        if (gameInfo.roostCount < 1) then
+            return
+        end
+        waveMessage    = {}
+        waveCount      = waveCount + 1
+        waveMessage[1] = "Wave "..waveCount
+        waveMessage[2] = waveColors[chickenEventArgs.tech]..chickenEventArgs.number.." chickens!"
+        waveTime = Spring.GetTimer()
+    elseif (chickenEventArgs.type == "burrowSpawn") then
+        UpdateRules()
+    elseif (chickenEventArgs.type == "queen") then
+        waveMessage    = {}
+        waveMessage[1] = "The Queen is angered!"
+        waveTime = Spring.GetTimer()
+    elseif (chickenEventArgs.type == "score"..(Spring.GetMyTeamID())) then
+        gotScore = chickenEventArgs.number
+    end
 end
 
 
@@ -363,7 +363,7 @@ function widget:GameFrame(n)
     if (not enabled and n > 0) then
       enabled = true
     end
---	
+--    
 --    queenAnger = math.ceil((((GetGameSeconds()-gameInfo.gracePeriod+gameInfo.queenAnger)/(gameInfo.queenTime-gameInfo.gracePeriod))*100) -0.5)
  
   end

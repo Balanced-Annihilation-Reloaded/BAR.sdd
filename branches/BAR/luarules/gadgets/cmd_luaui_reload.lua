@@ -11,7 +11,7 @@ function gadget:GetInfo()
 end
 
 if (gadgetHandler:IsSyncedCode()) then
-	return
+    return
 end
 
 function LuaUIReload(cmd, line, words, playerID)
@@ -22,11 +22,11 @@ end
     
 
 function gadget:Initialize()
-	gadgetHandler:AddChatAction('reloadluaui', LuaUIReload, "")
+    gadgetHandler:AddChatAction('reloadluaui', LuaUIReload, "")
 end
 
 function gadget:Shutdown()
-	gadgetHandler:RemoveChatAction('reloadluaui')
+    gadgetHandler:RemoveChatAction('reloadluaui')
 end
 
 

@@ -49,10 +49,10 @@ function gadget:UnitPreDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, w
   elseif mines[unitID] and (attackerID == mines[unitID]) then
     return 0,0
   elseif (weaponID == COMMANDO_MINELAYER) and (orderQueue[attackerID]==nil) and (attackerTeam) and (unitTeam) and (not Spring.AreTeamsAllied(attackerTeam,unitTeam)) and UnitDefs[unitDefID]["isBuilding"] then
-	local attackerState = Spring.GetUnitStates(attackerID)
-	if attackerState["movestate"] ~= 2 then return damage,1 end
+    local attackerState = Spring.GetUnitStates(attackerID)
+    if attackerState["movestate"] ~= 2 then return damage,1 end
 
-	local vx,_,vz = Spring.GetUnitVelocity(unitID)
+    local vx,_,vz = Spring.GetUnitVelocity(unitID)
     local e,_,_,i = Spring.GetTeamResources(attackerTeam, "energy")
     local cQueue = Spring.GetCommandQueue(attackerID,20)
     local active = false
@@ -63,29 +63,29 @@ function gadget:UnitPreDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, w
       end
     end
     if ((e > 1000) or (i > 1000)) and (not active) and (math.sqrt((vx*vx)+(vz*vz)) < 1.5) then
-	  local x,_,z = Spring.GetUnitBasePosition(attackerID)
-	  local ex,ey,ez = Spring.GetUnitBasePosition(unitID)
-	  local r = Spring.GetUnitRadius(unitID)
-	  for i=r/2,r+28,4 do
-	    local angle = math.atan2((x-ex),(z-ez))
-	    local angleMod = ((math.random(math.pi) - (math.pi/2)) * 0.25)
-	    angle = (angle + angleMod)
-	    tx = ex + (math.sin(angle) * i)
-	    tz = ez + (math.cos(angle) * i)
-	    if (Spring.TestBuildOrder(MINE2,tx,ey,tz,1) == 2) then
-	  	  orderQueue[attackerID] = {tx,ey,tz}
-	  	  break
-	    end
-	  end
-	  return 0,0
-	end
+      local x,_,z = Spring.GetUnitBasePosition(attackerID)
+      local ex,ey,ez = Spring.GetUnitBasePosition(unitID)
+      local r = Spring.GetUnitRadius(unitID)
+      for i=r/2,r+28,4 do
+        local angle = math.atan2((x-ex),(z-ez))
+        local angleMod = ((math.random(math.pi) - (math.pi/2)) * 0.25)
+        angle = (angle + angleMod)
+        tx = ex + (math.sin(angle) * i)
+        tz = ez + (math.cos(angle) * i)
+        if (Spring.TestBuildOrder(MINE2,tx,ey,tz,1) == 2) then
+            orderQueue[attackerID] = {tx,ey,tz}
+            break
+        end
+      end
+      return 0,0
+    end
   end
   return damage,1
 end
 
 function gadget:GameFrame(n)
   for unitID,coords in pairs(orderQueue) do
-	Spring.GiveOrderToUnit(unitID,MINE2*-1,coords,{})
+    Spring.GiveOrderToUnit(unitID,MINE2*-1,coords,{})
     orderQueue[unitID] = nil
   end
 end

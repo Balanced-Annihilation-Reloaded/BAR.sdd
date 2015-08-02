@@ -235,30 +235,30 @@ local function DrawTiles()
         gl.PopAttrib()
 end
 function widget:ViewResize()
-	vsx, vsy = gl.GetViewSizes()
+    vsx, vsy = gl.GetViewSizes()
 end
 
 local function CheckVRGridVisible() --pointless?
-	local at, p = spTraceScreenRay(0,0,true,false,false)
-	if at == nil then
-		return true
-	else
-		at, p = spTraceScreenRay(0,vsy-1,true,false,false)
-		if at == nil then
-			return true
-		else
-			at, p = spTraceScreenRay(vsx-1,0,true,false,false)
-			if at == nil then
-				return true
-			else
-				at, p = spTraceScreenRay(vsx-1,vsy-1,true,false,false)
-				if at == nil then
-					return true
-				end
-			end
-		end
-	end
-	return false
+    local at, p = spTraceScreenRay(0,0,true,false,false)
+    if at == nil then
+        return true
+    else
+        at, p = spTraceScreenRay(0,vsy-1,true,false,false)
+        if at == nil then
+            return true
+        else
+            at, p = spTraceScreenRay(vsx-1,0,true,false,false)
+            if at == nil then
+                return true
+            else
+                at, p = spTraceScreenRay(vsx-1,vsy-1,true,false,false)
+                if at == nil then
+                    return true
+                end
+            end
+        end
+    end
+    return false
 end
 
 function widget:DrawWorld()
@@ -269,10 +269,10 @@ function widget:DrawWorld()
 end
 
 function widget:Initialize()
-	vsx, vsy = gl.GetViewSizes()
-	island = IsIsland()
-	InitGroundHeights()
-	DspLst = glCreateList(DrawTiles)
+    vsx, vsy = gl.GetViewSizes()
+    island = IsIsland()
+    InitGroundHeights()
+    DspLst = glCreateList(DrawTiles)
     Spring.SendCommands('mapborder 0')
 end
 

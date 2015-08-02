@@ -1,14 +1,14 @@
 -- WIP
 function widget:GetInfo()
-	return {
-		name    = 'Ready Button',
-		desc    = 'Displays the ready button',
-		author  = 'Bluestone',
-		date    = '2013',
-		license = 'GNU GPL v3',
-		layer   = 0,
-		enabled = true,
-	}
+    return {
+        name    = 'Ready Button',
+        desc    = 'Displays the ready button',
+        author  = 'Bluestone',
+        date    = '2013',
+        license = 'GNU GPL v3',
+        layer   = 0,
+        enabled = true,
+    }
 end
 
 local Chili, button, panel, text
@@ -46,7 +46,7 @@ function widget:Initialize()
     tsSigma = tonumber(tsSigma)
     eligibleSub = tsMu and tsSigma and (tsSigma<=2) and (not string.find(tsMu, ")")) and amSpec
    
-	Chili = WG.Chili
+    Chili = WG.Chili
     
     window = Chili.Panel:New{
         name = 'readybutton_window',
@@ -55,9 +55,9 @@ function widget:Initialize()
         y = 200,
         height = 50,
         width = amSpec and offerWidth or readyWidth,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
     }
 
     button_text = amSpec and offerSubText or readyText
@@ -97,15 +97,15 @@ function widget:Initialize()
         y = 200,
         height = 45,
         width = 400,
-		padding     = {0,0,0,0},
-		itemPadding = {10,10,10,10},
-		itemMargin  = {0,0,0,0},
+        padding     = {0,0,0,0},
+        itemPadding = {10,10,10,10},
+        itemMargin  = {0,0,0,0},
         children = {text},
     }
     
     panel:Hide()
         
-	widgetHandler:RegisterGlobal('ReadyButtonState', ReadyButtonState)
+    widgetHandler:RegisterGlobal('ReadyButtonState', ReadyButtonState)
 end
 
 function StartPointChosen()
@@ -193,6 +193,6 @@ function widget:Shutdown()
     if window then
         window:Dispose()
     end
-	widgetHandler:DeregisterGlobal('ReadyButtonState')
+    widgetHandler:DeregisterGlobal('ReadyButtonState')
 end
 

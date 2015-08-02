@@ -24,7 +24,7 @@ function gadget:GetInfo()
 end
 
 if (gadgetHandler:IsSyncedCode()) then
-	return
+    return
 end
 
 --------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ end
 --
 
 local tinsert = function(tab, insert)
-	tab[#tab+1] = insert
+    tab[#tab+1] = insert
 end
 
 local type  = type
@@ -56,12 +56,12 @@ local tryloading  = 1     --// try to activate lups if it isn't found
 
 local supportedFxs = {}
 local function fxSupported(fxclass)
-	if (supportedFxs[fxclass]~=nil) then
-		return supportedFxs[fxclass]
-	else
-		supportedFxs[fxclass] = Lups.HasParticleClass(fxclass)
-		return supportedFxs[fxclass]
-	end
+    if (supportedFxs[fxclass]~=nil) then
+        return supportedFxs[fxclass]
+    else
+        supportedFxs[fxclass] = Lups.HasParticleClass(fxclass)
+        return supportedFxs[fxclass]
+    end
 end
 
 
@@ -72,140 +72,140 @@ end
 --
 
 local CloakedHitEffect = {
-	class='UnitJitter', options={ life=50, pos={0,0,0}, enemyHit=true, repeatEffect=false},
+    class='UnitJitter', options={ life=50, pos={0,0,0}, enemyHit=true, repeatEffect=false},
 }
 local CloakEffect      = {
-	{ class='UnitCloaker',options={ life=50 } },
-	{ class='UnitJitter',options={ delay=24, life=math.huge } },
-	{ class='Sound',options={ file="sounds/cloak.wav",volume=0.9 } },
+    { class='UnitCloaker',options={ life=50 } },
+    { class='UnitJitter',options={ delay=24, life=math.huge } },
+    { class='Sound',options={ file="sounds/cloak.wav",volume=0.9 } },
 }
 local EnemyCloakEffect      = {
-	{ class='UnitCloaker',options={ life=20 } },
-	{ class='Sound',options={ file="sounds/cloak.wav",volume=0.9 } },
+    { class='UnitCloaker',options={ life=20 } },
+    { class='Sound',options={ file="sounds/cloak.wav",volume=0.9 } },
 }
 
 local DecloakEffect    = {
-	{ class='UnitCloaker',options={ inverse=true, life=50 } },
-	{ class='UnitJitter',options={ life=24 } },
-	{ class='Sound',options={ file="sounds/cloak.wav",volume=0.9 } },
+    { class='UnitCloaker',options={ inverse=true, life=50 } },
+    { class='UnitJitter',options={ life=24 } },
+    { class='Sound',options={ file="sounds/cloak.wav",volume=0.9 } },
 }
 local EnemyDecloakEffect      = {
-	{ class='UnitCloaker',options={ inverse=true, life=60 } },
-	{ class='Sound',options={ file="sounds/cloak.wav",volume=0.9 } },
+    { class='UnitCloaker',options={ inverse=true, life=60 } },
+    { class='Sound',options={ file="sounds/cloak.wav",volume=0.9 } },
 }
 
 
 function gadget:UnitDamaged(unitID,unitDefID,teamID)
-	if (not Spring.GetUnitIsCloaked(unitID)) then
-		return
-	end
+    if (not Spring.GetUnitIsCloaked(unitID)) then
+        return
+    end
 
-	local allyTeamID = Spring.GetUnitAllyTeam(unitID)
+    local allyTeamID = Spring.GetUnitAllyTeam(unitID)
 
-	local LocalAllyTeamID
-	local _, specFullView = Spring.GetSpectatingState()
-	if (specFullView) then
-		LocalAllyTeamID = allyTeamID
-	else
-		LocalAllyTeamID = Spring.GetLocalAllyTeamID()
-	end
+    local LocalAllyTeamID
+    local _, specFullView = Spring.GetSpectatingState()
+    if (specFullView) then
+        LocalAllyTeamID = allyTeamID
+    else
+        LocalAllyTeamID = Spring.GetLocalAllyTeamID()
+    end
 
-	if (allyTeamID==LocalAllyTeamID) then
-		return
-	end
+    if (allyTeamID==LocalAllyTeamID) then
+        return
+    end
 
-	if (particleIDs[unitID]) then
-		for _,fxID in ipairs(particleIDs[unitID]) do
-			Lups.RemoveParticles(fxID)
-		end
-	end
+    if (particleIDs[unitID]) then
+        for _,fxID in ipairs(particleIDs[unitID]) do
+            Lups.RemoveParticles(fxID)
+        end
+    end
 
-	particleIDs[unitID] = {}
-	CloakedHitEffect.options.unit = unitID
-	CloakedHitEffect.options.team = teamID
-	CloakedHitEffect.options.unitDefID = unitDefID
-	tinsert( particleIDs[unitID], Lups.AddParticles(CloakedHitEffect.class,CloakedHitEffect.options) )
+    particleIDs[unitID] = {}
+    CloakedHitEffect.options.unit = unitID
+    CloakedHitEffect.options.team = teamID
+    CloakedHitEffect.options.unitDefID = unitDefID
+    tinsert( particleIDs[unitID], Lups.AddParticles(CloakedHitEffect.class,CloakedHitEffect.options) )
 end
 
 
 
 
 function gadget:UnitCloaked(unitID,unitDefID,teamID)
-	--Spring.Echo('gadget:UnitCloaked(unitID,unitDefID,teamID)',unitID,unitDefID,teamID)
-	local allyTeamID = Spring.GetUnitAllyTeam(unitID)
+    --Spring.Echo('gadget:UnitCloaked(unitID,unitDefID,teamID)',unitID,unitDefID,teamID)
+    local allyTeamID = Spring.GetUnitAllyTeam(unitID)
 
-	local LocalAllyTeamID
-	local _, specFullView = Spring.GetSpectatingState()
-	if (specFullView) then
-		LocalAllyTeamID = allyTeamID
-	else
-		LocalAllyTeamID = Spring.GetLocalAllyTeamID()
-	end
+    local LocalAllyTeamID
+    local _, specFullView = Spring.GetSpectatingState()
+    if (specFullView) then
+        LocalAllyTeamID = allyTeamID
+    else
+        LocalAllyTeamID = Spring.GetLocalAllyTeamID()
+    end
 
-	if (particleIDs[unitID]) then
-		for i=1,#particleIDs[unitID] do
-			Lups.RemoveParticles(particleIDs[unitID][i])
-		end
-	end
-	particleIDs[unitID] = {}
-	if (LocalAllyTeamID==allyTeamID) then
-		for i=1,#CloakEffect do
-			local fx = CloakEffect[i]
-			fx.options.unit      = unitID
-			fx.options.unitDefID = unitDefID
-			fx.options.team      = teamID
-			fx.options.allyTeam  = allyTeamID
-			tinsert( particleIDs[unitID],Lups.AddParticles(fx.class,fx.options) )
-		end
-	else
-		for i=1,#EnemyCloakEffect do
-			local fx = EnemyCloakEffect[i]
-			fx.options.unit      = unitID
-			fx.options.unitDefID = unitDefID
-			fx.options.team      = teamID
-			fx.options.allyTeam  = allyTeamID
-			tinsert( particleIDs[unitID],Lups.AddParticles(fx.class,fx.options) )
-		end
-	end
+    if (particleIDs[unitID]) then
+        for i=1,#particleIDs[unitID] do
+            Lups.RemoveParticles(particleIDs[unitID][i])
+        end
+    end
+    particleIDs[unitID] = {}
+    if (LocalAllyTeamID==allyTeamID) then
+        for i=1,#CloakEffect do
+            local fx = CloakEffect[i]
+            fx.options.unit      = unitID
+            fx.options.unitDefID = unitDefID
+            fx.options.team      = teamID
+            fx.options.allyTeam  = allyTeamID
+            tinsert( particleIDs[unitID],Lups.AddParticles(fx.class,fx.options) )
+        end
+    else
+        for i=1,#EnemyCloakEffect do
+            local fx = EnemyCloakEffect[i]
+            fx.options.unit      = unitID
+            fx.options.unitDefID = unitDefID
+            fx.options.team      = teamID
+            fx.options.allyTeam  = allyTeamID
+            tinsert( particleIDs[unitID],Lups.AddParticles(fx.class,fx.options) )
+        end
+    end
 end
 
 
 function gadget:UnitDecloaked(unitID,unitDefID,teamID)
-	local allyTeamID = Spring.GetUnitAllyTeam(unitID)
+    local allyTeamID = Spring.GetUnitAllyTeam(unitID)
 
-	local LocalAllyTeamID
-	local _, specFullView = Spring.GetSpectatingState()
-	if (specFullView) then
-		LocalAllyTeamID = allyTeamID
-	else
-		LocalAllyTeamID = Spring.GetLocalAllyTeamID()
-	end
+    local LocalAllyTeamID
+    local _, specFullView = Spring.GetSpectatingState()
+    if (specFullView) then
+        LocalAllyTeamID = allyTeamID
+    else
+        LocalAllyTeamID = Spring.GetLocalAllyTeamID()
+    end
 
-	if (particleIDs[unitID]) then
-		for i=1,#particleIDs[unitID] do
-			Lups.RemoveParticles(particleIDs[unitID][i])
-		end
-	end
-	particleIDs[unitID] = {}
-	if (LocalAllyTeamID==allyTeamID) then
-		for i=1,#DecloakEffect do
-			local fx = DecloakEffect[i]
-			fx.options.unit      = unitID
-			fx.options.unitDefID = unitDefID
-			fx.options.team      = teamID
-			fx.options.allyTeam  = allyTeamID
-			tinsert( particleIDs[unitID],Lups.AddParticles(fx.class,fx.options) )
-		end
-	else
-		for i=1,#EnemyDecloakEffect do
-			local fx = EnemyDecloakEffect[i]
-			fx.options.unit      = unitID
-			fx.options.unitDefID = unitDefID
-			fx.options.team      = teamID
-			fx.options.allyTeam  = allyTeamID
-			tinsert( particleIDs[unitID],Lups.AddParticles(fx.class,fx.options) )
-		end
-	end
+    if (particleIDs[unitID]) then
+        for i=1,#particleIDs[unitID] do
+            Lups.RemoveParticles(particleIDs[unitID][i])
+        end
+    end
+    particleIDs[unitID] = {}
+    if (LocalAllyTeamID==allyTeamID) then
+        for i=1,#DecloakEffect do
+            local fx = DecloakEffect[i]
+            fx.options.unit      = unitID
+            fx.options.unitDefID = unitDefID
+            fx.options.team      = teamID
+            fx.options.allyTeam  = allyTeamID
+            tinsert( particleIDs[unitID],Lups.AddParticles(fx.class,fx.options) )
+        end
+    else
+        for i=1,#EnemyDecloakEffect do
+            local fx = EnemyDecloakEffect[i]
+            fx.options.unit      = unitID
+            fx.options.unitDefID = unitDefID
+            fx.options.team      = teamID
+            fx.options.allyTeam  = allyTeamID
+            tinsert( particleIDs[unitID],Lups.AddParticles(fx.class,fx.options) )
+        end
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -215,81 +215,81 @@ end
 --
 
 function gadget:UnitDestroyed(unitID,unitDefID)
-	if (particleIDs[unitID]) then
-		local effects = particleIDs[unitID]
-		for i=1,#effects do
-			Lups.RemoveParticles(effects[i])
-		end
-		particleIDs[unitID] = nil
-	end
+    if (particleIDs[unitID]) then
+        local effects = particleIDs[unitID]
+        for i=1,#effects do
+            Lups.RemoveParticles(effects[i])
+        end
+        particleIDs[unitID] = nil
+    end
 end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 function gadget:PlayerChanged(playerID)
-	if (playerID == Spring.GetMyPlayerID()) then
-		--// this should reset the cloak fx when becoming a spec
-		--gadget.Update = ReinitializeUnitFX
-		gadgetHandler:UpdateCallIn("Update")
-	end
+    if (playerID == Spring.GetMyPlayerID()) then
+        --// this should reset the cloak fx when becoming a spec
+        --gadget.Update = ReinitializeUnitFX
+        gadgetHandler:UpdateCallIn("Update")
+    end
 end
 
 local function ReinitializeUnitFX()
-	--// clear old FXs
-	for _,unitFxIDs in pairs(particleIDs) do
-		for i=1,#unitFxIDs do
-			Lups.RemoveParticles(unitFxIDs[i])
-		end
-	end
-	particleIDs = {}
+    --// clear old FXs
+    for _,unitFxIDs in pairs(particleIDs) do
+        for i=1,#unitFxIDs do
+            Lups.RemoveParticles(unitFxIDs[i])
+        end
+    end
+    particleIDs = {}
 
-	--// initialize effects for existing units
-	local allUnits = Spring.GetAllUnits();
-	for i=1,#allUnits do
-		local unitID    = allUnits[i]
-		if (Spring.GetUnitIsCloaked(unitID)) then
-			local unitDefID = Spring.GetUnitDefID(unitID)
-			local teamID = Spring.GetUnitTeam(unitID)
-			UnitCloaked(nil,unitID,unitDefID,teamID)
-		end
-	end
+    --// initialize effects for existing units
+    local allUnits = Spring.GetAllUnits();
+    for i=1,#allUnits do
+        local unitID    = allUnits[i]
+        if (Spring.GetUnitIsCloaked(unitID)) then
+            local unitDefID = Spring.GetUnitDefID(unitID)
+            local teamID = Spring.GetUnitTeam(unitID)
+            UnitCloaked(nil,unitID,unitDefID,teamID)
+        end
+    end
 
-	gadgetHandler:RemoveCallIn("Update")
+    gadgetHandler:RemoveCallIn("Update")
 end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 function gadget:Update()
-	if (Spring.GetGameFrame()<1) then
-		return
-	end
+    if (Spring.GetGameFrame()<1) then
+        return
+    end
 
-	Lups  = GG['Lups']
+    Lups  = GG['Lups']
 
-	if (Lups) then
-		initialized=true
-	else
-		return
-	end
+    if (Lups) then
+        initialized=true
+    else
+        return
+    end
 
-	gadget.Update = ReinitializeUnitFX
-	gadgetHandler:UpdateCallIn("Update")
+    gadget.Update = ReinitializeUnitFX
+    gadgetHandler:UpdateCallIn("Update")
 end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 function gadget:Shutdown()
-	if (initialized) then
-		for _,unitFxIDs in pairs(particleIDs) do
-			for i=1,#unitFxIDs do
-				Lups.RemoveParticles(unitFxIDs[i])
-			end
-		end
-		particleIDs = {}
-	end
+    if (initialized) then
+        for _,unitFxIDs in pairs(particleIDs) do
+            for i=1,#unitFxIDs do
+                Lups.RemoveParticles(unitFxIDs[i])
+            end
+        end
+        particleIDs = {}
+    end
 end
 
 --------------------------------------------------------------------------------

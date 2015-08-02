@@ -44,16 +44,16 @@ function gadget:GameFrame(n)
   if (n >= timeCounter) then
     timeCounter = (n + UPDATE)
     for unitID,neutral in pairs(neutralUnits) do
-	  local cobValue = GetUnitCOBValue(unitID, 20)
+      local cobValue = GetUnitCOBValue(unitID, 20)
       if cobValue then
-		local armoured = (cobValue > 0)
-		if neutral and (not armoured) then
-		  SetUnitNeutral(unitID, false)
-		  neutralUnits[unitID] = false  
+        local armoured = (cobValue > 0)
+        if neutral and (not armoured) then
+          SetUnitNeutral(unitID, false)
+          neutralUnits[unitID] = false  
         elseif (not neutral) and armoured then
           SetUnitNeutral(unitID, true)
           neutralUnits[unitID] = true  
-		end
+        end
       end      
     end    
   end

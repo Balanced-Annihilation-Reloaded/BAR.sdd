@@ -25,10 +25,10 @@ end
 -- Console commands
 --------------------------------------------------------------------------------
 
--- /healthbars_percentage			-- toggles rendering of the textual percentage beside each bar
--- /healthbars_compercentage		-- toggles always rendering health precentagees for coms
--- /healthbars_style				-- toggles different styles
--- /healthbars_glow					-- toggles a subtle glow to the bar´s value
+-- /healthbars_percentage            -- toggles rendering of the textual percentage beside each bar
+-- /healthbars_compercentage        -- toggles always rendering health precentagees for coms
+-- /healthbars_style                -- toggles different styles
+-- /healthbars_glow                    -- toggles a subtle glow to the bar´s value
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ local barWidth                  = 11.5         --// (barWidth)x2 total width!!!
 local barAlpha                  = 0.85
 local barOutlineAlpha           = 0.8
 local barInnerAlpha             = 0.5
-local barValueAlpha             = 0.9	      -- alpha of the colored part
+local barValueAlpha             = 0.9          -- alpha of the colored part
 
 local featureBarHeight          = 1.6
 local featureBarWidth           = 7
@@ -47,9 +47,9 @@ local featureBarAlpha           = 0.6
 local drawBarTitles             = true          -- (I disabled the healthbar text, cause that one doesnt need an explanation)
 local titlesAlpha               = 0.3*barAlpha
 
-local drawBarPercentage         = 0		        -- wont draw heath percentage text above this percentage
+local drawBarPercentage         = 0                -- wont draw heath percentage text above this percentage
 local alwaysDrawBarPercentageForComs = true     -- true:  commanders always will show health percentage number
-local drawFeatureBarPercentage  = 0	            
+local drawFeatureBarPercentage  = 0                
 local choppedCornerSize         = 0.44
 local outlineSize               = 0.63
 local drawFullHealthBars        = false
@@ -612,7 +612,7 @@ function init()
         #define progress gl_MultiTexCoord2.x
         #define offset   gl_MultiTexCoord2.y
         
-		uniform float glowAlpha;
+        uniform float glowAlpha;
 
         void main()
         {
@@ -659,7 +659,7 @@ function init()
              gl_Vertex.w  = 1;
              
            }else if (gl_Vertex.w>1 ) {
-             if (progress >= 0.92) {		// smooth out because else the bar wil overlap and look ugly at the end point
+             if (progress >= 0.92) {        // smooth out because else the bar wil overlap and look ugly at the end point
                gl_FrontColor = float4(gl_Color[0]+(barColor.r/4),gl_Color[1]+(barColor.g/4),gl_Color[2]+(barColor.b/4),((0.08-(progress-0.92))*12.5)*gl_Color[3]);
              }else{
                gl_FrontColor = float4(gl_Color[0]+(barColor.r/4),gl_Color[1]+(barColor.g/4),gl_Color[2]+(barColor.b/4),gl_Color[3]);
@@ -688,12 +688,12 @@ function init()
            gl_Position  = gl_ModelViewProjectionMatrix*gl_Vertex;
          }
       ]],
-		uniform = {
-			glowAlpha = 0.14,
-		},
+        uniform = {
+            glowAlpha = 0.14,
+        },
     });
-	
-	
+    
+    
     if (barShader) then
       barDList         = gl.CreateList(drawBarGl)
       barFeatureDList  = gl.CreateList(drawFeatureBarGl)
@@ -703,11 +703,11 @@ end
 
 
 local function toggleOption()
-	currentOption = currentOption + 1
-	if not OPTIONS[currentOption] then
-		currentOption = 1
-	end
-	init()
+    currentOption = currentOption + 1
+    if not OPTIONS[currentOption] then
+        currentOption = 1
+    end
+    init()
 end
 
 
@@ -971,7 +971,7 @@ do
       end
       fullText = false
     end
-	
+    
     --// GET UNIT INFORMATION
     health,maxHealth,paralyzeDamage,capture,build = GetUnitHealth(unitID)
     --if (not health)    then health=-1   elseif(health<1)    then health=1    end
@@ -1001,10 +1001,10 @@ do
             infotext = hp100..'%'
           end
           if alwaysDrawBarPercentageForComs then
-			  local unitName = UnitDefs[GetUnitDefID(unitID)].name
-			  if (unitName == 'corcom'  or  unitName == 'armcom') then
-				infotext = hp100..'%'
-			  end
+              local unitName = UnitDefs[GetUnitDefID(unitID)].name
+              if (unitName == 'corcom'  or  unitName == 'armcom') then
+                infotext = hp100..'%'
+              end
           end
           AddBar("health",hp,nil,infotext or '',bfcolormap[hp100])
         end
@@ -1293,7 +1293,7 @@ do
       for i=1,#visibleUnits do
         unitID    = visibleUnits[i]
         unitDefID = GetUnitDefID(unitID)
-	    unitDef   = UnitDefs[unitDefID or -1]
+        unitDef   = UnitDefs[unitDefID or -1]
         if (unitDef) then
           DrawUnitInfos(unitID, unitDefID, unitDef)
         end
@@ -1401,26 +1401,26 @@ end --//end do
 
 function widget:GetConfigData(data)
     savedTable = {}
-    savedTable.drawBarPercentage				= drawBarPercentage
-    savedTable.alwaysDrawBarPercentageForComs	= alwaysDrawBarPercentageForComs
-    savedTable.currentOption					= currentOption
+    savedTable.drawBarPercentage                = drawBarPercentage
+    savedTable.alwaysDrawBarPercentageForComs    = alwaysDrawBarPercentageForComs
+    savedTable.currentOption                    = currentOption
     return savedTable
 end
 
 function widget:SetConfigData(data)
-    if data.drawBarPercentage ~= nil    			then  drawBarPercentage	= data.drawBarPercentage end
+    if data.drawBarPercentage ~= nil                then  drawBarPercentage    = data.drawBarPercentage end
     if data.alwaysDrawBarPercentageForComs ~= nil   then  alwaysDrawBarPercentageForComs = data.alwaysDrawBarPercentageForComs end
-    if data.currentOption ~= nil					then  currentOption = data.currentOption end
+    if data.currentOption ~= nil                    then  currentOption = data.currentOption end
 end
 
 function widget:TextCommand(command)
     if (string.find(command, "healthbars_percentage") == 1  and  string.len(command) == 21) then 
-		drawBarPercentage =  (drawBarPercentage < 100 and 100 or 0)
-	end
+        drawBarPercentage =  (drawBarPercentage < 100 and 100 or 0)
+    end
     if (string.find(command, "healthbars_compercentage") == 1  and  string.len(command) == 24) then 
-		alwaysDrawBarPercentageForComs = not alwaysDrawBarPercentageForComs
-	end
+        alwaysDrawBarPercentageForComs = not alwaysDrawBarPercentageForComs
+    end
     if (string.find(command, "healthbars_style") == 1  and  string.len(command) == 16) then 
-		toggleOption()
-	end
+        toggleOption()
+    end
 end

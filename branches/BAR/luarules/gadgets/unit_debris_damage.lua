@@ -24,14 +24,14 @@ local min = math.min
 local random = math.random
 
 function gadget:UnitPreDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, weaponDefID, projectileID, attackerID, attackerDefID, attackerTeam)
-	-- debris damage occurs when weaponDefID == -1
-	-- in this case attackerID and attackerDefID are nil
-	if weaponDefID == -1 then 
+    -- debris damage occurs when weaponDefID == -1
+    -- in this case attackerID and attackerDefID are nil
+    if weaponDefID == -1 then 
         if groundScouts[unitDefID] then
             return random(45,65), nil
         else
             return min(damage, random(15,35)), nil
         end
     end
-	return damage, nil
+    return damage, nil
 end

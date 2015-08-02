@@ -52,7 +52,7 @@ local glSmoothing            = gl.Smoothing
 local glTexCoord             = gl.TexCoord
 local glTranslate            = gl.Translate
 local glVertex               = gl.Vertex
-local glTexture        		 = gl.Texture
+local glTexture                 = gl.Texture
 local spGetFrameTimeOffset   = Spring.GetFrameTimeOffset
 local spGetGameSeconds       = Spring.GetGameSeconds
 local spGetUnitPosition      = Spring.GetUnitPosition
@@ -191,13 +191,13 @@ circleList = glCreateList(function()
   rectList = glCreateList(function()
     glBeginEnd(GL_QUADS, function()
       --glTexCoord(0, 0); 
-	  glVertex(-1, 0, -1)
+      glVertex(-1, 0, -1)
       --glTexCoord(1, 0); 
-	  glVertex( 1, 0, -1)
+      glVertex( 1, 0, -1)
       --glTexCoord(1, 1); 
-	  glVertex( 1, 0,  1)
+      glVertex( 1, 0,  1)
       --glTexCoord(0, 1); 
-	  glVertex(-1, 0,  1)
+      glVertex(-1, 0,  1)
     end)
   end)
 end 
@@ -406,13 +406,13 @@ local function DrawDamage(damage)
   
   if (pixels > 0) then
     
-	local scale = minPixels + pixels
-	
+    local scale = minPixels + pixels
+    
     glPushMatrix()
     glTranslate(px, 0, pz)
     glScale(scale * pxScale, 1, scale * pyScale)
     glColor(damageColor)
-	glCallList(circleList)
+    glCallList(circleList)
     glPopMatrix()
   end
 
@@ -424,7 +424,7 @@ local function DrawDamage(damage)
     glPushMatrix()
     glTranslate(px, 0, pz)
     glScale(scale * pxScale, 1, scale * pyScale)
-	glColor(paralyzeColor)
+    glColor(paralyzeColor)
     glCallList(circleList)
     glPopMatrix()
   end
@@ -441,7 +441,7 @@ function widget:DrawInMiniMap(xSize, ySize)
   end
   
   if circleList == 0 then
-	CreateLists()
+    CreateLists()
   end
  
   glSmoothing(false, false, false)

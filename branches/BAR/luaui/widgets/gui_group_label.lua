@@ -23,16 +23,16 @@ function widget:GetInfo()
   }
 end
 
-local glPushMatrix				= gl.PushMatrix
-local glTranslate				= gl.Translate
-local glPopMatrix				= gl.PopMatrix
-local glColor					= gl.Color
-local glText					= gl.Text
-local glBillboard				= gl.Billboard
+local glPushMatrix                = gl.PushMatrix
+local glTranslate                = gl.Translate
+local glPopMatrix                = gl.PopMatrix
+local glColor                    = gl.Color
+local glText                    = gl.Text
+local glBillboard                = gl.Billboard
 
-local spGetGroupList			= Spring.GetGroupList
-local spGetGroupUnits			= Spring.GetGroupUnits
-local spGetUnitViewPosition 	= Spring.GetUnitViewPosition
+local spGetGroupList            = Spring.GetGroupList
+local spGetGroupUnits            = Spring.GetGroupUnits
+local spGetUnitViewPosition     = Spring.GetUnitViewPosition
 local textColor = {0.7, 1.0, 0.7, 1.0}
 local textSize = 12.0
 

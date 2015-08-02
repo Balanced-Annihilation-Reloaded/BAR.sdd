@@ -25,7 +25,7 @@ local CMD_REMOVE = CMD.REMOVE
 
 function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions, cmdTag, synced)
   if (cmdID == CMD_INSERT) then
-	if (CMD_REMOVE == cmdParams[2]) or (CMD_INSERT == cmdParams[2]) then
+    if (CMD_REMOVE == cmdParams[2]) or (CMD_INSERT == cmdParams[2]) then
       return false
     end
   end

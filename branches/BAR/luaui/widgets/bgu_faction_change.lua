@@ -1,14 +1,14 @@
 
 function widget:GetInfo()
-	return {
-		name	= 'Faction Change',
-		desc	= 'Adds buttons to switch faction before the game starts',
-		author	= 'Niobium',
-		date	= 'May 2011',
-		license	= 'GNU GPL v2',
-		layer	= 1002, -- must go after initial queue, or depthtest is wrong
-		enabled	= true,
-	}
+    return {
+        name    = 'Faction Change',
+        desc    = 'Adds buttons to switch faction before the game starts',
+        author    = 'Niobium',
+        date    = 'May 2011',
+        license    = 'GNU GPL v2',
+        layer    = 1002, -- must go after initial queue, or depthtest is wrong
+        enabled    = true,
+    }
 end
 
 --------------------------------------------------------------------------------
@@ -51,10 +51,10 @@ local factionChangeList
 --------------------------------------------------------------------------------
 local function QuadVerts(x, z, r)
     local y = Spring.GetGroundHeight(x,z)
-	glTexCoord(0, 0); glVertex(x-r, y, z-r)
-	glTexCoord(1, 0); glVertex(x+r, y, z-r)
-	glTexCoord(1, 1); glVertex(x+r, y, z+r)
-	glTexCoord(0, 1); glVertex(x-r, y, z+r)
+    glTexCoord(0, 0); glVertex(x-r, y, z-r)
+    glTexCoord(1, 0); glVertex(x+r, y, z-r)
+    glTexCoord(1, 1); glVertex(x+r, y, z+r)
+    glTexCoord(0, 1); glVertex(x-r, y, z+r)
 end
 
 --------------------------------------------------------------------------------
@@ -63,12 +63,12 @@ end
 local Chili, window, panel, arm_button, core_button
 
 function widget:Initialize()
-	if spGetSpectatingState() or
+    if spGetSpectatingState() or
         Spring.GetGameFrame() > 0 or
-	    amNewbie then
+        amNewbie then
         widgetHandler:RemoveWidget(self)
         return
-	end
+    end
         
     WG.startUnit = commanderDefID
     
@@ -76,7 +76,7 @@ function widget:Initialize()
     
     -- match sMenu
     local scrH = Chili.Screen0.height
-	local winW = scrH * 0.25
+    local winW = scrH * 0.25
 
     window = Chili.Panel:New{
         parent = Chili.Screen0,
@@ -84,18 +84,18 @@ function widget:Initialize()
         y = scrH*0.2-80,
         width = winW,
         height = 80,
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
     }
 
     panel = Chili.LayoutPanel:New{
         parent = window,
         height = '100%',
         width = '100%',
-		padding     = {0,0,0,0},
-		itemPadding = {0,0,0,0},
-		itemMargin  = {0,0,0,0},
+        padding     = {0,0,0,0},
+        itemPadding = {0,0,0,0},
+        itemMargin  = {0,0,0,0},
     }
 
     arm_button = Chili.Button:New{
@@ -120,22 +120,22 @@ end
 
 function widget:DrawWorld()
     -- draw faction baseplate onto startpos
-	glColor(1, 1, 1, 0.5)
-	glDepthTest(GL.ALWAYS)
-	for i = 1, #teamList do
-		local teamID = teamList[i]
-		local tsx, tsy, tsz = spGetTeamStartPosition(teamID)
-		if tsx and tsx > 0 then
-			if spGetTeamRulesParam(teamID, 'startUnit') == armcomDefID then
-				glTexture('LuaUI/Images/arm.png')
-				glBeginEnd(GL_QUADS, QuadVerts, tsx, tsz, 80)
-			else
-				glTexture('LuaUI/Images/core.png')
-				glBeginEnd(GL_QUADS, QuadVerts, tsx, tsz, 64)
-			end
-		end
-	end
-	glTexture(false)
+    glColor(1, 1, 1, 0.5)
+    glDepthTest(GL.ALWAYS)
+    for i = 1, #teamList do
+        local teamID = teamList[i]
+        local tsx, tsy, tsz = spGetTeamStartPosition(teamID)
+        if tsx and tsx > 0 then
+            if spGetTeamRulesParam(teamID, 'startUnit') == armcomDefID then
+                glTexture('LuaUI/Images/arm.png')
+                glBeginEnd(GL_QUADS, QuadVerts, tsx, tsz, 80)
+            else
+                glTexture('LuaUI/Images/core.png')
+                glBeginEnd(GL_QUADS, QuadVerts, tsx, tsz, 64)
+            end
+        end
+    end
+    glTexture(false)
 end
 
 function SetArm()
@@ -149,9 +149,9 @@ function SetCore()
 end
 
 function SetFaction(commanderDefID)
-	-- tell initial_spawn
-	spSendLuaRulesMsg('\138' .. tostring(commanderDefID)) 
-	-- tell sMenu and initial queue
+    -- tell initial_spawn
+    spSendLuaRulesMsg('\138' .. tostring(commanderDefID)) 
+    -- tell sMenu and initial queue
     WG.startUnit = commanderDefID
 end
 

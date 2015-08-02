@@ -215,7 +215,7 @@ function widget:DrawWorld()
   cx, cy, cz = SpGetCameraPosition()
   local smoothheight = SpGetSmoothMeshHeight(cx,cz) --clamps x and z
   if ((cy-smoothheight)^2 >= maxUnitDistance) or SpIsGUIHidden() then 
-	return
+    return
   end
 
   gl.DepthTest(true)
@@ -224,9 +224,9 @@ function widget:DrawWorld()
   --fontHandler.UseDefaultFont()
 
   for unitID, bi in pairs(etaTable) do
-	if SpIsUnitInView(unitID) then
-	  gl.DrawFuncAtUnit(unitID, false, DrawEtaText, bi.timeLeft,bi.yoffset)
-	end
+    if SpIsUnitInView(unitID) then
+      gl.DrawFuncAtUnit(unitID, false, DrawEtaText, bi.timeLeft,bi.yoffset)
+    end
   end
 
   gl.DepthTest(false)

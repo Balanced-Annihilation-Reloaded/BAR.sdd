@@ -29,11 +29,11 @@ local gaiaTeamID = Spring.GetGaiaTeamID()
 
 
 function gadget:UnitCreated(unitID, unitDefID, teamID)
-	if (not gameStart) then
-		local x,y,z = Spring.GetUnitPosition(unitID)
-		hiddenUnits[unitID] = {x,y,z,teamID}
-		Spring.SetUnitNoDraw(unitID,true) 
-	end
+    if (not gameStart) then
+        local x,y,z = Spring.GetUnitPosition(unitID)
+        hiddenUnits[unitID] = {x,y,z,teamID}
+        Spring.SetUnitNoDraw(unitID,true) 
+    end
 end
 
 function gadget:GameFrame(n)
@@ -43,13 +43,13 @@ function gadget:GameFrame(n)
   end
   if (n == 20) then
     for _,data in pairs(hiddenUnits) do
-		Spring.SpawnCEG("COMGATE",data[1],data[2],data[3],0,0,0)
-		SendToUnsynced("gatesound", data[4], data[1], data[2]+90, data[3])
+        Spring.SpawnCEG("COMGATE",data[1],data[2],data[3],0,0,0)
+        SendToUnsynced("gatesound", data[4], data[1], data[2]+90, data[3])
     end
   end
   if (n == 105) then
     for unitID,_ in pairs(hiddenUnits) do
-		Spring.SetUnitNoDraw(unitID,false)
+        Spring.SetUnitNoDraw(unitID,false)
     end
     Spring.Echo("Commander Gate Complete")
     gadgetHandler:RemoveGadget(self)
@@ -57,9 +57,9 @@ function gadget:GameFrame(n)
 end
 
 function gadget:AllowCommand(unitID, unitDefID, unitTeam, cmdID, cmdParams, cmdOptions, cmdTag, synced)
-	local n = Spring.GetGameFrame()
-	if n < 105 then return false end
-	return true
+    local n = Spring.GetGameFrame()
+    if n < 105 then return false end
+    return true
 end
 
 

@@ -11,7 +11,7 @@ function gadget:GetInfo()
 end
 
 if (gadgetHandler:IsSyncedCode()) then
-	return
+    return
 end
 
 local slappingObjects_uncommon = {
@@ -23,11 +23,11 @@ local slappingObjects_uncommon = {
 }
 
 local slappingObjects_rare = {
-	[1] = "a long-eared bunny rabbit",
-	[2] = "a paddle",
-	[4] = "a sack of dead kittens",
-	[3] = "a pair of inflatable breasts",
-	[5] = "the interminable torment of mankind",
+    [1] = "a long-eared bunny rabbit",
+    [2] = "a paddle",
+    [4] = "a sack of dead kittens",
+    [3] = "a pair of inflatable breasts",
+    [5] = "the interminable torment of mankind",
 }
 
 local myPlayerID = Spring.GetMyPlayerID()
@@ -61,26 +61,26 @@ function Slap(cmd,line,words,playerID)
     if math.random() < 0.95 then
         slapText = slapText .. "large peewee"
     else
-		if math.random() < 0.80 then
-			local n = math.random(1,#slappingObjects_uncommon)
-			slapText = slapText .. slappingObjects_uncommon[n]
-		else
-			local n = math.random(1,#slappingObjects_rare)
-			slapText = slapText .. slappingObjects_rare[n]		
-		end
-	end
+        if math.random() < 0.80 then
+            local n = math.random(1,#slappingObjects_uncommon)
+            slapText = slapText .. slappingObjects_uncommon[n]
+        else
+            local n = math.random(1,#slappingObjects_rare)
+            slapText = slapText .. slappingObjects_rare[n]        
+        end
+    end
 
     Spring.SendMessage(slapText)
 end
 
 
 function gadget:Initialize()
-	gadgetHandler:AddChatAction('slap', Slap, "")
+    gadgetHandler:AddChatAction('slap', Slap, "")
 end
 
 
 function gadget:Shutdown()
-	gadgetHandler:RemoveChatAction('slap')
+    gadgetHandler:RemoveChatAction('slap')
 end
 
 

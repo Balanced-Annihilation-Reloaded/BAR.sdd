@@ -11,20 +11,20 @@ function gadget:GetInfo()
 end
 
 if (not gadgetHandler:IsSyncedCode()) then
-	return
+    return
 end
 
 function LoadMissiles()
-	if not Spring.IsCheatingEnabled() then return end
+    if not Spring.IsCheatingEnabled() then return end
 
-	for _,unitID in pairs(Spring.GetAllUnits()) do
-		Spring.SetUnitStockpile(unitID, select(2,Spring.GetUnitStockpile(unitID)) or 0) --no effect if the unit can't stockpile
-	end
+    for _,unitID in pairs(Spring.GetAllUnits()) do
+        Spring.SetUnitStockpile(unitID, select(2,Spring.GetUnitStockpile(unitID)) or 0) --no effect if the unit can't stockpile
+    end
 
 end
 
 function gadget:HalfHealth()
-	if not Spring.IsCheatingEnabled() then return end
+    if not Spring.IsCheatingEnabled() then return end
 
     -- reduce all units health to 1/2 of its current value
     for _,unitID in pairs(Spring.GetAllUnits()) do
@@ -34,14 +34,14 @@ end
 
 
 function gadget:Initialize()
-	gadgetHandler:AddChatAction('loadmissiles', LoadMissiles, "")
-	gadgetHandler:AddChatAction('halfhealth', HalfHealth, "")
+    gadgetHandler:AddChatAction('loadmissiles', LoadMissiles, "")
+    gadgetHandler:AddChatAction('halfhealth', HalfHealth, "")
 end
 
 
 function gadget:Shutdown()
-	gadgetHandler:RemoveChatAction('loadmissiles')
-	gadgetHandler:RemoveChatAction('halfhealth')
+    gadgetHandler:RemoveChatAction('loadmissiles')
+    gadgetHandler:RemoveChatAction('halfhealth')
 end
 
 

@@ -175,10 +175,10 @@ local function CompileMaterialShaders()
         mat_src.shadowParamsLoc = gl.GetUniformLocation(GLSLshader,"shadowParams")
         mat_src.sunLoc          = gl.GetUniformLocation(GLSLshader,"sunPos")
         mat_src.etcLoc        = gl.GetUniformLocation(GLSLshader,"etcLoc")
-		end
-	end
-	
-	if (mat_src.deferredSource) then
+        end
+    end
+    
+    if (mat_src.deferredSource) then
       local GLSLshader = CompileShader(mat_src.deferredSource, mat_src.deferredDefinitions, mat_src.deferredPlugins)
 
       if (GLSLshader) then
@@ -244,7 +244,7 @@ function GetUnitMaterial(unitDefID)
 
   local luaMat = Spring.UnitRendering.GetMaterial("opaque",{
                    shader          = mat.shader,
-					deferred        = mat.deferred,
+                    deferred        = mat.deferred,
                    cameraposloc    = mat.cameraPosLoc,
                    cameraloc       = mat.cameraLoc,
                    camerainvloc    = mat.cameraInvLoc,
@@ -430,11 +430,11 @@ end
 
 function TurnOn()
     isOn = true
-	for i,uid in ipairs(Spring.GetAllUnits()) do
-		if not select(3,Spring.GetUnitIsStunned(uid)) then --// inbuild?
-			gadget:UnitFinished(uid,Spring.GetUnitDefID(uid),Spring.GetUnitTeam(uid))
-		end
-	end
+    for i,uid in ipairs(Spring.GetAllUnits()) do
+        if not select(3,Spring.GetUnitIsStunned(uid)) then --// inbuild?
+            gadget:UnitFinished(uid,Spring.GetUnitDefID(uid),Spring.GetUnitTeam(uid))
+        end
+    end
     --Spring.Echo("on")
 end
 
@@ -533,9 +533,9 @@ function to_string(data, indent)
 
     -- Check the type
     if(type(data) == "string") then
-        str = str .. ("	"):rep(indent) .. data .. "\n"
+        str = str .. ("    "):rep(indent) .. data .. "\n"
     elseif(type(data) == "number") then
-        str = str .. ("	"):rep(indent) .. data .. "\n"
+        str = str .. ("    "):rep(indent) .. data .. "\n"
     elseif(type(data) == "boolean") then
         if(data == true) then
             str = str .. "true"
@@ -547,18 +547,18 @@ function to_string(data, indent)
         for i, v in pairs(data) do
             -- Check for a table in a table
             if(type(v) == "table") then
-                str = str .. ("	"):rep(indent) .. i .. ":\n"
+                str = str .. ("    "):rep(indent) .. i .. ":\n"
                 str = str .. to_string(v, indent + 2)
             else
-                str = str .. ("	"):rep(indent) .. i .. ": " .. to_string(v, 0)
+                str = str .. ("    "):rep(indent) .. i .. ": " .. to_string(v, 0)
             end
         end
     elseif (data ==nil) then
-		str=str..'nil'
-	else
+        str=str..'nil'
+    else
         --print_debug(1, "Error: unknown data type: %s", type(data))
-		str=str.. "Error: unknown data type:" .. type(data)
-		Spring.Echo('X data type')
+        str=str.. "Error: unknown data type:" .. type(data)
+        Spring.Echo('X data type')
 
 
     end

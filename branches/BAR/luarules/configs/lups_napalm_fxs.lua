@@ -4,8 +4,8 @@ local napalm = {
     count           = 4,
     life            = 100,
     lifeSpread      = 40,
-	delay			= 0,
-	delaySpread		= 0,
+    delay            = 0,
+    delaySpread        = 0,
     emitVector      = {0,1,0},
     emitRotSpread   = 90,
     force           = {0,0.3,0},
@@ -59,14 +59,14 @@ local heat = {
 }
 
 for name,def in pairs(napalm) do
-	if name ~= "default" then
-		napalm[name] = Spring.Utilities.MergeTable(def,napalm.default,true)
-	end
+    if name ~= "default" then
+        napalm[name] = Spring.Utilities.MergeTable(def,napalm.default,true)
+    end
 end
 for name,def in pairs(heat) do
-	if name ~= "default" then
-		heat[name] = Spring.Utilities.MergeTable(def,heat.default,true)
-	end
+    if name ~= "default" then
+        heat[name] = Spring.Utilities.MergeTable(def,heat.default,true)
+    end
 end
 
 return napalm, heat

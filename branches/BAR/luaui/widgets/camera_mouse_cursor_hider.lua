@@ -12,7 +12,7 @@ end
 -------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------
 function widget:Update()
-	if Spring.IsGUIHidden() then
+    if Spring.IsGUIHidden() then
         Spring.SetMouseCursor("none") 
     end
 end

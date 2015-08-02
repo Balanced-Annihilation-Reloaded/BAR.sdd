@@ -1,21 +1,21 @@
 
 function gadget:GetInfo()
-	return {
-		name      = 'DGun CmdType Fix',
-		desc      = 'Fixed DGun CmdType so it can target units',
-		author    = 'Niobium',
-		date      = 'April 2011',
-		license   = 'GNU GPL, v2 or later',
-		layer     = 0,
-		enabled   = true
-	}
+    return {
+        name      = 'DGun CmdType Fix',
+        desc      = 'Fixed DGun CmdType so it can target units',
+        author    = 'Niobium',
+        date      = 'April 2011',
+        license   = 'GNU GPL, v2 or later',
+        layer     = 0,
+        enabled   = true
+    }
 end
 
 ----------------------------------------------------------------
 -- Synced only
 ----------------------------------------------------------------
 if not gadgetHandler:IsSyncedCode() then
-	return false
+    return false
 end
 
 ----------------------------------------------------------------

@@ -110,7 +110,7 @@ function CountTable(t)
     return i
 end
 
-function IsDark(red,green,blue)                  	
+function IsDark(red,green,blue)                      
     -- Determines if the player color is dark (i.e. if a white outline for the sidePic is needed)
     if red*1.2 + green*1.1 + blue*0.8 < 0.9 then return true end
     return false
@@ -205,7 +205,7 @@ local takeInfo
 function TakeTeam()
     -- record info about the take
     -- effects of take can't be fully determined until after it happens, so we process this in widget:GameFrame
-	Spring.SendCommands("luarules take2 " .. iPaneltID)
+    Spring.SendCommands("luarules take2 " .. iPaneltID)
     takeInfo = {team=iPaneltID, name=iPanelName, byPlayer=myPlayerID, onFrame=Spring.GetGameFrame()}
     
     iPanel:Hide()
@@ -755,17 +755,17 @@ function IsTakeable(tID)
     local spec,_ = Spring.GetSpectatingState()
     if spec then return false end
     
-	if Spring.GetTeamRulesParam(tID, "numActivePlayers") == 0 then
-		local units = Spring.GetTeamUnitCount(tID)
-		local energy = Spring.GetTeamResources(tID,"energy")
-		local metal = Spring.GetTeamResources(tID,"metal")
-		if units and energy and metal then
-			if (units > 0) or (energy > 1000) or (metal > 100) then			
-				return true
-			end
-		end
+    if Spring.GetTeamRulesParam(tID, "numActivePlayers") == 0 then
+        local units = Spring.GetTeamUnitCount(tID)
+        local energy = Spring.GetTeamResources(tID,"energy")
+        local metal = Spring.GetTeamResources(tID,"metal")
+        if units and energy and metal then
+            if (units > 0) or (energy > 1000) or (metal > 100) then            
+                return true
+            end
+        end
     end
-    return false					
+    return false                    
 end
 
 function GetSkill(playerID)
@@ -785,7 +785,7 @@ function GetSkill(playerID)
             -- show privacy mode
             local priv = ""
             if string.find(tsMu, "~") then -- '~' means privacy mode is on
-                priv = "\255"..string.char(200)..string.char(200)..string.char(200) .. "*" 		
+                priv = "\255"..string.char(200)..string.char(200)..string.char(200) .. "*"         
             end
             
             --show sigma
@@ -822,7 +822,7 @@ function ReadyColour(readyState, isAI)
         if hasStartPoint then
             readyColour = {1,0.65,0.1,1}
         else
-            readyColour = {0.8,0.1,0.1,1}	
+            readyColour = {0.8,0.1,0.1,1}    
         end
     end
     return readyColour
@@ -1073,16 +1073,16 @@ end
 --------------------------------------------------------------------------------
 
 function ProcessTake()
-	local afterE = Spring.GetTeamResources(takeInfo.team,"energy")
-	local afterM = Spring.GetTeamResources(takeInfo.team, "metal")
-	local afterU = Spring.GetTeamUnitCount(takeInfo.team)
-	local toSay = "say a: I took " .. takeInfo.name .. ". "
+    local afterE = Spring.GetTeamResources(takeInfo.team,"energy")
+    local afterM = Spring.GetTeamResources(takeInfo.team, "metal")
+    local afterU = Spring.GetTeamUnitCount(takeInfo.team)
+    local toSay = "say a: I took " .. takeInfo.name .. ". "
 
-	if afterE and afterM and afterU then
-		if afterE > 1.0 or afterM > 1.0 or  afterU > 0 then
-			toSay = toSay .. "Left  " .. math.floor(afterU) .. " units, " .. math.floor(afterE) .. " energy and " .. math.floor(afterM) .. " metal."
-		end
-	end
+    if afterE and afterM and afterU then
+        if afterE > 1.0 or afterM > 1.0 or  afterU > 0 then
+            toSay = toSay .. "Left  " .. math.floor(afterU) .. " units, " .. math.floor(afterE) .. " energy and " .. math.floor(afterM) .. " metal."
+        end
+    end
 
     Spring.SendCommands(toSay)
     takeInfo = nil

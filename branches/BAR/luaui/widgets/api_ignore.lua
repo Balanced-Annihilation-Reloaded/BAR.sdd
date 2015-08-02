@@ -1,12 +1,12 @@
 function widget:GetInfo()
-	return {
-	name      = "Ignore List API", --version 4.1
-	desc      = "Adds /ignoreplayer <name>, /unignoreplayer <name>, /ignorelist\n(puts ignoredPlayers table into WG)",
-	author    = "Bluestone",
-	date      = "June 2014", --last change September 10,2009
-	license   = "GNU GPL, v3 or later",
-	layer     = 0,
-	enabled   = true, --enabled by default
+    return {
+    name      = "Ignore List API", --version 4.1
+    desc      = "Adds /ignoreplayer <name>, /unignoreplayer <name>, /ignorelist\n(puts ignoredPlayers table into WG)",
+    author    = "Bluestone",
+    date      = "June 2014", --last change September 10,2009
+    license   = "GNU GPL, v3 or later",
+    layer     = 0,
+    enabled   = true, --enabled by default
     api       = true,
     }
 end
@@ -46,8 +46,8 @@ function colourPlayer(playerName)
         
         local _,_,spec,teamID = Spring.GetPlayerInfo(playerID)
         if spec then return specColStr end
-    	nameColourR,nameColourG,nameColourB,nameColourA = Spring.GetTeamColor(teamID)
-		R255 = math.floor(nameColourR*255)  --the first \255 is just a tag (not colour setting) no part can end with a zero due to engine limitation (C)
+        nameColourR,nameColourG,nameColourB,nameColourA = Spring.GetTeamColor(teamID)
+        R255 = math.floor(nameColourR*255)  --the first \255 is just a tag (not colour setting) no part can end with a zero due to engine limitation (C)
         G255 = math.floor(nameColourG*255)
         B255 = math.floor(nameColourB*255)
         if ( R255%10 == 0) then
@@ -59,28 +59,28 @@ function colourPlayer(playerName)
         if ( B255%10 == 0) then
                 B255 = B255+1
         end
-	return "\255"..string.char(R255)..string.char(G255)..string.char(B255) --works thanks to zwzsg
+    return "\255"..string.char(R255)..string.char(G255)..string.char(B255) --works thanks to zwzsg
 end 
 
 --ignore--
 function widget:TextCommand(s)     
      local token = {}
-	 local n = 0
-	 --for w in string.gmatch(s, "%a+") do
-	 for w in string.gmatch(s, "%S+") do
-		n = n +1
-		token[n] = w		
+     local n = 0
+     --for w in string.gmatch(s, "%a+") do
+     for w in string.gmatch(s, "%S+") do
+        n = n +1
+        token[n] = w        
      end
-	 
-	--for i = 1,n do Spring.Echo (token[i]) end
-	 
-	 if (token[1] == "ignoreplayer" or token[1] == "ignoreplayers") then
-		 for i = 2,n do
-			IgnorePlayer(token[i])
-		end
-	end
-	
-	if (token[1] == "unignoreplayer" or token[1] == "unignoreplayers") then
+     
+    --for i = 1,n do Spring.Echo (token[i]) end
+     
+     if (token[1] == "ignoreplayer" or token[1] == "ignoreplayers") then
+         for i = 2,n do
+            IgnorePlayer(token[i])
+        end
+    end
+    
+    if (token[1] == "unignoreplayer" or token[1] == "unignoreplayers") then
         if n==1 then
             UnignoreAll() 
         else
@@ -101,7 +101,7 @@ function widget:TextCommand(s)
         end
     end
         
-	if (token[1] == "ignorelist") then
+    if (token[1] == "ignorelist") then
         ignoreList()
     end
 end
@@ -128,13 +128,13 @@ function IgnorePlayer (playerName)
         return
     end
     
-	ignoredPlayers[playerName] = true
+    ignoredPlayers[playerName] = true
     WG.ignoredPlayers = ignoredPlayers
     Spring.Echo ("Ignored " .. colourPlayer(playerName) .. playerName)
 end
 
 function UnignorePlayer (playerName)
-	ignoredPlayers[playerName] = nil
+    ignoredPlayers[playerName] = nil
     WG.ignoredPlayers = ignoredPlayers
     Spring.Echo("Un-ignored " .. colourPlayer(playerName) .. playerName)
 end
@@ -156,7 +156,7 @@ function UnignoreAll ()
         Spring.Echo("No players to unignore")
     end
 
-	ignoredPlayers = {}
+    ignoredPlayers = {}
     WG.ignoredPlayers = ignoredPlayers    
 end
 
@@ -169,7 +169,7 @@ function widget:MapDrawCmd(playerID, cmdType, startx, starty, startz, a, b, c)
 end
 
 function widget:GetConfigData()
-	return ignoredPlayers
+    return ignoredPlayers
 end
 
 function widget:SetConfigData(data)

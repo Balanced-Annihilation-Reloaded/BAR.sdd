@@ -68,7 +68,7 @@ function widget:Initialize()
   end
   
   if (tonumber(Spring.GetModOptions().mo_preventcombomb) or 0) ~= 0 then
-	message2 = "Commanders survive DGuns and commander explosions"
+    message2 = "Commanders survive DGuns and commander explosions"
   end
   
   if (tonumber(Spring.GetModOptions().mo_armageddontime) or -1) > 0 then
@@ -79,7 +79,7 @@ function widget:Initialize()
     message3 = "Armageddon at " .. Spring.GetModOptions().mo_armageddontime .. " minute" .. plural
   end
 end
-	
+    
 
 
 function widget:DrawScreen()
@@ -89,7 +89,7 @@ function widget:DrawScreen()
   
   local timer = widgetHandler:GetHourTimer()
   local colorStr = WhiteStr
- 		
+         
   local msg = colorStr .. string.format("%s %s", "Gametype: ",  message)
   local msg2 = colorStr .. message2
   local msg3 = "\255\255\0\0" .. message3

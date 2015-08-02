@@ -1,13 +1,13 @@
 function gadget:GetInfo()
-	return {
-		name     = "Don't target flyover nukes",
-		desc     = "bla",
-		author	 = "ashdnazg + [teh]decay",
-		date     = "Too late",
-		license	 = "GNU GPL, v2 or later",
-		layer    = 0,
-		enabled  = true
-	}
+    return {
+        name     = "Don't target flyover nukes",
+        desc     = "bla",
+        author     = "ashdnazg + [teh]decay",
+        date     = "Too late",
+        license     = "GNU GPL, v2 or later",
+        layer    = 0,
+        enabled  = true
+    }
 end
 
 
@@ -17,18 +17,18 @@ end
 --------------------------------------------------------------------------------
 
 if (not gadgetHandler:IsSyncedCode()) then
-	return false	--	no unsynced code
+    return false    --    no unsynced code
 end
 
 local interceptors = {}
 
 function gadget:AllowWeaponInterceptTarget(interceptorUnitID, interceptorWeaponID, targetProjectileID)
-	local ud = UnitDefs[Spring.GetUnitDefID(interceptorUnitID)]
-	local wd = WeaponDefs[ud.weapons[interceptorWeaponID + 1].weaponDef]
-	local ox, _, oz = Spring.GetUnitPosition(interceptorUnitID)
+    local ud = UnitDefs[Spring.GetUnitDefID(interceptorUnitID)]
+    local wd = WeaponDefs[ud.weapons[interceptorWeaponID + 1].weaponDef]
+    local ox, _, oz = Spring.GetUnitPosition(interceptorUnitID)
 
     --Spring.GetProjectileTarget( number projectileID ) -> nil | [number targetTypeInt, number targetID | table targetPos = {x, y, z}]
-	local targetType, targetID = Spring.GetProjectileTarget(targetProjectileID)
+    local targetType, targetID = Spring.GetProjectileTarget(targetProjectileID)
 
     if targetType then
         local tx, ty, tz;
@@ -49,9 +49,9 @@ end
 
 
 function gadget:Initialize()
-	for wdid, wd in pairs(WeaponDefs) do
-		if wd.interceptor > 0 and wd.coverageRange then
-			Script.SetWatchWeapon(wdid, true)
-		end
-	end
+    for wdid, wd in pairs(WeaponDefs) do
+        if wd.interceptor > 0 and wd.coverageRange then
+            Script.SetWatchWeapon(wdid, true)
+        end
+    end
 end

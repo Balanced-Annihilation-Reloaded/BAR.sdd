@@ -42,10 +42,10 @@ local hadArmageddon = false
 
 local gaiaTeamID = Spring.GetGaiaTeamID()
  
-local spGetUnitDefID 	= Spring.GetUnitDefID
-local spValidUnitID		= Spring.ValidUnitID
-local spDestroyUnit		= Spring.DestroyUnit 
-local spGetGameFrame	= Spring.GetGameFrame
+local spGetUnitDefID     = Spring.GetUnitDefID
+local spValidUnitID        = Spring.ValidUnitID
+local spDestroyUnit        = Spring.DestroyUnit 
+local spGetGameFrame    = Spring.GetGameFrame
 
 local numX = Game.mapX-1
 local numZ = Game.mapY-1
@@ -67,9 +67,9 @@ end
 end
 
 function RandomCoordInSquare(sx,sz)
-	local x = 512 * sx + math.random(512)
-	local z = 512 * sz + math.random(512)
-	return x,z
+    local x = 512 * sx + math.random(512)
+    local z = 512 * sz + math.random(512)
+    return x,z
 end
  
 function FireMeteor()
@@ -112,33 +112,33 @@ function FireMeteor()
 end 
  
 function gadget:GameFrame(n)
-	-- cause the armageddon; kill everything immobile
+    -- cause the armageddon; kill everything immobile
     if n == armageddonFrame - 1 then
-		isArmageddon = true
-		hadArmageddon = true
+        isArmageddon = true
+        hadArmageddon = true
         local allUnits = Spring.GetAllUnits()
         local unitID,unitDefID
-		for i = 1, #allUnits do
-			unitID = allUnits[i]
-			unitDefID = spGetUnitDefID(unitID)
-			if UnitDefs[unitDefID].isImmobile then
-				toKillUnits[#toKillUnits+1] = unitID
-				toKillFrame[#toKillFrame+1] = armageddonFrame + math.floor(armageddonDuration * 30 * math.random())
-			end
+        for i = 1, #allUnits do
+            unitID = allUnits[i]
+            unitDefID = spGetUnitDefID(unitID)
+            if UnitDefs[unitDefID].isImmobile then
+                toKillUnits[#toKillUnits+1] = unitID
+                toKillFrame[#toKillFrame+1] = armageddonFrame + math.floor(armageddonDuration * 30 * math.random())
+            end
         end
     elseif n >= armageddonFrame and n <= armageddonFrame + armageddonDuration * 30 + 1 then
         -- explode immobile units
-		for i = 1, #toKillUnits do
-			if n == toKillFrame[i] then
-				if spValidUnitID(toKillUnits[i]) then
-					spDestroyUnit(toKillUnits[i],true) --boom!
-				end
-			end
+        for i = 1, #toKillUnits do
+            if n == toKillFrame[i] then
+                if spValidUnitID(toKillUnits[i]) then
+                    spDestroyUnit(toKillUnits[i],true) --boom!
+                end
+            end
         end  
-	elseif n == armageddonFrame + (armageddonDuration + 1) * 30 then
-		isArmageddon = false
-	end
-	
+    elseif n == armageddonFrame + (armageddonDuration + 1) * 30 then
+        isArmageddon = false
+    end
+    
     -- meteor shower 
     if n>=armageddonFrame then
         if n==argmageddonFrame then
@@ -168,19 +168,19 @@ function gadget:GameFrame(n)
         nextStrike = nextStrike + 5 * math.random(25) --about twice every second
     end
     
-	-- kill anything that is created (as instructed by UnitFinished)
-	if toKill[n] then
-		for i=1,#(toKill[n]) do
-			if spValidUnitID(toKill[n][i]) then
-				spDestroyUnit(toKill[n][i],true)
-			end
-		end
-		toKill[n] = nil
-	end
+    -- kill anything that is created (as instructed by UnitFinished)
+    if toKill[n] then
+        for i=1,#(toKill[n]) do
+            if spValidUnitID(toKill[n][i]) then
+                spDestroyUnit(toKill[n][i],true)
+            end
+        end
+        toKill[n] = nil
+    end
 end
 
 function gadget:UnitPreDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, weaponDefID, projectileID, attackerID, attackerDefID, attackerTeam)
-	if isArmageddon then
+    if isArmageddon then
         --coms must survive & need protecting until the explosions are over
         if UnitDefs[unitDefID].customParams.iscommander == "1" then 
             local h, mh = Spring.GetUnitHealth(unitID)
@@ -201,12 +201,12 @@ end
 
 
 function gadget:UnitFinished(unitID, unitDefID, teamID, builderID)
-	if hadArmageddon and unitDefID~=meteorDefID then
-		local n = spGetGameFrame()
-		if not toKill[n+1] then toKill[n+1] = {} end
-		local k = #(toKill[n+1])+1
-		toKill[n+1][k] = unitID --destroying units on the same simframe as they are created is a bad idea 
-	end
+    if hadArmageddon and unitDefID~=meteorDefID then
+        local n = spGetGameFrame()
+        if not toKill[n+1] then toKill[n+1] = {} end
+        local k = #(toKill[n+1])+1
+        toKill[n+1][k] = unitID --destroying units on the same simframe as they are created is a bad idea 
+    end
 end
 
 function gadget:UnitCreated(unitID, unitDefID, teamID, builderID)
@@ -219,8 +219,8 @@ function gadget:UnitCreated(unitID, unitDefID, teamID, builderID)
         toKill[n+3*30+2][k] = unitID --just to make sure, although its own explosion should kill it on the frame before
         
         Spring.SetUnitNoDraw(unitID, true)
-		Spring.SetUnitStealth(unitID, true)
-		Spring.SetUnitSonarStealth(unitID, true)
+        Spring.SetUnitStealth(unitID, true)
+        Spring.SetUnitSonarStealth(unitID, true)
         Spring.SetUnitNeutral(unitID, true)
     end
 end

@@ -1,14 +1,14 @@
 
 function gadget:GetInfo()
-	return {
-		name	= 'Arm Atlas Loader',
-		desc	= 'Forces the arm atlas to be loaded',
-		author	= 'Bluestone',
-		date	= '',
-		license	= 'GNU GPL v3',
-		layer	= 0, 
-		enabled	= true,
-	}
+    return {
+        name    = 'Arm Atlas Loader',
+        desc    = 'Forces the arm atlas to be loaded',
+        author    = 'Bluestone',
+        date    = '',
+        license    = 'GNU GPL v3',
+        layer    = 0, 
+        enabled    = true,
+    }
 end
 
 -- this is a bit of a hack!

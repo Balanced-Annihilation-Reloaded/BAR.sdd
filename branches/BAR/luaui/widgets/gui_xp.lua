@@ -171,7 +171,7 @@ function widget:UnitExperience(unitID,unitDefID,unitTeam, xp, oldXP)
 
   if (rank~=oldRank) then
     unitHeights[unitID] = ud.height + iconoffset
-	if not PWUnits[unitID] then
+    if not PWUnits[unitID] then
       for i=0,rank-1 do ranks[i][unitID] = nil end
       ranks[rank][unitID] = true
     else

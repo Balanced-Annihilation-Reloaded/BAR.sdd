@@ -1,14 +1,14 @@
 
 function widget:GetInfo()
-	return {
-		name      = "LOS View",
-		desc      = "Turns LOS view on while the game is in progress",
-		author    = "Bluestone",
-		date      = "",
-		license   = "Round Objects",
-		layer     = 0,
-		enabled   = true
-	}
+    return {
+        name      = "LOS View",
+        desc      = "Turns LOS view on while the game is in progress",
+        author    = "Bluestone",
+        date      = "",
+        license   = "Round Objects",
+        layer     = 0,
+        enabled   = true
+    }
 end
 
 function TurnOnLOS()

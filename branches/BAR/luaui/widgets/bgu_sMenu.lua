@@ -839,6 +839,7 @@ function GameFrame()
             updateRequired = true
             activeSelUDID = uDID
             activeSelCmdID = nil
+            selectTab(menuTab[getMenuCat(UnitDefs[uDID])])
         end
     elseif cmdID then
         -- looking to give this cmdID
@@ -846,7 +847,6 @@ function GameFrame()
             updateRequired = true
             activeSelUDID = nil
             activeSelCmdID = cmdID
-            selectTab(menuTab[getMenuCat(uDID)])
         end
     else
         -- no active commands

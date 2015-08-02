@@ -784,9 +784,9 @@ local function createInterfaceTab()
 
 			comboBox{name='Skin',y=90, width='45%',
 				labels=Chili.SkinHandler.GetAvailableSkins()},
-			--[[comboBox{name='Cursor',y=125, width='45%',
+			comboBox{name='Cursor',y=125, width='45%',
 				labels={'Chili Default','Chili Static','Spring Default','CA Classic','CA Static','Erom','Masse','K_haos_girl'},
-				options={'zk','zk_static','ba','ca','ca_static','erom','masse','k_haos_girl'}},]]
+				options={'zk','zk_static','ba','ca','ca_static','erom','masse','k_haos_girl'}},
 			Chili.Label:New{caption='-- Widget Settings --',x='2%',width='46%',align = 'center',y=175},
 			addStack{y=190,x='2%',width='46%',scroll=true},
 		}

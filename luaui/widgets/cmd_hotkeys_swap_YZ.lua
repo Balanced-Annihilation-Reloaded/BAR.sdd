@@ -1,29 +1,29 @@
 function widget:GetInfo()
 	return {
-		name = "BA Hotkeys -- swap YZ",
-		desc = "Swaps Y and Z in BA Hotkeys widget" ,
-		author = "Beherith",
-		date = "23 march 2012",
+		name = "Hotkeys -- swap Y and Z",
+		desc = "Swaps Y and Z keys in hotkeys widget (useful for AZERTY keyboards)" ,
+		author = "Beherith, Bluestone",
+		date = "",
 		license = "GNU LGPL, v2.1 or later",
-		layer = 100, --should load AFTER BA hotkeys
+		layer = 0,
 		enabled = false
 	}
 end
 
 function widget:Initialize()
-    if WG.Reload_BA_Hotkeys then
+    if WG.SetYZState then
         WG.swapYZbinds = true
-        WG.Reload_BA_Hotkeys()
+        WG.SetYZState()
     else
-        Spring.Echo("BA Hotkeys widget not found, cannot swap YZ")
+        Spring.Echo("Hotkeys widget not found, cannot swap YZ")
         widgetHandler:RemoveWidget(self)
     end
 end
 
 function widget:Shutdown()
     WG.swapYZbinds = nil
-    if WG.Reload_BA_Hotkeys then
-        WG.Reload_BA_Hotkeys()
+    if WG.SetYZState then
+        WG.SetYZState()
     else
         Spring.Echo("BA Hotkeys widget not found, cannot swap YZ")
     end

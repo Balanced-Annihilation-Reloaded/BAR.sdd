@@ -40,8 +40,8 @@ local function SetMMRulesParams()
     end
 end
 
-local frameRate = 32
-local resourceRefreshRate = 16 -- In Frames
+local frameRate = 30
+local resourceRefreshRate = 15 -- In Frames
 local resourceFraction = resourceRefreshRate / frameRate
 local resourceUpdatesPerGameSec = frameRate / resourceRefreshRate
 
@@ -328,6 +328,9 @@ end
 function gadget:UnitFinished(uID, uDefID, uTeam)
     local cDefs = convertCapacities[uDefID]
     if cDefs then
+        if not teamMMList[uTeam][cDefs.e][uID] then 
+	    teamMMList[uTeam][cDefs.e][uID] = {capacity = 0, status = 0, built = false, emped = false, damaged = false}
+        end
         teamMMList[uTeam][cDefs.e][uID].capacity = cDefs.c
         teamMMList[uTeam][cDefs.e][uID].built = true
         if not teamMMList[uTeam][cDefs.e][uID].emped then

@@ -1,14 +1,14 @@
 
 function widget:GetInfo()
-	return {
-		name = "Hotkeys",
-		desc = "Sets up many hotkeys" ,
-		author = "Bluestone", --incorporates Context Build widget by BD and Dizekat
-		date = "30 July 2009",
-		license = "GNU LGPL, v2.1 or later",
-		layer = 0,
-		enabled = true
-	}
+    return {
+        name = "Hotkeys",
+        desc = "Sets up many hotkeys" ,
+        author = "Bluestone", --incorporates Context Build widget by BD and Dizekat
+        date = "30 July 2009",
+        license = "GNU LGPL, v2.1 or later",
+        layer = 0,
+        enabled = true
+    }
 end
 
 local waterLandPairsHuman = {
@@ -51,8 +51,8 @@ local waterLandPairsHuman = {
 
 local binds = {
     -- buildspacing
-	"bind any+b buildspacing inc",
-	"bind any+n buildspacing dec",
+    "bind any+b buildspacing inc",
+    "bind any+n buildspacing dec",
     
     -- numpad movement
     "bind numpad2 moveback",
@@ -64,13 +64,13 @@ local binds = {
     "bind numpad1 movefast",
     
     -- chat/fullscreen keys
-	"bind Alt+backspace  fullscreen",
-	"bind Alt+enter  chatally",
-	"bind Alt+enter  chatswitchally",
-	"bind Ctrl+enter  chatall",
-	"bind Ctrl+enter  chatswitchall",
-	"bind Shift+enter  chatspec",
-	"bind Shift+enter  chatswitchspec",
+    "bind Alt+backspace  fullscreen",
+    "bind Alt+enter  chatally",
+    "bind Alt+enter  chatswitchally",
+    "bind Ctrl+enter  chatall",
+    "bind Ctrl+enter  chatswitchall",
+    "bind Shift+enter  chatspec",
+    "bind Shift+enter  chatswitchspec",
     
     -- settarget
     -- "bind y settarget", -- see SetYZState()
@@ -78,24 +78,24 @@ local binds = {
     
     "bind q drawinmap", --some keyboards don't have ` or \
 
-    "bind ,	buildfacing inc", --because some keyboards don't have [ and ] keys
-    "bind .	buildfacing dec",
+    "bind ,    buildfacing inc", --because some keyboards don't have [ and ] keys
+    "bind .    buildfacing dec",
     "bind o buildfacing inc", --apparently some keyboards don't have , and . either...
 }
     
 local unbinds={
     -- unwanted default bindings
-	"bind any+c controlunit",
-	"bind c controlunit",
-	"bind Any+x  buildspacing dec",
-	"bind x  buildspacing dec",
-	"bindaction buildspacing dec",
-	"bind any+z buildspacing inc",
-	"bind z buildspacing inc",
-	"bindaction buildspacing inc",
+    "bind any+c controlunit",
+    "bind c controlunit",
+    "bind Any+x  buildspacing dec",
+    "bind x  buildspacing dec",
+    "bindaction buildspacing dec",
+    "bind any+z buildspacing inc",
+    "bind z buildspacing inc",
+    "bindaction buildspacing inc",
     "bind , prevmenu",
     "bind . nextmenu",
-	"bind Alt+enter fullscreen",
+    "bind Alt+enter fullscreen",
 }
 
 include('keysym.h.lua')
@@ -104,13 +104,13 @@ local X_KEY = KEYSYMS.X
 local C_KEY = KEYSYMS.C
 local V_KEY = KEYSYMS.V
 
-local TestBuildOrder		= Spring.TestBuildOrder
-local GetActiveCommand		= Spring.GetActiveCommand
-local SetActiveCommand		= Spring.SetActiveCommand
-local GetMouseState			= Spring.GetMouseState
-local TraceScreenRay		= Spring.TraceScreenRay
-local TestBuildOrder		= Spring.TestBuildOrder
-local GetFPS				= Spring.GetFPS
+local TestBuildOrder        = Spring.TestBuildOrder
+local GetActiveCommand        = Spring.GetActiveCommand
+local SetActiveCommand        = Spring.SetActiveCommand
+local GetMouseState            = Spring.GetMouseState
+local TraceScreenRay        = Spring.TraceScreenRay
+local TestBuildOrder        = Spring.TestBuildOrder
+local GetFPS                = Spring.GetFPS
 
 local alternative_units = {}-- unit def id --> list of alternative unit def ids
 local updateRate = 1/3 -- in seconds
@@ -119,22 +119,22 @@ local timeCounter = 0
 local waterLandPairs = {}
 
 function SetBinds()
-	for k,v in ipairs(unbinds) do
-		Spring.SendCommands("un"..v)
-	end
-	for k,v in ipairs(binds) do
-		Spring.SendCommands(v)
-	end
+    for k,v in ipairs(unbinds) do
+        Spring.SendCommands("un"..v)
+    end
+    for k,v in ipairs(binds) do
+        Spring.SendCommands(v)
+    end
     SetYZState()
 end
 
 function SetUnBinds()
     for k,v in ipairs(binds) do
-		Spring.SendCommands("un"..v)
-	end
-	for k,v in ipairs(unbinds) do
-		Spring.SendCommands(v)
-	end
+        Spring.SendCommands("un"..v)
+    end
+    for k,v in ipairs(unbinds) do
+        Spring.SendCommands(v)
+    end
     Spring.SendCommands("unbind y settarget")
     Spring.SendCommands("unbind z settarget")
 end
@@ -200,8 +200,8 @@ function AdvanceToNextBuildable(t, cmdID)
         local cmdList = Spring.GetUnitCmdDescs(unitID)
         for i = 1, #cmdList do
             local cmd = cmdList[i]
-			if UnitDefNames[cmd.name] then
-				local uDID = UnitDefNames[cmd.name].id
+            if UnitDefNames[cmd.name] then
+                local uDID = UnitDefNames[cmd.name].id
                 canBuild[uDID] = true
             end
         end
@@ -223,25 +223,25 @@ end
 
 function CheckContextBuild(uDID)
     -- check if we can build uDID in current context, return uDID if it is, return its pairedID if that is, return nil otherwise
-	local mx, my = GetMouseState()
-	local _, coords = TraceScreenRay(mx, my, true, true)
-	if (not coords) then
-		return uDID
-	end
+    local mx, my = GetMouseState()
+    local _, coords = TraceScreenRay(mx, my, true, true)
+    if (not coords) then
+        return uDID
+    end
     if coords[1]<0 or coords[1]>Game.mapSizeX or coords[3]<0 or coords[3]>Game.mapSizeZ then
         return uDID
     end
 
-	if TestBuildOrder(uDID, coords[1], coords[2], coords[3], 1) == 0 then
-		if waterLandPairs[uDID] then 
+    if TestBuildOrder(uDID, coords[1], coords[2], coords[3], 1) == 0 then
+        if waterLandPairs[uDID] then 
             local pairedID = waterLandPairs[uDID]
-			if TestBuildOrder(pairedID, coords[1], coords[2], coords[3], 1) ~= 0 then
+            if TestBuildOrder(pairedID, coords[1], coords[2], coords[3], 1) ~= 0 then
                 --Spring.Echo("paired", uDID, pairedID)
                 return pairedID
-			end
-		end
+            end
+        end
         return nil
-	end
+    end
     return uDID
 end
 
@@ -323,23 +323,23 @@ end
 
 function widget:Update(deltaTime)
     -- swap water-land pairs due to context, if it helps
-	timeCounter = timeCounter + deltaTime
-	if timeCounter >= updateRate then -- update only x times per second
-		timeCounter = 0
-	else
-		return
-	end
+    timeCounter = timeCounter + deltaTime
+    if timeCounter >= updateRate then -- update only x times per second
+        timeCounter = 0
+    else
+        return
+    end
 
-	local _, cmd_id = GetActiveCommand()
-	if (not cmd_id) or (cmd_id>=0) then
-		return
-	end
+    local _, cmd_id = GetActiveCommand()
+    if (not cmd_id) or (cmd_id>=0) then
+        return
+    end
     
-	local unitDefID = -cmd_id
+    local unitDefID = -cmd_id
     local pairedID = CheckContextBuild(unitDefID)
     if pairedID and unitDefID ~= pairedID then
         SetActiveCommand('buildunit_'..UnitDefs[pairedID].name) 
-	end
+    end
 end
 
 function widget:ShutDown()

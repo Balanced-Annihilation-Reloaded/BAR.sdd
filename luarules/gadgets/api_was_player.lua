@@ -1,13 +1,13 @@
 function gadget:GetInfo()
-	return {
-		name      = "Was Player",
-		desc      = "Sets gamerulesparams to record if a playerID was ever actually a player",
-		author    = "Bluestone", 
-		date      = "July 2014",
-		license   = "GNU GPL, v3 or later",
-		layer     = 0,
-		enabled   = true,  
-	}
+    return {
+        name      = "Was Player",
+        desc      = "Sets gamerulesparams to record if a playerID was ever actually a player",
+        author    = "Bluestone", 
+        date      = "July 2014",
+        license   = "GNU GPL, v3 or later",
+        layer     = 0,
+        enabled   = true,  
+    }
 end
 
 if not gadgetHandler:IsSyncedCode() then return false end

@@ -93,13 +93,13 @@ function determine(ud, wd)
         mexDef.extractsMetal = extractsMetal 
         if #unitDef.weapons <= 1 then
           if (#unitDef.weapons == 1 and wd[unitDef.weapons[1].weaponDef].isShield) then
-	    mexDef.armed = #unitDef.weapons < 0
+        mexDef.armed = #unitDef.weapons < 0
           else
             mexDef.armed = #unitDef.weapons > 0      
           end
-        else	
+        else    
           mexDef.armed = #unitDef.weapons > 0
-	end	
+    end    
         mexDef.stealth = unitDef.stealth 
         mexDef.water = unitDef.minWaterDepth >= 0        
         mexDefs[unitDefID] = mexDef 
@@ -335,8 +335,8 @@ function unregisterUnit(unitID, unitDefID, unitTeam, destroyed)
         mexes[unitTeam][builder.targetMex].assignedBuilder = nil
       end
       if mex then
-		assignClosestBuilder(builder.targetMex, mex, unitTeam) 
-	  end
+        assignClosestBuilder(builder.targetMex, mex, unitTeam) 
+      end
     end 
     
     builders[unitTeam][unitID] = nil 
@@ -466,7 +466,7 @@ function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, _)
     return false 
   elseif cmdID ~= CMD_AUTOMEX then 
     if builder and builder.targetMex and ValidUnitID(builder.targetMex) and (not GetUnitIsDead(builder.targetMex)) and (getUnitPhase(unitID, teamID) == RECLAIMING) then 
-	  mexes[teamID][builder.targetMex].assignedBuilder = nil 
+      mexes[teamID][builder.targetMex].assignedBuilder = nil 
     end 
     return true 
   end 
@@ -566,21 +566,21 @@ end
 function gadget:Initialize()
     Spring.AssignMouseCursor("upgmex", "cursorupgmex", false)
     
-	determine(UnitDefs, WeaponDefs)
+    determine(UnitDefs, WeaponDefs)
 
-	for k,v in pairs(builderDefs) do 
-		local upgradePairs = {} 
-		for k2,v2 in pairs(v) do 
-			upgradePairs[k2] = v2 
-		end 
-		bDefs[k] = upgradePairs 
-	end
+    for k,v in pairs(builderDefs) do 
+        local upgradePairs = {} 
+        for k2,v2 in pairs(v) do 
+            upgradePairs[k2] = v2 
+        end 
+        bDefs[k] = upgradePairs 
+    end
 
-	gadgetHandler:AddChatAction("registerUpgradePairs", RegisterUpgradePairs, "toggles registerUpgradePairs setting")
+    gadgetHandler:AddChatAction("registerUpgradePairs", RegisterUpgradePairs, "toggles registerUpgradePairs setting")
 end
 
 function gadget:Shutdown()
-	gadgetHandler:RemoveChatAction("registerUpgradePairs")
+    gadgetHandler:RemoveChatAction("registerUpgradePairs")
 end
 
 end

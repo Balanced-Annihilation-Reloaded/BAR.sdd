@@ -1,14 +1,14 @@
 -- WIP
 function widget:GetInfo()
-	return {
-		name    = 'Resource Bars',
-		desc    = 'Displays resource and resource sharing bars',
-		author  = 'Funkencool',
-		date    = '2013',
-		license = 'GNU GPL v2',
+    return {
+        name    = 'Resource Bars',
+        desc    = 'Displays resource and resource sharing bars',
+        author  = 'Funkencool',
+        date    = '2013',
+        license = 'GNU GPL v2',
         layer = 0,
-		enabled = true,
-	}
+        enabled = true,
+    }
 end
 -------------------------------------------
 -- Chili vars
@@ -21,9 +21,9 @@ local spGetTeamResources = Spring.GetTeamResources
 local spGetMyTeamID      = Spring.GetMyTeamID
 
 local image = {
-	metal  = 'luaui/images/resourcebars/Ibeam.png',
-	energy = 'luaui/images/resourcebars/lightning.png',
-	}
+    metal  = 'luaui/images/resourcebars/Ibeam.png',
+    energy = 'luaui/images/resourcebars/lightning.png',
+    }
 local conversionPic  = "LuaUI/Images/EMconversion.png"
 
 local meter        = {}
@@ -48,23 +48,23 @@ function format(num, idp)
   return string.format("%." .. (idp or 0) .. "f", num)
 end
 local function readable(num)
-	local s = ""
-	if num < 0 then
-		s = '-'
-	else
-		s = '+'
-	end
-	num = math.abs(num)
-	if num < 10 then
-		s = s .. format(num,1)
-	elseif num >10000 then
-		s = s .. format(num/1000,0)..'K'
-	elseif num >1000 then
-		s = s .. format(num/1000,1)..'K'
-	else
-		s = s .. format(num,0)
-	end
-	return s
+    local s = ""
+    if num < 0 then
+        s = '-'
+    else
+        s = '+'
+    end
+    num = math.abs(num)
+    if num < 10 then
+        s = s .. format(num,1)
+    elseif num >10000 then
+        s = s .. format(num/1000,0)..'K'
+    elseif num >1000 then
+        s = s .. format(num/1000,1)..'K'
+    else
+        s = s .. format(num,0)
+    end
+    return s
 end
 -------------------------------------------
 -- Main
@@ -83,87 +83,87 @@ local function ToggleConversionPanel()
 end
 
 local function initWindow()
-	local screen0 = Chili.Screen0
-	
-	window0 = Chili.Panel:New{
-		parent    = screen0,
-		right     = 0, 
-		y         = 0, 
-		width     = 450, 
-		height    = 60, 
-		minHeight = 20, 
-		padding   = {0,0,0,0},
-	}
+    local screen0 = Chili.Screen0
+    
+    window0 = Chili.Panel:New{
+        parent    = screen0,
+        right     = 0, 
+        y         = 0, 
+        width     = 450, 
+        height    = 60, 
+        minHeight = 20, 
+        padding   = {0,0,0,0},
+    }
 
 end
 
 local function makeBar(res, barX, barY)
-	
-	local control = Chili.Control:New{
-		parent    = window0,
-		name      = res,
-		x         = barX,
-		y         = barY,
-		height    = 30,
-		minHeight = 20, 
-		width     = 420,
-		padding   = {0,0,0,0},
-	}
-	
-	meter[res] = Chili.Progressbar:New{
-		parent = control, 
-		x      = 110, 
-		height = 20, 
-		bottom = 5, 
-		right  = 0,
-	}
-	
-	Chili.Image:New{
-		file   = image[res],
-		height = 24,
-		width  = 24,
-		x      = 86, 
-		y      = 3, 
-		parent = control
-	}
-	
-	netLabel[res] = Chili.Label:New{
-		caption = "",
-		right   = 380,
+    
+    local control = Chili.Control:New{
+        parent    = window0,
+        name      = res,
+        x         = barX,
+        y         = barY,
+        height    = 30,
+        minHeight = 20, 
+        width     = 420,
+        padding   = {0,0,0,0},
+    }
+    
+    meter[res] = Chili.Progressbar:New{
+        parent = control, 
+        x      = 110, 
+        height = 20, 
+        bottom = 5, 
+        right  = 0,
+    }
+    
+    Chili.Image:New{
+        file   = image[res],
+        height = 24,
+        width  = 24,
+        x      = 86, 
+        y      = 3, 
+        parent = control
+    }
+    
+    netLabel[res] = Chili.Label:New{
+        caption = "",
+        right   = 380,
         bottom  = 7,
-		parent  = control,
+        parent  = control,
         height  = 16,
         font    = {size = 15}
-	}
-	
-	incomeLabel[res] = Chili.Label:New{
-		caption  = '+0.0',
-		right    = 334, 
-		y        = 0,
-		parent   = control,
-		align    = 'right',
+    }
+    
+    incomeLabel[res] = Chili.Label:New{
+        caption  = '+0.0',
+        right    = 334, 
+        y        = 0,
+        parent   = control,
+        align    = 'right',
         height   = 14,
-		font     = {
-			size         = 13,
-			color        = green,
-			outlineColor = greenOutline,
-		},
-	}
+        font     = {
+            size         = 13,
+            color        = green,
+            outlineColor = greenOutline,
+        },
+    }
 
-	expenseLabel[res] = Chili.Label:New{
-		caption  = '-0.0',
-		right    = 334,
-		bottom   = 0,
-		parent   = control,
-		align    = 'right',
+    expenseLabel[res] = Chili.Label:New{
+        caption  = '-0.0',
+        right    = 334,
+        bottom   = 0,
+        parent   = control,
+        align    = 'right',
         height   = 14,
-		font     = {
-			size         = 13,
-			color        = red,
-			outlineColor = redOutline,
-		},
-	}
-	
+        font     = {
+            size         = 13,
+            color        = red,
+            outlineColor = redOutline,
+        },
+    }
+    
 end
 
 local function makeConversionPanel()
@@ -291,7 +291,7 @@ end
 
 -- Updates 
 local function setBar(res)
-	local currentLevel, storage, pull, income, expense, share = spGetTeamResources(myTeamID, res)
+    local currentLevel, storage, pull, income, expense, share = spGetTeamResources(myTeamID, res)
     
     -- set everything to 0 if nil (eg. we are a spec and not watching anyone)
     currentLevel = currentLevel or 0
@@ -302,24 +302,24 @@ local function setBar(res)
     share = share or 0
 
     
-	local net = income-expense
-	
-	-- if there is a net gain
-	if net > 0 then
-		netLabel[res].font.color = green
-		netLabel[res].font.outlineColor = greenOutline
-	-- if there is a net loss
-	else
-		netLabel[res].font.color = red
-		netLabel[res].font.outlineColor = redOutline
-	end
-	
-	netLabel[res]:SetCaption(readable(net))
-	incomeLabel[res]:SetCaption(readable(income))
-	expenseLabel[res]:SetCaption(readable(-pull))
-	
-	meter[res]:SetValue(currentLevel/storage*100)
-	meter[res]:SetCaption(math.floor(currentLevel)..'/'..storage)
+    local net = income-expense
+    
+    -- if there is a net gain
+    if net > 0 then
+        netLabel[res].font.color = green
+        netLabel[res].font.outlineColor = greenOutline
+    -- if there is a net loss
+    else
+        netLabel[res].font.color = red
+        netLabel[res].font.outlineColor = redOutline
+    end
+    
+    netLabel[res]:SetCaption(readable(net))
+    incomeLabel[res]:SetCaption(readable(income))
+    expenseLabel[res]:SetCaption(readable(-pull))
+    
+    meter[res]:SetValue(currentLevel/storage*100)
+    meter[res]:SetCaption(math.floor(currentLevel)..'/'..storage)
 end
 function SetBarColors()
     meter['metal']:SetColor(0.6,0.6,0.8,.8)
@@ -334,7 +334,7 @@ function widget:GameFrame(n)
 end
 
 function widget:CommandsChanged()
-	myTeamID = spGetMyTeamID()
+    myTeamID = spGetMyTeamID()
 end
 
 function SetValues()
@@ -345,11 +345,11 @@ function SetValues()
 end
 
 function widget:Initialize()
-	Spring.SendCommands('resbar 0')
-	Chili = WG.Chili
-	initWindow()
-	makeBar('metal',25,0)
-	makeBar('energy',25,30)
+    Spring.SendCommands('resbar 0')
+    Chili = WG.Chili
+    initWindow()
+    makeBar('metal',25,0)
+    makeBar('energy',25,30)
     makeConversionPanel()
     if Spring.GetGameFrame()>0 then
         SetBarColors()
@@ -373,7 +373,7 @@ function widget:GameStart()
 end
 
 function widget:Shutdown()
-	Spring.SendCommands('resbar 1')
+    Spring.SendCommands('resbar 1')
 end
 
 function widget:GetConfigData()

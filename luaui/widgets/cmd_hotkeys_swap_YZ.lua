@@ -1,13 +1,13 @@
 function widget:GetInfo()
-	return {
-		name = "Hotkeys -- swap Y and Z",
-		desc = "Swaps Y and Z keys in hotkeys widget (useful for AZERTY keyboards)" ,
-		author = "Beherith, Bluestone",
-		date = "",
-		license = "GNU LGPL, v2.1 or later",
-		layer = 0,
-		enabled = false
-	}
+    return {
+        name = "Hotkeys -- swap Y and Z",
+        desc = "Swaps Y and Z keys in hotkeys widget (useful for AZERTY keyboards)" ,
+        author = "Beherith, Bluestone",
+        date = "",
+        license = "GNU LGPL, v2.1 or later",
+        layer = 0,
+        enabled = false
+    }
 end
 
 function widget:Initialize()

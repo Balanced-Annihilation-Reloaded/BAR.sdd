@@ -14,42 +14,42 @@ function widget:GetInfo()
 end
 
 OPTIONS = {
-	shortcuts = {
-		intensityIncrease = 'Ctrl+]',
-		intensityDecrease = 'Ctrl+[',
-	},
-	quality = {
-		name = 'Quality',
-		type = 'number',
-		min = 1,
-		max = 30,
-		step = 1,
-		value = 5,
-	},
-	intensity = {
-		name = 'Intensity',
-		type = 'number',
-		min = 0.05,
-		max = 10.,
-		step = 0.05,
-		value = 0,
-	},
-	focusCurveExp = {
-		name = 'Non linear focused area',
-		type = 'number',
-		min = 1.,
-		max = 4.,
-		step = 0.1,
-		value = 2,
-	},
-	focusRangeMultiplier = {
-		name = 'Focus range multiplier',
-		type = 'number',
-		min = 0.1,
-		max = 3.0,
-		step = 0.1,
-		value = 0.2,
-	},
+    shortcuts = {
+        intensityIncrease = 'Ctrl+]',
+        intensityDecrease = 'Ctrl+[',
+    },
+    quality = {
+        name = 'Quality',
+        type = 'number',
+        min = 1,
+        max = 30,
+        step = 1,
+        value = 5,
+    },
+    intensity = {
+        name = 'Intensity',
+        type = 'number',
+        min = 0.05,
+        max = 10.,
+        step = 0.05,
+        value = 0,
+    },
+    focusCurveExp = {
+        name = 'Non linear focused area',
+        type = 'number',
+        min = 1.,
+        max = 4.,
+        step = 0.1,
+        value = 2,
+    },
+    focusRangeMultiplier = {
+        name = 'Focus range multiplier',
+        type = 'number',
+        min = 0.1,
+        max = 3.0,
+        step = 0.1,
+        value = 0.2,
+    },
 }
 
 --------------------------------------------------------------------------------
@@ -124,9 +124,9 @@ end
 function widget:GetConfigData()
   return {
     quality  = OPTIONS.quality.value,
-	intensity = OPTIONS.intensity.value,
-	focusCurveExp = OPTIONS.focusCurveExp.value,
-	focusRangeMultiplier = OPTIONS.focusRangeMultiplier.value,
+    intensity = OPTIONS.intensity.value,
+    focusCurveExp = OPTIONS.focusCurveExp.value,
+    focusRangeMultiplier = OPTIONS.focusRangeMultiplier.value,
   }
 end
 
@@ -174,10 +174,10 @@ end
 function dofIntensityIncrease()
   OPTIONS.intensity.value = OPTIONS.intensity.value + OPTIONS.intensity.step
   if (OPTIONS.intensity.value > OPTIONS.intensity.max) then
-  	 OPTIONS.intensity.value = OPTIONS.intensity.max
+       OPTIONS.intensity.value = OPTIONS.intensity.max
   end
   if OPTIONS.intensity.value >= OPTIONS.intensity.min and OPTIONS.intensity.value - OPTIONS.intensity.step <= OPTIONS.intensity.min then 
-	Spring.Echo("Depth of Field: enabled")
+    Spring.Echo("Depth of Field: enabled")
   end
   return true
 end
@@ -185,10 +185,10 @@ end
 function dofIntensityDecrease()
   OPTIONS.intensity.value = OPTIONS.intensity.value - OPTIONS.intensity.step
   if (OPTIONS.intensity.value < OPTIONS.intensity.min) then
-  	 OPTIONS.intensity.value = OPTIONS.intensity.min
+       OPTIONS.intensity.value = OPTIONS.intensity.min
   end
   if OPTIONS.intensity.value <= OPTIONS.intensity.min then 
-	Spring.Echo("Depth of Field: disabled")
+    Spring.Echo("Depth of Field: disabled")
   end
   return true
 end
@@ -196,7 +196,7 @@ end
 function dofQuality(cmd, line, words)
   OPTIONS.quality.value = tonumber(words[1])
   if (OPTIONS.quality.value > OPTIONS.quality.max) then
-  	 OPTIONS.quality.value = OPTIONS.quality.max
+       OPTIONS.quality.value = OPTIONS.quality.max
   end
   --Spring.Echo("Depth of Field: quality changed to: "..OPTIONS.quality.value)
   return true
@@ -268,38 +268,38 @@ function widget:Initialize()
   focusPtYLoc = gl.GetUniformLocation(dofShader,"focusPtY")  
   
   
-	local Chili = WG.Chili
-	local Menu = WG.MainMenu
-	if not Menu then return end
-	
-	Menu.AddOption{
-		tab      = 'Interface',
-		children = {
-			Chili.Label:New{caption='Depth of Field',x='0%',fontsize=18},
-			Chili.Label:New{caption='Intensity'},
-			Chili.Trackbar:New{
-				x        = '10%',
-				width    = '80%',
-				min      = OPTIONS.intensity.min,
-				max      = OPTIONS.intensity.max,
-				step     = OPTIONS.intensity.step,
-				value    = OPTIONS.intensity.value,
-				OnChange = {function(_,value) 
-					OPTIONS.intensity.value = value; 
-					OPTIONS.quality.value = 2 + math.floor(value*0.33)
-					--Spring.Echo(OPTIONS.quality.value)
-				end}
-			},
-			--[[Chili.Checkbox:New{
-				caption='Follow Cursor',x='10%',width='80%',
-				checked=OPTIONS.defaults.showUnitHighlightHealth,
-				setting=OPTIONS.defaults.showUnitHighlightHealth,
-				OnChange={function(_,value) OPTIONS.defaults.showUnitHighlightHealth = value;  OPTIONS[currentOption].showUnitHighlightHealth = value end}
-			},]]--
-			Chili.Line:New{width='100%'},
-		}
-	}
-	
+    local Chili = WG.Chili
+    local Menu = WG.MainMenu
+    if not Menu then return end
+    
+    Menu.AddOption{
+        tab      = 'Interface',
+        children = {
+            Chili.Label:New{caption='Depth of Field',x='0%',fontsize=18},
+            Chili.Label:New{caption='Intensity'},
+            Chili.Trackbar:New{
+                x        = '10%',
+                width    = '80%',
+                min      = OPTIONS.intensity.min,
+                max      = OPTIONS.intensity.max,
+                step     = OPTIONS.intensity.step,
+                value    = OPTIONS.intensity.value,
+                OnChange = {function(_,value) 
+                    OPTIONS.intensity.value = value; 
+                    OPTIONS.quality.value = 2 + math.floor(value*0.33)
+                    --Spring.Echo(OPTIONS.quality.value)
+                end}
+            },
+            --[[Chili.Checkbox:New{
+                caption='Follow Cursor',x='10%',width='80%',
+                checked=OPTIONS.defaults.showUnitHighlightHealth,
+                setting=OPTIONS.defaults.showUnitHighlightHealth,
+                OnChange={function(_,value) OPTIONS.defaults.showUnitHighlightHealth = value;  OPTIONS[currentOption].showUnitHighlightHealth = value end}
+            },]]--
+            Chili.Line:New{width='100%'},
+        }
+    }
+    
 end
 
 
@@ -348,14 +348,14 @@ function widget:DrawScreenEffects()
     gl.UseShader(dofShader)
       gl.Uniform(focusLoc,zfocus)
       gl.Uniform(focusRangeLoc,1/focusRange)
-	  gl.Uniform(viewXLoc,viewX)
-	  gl.Uniform(viewYLoc,viewY)
-	  gl.Uniform(qualityLoc,OPTIONS.quality.value)
-	  gl.Uniform(intensityLoc,OPTIONS.intensity.value)
-	  gl.Uniform(focusCurveExpLoc,OPTIONS.focusCurveExp.value)
-	  gl.Uniform(focusRangeMultiplierLoc,OPTIONS.focusRangeMultiplier.value)
-	  gl.Uniform(focusPtXLoc,mouseX/viewX)
-	  gl.Uniform(focusPtYLoc,mouseY/viewY)
+      gl.Uniform(viewXLoc,viewX)
+      gl.Uniform(viewYLoc,viewY)
+      gl.Uniform(qualityLoc,OPTIONS.quality.value)
+      gl.Uniform(intensityLoc,OPTIONS.intensity.value)
+      gl.Uniform(focusCurveExpLoc,OPTIONS.focusCurveExp.value)
+      gl.Uniform(focusRangeMultiplierLoc,OPTIONS.focusRangeMultiplier.value)
+      gl.Uniform(focusPtXLoc,mouseX/viewX)
+      gl.Uniform(focusPtYLoc,mouseY/viewY)
     gl.Texture(0,screencopy)
     gl.Texture(2,depthcopy)
     gl.TexRect(0,vsy,vsx,0)

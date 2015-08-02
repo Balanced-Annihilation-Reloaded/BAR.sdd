@@ -16,19 +16,19 @@ VFS.Include("LuaRules/Utilities/tablefunctions.lua")
 if (gadgetHandler:IsSyncedCode()) then
 
   local napalmWeapons = {
-	  ["corhurc_coradvbomb"] = true,
-	  ["armsb_arm_seaadvbomb"] = true,
-	  ["armraven_exp_heavyrocket"] = true,
-	  ["corkrog_corkrog_rocket"] = true,
+      ["corhurc_coradvbomb"] = true,
+      ["armsb_arm_seaadvbomb"] = true,
+      ["armraven_exp_heavyrocket"] = true,
+      ["corkrog_corkrog_rocket"] = true,
   }
-	for i=1,#WeaponDefs do
-		local wd = WeaponDefs[i]
-		if napalmWeapons[wd.name] then
-			Script.SetWatchWeapon(wd.id,true)
-			napalmWeapons[wd.id]=true 
-			napalmWeapons[wd.name]=nil
-		end
-	end
+    for i=1,#WeaponDefs do
+        local wd = WeaponDefs[i]
+        if napalmWeapons[wd.name] then
+            Script.SetWatchWeapon(wd.id,true)
+            napalmWeapons[wd.id]=true 
+            napalmWeapons[wd.name]=nil
+        end
+    end
   --// find napalms
   -- for i=1,#WeaponDefs do
     -- local wd = WeaponDefs[i]
@@ -69,12 +69,12 @@ else
   local SYNCED = SYNCED
 
   local function SpawnNapalmFX(data)
-	local nFXkey = WeaponDefs[data[1]].customParams and WeaponDefs[data[1]].customParams.lups_napalm_fx or "default"
-	local hFXkey = WeaponDefs[data[1]].customParams and WeaponDefs[data[1]].customParams.lups_heat_fx or "default"
-	
-	local nFX = napalmFX[nFXkey]
-	local hFX = heatFX[hFXkey]
-	
+    local nFXkey = WeaponDefs[data[1]].customParams and WeaponDefs[data[1]].customParams.lups_napalm_fx or "default"
+    local hFXkey = WeaponDefs[data[1]].customParams and WeaponDefs[data[1]].customParams.lups_heat_fx or "default"
+    
+    local nFX = napalmFX[nFXkey]
+    local hFX = heatFX[hFXkey]
+    
     nFX.pos = {data[2],data[3],data[4]}
     Lups.AddParticles('SimpleParticles2',nFX)
     hFX.pos = nFX.pos

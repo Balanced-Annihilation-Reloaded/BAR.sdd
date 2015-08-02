@@ -1,37 +1,37 @@
 
 function gadget:GetInfo()
-	return {
-		name      = 'Team Resourcing',
-		desc      = 'Sets up team resources',
-		author    = 'Niobium',
-		date      = 'May 2011',
-		license   = 'GNU GPL, v2 or later',
-		layer     = 0,
-		enabled   = true
-	}
+    return {
+        name      = 'Team Resourcing',
+        desc      = 'Sets up team resources',
+        author    = 'Niobium',
+        date      = 'May 2011',
+        license   = 'GNU GPL, v2 or later',
+        layer     = 0,
+        enabled   = true
+    }
 end
 
 ----------------------------------------------------------------
 -- Synced only
 ----------------------------------------------------------------
 if not gadgetHandler:IsSyncedCode() then
-	return false
+    return false
 end
 
 ----------------------------------------------------------------
 -- Callins
 ----------------------------------------------------------------
 function gadget:Initialize()
-	
-	local modOptions = Spring.GetModOptions() or {}
-	local startMetal  = tonumber(modOptions.startmetal)  or 1000
-	local startEnergy = tonumber(modOptions.startenergy) or 1000
-	local teamResources = true 
+    
+    local modOptions = Spring.GetModOptions() or {}
+    local startMetal  = tonumber(modOptions.startmetal)  or 1000
+    local startEnergy = tonumber(modOptions.startenergy) or 1000
+    local teamResources = true 
 
-	if ((modOptions.mo_storageowner) and (modOptions.mo_storageowner == "com")) then
+    if ((modOptions.mo_storageowner) and (modOptions.mo_storageowner == "com")) then
     teamResources = false
-	end
-	
+    end
+    
     if GG.coopMode then
         
         local teamPlayerCounts = {}
@@ -76,8 +76,8 @@ function gadget:Initialize()
 end
 
 function gadget:TeamDied(teamID)
-	Spring.SetTeamShareLevel(teamID, 'metal', 0)
-	Spring.SetTeamShareLevel(teamID, 'energy', 0)
+    Spring.SetTeamShareLevel(teamID, 'metal', 0)
+    Spring.SetTeamShareLevel(teamID, 'energy', 0)
 end
 
 

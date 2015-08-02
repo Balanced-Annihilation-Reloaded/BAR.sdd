@@ -11,7 +11,7 @@ function gadget:GetInfo()
 end
 
 if (gadgetHandler:IsSyncedCode()) then
-	return
+    return
 end
 
 local minEngineVersion = 99 -- major engine version as number

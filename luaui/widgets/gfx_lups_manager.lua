@@ -37,9 +37,9 @@ function to_string(data, indent)
 
     -- Check the type
     if(type(data) == "string") then
-        str = str .. ("	"):rep(indent) .. data .. "\n"
+        str = str .. ("    "):rep(indent) .. data .. "\n"
     elseif(type(data) == "number") then
-        str = str .. ("	"):rep(indent) .. data .. "\n"
+        str = str .. ("    "):rep(indent) .. data .. "\n"
     elseif(type(data) == "boolean") then
         if(data == true) then
             str = str .. "true"
@@ -51,26 +51,26 @@ function to_string(data, indent)
         for i, v in pairs(data) do
             -- Check for a table in a table
             if(type(v) == "table") then
-                str = str .. ("	"):rep(indent) .. i .. ":\n"
+                str = str .. ("    "):rep(indent) .. i .. ":\n"
                 str = str .. to_string(v, indent + 2)
             else
-                str = str .. ("	"):rep(indent) .. i .. ": " .. to_string(v, 0)
+                str = str .. ("    "):rep(indent) .. i .. ": " .. to_string(v, 0)
             end
         end
     elseif (data ==nil) then
-		str=str..'nil'
-	else
+        str=str..'nil'
+    else
         --print_debug(1, "Error: unknown data type: %s", type(data))
-		str=str.. "Error: unknown data type:" .. type(data)
-		Spring.Echo('X data type')
+        str=str.. "Error: unknown data type:" .. type(data)
+        Spring.Echo('X data type')
     end
 
     return str
 end
 
 function MergeTable(table1,table2)
-	--Spring.Echo('table1',to_string(table1))   
-	--Spring.Echo('table2',to_string(table2))   
+    --Spring.Echo('table1',to_string(table1))   
+    --Spring.Echo('table2',to_string(table2))   
   local result = {}
   for i,v in pairs(table2) do 
     if (type(v)=='table') then
@@ -119,10 +119,10 @@ end
 --------------------------------------------------------------------------------
 
 local UnitEffects = {}
-local registeredUnits = {}	-- all finished units - prevents partial unbuild then rebuild from being treated as two UnitFinished events
+local registeredUnits = {}    -- all finished units - prevents partial unbuild then rebuild from being treated as two UnitFinished events
 
 local function AddFX(unitname,fx)
-	-- Spring.Echo('local function AddFX(unitname,fx)',unitname,fx)
+    -- Spring.Echo('local function AddFX(unitname,fx)',unitname,fx)
   local ud = UnitDefs[unitname]
   --// Seasonal lups stuff
 
@@ -239,12 +239,12 @@ local function UnitFinished(_,unitID,unitDefID)
         fx.options.pos = { Spring.GetUnitPosition(unitID) }
       end
       if (fx.options.heightFactor) then
-		local pos = fx.options.pos or {0, 0, 0}
+        local pos = fx.options.pos or {0, 0, 0}
         fx.options.pos = { pos[1], Spring.GetUnitHeight(unitID)*fx.options.heightFactor, pos[3] }
       end
-	  if (fx.options.radiusFactor) then
-		fx.options.size = Spring.GetUnitRadius(unitID)*fx.options.radiusFactor
-	  end
+      if (fx.options.radiusFactor) then
+        fx.options.size = Spring.GetUnitRadius(unitID)*fx.options.radiusFactor
+      end
       fx.options.unit = unitID
       AddFxs( unitID,LupsAddFX(fx.class,fx.options) )
       fx.options.unit = nil
@@ -308,7 +308,7 @@ local color1 = {0,0,0}
 local color2 = {1,0.5,0}
 
 local function GameFrame(_,n)
-	return
+    return
 end
 
 --------------------------------------------------------------------------------
@@ -320,7 +320,7 @@ local function PlayerChanged(_,playerID)
     --// clear all FXs
     for _,unitFxIDs in pairs(particleIDs) do
       for i=1,#unitFxIDs do
-	local fxID = unitFxIDs[i]    
+    local fxID = unitFxIDs[i]    
         Lups.RemoveParticles(fxID)
       end
     end
@@ -430,7 +430,7 @@ function widget:Shutdown()
   if (initialized) then
     for _,unitFxIDs in pairs(particleIDs) do
       for i=1,#unitFxIDs do
-	local fxID = unitFxIDs[i]
+    local fxID = unitFxIDs[i]
       end
     end
     particleIDs = {}

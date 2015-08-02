@@ -12,13 +12,13 @@ function widget:GetInfo()
 end
 
 
-	local function TakeTeam()
-	  Spring.SendCommands({"luarules take2"})
-	end
-	function widget:Initialize()
-  		widgetHandler:AddAction("take2", TakeTeam, "Take control of units and resouces from inactive players")
-	end
+    local function TakeTeam()
+      Spring.SendCommands({"luarules take2"})
+    end
+    function widget:Initialize()
+          widgetHandler:AddAction("take2", TakeTeam, "Take control of units and resouces from inactive players")
+    end
 
-	function widget:Shutdown()
-	  widgetHandler:RemoveAction('take2')
-	end
+    function widget:Shutdown()
+      widgetHandler:RemoveAction('take2')
+    end

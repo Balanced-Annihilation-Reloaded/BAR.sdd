@@ -1,15 +1,15 @@
 
 function widget:GetInfo()
-	return {
-		name      = 'Spectate Selected',
-		desc      = 'Automatically spectates owner of selected unit',
-		author    = 'Niobium',
+    return {
+        name      = 'Spectate Selected',
+        desc      = 'Automatically spectates owner of selected unit',
+        author    = 'Niobium',
         version   = '1.0',
-		date      = 'April 2011',
-		license   = 'GNU GPL v2',
-		layer     = 0,
-		enabled   = true
-	}
+        date      = 'April 2011',
+        license   = 'GNU GPL v2',
+        layer     = 0,
+        enabled   = true
+    }
 end
 
 local spGetSpectatingState = Spring.GetSpectatingState
@@ -19,7 +19,7 @@ local spGetMyTeamID = Spring.GetMyTeamID
 local spSendCommands = Spring.SendCommands
 
 function widget:CommandsChanged()
-	if spGetSpectatingState() then
+    if spGetSpectatingState() then
         local selUnits = spGetSelectedUnits()
         if #selUnits > 0 then
             local selTeam = spGetUnitTeam(selUnits[1])

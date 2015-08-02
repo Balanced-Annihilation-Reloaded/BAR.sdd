@@ -61,13 +61,13 @@ end
 
 options_path = 'Game/Settings'
 options = {
-	ignoreBuilders = {
-		name = "Transport AI: Ignore Builders",
-		type = "bool",
-		value = false,
-		desc = "Do not pick up builders.",
-		OnChange = IgBuilderChanged,
-	},
+    ignoreBuilders = {
+        name = "Transport AI: Ignore Builders",
+        type = "bool",
+        value = false,
+        desc = "Do not pick up builders.",
+        OnChange = IgBuilderChanged,
+    },
 }
 
 function IsTransport(unitDefID) 
@@ -170,17 +170,17 @@ end
 
 
 function widget:Initialize()
-	local _, _, spec, teamID = GetPlayerInfo(Spring.GetMyPlayerID())
-	if spec then
-		widgetHandler:RemoveWidget()
-		return false
-	end
+    local _, _, spec, teamID = GetPlayerInfo(Spring.GetMyPlayerID())
+    if spec then
+        widgetHandler:RemoveWidget()
+        return false
+    end
   myTeamID = teamID
   widgetHandler:RegisterGlobal('taiEmbark', taiEmbark)
 
 
   for _, unitID in ipairs(GetTeamUnits(teamID)) do  -- init existing transports
-	if AddTransport(unitID, GetUnitDefID(unitID)) then
+    if AddTransport(unitID, GetUnitDefID(unitID)) then
        AssignTransports(unitID, 0)
     end
   end
@@ -283,10 +283,10 @@ end
 
 
 function widget:UnitFromFactory(unitID, unitDefID, unitTeam, factID, factDefID, userOrders) 
-	if unitTeam == myTeamID then 
+    if unitTeam == myTeamID then 
     local ud = UnitDefs[unitDefID]
     if (CONST_IGNORE_BUILDERS and ud.isBuilder and ud.canAssist) then return end
-	if (CONST_IGNORE_GROUNDSCOUTS and ud.modCategories.groundscout) then return end
+    if (CONST_IGNORE_GROUNDSCOUTS and ud.modCategories.groundscout) then return end
     if (IsTransportable(unitDefID) and not userOrders) then 
 --      Echo ("new unit from factory "..unitID)
 
@@ -325,8 +325,8 @@ end
 
 
 function widget:Update(deltaTime)
-	timer = timer + deltaTime
-	if (timer < 1) then return end
+    timer = timer + deltaTime
+    if (timer < 1) then return end
   StopCloseUnits()
 
   local todel = {}
@@ -404,9 +404,9 @@ function widget:UnitLoaded(unitID, unitDefID, teamID, transportID)
           table.insert(torev, {v.params[1], v.params[2], v.params[3]+20})
           vl = v.params 
         end
-		if (IsDisembark(v)) then 
-			ender = true
-		end
+        if (IsDisembark(v)) then 
+            ender = true
+        end
       else
         if (not ender) then 
           ender = true

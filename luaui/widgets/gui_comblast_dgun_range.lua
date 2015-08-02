@@ -12,30 +12,30 @@ end
 
 -- locals --
 
-local pairs					= pairs
+local pairs                    = pairs
 local sqrt                  = math.sqrt
 local min                   = math.min
 local max                   = math.max
 
 local spGetUnitPosition     = Spring.GetUnitPosition
-local spGetUnitDefID 		= Spring.GetUnitDefID
-local spGetAllUnits			= Spring.GetAllUnits
-local spGetSpectatingState 	= Spring.GetSpectatingState
-local spGetMyPlayerID		= Spring.GetMyPlayerID
-local spGetPlayerInfo		= Spring.GetPlayerInfo
-local spGetGroundHeight		= Spring.GetGroundHeight
-local spIsSphereInView		= Spring.IsSphereInView
-local spValidUnitID			= Spring.ValidUnitID
+local spGetUnitDefID         = Spring.GetUnitDefID
+local spGetAllUnits            = Spring.GetAllUnits
+local spGetSpectatingState     = Spring.GetSpectatingState
+local spGetMyPlayerID        = Spring.GetMyPlayerID
+local spGetPlayerInfo        = Spring.GetPlayerInfo
+local spGetGroundHeight        = Spring.GetGroundHeight
+local spIsSphereInView        = Spring.IsSphereInView
+local spValidUnitID            = Spring.ValidUnitID
 local spIsGUIHidden         = Spring.IsGUIHidden
 local spGetUnitNearestEnemy = Spring.GetUnitNearestEnemy
 local spGetUnitPosition     = Spring.GetUnitPosition
 local spIsUnitSelected      = Spring.IsUnitSelected
 local spAreTeamAllied       = Spring.AreTeamsAllied
 
-local glDepthTest 			= gl.DepthTest
-local glDrawGroundCircle 	= gl.DrawGroundCircle
-local glColor				= gl.Color
-local GL_ALWAYS				= GL.ALWAYS
+local glDepthTest             = gl.DepthTest
+local glDrawGroundCircle     = gl.DrawGroundCircle
+local glColor                = gl.Color
+local GL_ALWAYS                = GL.ALWAYS
 
 local circleDivs = 32
 local blastRadius = 360 -- com explosion
@@ -209,7 +209,7 @@ function widget:GameFrame(n)
                 removeCom(unitID)
             end
         end
-    end	
+    end    
 end
 
 -- opacity control

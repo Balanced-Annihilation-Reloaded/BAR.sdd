@@ -11,7 +11,7 @@ function widget:GetInfo()
 end
 ----------------------------------------------------------------------------
 local alarmInterval                 = 15        --seconds
-local commanderAlarmInterval		= 10
+local commanderAlarmInterval        = 10
 ----------------------------------------------------------------------------                
 local spGetLocalTeamID              = Spring.GetLocalTeamID
 local spPlaySoundFile               = Spring.PlaySoundFile
@@ -21,7 +21,7 @@ local spDiffTimers                  = Spring.DiffTimers
 local spIsUnitInView                = Spring.IsUnitInView
 local spGetUnitPosition             = Spring.GetUnitPosition
 local spSetLastMessagePosition      = Spring.SetLastMessagePosition
-local spGetSpectatingState   		= Spring.GetSpectatingState
+local spGetSpectatingState           = Spring.GetSpectatingState
 local random                        = math.random
 ----------------------------------------------------------------------------
 local lastAlarmTime                 = nil
@@ -35,30 +35,30 @@ local corcomID=UnitDefNames["corcom"].id
 function widget:Initialize()
     setTeamId()    
     lastAlarmTime = spGetTimer()
-	lastCommanderAlarmTime =  spGetTimer()
+    lastCommanderAlarmTime =  spGetTimer()
     math.randomseed( os.time() )
 end
 
 function widget:UnitDamaged (unitID, unitDefID, unitTeam, damage, paralyzer)
     if ( localTeamID ~= unitTeam )then
-		return
-	end
-	--Spring.Echo(corcomID, unitID)
-	local now = spGetTimer()
-	if (unitDefID==corcomID or unitDefID==armcomID) then --commander under attack must always be played! (10 sec retrigger alert though)
-		--Spring.Echo("Commander under attack!")
-		if ( spDiffTimers( now, lastCommanderAlarmTime ) < alarmInterval ) then
-			return
-		end
-		lastCommanderAlarmTime=now
-	else
-		if (spIsUnitInView(unitID)) then
-			return --ignore other teams and units in view
-		end
-		if ( spDiffTimers( now, lastAlarmTime ) < alarmInterval ) then
-			return
-		end
-	end
+        return
+    end
+    --Spring.Echo(corcomID, unitID)
+    local now = spGetTimer()
+    if (unitDefID==corcomID or unitDefID==armcomID) then --commander under attack must always be played! (10 sec retrigger alert though)
+        --Spring.Echo("Commander under attack!")
+        if ( spDiffTimers( now, lastCommanderAlarmTime ) < alarmInterval ) then
+            return
+        end
+        lastCommanderAlarmTime=now
+    else
+        if (spIsUnitInView(unitID)) then
+            return --ignore other teams and units in view
+        end
+        if ( spDiffTimers( now, lastAlarmTime ) < alarmInterval ) then
+            return
+        end
+    end
     lastAlarmTime = now
     
     local udef = UnitDefs[unitDefID]
@@ -92,15 +92,15 @@ end
 --changing teams, rejoin, becoming spec etc
 function widget:PlayerChanged(playerID)
     setTeamId()
-	CheckSpecState()
+    CheckSpecState()
 end
 
 
 function CheckSpecState()
-	if ( spGetSpectatingState() == true ) then
-		widgetHandler:RemoveWidget()
-		return false
-	end
-	
-	return true	
+    if ( spGetSpectatingState() == true ) then
+        widgetHandler:RemoveWidget()
+        return false
+    end
+    
+    return true    
 end

@@ -17,21 +17,21 @@ local spGetCmdDescIndex = Spring.GetCmdDescIndex
 
 function widget:CommandNotify(id, params, options)
 
-	local index = spGetCmdDescIndex(id)
-	if index then
-		local comButton = spGetActiveCmdDesc(index)
-		if comButton and comButton.params and #comButton.params>3 then
-			if options.right then
-				local units = spGetSelectedUnits()
-				local state = params[1] -2
-				if state < 0 then 
-					state = state + #comButton.params - 1
-				end
-				for _,sid in ipairs(units) do
-					spGiveOrderToUnit(sid, id, { state }, {})	
-				end
-				return true
-			end
-		end
-	end
+    local index = spGetCmdDescIndex(id)
+    if index then
+        local comButton = spGetActiveCmdDesc(index)
+        if comButton and comButton.params and #comButton.params>3 then
+            if options.right then
+                local units = spGetSelectedUnits()
+                local state = params[1] -2
+                if state < 0 then 
+                    state = state + #comButton.params - 1
+                end
+                for _,sid in ipairs(units) do
+                    spGiveOrderToUnit(sid, id, { state }, {})    
+                end
+                return true
+            end
+        end
+    end
 end

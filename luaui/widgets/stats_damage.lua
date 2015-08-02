@@ -1,13 +1,13 @@
 function widget:GetInfo()
-	return {
-	name      = "Statistics Collection", 
-	desc      = "Receive unit stats and write to file in /luaui/config \nIf your experiment needs statistics, you should have done a better experiment",
-	author    = "Bluestone",
-	date      = "", 
-	license   = "GNU GPL, v3 or later",
-	layer     = 0,
-	enabled   = true,
-	}
+    return {
+    name      = "Statistics Collection", 
+    desc      = "Receive unit stats and write to file in /luaui/config \nIf your experiment needs statistics, you should have done a better experiment",
+    author    = "Bluestone",
+    date      = "", 
+    license   = "GNU GPL, v3 or later",
+    layer     = 0,
+    enabled   = true,
+    }
 end
 
 --[[
@@ -33,8 +33,8 @@ if chunk then
 end
 
 function widget:GameStart()
-	widgetHandler:RegisterGlobal('SendStats', RecieveStats)
-	widgetHandler:RegisterGlobal('SendStats_GameMode', RecieveGameMode)    
+    widgetHandler:RegisterGlobal('SendStats', RecieveStats)
+    widgetHandler:RegisterGlobal('SendStats_GameMode', RecieveGameMode)    
 end
 
 function RecieveGameMode(mode)

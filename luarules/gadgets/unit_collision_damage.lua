@@ -34,27 +34,27 @@ local FALL_DAMAGE_MULT = 10 -- Unit<->Ground collisions
 -- weaponDefID -5 --> kill damage
 
 function gadget:UnitPreDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, weaponDefID, projectileID, attackerID, attackerDefID, attackerTeam)
-	-- unit collision
-	if weaponDefID == -3 and attackerID == nil then
-		--[[Spring code:
-			const float impactDamageMult = std::min(impactSpeed * collider->mass * MASS_MULT, MAX_UNIT_SPEED);
-			]]
-		-- Damage upper limit is given by MAX_UNIT_SPEED, which is 1e3f as of 91.0
-	
-		return damage * UNIT_DAMAGE_MULT	
-	end
-	
-	-- ground collision
-	if weaponDefID == -2 and attackerID == nil then		
-		--[[Spring code:
-			const float impactSpeed = midPos.IsInBounds()?
-			-speed.dot(ground->GetNormal(midPos.x, midPos.z)):
-			-speed.dot(UpVector);
-			impactDamageMult = impactSpeed * owner->mass * 0.2f --(is 0.02f as of latest)
-			]]
-		-- Fall damage does not appear to be limited by a ceiling (hurr hurr)
+    -- unit collision
+    if weaponDefID == -3 and attackerID == nil then
+        --[[Spring code:
+            const float impactDamageMult = std::min(impactSpeed * collider->mass * MASS_MULT, MAX_UNIT_SPEED);
+            ]]
+        -- Damage upper limit is given by MAX_UNIT_SPEED, which is 1e3f as of 91.0
+    
+        return damage * UNIT_DAMAGE_MULT    
+    end
+    
+    -- ground collision
+    if weaponDefID == -2 and attackerID == nil then        
+        --[[Spring code:
+            const float impactSpeed = midPos.IsInBounds()?
+            -speed.dot(ground->GetNormal(midPos.x, midPos.z)):
+            -speed.dot(UpVector);
+            impactDamageMult = impactSpeed * owner->mass * 0.2f --(is 0.02f as of latest)
+            ]]
+        -- Fall damage does not appear to be limited by a ceiling (hurr hurr)
 
-		return damage * FALL_DAMAGE_MULT
-	end
-	return damage
+        return damage * FALL_DAMAGE_MULT
+    end
+    return damage
 end

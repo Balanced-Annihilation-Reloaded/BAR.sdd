@@ -104,8 +104,8 @@ function gadget:AllowDirectUnitControl(unitID, unitDefID, unitTeam, playerID)
   
   for key, value in pairs(badUnitDefs) do
     if (value == unitDefID) then
-	  Spring.SendMessageToPlayer(playerID,
-	    "Direct control of " .. UnitDefs[value].name .. " is disabled")
+      Spring.SendMessageToPlayer(playerID,
+        "Direct control of " .. UnitDefs[value].name .. " is disabled")
       return false
     end
   end

@@ -25,17 +25,17 @@ if (gadgetHandler:IsSyncedCode()) then
       local speed = 1
       local life = 1
       if customParams.lups_explodespeed then
-	    speed = wd.customParams.lups_explodespeed
+        speed = wd.customParams.lups_explodespeed
       end
       if wd.customParams.lups_explodelife then
-	    life = wd.customParams.lups_explodelife
+        life = wd.customParams.lups_explodelife
       end
       if (wd.damageAreaOfEffect>70 and not wd.paralyzer) then
         Script.SetWatchWeapon(wd.id,true)
-	    hasShockwave[wd.id] = {life = life, speed = speed}
+        hasShockwave[wd.id] = {life = life, speed = speed}
       elseif (wd.type == "DGun") then
         Script.SetWatchWeapon(wd.id,true)
-	    hasShockwave[wd.id] = {life = life, speed = speed}
+        hasShockwave[wd.id] = {life = life, speed = speed}
       --elseif (wd.description:find("Clogger")) then
       --  Script.SetWatchWeapon(wd.id,true)
       end
@@ -48,8 +48,8 @@ if (gadgetHandler:IsSyncedCode()) then
     --  SendToUnsynced("lups_shockwave", px, py, pz, 6.4, 30, 0.13, true)
     --  return true
     --else
-	local shockwave = hasShockwave[weaponID]
-	if shockwave then
+    local shockwave = hasShockwave[weaponID]
+    if shockwave then
       if (wd.type == "DGun") then
         SendToUnsynced("lups_shockwave", px, py, pz, 4.0, 18, 0.13, true)
       else
@@ -59,7 +59,7 @@ if (gadgetHandler:IsSyncedCode()) then
         local life = 23*shockwave.life
         SendToUnsynced("lups_shockwave", px, py, pz, growth, life)
       end
-	end
+    end
     return false
   end
 

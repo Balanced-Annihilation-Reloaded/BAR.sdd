@@ -19,28 +19,28 @@ local font = gl.LoadFont("Fonts/freesansbold.otf",14, 3, 6)
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local GetUnitTeam        		= Spring.GetUnitTeam
-local GetTeamInfo        		= Spring.GetTeamInfo
-local GetPlayerInfo      		= Spring.GetPlayerInfo
-local GetTeamColor       		= Spring.GetTeamColor
-local GetVisibleUnits    		= Spring.GetVisibleUnits
-local GetUnitDefID       		= Spring.GetUnitDefID
-local GetAllUnits        		= Spring.GetAllUnits
-local IsUnitInView	 	 		= Spring.IsUnitInView
-local GetCameraPosition  		= Spring.GetCameraPosition
-local GetUnitPosition    		= Spring.GetUnitPosition
+local GetUnitTeam                = Spring.GetUnitTeam
+local GetTeamInfo                = Spring.GetTeamInfo
+local GetPlayerInfo              = Spring.GetPlayerInfo
+local GetTeamColor               = Spring.GetTeamColor
+local GetVisibleUnits            = Spring.GetVisibleUnits
+local GetUnitDefID               = Spring.GetUnitDefID
+local GetAllUnits                = Spring.GetAllUnits
+local IsUnitInView                  = Spring.IsUnitInView
+local GetCameraPosition          = Spring.GetCameraPosition
+local GetUnitPosition            = Spring.GetUnitPosition
 
-local glDepthTest        		= gl.DepthTest
-local glAlphaTest        		= gl.AlphaTest
-local glColor            		= gl.Color
-local glText             		= gl.Text
-local glTranslate        		= gl.Translate
-local glBillboard        		= gl.Billboard
-local glDrawFuncAtUnit   		= gl.DrawFuncAtUnit
-local GL_GREATER     	 		= GL.GREATER
-local GL_SRC_ALPHA				= GL.SRC_ALPHA	
-local GL_ONE_MINUS_SRC_ALPHA	= GL.ONE_MINUS_SRC_ALPHA
-local glBlending          		= gl.Blending
+local glDepthTest                = gl.DepthTest
+local glAlphaTest                = gl.AlphaTest
+local glColor                    = gl.Color
+local glText                     = gl.Text
+local glTranslate                = gl.Translate
+local glBillboard                = gl.Billboard
+local glDrawFuncAtUnit           = gl.DrawFuncAtUnit
+local GL_GREATER                  = GL.GREATER
+local GL_SRC_ALPHA                = GL.SRC_ALPHA    
+local GL_ONE_MINUS_SRC_ALPHA    = GL.ONE_MINUS_SRC_ALPHA
+local glBlending                  = gl.Blending
 
 --------------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ local function GetCommAttributes(unitID, unitDefID)
   local r, g, b, a = GetTeamColor(team)
   local bgColor = {0,0,0,1}
   if (r + g*1.35 + b*0.5) < 0.75 then  -- font:SetAutoOutlineColor(true) is broken (same for gl)
-	bgColor = {1,1,1,1}
+    bgColor = {1,1,1,1}
   end
   local height = UnitDefs[unitDefID].height + 36
   return {name = name or 'Commander', colour = {r, g, b, a}, height = height, bgColour = bgColor}

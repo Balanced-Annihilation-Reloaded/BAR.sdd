@@ -271,26 +271,26 @@ function DrawWidgetList(list,name,x,y,j)
       local tLoad = v.tLoad
       local colour = v.colourString
       gl.Text(wname, x+150, y+1-(12)*j, 10)
-      gl.Text(colour .. ('%.3f%%'):format(tLoad), x+105, y+1-(12)*j, 10)	  
+      gl.Text(colour .. ('%.3f%%'):format(tLoad), x+105, y+1-(12)*j, 10)      
 
-	  j = j + 1
+      j = j + 1
     end
     
     gl.Text("\255\255\064\064total load ("..string.lower(name)..")", x+150, y+1-(12)*j, 10)
-    gl.Text("\255\255\064\064"..('%.3f%%'):format(list.allOverTime), x+105, y+1-(12)*j, 10)	  
+    gl.Text("\255\255\064\064"..('%.3f%%'):format(list.allOverTime), x+105, y+1-(12)*j, 10)      
     j = j + 1
     
     return x,j
 end
 
 function ColourString(R,G,B)
-	R255 = math.floor(R*255)  
+    R255 = math.floor(R*255)  
     G255 = math.floor(G*255)
     B255 = math.floor(B*255)
     if (R255%10 == 0) then R255 = R255+1 end
     if (G255%10 == 0) then G255 = G255+1 end
     if (B255%10 == 0) then B255 = B255+1 end
-	return "\255"..string.char(R255)..string.char(G255)..string.char(B255)
+    return "\255"..string.char(R255)..string.char(G255)..string.char(B255)
 end 
 
 local minTime = 0.005 -- above this value, we fade in how heavy we mark a widget
@@ -325,8 +325,8 @@ end
     -- sort & count timing
     if (deltaTime>=tick) then
       startTimer = Spring.GetTimer()
-	  sortedList = {}
-	  
+      sortedList = {}
+      
       totalLoads = {}
       maximum = 0
       avg = 0
@@ -347,7 +347,7 @@ end
 
         local load = 100*total/deltaTime
         local load_avg = CalcLoad(loadAverages[wname] or load, load, averageTime)
-		loadAverages[wname] = load_avg
+        loadAverages[wname] = load_avg
 
         allOverTimeSec = allOverTimeSec + total
 
@@ -359,7 +359,7 @@ end
         n = n + 1
       end
       avg = avg/n
-	  
+      
       table.sort(sortedList,SortFunc)
     end
 
@@ -397,7 +397,7 @@ end
 
     gl.Color(1,1,1,1)
     gl.BeginText()
-	local j = -1 --line number
+    local j = -1 --line number
     
     x,j = DrawWidgetList(gameList,"GAME",x,y,j)
     x,j = DrawWidgetList(specialList,"API & SPECIAL",x,y,j)
@@ -408,7 +408,7 @@ end
     gl.Text("\255\180\255\180TOTAL", x+150, y-1-(12)*j, 10)
     j = j + 1
 
-	j = j + 1
+    j = j + 1
     gl.Text("\255\255\064\064total load", x+150, y-1-(12)*j, 10)
     gl.Text("\255\255\064\064"..('%.1f%%'):format(allOverTime), x+105, y-1-(12)*j, 10)
     j = j + 1

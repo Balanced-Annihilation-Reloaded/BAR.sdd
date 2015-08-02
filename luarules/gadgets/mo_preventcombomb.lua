@@ -97,7 +97,7 @@ function gadget:GameFrame(n)
         break
       elseif (ctrlCom == unitID) then
         --if the game was actually a draw then this unitID is not valid anymore
-        --if that is the case then just remove it from the watchList and clear the ctrlCom flag		
+        --if that is the case then just remove it from the watchList and clear the ctrlCom flag        
         local x,_,z = Spring.GetUnitPosition(unitID)
         if (x) then
             local y = Spring.GetGroundHeight(x,z) 

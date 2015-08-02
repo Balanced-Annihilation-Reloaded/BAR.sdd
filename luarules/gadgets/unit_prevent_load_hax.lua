@@ -83,7 +83,7 @@ function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpt
      else
        local dist = GetUnitSeparation(unitID, cmdParams[1])
        if (not dist) then return false end
-       if ((dist < 80) and (GetUnitTeam(unitID) ~= GetUnitTeam(cmdParams[1]))) then	
+       if ((dist < 80) and (GetUnitTeam(unitID) ~= GetUnitTeam(cmdParams[1]))) then    
          local tx,ty,tz = GetUnitPosition(unitID)
          local ux,_,uz = GetUnitPosition(cmdParams[1])
          local angle = math.atan2((tx-ux),(tz-uz))

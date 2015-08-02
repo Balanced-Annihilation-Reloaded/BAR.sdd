@@ -72,17 +72,17 @@ local spGetUnitDefID = Spring.GetUnitDefID
 
 local mx,my,s,uID,sDefID
 function gadget:DefaultCommand()
-	mx,my = spGetMouseState()
-	s,uID = spTraceScreenRay(mx,my)
-	if s ~= "unit" then return end
-	sDefID = spGetUnitDefID(uID)
-	if isWall[sDefID] then 
+    mx,my = spGetMouseState()
+    s,uID = spTraceScreenRay(mx,my)
+    if s ~= "unit" then return end
+    sDefID = spGetUnitDefID(uID)
+    if isWall[sDefID] then 
         local _,_,_,_,p = Spring.GetUnitHealth(uID)
         if p==1 then
             return CMD_MOVE
         end
     end
-	return
+    return
 end
 
 end

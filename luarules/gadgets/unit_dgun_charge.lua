@@ -97,7 +97,7 @@ end
 function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions, cmdTag, synced)
     if not (cmdID == CMD_MANUALFIRE or (cmdID==CMD_INSERT and cmdParams[2]==CMD_MANUALFIRE)) then 
         return true
-	end
+    end
 
     -- allow the command if we have enough charge
     if isCom(unitDefID) and coms[unitID] and coms[unitID] < shotCost then

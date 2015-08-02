@@ -35,43 +35,43 @@ for featureDefID, defs in pairs(FeatureDefs) do
 end
 
 function gadget:FeatureDamaged(featureID, featureDefID, featureTeam, damage, weaponDefID, projectileID, attackerID, attackerDefID, attackerTeam)
-	if not cegList[featureID] and (damage > 5) then
-		local featureDefs = featureList[featureDefID] or nil
-		if featureDefs then
-			if (featureDefs == -1) then
-				local defs = FeatureDefs[featureDefID]
-				featureList[featureDefID] = {
-					minX = (defs.minx * 0.6), 
-					maxX = (defs.maxx * 0.6), 
-					minZ = (defs.minz * 0.6), 
-					maxZ = (defs.maxz * 0.6), 
-					y = (defs.maxy * 0.5)
-				}
-				featureDefs = featureList[featureDefID]
-			end
-			local x,y,z = GetFeaturePosition(featureID)
+    if not cegList[featureID] and (damage > 5) then
+        local featureDefs = featureList[featureDefID] or nil
+        if featureDefs then
+            if (featureDefs == -1) then
+                local defs = FeatureDefs[featureDefID]
+                featureList[featureDefID] = {
+                    minX = (defs.minx * 0.6), 
+                    maxX = (defs.maxx * 0.6), 
+                    minZ = (defs.minz * 0.6), 
+                    maxZ = (defs.maxz * 0.6), 
+                    y = (defs.maxy * 0.5)
+                }
+                featureDefs = featureList[featureDefID]
+            end
+            local x,y,z = GetFeaturePosition(featureID)
             if featureDefs.minX+1 < featureDefs.minX then
                 x = x + random(featureDefs.minX,featureDefs.maxX)
-			end
+            end
             if featureDefs.minZ+1 < featureDefs.minZ then
                 z = z + random(featureDefs.minZ,featureDefs.maxZ)
-			end
+            end
             y = y + (random() * featureDefs.y)
-			cegList[featureID] = {ceg = cegs[random(1,3)],x=x,y=y,z=z, enabled = true}
-		end
-	end
+            cegList[featureID] = {ceg = cegs[random(1,3)],x=x,y=y,z=z, enabled = true}
+        end
+    end
 end
 
 function gadget:GameFrame(n)
-	for i,v in pairs(cegList) do
-		if v.enabled then
-			SpawnCEG(v.ceg,v.x,v.y,v.z,0,1.0,0,0,0)
-			cegList[i].enabled = false
-		end
-	end
-	if (n % 15 == 0) then
-		cegList = {}
-	end
+    for i,v in pairs(cegList) do
+        if v.enabled then
+            SpawnCEG(v.ceg,v.x,v.y,v.z,0,1.0,0,0,0)
+            cegList[i].enabled = false
+        end
+    end
+    if (n % 15 == 0) then
+        cegList = {}
+    end
 end
 
 --------------------------------------------------------------------------------

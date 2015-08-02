@@ -13,8 +13,8 @@ end
 -- future:          hotkey to show all current cmds? (like current shift+space)
 --                  handle set target
 
-local spGetUnitPosition	= Spring.GetUnitPosition
-local spGetUnitCommands	= Spring.GetUnitCommands
+local spGetUnitPosition    = Spring.GetUnitPosition
+local spGetUnitCommands    = Spring.GetUnitCommands
 local spIsUnitInView = Spring.IsUnitInView
 local spIsSphereInView = Spring.IsSphereInView
 local spIsUnitIcon = Spring.IsUnitIcon
@@ -60,10 +60,10 @@ local unitCommand = {} -- most recent key in command table of order for unitID
 local setTarget = {} -- set targets of units
 local osClock
 
-local opacity       = 0.75		
+local opacity       = 0.75        
 local duration      = 1.25
-local lineWidth	    = 6
-local dotRadius     = 28		
+local lineWidth        = 6
+local dotRadius     = 28        
 
 local mapX = Game.mapSizeX
 local mapZ = Game.mapSizeZ
@@ -172,7 +172,7 @@ local function DrawDot(size, r,g,b,a, x,y,z)
 end
 
 local function DrawLine(x1,y1,z1, x2,y2,z2, width) -- long thin rectangle
-    local theta	= (x1~=x2) and atan((z2-z1)/(x2-x1)) or pi/2
+    local theta    = (x1~=x2) and atan((z2-z1)/(x2-x1)) or pi/2
     local zOffset = cos(pi-theta) * width / 2
     local xOffset = sin(pi-theta) * width / 2
     
@@ -180,7 +180,7 @@ local function DrawLine(x1,y1,z1, x2,y2,z2, width) -- long thin rectangle
     gl.Vertex(x1-xOffset, y1, z1-zOffset)
     
     gl.Vertex(x2-xOffset, y2, z2-zOffset)
-    gl.Vertex(x2+xOffset, y2, z2+zOffset)	
+    gl.Vertex(x2+xOffset, y2, z2+zOffset)    
 end
 
 ------------------------------------------------------------------------------------
@@ -303,7 +303,7 @@ function widget:DrawWorldPreUnit()
             commands[i] = nil
             minCommand = minCommand + 1
             
-        elseif commands[i].draw and (spIsUnitInView(unitID) or IsPointInView(commands[i].x,commands[i].y,commands[i].z)) then 				
+        elseif commands[i].draw and (spIsUnitInView(unitID) or IsPointInView(commands[i].x,commands[i].y,commands[i].z)) then                 
             local prevX, prevY, prevZ = spGetUnitPosition(unitID)
             -- draw set target command (TODO)
             --[[

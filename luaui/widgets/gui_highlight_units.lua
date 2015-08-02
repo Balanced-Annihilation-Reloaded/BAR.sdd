@@ -14,8 +14,8 @@ end
 -- Defaults
 --------------------------------------------------------------------------------
 
-local drawPlatter						= true
-local drawXRayShader					= false
+local drawPlatter                        = true
+local drawXRayShader                    = false
 local highlightAllyTeam                 = true
 
 --------------------------------------------------------------------------------
@@ -25,15 +25,15 @@ local highlightAllyTeam                 = true
 local useTeamColours                    = (tonumber(Spring.GetModOptions().mo_noowner)==1) or false 
 local updateTime                        = 0.2
 
-local circleParts						= 13      	-- number of parts for a cirlce, when not using useVariableSpotterDetail
-local circlePartsMin					= 6      	-- minimal number of parts for a cirlce, when zoomed out
-local circlePartsMax					= 12      	-- maximum number of parts for a cirlce, when zoomed in
+local circleParts                        = 13          -- number of parts for a cirlce, when not using useVariableSpotterDetail
+local circlePartsMin                    = 6          -- minimal number of parts for a cirlce, when zoomed out
+local circlePartsMax                    = 12          -- maximum number of parts for a cirlce, when zoomed in
 
-local spotterOpacity					= 0.18
-local innerSize							= 1.30		-- circle scale compared to unit radius
-local outerSize							= 1.30		-- outer fade size compared to circle scale (1 = not rendered)
+local spotterOpacity                    = 0.18
+local innerSize                            = 1.30        -- circle scale compared to unit radius
+local outerSize                            = 1.30        -- outer fade size compared to circle scale (1 = not rendered)
                                         
-local spotterColours = {								-- default color values
+local spotterColours = {                                -- default color values
     {0,0,1} , {1,0,1} , {0,1,1} , {0,1,0} , {1,0.5,0} , {0,1,1} , {1,1,0} , {1,1,1} , {0.5,0.5,0.5} , {0,0,0} , {0.5,0,0} , {0,0.5,0} , {0,0,0.5} , {0.5,0.5,0} , {0.5,0,0.5} , {0,0.5,0.5} , {1,0.5,0.5} , {0.5,0.5,0.1} , {0.5,0.1,0.5},
 }
 
@@ -65,25 +65,25 @@ local spValidUnitID           = Spring.ValidUnitID
           
 --local myTeamID                = Spring.GetLocalTeamID()
 local myAllyID                = Spring.GetMyAllyTeamID()
---local gaiaTeamID			  = Spring.GetGaiaTeamID()
+--local gaiaTeamID              = Spring.GetGaiaTeamID()
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local circlePolys			= {}
-local colours      		    = {}
-local unitConf				= {}
+local circlePolys            = {}
+local colours                  = {}
+local unitConf                = {}
 local visibleUnits          = {}
 local n_visibleUnits        = 0
 local guiHidden             = false
 local prevUpdate = spGetTimer()
 
-local edgeExponent			= 1.5
-local highlightOpacity		= 1.7
-local smoothPolys			= gl.Smoothing -- can save a bit of perf by turning this off, without much impact to visuals
+local edgeExponent            = 1.5
+local highlightOpacity        = 1.7
+local smoothPolys            = gl.Smoothing -- can save a bit of perf by turning this off, without much impact to visuals
 
-local rectangleFactor		= 3.3
-local scaleFactor			= 2.9
+local rectangleFactor        = 3.3
+local scaleFactor            = 2.9
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -265,7 +265,7 @@ function widget:Initialize()
         shadersupported = false
         Spring.Log("gui_highlight_units.lua", LOG.WARNING, "Your hardware does not support shaders, disabled")
         widgetHandler:RemoveWidget(self)
-	return
+    return
     end
 
     SetUnitConf()
@@ -282,16 +282,16 @@ function widget:Initialize()
     Menu   = WG.MainMenu
     
     Menu.AddOption{
-			tab = 'Interface',
-			children = {
-				Chili.Label:New{caption='Highlight Units',x='0%',fontsize=18},
-				Chili.Checkbox:New{caption='Show platters',x='10%',width='80%',
-						checked=drawPlatter,setting=drawPlatter,OnChange={function() drawPlatter = not drawPlatter; end}}, --toggle doesn't work
-				Chili.Checkbox:New{caption='Use XRay shader',x='10%',width='80%',
-						checked=drawXRayShader,setting=drawXRayShader,OnChange={function() drawXRayShader = not drawXRayShader; end}},
-				Chili.Checkbox:New{caption='Highlight allies',x='10%',width='80%',
-						checked=highlightAllyTeam,setting=highlightAllyTeam,OnChange={function() highlightAllyTeam = not highlightAllyTeam; end}},
-				Chili.Line:New{width='100%'}
+            tab = 'Interface',
+            children = {
+                Chili.Label:New{caption='Highlight Units',x='0%',fontsize=18},
+                Chili.Checkbox:New{caption='Show platters',x='10%',width='80%',
+                        checked=drawPlatter,setting=drawPlatter,OnChange={function() drawPlatter = not drawPlatter; end}}, --toggle doesn't work
+                Chili.Checkbox:New{caption='Use XRay shader',x='10%',width='80%',
+                        checked=drawXRayShader,setting=drawXRayShader,OnChange={function() drawXRayShader = not drawXRayShader; end}},
+                Chili.Checkbox:New{caption='Highlight allies',x='10%',width='80%',
+                        checked=highlightAllyTeam,setting=highlightAllyTeam,OnChange={function() highlightAllyTeam = not highlightAllyTeam; end}},
+                Chili.Line:New{width='100%'}
         }
     }
     
@@ -390,14 +390,14 @@ end
 
 function widget:GetConfigData(data)
     savedTable = {}
-    savedTable.drawPlatter				= drawPlatter
-    savedTable.drawXRayShader			= drawXRayShader
-    savedTable.highlightAllyTeam		= highlightAllyTeam
+    savedTable.drawPlatter                = drawPlatter
+    savedTable.drawXRayShader            = drawXRayShader
+    savedTable.highlightAllyTeam        = highlightAllyTeam
     return savedTable
 end
 
 function widget:SetConfigData(data)
-    if data.drawPlatter ~= nil				then  drawPlatter				= data.drawPlatter end
-    if data.drawXRayShader ~= nil			then  drawXRayShader			= data.drawXRayShader end
-    if data.highlightAllyTeam ~= nil		then  highlightAllyTeam		    = data.highlightAllyTeam end
+    if data.drawPlatter ~= nil                then  drawPlatter                = data.drawPlatter end
+    if data.drawXRayShader ~= nil            then  drawXRayShader            = data.drawXRayShader end
+    if data.highlightAllyTeam ~= nil        then  highlightAllyTeam            = data.highlightAllyTeam end
 end

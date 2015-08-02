@@ -113,8 +113,8 @@ function gadget:Initialize()
           Spring.SetUnitDefIcon(udid, "square_+.user")  -- immobile
         end
       elseif (ud.stockpileWeaponDef ~= nil) and not (ud.name=="mercury" or ud.name=="screamer") then
-      	-- nuke / antinuke ( stockpile weapon, but not mercury/screamer )
-      	Spring.SetUnitDefIcon(udid, "nuke.user")
+          -- nuke / antinuke ( stockpile weapon, but not mercury/screamer )
+          Spring.SetUnitDefIcon(udid, "nuke.user")
       elseif (ud.canFly) then
         -- aircraft
         Spring.SetUnitDefIcon(udid, "tri-up.user")
@@ -122,8 +122,8 @@ function gadget:Initialize()
         -- immobile shields
         Spring.SetUnitDefIcon(udid, "hemi-up.user")
       elseif ((ud.extractsMetal > 0) or (ud.makesMetal > 0)) or
-	(ud.name=="armmakr") or (ud.name=="armfmkr") or (ud.name=="armmmkr") or (ud.name=="armuwmmm") or
-	(ud.name=="cormakr") or (ud.name=="corfmkr") or (ud.name=="cormmkr") or (ud.name=="coruwmmm") then
+    (ud.name=="armmakr") or (ud.name=="armfmkr") or (ud.name=="armmmkr") or (ud.name=="armuwmmm") or
+    (ud.name=="cormakr") or (ud.name=="corfmkr") or (ud.name=="cormmkr") or (ud.name=="coruwmmm") then
         -- metal extractors and makers
         Spring.SetUnitDefIcon(udid, "m.user")
       elseif ((ud.totalEnergyOut > 10) and (ud.speed <= 0)) then
@@ -152,11 +152,11 @@ function gadget:Initialize()
         if (#ud.weapons <= 0) then
           Spring.SetUnitDefIcon(udid, "square.user")
         else
-		  if ud.weapons[1].onlyTargets["vtol"] then
-			Spring.SetUnitDefIcon(udid, "slash.user")		  
-		  else
-			Spring.SetUnitDefIcon(udid, "x.user")
-		  end
+          if ud.weapons[1].onlyTargets["vtol"] then
+            Spring.SetUnitDefIcon(udid, "slash.user")          
+          else
+            Spring.SetUnitDefIcon(udid, "x.user")
+          end
         end
       else
         if (ud.techLevel == 4) then

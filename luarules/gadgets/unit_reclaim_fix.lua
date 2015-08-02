@@ -54,42 +54,42 @@ end
 local featuresCreatedThisFrame = {}
 
 function gadget:FeatureCreated(featureID, allyTeamID)
-	--record feature creation
-	--Spring.Echo("created:",featureID)
-	featuresCreatedThisFrame[#featuresCreatedThisFrame+1] = featureID
+    --record feature creation
+    --Spring.Echo("created:",featureID)
+    featuresCreatedThisFrame[#featuresCreatedThisFrame+1] = featureID
 end
 
 function gadget:FeatureDestroyed(featureID, allyTeamID)
-	local bpx,bpy,bpz = GetFeaturePosition(featureID)
-	local _,_,_,_, reclaimLeft = GetFeatureResources(featureID)
-	--Spring.Echo("died:", featureID, bpx,bpy,bpz,reclaimLeft, heap)
+    local bpx,bpy,bpz = GetFeaturePosition(featureID)
+    local _,_,_,_, reclaimLeft = GetFeatureResources(featureID)
+    --Spring.Echo("died:", featureID, bpx,bpy,bpz,reclaimLeft, heap)
 
-	--seek out heap, if one exists
-	local replaceFID
-	for i=1,#featuresCreatedThisFrame do 
-		local nbpx, nbpy, nbpz = GetFeaturePosition(featuresCreatedThisFrame[i])
-		--Spring.Echo("possible", featuresCreatedThisFrame[i], bpx,bpy,bpz,nbpx,nbpy,nbpz)
-		if bpx==nbpx and bpy==nbpy and bpz==nbpz then --floating point errors
-			replaceFID = featuresCreatedThisFrame[i]
-		end
-	end
-	
-	--set heap reclaim %
-	if replaceFID and reclaimLeft then
-		--Spring.Echo("set:", replaceFID, reclaimLeft)
-		SetFeatureReclaim(replaceFID, reclaimLeft)
-	end
-	
+    --seek out heap, if one exists
+    local replaceFID
+    for i=1,#featuresCreatedThisFrame do 
+        local nbpx, nbpy, nbpz = GetFeaturePosition(featuresCreatedThisFrame[i])
+        --Spring.Echo("possible", featuresCreatedThisFrame[i], bpx,bpy,bpz,nbpx,nbpy,nbpz)
+        if bpx==nbpx and bpy==nbpy and bpz==nbpz then --floating point errors
+            replaceFID = featuresCreatedThisFrame[i]
+        end
+    end
+    
+    --set heap reclaim %
+    if replaceFID and reclaimLeft then
+        --Spring.Echo("set:", replaceFID, reclaimLeft)
+        SetFeatureReclaim(replaceFID, reclaimLeft)
+    end
+    
 end
 
 function gadget:GameFrame()
-	--flush featuresCreatedThisFrame
-	if featuresCreatedThisFrame then
-		for i=1,#featuresCreatedThisFrame do
-			--Spring.Echo("removed",i,featuresCreatedThisFrame[i])
-			featuresCreatedThisFrame[i] = nil
-		end
-	end
+    --flush featuresCreatedThisFrame
+    if featuresCreatedThisFrame then
+        for i=1,#featuresCreatedThisFrame do
+            --Spring.Echo("removed",i,featuresCreatedThisFrame[i])
+            featuresCreatedThisFrame[i] = nil
+        end
+    end
 end
 
 --------------------------------------------------------------------------------

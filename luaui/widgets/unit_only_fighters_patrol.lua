@@ -14,16 +14,16 @@
 
 
 function widget:GetInfo()
-	return {
-		name	= "Only Fighters Patrol",
-		desc	= "Only fighters follow factorys patrol route after leaving the airlab",
-		author	= "dizekat",
-		date	= "2008-04-22",
-		license	= "GNU GPL, v2 or later",
-		layer	= 0,
-		enabled	= false,
-		handler   = true
-	}
+    return {
+        name    = "Only Fighters Patrol",
+        desc    = "Only fighters follow factorys patrol route after leaving the airlab",
+        author    = "dizekat",
+        date    = "2008-04-22",
+        license    = "GNU GPL, v2 or later",
+        layer    = 0,
+        enabled    = false,
+        handler   = true
+    }
 end
 
 local opts={
@@ -39,82 +39,82 @@ local GetUnitPosition = Spring.GetUnitPosition
 
 --[[
 local function WeaponCanTargetAir(weapon)
-	local wd = WeaponDefs[ weapon.weaponDef ]
-	for name,param in wd:pairs() do
-		Spring.Echo("wd:",name,param)
-	end
-	categories=wd.onlyTargetCategories
-	if categories then
-		for name,value in pairs(categories) do
-			Spring.Echo("wdtc:",name,value)
-		end
-	end
+    local wd = WeaponDefs[ weapon.weaponDef ]
+    for name,param in wd:pairs() do
+        Spring.Echo("wd:",name,param)
+    end
+    categories=wd.onlyTargetCategories
+    if categories then
+        for name,value in pairs(categories) do
+            Spring.Echo("wdtc:",name,value)
+        end
+    end
 end
 
 local function UnitCanTargetAir(unitDefID)
-	local ud=UnitDefs[unitDefID]
-	for i=1,table.getn(ud.weapons) do
-		if WeaponCanTargetAir(ud.weapons[i]) then
-			return true
-		end
-	end
-	return false
+    local ud=UnitDefs[unitDefID]
+    for i=1,table.getn(ud.weapons) do
+        if WeaponCanTargetAir(ud.weapons[i]) then
+            return true
+        end
+    end
+    return false
 end
 ]]--
 local function UnitHasPatrolOrder(unitID)
-	local queue=GetCommandQueue(unitID,20)
-	for i,cmd in ipairs(queue) do
-		if cmd.id==CMD.PATROL then
-			return true
-		end
-	end
-	return false
+    local queue=GetCommandQueue(unitID,20)
+    for i,cmd in ipairs(queue) do
+        if cmd.id==CMD.PATROL then
+            return true
+        end
+    end
+    return false
 end
 local function MustStop(unitID, unitDefID)
-	local ud=UnitDefs[unitDefID]
-	if ud and ud.canFly and (ud.weaponCount==0 or (not (ud.isFighterAirUnit or ud.isFighter)) or (ud.humanName=="Liche") or ud.noAutoFire) and UnitHasPatrolOrder(unitID) then --isFighter kept for 94 compat only, remove after
-		if (not opts.stop_builders)and ud and ud.isBuilder then
-			return false
-		end
-		--[[
-		if opts.FactoryGuard_workaround then
-			local factoryGuard = widgetHandler.knownWidgets["FactoryGuard"]
-			if factoryGuard and factoryGuard.name and (widgetHandler.orderList[factoryGuard.name]>0) then
-				if ud and ud.isBuilder and ud.canAssist then
-					return false
-				end
-			end			
-		end	
-		]]--		
-		return true
-	end
-	return false
+    local ud=UnitDefs[unitDefID]
+    if ud and ud.canFly and (ud.weaponCount==0 or (not (ud.isFighterAirUnit or ud.isFighter)) or (ud.humanName=="Liche") or ud.noAutoFire) and UnitHasPatrolOrder(unitID) then --isFighter kept for 94 compat only, remove after
+        if (not opts.stop_builders)and ud and ud.isBuilder then
+            return false
+        end
+        --[[
+        if opts.FactoryGuard_workaround then
+            local factoryGuard = widgetHandler.knownWidgets["FactoryGuard"]
+            if factoryGuard and factoryGuard.name and (widgetHandler.orderList[factoryGuard.name]>0) then
+                if ud and ud.isBuilder and ud.canAssist then
+                    return false
+                end
+            end            
+        end    
+        ]]--        
+        return true
+    end
+    return false
 end
-			
+            
 function widget:UnitFromFactory(unitID, unitDefID, unitTeam, factID, factDefID, userOrders)
-	if (unitTeam ~= GetMyTeamID()) then
-		return
-	elseif (userOrders) then
-		return
-	end
-	local bd = UnitDefs[factDefID]
-	if (not (bd and bd.isFactory)) then
-		return
-	end
-	local ud=UnitDefs[unitDefID]
-	--- liche: workaround for BA (liche is fighter)
-	if MustStop(unitID, unitDefID) then
-		Spring.GiveOrderToUnit(unitID,CMD.STOP,{},{})
-	else
-	--[[	
-		Spring.Echo("-----")
-		for name,param in ud:pairs() do
-			Spring.Echo(name,param)
-		end
-	]]--
-	end
-	
-	--if ud.humanName=="Liche" then
-	--	UnitCanTargetAir(unitDefID)
-	--end
+    if (unitTeam ~= GetMyTeamID()) then
+        return
+    elseif (userOrders) then
+        return
+    end
+    local bd = UnitDefs[factDefID]
+    if (not (bd and bd.isFactory)) then
+        return
+    end
+    local ud=UnitDefs[unitDefID]
+    --- liche: workaround for BA (liche is fighter)
+    if MustStop(unitID, unitDefID) then
+        Spring.GiveOrderToUnit(unitID,CMD.STOP,{},{})
+    else
+    --[[    
+        Spring.Echo("-----")
+        for name,param in ud:pairs() do
+            Spring.Echo(name,param)
+        end
+    ]]--
+    end
+    
+    --if ud.humanName=="Liche" then
+    --    UnitCanTargetAir(unitDefID)
+    --end
 end

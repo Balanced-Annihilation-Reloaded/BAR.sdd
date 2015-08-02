@@ -236,7 +236,7 @@ else
   end
   local function StartBoth(cmd, msg, words, playerID)
     Start(cmd, msg, words, playerID)
-	StartSYNCED(cmd, msg, words, playerID)
+    StartSYNCED(cmd, msg, words, playerID)
   end
     
 
@@ -267,7 +267,7 @@ else
       " : starts the gadget profiler (for debugging issues)"
     )
     gadgetHandler.actionHandler.AddChatAction(gadget, 'profile', StartSYNCED,"")
-	gadgetHandler.actionHandler.AddChatAction(gadget, 'ap', StartBoth,"")
+    gadgetHandler.actionHandler.AddChatAction(gadget, 'ap', StartBoth,"")
     --StartHook()
   end
 
@@ -299,7 +299,7 @@ end
 
   function gadget:DrawScreen_()
     if not (next(callinTimes)) then
-		--Spring.Echo("no callin times in profiler!")
+        --Spring.Echo("no callin times in profiler!")
       return --// nothing to do
     end
 
@@ -391,7 +391,7 @@ end
     gl.Color(1,1,1,1)
     gl.BeginText()
     
-    if (profile_unsynced) then	
+    if (profile_unsynced) then    
       y = y - 24
       gl.Text("UNSYNCED", x+115, y-3, 12, "nOc")
       y = y - 5
@@ -413,11 +413,11 @@ end
 
       --gl.Rect(x, y+5-(12)*j, x+230, y+4-(12)*j)
       gl.Color(1,0,0)   
-	  y = y - 8
+      y = y - 8
       gl.Text("SYNCED", x+115, y-3-(12)*j, 12, "nOc")
       gl.Color(1,1,1,1)
       j = j
-	  y = y - 5
+      y = y - 5
 
       for i=1,#sortedListSYNCED do
         local v = sortedListSYNCED[i]

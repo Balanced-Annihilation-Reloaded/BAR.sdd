@@ -147,7 +147,7 @@ end
 local function updateStatics()
   if (staticList) then gl.DeleteList(staticList) end
   staticList = gl.CreateList( function()
-	gl.PushMatrix()
+    gl.PushMatrix()
     gl.Color(0.0, 0.0, 0.0, 0.5)
     gl.Rect(x1, y1, x1+w,y1+h)
     gl.Color(0.0, 0.0, 0.0, 1)
@@ -229,7 +229,7 @@ local function updateBars()
   end
   if (displayList) then gl.DeleteList(displayList) end
   displayList = gl.CreateList( function()
-	gl.PushMatrix()
+    gl.PushMatrix()
     for _,d in pairs(teamRes) do
       if d.eRec then
         gl.Color(0.8, 0, 0, 0.8)
@@ -305,71 +305,71 @@ local function transferResources(n)
 end
 
 function widget:GameFrame(n)
-	gameFrame = n
+    gameFrame = n
 end
 
 function widget:Update()
   if (gameFrame ~= lastFrame) then
     if enabled then
-	  lastFrame = gameFrame
-	  updateBars()
-	  if transferTeam then
-	    transferResources(gameFrame)
-	  end
-	  if sentSomething and ((gameFrame % 16) == 0) then
-	    for teamID,send in pairs(sendEnergy) do
-		  ShareResources(teamID,"energy",send)
-	    end
-	    for teamID,send in pairs(sendMetal) do
-	      ShareResources(teamID,"metal",send)
-	    end
-	    sendEnergy = {}
-	    sendMetal = {}
-	    trnsEnergy = {}
-	    trnsMetal = {}
-	    sentEnergy = 0
-	    sentMetal = 0 
-	    sentSomething = false
-	  end
-	  if TOOL_TIPS then
-	    local x, y = GetMouseState()
-	    if (mx ~= x) or (my ~= y) or transferring or ((gameFrame % 15) == 0) then
-		  mx = x
-		  my = y
-		  if (x > x1 + BAR_GAP) and (y > y1 + BAR_GAP) and (x < (x1 + FULL_BAR)) and (y < (y1 + h - TOP_HEIGHT)) then
-		    for teamID,defs in pairs(teamIcons) do
-			  if (y < defs.iy1) and (y >= defs.iy2) then
-			    local _, _, _, eInc, _, _, _, eRec = GetTeamResources(teamID, "energy")
-			    local _, _, _, mInc, _, _, _, mRec = GetTeamResources(teamID, "metal")   
-			    eRec = eRec + (trnsEnergy[teamID] or 0)
-			    mRec = mRec + (trnsMetal[teamID] or 0)      
-			    labelText[1] = 
-			    {
-				  label=defs.name,
-				  x=x1-BAR_SPACER,
-				  y=defs.iy1-BAR_SPACER,
-				  size=TOTAL_BAR_HEIGHT,
-				  config="orn",
-			    }
-			    labelText[2] = 
-			    {
-				  label="(E: +"..sF("%.1f",eInc+eRec) ..", M: +"..sF("%.2f",mInc+mRec)..")", 
-				  x=x1-BAR_SPACER, 
-				  y=defs.iy1-BAR_SPACER-TOTAL_BAR_HEIGHT, 
-				  size=TOTAL_BAR_HEIGHT/1.25, 
-				  config="orn",
-			    }
-			    return
-			  end
-		    end
-		    if (labelText) then labelText = {} end
-		  elseif (labelText) then labelText = {} end
-	    end
-	  end
+      lastFrame = gameFrame
+      updateBars()
+      if transferTeam then
+        transferResources(gameFrame)
+      end
+      if sentSomething and ((gameFrame % 16) == 0) then
+        for teamID,send in pairs(sendEnergy) do
+          ShareResources(teamID,"energy",send)
+        end
+        for teamID,send in pairs(sendMetal) do
+          ShareResources(teamID,"metal",send)
+        end
+        sendEnergy = {}
+        sendMetal = {}
+        trnsEnergy = {}
+        trnsMetal = {}
+        sentEnergy = 0
+        sentMetal = 0 
+        sentSomething = false
+      end
+      if TOOL_TIPS then
+        local x, y = GetMouseState()
+        if (mx ~= x) or (my ~= y) or transferring or ((gameFrame % 15) == 0) then
+          mx = x
+          my = y
+          if (x > x1 + BAR_GAP) and (y > y1 + BAR_GAP) and (x < (x1 + FULL_BAR)) and (y < (y1 + h - TOP_HEIGHT)) then
+            for teamID,defs in pairs(teamIcons) do
+              if (y < defs.iy1) and (y >= defs.iy2) then
+                local _, _, _, eInc, _, _, _, eRec = GetTeamResources(teamID, "energy")
+                local _, _, _, mInc, _, _, _, mRec = GetTeamResources(teamID, "metal")   
+                eRec = eRec + (trnsEnergy[teamID] or 0)
+                mRec = mRec + (trnsMetal[teamID] or 0)      
+                labelText[1] = 
+                {
+                  label=defs.name,
+                  x=x1-BAR_SPACER,
+                  y=defs.iy1-BAR_SPACER,
+                  size=TOTAL_BAR_HEIGHT,
+                  config="orn",
+                }
+                labelText[2] = 
+                {
+                  label="(E: +"..sF("%.1f",eInc+eRec) ..", M: +"..sF("%.2f",mInc+mRec)..")", 
+                  x=x1-BAR_SPACER, 
+                  y=defs.iy1-BAR_SPACER-TOTAL_BAR_HEIGHT, 
+                  size=TOTAL_BAR_HEIGHT/1.25, 
+                  config="orn",
+                }
+                return
+              end
+            end
+            if (labelText) then labelText = {} end
+          elseif (labelText) then labelText = {} end
+        end
+      end
     elseif (#GetTeamList(GetMyAllyTeamID()) > 1) then
-	  setUpTeam()
-	  updateStatics()
-	  updateBars()
+      setUpTeam()
+      updateStatics()
+      updateBars()
     end
   end
 end

@@ -1,124 +1,58 @@
+
 function widget:GetInfo()
 	return {
-		name = "Building Hotkeys",
-		desc = "Enables Building Hotkeys for ZXCV,BN,O" ,
-		author = "Beherith",
-		date = "23 march 2012",
+		name = "Hotkeys",
+		desc = "Sets up many hotkeys" ,
+		author = "Bluestone", --incorporates Context Build widget by BD and Dizekat
+		date = "30 July 2009",
 		license = "GNU LGPL, v2.1 or later",
-		layer = 1,
+		layer = 0,
 		enabled = true
 	}
 end
 
-local binds={
+local waterLandPairsHuman = {
+-- human friendly, bidirectional 
+{'armmex','armuwmex'},
+{'cormex','coruwmex'},
+{'armmakr','armfmkr'},
+{'cormakr','corfmkr'},
+{'armdrag','armfdrag'},  
+{'cordrag','corfdrag'},  
+{'armmstor','armuwms'},
+{'armestor','armuwes'},
+{'cormstor','coruwms'},
+{'corestor','coruwes'},
+{'armrl','armfrt'},
+{'corrl','corfrt'},
+{'armhp','armfhp'},
+{'corhp','corfhp'},
+{'armrad','armfrad'},
+{'corrad','corfrad'},
+{'armhlt','armfhlt'},
+{'corhlt','corfhlt'},
+{'armtarg','armfatf'},
+{'cortarg','corfatf'},
+--{'armmmkr','armuwmmm'}, --FIXME
+--{'cormmkr','coruwmmm'},
+{'armfus','armuwfus'},
+{'corfus','coruwfus'},
+{'armflak','armfflak'},
+{'corflak','corenaa'},
+{'armmoho','armuwmme'},
+{'cormoho','coruwmme'},
+{'armsolar','armtide'},
+{'corsolar','cortide'},
+{'armlab','armsy'},
+{'corlab','corsy'},
+{'armllt','armtl'},
+{'corllt','cortl'},
+}
+
+local binds = {
+    -- buildspacing
 	"bind any+b buildspacing inc",
 	"bind any+n buildspacing dec",
-	"bind z buildunit_armmex",
-	"bind shift+z buildunit_armmex",
-	"bind z buildunit_armamex",
-	"bind shift+z buildunit_armamex",
-	"bind z buildunit_cormex",
-	"bind shift+z buildunit_cormex",
-	"bind z buildunit_corexp",
-	"bind shift+z buildunit_corexp",
-	"bind z buildunit_armmoho",
-	"bind shift+z buildunit_armmoho",
-	"bind z buildunit_cormoho",
-	"bind shift+z buildunit_cormoho",
-	"bind z buildunit_cormexp",
-	"bind shift+z buildunit_cormexp",
-	"bind z buildunit_coruwmex",
-	"bind shift+z buildunit_coruwmex",
-	"bind z buildunit_armuwmex",
-	"bind shift+z buildunit_armuwmex",
-	"bind z buildunit_coruwmme",
-	"bind shift+z buildunit_coruwmme",
-	"bind z buildunit_armuwmme",
-	"bind shift+z buildunit_armuwmme",
-	"bind x buildunit_armsolar",
-	"bind shift+x buildunit_armsolar",
-	"bind x buildunit_armwin",
-	"bind shift+x buildunit_armwin",
-	"bind x buildunit_corsolar",
-	"bind shift+x buildunit_corsolar",
-	"bind x buildunit_corwin",
-	"bind shift+x buildunit_corwin",
-	"bind x buildunit_armadvsol",
-	"bind shift+x buildunit_armadvsol",
-	"bind x buildunit_coradvsol",
-	"bind shift+x buildunit_coradvsol",
-	"bind x buildunit_armfus",
-	"bind shift+x buildunit_armfus",
-	"bind x buildunit_armmmkr",
-	"bind shift+x buildunit_armmmkr",
-	"bind x buildunit_corfus",
-	"bind shift+x buildunit_corfus",
-	"bind x buildunit_cormmkr",
-	"bind shift+x buildunit_cormmkr",
-	"bind x buildunit_armtide",
-	"bind shift+x buildunit_armtide",
-	"bind x buildunit_cortide",
-	"bind shift+x buildunit_cortide",
-	"bind x buildunit_armuwfus",
-	"bind shift+x buildunit_armuwfus",
-	"bind x buildunit_coruwfus",
-	"bind shift+x buildunit_coruwfus",
-	"bind x buildunit_armuwmmm",
-	"bind shift+x buildunit_armuwmmm",
-	"bind x buildunit_coruwmmm",
-	"bind shift+x buildunit_coruwmmm",
-	"bind c buildunit_armllt",
-	"bind shift+c buildunit_armllt",
-	"bind c buildunit_armrad",
-	"bind shift+c buildunit_armrad",
-	"bind c buildunit_corllt",
-	"bind shift+c buildunit_corllt",
-	"bind c buildunit_corrad",
-	"bind shift+c buildunit_corrad",
-	"bind c buildunit_corrl",
-	"bind shift+c buildunit_corrl",
-	"bind c buildunit_armrl",
-	"bind shift+c buildunit_armrl",
-	"bind c buildunit_armpb",
-	"bind shift+c buildunit_armpb",
-	"bind c buildunit_armflak",
-	"bind shift+c buildunit_armflak",
-	"bind c buildunit_corvipe",
-	"bind shift+c buildunit_corvipe",
-	"bind c buildunit_corflak",
-	"bind shift+c buildunit_corflak",
-	"bind c buildunit_armtl",
-	"bind shift+c buildunit_armtl",
-	"bind c buildunit_cortl",
-	"bind shift+c buildunit_cortl",
-	"bind c buildunit_armsonar",
-	"bind shift+c buildunit_armsonar",
-	"bind c buildunit_corsonar",
-	"bind shift+c buildunit_corsonar",
-	"bind c buildunit_armfrad",
-	"bind shift+c buildunit_armfrad",
-	"bind c buildunit_corfrad",
-	"bind shift+c buildunit_corfrad",
-	"bind c buildunit_armfrt",
-	"bind shift+c buildunit_armfrt",
-	"bind c buildunit_corfrt",
-	"bind shift+c buildunit_corfrt",
-	"bind v buildunit_armnanotc",
-	"bind shift+v buildunit_armnanotc",
-	"bind v buildunit_armlab",
-	"bind shift+v buildunit_armlab",
-	"bind v buildunit_armvp",
-	"bind shift+v buildunit_armvp",
-	"bind v buildunit_cornanotc",
-	"bind shift+v buildunit_cornanotc",
-	"bind v buildunit_corlab",
-	"bind shift+v buildunit_corlab",
-	"bind v buildunit_corvp",
-	"bind shift+v buildunit_corvp",
-	"bind v buildunit_armsy",
-	"bind shift+v buildunit_armsy",
-	"bind v buildunit_corsy",
-	"bind shift+v buildunit_corsy",
     
     -- numpad movement
     "bind numpad2 moveback",
@@ -129,15 +63,28 @@ local binds={
     "bind numpad3 movedown",
     "bind numpad1 movefast",
     
-    -- hotfixes for 98.0
-    "bind f6 mutesound", --http://springrts.com/mantis/view.php?id=4576
+    -- chat/fullscreen keys
+	"bind Alt+backspace  fullscreen",
+	"bind Alt+enter  chatally",
+	"bind Alt+enter  chatswitchally",
+	"bind Ctrl+enter  chatall",
+	"bind Ctrl+enter  chatswitchall",
+	"bind Shift+enter  chatspec",
+	"bind Shift+enter  chatswitchspec",
+    
+    -- settarget
+    -- "bind y settarget", -- see SetYZState()
+    "bind j canceltarget",
+    
     "bind q drawinmap", --some keyboards don't have ` or \
+
     "bind ,	buildfacing inc", --because some keyboards don't have [ and ] keys
     "bind .	buildfacing dec",
     "bind o buildfacing inc", --apparently some keyboards don't have , and . either...
 }
     
 local unbinds={
+    -- unwanted default bindings
 	"bind any+c controlunit",
 	"bind c controlunit",
 	"bind Any+x  buildspacing dec",
@@ -146,42 +93,256 @@ local unbinds={
 	"bind any+z buildspacing inc",
 	"bind z buildspacing inc",
 	"bindaction buildspacing inc",
-
-    -- hotfixes for 98.0
-    "bind backspace	mousestate", --http://springrts.com/mantis/view.php?id=4578
     "bind , prevmenu",
     "bind . nextmenu",
+	"bind Alt+enter fullscreen",
 }
 
-function widget:Initialize()
-	for k,v in ipairs(unbinds) do
-		Spring.SendCommands("un"..v)
-	end
-	for k,v in ipairs(binds) do
-		Spring.SendCommands(v)
-	end
-end
-
-function widget:Shutdown()
-	for k,v in ipairs(binds) do
-		Spring.SendCommands("un"..v)
-	end
-	for k,v in ipairs(unbinds) do
-		Spring.SendCommands(v)
-	end
-end
-
--- hacky hotfix for http://springrts.com/mantis/view.php?id=4455
--- see also https://github.com/spring/spring/blob/develop/rts/Game/UI/KeyCodes.cpp and https://github.com/spring/spring/blob/develop/cont/LuaUI/Headers/keysym.h.lua
 include('keysym.h.lua')
-local BACKQUOTE = KEYSYMS.BACKQUOTE
-local BACKSLASH = KEYSYMS.BACKSLASH
-local PAR = KEYSYMS.WORLD_23
-local Q = KEYSYMS.Q 
-local RETURN = KEYSYMS.RETURN
-local wasDrawKey = false
-function widget:KeyPress(key, mods, isRepeat)
-    if key==RETURN and (Spring.GetKeyState(BACKQUOTE) or Spring.GetKeyState(BACKSLASH) or Spring.GetKeyState(PAR) or Spring.GetKeyState(Q)) then
-        return true
+local Z_KEY = KEYSYMS.Z
+local X_KEY = KEYSYMS.X
+local C_KEY = KEYSYMS.C
+local V_KEY = KEYSYMS.V
+
+local TestBuildOrder		= Spring.TestBuildOrder
+local GetActiveCommand		= Spring.GetActiveCommand
+local SetActiveCommand		= Spring.SetActiveCommand
+local GetMouseState			= Spring.GetMouseState
+local TraceScreenRay		= Spring.TraceScreenRay
+local TestBuildOrder		= Spring.TestBuildOrder
+local GetFPS				= Spring.GetFPS
+
+local alternative_units = {}-- unit def id --> list of alternative unit def ids
+local updateRate = 1/3 -- in seconds
+local timeCounter = 0
+
+local waterLandPairs = {}
+
+function SetBinds()
+	for k,v in ipairs(unbinds) do
+		Spring.SendCommands("un"..v)
+	end
+	for k,v in ipairs(binds) do
+		Spring.SendCommands(v)
+	end
+    SetYZState()
+end
+
+function SetUnBinds()
+    for k,v in ipairs(binds) do
+		Spring.SendCommands("un"..v)
+	end
+	for k,v in ipairs(unbinds) do
+		Spring.SendCommands(v)
+	end
+    Spring.SendCommands("unbind y settarget")
+    Spring.SendCommands("unbind z settarget")
+end
+
+function SetYZState()
+    Spring.SendCommands("unbind y settarget")
+    Spring.SendCommands("unbind z settarget")
+    if WG.swapYZbinds then
+        Spring.SendCommands("bind z settarget")
+        Z_KEY = KEYSYMS.Y
+    else
+        Spring.SendCommands("bind y settarget")
+        Z_KEY = KEYSYMS.Z    
     end
+end
+
+function Cost(uDID)
+    return UnitDefs[uDID].metalCost + 60*UnitDefs[uDID].energyCost
+end
+
+function ConstructUnitOrder(Score)
+    -- construct a table of uDIDs with non-nil score, in increasing order of score
+    local t = {}
+    for uDID,uDef in pairs(UnitDefs) do
+        local score = Score(uDID)
+        if score then
+            t[#t+1] = {uDID=uDID,score=score}
+        end
+    end
+    local function Comparator (i,j)
+        return (i.score<j.score)
+    end
+    table.sort(t,Comparator)
+    local t2 = {}
+    for k,v in ipairs(t) do
+        t2[k] = v.uDID
+    end
+    return t2
+end
+
+function PrintArrayTable(t)
+    for k,v in ipairs(t) do
+        Spring.Echo(k,v, UnitDefs[v].name)
+    end
+end
+
+function AdvanceToNextBuildable(t, cmdID)
+    local pos = 0 -- current pos in table, or 0
+    if cmdID and cmdID < 0 then
+        local uDID = -cmdID
+        for k,v in ipairs(t) do
+            if v==uDID then
+                pos = k
+                break
+            end        
+        end
+    end
+    
+    -- make a list of all the units our current selection can build
+    local canBuild = {}
+    local units = Spring.GetSelectedUnits()
+    for _,unitID in ipairs(units) do
+        local cmdList = Spring.GetUnitCmdDescs(unitID)
+        for i = 1, #cmdList do
+            local cmd = cmdList[i]
+			if UnitDefNames[cmd.name] then
+				local uDID = UnitDefNames[cmd.name].id
+                canBuild[uDID] = true
+            end
+        end
+    end        
+    
+    -- find the next unitDefID in the (circular) array that we can build, skipping over any units that cannot be built in current context, and set is as the active build command
+    local i = (pos>0) and pos+1 or 1
+    if i>#t then i=1 end
+    while (i~=pos) do
+        if pos==0 then pos=1 end
+        if canBuild[t[i]] and CheckContextBuild(t[i])==t[i] then
+            SetActiveCommand('buildunit_'..UnitDefs[t[i]].name)
+            return true
+        end
+        i = i + 1
+        if i>#t then i=1 end    
+    end
+end
+
+function CheckContextBuild(uDID)
+    -- check if we can build uDID in current context, return uDID if it is, return its pairedID if that is, return nil otherwise
+	local mx, my = GetMouseState()
+	local _, coords = TraceScreenRay(mx, my, true, true)
+	if (not coords) then
+		return uDID
+	end
+    if coords[1]<0 or coords[1]>Game.mapSizeX or coords[3]<0 or coords[3]>Game.mapSizeZ then
+        return uDID
+    end
+
+	if TestBuildOrder(uDID, coords[1], coords[2], coords[3], 1) == 0 then
+		if waterLandPairs[uDID] then 
+            local pairedID = waterLandPairs[uDID]
+			if TestBuildOrder(pairedID, coords[1], coords[2], coords[3], 1) ~= 0 then
+                --Spring.Echo("paired", uDID, pairedID)
+                return pairedID
+			end
+		end
+        return nil
+	end
+    return uDID
+end
+
+function widget:Initialize()
+    SetBinds()
+    SetYZState()
+    WG.SetYZState = SetYZState
+    
+    -- setup pairs
+    for _,v in pairs(waterLandPairsHuman) do
+        local uDID1 = UnitDefNames[v[1]].id
+        local uDID2 = UnitDefNames[v[2]].id
+        if waterLandPairs[uDID1] or waterLandPairs[uDID2] then
+            Spring.Echo("WARNING: found duplicate water-land pairing for (" .. v[1] .. "," .. v[2] .. ")")
+        end
+        waterLandPairs[uDID1] = uDID2
+        waterLandPairs[uDID2] = uDID1
+    end
+    
+    -- setup Z (metal extractors)
+    local function Z_Score (uDID)
+        if not UnitDefs[uDID].isExtractor then return end
+        return Cost(uDID)
+    end
+    Z_units = ConstructUnitOrder(Z_Score)
+    --Spring.Echo("Z TABLE")
+    --PrintArrayTable(Z_units)
+        
+    -- setup X (energy producers)
+    local function X_Score (uDID)
+        if not UnitDefs[uDID].isBuilding then return end
+        if UnitDefs[uDID].isBuilder then return end
+        if UnitDefs[uDID].energyMake<20 and (UnitDefs[uDID].tidalGenerator==0) and (UnitDefs[uDID].windGenerator==0) then return end
+        return Cost(uDID)
+    end
+    X_units = ConstructUnitOrder(X_Score)
+    --Spring.Echo("X TABLE")
+    --PrintArrayTable(X_units)
+    
+    -- setup C (defences)
+    local function C_Score (uDID)
+        if not UnitDefs[uDID].isBuilding then return end
+        if UnitDefs[uDID].isFactory then return end
+        if UnitDefs[uDID].isExtractor then return end
+        -- TODO: remove fixed launchers
+        if #UnitDefs[uDID].weapons==0 and UnitDefs[uDID].radarRadius<200 and UnitDefs[uDID].sonarRadius<200 then return end
+        
+        return Cost(uDID)    
+    end
+    C_units = ConstructUnitOrder(C_Score)
+    Spring.Echo("C TABLE")
+    PrintArrayTable(C_units)
+    
+    -- setup V (labs)
+    local function V_Score (uDID)
+        if not UnitDefs[uDID].isFactory then return end
+        return Cost(uDID)    
+    end
+    V_units = ConstructUnitOrder(V_Score)
+    --Spring.Echo("V TABLE")
+    --PrintArrayTable(V_units)  
+end
+
+function widget:KeyPress(key, mods, isRepeat)
+    -- if we are queueing build commands, and ZXCV is pressed, move onto the next unitDefID that at least one of our selected units can build
+    local _,cmdID,_ = Spring.GetActiveCommand()
+    local advanced = false
+    if key==Z_KEY then
+        advanced = AdvanceToNextBuildable(Z_units, cmdID)
+    elseif key==X_KEY then
+        advanced = AdvanceToNextBuildable(X_units, cmdID)
+    elseif key==C_KEY then
+        advanced = AdvanceToNextBuildable(C_units, cmdID)
+    elseif key==V_KEY then
+        advanced = AdvanceToNextBuildable(V_units, cmdID)
+    end    
+    return advanced
+end
+
+function widget:Update(deltaTime)
+    -- swap water-land pairs due to context, if it helps
+	timeCounter = timeCounter + deltaTime
+	if timeCounter >= updateRate then -- update only x times per second
+		timeCounter = 0
+	else
+		return
+	end
+
+	local _, cmd_id = GetActiveCommand()
+	if (not cmd_id) or (cmd_id>=0) then
+		return
+	end
+    
+	local unitDefID = -cmd_id
+    local pairedID = CheckContextBuild(unitDefID)
+    if pairedID and unitDefID ~= pairedID then
+        SetActiveCommand('buildunit_'..UnitDefs[pairedID].name) 
+	end
+end
+
+function widget:ShutDown()
+    WG.SetYZState = nil
+    SetUnBinds()
 end

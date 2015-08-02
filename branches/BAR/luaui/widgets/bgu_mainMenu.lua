@@ -1,16 +1,14 @@
--- WIP
+
 -- Look at the globalize function for an explanation on the 'API' to add options to menu from other widgets
---  as of writing this it is around line 700
 
 -- TODO add popup window/API
--- TODO Handle spring settings better in general
--- TODO possibly seperate engine options and handling to seperate widget
---   same with widget/interface tab
+-- TODO possible separate some tabs into separate widgets
+
 function widget:GetInfo()
 	return {
 		name    = 'Main Menu',
 		desc    = 'The main menu; for information, settings, widgets, etc',
-		author  = 'Funkencool',
+		author  = 'Funkencool, Bluestone',
 		date    = '2013',
 		license = 'GNU GPL v2',
 		layer   = -100,
@@ -786,10 +784,9 @@ local function createInterfaceTab()
 
 			comboBox{name='Skin',y=90, width='45%',
 				labels=Chili.SkinHandler.GetAvailableSkins()},
-			comboBox{name='Cursor',y=125, width='45%',
+			--[[comboBox{name='Cursor',y=125, width='45%',
 				labels={'Chili Default','Chili Static','Spring Default','CA Classic','CA Static','Erom','Masse','K_haos_girl'},
-				options={'zk','zk_static','ba','ca','ca_static','erom','masse','k_haos_girl'}},
-
+				options={'zk','zk_static','ba','ca','ca_static','erom','masse','k_haos_girl'}},]]
 			Chili.Label:New{caption='-- Widget Settings --',x='2%',width='46%',align = 'center',y=175},
 			addStack{y=190,x='2%',width='46%',scroll=true},
 		}

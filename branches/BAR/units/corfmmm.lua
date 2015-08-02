@@ -9,7 +9,7 @@ return {
 		buildinggrounddecaldecayspeed = 30,
 		buildinggrounddecalsizex = 8,
 		buildinggrounddecalsizey = 8,
-		buildinggrounddecaltype = "coruwmmm_aoplane.dds",
+		buildinggrounddecaltype = "corfmmm_aoplane.dds",
 		buildpic = "CORFMMM.DDS",
 		buildtime = 38623,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",

@@ -286,9 +286,8 @@ function widget:Initialize()
         if not UnitDefs[uDID].isBuilding then return end
         if UnitDefs[uDID].isFactory then return end
         if UnitDefs[uDID].isExtractor then return end
-        -- TODO: remove fixed launchers
-        if #UnitDefs[uDID].weapons==0 and UnitDefs[uDID].radarRadius<200 and UnitDefs[uDID].sonarRadius<200 then return end
-        
+        if #UnitDefs[uDID].weapons>0 and WeaponDefs[UnitDefs[uDID].weapons[1].weaponDef].type=="StarburstLauncher" then return end
+        if #UnitDefs[uDID].weapons==0 and UnitDefs[uDID].radarRadius<200 and UnitDefs[uDID].sonarRadius<200 then return end        
         return Cost(uDID)    
     end
     C_units = ConstructUnitOrder(C_Score)

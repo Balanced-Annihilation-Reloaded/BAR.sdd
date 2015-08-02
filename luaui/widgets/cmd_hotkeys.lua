@@ -33,8 +33,8 @@ local waterLandPairsHuman = {
 {'corhlt','corfhlt'},
 {'armtarg','armfatf'},
 {'cortarg','corfatf'},
---{'armmmkr','armuwmmm'}, --FIXME
---{'cormmkr','coruwmmm'},
+{'armmmkr','armfmmm'},
+{'cormmkr','corfmmm'},
 {'armfus','armuwfus'},
 {'corfus','coruwfus'},
 {'armflak','armfflak'},

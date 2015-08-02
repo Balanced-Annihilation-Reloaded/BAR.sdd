@@ -304,6 +304,7 @@ local function addBuild(cmd, category)
         if -cmd.id==activeSelUDID then
             overlay.color = selectedColor
             button.borderColor = selectedBorderColor
+            selectTab(menuTab[category])
         else
             overlay.color = teamColor
             button.borderColor = {1,1,1,0.1}        
@@ -845,6 +846,7 @@ function GameFrame()
             updateRequired = true
             activeSelUDID = nil
             activeSelCmdID = cmdID
+            selectTab(menuTab[getMenuCat(uDID)])
         end
     else
         -- no active commands

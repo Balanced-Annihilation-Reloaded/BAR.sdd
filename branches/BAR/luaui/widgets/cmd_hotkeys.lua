@@ -292,8 +292,8 @@ function widget:Initialize()
         return Cost(uDID)    
     end
     C_units = ConstructUnitOrder(C_Score)
-    Spring.Echo("C TABLE")
-    PrintArrayTable(C_units)
+    --Spring.Echo("C TABLE")
+    --PrintArrayTable(C_units)
     
     -- setup V (labs)
     local function V_Score (uDID)

@@ -19,7 +19,7 @@ return {
 		damagemodifier = 0.5,
 		description = "Produces Energy (20E)",
 		energystorage = 50,
-		energyuse = -20,
+		energymake = 20,
 		explodeas = "SMALL_BUILDINGEX",
 		footprintx = 5,
 		footprintz = 5,

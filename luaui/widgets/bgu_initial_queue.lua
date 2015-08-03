@@ -310,7 +310,8 @@ end
 local function SetSelDefID(defID)
 
     selDefID = defID
-
+    WG.InitialQueue.selDefID = defID
+    
     if (isMex[selDefID] ~= nil) ~= (Spring.GetMapDrawMode() == "metal") then
         Spring.SendCommands("ShowMetalMap")
     end
@@ -328,8 +329,9 @@ function widget:Initialize()
         return
     end
     
-    -- expose out API to WG, its used by sMenu
-    WG.SetSelDefID = SetSelDefID
+    -- expose our API to WG, its used by sMenu
+    WG.InitialQueue = {}
+    WG.InitialQueue.SetSelDefID = SetSelDefID
     
     -- Get our starting unit
     local _, _, _, _, mySide = Spring.GetTeamInfo(myTeamID)
@@ -356,7 +358,7 @@ function widget:Initialize()
 end
 
 function widget:Shutdown()
-    WG.SetSelDefID = nil
+
 end
 
 ------------------------------------------------------------
@@ -472,9 +474,9 @@ local comGate = tonumber(Spring.GetModOptions().mo_comgate) or 0 --if comgate is
 
 
 function widget:GameFrame(n)
-
     if not gameStarted then
         gameStarted = true
+        WG.InitialQueue = nil
     end
 
     -- Don't run if we are a spec
@@ -610,74 +612,6 @@ function widget:MouseMove(mx, my, dx, dy, mButton)
 end
 function widget:MouseRelease(mx, my, mButton)
     areDragging = false
-end
-
-------------------------------------------------------------
--- Keyboard 
-------------------------------------------------------------
-local ZKEY = 122
-local XKEY = 120
-local CKEY = 99
-local VKEY = 118
-
-function widget:KeyPress(key,mods,isrepeat)
-    if sDef == UnitDefs[ARMCOM] then
-        if key == ZKEY then
-            if         selDefID == ARMMEX then     SetSelDefID(ARMUWMEX)
-            elseif     selDefID == ARMUWMEX then    SetSelDefID(ARMMEX)
-            else                                SetSelDefID(ARMMEX)
-            end        
-        elseif key == XKEY then
-            if         selDefID == RMSOLAR then    SetSelDefID(ARMWIN)
-            elseif     selDefID == ARMWIN then        SetSelDefID(ARMTIDE)
-            elseif     selDefID == ARMTIDE then    SetSelDefID(ARMSOLAR)
-            else                                 SetSelDefID(ARMSOLAR)
-            end
-        elseif key == CKEY then
-            if        selDefID == ARMLLT then        SetSelDefID(ARMRAD)
-            elseif     selDefID == ARMRAD then        SetSelDefID(ARMRL)
-            elseif     selDefID == ARMRL then         SetSelDefID(ARMTL)
-            elseif     selDefID == ARMTL then         SetSelDefID(ARMSONAR)
-            elseif     selDefID == ARMSONAR then    SetSelDefID(ARMFRT)
-            elseif     selDefID == ARMFRT then        SetSelDefID(ARMLLT)
-            else                                 SetSelDefID(ARMLLT)
-            end
-        elseif key == VKEY then
-            if        selDefID == ARMLAB then        SetSelDefID(ARMVP)
-            elseif     selDefID == ARMVP then        SetSelDefID(ARMSY)
-            elseif     selDefID == ARMSY then        SetSelDefID(ARMLAB)
-            else                                 SetSelDefID(ARMLAB)
-            end            
-        end    
-    elseif sDef == UnitDefs[CORCOM] then
-        if key == ZKEY then
-            if         selDefID == CORMEX then     SetSelDefID(CORUWMEX)
-            elseif     selDefID == CORUWMEX then    SetSelDefID(CORMEX)
-            else                                SetSelDefID(CORMEX)
-            end        
-        elseif key == XKEY then
-            if         selDefID == CORSOLAR then    SetSelDefID(CORWIN)
-            elseif     selDefID == CORWIN then        SetSelDefID(CORTIDE)
-            elseif     selDefID == CORTIDE then    SetSelDefID(CORSOLAR)
-            else                                 SetSelDefID(CORSOLAR)
-            end
-        elseif key == CKEY then
-            if        selDefID == CORLLT then        SetSelDefID(CORRAD)
-            elseif     selDefID == CORRAD then        SetSelDefID(CORRL)
-            elseif     selDefID == CORRL then         SetSelDefID(CORTL)
-            elseif     selDefID == CORTL then         SetSelDefID(CORSONAR)
-            elseif     selDefID == CORSONAR then    SetSelDefID(CORFRT)
-            elseif     selDefID == CORFRT then        SetSelDefID(CORLLT)
-            else                                 SetSelDefID(CORLLT)
-            end
-        elseif key == VKEY then
-            if        selDefID == CORLAB then        SetSelDefID(CORVP)
-            elseif     selDefID == CORVP then        SetSelDefID(CORSY)
-            elseif     selDefID == CORSY then        SetSelDefID(CORLAB)
-            else                                 SetSelDefID(CORLAB)        
-            end
-        end    
-    end
 end
 
 ------------------------------------------------------------

@@ -197,8 +197,8 @@ end
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
     if obj.disabled then return end
-    if not gameStarted and WG.SetSelDefID then 
-        WG.SetSelDefID(-obj.cmdId)
+    if not gameStarted and WG.InitialQueue then 
+        WG.InitialQueue.SetSelDefID(-obj.cmdId)
     else
         local index = spGetCmdDescIndex(obj.cmdId)
         if (index) then
@@ -249,6 +249,7 @@ local function resizeUI(scrH,i)
 end
 
 local function selectTab(self)
+    if not self then return end 
     local choice = self.tabNum
     showGrid(choice)
     
@@ -287,21 +288,26 @@ end
 ---------------------------------------------------------------
 
 -- Adds icons/commands to the menu panels accordingly
-local function addBuild(cmd, category)
-    local button = unit[cmd.name]
-    local label = button.children[1].children[1]
-    local overlay = button.children[1].children[2]
-    local caption = queue[-cmd.id] or ''
+local function addBuild(item)
+    -- unpack item
+    local uDID = item.uDID
+    local name = item.name
+    local category = item.category
+    local disabled = item.disabled
     
-    -- Build command is disabled (note that this can change dependent on the number of this type of unit currently alive)
-    if cmd.disabled then
-        -- No Highlight on mouse over
+    local button = unit[name]
+    local label = button.children[1].children[1]
+    local overlay = button.children[1].children[3]
+    local caption = queue[uDID] or ''
+    
+    if disabled then
+        -- building this unit is disabled
         button.focusColor[4] = 0
         -- Grey out Unit pic
         overlay.color = {0.4,0.4,0.4}
     else
         button.focusColor[4] = 0.5
-        if -cmd.id==activeSelUDID then
+        if uDID==activeSelUDID then
             overlay.color = selectedColor
             button.borderColor = selectedBorderColor
             selectTab(menuTab[category])
@@ -310,7 +316,7 @@ local function addBuild(cmd, category)
             button.borderColor = {1,1,1,0.1}        
         end
     end
-    button.disabled = cmd.disabled
+    button.disabled = disabled
     
     label:SetCaption(caption)
     if not grid[category]:GetChildByName(button.name) then
@@ -446,24 +452,46 @@ local function getMenuCat(ud)
     return menuCat
 end
 
-local function AddInSequence(cmds, t, func, dummyFunc)
+local function AddInSequence(items, t, Add, dummyAdd)
+    -- add any items in the array table t, in order, first 
+    -- if we can't find something from t, add a dummy instead
     for _,k in ipairs(t) do
-        if cmds[k] then
+        if items[k] then
             -- add top cmd
-            func(cmds[k])
-            cmds[k] = nil
+            Add(items[k])
+            items[k] = nil
         else
             -- add dummy top cmd
-            dummy_cmd = {action=k}
-            dummyFunc(dummy_cmd)
+            dummy_item = {action=k}
+            dummyAdd(dummy_item)
         end
     end
     
     -- add the rest
-    for _,cmd in pairs(cmds) do
-        func(cmd)
+    for _,item in pairs(items) do
+        Add(item)
     end    
 end 
+
+local function AddInSortedOrder(items, Add, Score)
+    -- add items in order of score, from lowest to highest
+    local t = {}
+    for _,v in pairs(items) do
+        t[#t+1] = {item=v, score=Score(v)}
+    end
+    local function Comparator(i,j)
+        return i.score<j.score
+    end
+    table.sort(t,Comparator)
+    for _,v in ipairs(t) do
+        Add(v.item)
+    end
+end
+
+function Cost(item)
+    local uDID = item.uDID
+    return UnitDefs[uDID].metalCost + 60*UnitDefs[uDID].energyCost
+end
 
 local function SetGridDimensions()
     for i=1,#catNames do
@@ -490,6 +518,7 @@ end
 
 local function parseCmds()
     local cmdList = spGetActiveCmdDescs()
+    local units = {}
     local orders = {}
     local states = {}
     
@@ -507,7 +536,7 @@ local function parseCmds()
             if menuCat and #grid[menuCat].children<=maxRows*maxCols then
                 buildMenu.active     = true
                 grid[menuCat].active = true
-                addBuild(cmd,menuCat)
+                units[#units+1] = {name=cmd.name, uDID=-cmd.id, disabled=cmd.disabled, category=menuCat}
             elseif #cmd.params > 1 then
                 states[cmd.action] = cmd
             elseif cmd.id > 0 and not WG.OpenHostsList then -- hide the order menu if the open host list is showing (it shows to specs who have it enabled)
@@ -528,12 +557,18 @@ local function parseCmds()
         AddInSequence(orders, topOrders, addOrder, addDummyOrder)
         AddInSequence(states, topStates, addState, addDummyState)
     end    
+    
+    -- Add the units, in order of lowest cost
+    if #units>0 then
+        AddInSortedOrder(units, addBuild, Cost)
+    end
 end
 
-local function parseUnitDef(uDID)
-  -- load the build menu for the given unitDefID
-  -- don't load the state/cmd menus
+local function parseUnitDefCmds(uDID)
+    -- load the build menu for the given unitDefID
+    -- don't load the state/cmd menus
 
+    local units = {}
     buildMenu.active = true
     orderMenu.active = false
     
@@ -543,8 +578,11 @@ local function parseUnitDef(uDID)
         local ud = UnitDefs[bDID]
         local menuCat = getMenuCat(ud)
         grid[menuCat].active = true
-        local cmd = {name=ud.name, id=bDID, disabled=false} --fake cmd desc muahahah
-        addBuild(cmd,menuCat)    
+        units[#units+1] = {name=ud.name, uDID=bDID, disabled=false, category=menuCat} 
+    end
+
+    if #units>0 then
+        AddInSortedOrder(units, addBuild, Cost)
     end
 end
 
@@ -630,7 +668,7 @@ local function loadDummyPanels(unitDefID)
         grid[i].active = false
     end
 
-    parseUnitDef(unitDefID)
+    parseUnitDefCmds(unitDefID)
     SetGridDimensions()   
     makeMenuTabs()
     menuTabs.choice = ChooseTab()
@@ -658,6 +696,7 @@ local function createButton(name, unitDef)
                   rangeText
 
     -- make the button for this unit
+    local hotkey = WG.buildingHotkeys and WG.buildingHotkeys[unitDef.id] or ''
     unit[name] = Chili.Button:New{
         name      = name,
         cmdId     = -unitDef.id,
@@ -676,6 +715,11 @@ local function createButton(name, unitDef)
                         caption = '',
                         right   = 10,
                         y       = 10,
+                    },
+                    Chili.Label:New{
+                        caption = hotkey,
+                        right   = 5,
+                        bottom = 5,
                     },
                     Chili.Image:New{
                         color  = teamColor,
@@ -720,6 +764,16 @@ local function LayoutHandler(xIcons, yIcons, cmdCount, commands)
     widgetHandler:CommandsChanged()
     
     return "", xIcons, yIcons, {}, {}, {}, {}, {}, {}, {}, {[1337]=9001}
+end
+---------------------------
+local function ForceSelect(uDID)
+    -- act as though the build button for this uDID was pushed
+    updateRequired = true
+    activeSelUDID = uDID
+    activeSelCmdID = nil
+    if WG.InitialQueue then
+        WG.InitialQueue.SetSelDefID(uDID)
+    end
 end
 ---------------------------
 function widget:Initialize()
@@ -798,10 +852,11 @@ function widget:Initialize()
         createButton(name,unitDef)
     end
 
+    -- offer the option to force select build menu buttons
+    WG.SelectionMenuForceSelect = ForceSelect
 end
 
 --------------------------- 
--- 
 function widget:ViewResize(_,scrH)
     resizeUI(scrH)
 end
@@ -858,16 +913,16 @@ function GameFrame()
     end
 end
 --------------------------- 
--- Checks status of game and InitialQueue, handles InitialQueue if enabled
+-- handle InitialQueue, if enabled
 local startUnitDefID
 local function InitialQueue()
-    if not WG.SetSelDefID or gameStarted or Spring.GetSpectatingState() then 
+    if not WG.InitialQueue or gameStarted or Spring.GetSpectatingState() then 
         return false 
     end
-
+    
     -- check if we just changed faction
     local uDID = WG.startUnit or Spring.GetTeamRulesParam(myTeamID, 'startUnit')
-    if uDID==startUnitDefID then return true end 
+    if uDID==startUnitDefID and not updateRequired then return true end 
 
     -- now act as though unitDefID is selected for building
     startUnitDefID = uDID
@@ -883,6 +938,7 @@ local function InitialQueue()
     end
     
     loadDummyPanels(startUnitDefID)
+    updateRequired = false
     return true
 end
 --------------------------- 

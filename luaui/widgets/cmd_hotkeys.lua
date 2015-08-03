@@ -199,6 +199,12 @@ function AdvanceToNextBuildable(t, cmdID)
             end
         end
     end        
+    if WG.InitialQueue and WG.startUnit then
+        local buildOptions = UnitDefs[WG.startUnit].buildOptions
+        for _,uDID        in ipairs(buildOptions) do
+            canBuild[uDID] = true
+        end
+    end
     
     -- find the next unitDefID in the (circular) array that we can build, skipping over any units that cannot be built in current context, and set is as the active build command
     local i = (pos>0) and pos+1 or 1
@@ -206,7 +212,7 @@ function AdvanceToNextBuildable(t, cmdID)
     while (i~=pos) do
         if pos==0 then pos=1 end
         if canBuild[t[i]] and CheckContextBuild(t[i])==t[i] then
-            Spring.SetActiveCommand('buildunit_'..UnitDefs[t[i]].name)
+            SetActiveBuildUnit(t[i])
             return true
         end
         i = i + 1
@@ -236,6 +242,13 @@ function CheckContextBuild(uDID)
         return nil
     end
     return uDID
+end
+
+function SetActiveBuildUnit(uDID)
+    Spring.SetActiveCommand('buildunit_'..UnitDefs[uDID].name)
+    if WG.InitialQueue and WG.SelectionMenuForceSelect then -- if the game hasn't started, we can't set buildunit_ as the active command, so we tell sMenu directly
+        WG.SelectionMenuForceSelect(uDID)
+    end
 end
 
 function widget:Initialize()
@@ -295,11 +308,32 @@ function widget:Initialize()
     V_units = ConstructUnitOrder(V_Score)
     --Spring.Echo("V TABLE")
     --PrintArrayTable(V_units)  
+    
+    --expose inverse of _key tables to WG (they should be disjoint)
+    local hotkeys = {}
+    for _,v in pairs(Z_units) do
+        hotkeys[v] = "Z"
+    end
+    for _,v in pairs(X_units) do
+        hotkeys[v] = "X"
+    end
+    for _,v in pairs(C_units) do
+        hotkeys[v] = "C"
+    end
+    for _,v in pairs(V_units) do
+        hotkeys[v] = "V"
+    end
+    WG.buildingHotkeys = hotkeys
 end
 
 function widget:KeyPress(key, mods, isRepeat)
+    if mods.shift or mods.ctrl or mods.alt or mods.meta then return end
     -- if we are queueing build commands, and ZXCV is pressed, move onto the next unitDefID that at least one of our selected units can build
     local _,cmdID,_ = Spring.GetActiveCommand()
+    if WG.InitialQueue and WG.InitialQueue.selDefID then
+        cmdID = -WG.InitialQueue.selDefID
+    end
+    
     local advanced = false
     if key==Z_KEY then
         advanced = AdvanceToNextBuildable(Z_units, cmdID)
@@ -330,7 +364,7 @@ function widget:Update(deltaTime)
     local unitDefID = -cmd_id
     local pairedID = CheckContextBuild(unitDefID)
     if pairedID and unitDefID ~= pairedID then
-        Spring.SetActiveCommand('buildunit_'..UnitDefs[pairedID].name) 
+        SetActiveBuildUnit(pairedID)
     end
 end
 

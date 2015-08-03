@@ -27,6 +27,8 @@ local waterLandPairsHuman = {
 {'corrl','corfrt'},
 {'armhp','armfhp'},
 {'corhp','corfhp'},
+{'armdrag','armfdrag'},   
+{'cordrag','corfdrag'},
 {'armrad','armfrad'},
 {'corrad','corfrad'},
 {'armhlt','armfhlt'},
@@ -104,15 +106,6 @@ local X_KEY = KEYSYMS.X
 local C_KEY = KEYSYMS.C
 local V_KEY = KEYSYMS.V
 
-local TestBuildOrder        = Spring.TestBuildOrder
-local GetActiveCommand        = Spring.GetActiveCommand
-local SetActiveCommand        = Spring.SetActiveCommand
-local GetMouseState            = Spring.GetMouseState
-local TraceScreenRay        = Spring.TraceScreenRay
-local TestBuildOrder        = Spring.TestBuildOrder
-local GetFPS                = Spring.GetFPS
-
-local alternative_units = {}-- unit def id --> list of alternative unit def ids
 local updateRate = 1/3 -- in seconds
 local timeCounter = 0
 
@@ -213,7 +206,7 @@ function AdvanceToNextBuildable(t, cmdID)
     while (i~=pos) do
         if pos==0 then pos=1 end
         if canBuild[t[i]] and CheckContextBuild(t[i])==t[i] then
-            SetActiveCommand('buildunit_'..UnitDefs[t[i]].name)
+            Spring.SetActiveCommand('buildunit_'..UnitDefs[t[i]].name)
             return true
         end
         i = i + 1
@@ -223,8 +216,8 @@ end
 
 function CheckContextBuild(uDID)
     -- check if we can build uDID in current context, return uDID if it is, return its pairedID if that is, return nil otherwise
-    local mx, my = GetMouseState()
-    local _, coords = TraceScreenRay(mx, my, true, true)
+    local mx, my = Spring.GetMouseState()
+    local _, coords = Spring.TraceScreenRay(mx, my, true, true)
     if (not coords) then
         return uDID
     end
@@ -232,10 +225,10 @@ function CheckContextBuild(uDID)
         return uDID
     end
 
-    if TestBuildOrder(uDID, coords[1], coords[2], coords[3], 1) == 0 then
+    if Spring.TestBuildOrder(uDID, coords[1], coords[2], coords[3], 1) == 0 then
         if waterLandPairs[uDID] then 
             local pairedID = waterLandPairs[uDID]
-            if TestBuildOrder(pairedID, coords[1], coords[2], coords[3], 1) ~= 0 then
+            if Spring.TestBuildOrder(pairedID, coords[1], coords[2], coords[3], 1) ~= 0 then
                 --Spring.Echo("paired", uDID, pairedID)
                 return pairedID
             end
@@ -329,7 +322,7 @@ function widget:Update(deltaTime)
         return
     end
 
-    local _, cmd_id = GetActiveCommand()
+    local _, cmd_id = Spring.GetActiveCommand()
     if (not cmd_id) or (cmd_id>=0) then
         return
     end
@@ -337,7 +330,7 @@ function widget:Update(deltaTime)
     local unitDefID = -cmd_id
     local pairedID = CheckContextBuild(unitDefID)
     if pairedID and unitDefID ~= pairedID then
-        SetActiveCommand('buildunit_'..UnitDefs[pairedID].name) 
+        Spring.SetActiveCommand('buildunit_'..UnitDefs[pairedID].name) 
     end
 end
 

@@ -731,7 +731,9 @@ local function createButton(name, unitDef)
         }
     }
  
-    local isWater = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25) or (unitDef.minWaterDepth and unitDef.minWaterDepth>0) -- TODO: include hovers
+    local isWater = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25) 
+                    or (unitDef.minWaterDepth and unitDef.minWaterDepth>0) 
+                    or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
     if isWater then
         -- Add raindrop to unit icon
         Chili.Image:New{

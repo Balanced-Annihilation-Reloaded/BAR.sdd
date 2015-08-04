@@ -1,18 +1,14 @@
-local versionNumber = "v1.92"
-
 function widget:GetInfo()
     return {
         name = "Prospector",
-        desc = "Tooltip for amount of metal available when placing metal extractors.",
-        author = "Evil4Zerggin",
+        desc = "Tooltip for amount of metal available when placing metal extractors",
+        author = "Evil4Zerggin, Bluestone",
         date = "9 January 2009",
         license = "GNU LGPL, v2.1 or later",
         layer = 1,
         enabled = true
     }
 end
-
-local textSize = 16
 
 ------------------------------------------------
 --speedups
@@ -23,22 +19,6 @@ local TraceScreenRay = Spring.TraceScreenRay
 local GetGroundInfo = Spring.GetGroundInfo
 local GetGameFrame = Spring.GetGameFrame
 local GetMapDrawMode = Spring.GetMapDrawMode
-
-local glLineWidth = gl.LineWidth
-local glColor = gl.Color
-local glRect = gl.Rect
-local glText = gl.Text
-local glGetTextWidth = gl.GetTextWidth
-local glPolygonMode = gl.PolygonMode
-local glDrawGroundCircle = gl.DrawGroundCircle
-local glUnitShape = gl.UnitShape
-
-local glPopMatrix = gl.PopMatrix
-local glPushMatrix = gl.PushMatrix
-local glTranslate = gl.Translate
-
-local GL_FRONT_AND_BACK = GL.FRONT_AND_BACK
-local GL_FILL = GL.FILL
 
 local floor = math.floor
 local min, max = math.min, math.max
@@ -69,37 +49,8 @@ local MAP_SIZE_Z = Game.mapSizeZ
 local MAP_SIZE_Z_SCALED = MAP_SIZE_Z / METAL_MAP_SQUARE_SIZE
 
 ------------------------------------------------
---H4X
-------------------------------------------------
-local once
-local vsx, vsy
-
-------------------------------------------------
 --helpers
 ------------------------------------------------
-
-local function DrawTextWithBackground(text, x, y, size, opt)
-    local width = (glGetTextWidth(text) * size) + 8
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-    
-    glColor(0.25, 0.25, 0.25, 0.75)
-    if (opt) then
-        if (strFind(opt, "r")) then
-            glRect(x, y, x - width, y + size * TEXT_CORRECT_Y)
-        elseif (strFind(opt, "c")) then
-            glRect(x + width * 0.5, y, x - width * 0.5, y + size * TEXT_CORRECT_Y)
-        else
-            glRect(x, y, x + width, y + size * TEXT_CORRECT_Y)
-        end
-    else
-        glRect(x, y, x + width, y + size * TEXT_CORRECT_Y)
-    end
-    
-    glColor(1, 1, 1, 0.85)
-    
-    glText(text, x+4, y, size, opt)
-    
-end
 
 local function SetupMexDefInfos() 
     local minExtractsMetal
@@ -184,42 +135,17 @@ end
 ------------------------------------------------
 
 function widget:Initialize()
+    WG.Prospector = {}
     SetupMexDefInfos() 
     myTeamID = Spring.GetMyTeamID()
-  once = true
 end
 
-function widget:DrawWorld()
-    local drawMode = GetMapDrawMode()
-    if GetGameFrame() < 1 and defaultDefID and drawMode == "metal" then
-        local mx, my = GetMouseState()
-        local _, coords = TraceScreenRay(mx, my, true, true)
-        
-        if not coords then return end
-        
-        IntegrateMetal(mexDefInfos[defaultDefID], coords[1], coords[3], false)
-        
-        glLineWidth(1)
-        glColor(1, 0, 0, 0.5)
-        glDrawGroundCircle(centerX, 0, centerZ, MEX_RADIUS, 32)
-        if defaultDefID then
-            glPushMatrix()
-                glColor(1, 1, 1, 0.25)
-                glTranslate(centerX, coords[2], centerZ)
-                glUnitShape(defaultDefID, myTeamID)
-            glPopMatrix()
-        end
-        glColor(1, 1, 1, 1)
-    end
+function widget:Shutdown()
+    WG.Prospector = nil
 end
 
 function widget:DrawScreen()
-  if (once) then
-        local viewSizeX, viewSizeY = widgetHandler:GetViewSizes()
-        widget:ViewResize(viewSizeX, viewSizeY)
-        once = false
-    end
-    
+
     local mexDefInfo
     
     if GetGameFrame() < 1 then
@@ -229,7 +155,11 @@ function widget:DrawScreen()
         end
     else
         local _, cmd_id = GetActiveCommand()
-        if (not cmd_id) then return end
+        if (not cmd_id) or cmd_id>=0 then 
+            WG.Prospector.tooltip = nil
+            return 
+        end
+        
         local unitDefID = -cmd_id
         local forceUpdate = false
         if (unitDefID ~= lastUnitDefID) then 
@@ -239,7 +169,10 @@ function widget:DrawScreen()
         mexDefInfo = mexDefInfos[unitDefID]
     end
     
-    if (not mexDefInfo) then return end
+    if (not mexDefInfo) then  
+        WG.Prospector.tooltip = nil
+        return 
+    end
     
     local mx, my = GetMouseState()
     local _, coords = TraceScreenRay(mx, my, true, true)
@@ -247,11 +180,6 @@ function widget:DrawScreen()
     if (not coords) then return end
     
     IntegrateMetal(mexDefInfo, coords[1], coords[3], forceUpdate)
-    DrawTextWithBackground("\255\255\255\255Metal extraction: " .. strFormat("%.2f", extraction), mx, my, textSize, "d")
-    glColor(1, 1, 1, 1)
+    WG.Prospector.tooltip = "\255\255\255\255Metal extraction: " .. strFormat("%.2f", extraction)
 end
 
-function widget:ViewResize(viewSizeX, viewSizeY)
-    vsx = viewSizeX
-    vsy = viewSizeY
-end

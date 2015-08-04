@@ -111,6 +111,9 @@ local function getTooltip()
     if screen.currentTooltip then
         tipType = 'chili'
         return screen.currentTooltip
+    elseif WG.Prospector and WG.Prospector.tooltip then
+        tipType = 'prospector'
+        return WG.Prospector.tooltip
     else
         tipType, ID = spTraceScreenRay(spGetMouseState())
         
@@ -162,7 +165,7 @@ function widget:Update()
         if not tipType and tipWindow.visible then 
             tipWindow:Hide()
         end
-    elseif tipType and (tipWindow.visible or spDiffTimers(curTime, oldTime) > 1 or tipType == 'chili') then
+    elseif tipType and (tipWindow.visible or spDiffTimers(curTime, oldTime) > 1 or tipType == 'chili' or tipType == 'prospector') then
         setTooltipPos(text)
     end
 end

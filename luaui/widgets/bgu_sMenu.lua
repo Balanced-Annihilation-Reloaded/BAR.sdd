@@ -437,19 +437,20 @@ end
 
 local function getMenuCat(ud)
     if (ud.speed > 0 and ud.canMove) or ud.isFactory then
-        -- factories, and the units they can build
+        -- Factories and the units they build
         menuCat = 3
-    elseif (ud.radarRadius > 1 or ud.sonarRadius > 1 or 
-        ud.jammerRadius > 1 or ud.sonarJamRadius > 1 or
-        ud.seismicRadius > 1 or ud.name=='coreyes') and #ud.weapons<=0 then
-        -- Intel
-        menuCat = 2
-    elseif #ud.weapons > 0 or ud.shieldWeaponDef or ud.isFeature then
-        -- Defence
-        menuCat = 2
-    else
+    elseif ud.isBuilding and (ud.energyMake>=20 
+                           or ud.isExtractor 
+                           or ud.tidalGenerator>0 
+                           or ud.windGenerator>0 
+                           or Spring.GetGameRulesParam(ud.name .. "_mm_capacity")
+                           or ud.energyStorage>=3000
+                           or ud.metalStorage>=1000)then
         -- Economy
         menuCat = 1
+    else
+        -- Battle 
+        menuCat = 2
     end
 
     return menuCat
@@ -730,7 +731,7 @@ local function createButton(name, unitDef)
         }
     }
  
-    local isWater = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25) or (unitDef.minWaterDepth and unitDef.minWaterDepth>0)
+    local isWater = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25) or (unitDef.minWaterDepth and unitDef.minWaterDepth>0) -- TODO: include hovers
     if isWater then
         -- Add raindrop to unit icon
         Chili.Image:New{

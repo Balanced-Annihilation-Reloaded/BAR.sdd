@@ -113,11 +113,11 @@ local function getTooltip()
         return screen.currentTooltip
     else
         tipType, ID = spTraceScreenRay(spGetMouseState())
-
+        
         local gameFrame = spGetGameFrame()
         if tipType == prevTipType and ID==prevID and not (tipType=='unit' and gameFrame<=prevGameFrame+3) then --need to update because units build costs change
             return false
-        else
+        elseif tipType then
             prevTipType = tipType; prevID = ID; prevGameFrame = gameFrame
         end
 

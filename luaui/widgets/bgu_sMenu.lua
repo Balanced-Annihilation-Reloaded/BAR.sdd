@@ -697,7 +697,7 @@ local function createButton(name, unitDef)
     unit[name] = Chili.Button:New{
         name      = name,
         cmdId     = -unitDef.id,
-        --tooltip   = tooltip,
+        tooltip   = nil,
         caption   = '',
         disabled  = false,
         padding   = {0,0,0,0},

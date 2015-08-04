@@ -991,6 +991,8 @@ function widget:Shutdown()
     buildMenu:Dispose()
     menuTabs:Dispose()
     
+    WG.sMenu = nil
+    
     -- Bring back stock Order Menu
     widgetHandler:ConfigLayoutHandler(nil)
     Spring.ForceLayoutUpdate()

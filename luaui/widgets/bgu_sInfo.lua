@@ -296,23 +296,19 @@ local function showFocusInfo()
 
     -- TODO: more/better info
     -- also, the unit descriptions need fixing
-    focusMCost = Chili.TextBox:New{
+    focusCost = Chili.TextBox:New{
         x        = 5,
         bottom   = 35,
         height   = 24,
-        text     =  getInline{0.6,0.6,0.8} .. "Metal Cost: " .. "\255\255\255\255" .. unitDef.metalCost,
-    }
-    focusECost = Chili.TextBox:New{
-        x        = 5,
-        bottom   = 50,
-        height   = 24,
-        text     =  getInline{1,1,0.3} .. "Energy Cost: " .. "\255\255\255\255" .. unitDef.energyCost,
+        text     =  "Cost: " .. getInline{0.6,0.6,0.8} .. unitDef.metalCost .. " " .. getInline{1,1,0.3} .. unitDef.energyCost,
+        font = {size = 14,},
     }
     focusBuildTime = Chili.TextBox:New{
         x        = 5,
         bottom   = 20,
         height   = 24,
         text     =  "Build Time: " .. unitDef.buildTime, -- this isn't very intuitive
+        font = {size = 14,},
     }
         
     focusIcon = Chili.Image:New{
@@ -327,7 +323,7 @@ local function showFocusInfo()
                 height   = '100%',
                 width    = '100%',
                 file     = overlay,
-                children = {focusName, focusMCost, focusECost, focusBuildTime, focusRestText},
+                children = {focusName, focusCost, focusBuildTime, focusRestText},
             }
         }
     }

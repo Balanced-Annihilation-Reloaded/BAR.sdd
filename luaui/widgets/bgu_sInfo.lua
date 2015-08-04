@@ -295,6 +295,7 @@ local function showFocusInfo()
     }
 
     -- TODO: more/better info
+    -- also, the unit descriptions need fixing
     focusMCost = Chili.TextBox:New{
         x        = 5,
         bottom   = 35,
@@ -614,7 +615,7 @@ function widget:Update()
     elseif WG.InitialQueue and WG.InitialQueue.selDefID then
         newFocusDefID = WG.InitialQueue.selDefID
     elseif WG.sMenu and WG.sMenu.mouseOverDefID then
-        newFocusDefID = WG.sMenu.mouseOverDefID --TODO: implement in sMenu
+        newFocusDefID = WG.sMenu.mouseOverDefID 
     end    
     if newFocusDefID~= focusDefID then
         focusDefID = newFocusDefID

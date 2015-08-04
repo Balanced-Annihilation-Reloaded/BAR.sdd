@@ -344,6 +344,7 @@ function widget:AddConsoleLine(msg)
         local prevMsg = log.children[#log.children - i]
         if prevMsg and (text == prevMsg.text or text == prevMsg.origText) then
             prevMsg.duplicates = prevMsg.duplicates + 1
+            showChat()
             prevMsg.origText = text
             prevMsg:SetText(getInline{1,0,0}..(prevMsg.duplicates + 1)..'x \b'..text)
             return

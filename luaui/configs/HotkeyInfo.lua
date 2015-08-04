@@ -92,7 +92,7 @@ local Units_III = {
     {"x",         "Cycle through energy production"},
     {"c",         "Cycle through radar/defence/etc"},
     {"v",         "Cycle through factories"},
-    {"[ and ]",   "Change facing of buildings"},
+    {"[ and ], o",   "Change facing of buildings"},
     {blankLine=true},    
     {"Giving build orders", title=true},
     {"left mouse",   "Give build order"},

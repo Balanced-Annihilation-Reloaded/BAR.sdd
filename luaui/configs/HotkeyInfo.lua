@@ -22,6 +22,7 @@ local General = {
     {"middle click (+ drag)",       "Drag camera"},
     {blankLine=true},
     {"Camera modes", title=true},
+    {"alt + backspace", "Toggle fulscreen"},
     {"ctrl + f1,2,3,4,5",           "Change camera type"},
     {"tab",                         "Toggle overview camera"},
     {"l",   "Toggle LOS view"},

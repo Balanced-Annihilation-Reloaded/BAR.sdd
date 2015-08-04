@@ -145,7 +145,7 @@ function SetYZState()
 end
 
 function Cost(uDID)
-    return UnitDefs[uDID].metalCost + 60*UnitDefs[uDID].energyCost
+    return 60*UnitDefs[uDID].metalCost + UnitDefs[uDID].energyCost
 end
 
 function ConstructUnitOrder(Score)
@@ -303,6 +303,7 @@ function widget:Initialize()
     -- setup V (labs)
     local function V_Score (uDID)
         if not UnitDefs[uDID].isFactory then return end
+        if not UnitDefs[uDID].buildOptions or #UnitDefs[uDID].buildOptions==0 then return end
         return Cost(uDID)    
     end
     V_units = ConstructUnitOrder(V_Score)

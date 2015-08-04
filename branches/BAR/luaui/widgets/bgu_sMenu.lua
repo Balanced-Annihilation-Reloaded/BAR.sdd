@@ -197,8 +197,11 @@ end
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
     if obj.disabled then return end
-    if not gameStarted and WG.InitialQueue then 
-        WG.InitialQueue.SetSelDefID(-obj.cmdId)
+    -- tell initial queue / set active command
+    if not gameStarted then 
+        if  WG.InitialQueue then 
+            WG.InitialQueue.SetSelDefID(-obj.cmdId)
+        end
     else
         local index = spGetCmdDescIndex(obj.cmdId)
         if (index) then

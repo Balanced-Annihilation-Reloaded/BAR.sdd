@@ -17,13 +17,9 @@ local imageDir = 'luaui/images/buildIcons/'
 local Chili, screen, infoWindow, groundInfo, groundText
 local unitInfo, unitName, unitIcon, selectionGrid, unitHealthText, unitHealth
 local healthBars = {}
-local updateNow  = false
 
-local curTip --[[ current tooltip type: 
-                  -3 for ground info
-                  -2 for so many unitDefIDs that we just give text info 
-                  -1 for multiple unitDefIDs that fit with pics (<=9)
-                  >=0 for a single unit & is the unitID  ]]
+local curTip 
+local focusDefID
 
 local spGetTimer                = Spring.GetTimer
 local spDiffTimers              = Spring.DiffTimers
@@ -115,22 +111,44 @@ end
 
 
 ----------------------------------
--- unit info (curTip >= 0)
 
 function round(num, idp)
     return string.format("%." .. (idp or 0) .. "f", num) -- lua is such a great language that this is the only reliable way to round
 end
 
 local function ResToolTip(Mmake, Muse, Emake, Euse)
-    --if Mmake>0.01 or Muse>0.01 or Emake>0.01 or Euse>0.01 then
-        return white .. "M: " .. green .. '+' .. round(Mmake,1) .. '  ' .. red .. '-' .. round(Muse,1) .. "\n" ..  white .. "E:  " .. green .. '+' .. round(Emake,1) .. '  ' .. red .. "-" .. round(Euse,1)
-    --else
-    --   return ""
-    --end
+    return white .. "M: " .. green .. '+' .. round(Mmake,1) .. '  ' .. red .. '-' .. round(Muse,1) .. "\n" ..  white .. "E:  " .. green .. '+' .. round(Emake,1) .. '  ' .. red .. "-" .. round(Euse,1)
 end
 
 
-local function showUnitInfo(unitDefID, texture, overlay, description, humanName, health, maxHealth, Mmake, Muse, Emake, Euse, Mcost, Ecost, n)
+local function showUnitInfo()
+    local defID = curTip.selDefID
+    local selUnits = curTip.selUnits 
+    local n = #selUnits
+
+    local description = UnitDefs[defID].tooltip or ''
+    local name        = UnitDefs[defID].name
+    local texture     = imageDir..'Units/' .. name .. '.dds'
+    local overlay     = imageDir..'Overlays/' .. name .. '.dds'
+    local humanName   = UnitDefs[defID].humanName
+
+    local Ecost = 0
+    local Mcost = 0
+    local curHealth = 0
+    local maxHealth = 0
+    local Mmake, Muse, Emake, Euse = 0,0,0,0
+    for _, uID in ipairs(selUnits) do
+        Ecost = Ecost + UnitDefs[defID].energyCost
+        Mcost = Mcost + UnitDefs[defID].metalCost 
+        local c, m = spGetUnitHealth(uID)
+        local mm, mu, em, eu = spGetUnitResources(uID)
+        curHealth = curHealth + (c or 0)
+        maxHealth = maxHealth + (m or 0)
+        Mmake = Mmake + (mm or 0)
+        Muse = Muse + (mu or 0)
+        Emake = Emake + (em or 0)
+        Euse = Euse + (eu or 0)
+    end
 
     local numText = ""
     if n>1 then numText = "\n " .. blue .. "(x" .. tostring(n) .. ")" end
@@ -146,7 +164,7 @@ local function showUnitInfo(unitDefID, texture, overlay, description, humanName,
     unitHealthText = Chili.TextBox:New{
         x      = 5,
         bottom = 21,
-        text   = math.floor(health) ..' / '.. math.floor(maxHealth),
+        text   = math.floor(curHealth) ..' / '.. math.floor(maxHealth),
     }
     
     unitHealth = Chili.Progressbar:New{
@@ -199,11 +217,14 @@ local function showUnitInfo(unitDefID, texture, overlay, description, humanName,
     
     unitInfo:AddChild(unitIcon)
     
-    if UnitDefs[unitDefID].customParams.iscommander then
+    if UnitDefs[defID].customParams.iscommander then
         unitCostText:Hide()
     end
-    if (n==1) then unitCostTextTitle:Hide() end
-        
+    if (n==1) or UnitDefs[defID].customParams.iscommander then 
+        unitCostTextTitle:Hide() 
+    end
+    
+    infoWindow:Show()        
 end
 
 local function addUnitGroupInfo()
@@ -228,21 +249,23 @@ local function addUnitGroupInfo()
 
     unitInfo:AddChild(unitCostText)
     unitInfo:AddChild(unitResText)
+    
+    infoWindow:Show()
 end
 
-----------------------------------
--- text unit info only (curTip = -2)
-local function showBasicSelectionInfo(num, numTypes)
-    
+local function showBasicUnitInfo()
+
     basicUnitInfo = Chili.TextBox:New{
         x      = 0,
         y      = 5,
         right  = 0,
         bottom = 0,
-        text   = " Units selected: " .. num .. "\n Unit types: " .. numTypes,
+        text   = " Units selected: " .. curTip.n .. "\n Unit types: " .. curTip.nType,
     }
     
     unitInfo:AddChild(basicUnitInfo)
+    
+    infoWindow:Show()
 end
 
 ----------------------------------
@@ -264,7 +287,7 @@ local function speedModCol(x)
     return schar(255, r*255, g*255, b*255)
 end
 ----------------------------------
--- ground info (curTip = -3)
+-- ground info
 local function updateGroundInfo()
     local mx, my    = spGetMouseState()
     local focus,map = spTraceScreenRay(mx,my,true)
@@ -298,9 +321,9 @@ end
 
 ----------------------------------
 local function updateUnitInfo()
-    
-    if curTip >= 0 then     
-        --single unit    
+  
+    if curTip.type == "unitDefID" then     
+        -- single unit type
         units = spGetSelectedUnits()
         
         local curHealth = 0
@@ -319,10 +342,10 @@ local function updateUnitInfo()
         unitHealthText:SetText(math.floor(curHealth) ..' / '.. math.floor(maxHealth)) 
         unitHealth:SetMinMax(0, maxHealth)
         unitHealth:SetValue(curHealth) 
-          unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
+        unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
         
-    elseif curTip == -1 then 
-        --multiple units, but not so many we cant fit pics
+    elseif curTip.type == "unitDefPics" then 
+        -- multiple units, but not so many we cant fit pics
         local Ecost,Mcost = 0,0
         local Mmake,Muse,Emake,Euse = 0,0,0,0
         for a = 1, #healthBars do
@@ -356,88 +379,79 @@ local function updateUnitInfo()
             unitInfo:GetChildByName('unitCostText'):SetText(mColour .. Mcost .. '\n' .. eColour .. Ecost)
         end
     end
-    
-    updateNow = false
 end
 
 ----------------------------------
-local function getInfo()
-    local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
-    teamColor = {r,g,b}
+local function ChooseCurTip()
+    curTip = {}
 
-    units = spGetSelectedUnits()
-    sUnits = spGetSelectedUnitsCounts()
+    -- determine if we have any selected units
+    local selUnits = spGetSelectedUnits()
+    local sortedSelUnits = spGetSelectedUnitsSorted()
+    
+    curTip.selUnits = selUnits
+    curTip.sortedSelUnits = sortedSelUnits
+    curTip.n = #selUnits
+    curTip.nType = #sortedSelUnits
 
-    if #units == 0 then
+    if focusDefID then
+        -- info about a unit we are thinking to build
+        curTip.type = "focusDefID"
+        curTip.uDID = focusDefID         
+    elseif #selUnits == 0 then
         --info about point on map corresponding to cursor 
-        curTip = -3
-        return
-    end    
-        
-    if sUnits["n"] == 1 then
-        
-        --detailed info about a single unitDefID
-        local unitID      = units[1]
-        local defID       = spGetUnitDefID(unitID)
-        curTip = defID
-
-        local description = UnitDefs[defID].tooltip or ''
-        local name        = UnitDefs[defID].name
-        local texture     = imageDir..'Units/' .. name .. '.dds'
-        local overlay     = imageDir..'Overlays/' .. name .. '.dds'
-        local humanName   = UnitDefs[defID].humanName
-
-        local Ecost = 0
-        local Mcost = 0
-        local curHealth = 0
-        local maxHealth = 0
-        local Mmake, Muse, Emake, Euse = 0,0,0,0
-        for _, uID in ipairs(units) do
-            Ecost = Ecost + UnitDefs[defID].energyCost
-            Mcost = Mcost + UnitDefs[defID].metalCost 
-            local c, m = spGetUnitHealth(uID)
-            local mm, mu, em, eu = spGetUnitResources(uID)
-            curHealth = curHealth + (c or 0)
-            maxHealth = maxHealth + (m or 0)
-            Mmake = Mmake + (mm or 0)
-            Muse = Muse + (mu or 0)
-            Emake = Emake + (em or 0)
-            Euse = Euse + (eu or 0)
-        end
-                
-        showUnitInfo(defID, texture, overlay, description, humanName, curHealth, maxHealth, Mmake, Muse, Emake, Euse, Mcost, Ecost, #units)        
+        curTip.type = "ground"
+    elseif sortedSelUnits["n"] == 1 then
+        -- info about units of a single unitDefID )
+        curTip.type = "unitDefID"
+        curTip.selDefID = Spring.GetUnitDefID(selUnits[1])  
+    elseif sortedSelUnits["n"] <= 6 then 
+        -- info about multiple unitDefIDs, but few enough that we can display a small pic for each
+        curTip.type = "unitDefPics"
     else
-        --broad info about lots of units
-        local sortedUnits = spGetSelectedUnitsSorted()
-        local unitDefIDCount = 0
-        local unitCount = 0
-        --see if sortedUnits has too many elements
-        if sortedUnits["n"] <= 6 then 
-            curTip = -1
-            --pics & healthbars, grouped by UnitDefID, if it fits
-            for unitDefID, unitIDs in pairs(sortedUnits) do
-                if unitDefID ~= 'n' then 
-                    local name    = UnitDefs[unitDefID].name
-                    local texture = imageDir..'Units/' .. name .. '.dds'
-                    local overlay = imageDir..'Overlays/' .. name .. '.dds'
-                    addUnitGroup(name,texture,overlay,unitIDs, unitDefID)
-                end
-            end
-            addUnitGroupInfo()
-        else
-            curTip = -2
-            showBasicSelectionInfo(#units, sortedUnits["n"])
-        end
+        -- so many units that we just give basic info
+        curTip.type = "basicUnitInfo"
     end
         
-    updateUnitInfo()
+end
+local function ResetTip()
+    -- delete/hide the old tip
+    curTip = nil
+    healthBars = {}
+    if infoWindow.visible then infoWindow:Hide() end
+    if groundInfo.visible then groundInfo:Hide() end
+    selectionGrid:ClearChildren()
+    unitInfo:ClearChildren()
+    
+    -- choose the new tip
+    ChooseCurTip()
+
+    --if curTip.type=="focusDefID" then
+        -- TODO
+    --else
+    if curTip.type=="unitDefID" then
+        showUnitInfo()
+        updateUnitInfo()
+    elseif curTip.type=="unitDefPics" then
+        for unitDefID, unitIDs in pairs(curTip.sortedSelUnits) do
+            if unitDefID ~= 'n' then 
+                local name    = UnitDefs[unitDefID].name
+                local texture = imageDir..'Units/' .. name .. '.dds'
+                local overlay = imageDir..'Overlays/' .. name .. '.dds'
+                addUnitGroup(name,texture,overlay,unitIDs, unitDefID)
+            end
+        end
+        addUnitGroupInfo()
+        updateUnitInfo()
+    elseif curTip.type=="basicUnitInfo" then
+        showBasicUnitInfo()    
+    elseif curTip.type=="ground" then
+        -- nothing to do?
+    end
 end
 
 ----------------------------------
-function widget:Initialize()
-    
-
-    
+function widget:Initialize()    
     if (not WG.Chili) then
         widgetHandler:RemoveWidget()
         return
@@ -513,33 +527,31 @@ end
 
 ----------------------------------
 function widget:CommandsChanged()
-    curTip = nil
-    healthBars = {}
-    selectionGrid:ClearChildren()
-    unitInfo:ClearChildren()
-    getInfo()
-    updateNow = true
+    local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
+    teamColor = {r,g,b}
+
+    ResetTip()
 end
 
--- Updates health bars or ground info depending on curtip
---   -3 for ground info
---   -2 for so many unitDefIDs that we just give text info (doesn't require updating)
---   -1 for multiple unitDefIDs that fit with pics (<=9)
---   >=0 for a single unit & is the unitID
 function widget:Update()
-    
-    if curTip == nil then return end
-    
-    if curTip == -3 then
-        if infoWindow.visible then infoWindow:Hide() end
-    else
-        if groundInfo.visible then groundInfo:Hide() end
-        if infoWindow.hidden then infoWindow:Show() end
+    -- check if focus unit for build command has changed
+    local _,cmdID,_ = Spring.GetActiveCommand()
+    local newFocusDefID
+    if cmdID and cmdID<0 then
+        newFocusDefID = -cmdID
+    elseif WG.InitialQueue and WG.InitialQueue.selDefID then
+        newFocusDefID = WG.InitialQueue.selDefID
+    elseif WG.sMenu and WG.sMenu.mouseOverDefID then
+        newFocusDefID = WG.sMenu.mouseOverDefID --TODO: implement in sMenu
+    end    
+    if newFocusDefID~= focusDefID then
+        focusDefID = newFocusDefID
+        widget:CommandsChanged()
     end
-    
+
+    -- update ground info, if needed
     local timer = spGetTimer()
-    local updateGround = curTip == -3 and spDiffTimers(timer, groundTimer) > 0.05 
-    
+    local updateGround = (curTip.type=="ground") and spDiffTimers(timer, groundTimer) > 0.05 
     if updateGround then
         updateGroundInfo()
         groundTimer = timer
@@ -547,16 +559,19 @@ function widget:Update()
 end
 
 function widget:GameFrame()
-    updateUnitInfo()
+    if curTip.type=="unitDefID" or curTip.type=="unitDefPics" then
+        updateUnitInfo()
+    end
 end
 
-----------------------------------
 function widget:ViewResize(_,scrH)
     infoWindow:Resize(scrH*0.2,scrH*0.2)
+    -- ground info does not resize
 end
-----------------------------------
+
 function widget:Shutdown()
     infoWindow:Dispose()
+    groundInfo:Dispose()
     Spring.SetDrawSelectionInfo(true)
 end
 

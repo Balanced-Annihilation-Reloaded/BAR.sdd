@@ -391,7 +391,7 @@ end
 ----------------------------
 -- Creates the original window in which all else is contained
 local function loadMainMenu()
-    local sizeData = Load('mainMenuSize') or {x=400,y=200,width=585,height=400}
+    local sizeData = Load('mainMenuSize') or {x=400,y=200,width=625,height=500}
 
     -- Detects and fixes menu being off-screen
     local vsx,vsy = Spring.GetViewGeometry()

@@ -6,9 +6,8 @@ function widget:GetInfo()
         author    = 'Funkencool',
         date      = '2013',
         license   = 'GNU GPL v2',
-        layer     = 2000,
+        layer     = 0,
         enabled   = true,
-        handler   = true,
     }
 end
 
@@ -18,8 +17,8 @@ local Chili, screen, infoWindow, groundInfo, groundText
 local unitInfo, unitName, unitIcon, selectionGrid, unitHealthText, unitHealth
 local healthBars = {}
 
-local curTip 
-local focusDefID
+local curTip -- general info about 
+local focusDefID -- unitDefID of unit we are currently thinking of building
 
 local spGetTimer                = Spring.GetTimer
 local spDiffTimers              = Spring.DiffTimers
@@ -39,9 +38,7 @@ local floor = math.floor
 local r,g,b     = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
 
-local timer = spGetTimer()
-local healthTimer = timer
-local groundTimer = timer
+local groundTimer = spGetTimer()
 
 local green = '\255\0\255\0'
 local red = '\255\255\0\0'
@@ -52,16 +49,24 @@ local eColour = '\255\255\255\76'
 local blue = "\255\200\200\255"
 
 function round(num, idp)
-  local mult = 10^(idp or 0)
-  return math.floor(num * mult + 0.5) / mult
+    return string.format("%." .. (idp or 0) .. "f", num) -- lua is such a great language that this is the only reliable way to round
+end 
+
+local function getInline(r,g,b)
+    if type(r) == 'table' then
+        return string.char(255, (r[1]*255), (r[2]*255), (r[3]*255))
+    else
+        return string.char(255, (r*255), (g*255), (b*255))
+    end
 end
 
 ----------------------------------
+-- multi-unitdef info
+
 local function refineSelection(obj)
-        Spring.SelectUnitArray(obj.unitIDs)
+    Spring.SelectUnitArray(obj.unitIDs)
 end
 
--- add unitDefID (curTip = -1)
 local function addUnitGroup(name,texture,overlay,unitIDs)
     local count = #unitIDs
     if count == 1 then count = '' end
@@ -109,17 +114,38 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
     selectionGrid:AddChild(button)
 end
 
+local function addUnitGroupInfo()
+
+    unitCostText = Chili.TextBox:New{
+        name     = "unitCostText",
+        x        = '70%',
+        height   = 28,
+        bottom   = 10,
+        text     = "", --mColour .. Mcost .. '\n' .. eColour .. Ecost,
+        fontsize = 12
+    }
+        
+    unitResText = Chili.TextBox:New{
+        name     = "unitResText",
+        x        = 5,
+        bottom   = 10,
+        height   = 24,
+        text     =  "", --ResToolTip(Mmake, Muse, Emake, Euse),
+        fontsize = 12,
+    }
+
+    unitInfo:AddChild(unitCostText)
+    unitInfo:AddChild(unitResText)
+    
+    infoWindow:Show()
+end
 
 ----------------------------------
-
-function round(num, idp)
-    return string.format("%." .. (idp or 0) .. "f", num) -- lua is such a great language that this is the only reliable way to round
-end
+-- single unitdef info
 
 local function ResToolTip(Mmake, Muse, Emake, Euse)
     return white .. "M: " .. green .. '+' .. round(Mmake,1) .. '  ' .. red .. '-' .. round(Muse,1) .. "\n" ..  white .. "E:  " .. green .. '+' .. round(Emake,1) .. '  ' .. red .. "-" .. round(Euse,1)
 end
-
 
 local function showUnitInfo()
     local defID = curTip.selDefID
@@ -154,11 +180,11 @@ local function showUnitInfo()
     if n>1 then numText = "\n " .. blue .. "(x" .. tostring(n) .. ")" end
     
     unitName = Chili.TextBox:New{
-        x      = 0,
+        x      = 5,
         y      = 5,
         right  = 0,
         bottom = 0,
-        text   = " " .. humanName..'\n'.. " " .. description .. numText,
+        text   = humanName .. numText,
     }
     
     unitHealthText = Chili.TextBox:New{
@@ -199,6 +225,7 @@ local function showUnitInfo()
     }
         
     unitIcon = Chili.Image:New{
+        parent   = unitInfo,
         file     = texture,
         y        = 0,
         height   = '100%',
@@ -215,8 +242,6 @@ local function showUnitInfo()
     }
     
     
-    unitInfo:AddChild(unitIcon)
-    
     if UnitDefs[defID].customParams.iscommander then
         unitCostText:Hide()
     end
@@ -227,48 +252,91 @@ local function showUnitInfo()
     infoWindow:Show()        
 end
 
-local function addUnitGroupInfo()
-
-    unitCostText = Chili.TextBox:New{
-        name     = "unitCostText",
-        x        = '70%',
-        height   = 28,
-        bottom   = 10,
-        text     = "", --mColour .. Mcost .. '\n' .. eColour .. Ecost,
-        fontsize = 12
-    }
-        
-    unitResText = Chili.TextBox:New{
-        name     = "unitResText",
-        x        = 5,
-        bottom   = 10,
-        height   = 24,
-        text     =  "", --ResToolTip(Mmake, Muse, Emake, Euse),
-        fontsize = 12,
-    }
-
-    unitInfo:AddChild(unitCostText)
-    unitInfo:AddChild(unitResText)
-    
-    infoWindow:Show()
-end
+----------------------------------
+-- basic unit info
 
 local function showBasicUnitInfo()
 
     basicUnitInfo = Chili.TextBox:New{
-        x      = 0,
+        parent = unitInfo,
+        x      = 5,
         y      = 5,
         right  = 0,
         bottom = 0,
-        text   = " Units selected: " .. curTip.n .. "\n Unit types: " .. curTip.nType,
+        text   = "Units selected: " .. curTip.n .. "\nUnit types: " .. curTip.nType,
     }
-    
-    unitInfo:AddChild(basicUnitInfo)
     
     infoWindow:Show()
 end
 
 ----------------------------------
+-- focus unit info
+
+local function showFocusInfo()
+    local defID = curTip.focusDefID
+    local unitDef = UnitDefs[defID]
+
+    local description = UnitDefs[defID].tooltip or ''
+    local name        = UnitDefs[defID].name
+    local texture     = imageDir..'Units/' .. name .. '.dds'
+    local overlay     = imageDir..'Overlays/' .. name .. '.dds'
+    local humanName   = UnitDefs[defID].humanName
+
+    local Ecost = UnitDefs[defID].energyCost
+    local Mcost = UnitDefs[defID].metalCost 
+    local maxHealth = UnitDefs[defID].health
+    
+    focusName = Chili.TextBox:New{
+        x      = 5,
+        y      = 5,
+        right  = 0,
+        bottom = 0,
+        text   = humanName .. "\n" .. description,
+    }
+
+    -- TODO: more/better info
+    focusMCost = Chili.TextBox:New{
+        x        = 5,
+        bottom   = 35,
+        height   = 24,
+        text     =  getInline{0.6,0.6,0.8} .. "Metal Cost: " .. "\255\255\255\255" .. unitDef.metalCost,
+    }
+    focusECost = Chili.TextBox:New{
+        x        = 5,
+        bottom   = 50,
+        height   = 24,
+        text     =  getInline{1,1,0.3} .. "Energy Cost: " .. "\255\255\255\255" .. unitDef.energyCost,
+    }
+    focusBuildTime = Chili.TextBox:New{
+        x        = 5,
+        bottom   = 20,
+        height   = 24,
+        text     =  "Build Time: " .. unitDef.buildTime, -- this isn't very intuitive
+    }
+        
+    focusIcon = Chili.Image:New{
+        parent   = unitInfo,
+        file     = texture,
+        y        = 0,
+        height   = '100%',
+        width    = '100%',
+        children = {
+            Chili.Image:New{
+                color    = teamColor,
+                height   = '100%',
+                width    = '100%',
+                file     = overlay,
+                children = {focusName, focusMCost, focusECost, focusBuildTime, focusRestText},
+            }
+        }
+    }
+    
+    infoWindow:Show()        
+end
+
+----------------------------------
+-- ground info
+
 local max = math.max
 local min = math.min
 local schar = string.char
@@ -286,8 +354,7 @@ local function speedModCol(x)
     end
     return schar(255, r*255, g*255, b*255)
 end
-----------------------------------
--- ground info
+
 local function updateGroundInfo()
     local mx, my    = spGetMouseState()
     local focus,map = spTraceScreenRay(mx,my,true)
@@ -382,6 +449,8 @@ local function updateUnitInfo()
 end
 
 ----------------------------------
+-- (re-)setting up 
+
 local function ChooseCurTip()
     curTip = {}
 
@@ -392,12 +461,12 @@ local function ChooseCurTip()
     curTip.selUnits = selUnits
     curTip.sortedSelUnits = sortedSelUnits
     curTip.n = #selUnits
-    curTip.nType = #sortedSelUnits
+    curTip.nType = sortedSelUnits['n']
 
     if focusDefID then
         -- info about a unit we are thinking to build
         curTip.type = "focusDefID"
-        curTip.uDID = focusDefID         
+        curTip.focusDefID = focusDefID         
     elseif #selUnits == 0 then
         --info about point on map corresponding to cursor 
         curTip.type = "ground"
@@ -414,6 +483,7 @@ local function ChooseCurTip()
     end
         
 end
+
 local function ResetTip()
     -- delete/hide the old tip
     curTip = nil
@@ -426,10 +496,9 @@ local function ResetTip()
     -- choose the new tip
     ChooseCurTip()
 
-    --if curTip.type=="focusDefID" then
-        -- TODO
-    --else
-    if curTip.type=="unitDefID" then
+    if curTip.type=="focusDefID" then
+        showFocusInfo()
+    elseif curTip.type=="unitDefID" then
         showUnitInfo()
         updateUnitInfo()
     elseif curTip.type=="unitDefPics" then
@@ -446,11 +515,12 @@ local function ResetTip()
     elseif curTip.type=="basicUnitInfo" then
         showBasicUnitInfo()    
     elseif curTip.type=="ground" then
-        -- nothing to do?
+        updateGroundInfo()
     end
 end
 
 ----------------------------------
+
 function widget:Initialize()    
     if (not WG.Chili) then
         widgetHandler:RemoveWidget()
@@ -522,10 +592,12 @@ function widget:Initialize()
     }
     
     Spring.SetDrawSelectionInfo(false)
+    
     widget:CommandsChanged()
 end
 
 ----------------------------------
+
 function widget:CommandsChanged()
     local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
     teamColor = {r,g,b}

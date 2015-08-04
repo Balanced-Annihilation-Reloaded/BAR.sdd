@@ -246,8 +246,8 @@ end
 
 function SetActiveBuildUnit(uDID)
     Spring.SetActiveCommand('buildunit_'..UnitDefs[uDID].name)
-    if WG.InitialQueue and WG.SelectionMenuForceSelect then -- if the game hasn't started, we can't set buildunit_ as the active command, so we tell sMenu directly
-        WG.SelectionMenuForceSelect(uDID)
+    if WG.InitialQueue and WG.sMenu then -- if the game hasn't started, we can't set buildunit_ as the active command, so we tell sMenu directly
+        WG.sMenu.ForceSelect(uDID)
     end
 end
 

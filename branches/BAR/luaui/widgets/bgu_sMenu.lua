@@ -692,23 +692,19 @@ local function createButton(name, unitDef)
         rangeText = '\nRange: ' .. range
     end
     
-    -- make the tooltip for this unit
-    local tooltip = unitDef.humanName..' - '..unitDef.tooltip..
-                    '\nCost: '..getInline{0.6,0.6,0.8}..unitDef.metalCost..'\b Metal, '..getInline{1,1,0.3}..unitDef.energyCost..'\b Energy'..
-                    '\nBuild Time: '..unitDef.buildTime..
-                  rangeText
-
     -- make the button for this unit
     local hotkey = WG.buildingHotkeys and WG.buildingHotkeys[unitDef.id] or ''
     unit[name] = Chili.Button:New{
         name      = name,
         cmdId     = -unitDef.id,
-        tooltip   = tooltip,
+        --tooltip   = tooltip,
         caption   = '',
         disabled  = false,
         padding   = {0,0,0,0},
         margin    = {0,0,0,0},
         OnMouseUp = {cmdAction},
+        OnMouseOver = {function() WG.sMenu.mouseOverDefID = unitDef.id end},
+        OnMouseOut   = {function() WG.sMenu.mouseOverDefID = nil end}, -- FIXME
         children  = {
             Chili.Image:New{
                 height = '100%', width = '100%',
@@ -773,6 +769,7 @@ local function ForceSelect(uDID)
     -- act as though the build button for this uDID was pushed
     updateRequired = true
     activeSelUDID = uDID
+    WG.sMenu.mouseOverDefID = uDID
     activeSelCmdID = nil
     if WG.InitialQueue then
         WG.InitialQueue.SetSelDefID(uDID)
@@ -786,6 +783,8 @@ function widget:Initialize()
     
     if Spring.GetGameFrame()>0 then gameStarted = true end
 
+    WG.sMenu = {}    
+    
     if (not WG.Chili) then
         widgetHandler:RemoveWidget()
         return
@@ -809,7 +808,7 @@ function widget:Initialize()
         height  = 150,
         width   = 120,
         padding = {0,0,0,0},
-        margin  = {0,0,0,0}
+        margin  = {0,0,0,0},
     }
     
     orderMenu = Chili.Grid:New{
@@ -856,7 +855,7 @@ function widget:Initialize()
     end
 
     -- offer the option to force select build menu buttons
-    WG.SelectionMenuForceSelect = ForceSelect
+    WG.sMenu.ForceSelect = ForceSelect
 end
 
 --------------------------- 

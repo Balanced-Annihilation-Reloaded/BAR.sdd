@@ -493,7 +493,7 @@ end
 
 function Cost(item)
     local uDID = item.uDID
-    return UnitDefs[uDID].metalCost + 60*UnitDefs[uDID].energyCost
+    return 60*UnitDefs[uDID].metalCost + UnitDefs[uDID].energyCost
 end
 
 local function SetGridDimensions()

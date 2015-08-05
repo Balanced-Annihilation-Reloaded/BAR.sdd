@@ -51,6 +51,7 @@ local darkblue = "\255\100\100\255"
 local yellow = "\255\255\255\0"
 local lilac = "\255\200\162\200"
 local tomato = "\255\255\99\71"
+local turqoise = "\255\48\213\200"
 
 function round(num, idp)
     return string.format("%." .. (idp or 0) .. "f", num) -- lua is such a great language that this is the only reliable way to round
@@ -350,33 +351,33 @@ local function GetUnitDefKeyProperties (defID)
     elseif ud.energyMake>=20 and #ud.weapons==0 and ud.speed==0 then
         t[#t+1] = {"Energy Output", eColour .. tostring(ud.energyMake)}
     elseif (ud.radarRadius>200 or ud.sonarRadius>200) and #ud.weapons==0 then
-        if ud.radarRadius>200 then t[#t+1] = {"Radar Range", lilac .. tostring(ud.radarRadius)} end
-        if ud.sonarRadius>200 then t[#t+1] = {"Sonar Range", lilac .. tostring(ud.sonarRadius)} end
+        if ud.radarRadius>200 then t[#t+1] = {"Radar Range", blue .. tostring(ud.radarRadius)} end
+        if ud.sonarRadius>200 then t[#t+1] = {"Sonar Range", blue .. tostring(ud.sonarRadius)} end
     elseif ud.jammerRadius>0 and #ud.weapons==0 then
-        t[#t+1] = {"Jammer Radius", blue .. tostring(ud.jammerRadius)}
+        t[#t+1] = {"Jammer Radius", turqoise .. tostring(ud.jammerRadius)}
         -- note: there are no sonar jammers
     elseif ud.seismicRadius>0 then
-        t[#t+1] = {"Coverage Radius", blue .. tostring(ud.seismicRadius)}
+        t[#t+1] = {"Coverage Radius", turqoise .. tostring(ud.seismicRadius)}
     elseif ud.energyStorage>=3000 then
         t[#t+1] = {"Energy Storage", eColour .. tostring(ud.energyStorage)} 
     elseif ud.metalStorage>=1000 then
         t[#t+1] = {"Metal Storage", mColour .. tostring(ud.metalStorage)}
     elseif ud.windGenerator>0 then
-        t[#t+1] = {"Wind", blue .. tostring(Game.windMin) .. " - " .. tostring(Game.windMax)}
+        t[#t+1] = {"Wind", eColour .. tostring(Game.windMin) .. " - " .. tostring(Game.windMax)}
     elseif ud.tidalGenerator>0 then
-        t[#t+1] = {"Tidal", blue .. tostring(Game.tidal)}
+        t[#t+1] = {"Tidal", eColour .. tostring(Game.tidal)}
     --elseif ud.isExtractor then
         -- do nothing, extraction shows in the tooltip as a result of prospector
         -- if it has a weapon, it'll get picked up later
     elseif #ud.weapons>0 and WeaponDefs[ud.weapons[1].weaponDef].interceptor~=0 then
         -- anti-nukes
         local wd = WeaponDefs[ud.weapons[1].weaponDef]
-        t[#t+1] = {"Coverage Radius", blue .. tostring(wd.coverageRange)}
+        t[#t+1] = {"Coverage Radius", turqoise .. tostring(wd.coverageRange)}
         t[#t+1] = {"Stockpile Time", blue .. tostring(wd.stockpileTime/30) .. "s"}
         if ud.energyMake>=20 then t[#t+1] = {"Energy Output", eColour .. tostring(ud.energyMake)} end -- mobile antis make 200e
     elseif #ud.weapons>0 and WeaponDefs[ud.weapons[1].weaponDef].type=="Shield" then
         local wd = WeaponDefs[ud.weapons[1].weaponDef]
-        t[#t+1] = {"Coverage Radius", blue .. tostring(wd.shieldRadius)}  
+        t[#t+1] = {"Coverage Radius", turqoise .. tostring(wd.shieldRadius)}  
     elseif (false) then --TODO: crawling bombs
         t[#t+1] = {"Damage", GetBombDamageCategory(ud)} 
     elseif (#ud.weapons>0) and (not ud.canMove) and WeaponDefs[ud.weapons[1].weaponDef].type=="StarburstLauncher" then
@@ -391,7 +392,7 @@ local function GetUnitDefKeyProperties (defID)
         if ud.speed>0 then t[#t+1] = {"Max Speed", tomato .. tostring(round(ud.speed))} end
         t[#t+1] = {"Weapon Range", red .. tostring(GetMaxWeaponRange(ud))}
         if GetMaxWeaponReload(ud)>10 then 
-            t[#t+1] = {"Reload Time", red .. tostring(GetMaxWeaponReload(ud)) .. "s"}
+            t[#t+1] = {"Reload Time", blue .. tostring(GetMaxWeaponReload(ud)) .. "s"}
             if WeaponDefs[ud.weapons[1].weaponDef].paralyzer then
                 t[#t+1] = {"Paralyze Time", blue .. tostring(WeaponDefs[ud.weapons[1].weaponDef].damages.paralyzeDamageTime).. "s"}            
             else            

@@ -14,7 +14,7 @@ return {
 		collisionvolumeoffsets = "0 0 0",
 		collisionvolumescales = "16 14 22",
 		collisionvolumetype = "ellipsoid",
-		description = "Advanced Amphibious Crawling Bomb",
+		description = "Cloakable Crawling Bomb",
 		energymake = 0.2,
 		energyuse = 0.2,
 		explodeas = "CRAWL_BLAST",

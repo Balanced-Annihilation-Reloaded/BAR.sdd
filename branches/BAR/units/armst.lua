@@ -11,7 +11,7 @@ return {
 		cloakcost = 5,
 		cloakcostmoving = 20,
 		corpse = "DEAD",
-		description = "Stealth Tank",
+		description = "Cloakable Stealth Tank",
 		energymake = 0.9,
 		energyuse = 0.9,
 		explodeas = "BIG_UNITEX",

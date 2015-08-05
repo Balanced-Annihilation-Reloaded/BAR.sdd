@@ -14,7 +14,7 @@ return {
 		buildtime = 38623,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Converts up to 650 energy into 13 metal per second",
+		description = "",
 		explodeas = "ATOMIC_BLASTSML",
 		floater = true,
 		footprintx = 5,

@@ -14,7 +14,7 @@ return {
 		collisionvolumetest = 1,
 		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
-		description = "Amphibious Kbot",
+		description = "Floating Kbot",
 		energymake = 0.4,
 		energyuse = 0.4,
 		explodeas = "BIG_UNITEX",

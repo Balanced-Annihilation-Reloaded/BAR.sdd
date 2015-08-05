@@ -13,7 +13,7 @@ return {
 		collisionvolumescales = "52 64 52",
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",
-		description = "Enhanced Radar Targeting",
+		description = "Enhanced Radar Accuracy",
 		energyuse = 150,
 		explodeas = "LARGE_BUILDINGEX",
 		footprintx = 4,

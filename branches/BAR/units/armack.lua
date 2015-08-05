@@ -11,7 +11,7 @@ return {
 		canmove = true,
 		category = "KBOT MOBILE ALL NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Level 2 Construction Kbot",
+		description = "",
 		energymake = 14,
 		energystorage = 100,
 		energyuse = 14,

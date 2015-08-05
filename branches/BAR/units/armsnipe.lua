@@ -11,7 +11,7 @@ return {
 		cloakcost = 75,
 		cloakcostmoving = 200,
 		corpse = "DEAD",
-		description = "Sniper Kbot",
+		description = "Stealthy Sniper Kbot",
 		energymake = 0.9,
 		energyuse = 0.9,
 		explodeas = "BIG_UNITEX",

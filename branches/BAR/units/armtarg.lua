@@ -14,7 +14,7 @@ return {
 		buildtime = 8707,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Enhanced Radar Targeting, more facilities enhance accuracy",
+		description = "Enhanced Radar Accuracy",
 		energyuse = 100,
 		explodeas = "LARGE_BUILDINGEX",
 		footprintx = 3,

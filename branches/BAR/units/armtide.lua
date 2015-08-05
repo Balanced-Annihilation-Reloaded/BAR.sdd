@@ -10,7 +10,7 @@ return {
 		buildtime = 2188,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Produces Energy",
+		description = "",
 		energystorage = 50,
 		explodeas = "TIDAL_DEATHEX",
 		footprintx = 3,

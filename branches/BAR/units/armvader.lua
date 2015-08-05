@@ -10,7 +10,7 @@ return {
 		canmove = true,
 		category = "KBOT MOBILE WEAPON ALL NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "CORPSE",
-		description = "Amphibious Crawling Bomb",
+		description = "Crawling Bomb",
 		energymake = 0.1,
 		energyuse = 0.1,
 		explodeas = "CRAWL_BLASTSML",

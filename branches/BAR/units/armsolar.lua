@@ -17,7 +17,7 @@ return {
 		collisionvolumetype = "Ell",
 		corpse = "DEAD",
 		damagemodifier = 0.5,
-		description = "Produces Energy (20E)",
+		description = "",
 		energystorage = 50,
 		energymake = 20,
 		explodeas = "SMALL_BUILDINGEX",

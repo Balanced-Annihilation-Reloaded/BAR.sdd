@@ -14,7 +14,7 @@ return {
 		collisionvolumescales = "39.2 33.2 48.2",
 		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
-		description = "Level 2 Construction Vehicle",
+		description = "",
 		energymake = 20,
 		energystorage = 100,
 		energyuse = 20,

@@ -17,7 +17,7 @@ return {
 		collisionvolumescales = "48 80 48",
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",
-		description = "Extracts Metal",
+		description = "",
 		explodeas = "TINY_BUILDINGEX",
 		extractsmetal = 0.001,
 		footprintx = 3,

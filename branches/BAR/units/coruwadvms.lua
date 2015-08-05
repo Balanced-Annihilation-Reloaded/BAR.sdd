@@ -11,7 +11,7 @@ return {
 		buildtime = 20524,
 		category = "ALL NOTSUB NOWEAPON NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Increases Metal Storage (10000)",
+		description = "",
 		explodeas = "LARGE_BUILDINGEX",
 		footprintx = 4,
 		footprintz = 4,

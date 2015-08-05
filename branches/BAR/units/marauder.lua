@@ -9,7 +9,7 @@ return {
 		canmove = true,
 		category = "KBOT WEAPON ALL NOTSUB NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Amphibious Assault Mech",
+		description = "Amphibious Light Mech",
 		explodeas = "BIG_UNITEX",
 		footprintx = 3,
 		footprintz = 3,

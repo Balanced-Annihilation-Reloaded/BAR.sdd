@@ -12,7 +12,7 @@ return {
 		collisionvolumescales = "100 168 80",
 		collisionvolumetype = "Ell",
 		corpse = "DEAD",
-		description = "Experimental Assault Kbot",
+		description = "Experimental Assault Mech",
 		energymake = 35,
 		energystorage = 350,
 		explodeas = "NUCLEAR_MISSILE",

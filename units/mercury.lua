@@ -14,7 +14,7 @@ return {
 		buildtime = 30190,
 		category = "ALL WEAPON NOTSUB SPECIAL NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Long Range Anti-Air Tower",
+		description = "Long Range Anti-Air",
 		explodeas = "BIG_UNITEX",
 		footprintx = 4,
 		footprintz = 4,

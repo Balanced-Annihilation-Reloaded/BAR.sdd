@@ -48,6 +48,8 @@ local MAP_SIZE_X_SCALED = MAP_SIZE_X / METAL_MAP_SQUARE_SIZE
 local MAP_SIZE_Z = Game.mapSizeZ
 local MAP_SIZE_Z_SCALED = MAP_SIZE_Z / METAL_MAP_SQUARE_SIZE
 
+local mColour = '\255\153\153\204'
+
 ------------------------------------------------
 --helpers
 ------------------------------------------------
@@ -180,6 +182,6 @@ function widget:DrawScreen()
     if (not coords) then return end
     
     IntegrateMetal(mexDefInfo, coords[1], coords[3], forceUpdate)
-    WG.Prospector.tooltip = "\255\255\255\255Metal extraction: " .. strFormat("%.2f", extraction)
+    WG.Prospector.tooltip = "\255\255\255\255Metal extraction: " .. mColour .. strFormat("%.2f", extraction)
 end
 

@@ -62,6 +62,12 @@ end
 --------------------------------------------------------------------------------
 local Chili, window, panel, arm_button, core_button
 
+function widget:ViewResize(vsx,vsy)
+    window:SetPos(0,vsy*0.2-80, vsy*0.25)
+    arm_button:Resize(vsy*0.25/2-1)
+    core_button:Resize(vsy*0.25/2-1)
+end
+
 function widget:Initialize()
     if spGetSpectatingState() or
         Spring.GetGameFrame() > 0 or

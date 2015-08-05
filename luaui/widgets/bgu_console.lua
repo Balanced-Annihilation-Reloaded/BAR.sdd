@@ -110,6 +110,7 @@ function widget:ViewResize(viewSizeX, viewSizeY)
     window:Resize(w,_)
     SetInputTextGeo(w, window.y, viewSizeX, viewSizeY) -- at this point, GetXXXGeometry and window.XXX both still return previous values
     window:Invalidate() -- avoid mangling from chili bugs
+    msgWindow:Invalidate() -- avoid mangling from chili bugs
 end
 
 local function loadWindow()

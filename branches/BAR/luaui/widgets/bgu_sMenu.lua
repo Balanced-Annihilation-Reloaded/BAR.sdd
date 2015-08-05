@@ -993,6 +993,7 @@ function widget:GameStart()
     for i=1,#catNames do
         grid[i].active = false
     end
+    WG.sMenu.mouseOverDefID = nil
     gameStarted = true
     updateRequired = true
 end

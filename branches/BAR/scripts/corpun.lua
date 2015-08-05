@@ -78,6 +78,16 @@
                 currBarrel = currBarrel + 1
                 if currBarrel == 3 then currBarrel = 1 end
         end
+
+        function script.QueryWeapon2()
+                if (currBarrel == 1) then 
+                        return flare1
+                else 
+                        return flare2
+                end
+        end
+        
+        function script.AimFromWeapon2() return turret end
         
 	function script.Killed(recentDamage, maxHealth)
 		local severity = recentDamage / maxHealth

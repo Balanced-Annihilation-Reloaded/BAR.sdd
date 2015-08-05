@@ -140,6 +140,16 @@ FireTertiary()
 	}
 }
 
+AimFromPrimary(piecenum)
+{
+	piecenum = turret;
+}
+
+QueryPrimary(piecenum)
+{
+	piecenum = turret;
+}
+
 AimFromTertiary(piecenum)
 {
 	piecenum = turret;

@@ -673,7 +673,7 @@ RestoreAfterDelay()
 	bAiming = FALSE;
 }
 
-AimTertiary(heading, pitch)
+AimSecondary(heading, pitch)
 {
 	Unit_Depth = get GROUND_WATER_HEIGHT(get UNIT_XZ);
 	//get PRINT( Unit_Depth );
@@ -690,17 +690,17 @@ AimTertiary(heading, pitch)
 	return (1);
 }
 
-FireTertiary()
+FireSecondary()
 {
 	sleep 100;
 }
 
-AimFromTertiary(piecenum)
+AimFromSecondary(piecenum)
 {
 	piecenum = head;
 }
 
-QueryTertiary(piecenum)
+QuerySecondary(piecenum)
 {
 	piecenum = tflare;
 }

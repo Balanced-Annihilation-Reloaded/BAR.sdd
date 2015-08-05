@@ -285,7 +285,7 @@ local function GetMaxWeaponRange (ud)
         local wd = WeaponDefs[wDID]
         range = math.max(range,wd.range)    
     end
-    return floor(range)
+    return range
 end
 local function GetMaxWeaponReload (ud)
     -- get the max weapon reload time of this units weapons
@@ -295,7 +295,7 @@ local function GetMaxWeaponReload (ud)
         local wd = WeaponDefs[wDID]
         reload = math.max(reload,wd.reload)    
     end
-    return floor(reload)
+    return reload
 end
 local function GetMaxDamage (wd)
     -- get the max damage dealt by a single shot of this weapon
@@ -305,7 +305,7 @@ local function GetMaxDamage (wd)
     end
     return dmg
 end
-local function GetDamageCategory (ud)
+local function GetDamagePerSec (ud)
     -- classify the DPS of the weapons of this unit
     local damage = 0
     local n = 0
@@ -313,96 +313,124 @@ local function GetDamageCategory (ud)
         n = n + 1
         local wDID = v.weaponDef
         local wd = WeaponDefs[wDID]
-        local dmg_per_shot = GetMaxDamage(wd)
-        local rate = wd.salvoSize/(wd.reload/30)
-        damage = damage + (dmg_per_shot*wd.projectiles*rate)
+        local oDmg = GetMaxDamage(wd)
+        local oBurst = wd.salvoSize*wd.projectiles
+        local oRld = math.max(1/30,wd.stockpile and wd.stockpileTime or wd.reload)
+        damage = damage + oBurst*oDmg/oRld
     end
-    damage = damage/n
-    return "TODO"
+
+    return damage
 end
-local function GetMissileDamageCategory (ud)
+local function GetDamagePerShot (ud)
     -- classify the damage of a single missile fired by this units first weapon
-    return "TODO"
+    local wDID = ud.weapons[1].weaponDef
+    local wd = WeaponDefs[wDID]
+    local oBurst = wd.salvoSize*wd.projectiles
+    local damage = GetMaxDamage(wd) * oBurst
+    return damage
 end
-local function GetPerShotDamageCategory (ud)
-    -- classify the damage of a single missile fired by this units first weapon
-    return "TODO"
-end
-local function GetBombDamageCategory (ud)
-    -- classify the damage of a single missile fired by this units first weapon
-    return "TODO"
+local function GetWindString()
+    local lower = round(Game.windMin)
+    local upper = round(Game.windMax)
+    if tonumber(lower)<tonumber(upper) then
+        return lower .. " - " .. upper
+    end
+    return lower
 end
 
+local function isKamikaze(ud)
+    if #ud.weapons~=2 then return false end
+    local wd = WeaponDefs[ud.weapons[1].weaponDef]
+    if string.find(wd.name,"mine_dummy") then return true end
+    if string.find(wd.name,"crawl_dummy") then return true end
+    return false
+end
+    
 local function GetUnitDefKeyProperties (defID)
     local ud = UnitDefs[defID]
     local t = {}
-    t[#t+1] = {"Health", green .. tostring(ud.health)}
     
-    -- deal with special cases
-    if defID==UnitDefNames.commando.id then
-        -- commando, gimp, maverick, sniper, behemoth, junos
+    -- deal with mines and crawling bombs
+    if isKamikaze(ud) then
+        if ud.speed>0 then t[#t+1] = {"Max Speed", tomato .. round(ud.speed)} end
+        local bomb_wd = WeaponDefs[ud.weapons[2].weaponDef]
+        t[#t+1] = {"Damage", red .. round(GetMaxDamage(bomb_wd))} 
+        return t
     end
     
+    -- deal with one very special case
+    if defID==UnitDefNames.commando.id then
+        t[#t+1] = {"Health", green .. tostring(ud.health)}
+        t[#t+1] = {"Build Power", lilac .. round(ud.buildSpeed)}
+        t[#t+1] = {"Max Speed", tomato .. round(ud.speed)}
+        t[#t+1] = {"Weapon Range", turqoise .. round(GetMaxWeaponRange(ud))}
+        t[#t+1] = {"Damage Per Sec", red .. round(GetDamagePerSec(ud))}    
+        return t
+    end
+    
+    -- deal with the rest
+    t[#t+1] = {"Health", green .. tostring(ud.health)}
+    
     if ud.isFactory or (ud.isBuilder and ud.speed==0) then
-        t[#t+1] = {"Build Power", lilac .. tostring(ud.buildSpeed)}
+        t[#t+1] = {"Build Power", lilac .. round(ud.buildSpeed)}
     elseif ud.isBuilder and ud.canMove then
-        t[#t+1] = {"Build Power", lilac .. tostring(ud.buildSpeed)}
-        t[#t+1] = {"Max Speed", tomato .. tostring(round(ud.speed))}
+        t[#t+1] = {"Build Power", lilac .. round(ud.buildSpeed)}
+        t[#t+1] = {"Max Speed", tomato .. round(ud.speed)}
     elseif ud.energyMake>=20 and #ud.weapons==0 and ud.speed==0 then
-        t[#t+1] = {"Energy Output", eColour .. tostring(ud.energyMake)}
+        t[#t+1] = {"Energy Output", eColour .. round(ud.energyMake)}
     elseif (ud.radarRadius>200 or ud.sonarRadius>200) and #ud.weapons==0 then
-        if ud.radarRadius>200 then t[#t+1] = {"Radar Range", blue .. tostring(ud.radarRadius)} end
-        if ud.sonarRadius>200 then t[#t+1] = {"Sonar Range", blue .. tostring(ud.sonarRadius)} end
+        if ud.radarRadius>200 then t[#t+1] = {"Radar Range", turqoise .. round(ud.radarRadius)} end
+        if ud.sonarRadius>200 then t[#t+1] = {"Sonar Range", turqoise .. round(ud.sonarRadius)} end
+        if ud.losRadius>0 then t[#t+1] = {"LOS Range", turqoise .. round(ud.losRadius)} end
     elseif ud.jammerRadius>0 and #ud.weapons==0 then
-        t[#t+1] = {"Jammer Radius", turqoise .. tostring(ud.jammerRadius)}
+        t[#t+1] = {"Jammer Radius", turqoise .. round(ud.jammerRadius)}
         -- note: there are no sonar jammers
     elseif ud.seismicRadius>0 then
-        t[#t+1] = {"Coverage Radius", turqoise .. tostring(ud.seismicRadius)}
+        t[#t+1] = {"Coverage Radius", turqoise .. round(ud.seismicRadius)}
     elseif ud.energyStorage>=3000 then
-        t[#t+1] = {"Energy Storage", eColour .. tostring(ud.energyStorage)} 
+        t[#t+1] = {"Energy Storage", eColour .. round(ud.energyStorage)} 
     elseif ud.metalStorage>=1000 then
-        t[#t+1] = {"Metal Storage", mColour .. tostring(ud.metalStorage)}
+        t[#t+1] = {"Metal Storage", mColour .. round(ud.metalStorage)}
     elseif ud.windGenerator>0 then
-        t[#t+1] = {"Wind", eColour .. tostring(Game.windMin) .. " - " .. tostring(Game.windMax)}
+        t[#t+1] = {"Wind", eColour .. GetWindString()}
     elseif ud.tidalGenerator>0 then
-        t[#t+1] = {"Tidal", eColour .. tostring(Game.tidal)}
+        t[#t+1] = {"Tidal", eColour .. round(Game.tidal)}
     --elseif ud.isExtractor then
         -- do nothing, extraction shows in the tooltip as a result of prospector
         -- if it has a weapon, it'll get picked up later
     elseif #ud.weapons>0 and WeaponDefs[ud.weapons[1].weaponDef].interceptor~=0 then
         -- anti-nukes
         local wd = WeaponDefs[ud.weapons[1].weaponDef]
-        t[#t+1] = {"Coverage Radius", turqoise .. tostring(wd.coverageRange)}
-        t[#t+1] = {"Stockpile Time", blue .. tostring(wd.stockpileTime/30) .. "s"}
-        if ud.energyMake>=20 then t[#t+1] = {"Energy Output", eColour .. tostring(ud.energyMake)} end -- mobile antis make 200e
+        t[#t+1] = {"Coverage Radius", turqoise .. round(wd.coverageRange)}
+        t[#t+1] = {"Stockpile Time", blue .. round(wd.stockpileTime/30) .. "s"}
+        if ud.energyMake>=20 then t[#t+1] = {"Energy Output", eColour .. round(ud.energyMake)} end -- mobile antis make 200e
     elseif #ud.weapons>0 and WeaponDefs[ud.weapons[1].weaponDef].type=="Shield" then
         local wd = WeaponDefs[ud.weapons[1].weaponDef]
-        t[#t+1] = {"Coverage Radius", turqoise .. tostring(wd.shieldRadius)}  
-    elseif (false) then --TODO: crawling bombs
-        t[#t+1] = {"Damage", GetBombDamageCategory(ud)} 
-    elseif (#ud.weapons>0) and (not ud.canMove) and WeaponDefs[ud.weapons[1].weaponDef].type=="StarburstLauncher" then
+        t[#t+1] = {"Coverage Radius", turqoise .. round(wd.shieldRadius)}  
+    elseif (#ud.weapons>0) and (not ud.canMove) and (WeaponDefs[ud.weapons[1].weaponDef].type=="StarburstLauncher" or WeaponDefs[ud.weapons[1].weaponDef].stockpileTime/30>7) then
         -- static launchers
         local wd = WeaponDefs[ud.weapons[1].weaponDef]
-        t[#t+1] = {"Weapon Range", red .. tostring(GetMaxWeaponRange(ud))}
-        t[#t+1] = {"AOE", red .. tostring(wd.damageAreaOfEffect)}
-        t[#t+1] = {"Stockpile Time", blue .. tostring(wd.stockpileTime/30) .. "s"}
-        t[#t+1] = {"Damage", GetMissileDamageCategory(ud)}
+        t[#t+1] = {"Weapon Range", turqoise .. round(GetMaxWeaponRange(ud))}
+        t[#t+1] = {"AOE", turqoise .. round(wd.damageAreaOfEffect)}
+        t[#t+1] = {"Stockpile Time", blue .. round(wd.stockpileTime/30) .. "s"}
+        t[#t+1] = {"Damage Per Shot", red .. round(GetDamagePerShot(ud))}
+        -- missile costs would be nice but no space
     elseif #ud.weapons>0 then
         -- mobile units & static def
-        if ud.speed>0 then t[#t+1] = {"Max Speed", tomato .. tostring(round(ud.speed))} end
-        t[#t+1] = {"Weapon Range", red .. tostring(GetMaxWeaponRange(ud))}
-        if GetMaxWeaponReload(ud)>10 then 
-            t[#t+1] = {"Reload Time", blue .. tostring(GetMaxWeaponReload(ud)) .. "s"}
+        if ud.speed>0 then t[#t+1] = {"Max Speed", tomato .. round(ud.speed)} end
+        if not ud.isBomberAirUnit then t[#t+1] = {"Weapon Range", turqoise .. round(GetMaxWeaponRange(ud))} end
+        if GetMaxWeaponReload(ud)>=7 then 
+            t[#t+1] = {"Reload Time", blue .. round(GetMaxWeaponReload(ud)) .. "s"}
             if WeaponDefs[ud.weapons[1].weaponDef].paralyzer then
-                t[#t+1] = {"Paralyze Time", blue .. tostring(WeaponDefs[ud.weapons[1].weaponDef].damages.paralyzeDamageTime).. "s"}            
+                t[#t+1] = {"Paralyze Time", blue .. round(WeaponDefs[ud.weapons[1].weaponDef].damages.paralyzeDamageTime).. "s"}            
             else            
-                t[#t+1] = {"Damage", GetPerShotDamageCategory(ud)}
+                t[#t+1] = {"Weapon Damage", red .. round(GetDamagePerShot(ud))}
             end
         else 
             if WeaponDefs[ud.weapons[1].weaponDef].paralyzer then
-                t[#t+1] = {"Paralyze Time", blue .. tostring(WeaponDefs[ud.weapons[1].weaponDef].damages.paralyzeDamageTime) .. "s"}            
+                t[#t+1] = {"Paralyze Time", blue .. round(WeaponDefs[ud.weapons[1].weaponDef].damages.paralyzeDamageTime) .. "s"}            
             else            
-                t[#t+1] = {"Damage", GetDamageCategory(ud)}     
+                t[#t+1] = {"Damage Per Sec", red .. round(GetDamagePerSec(ud))}     
             end
         end
     end

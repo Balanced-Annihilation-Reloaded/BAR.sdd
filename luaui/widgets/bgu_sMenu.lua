@@ -282,9 +282,17 @@ end
 
 local function scrollMenus(_,_,_,_,value)
     local choice = menuTabs.choice
-    choice = (choice - value - 1) % #menuTab + 1
+    local maxMenuTab = 0
+    for k,_ in pairs(menuTab) do
+        maxMenuTab = math.max(maxMenuTab, k)
+    end
+    while (true) do
+        choice = choice - value
+        if choice<=0 then choice = maxMenuTab end
+        if choice==maxMenuTab+1 then choice=0 end
+        if menuTab[choice]~= nil then break end
+    end -- Prevents zooming
     selectTab(menuTab[choice])
-    return true -- Prevents zooming
 end
 
 ---------------------------------------------------------------

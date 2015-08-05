@@ -14,7 +14,7 @@ return {
 		collisionvolumescales = "32 30 78",
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",
-		description = "Level 1 Construction Ship",
+		description = "",
 		energymake = 15,
 		energystorage = 15,
 		explodeas = "BIG_UNITEX",

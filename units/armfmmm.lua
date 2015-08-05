@@ -17,7 +17,7 @@ return {
 		collisionvolumescales = "64 100 64",
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",
-		description = "Converts up to 650 energy into 13 metal per second",
+		description = "",
 		explodeas = "ATOMIC_BLASTSML",
 		floater = true,
 		footprintx = 5,

@@ -12,7 +12,7 @@ return {
 		collisionvolumescales = "60 53 30",
 		collisionvolumetype = "box",
 		corpse = "DEAD",
-		description = "Heavy Rocket Kbot",
+		description = "Heavy Rocket Mech",
 		explodeas = "MECH_BLAST",
 		footprintx = 4,
 		footprintz = 4,

@@ -13,7 +13,7 @@ return {
 		collisionvolumescales = "97 42 51",
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
-		description = "Cloakable, Produces Energy (1000E) / Storage",
+		description = "",
 		energymake = 1000,
 		energystorage = 2500,
 		explodeas = "ATOMIC_BLAST",

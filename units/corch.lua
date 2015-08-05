@@ -15,7 +15,7 @@ return {
 		collisionvolumescales = "24 24 32",
 		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
-		description = "Level 1 Construction Hovercraft",
+		description = "",
 		energymake = 11,
 		energystorage = 75,
 		energyuse = 11,

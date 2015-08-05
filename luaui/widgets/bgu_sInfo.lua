@@ -47,6 +47,10 @@ local white = '\255\255\255\255'
 local mColour = '\255\153\153\204'
 local eColour = '\255\255\255\76'
 local blue = "\255\200\200\255"
+local darkblue = "\255\100\100\255"
+local yellow = "\255\255\255\0"
+local lilac = "\255\200\162\200"
+local tomato = "\255\255\99\71"
 
 function round(num, idp)
     return string.format("%." .. (idp or 0) .. "f", num) -- lua is such a great language that this is the only reliable way to round
@@ -272,6 +276,139 @@ end
 ----------------------------------
 -- focus unit info
 
+local function GetMaxWeaponRange (ud)
+    -- get the max range of this units weapons
+    local range = -1
+    for _,v in pairs(ud.weapons) do
+        local wDID = v.weaponDef
+        local wd = WeaponDefs[wDID]
+        range = math.max(range,wd.range)    
+    end
+    return floor(range)
+end
+local function GetMaxWeaponReload (ud)
+    -- get the max weapon reload time of this units weapons
+    local reload = -1
+    for _,v in pairs(ud.weapons) do
+        local wDID = v.weaponDef
+        local wd = WeaponDefs[wDID]
+        reload = math.max(reload,wd.reload)    
+    end
+    return floor(reload)
+end
+local function GetMaxDamage (wd)
+    -- get the max damage dealt by a single shot of this weapon
+    local dmg = -1
+    for _,v in pairs(wd.damages) do
+        dmg = math.max(dmg,v)
+    end
+    return dmg
+end
+local function GetDamageCategory (ud)
+    -- classify the DPS of the weapons of this unit
+    local damage = 0
+    local n = 0
+    for _,v in pairs(ud.weapons) do
+        n = n + 1
+        local wDID = v.weaponDef
+        local wd = WeaponDefs[wDID]
+        local dmg_per_shot = GetMaxDamage(wd)
+        local rate = wd.salvoSize/(wd.reload/30)
+        damage = damage + (dmg_per_shot*wd.projectiles*rate)
+    end
+    damage = damage/n
+    return "TODO"
+end
+local function GetMissileDamageCategory (ud)
+    -- classify the damage of a single missile fired by this units first weapon
+    return "TODO"
+end
+local function GetPerShotDamageCategory (ud)
+    -- classify the damage of a single missile fired by this units first weapon
+    return "TODO"
+end
+local function GetBombDamageCategory (ud)
+    -- classify the damage of a single missile fired by this units first weapon
+    return "TODO"
+end
+
+local function GetUnitDefKeyProperties (defID)
+    local ud = UnitDefs[defID]
+    local t = {}
+    t[#t+1] = {"Health", green .. tostring(ud.health)}
+    
+    -- deal with special cases
+    if defID==UnitDefNames.commando.id then
+        -- commando, gimp, maverick, sniper, behemoth, junos
+    end
+    
+    if ud.isFactory or (ud.isBuilder and ud.speed==0) then
+        t[#t+1] = {"Build Power", lilac .. tostring(ud.buildSpeed)}
+    elseif ud.isBuilder and ud.canMove then
+        t[#t+1] = {"Build Power", lilac .. tostring(ud.buildSpeed)}
+        t[#t+1] = {"Max Speed", tomato .. tostring(round(ud.speed))}
+    elseif ud.energyMake>=20 and #ud.weapons==0 and ud.speed==0 then
+        t[#t+1] = {"Energy Output", eColour .. tostring(ud.energyMake)}
+    elseif (ud.radarRadius>200 or ud.sonarRadius>200) and #ud.weapons==0 then
+        if ud.radarRadius>200 then t[#t+1] = {"Radar Range", lilac .. tostring(ud.radarRadius)} end
+        if ud.sonarRadius>200 then t[#t+1] = {"Sonar Range", lilac .. tostring(ud.sonarRadius)} end
+    elseif ud.jammerRadius>0 and #ud.weapons==0 then
+        t[#t+1] = {"Jammer Radius", blue .. tostring(ud.jammerRadius)}
+        -- note: there are no sonar jammers
+    elseif ud.seismicRadius>0 then
+        t[#t+1] = {"Coverage Radius", blue .. tostring(ud.seismicRadius)}
+    elseif ud.energyStorage>=3000 then
+        t[#t+1] = {"Energy Storage", eColour .. tostring(ud.energyStorage)} 
+    elseif ud.metalStorage>=1000 then
+        t[#t+1] = {"Metal Storage", mColour .. tostring(ud.metalStorage)}
+    elseif ud.windGenerator>0 then
+        t[#t+1] = {"Wind", blue .. tostring(Game.windMin) .. " - " .. tostring(Game.windMax)}
+    elseif ud.tidalGenerator>0 then
+        t[#t+1] = {"Tidal", blue .. tostring(Game.tidal)}
+    --elseif ud.isExtractor then
+        -- do nothing, extraction shows in the tooltip as a result of prospector
+        -- if it has a weapon, it'll get picked up later
+    elseif #ud.weapons>0 and WeaponDefs[ud.weapons[1].weaponDef].interceptor~=0 then
+        -- anti-nukes
+        local wd = WeaponDefs[ud.weapons[1].weaponDef]
+        t[#t+1] = {"Coverage Radius", blue .. tostring(wd.coverageRange)}
+        t[#t+1] = {"Stockpile Time", blue .. tostring(wd.stockpileTime/30) .. "s"}
+        if ud.energyMake>=20 then t[#t+1] = {"Energy Output", eColour .. tostring(ud.energyMake)} end -- mobile antis make 200e
+    elseif #ud.weapons>0 and WeaponDefs[ud.weapons[1].weaponDef].type=="Shield" then
+        local wd = WeaponDefs[ud.weapons[1].weaponDef]
+        t[#t+1] = {"Coverage Radius", blue .. tostring(wd.shieldRadius)}  
+    elseif (false) then --TODO: crawling bombs
+        t[#t+1] = {"Damage", GetBombDamageCategory(ud)} 
+    elseif (#ud.weapons>0) and (not ud.canMove) and WeaponDefs[ud.weapons[1].weaponDef].type=="StarburstLauncher" then
+        -- static launchers
+        local wd = WeaponDefs[ud.weapons[1].weaponDef]
+        t[#t+1] = {"Weapon Range", red .. tostring(GetMaxWeaponRange(ud))}
+        t[#t+1] = {"AOE", red .. tostring(wd.damageAreaOfEffect)}
+        t[#t+1] = {"Stockpile Time", blue .. tostring(wd.stockpileTime/30) .. "s"}
+        t[#t+1] = {"Damage", GetMissileDamageCategory(ud)}
+    elseif #ud.weapons>0 then
+        -- mobile units & static def
+        if ud.speed>0 then t[#t+1] = {"Max Speed", tomato .. tostring(round(ud.speed))} end
+        t[#t+1] = {"Weapon Range", red .. tostring(GetMaxWeaponRange(ud))}
+        if GetMaxWeaponReload(ud)>10 then 
+            t[#t+1] = {"Reload Time", red .. tostring(GetMaxWeaponReload(ud)) .. "s"}
+            if WeaponDefs[ud.weapons[1].weaponDef].paralyzer then
+                t[#t+1] = {"Paralyze Time", blue .. tostring(WeaponDefs[ud.weapons[1].weaponDef].damages.paralyzeDamageTime).. "s"}            
+            else            
+                t[#t+1] = {"Damage", GetPerShotDamageCategory(ud)}
+            end
+        else 
+            if WeaponDefs[ud.weapons[1].weaponDef].paralyzer then
+                t[#t+1] = {"Paralyze Time", blue .. tostring(WeaponDefs[ud.weapons[1].weaponDef].damages.paralyzeDamageTime) .. "s"}            
+            else            
+                t[#t+1] = {"Damage", GetDamageCategory(ud)}     
+            end
+        end
+    end
+
+    return t
+end
+
 local function showFocusInfo()
     local defID = curTip.focusDefID
     local unitDef = UnitDefs[defID]
@@ -285,48 +422,73 @@ local function showFocusInfo()
     local Ecost = UnitDefs[defID].energyCost
     local Mcost = UnitDefs[defID].metalCost 
     local maxHealth = UnitDefs[defID].health
+
+    -- picture
+    local overlayColor = {} -- desaturate and aim for 0.3 brightness, else unit properties are hard to read
+    overlayColor[4] = 0.75 
+    local average = 1/6 * (teamColor[1] + teamColor[2] + teamColor[3] + 0.9) 
+    local bias = 0.3
+    for i=1,3 do
+        overlayColor[i] = (1-bias)*average + bias*teamColor[i]
+    end
+    focusIcon = Chili.Image:New{
+        parent   = unitInfo,
+        file     = texture,
+        color    = overlayColor,
+        y        = 0,
+        height   = '100%',
+        width    = '100%',
+    }
+    focusOverlay = Chili.Image:New{
+        parent = focusIcon,
+        color    = overlayColor,
+        height   = '100%',
+        width    = '100%',
+        file     = overlay,
+    }
     
+    -- name
     focusName = Chili.TextBox:New{
+        parent = focusOverlay,
         x      = 5,
         y      = 5,
         right  = 0,
         bottom = 0,
         text   = humanName .. "\n" .. description,
     }
-
-    -- TODO: more/better info
-    -- also, the unit descriptions need fixing
+    
+    -- costs + buildtime
     focusCost = Chili.TextBox:New{
-        x        = 5,
-        bottom   = 35,
-        height   = 24,
-        text     =  "Cost: " .. getInline{0.6,0.6,0.8} .. unitDef.metalCost .. " " .. getInline{1,1,0.3} .. unitDef.energyCost,
-        font = {size = 14,},
-    }
-    focusBuildTime = Chili.TextBox:New{
+        parent = focusOverlay,
         x        = 5,
         bottom   = 20,
         height   = 24,
-        text     =  "Build Time: " .. unitDef.buildTime, -- this isn't very intuitive
-        font = {size = 14,},
+        text     =  "Cost: " .. mColour .. unitDef.metalCost .. " " .. eColour .. unitDef.energyCost,
     }
-        
-    focusIcon = Chili.Image:New{
-        parent   = unitInfo,
-        file     = texture,
-        y        = 0,
-        height   = '100%',
-        width    = '100%',
-        children = {
-            Chili.Image:New{
-                color    = teamColor,
-                height   = '100%',
-                width    = '100%',
-                file     = overlay,
-                children = {focusName, focusCost, focusBuildTime, focusRestText},
-            }
+    focusBuildTime = Chili.TextBox:New{
+        parent = focusOverlay,
+        x        = 5,
+        bottom   = 5,
+        height   = 24,
+        text     =  "Build Time: " .. lilac .. unitDef.buildTime, -- this isn't very intuitive
+    }
+    
+    -- key properties
+    local keyProperties = GetUnitDefKeyProperties(defID)
+    local bottom = 25+16*(#keyProperties)
+    for _,v in pairs(keyProperties) do
+        local text = tostring(v[1]) .. ": " .. tostring(v[2])
+        local property = Chili.TextBox:New{
+            parent = focusOverlay,
+            x        = 5,
+            bottom   = bottom,
+            height   = 24,
+            text     = text,
         }
-    }
+        bottom = bottom - 16
+    end
+        
+
     
     infoWindow:Show()        
 end

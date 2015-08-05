@@ -12,7 +12,7 @@ return {
 		collisionvolumescales = "55 65 53",
 		collisionvolumetype = "Ell",
 		corpse = "DEAD",
-		description = "All-Terrain Heavy Plasma Cannon",
+		description = "All-Terrain Heavy Mech",
 		explodeas = "SHOCKER",
 		footprintx = 4,
 		footprintz = 4,

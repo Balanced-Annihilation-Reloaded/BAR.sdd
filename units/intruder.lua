@@ -14,7 +14,7 @@ return {
 		collisionvolumescales = "48.2 48.2 87.2",
 		collisionvolumetype = "CylZ",
 		corpse = "DEAD",
-		description = "Amphibious Heavy Assault Transport",
+		description = "Amphibious Transport",
 		energymake = 2.6,
 		energyuse = 2.9,
 		explodeas = "BIG_UNITEX",

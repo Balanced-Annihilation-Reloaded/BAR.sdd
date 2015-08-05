@@ -18,7 +18,7 @@ return {
 		collisionvolumetype = "box",
 		corpse = "DEAD",
 		damagemodifier = 0.17,
-		description = "Energy Weapon",
+		description = "Heavy Energy Weapon",
 		energystorage = 2000,
 		explodeas = "ESTOR_BUILDING",
 		footprintx = 4,

@@ -19,7 +19,7 @@ return {
 		collisionvolumescales = "135 72 135",
 		collisionvolumetype = "Box",
 		corpse = "DEAD",
-		description = "Automatic Aircraft Repair Pad",
+		description = "",
 		explodeas = "LARGE_BUILDINGEX",
 		footprintx = 9,
 		footprintz = 9,

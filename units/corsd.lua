@@ -12,7 +12,7 @@ return {
 		buildtime = 11955,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Intrusion Countermeasure, Detects Cloaked Units",
+		description = "Detects Cloaked Units",
 		energyuse = 125,
 		explodeas = "LARGE_BUILDINGEX",
 		footprintx = 4,

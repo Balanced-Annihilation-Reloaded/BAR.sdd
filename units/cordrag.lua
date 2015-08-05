@@ -15,7 +15,7 @@ return {
 		collisionvolumetype = "CylY",
 		corpse = "ROCKTEETH",
 		crushresistance = 250,
-		description = "Dragons Teeth",
+		description = "Light Wall",
 		footprintx = 2,
 		footprintz = 2,
 		hidedamage = true,

@@ -15,7 +15,7 @@ return {
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
 		damagemodifier = 0.25,
-		description = "Tachyon Accelerator",
+		description = "Heavy Energy Weapon",
 		energystorage = 1500,
 		explodeas = "CRAWL_BLASTSML",
 		footprintx = 4,

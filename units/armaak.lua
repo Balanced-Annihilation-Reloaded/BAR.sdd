@@ -10,7 +10,7 @@ return {
 		canmove = true,
 		category = "KBOT MOBILE WEAPON ALL NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Advanced Amphibious Anti-Air Kbot",
+		description = "Advanced Anti-Air Kbot",
 		explodeas = "BIG_UNITEX",
 		footprintx = 2,
 		footprintz = 2,

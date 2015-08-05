@@ -16,7 +16,7 @@ return {
 		cloakcost = 12,
 		corpse = "DEAD",
 		damagemodifier = 0.2,
-		description = "Pop-Up Missile Battery",
+		description = "Pop-up Anti-Air Battery",
 		explodeas = "BIG_UNITEX",
 		footprintx = 3,
 		footprintz = 3,

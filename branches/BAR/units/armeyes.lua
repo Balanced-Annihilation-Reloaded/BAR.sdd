@@ -11,7 +11,7 @@ return {
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		cloakcost = 10,
 		corpse = "DRAGONSEYES_DEAD",
-		description = "Stealthy, Cloakable Camera",
+		description = "Stealthy Cloakable Camera",
 		energyuse = 3,
 		footprintx = 1,
 		footprintz = 1,

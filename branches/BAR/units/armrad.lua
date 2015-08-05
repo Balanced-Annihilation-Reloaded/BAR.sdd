@@ -15,7 +15,7 @@ return {
 		canattack = false,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Early Warning System",
+		description = "",
 		energymake = 4,
 		energyuse = 4,
 		explodeas = "SMALL_BUILDINGEX",

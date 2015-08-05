@@ -13,7 +13,7 @@ return {
 		collisionvolumeoffsets = "0 0 0",
 		collisionvolumescales = "31 32 31",
 		collisionvolumetype = "CylY",
-		description = "Assist Construction",
+		description = "Assists Construction",
 		energyuse = 30,
 		explodeas = "NANOBOOM2",
 		footprintx = 3,

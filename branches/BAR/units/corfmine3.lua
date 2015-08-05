@@ -16,7 +16,7 @@ return {
 		collisionvolumeoffsets = "0 -0.5 0",
 		collisionvolumescales = "20 5 20",
 		collisionvolumetype = "Ell",
-		description = "Heavy Mine, Naval Series",
+		description = "Heavy Mine",
 		explodeas = "FMINE_HEAVY",
 		firestate = 2,
 		footprintx = 1,

@@ -15,7 +15,7 @@ return {
 		canattack = false,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Long-Range Radar",
+		description = "",
 		energymake = 18,
 		energyuse = 18,
 		explodeas = "SMALL_BUILDINGEX",

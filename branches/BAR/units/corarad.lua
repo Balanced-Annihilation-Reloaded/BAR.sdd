@@ -18,7 +18,7 @@ return {
 		collisionvolumescales = "35 98 35",
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",
-		description = "Long-Range Radar",
+		description = "",
 		energymake = 17,
 		energyuse = 17,
 		explodeas = "SMALL_BUILDINGEX",

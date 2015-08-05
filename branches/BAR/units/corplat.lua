@@ -10,7 +10,7 @@ return {
 		canmove = true,
 		category = "ALL PLANT NOTLAND NOWEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Builds Seaplanes",
+		description = "Produces Seaplanes",
 		energystorage = 200,
 		explodeas = "LARGE_BUILDINGEX",
 		footprintx = 7,

@@ -13,7 +13,7 @@ return {
 		collisionvolumescales = "42 64 42",
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",
-		description = "Anti-Air Flak Gun - Naval Series",
+		description = "Floating Anti-Air Flak Gun",
 		explodeas = "BIG_UNITEX",
 		footprintx = 3,
 		footprintz = 3,

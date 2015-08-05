@@ -18,7 +18,7 @@ return {
 		collisionvolumescales = "34 93 34",
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",
-		description = "Long-Range Jamming Tower",
+		description = "Long-Range Jammer",
 		energyuse = 125,
 		explodeas = "SMALL_BUILDINGEX",
 		footprintx = 2,

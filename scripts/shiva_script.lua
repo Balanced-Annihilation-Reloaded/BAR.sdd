@@ -437,6 +437,16 @@ function script.QueryWeapon1()
     end
 end
 
+function script.AimFromWeapon2() return torso end
+
+function script.QueryWeapon2()
+    if (currBarrel == 1) then
+    return lflare
+    else
+    return rflare
+    end
+end
+
 function script.AimFromWeapon3() return lflare end
 
 function script.AimWeapon3()

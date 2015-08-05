@@ -212,6 +212,16 @@ SweetSpot(piecenum)
 	piecenum = pelvis;
 }
 
+AimFromPrimary(piecenum)
+{
+	piecenum = head;
+}
+
+QueryPrimary(piecenum)
+{
+	piecenum = rflare + gun_3;
+}
+
 AimFromTertiary(piecenum)
 {
 	piecenum = head;

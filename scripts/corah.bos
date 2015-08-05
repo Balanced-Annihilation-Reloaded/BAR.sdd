@@ -223,6 +223,23 @@ QueryWeapon2(Func_Var_1)
 	return (0);
 }
 
+AimFromWeapon1(Func_Var_1)
+{
+	Func_Var_1 = turret;
+}
+
+QueryWeapon1(Func_Var_1)
+{
+	if( Static_Var_2 == 1 )
+	{
+		Func_Var_1 = flare1;
+	}
+	if( Static_Var_2 == 2 )
+	{
+		Func_Var_1 = flare1;
+	}
+}
+
 SweetSpot(piecenum)
 {
 	piecenum = base;

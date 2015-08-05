@@ -15,7 +15,7 @@ return {
 		canattack = false,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Long-Range Jamming Tower",
+		description = "Long-Range Radar Jammer",
 		energyuse = 125,
 		explodeas = "SMALL_BUILDINGEX",
 		footprintx = 2,

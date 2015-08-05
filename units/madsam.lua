@@ -14,7 +14,7 @@ return {
 		buildtime = 5237,
 		category = "ALL NOTLAND WEAPON NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "DEAD",
-		description = "Hardened Missile Battery",
+		description = "Pop-up Anti-Air Battery",
 		energyuse = 5,
 		explodeas = "LARGE_BUILDINGEX",
 		footprintx = 3,

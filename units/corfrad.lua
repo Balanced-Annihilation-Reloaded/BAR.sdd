@@ -14,7 +14,7 @@ return {
 		collisionvolumescales = "40 95 40",
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",
-		description = "Early Warning System",
+		description = "",
 		energymake = 4,
 		energyuse = 4,
 		explodeas = "SMALL_BUILDINGEX",

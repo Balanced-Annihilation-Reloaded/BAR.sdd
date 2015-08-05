@@ -15,7 +15,7 @@ return {
 		collisionvolumescales = "32 82 32",
 		collisionvolumetype = "CylY",
 		corpse = "DEAD",
-		description = "Cloakable Jammer Tower",
+		description = "Cloakable Radar Jammer",
 		energyuse = 40,
 		explodeas = "BIG_UNITEX",
 		footprintx = 2,

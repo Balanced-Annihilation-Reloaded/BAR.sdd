@@ -358,12 +358,15 @@ function widget:Update(deltaTime)
         return
     end
 
-    local _, cmd_id = Spring.GetActiveCommand()
-    if (not cmd_id) or (cmd_id>=0) then
+    local _,cmdID,_ = Spring.GetActiveCommand()
+    if WG.InitialQueue and WG.InitialQueue.selDefID then
+        cmdID = -WG.InitialQueue.selDefID
+    end
+    if (not cmdID) or (cmdID>=0) then
         return
     end
     
-    local unitDefID = -cmd_id
+    local unitDefID = -cmdID
     local pairedID = CheckContextBuild(unitDefID)
     if pairedID and unitDefID ~= pairedID then
         SetActiveBuildUnit(pairedID)

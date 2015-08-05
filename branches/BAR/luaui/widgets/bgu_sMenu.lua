@@ -293,6 +293,7 @@ local function scrollMenus(_,_,_,_,value)
         if menuTab[choice]~= nil then break end
     end -- Prevents zooming
     selectTab(menuTab[choice])
+    return true
 end
 
 ---------------------------------------------------------------

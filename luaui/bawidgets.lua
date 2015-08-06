@@ -1149,8 +1149,14 @@ end
 --
 
 function widgetHandler:Shutdown()
-  self:SaveOrderList()
-  self:SaveConfigData()
+  if self.__reset_luaui then
+    table.save({}, CONFIG_FILENAME, '-- Widget Custom Data (reset)')
+    table.save({}, ORDER_FILENAME, '-- Widget Custom Data (reset)')
+  else
+    self:SaveOrderList()
+    self:SaveConfigData()  
+  end
+ 
   for _,w in ipairs(self.ShutdownList) do
     w:Shutdown()
   end

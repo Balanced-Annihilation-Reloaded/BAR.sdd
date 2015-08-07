@@ -186,6 +186,13 @@ local amNewbie = (Spring.GetTeamRulesParam(myTeamID, 'isNewbie') == 1)
 
 local totalTime
 
+local isMex = {} -- if we try to build a mex and mex snap is running, we need to ask it where to snap too
+for uDefID, uDef in pairs(UnitDefs) do
+    if uDef.extractsMetal > 0 then
+        isMex[uDefID] = true
+    end
+end
+
 ------------------------------------------------------------
 -- Local functions
 ------------------------------------------------------------
@@ -568,6 +575,15 @@ function widget:MousePress(mx, my, mButton)
             if not pos then return end
             local bx, by, bz = Spring.Pos2BuildPos(selDefID, pos[1], pos[2], pos[3])
             local buildFacing = Spring.GetBuildFacing()
+            
+            if isMex[selDefID] and WG.MexSnap then
+                local bestPos = WG.MexSnap.GetClosestPotentialBuildPos(selDefID, bx, bz, buildFacing) -- mexSnap handles the GUI part of this
+                if bestPos then
+                    bx = bestPos[1]
+                    by = bestPos[2]
+                    bz = bestPos[3]
+                end
+            end
 
             if Spring.TestBuildOrder(selDefID, bx, by, bz, buildFacing) ~= 0 then
                 local buildData = {selDefID, bx, by, bz, buildFacing}

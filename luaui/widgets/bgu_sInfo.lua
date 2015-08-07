@@ -392,9 +392,9 @@ local function GetUnitDefKeyProperties (defID)
     elseif ud.metalStorage>=1000 then
         t[#t+1] = {"Metal Storage", mColour .. round(ud.metalStorage)}
     elseif ud.windGenerator>0 then
-        t[#t+1] = {"Wind", eColour .. GetWindString()}
+        t[#t+1] = {"Energy Output", eColour .. GetWindString()}
     elseif ud.tidalGenerator>0 then
-        t[#t+1] = {"Tidal", eColour .. round(Game.tidal)}
+        t[#t+1] = {"Energy Output", eColour .. round(Game.tidal)}
     --elseif ud.isExtractor then
         -- do nothing, extraction shows in the tooltip as a result of prospector
         -- if it has a weapon, it'll get picked up later

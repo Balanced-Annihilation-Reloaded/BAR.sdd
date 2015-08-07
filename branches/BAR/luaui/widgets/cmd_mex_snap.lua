@@ -14,13 +14,6 @@ function widget:GetInfo()
 end
 
 ------------------------------------------------------------
--- Blacklist
-------------------------------------------------------------
-local mapBlackList = {
-                        "Brazillian_Battlefield_Remake_V2",
-                     }
-
-------------------------------------------------------------
 -- Speedups
 ------------------------------------------------------------
 local spGetActiveCommand = Spring.GetActiveCommand
@@ -91,37 +84,47 @@ function widget:Initialize()
         Spring.Echo("<Snap Mex> This widget requires the 'Metalspot Finder' widget to run.")
         widgetHandler:RemoveWidget(self)
     end
-    
-    for key,value in ipairs(mapBlackList) do
-        if (Game.mapName == value) then
-            Spring.Echo("<Snap Mex> This map is incompatible - removing mex snap widget.")
-            widgetHandler:RemoveWidget(self)
-        end
-    end
+        
+    WG.MexSnap = {}
 end
 
 function widget:DrawWorld()
     
     -- Check command is to build a mex
     local _, cmdID = spGetActiveCommand()
-    if not (cmdID and isMex[-cmdID]) then return end
+    if WG.InitialQueue and WG.InitialQueue.selDefID then
+        cmdID = -WG.InitialQueue.selDefID
+    end
+    if not (cmdID and isMex[-cmdID]) then 
+        WG.MexSnap.snappedPos = nil
+        return 
+    end
     
     -- Attempt to get position of command
     local mx, my = spGetMouseState()
     local _, pos = spTraceScreenRay(mx, my, true)
-    if not pos then return end
+    if not pos then 
+        WG.MexSnap.snappedPos = nil
+        return 
+    end
     
     -- Find build position and check if it is valid (Would get 100% metal)
     local bx, by, bz = Spring.Pos2BuildPos(-cmdID, pos[1], pos[2], pos[3])
     local closestSpot = GetClosestMetalSpot(bx, bz)
-    if not closestSpot or WG.IsMexPositionValid(closestSpot, bx, bz) then return end
+    if not closestSpot or WG.IsMexPositionValid(closestSpot, bx, bz) then 
+        WG.MexSnap.snappedPos = nil
+        return 
+    end
     
     -- Get the closet position that would give 100%
     local bface = Spring.GetBuildFacing()
     local bestPos = GetClosestMexPosition(closestSpot, bx, bz, -cmdID, bface)
-    if not bestPos then return end
+    if not bestPos then 
+        WG.MexSnap.snappedPos = nil
+        return 
+    end
     
-    -- Draw !
+    -- Draw mex
     gl.DepthTest(false)
     
     gl.LineWidth(1.49)
@@ -141,6 +144,9 @@ function widget:DrawWorld()
     
     gl.DepthTest(false)
     gl.DepthMask(false)
+    
+    -- Tell prospector where the mex is
+    WG.MexSnap.snappedPos = bestPos
 end
 
 function widget:CommandNotify(cmdID, cmdParams, cmdOpts)
@@ -160,4 +166,8 @@ function widget:CommandNotify(cmdID, cmdParams, cmdOpts)
             end
         end
     end
+end
+
+function widget:ShutDown()
+    WG.MexSnap = nil
 end

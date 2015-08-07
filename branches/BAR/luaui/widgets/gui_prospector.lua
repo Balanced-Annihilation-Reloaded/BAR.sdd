@@ -2,7 +2,7 @@ function widget:GetInfo()
     return {
         name = "Prospector",
         desc = "Tooltip for amount of metal available when placing metal extractors",
-        author = "Evil4Zerggin, Bluestone",
+        author = "Evil4Zerggin, Bluestone, Niobium",
         date = "9 January 2009",
         license = "GNU LGPL, v2.1 or later",
         layer = 1,
@@ -150,40 +150,47 @@ function widget:DrawScreen()
 
     local mexDefInfo
     
-    if GetGameFrame() < 1 then
-        local drawMode = GetMapDrawMode()
-        if drawMode == "metal" then
-            mexDefInfo = mexDefInfos[defaultDefID]
-        end
-    else
-        local _, cmdID = GetActiveCommand()
-        if WG.InitialQueue then
-            cmdID = -WG.InitialQueue.selDefID
-        end
-        if (not cmdID) or cmdID>=0 then 
-            WG.Prospector.tooltip = nil
-            return 
-        end
-        
-        local unitDefID = -cmdID
-        local forceUpdate = false
-        if (unitDefID ~= lastUnitDefID) then 
-            forceUpdate = true
-        end
-        lastUnitDefID = unitDefID
-        mexDefInfo = mexDefInfos[unitDefID]
+    -- get the active command
+    local _, cmdID = GetActiveCommand()
+    if WG.InitialQueue and WG.InitialQueue.selDefID then
+        cmdID = -WG.InitialQueue.selDefID
     end
+    
+    -- is it a build command
+    if (not cmdID) or cmdID>=0 then 
+        WG.Prospector.tooltip = nil
+        return 
+    end
+    
+    -- is a build mex command
+    local unitDefID = -cmdID
+    local forceUpdate = false
+    if (unitDefID ~= lastUnitDefID) then 
+        forceUpdate = true
+    end
+    lastUnitDefID = unitDefID
+    mexDefInfo = mexDefInfos[unitDefID]
     
     if (not mexDefInfo) then  
         WG.Prospector.tooltip = nil
         return 
     end
     
-    local mx, my = GetMouseState()
-    local _, coords = TraceScreenRay(mx, my, true, true)
+    -- get the coord of the pos where we would build the mex if we clicked now
+    local coords = {}
+    if WG.MexSnap and WG.MexSnap.snappedPos then
+        coords[1] = WG.MexSnap.snappedPos[1]
+        coords[3] = WG.MexSnap.snappedPos[3]
+    else
+        local mx, my = GetMouseState()
+        _,coords = TraceScreenRay(mx, my, true, true)
+    end    
+    if (not coords) then   
+        WG.Prospector.tooltip = nil
+        return 
+    end
     
-    if (not coords) then return end
-    
+    -- display the tooltip
     IntegrateMetal(mexDefInfo, coords[1], coords[3], forceUpdate)
     WG.Prospector.tooltip = "\255\255\255\255Metal extraction: " .. mColour .. strFormat("%.2f", extraction)
 end

@@ -86,10 +86,11 @@ function widget:Initialize()
     end
         
     WG.MexSnap = {}
+    WG.MexSnap.GetClosestPotentialBuildPos = GetClosestPotentialBuildPos
 end
 
 function widget:DrawWorld()
-    
+
     -- Check command is to build a mex
     local _, cmdID = spGetActiveCommand()
     if WG.InitialQueue and WG.InitialQueue.selDefID then
@@ -110,19 +111,13 @@ function widget:DrawWorld()
     
     -- Find build position and check if it is valid (Would get 100% metal)
     local bx, by, bz = Spring.Pos2BuildPos(-cmdID, pos[1], pos[2], pos[3])
-    local closestSpot = GetClosestMetalSpot(bx, bz)
-    if not closestSpot or WG.IsMexPositionValid(closestSpot, bx, bz) then 
-        WG.MexSnap.snappedPos = nil
-        return 
-    end
-    
-    -- Get the closet position that would give 100%
     local bface = Spring.GetBuildFacing()
-    local bestPos = GetClosestMexPosition(closestSpot, bx, bz, -cmdID, bface)
+    local bestPos = GetClosestPotentialBuildPos(-cmdID, bx, bz, bface)
     if not bestPos then 
         WG.MexSnap.snappedPos = nil
         return 
     end
+    
     
     -- Draw mex
     gl.DepthTest(false)
@@ -150,22 +145,28 @@ function widget:DrawWorld()
 end
 
 function widget:CommandNotify(cmdID, cmdParams, cmdOpts)
-    
+    -- intercept the build mex command and build it where we snapped too
     if isMex[-cmdID] then
-        
         local bx, bz = cmdParams[1], cmdParams[3]
-        local closestSpot = GetClosestMetalSpot(bx, bz)
-        if closestSpot and not WG.IsMexPositionValid(closestSpot, bx, bz) then
-            
-            local bface = cmdParams[4]
-            local bestPos = GetClosestMexPosition(closestSpot, bx, bz, -cmdID, bface)
-            if bestPos then
-                
-                GiveNotifyingOrder(cmdID, {bestPos[1], bestPos[2], bestPos[3], bface}, cmdOpts)
-                return true
-            end
+        local bface = cmdParams[4]
+        local bestPos = GetClosestPotentialBuildPos(-cmdID, bx, bz, bface)
+        if bestPos then
+            GiveNotifyingOrder(cmdID, {bestPos[1], bestPos[2], bestPos[3], bface}, cmdOpts)
+            return true
         end
     end
+    return false
+end
+        
+function GetClosestPotentialBuildPos (uDefID, bx, bz, bface)     
+    local closestSpot = GetClosestMetalSpot(bx, bz)
+    if closestSpot and not WG.IsMexPositionValid(closestSpot, bx, bz) then       
+        local bestPos = GetClosestMexPosition(closestSpot, bx, bz, uDefID, bface)
+        if bestPos then
+            return bestPos 
+        end
+    end
+    return nil
 end
 
 function widget:ShutDown()

@@ -896,6 +896,9 @@ function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpti
     if cmdID and cmdID<0 and teamID==Spring.GetMyTeamID() then --build command
         updateRequired = true
     end
+    if Spring.IsUnitSelected(unitID) then
+        updateRequired = true
+    end
 end
 function GameFrame()
     -- track the current active command

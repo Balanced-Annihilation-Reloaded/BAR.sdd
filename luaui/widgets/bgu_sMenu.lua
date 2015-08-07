@@ -337,14 +337,6 @@ local function addBuild(item)
     end
 end
 
-local function HotkeyString(action)
-    if Hotkey[action] then
-        return " " .. "[" .. Hotkey[action] .. "]"
-    else
-        return ""
-    end
-end
-
 local function addState(cmd)
     local param = cmd.params[cmd.params[1] + 2]
     stateMenu:AddChild(Chili.Button:New{
@@ -385,7 +377,7 @@ local function addOrder(cmd)
     local button = Chili.Button:New{
         caption   = '',
         cmdName   = cmd.name,
-        tooltip   = cmd.tooltip .. getInline(orderColors[cmd.action]) .. HotkeyString(cmd.action),
+        tooltip   = cmd.tooltip,
         cmdId     = cmd.id,
         cmdAName  = cmd.action,
         padding   = {0,0,0,0},
@@ -401,6 +393,13 @@ local function addOrder(cmd)
                 right   = 5,
                 color   = orderColors[cmd.action] or {1,1,1,1},
                 file    = imageDir..'Commands/'..cmd.action..'.png',
+                children = {
+                    Chili.Label:New{
+                        caption = Hotkey[cmd.action] or "",
+                        right  = 2,
+                        y = 1,
+                    },
+                }
             }
         }
     }

@@ -577,7 +577,7 @@ function widget:MousePress(mx, my, mButton)
             local buildFacing = Spring.GetBuildFacing()
             
             if isMex[selDefID] and WG.MexSnap then
-                local bestPos = WG.MexSnap.GetClosestPotentialBuildPos(selDefID, bx, bz, buildFacing) -- mexSnap handles the GUI part of this
+                local bestPos = WG.MexSnap.snappedPos -- mexSnap handles the GUI part of this
                 if bestPos then
                     bx = bestPos[1]
                     by = bestPos[2]

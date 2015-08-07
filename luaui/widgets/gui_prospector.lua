@@ -156,13 +156,16 @@ function widget:DrawScreen()
             mexDefInfo = mexDefInfos[defaultDefID]
         end
     else
-        local _, cmd_id = GetActiveCommand()
-        if (not cmd_id) or cmd_id>=0 then 
+        local _, cmdID = GetActiveCommand()
+        if WG.InitialQueue then
+            cmdID = -WG.InitialQueue.selDefID
+        end
+        if (not cmdID) or cmdID>=0 then 
             WG.Prospector.tooltip = nil
             return 
         end
         
-        local unitDefID = -cmd_id
+        local unitDefID = -cmdID
         local forceUpdate = false
         if (unitDefID ~= lastUnitDefID) then 
             forceUpdate = true

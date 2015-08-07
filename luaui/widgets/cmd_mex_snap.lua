@@ -61,6 +61,17 @@ local function GetClosestMexPosition(spot, x, z, uDefID, facing)
     end
     return bestPos
 end
+   
+local function GetClosestPotentialBuildPos (uDefID, bx, bz, bface)     
+    local closestSpot = GetClosestMetalSpot(bx, bz)
+    if closestSpot and not WG.IsMexPositionValid(closestSpot, bx, bz) then       
+        local bestPos = GetClosestMexPosition(closestSpot, bx, bz, uDefID, bface)
+        if bestPos then
+            return bestPos 
+        end
+    end
+    return nil
+end
 
 local function GiveNotifyingOrder(cmdID, cmdParams, cmdOpts)
     
@@ -79,6 +90,7 @@ end
 ------------------------------------------------------------
 -- Callins
 ------------------------------------------------------------
+
 function widget:Initialize()
     if not WG.metalSpots then
         Spring.Echo("<Snap Mex> This widget requires the 'Metalspot Finder' widget to run.")
@@ -86,7 +98,6 @@ function widget:Initialize()
     end
         
     WG.MexSnap = {}
-    WG.MexSnap.GetClosestPotentialBuildPos = GetClosestPotentialBuildPos
 end
 
 function widget:DrawWorld()
@@ -119,7 +130,7 @@ function widget:DrawWorld()
     end
     
     
-    -- Draw mex
+    -- Draw snapped mex
     gl.DepthTest(false)
     
     gl.LineWidth(1.49)
@@ -140,7 +151,7 @@ function widget:DrawWorld()
     gl.DepthTest(false)
     gl.DepthMask(false)
     
-    -- Tell prospector where the mex is
+    -- Tell other widgets where the snapped mex is
     WG.MexSnap.snappedPos = bestPos
 end
 
@@ -156,17 +167,6 @@ function widget:CommandNotify(cmdID, cmdParams, cmdOpts)
         end
     end
     return false
-end
-        
-function GetClosestPotentialBuildPos (uDefID, bx, bz, bface)     
-    local closestSpot = GetClosestMetalSpot(bx, bz)
-    if closestSpot and not WG.IsMexPositionValid(closestSpot, bx, bz) then       
-        local bestPos = GetClosestMexPosition(closestSpot, bx, bz, uDefID, bface)
-        if bestPos then
-            return bestPos 
-        end
-    end
-    return nil
 end
 
 function widget:ShutDown()

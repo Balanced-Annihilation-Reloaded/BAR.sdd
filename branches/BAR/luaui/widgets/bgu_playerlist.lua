@@ -519,6 +519,7 @@ local colourConv = {
 function PlayerPanel(pID)
 
     local panel = Chili.Button:New{
+        name        = "player_panel_" .. tostring(pID),
         width       = '100%',
         minHeight   = 17,
         resizeItems = false,
@@ -633,7 +634,7 @@ end
 
 function DeadPanel(pID)
     local panel = Chili.Button:New{
-        name        = "button",
+        name        = "dead_panel_" .. tostring(pID),
         parent      = panel,
         width       = '100%',
         minHeight   = 17,
@@ -673,7 +674,7 @@ end
 
 function SpecPanel(pID)
     local panel = Chili.Button:New{
-        name        = "button",
+        name        = "spec_panel_" .. tostring(pID),
         parent      = panel,
         width       = width.name,
         right       = offset.name,

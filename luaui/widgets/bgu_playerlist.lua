@@ -1243,6 +1243,16 @@ function widget:KeyPress()
     return false
 end
 
+function widget:MousePress(mx, my)
+    -- hide the iPanel if we click outside of it
+    if not iPanel.hidden then
+        if not (iPanel.x<mx and mx<iPanel.x+iPanel.width and iPanel.y<Chili.Screen0.height-my and Chili.Screen0.height-my<iPanel.y+iPanel.height) then 
+            iPanel:Hide()
+        end
+    end
+    return false
+end
+
 
 --------------------------------------------------------------------------------
 -- Team/AllyTeam tables

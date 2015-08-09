@@ -138,7 +138,7 @@ local options={
     -- below here are the chickens options
     {
 		key="mo_chickengame",
-		name="Enables Chicken AI",
+		name="Enable Chicken Defence",
 		desc="Defend against hordes of attacking Chickens!",
 		type= "bool",
 		def= false,

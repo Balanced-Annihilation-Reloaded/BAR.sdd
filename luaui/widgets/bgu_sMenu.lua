@@ -893,9 +893,11 @@ function widget:CommandsChanged()
     end
 end
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
-    if cmdID and cmdID<0 and teamID==Spring.GetMyTeamID() then --build command
+    if Spring.IsUnitSelected(unitID) then
         updateRequired = true
     end
+end
+function widget:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag, cmdParams, cmdOpts)
     if Spring.IsUnitSelected(unitID) then
         updateRequired = true
     end

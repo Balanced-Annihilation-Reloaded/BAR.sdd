@@ -329,7 +329,7 @@ function widget:Initialize()
 end
 
 function widget:KeyPress(key, mods, isRepeat)
-    if mods.shift or mods.ctrl or mods.alt or mods.meta then return end
+    if mods.meta then return end
     -- if we are queueing build commands, and ZXCV is pressed, move onto the next unitDefID that at least one of our selected units can build
     local _,cmdID,_ = Spring.GetActiveCommand()
     if WG.InitialQueue and WG.InitialQueue.selDefID then

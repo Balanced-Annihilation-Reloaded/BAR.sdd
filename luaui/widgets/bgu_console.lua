@@ -105,12 +105,12 @@ local function SetInputTextGeo(windowW, windowY, viewSizeX, viewSizeY)
         ..(windowW / viewSizeX) )
 end
 
+local screenResized = true
 function widget:ViewResize(viewSizeX, viewSizeY)
     local w = getChatWidth(viewSizeX)
     window:Resize(w,_)
     SetInputTextGeo(w, window.y, viewSizeX, viewSizeY) -- at this point, GetXXXGeometry and window.XXX both still return previous values
-    window:Invalidate() -- avoid mangling from chili bugs
-    msgWindow:Invalidate() -- avoid mangling from chili bugs
+    screenResized = true    
 end
 
 local function loadWindow()
@@ -241,6 +241,15 @@ function widget:Update()
         startTime = endTime
         hideChat()
     end
+    if screenResized then
+        -- without this, chili mangles the children of the console stackpanel when the screen is resized
+        -- for some reason, it usually un-mangles as soon as a new chat message is sent
+        -- so we block the engines message about window resized and send our own just afterwards to make it un-mangle 
+        -- this is a hacky workaround, and it doesn't always work
+        local vsx,vsy = Spring.GetViewGeometry()
+        Spring.Echo("Set view resolution: " .. vsx .. " x " .. vsy)
+        screenResized = false
+    end    
 end
 
 function widget:GameOver()
@@ -295,7 +304,7 @@ local function processLine(line)
             local i = sfind(ssub(line,4,slen(line)), ">")
             name = ssub(line,4,i+2)
         end
-    elseif sfind(line,'-> Version') or sfind(line,'ClientReadNet') or sfind(line,'Address') or (gameOver and sfind(line,'left the game')) then --surplus info when user connects
+    elseif sfind(line,'-> Version') or sfind(line,'ClientReadNet') or sfind(line,'Address') or (gameOver and sfind(line,'left the game')) or sfind(line,'video mode set to') then --surplus info when user connects
         -- Filter out unwanted engine messages
         return _, true, _ --ignore
     end

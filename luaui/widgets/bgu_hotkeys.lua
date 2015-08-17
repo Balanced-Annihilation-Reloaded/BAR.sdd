@@ -78,8 +78,10 @@ local binds = {
     -- "bind y settarget", -- see SetYZState()
     "bind j canceltarget",
     
+    -- drawing
     "bind q drawinmap", --some keyboards don't have ` or \
 
+    -- buildfacing
     "bind ,    buildfacing inc", --because some keyboards don't have [ and ] keys
     "bind .    buildfacing dec",
     "bind o buildfacing inc", --apparently some keyboards don't have , and . either...

@@ -91,7 +91,7 @@ local function createAward(award)
         width    = 550,
         height   = 100,
         children = {
-            Chili.Label:New{x=0 ,y=0,caption="test award"
+            Chili.Label:New{x=0 ,y=0,caption="test award"}
         },
     }
 end

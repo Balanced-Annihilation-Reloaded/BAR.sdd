@@ -4,7 +4,7 @@
 function widget:GetInfo()
    return {
       name      = "Depth of Field",
-      desc      = "ctrl+] or [ to change intensity",
+      desc      = "Adds (expensive) depth of field shader, use ctrl+] or [ to change intensity",
       author    = "jK, Satirik (shortcuts: BD & Floris)",
       date      = "March, 2013",
       license   = "GNU GPL, v2 or later",

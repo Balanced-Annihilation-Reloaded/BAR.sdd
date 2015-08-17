@@ -1,6 +1,6 @@
 function widget:GetInfo()
     return {
-        name = "CameraFlip",
+        name = "Camera Flip",
         desc = "Press ctrl+shift+o to flip the camera \n(with overhead or smooth cam)",
         author = "Bluestone",
         date = "11/09/2013",

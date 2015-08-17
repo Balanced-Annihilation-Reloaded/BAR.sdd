@@ -7,7 +7,7 @@ function widget:GetInfo()
         date = "June 2013",
         license = "click button magic",
         layer = 10,
-        enabled = true,        
+        enabled = false,        
     }
 end
 

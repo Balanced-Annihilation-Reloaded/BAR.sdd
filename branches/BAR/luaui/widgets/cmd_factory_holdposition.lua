@@ -13,7 +13,7 @@
 
 function widget:GetInfo()
   return {
-    name      = "Factory hold position",
+    name      = "Factory Hold Position",
     desc      = "Sets new factories, and all units they build, to hold position automatically (except aircraft)",
     author    = "Masta Ali",
     date      = "Mar 20, 2007",

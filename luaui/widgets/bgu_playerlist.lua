@@ -499,6 +499,12 @@ function iPanelPress(obj,value)
     iPanel:Invalidate()
 end
 
+function HideIPanel()
+    if not iPanel.hidden then
+        iPanel:Hide()
+    end
+end
+
 
 --------------------------------------------------------------------------------
 -- player/spec panels
@@ -1076,11 +1082,11 @@ function ProcessTake()
     local afterE = Spring.GetTeamResources(takeInfo.team,"energy")
     local afterM = Spring.GetTeamResources(takeInfo.team, "metal")
     local afterU = Spring.GetTeamUnitCount(takeInfo.team)
-    local toSay = "say a: I took " .. takeInfo.name .. ". "
+    local toSay = "say a: I took " .. takeInfo.name .. "."
 
     if afterE and afterM and afterU then
         if afterE > 1.0 or afterM > 1.0 or  afterU > 0 then
-            toSay = toSay .. "Left  " .. math.floor(afterU) .. " units, " .. math.floor(afterE) .. " energy and " .. math.floor(afterM) .. " metal."
+            toSay = toSay .. "\255\1\255\1" .. " Left  " .. math.floor(afterU) .. " units, " .. math.floor(afterE) .. " energy and " .. math.floor(afterM) .. " metal."
         end
     end
 
@@ -1231,24 +1237,24 @@ function widget:Update()
     
     if needUpdate then
         UpdateStack()
-        if not iPanel.hidden then iPanel:Hide() end
+        HideIPanel()
         needUpdate = false
     end
 end
 
 function widget:KeyPress()
-    if not iPanel.hidden then 
-        iPanel:Hide()
-    end
+    HideIPanel()
     return false
 end
 
-function widget:MousePress(mx, my)
-    -- hide the iPanel if we click outside of it
-    if not iPanel.hidden then
-        if not (iPanel.x<mx and mx<iPanel.x+iPanel.width and iPanel.y<Chili.Screen0.height-my and Chili.Screen0.height-my<iPanel.y+iPanel.height) then 
-            iPanel:Hide()
-        end
+function IsInRectPanel(mx,my,panel)
+    return (panel.x<mx and mx<panel.x+panel.width and panel.y<my and my<panel.y+panel.height)
+end
+
+function widget:MousePress(mx,my)
+    -- hide the iPanel if we click outside of the playerlist
+    if not IsInRectPanel(mx,Chili.Screen0.height-my, window) then
+        HideIPanel()
     end
     return false
 end
@@ -1403,15 +1409,15 @@ end
 
 function Separator() 
     local separator = Chili.Line:New{
-        width = '100%',
+        width   = '100%',
     }
     return separator
 end
 
 function HalfSeparator()
     local separator = Chili.Line:New{
-        width = 100,
-        x = offset.max - offset.name - width.name + 100,
+        width   = 100,
+        x       = offset.max - offset.name - width.name + 100,
     }
     return separator
 end

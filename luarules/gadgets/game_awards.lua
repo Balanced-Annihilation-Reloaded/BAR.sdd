@@ -148,7 +148,7 @@ function gadget:UnitTaken(unitID, unitDefID, teamID, newTeam)
 
     teamInfo[newTeam].ecoUsed = teamInfo[newTeam].ecoUsed + cost 
     if #(ud.weapons) > 0 then
-        teamInfo[teamID].unitsCost = teamInfo[teamID].unitsCost + cost   
+        teamInfo[newTeam].unitsCost = teamInfo[newTeam].unitsCost + cost   
     end
 end
 

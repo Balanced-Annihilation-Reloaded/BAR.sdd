@@ -19,6 +19,7 @@ walk()
 {
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move pelvis to y-axis [0.800000] now;
 		move pelvis to z-axis [0.000000] now;
 		move body to y-axis [0.000000] now;
@@ -40,6 +41,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move pelvis to y-axis [0.600000] speed [5.120690] *  currentSpeed / 100;
 		move rthigh to y-axis [0.575000] speed [4.480603] *  currentSpeed / 100;
 		move lthigh to y-axis [-0.975000] speed [0.213362] *  currentSpeed / 100;
@@ -61,6 +63,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move pelvis to y-axis [0.400000] speed [2.385542] *  currentSpeed / 100;
 		move rthigh to y-axis [0.050000] speed [6.262048] *  currentSpeed / 100;
 		move lthigh to y-axis [-1.000000] speed [0.298193] *  currentSpeed / 100;
@@ -82,6 +85,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move rthigh to y-axis [-0.275000] speed [3.876506] *  currentSpeed / 100;
 		move lthigh to y-axis [-0.800000] speed [2.385542] *  currentSpeed / 100;
 		move rleg to y-axis [0.350000] speed [4.174699] *  currentSpeed / 100;
@@ -102,6 +106,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move rthigh to y-axis [-0.600000] speed [3.876506] *  currentSpeed / 100;
 		move lthigh to y-axis [-0.600000] speed [2.385542] *  currentSpeed / 100;
 		move rleg to y-axis [0.000000] speed [4.174699] *  currentSpeed / 100;
@@ -122,6 +127,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move rthigh to y-axis [-0.400000] speed [2.385542] *  currentSpeed / 100;
 		move lthigh to y-axis [-0.300000] speed [3.578313] *  currentSpeed / 100;
 		turn pelvis to x-axis <14.934066> speed <43.975239> *  currentSpeed / 100;
@@ -139,6 +145,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move rthigh to y-axis [-0.200000] speed [2.385542] *  currentSpeed / 100;
 		move lthigh to y-axis [0.000000] speed [3.578313] *  currentSpeed / 100;
 		turn pelvis to x-axis <18.637363> speed <44.171856> *  currentSpeed / 100;
@@ -156,6 +163,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move pelvis to y-axis [0.500000] speed [1.192771] *  currentSpeed / 100;
 		move rthigh to y-axis [-0.387500] speed [2.236446] *  currentSpeed / 100;
 		move lthigh to y-axis [0.275000] speed [3.280120] *  currentSpeed / 100;
@@ -177,6 +185,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move pelvis to y-axis [0.600000] speed [0.853448] *  currentSpeed / 100;
 		move rthigh to y-axis [-0.575000] speed [1.600216] *  currentSpeed / 100;
 		move lthigh to y-axis [0.550000] speed [2.346983] *  currentSpeed / 100;
@@ -198,6 +207,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move pelvis to y-axis [0.700000] speed [0.853448] *  currentSpeed / 100;
 		move rthigh to y-axis [-0.762500] speed [1.600216] *  currentSpeed / 100;
 		move lthigh to y-axis [0.825000] speed [2.346983] *  currentSpeed / 100;
@@ -219,6 +229,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move pelvis to y-axis [0.800000] speed [0.853448] *  currentSpeed / 100;
 		move rthigh to y-axis [-0.950000] speed [1.600216] *  currentSpeed / 100;
 		move lthigh to y-axis [1.100000] speed [2.346983] *  currentSpeed / 100;
@@ -240,6 +251,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move pelvis to y-axis [0.600000] speed [1.706897] *  currentSpeed / 100;
 		move rthigh to y-axis [-0.975000] speed [0.213362] *  currentSpeed / 100;
 		move lthigh to y-axis [0.800000] speed [2.560345] *  currentSpeed / 100;
@@ -261,6 +273,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move pelvis to y-axis [0.400000] speed [1.706897] *  currentSpeed / 100;
 		move rthigh to y-axis [-1.000000] speed [0.213362] *  currentSpeed / 100;
 		move lthigh to y-axis [0.500000] speed [2.560345] *  currentSpeed / 100;
@@ -282,6 +295,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move rthigh to y-axis [-0.800000] speed [1.706897] *  currentSpeed / 100;
 		move lthigh to y-axis [-0.050000] speed [4.693966] *  currentSpeed / 100;
 		move lleg to y-axis [0.350000] speed [2.987018] *  currentSpeed / 100;
@@ -302,6 +316,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move rthigh to y-axis [-0.600000] speed [1.706897] *  currentSpeed / 100;
 		move lthigh to y-axis [-0.600000] speed [4.693966] *  currentSpeed / 100;
 		move lleg to y-axis [0.000000] speed [2.987069] *  currentSpeed / 100;
@@ -322,6 +337,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move rthigh to y-axis [-0.300000] speed [2.560345] *  currentSpeed / 100;
 		move lthigh to y-axis [-0.400000] speed [1.706897] *  currentSpeed / 100;
 		turn pelvis to x-axis <14.934066> speed <31.465042> *  currentSpeed / 100;
@@ -341,6 +357,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move rthigh to y-axis [0.000000] speed [3.578313] *  currentSpeed / 100;
 		move lthigh to y-axis [-0.200000] speed [2.385542] *  currentSpeed / 100;
 		turn pelvis to x-axis <18.637363> speed <44.171856> *  currentSpeed / 100;
@@ -360,6 +377,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move pelvis to y-axis [0.500000] speed [1.192771] *  currentSpeed / 100;
 		move rthigh to y-axis [0.275000] speed [3.280120] *  currentSpeed / 100;
 		move lthigh to y-axis [-0.387500] speed [2.236446] *  currentSpeed / 100;
@@ -380,6 +398,7 @@ walk()
 	}
 	if( bMoving )
 	{
+		if (bAiming) return;
 		move pelvis to y-axis [0.600000] speed [1.192771] *  currentSpeed / 100;
 		move rthigh to y-axis [0.550000] speed [3.280120] *  currentSpeed / 100;
 		move lthigh to y-axis [-0.575000] speed [2.236446] *  currentSpeed / 100;
@@ -398,6 +417,7 @@ walk()
 		turn rloarm to x-axis <-29.357143> speed <19.923213> *  currentSpeed / 100;
 		sleep 5900 / currentSpeed;
 	}
+	if (bAiming) return;
 	move pelvis to y-axis [0.700000] speed [1.192771] *  currentSpeed / 100;
 	move rthigh to y-axis [0.825000] speed [3.280120] *  currentSpeed / 100;
 	move lthigh to y-axis [-0.762500] speed [2.236446] *  currentSpeed / 100;

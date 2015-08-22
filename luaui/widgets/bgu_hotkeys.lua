@@ -27,8 +27,6 @@ local waterLandPairsHuman = {
 {'corrl','corfrt'},
 {'armhp','armfhp'},
 {'corhp','corfhp'},
-{'armdrag','armfdrag'},   
-{'cordrag','corfdrag'},
 {'armrad','armfrad'},
 {'corrad','corfrad'},
 {'armhlt','armfhlt'},

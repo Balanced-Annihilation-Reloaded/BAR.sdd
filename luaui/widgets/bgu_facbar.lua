@@ -749,8 +749,6 @@ function widget:Initialize()
         height = 450, --enough for max 5 factories
         parent = Chili.Screen0,
         draggable = false,
-        tweakDraggable = true,
-        tweakResizable = true,
         resizable = false,
         dragUseGrip = false,
         minWidth = 200,

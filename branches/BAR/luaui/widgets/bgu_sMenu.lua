@@ -939,8 +939,9 @@ local function InitialQueue()
     end
     
     -- check if we just changed faction
-    local uDID = WG.startUnit or Spring.GetTeamRulesParam(myTeamID, 'startUnit')
+    local uDID = WG.startUnit or Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'startUnit')
     if uDID==startUnitDefID and not updateRequired then return true end 
+    if not uDID then return false end
 
     -- now act as though unitDefID is selected for building
     startUnitDefID = uDID

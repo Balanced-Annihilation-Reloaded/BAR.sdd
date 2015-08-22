@@ -71,7 +71,8 @@ end
 function widget:Initialize()
     if spGetSpectatingState() or
         Spring.GetGameFrame() > 0 or
-        amNewbie then
+        amNewbie or
+        WG.isMission then
         widgetHandler:RemoveWidget(self)
         return
     end

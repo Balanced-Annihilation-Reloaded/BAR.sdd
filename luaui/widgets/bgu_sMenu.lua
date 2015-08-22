@@ -713,7 +713,7 @@ local function createButton(name, unitDef)
         margin    = {0,0,0,0},
         OnMouseUp = {cmdAction},
         OnMouseOver = {function() WG.sMenu.mouseOverDefID = unitDef.id end},
-        OnMouseOut   = {function() WG.sMenu.mouseOverDefID = nil end}, -- FIXME
+        OnMouseOut   = {function() WG.sMenu.mouseOverDefID = nil end}, 
         children  = {
             Chili.Image:New{
                 height = '100%', width = '100%',

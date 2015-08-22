@@ -97,8 +97,8 @@ end
 
 function widget:Initialize()
     if (not Spring.IsReplay()) then
-        --widgetHandler:RemoveWidget(self)
-        --return
+        widgetHandler:RemoveWidget(self)
+        return
     end
     
     ChooseAllowedSpeeds()

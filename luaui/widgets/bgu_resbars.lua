@@ -58,9 +58,9 @@ local function readable(num)
     if num < 10 then
         s = s .. format(num,1)
     elseif num >10000 then
-        s = s .. format(num/1000,0)..'K'
+        s = s .. format(num/1000,0)..'k'
     elseif num >1000 then
-        s = s .. format(num/1000,1)..'K'
+        s = s .. format(num/1000,1)..'k'
     else
         s = s .. format(num,0)
     end

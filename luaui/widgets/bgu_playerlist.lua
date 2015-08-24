@@ -46,9 +46,8 @@ local deadPlayers = {}
 local specs = {}
 
 -- permanent panels
-local alliesPanel, enemiesPanel, specsPanel, deadplayersPanel
+local window, stack
 local iPanel, shareE, shareM, watchres, watchcamera, ignore, slap
-local enemyAllyTeamPanels = {}
 
 --To determine faction at start
 local armcomDefID = UnitDefNames.armcom.id

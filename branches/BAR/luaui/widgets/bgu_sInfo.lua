@@ -14,7 +14,9 @@ end
 local imageDir = 'luaui/images/buildIcons/'
 
 local Chili, screen, infoWindow, groundInfo, groundText
-local unitInfo, unitName, unitIcon, selectionGrid, unitHealthText, unitHealth
+local unitInfo, unitName, unitPicture, unitPictureOverlay, unitHealthText, unitHealth, unitCostTextTitle, unitResText
+local focusName, focusPicture, focusPictureOverlay, focusCost, focusBuildTime
+local selectionGrid 
 local healthBars = {}
 
 local curTip -- general info about 
@@ -164,6 +166,17 @@ local function ResToolTip(Mmake, Muse, Emake, Euse)
     return white .. "M: " .. green .. '+' .. round(Mmake,1) .. '  ' .. red .. '-' .. round(Muse,1) .. "\n" ..  white .. "E:  " .. green .. '+' .. round(Emake,1) .. '  ' .. red .. "-" .. round(Euse,1)
 end
 
+function GetOverlayColor()
+    local overlayColor = {} -- desaturate and aim for 0.3 brightness, else unit properties are hard to read
+    overlayColor[4] = 0.75 
+    local average = 1/6 * (teamColor[1] + teamColor[2] + teamColor[3] + 0.9) 
+    local bias = 0.3
+    for i=1,3 do
+        overlayColor[i] = (1-bias)*average + bias*teamColor[i]
+    end
+    return overlayColor
+end
+
 local function showUnitInfo()
     local defID = curTip.selDefID
     local selUnits = curTip.selUnits 
@@ -173,6 +186,7 @@ local function showUnitInfo()
     local name        = UnitDefs[defID].name
     local texture     = imageDir..'Units/' .. name .. '.dds'
     local overlay     = imageDir..'Overlays/' .. name .. '.dds'
+    local overlayColor = GetOverlayColor()
     local humanName   = UnitDefs[defID].humanName
 
     local Ecost = 0
@@ -196,7 +210,24 @@ local function showUnitInfo()
     local numText = ""
     if n>1 then numText = "\n " .. blue .. "(x" .. tostring(n) .. ")" end
     
+    unitPicture = Chili.Image:New{
+        parent   = unitInfo,
+        file     = texture,
+        color    = overlayColor,
+        y        = 0,
+        height   = '100%',
+        width    = '100%',
+    }
+    unitPictureOverlay = Chili.Image:New{
+        parent = unitPicture,
+        color    = overlayColor,
+        height   = '100%',
+        width    = '100%',
+        file     = overlay,
+    }
+    
     unitName = Chili.TextBox:New{
+        parent = unitPictureOverlay,
         x      = 5,
         y      = 5,
         right  = 0,
@@ -205,12 +236,14 @@ local function showUnitInfo()
     }
     
     unitHealthText = Chili.TextBox:New{
+        parent = unitPictureOverlay,
         x      = 5,
         bottom = 21,
         text   = math.floor(curHealth) ..' / '.. math.floor(maxHealth),
     }
     
     unitHealth = Chili.Progressbar:New{
+        parent = unitPictureOverlay,
         value   = 0,
         bottom  = 5,
         x       = 5,
@@ -220,6 +253,7 @@ local function showUnitInfo()
     }
         
     unitCostTextTitle = Chili.TextBox:New{
+        parent = unitPictureOverlay,
         x      = '60%',
         height = 10,
         bottom = 35,
@@ -227,6 +261,7 @@ local function showUnitInfo()
     }
 
     unitCostText = Chili.TextBox:New{
+        parent = unitPictureOverlay,
         x      = '62%',
         height = 28,
         bottom = 3,
@@ -234,30 +269,13 @@ local function showUnitInfo()
     }
     
     unitResText = Chili.TextBox:New{
+        parent = unitPictureOverlay,
         x        = 5,
         bottom   = 35,
         height   = 24,
         text     =  ResToolTip(Mmake, Muse, Emake, Euse),
         fontsize = 12,
     }
-        
-    unitIcon = Chili.Image:New{
-        parent   = unitInfo,
-        file     = texture,
-        y        = 0,
-        height   = '100%',
-        width    = '100%',
-        children = {
-            Chili.Image:New{
-                color    = teamColor,
-                height   = '100%',
-                width    = '100%',
-                file     = overlay,
-                children = {unitName, unitHealthText, unitHealth, unitResText, unitCostTextTitle, unitCostText},
-            }
-        }
-    }
-    
     
     if UnitDefs[defID].customParams.iscommander then
         unitCostText:Hide()
@@ -370,13 +388,19 @@ local function GetUnitDefKeyProperties (defID)
         return t
     end
     
-    -- deal with one very special case
+    -- deal with two very special cases
     if defID==UnitDefNames.commando.id then
         t[#t+1] = {"Health", green .. tostring(ud.health)}
         t[#t+1] = {"Build Power", lilac .. round(ud.buildSpeed)}
         t[#t+1] = {"Max Speed", tomato .. round(ud.speed)}
         t[#t+1] = {"Weapon Range", turqoise .. round(GetMaxWeaponRange(ud))}
         t[#t+1] = {"Damage Per Sec", red .. round(GetDamagePerSec(ud))}    
+        return t
+    elseif ud.customParams.iscommander=="1" then
+        t[#t+1] = {"Health", green .. tostring(ud.health)}
+        t[#t+1] = {"Build Power", lilac .. round(ud.buildSpeed)}
+        t[#t+1] = {"Max Speed", tomato .. round(ud.speed)}
+        t[#t+1] = {"Weapon Range", turqoise .. round(GetMaxWeaponRange(ud))}
         return t
     end
     
@@ -458,6 +482,7 @@ local function showFocusInfo()
     local name        = UnitDefs[defID].name
     local texture     = imageDir..'Units/' .. name .. '.dds'
     local overlay     = imageDir..'Overlays/' .. name .. '.dds'
+    local overlayColor = GetOverlayColor()
     local humanName   = UnitDefs[defID].humanName
 
     local Ecost = UnitDefs[defID].energyCost
@@ -465,14 +490,7 @@ local function showFocusInfo()
     local maxHealth = UnitDefs[defID].health
 
     -- picture
-    local overlayColor = {} -- desaturate and aim for 0.3 brightness, else unit properties are hard to read
-    overlayColor[4] = 0.75 
-    local average = 1/6 * (teamColor[1] + teamColor[2] + teamColor[3] + 0.9) 
-    local bias = 0.3
-    for i=1,3 do
-        overlayColor[i] = (1-bias)*average + bias*teamColor[i]
-    end
-    focusIcon = Chili.Image:New{
+    focusPicture = Chili.Image:New{
         parent   = unitInfo,
         file     = texture,
         color    = overlayColor,
@@ -480,17 +498,17 @@ local function showFocusInfo()
         height   = '100%',
         width    = '100%',
     }
-    focusOverlay = Chili.Image:New{
-        parent = focusIcon,
+    focusPictureOverlay = Chili.Image:New{
+        parent = focusPicture,
         color    = overlayColor,
         height   = '100%',
         width    = '100%',
         file     = overlay,
     }
-    
+        
     -- name
     focusName = Chili.TextBox:New{
-        parent = focusOverlay,
+        parent = focusPictureOverlay,
         x      = 5,
         y      = 5,
         right  = 0,
@@ -499,20 +517,22 @@ local function showFocusInfo()
     }
     
     -- costs + buildtime
-    focusCost = Chili.TextBox:New{
-        parent = focusOverlay,
-        x        = 5,
-        bottom   = 20,
-        height   = 24,
-        text     =  "Cost: " .. mColour .. unitDef.metalCost .. " " .. eColour .. unitDef.energyCost,
-    }
-    focusBuildTime = Chili.TextBox:New{
-        parent = focusOverlay,
-        x        = 5,
-        bottom   = 5,
-        height   = 24,
-        text     =  "Build Time: " .. lilac .. unitDef.buildTime, -- this isn't very intuitive
-    }
+    if unitDef.customParams.iscommander~="1" then  
+        focusCost = Chili.TextBox:New{
+            parent = focusPictureOverlay,
+            x        = 5,
+            bottom   = 20,
+            height   = 24,
+            text     =  "Cost: " .. mColour .. unitDef.metalCost .. " " .. eColour .. unitDef.energyCost,
+        }
+        focusBuildTime = Chili.TextBox:New{
+            parent = focusPictureOverlay,
+            x        = 5,
+            bottom   = 5,
+            height   = 24,
+            text     =  "Build Time: " .. lilac .. unitDef.buildTime, -- this isn't very intuitive
+        }
+    end
     
     -- key properties
     local keyProperties = GetUnitDefKeyProperties(defID)
@@ -520,7 +540,7 @@ local function showFocusInfo()
     for _,v in pairs(keyProperties) do
         local text = tostring(v[1]) .. ": " .. tostring(v[2])
         local property = Chili.TextBox:New{
-            parent = focusOverlay,
+            parent = focusPictureOverlay,
             x        = 5,
             bottom   = bottom,
             height   = 24,
@@ -744,6 +764,7 @@ function widget:Initialize()
     infoWindow = Chili.Button:New{
         padding = {6,6,6,6},
         borderColor = {1,1,1,1},
+        caption = "",
         parent  = screen,
         x       = 0,
         y       = 0,

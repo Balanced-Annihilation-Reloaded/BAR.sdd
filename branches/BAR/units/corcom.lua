@@ -22,7 +22,7 @@ return {
 		collisionvolumetype = "Ell",
 		commander = true,
 		corpse = "DEAD",
-		description = "Commander",
+		description = "",
 		energymake = 25,
 		explodeas = "COMMANDER_BLAST",
 		footprintx = 2,

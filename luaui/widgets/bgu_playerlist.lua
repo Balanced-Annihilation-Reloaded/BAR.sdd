@@ -176,10 +176,6 @@ function ShareUnits()
     local n = Spring.GetSelectedUnitsCount()
     Spring.ShareResources(tID,'units')
     
-    if n>0 then
-        Spring.SendCommands("say a: I gave "..n.." units to "..players[iPanelpID].plainName) 
-    end
-    
     iPanel:Hide()
 end
 
@@ -189,13 +185,6 @@ function ShareRes()
     local tID = players[iPanelpID].tID
     Spring.ShareResources(tID,'energy',e)
     Spring.ShareResources(tID,'metal',m)
-    
-    if e > 0 then
-        Spring.SendCommands("say a: I sent "..e.." energy to "..players[iPanelpID].plainName) 
-    end
-    if m > 0 then
-        Spring.SendCommands("say a: I sent "..m.." metal to "..players[iPanelpID].plainName)
-    end
     
     iPanel:Hide()
 end

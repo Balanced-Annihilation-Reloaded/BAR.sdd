@@ -169,6 +169,6 @@ function widget:CommandNotify(cmdID, cmdParams, cmdOpts)
     return false
 end
 
-function widget:ShutDown()
+function widget:Shutdown()
     WG.MexSnap = nil
 end

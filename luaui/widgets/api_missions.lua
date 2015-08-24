@@ -99,7 +99,7 @@ function widget:GameFrame()
 end
 
 
-function widget:ShutDown ()
+function widget:Shutdown ()
     Spring.SendCommands('console 1')
     Spring.SetConfigString('InputTextGeo', '0.26 0.73 0.02 0.028') --default pos
 end

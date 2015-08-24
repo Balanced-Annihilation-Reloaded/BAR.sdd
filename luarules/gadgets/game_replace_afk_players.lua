@@ -292,7 +292,7 @@ end
     end
 end]]
 
-function gadget:ShutDown()
+function gadget:Shutdown()
     gadgetHandler:RemoveSyncAction("MarkStartPoint")
     gadgetHandler:RemoveSyncAction("ForceSpec")
 end

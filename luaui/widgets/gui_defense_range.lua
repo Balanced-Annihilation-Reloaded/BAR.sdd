@@ -343,7 +343,7 @@ function widget:Initialize()
     }
 end
 
-function widget:ShutDown()
+function widget:Shutdown()
     widgetHandler:DeregisterGlobal('SetOpacity_Defense_Range', SetOpacity)
 end
 

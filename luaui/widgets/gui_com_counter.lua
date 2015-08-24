@@ -310,7 +310,7 @@ function widget:Update()
     end    
 end
 
-function widget:ShutDown()
+function widget:Shutdown()
     window:Dispose()
 end
 

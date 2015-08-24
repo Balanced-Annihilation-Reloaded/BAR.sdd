@@ -1152,7 +1152,7 @@ function widget:Initialize()
     SetupOptions()  
 end
 
-function widget:ShutDown()
+function widget:Shutdown()
     window:Dispose()
     iPanel:Dispose()
     for pID,_ in pairs(players) do

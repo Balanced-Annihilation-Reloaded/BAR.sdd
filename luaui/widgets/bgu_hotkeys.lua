@@ -373,7 +373,7 @@ function widget:Update(deltaTime)
     end
 end
 
-function widget:ShutDown()
+function widget:Shutdown()
     WG.SetYZState = nil
     SetUnBinds()
 end

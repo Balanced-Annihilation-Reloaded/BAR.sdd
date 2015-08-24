@@ -1485,60 +1485,11 @@ function SetupStack()
         preserveChildrenOrder = true,
     }
     
-    alliesPanel = Chili.LayoutPanel:New{
-        parent      = stack,
-        name        = 'allies',
-        width       = '100%',
-        minHeight   = 0,
-        resizeItems = false,
-        autosize    = true,
-        padding     = {0,0,0,0},
-        itemPadding = {0,0,0,0},
-        itemMargin  = {0,0,0,0},
-        children    = {},
-        preserveChildrenOrder = true,
-    }
-        
-    enemiesPanel = Chili.LayoutPanel:New{
-        parent      = stack,
-        name        = 'enemies',
-        width       = '100%',
-        minHeight   = 0,
-        resizeItems = false,
-        autosize    = true,
-        padding     = {0,0,0,0},
-        itemPadding = {0,0,0,0},
-        itemMargin  = {0,0,0,0},
-        children    = {},
-        preserveChildrenOrder = true,
-    }
-    
-    specsPanel = Chili.LayoutPanel:New{
-        parent      = stack,
-        name        = 'specs',
-        width       = '100%',
-        minHeight   = 0,
-        resizeItems = false,
-        autosize    = true,
-        padding     = {0,0,0,0},
-        itemPadding = {0,0,0,0},
-        itemMargin  = {0,0,0,0},
-        children    = {},
-        preserveChildrenOrder = true,
-    }
-    
     UpdateStack()
 end
 
 function UpdateStack()
-    -- disassociate all children
-    alliesPanel:ClearChildren()
-    enemiesPanel:ClearChildren()
-    specsPanel:ClearChildren()
-    specsPanel:ClearChildren()
-    for i,_ in ipairs(enemyAllyTeamPanels) do
-        enemyAllyTeamPanels[i]:ClearChildren()
-    end
+    stack:ClearChildren()
 
     -- re-sort players into teams/allyteams
     AssignPlayersToTeams()
@@ -1546,65 +1497,51 @@ function UpdateStack()
     SortAllyTeams()
     
     -- now re-associate children
-    alliesPanel:AddChild(Header("ALLIES"))
+    stack:AddChild(Header("ALLIES"))
     for _,tID in ipairs(myAllyTeam) do
         for _,pID in ipairs(teams[tID]) do
             if players[pID].spec or not players[pID].active then
-                alliesPanel:AddChild(players[pID].deadPanel)
+                stack:AddChild(players[pID].deadPanel)
             else
-                alliesPanel:AddChild(players[pID].playerPanel)            
+                stack:AddChild(players[pID].playerPanel)            
             end
         end
     end
-    alliesPanel:AddChild(Separator())
+    stack:AddChild(Separator())
 
-    enemiesPanel:AddChild(Header("ENEMIES"))    
+    stack:AddChild(Header("ENEMIES"))    
     enemyAllyTeamPanels = {}
     local n_allies = CountTable(allyTeams)
     local n = 0
-    for aID,_ in pairs(allyTeams) do       
-        enemyAllyTeamPanels[aID] = Chili.LayoutPanel:New{
-            parent      = enemiesPanel,
-            name        = 'allyteam ' .. aID, 
-            width       = '100%',
-            minHeight   = 0,
-            resizeItems = false,
-            autosize    = true,
-            padding     = {0,0,0,0},
-            itemPadding = {0,0,0,0},
-            itemMargin  = {0,0,0,0},
-            children    = {},
-            preserveChildrenOrder = true,
-        }
-        
+    for aID,_ in pairs(allyTeams) do
         for _,tID in ipairs(allyTeams[aID]) do
             for _,pID in ipairs(teams[tID]) do
                 if players[pID].spec or not players[pID].active then
-                    enemyAllyTeamPanels[aID]:AddChild(players[pID].deadPanel)
+                    stack:AddChild(players[pID].deadPanel)
                 else
-                    enemyAllyTeamPanels[aID]:AddChild(players[pID].playerPanel)            
+                    stack:AddChild(players[pID].playerPanel)            
                 end
             end
         end
         
         n = n + 1
         if n < n_allies then
-            enemiesPanel:AddChild(HalfSeparator())
+            stack:AddChild(HalfSeparator())
         end
     end
 
     if #deadPlayers + #specs >= 1 then
-        enemiesPanel:AddChild(Separator())
-        specsPanel:AddChild(Header("SPECTATORS")) --already filtered for being active
+        stack:AddChild(Separator())
+        stack:AddChild(Header("SPECTATORS")) --already filtered for being active
         for _,pID in ipairs(deadPlayers) do 
-            specsPanel:AddChild(players[pID].specPanel)
+            stack:AddChild(players[pID].specPanel)
         end
         for _,pID in ipairs(specs) do
-            specsPanel:AddChild(players[pID].specPanel)
+            stack:AddChild(players[pID].specPanel)
         end 
     end
     
-    stack:Invalidate() -- without this the spectator panel doesn't resize, chili bug?
+    --window:Invalidate() -- without this the spectator panel doesn't resize, chili bug?
 end
 
 function OptionChange()

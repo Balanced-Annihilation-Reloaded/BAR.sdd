@@ -110,7 +110,7 @@ end
 -----------------------
 
 function ConstructFactionPic(tID) 
-    -- actually, we'll get them from the player list!
+    -- actually, we could get them from the player list?
     -- TODO    
 end
 

@@ -725,14 +725,11 @@ end
 function SetFaction(pID) 
     --set faction, from TeamRulesParam when possible and from initial info if not    
     local startUDID = Spring.GetTeamRulesParam(players[pID].tID, 'startUnit')
-    if startUDID then
-        if startUDID == armcomDefID then 
-            faction = "arm"
-        elseif startUDID == corcomDefID then
-            faction = "core"
-        else
-            _,_,_,_,faction = Spring.GetTeamInfo(players[pID].tID)
-        end
+    local faction
+    if startUDID == armcomDefID then 
+        faction = "arm"
+    elseif startUDID == corcomDefID then
+        faction = "core"
     else
         _,_,_,_,faction = Spring.GetTeamInfo(players[pID].tID)
     end

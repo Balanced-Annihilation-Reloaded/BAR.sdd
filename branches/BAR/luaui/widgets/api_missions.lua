@@ -35,7 +35,8 @@ local to_unload = {
     ["Center n Select"]=true,
     ["Game Type Info"]=true,
     ["Ally Selected Units"]=true,
-    ["Open Host List"]=true
+    ["Open Host List"]=true,
+    ["Ally Resource Stats"]=true,
 }
 
 

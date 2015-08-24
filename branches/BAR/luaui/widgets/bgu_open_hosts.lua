@@ -135,7 +135,7 @@ function widget:Initialize()
     CreateGUI()
 end
 
-function widget:ShutDown()
+function widget:Shutdown()
     window:Dispose()
 end
 

@@ -557,7 +557,7 @@ function ReadyStateMessage(_, msg, playerID)
     end
 end
 
-function gadget:ShutDown()
+function gadget:Shutdown()
     gl.DeleteList(replayButton)
 end
 

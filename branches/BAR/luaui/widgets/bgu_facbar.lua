@@ -771,7 +771,7 @@ function widget:Initialize()
     end
 end
 
-function widget:ShutDown()
+function widget:Shutdown()
     stack_main:Dispose()
     window_facbar:Dispose()
     WG.ShowFacBar = nil

@@ -286,7 +286,7 @@ function AwardAward (_, name, action, first, first_score, second, second_score, 
 end
 
 
-function gadget:ShutDown()
+function gadget:Shutdown()
     gadgetHandler:RemoveSyncAction("AwardAward")    
 end
 

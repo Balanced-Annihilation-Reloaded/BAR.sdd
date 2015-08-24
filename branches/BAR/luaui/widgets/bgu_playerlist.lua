@@ -1239,7 +1239,7 @@ end
 
 function widget:MousePress(mx,my)
     -- hide the iPanel if we click outside of the playerlist
-    if not IsInRectPanel(mx,Chili.Screen0.height-my, window) then
+    if (not IsInRectPanel(mx,Chili.Screen0.height-my, window)) and (not IsInRectPanel(mx, Chili.Screen0.height-my, iPanel)) then
         HideIPanel()
     end
     return false
@@ -1539,9 +1539,7 @@ function UpdateStack()
         for _,pID in ipairs(specs) do
             stack:AddChild(players[pID].specPanel)
         end 
-    end
-    
-    --window:Invalidate() -- without this the spectator panel doesn't resize, chili bug?
+    end    
 end
 
 function OptionChange()

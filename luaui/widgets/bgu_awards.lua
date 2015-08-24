@@ -122,7 +122,7 @@ function widget:Initialize()
     end
 end
 
-function widget:ShutDown()
+function widget:Shutdown()
     widgetHandler:DeregisterGlobal('AwardAward')
 end
 

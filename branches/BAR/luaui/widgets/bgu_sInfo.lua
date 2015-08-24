@@ -761,7 +761,7 @@ function widget:Initialize()
     screen = Chili.Screen0
     local winSize = screen.height * 0.2
     
-    infoWindow = Chili.Button:New{
+    infoWindow = Chili.Button:New{ -- parent of all the info stuffs
         padding = {6,6,6,6},
         borderColor = {1,1,1,1},
         caption = "",
@@ -773,7 +773,7 @@ function widget:Initialize()
         OnClick = {TogglePreferredUnitInfo},
     }
     
-    selectionGrid = Chili.Grid:New{
+    selectionGrid = Chili.Grid:New{ -- for multiple unit info stuff
         parent  = infoWindow,
         x       = 0,
         y       = 0,
@@ -783,9 +783,8 @@ function widget:Initialize()
         columns = 3,
         padding = {0,0,0,0},
         margin  = {0,0,0,0},
-    }
-    
-    unitInfo = Chili.Control:New{
+    }    
+    unitInfo = Chili.Control:New{ -- window for unit info stuff, children are remade on each change
         parent  = infoWindow,
         x       = 0,
         y       = 0,
@@ -795,7 +794,7 @@ function widget:Initialize()
         margin  = {0,0,0,0},
     }
     
-    groundInfo = Chili.Panel:New{
+    groundInfo = Chili.Panel:New{ -- for ground info, children are permanent
         padding = {6,6,6,6},
         parent  = screen,
         x       = 0,
@@ -803,7 +802,6 @@ function widget:Initialize()
         width   = 150,
         height  = 101,
     }    
-    
     groundText = Chili.TextBox:New{
         parent = groundInfo,
         x      = 0,
@@ -812,7 +810,6 @@ function widget:Initialize()
         bottom = 0,
         text   = '',
     }
-
     groundText2 = Chili.TextBox:New{
         parent = groundInfo,
         x      = 0,

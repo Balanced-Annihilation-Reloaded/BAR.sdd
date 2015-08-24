@@ -19,6 +19,7 @@ local healthBars = {}
 
 local curTip -- general info about 
 local focusDefID -- unitDefID of unit we are currently thinking of building
+local preferFocusInfo = false -- when there is just a single unit,do we prefer the focus info (i.e. UnitDefs info) or the unit info?
 
 local spGetTimer                = Spring.GetTimer
 local spDiffTimers              = Spring.DiffTimers
@@ -661,26 +662,29 @@ local function ChooseCurTip()
     curTip.sortedSelUnits = sortedSelUnits
     curTip.n = #selUnits
     curTip.nType = sortedSelUnits['n']
-
+    
     if focusDefID then
         -- info about a unit we are thinking to build
         curTip.type = "focusDefID"
-        curTip.focusDefID = focusDefID         
-    elseif #selUnits == 0 then
-        --info about point on map corresponding to cursor 
-        curTip.type = "ground"
+        curTip.focusDefID = focusDefID
+    elseif sortedSelUnits["n"] == 1 and preferFocus then
+        curTip.type = "focusDefID"
+        curTip.focusDefID = Spring.GetUnitDefID(selUnits[1])  
     elseif sortedSelUnits["n"] == 1 then
         -- info about units of a single unitDefID )
         curTip.type = "unitDefID"
         curTip.selDefID = Spring.GetUnitDefID(selUnits[1])  
-    elseif sortedSelUnits["n"] <= 6 then 
+    elseif sortedSelUnits["n"] <= 6 and sortedSelUnits["n"] > 1 then 
         -- info about multiple unitDefIDs, but few enough that we can display a small pic for each
         curTip.type = "unitDefPics"
-    else
+    elseif sortedSelUnits["n"] > 6 then
         -- so many units that we just give basic info
         curTip.type = "basicUnitInfo"
+    else
+        --info about point on map corresponding to cursor 
+        curTip.type = "ground"
     end
-        
+    
 end
 
 local function ResetTip()
@@ -718,6 +722,13 @@ local function ResetTip()
     end
 end
 
+local function TogglePreferredUnitInfo()
+    if unitInfo.visible then
+        preferFocus = not preferFocus
+        ResetTip()
+    end
+end
+
 ----------------------------------
 
 function widget:Initialize()    
@@ -730,24 +741,16 @@ function widget:Initialize()
     screen = Chili.Screen0
     local winSize = screen.height * 0.2
     
-    --Main window, ancestor of everything
-    infoWindow = Chili.Panel:New{
+    infoWindow = Chili.Button:New{
         padding = {6,6,6,6},
+        borderColor = {1,1,1,1},
         parent  = screen,
         x       = 0,
         y       = 0,
         width   = winSize * 1.05,
         height  = winSize,
+        OnClick = {TogglePreferredUnitInfo},
     }
-    
-    groundInfo = Chili.Panel:New{
-        padding = {6,6,6,6},
-        parent  = screen,
-        x       = 0,
-        y       = 0,
-        width   = 150,
-        height  = 101,
-    }    
     
     selectionGrid = Chili.Grid:New{
         parent  = infoWindow,
@@ -770,6 +773,15 @@ function widget:Initialize()
         padding = {0,0,0,0},
         margin  = {0,0,0,0},
     }
+    
+    groundInfo = Chili.Panel:New{
+        padding = {6,6,6,6},
+        parent  = screen,
+        x       = 0,
+        y       = 0,
+        width   = 150,
+        height  = 101,
+    }    
     
     groundText = Chili.TextBox:New{
         parent = groundInfo,

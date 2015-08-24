@@ -1,6 +1,6 @@
 function widget:GetInfo()
     return {
-        name = "Replay Speed Control",
+        name = "Replay Speed Controls",
         desc = "Add buttons to change replay speed",
         author = "Bluestone", 
         date = "",
@@ -111,6 +111,7 @@ function widget:Initialize()
     
     window = Chili.Window:New{
         parent    = Screen0,
+        name      = 'replay speed control window',
         right     = 325,
         bottom    = 100,
         height    = (#allowedSpeeds) * buttonH + labelH,
@@ -122,7 +123,7 @@ function widget:Initialize()
     }
     stack = Chili.LayoutPanel:New{
         parent      = window,
-        name        = 'stack',
+        name        = 'replay speed control stack',
         width       = '100%',
         height      = '100%',
         resizeItems = false,
@@ -175,8 +176,10 @@ end
 
 function widget:GetConfigData()
     local data = {}
-    data.x = window.x
-    data.y = window.y
+    if window then
+        data.x = window.x
+        data.y = window.y
+    end
     return data
 end
 

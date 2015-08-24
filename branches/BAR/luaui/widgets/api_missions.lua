@@ -64,6 +64,7 @@ function widget:GamePreload()
                 widgetHandler:ToggleWidget(name)   
             end
         end
+        to_reload = {}
         
         widgetHandler:RemoveWidget(self)
         return

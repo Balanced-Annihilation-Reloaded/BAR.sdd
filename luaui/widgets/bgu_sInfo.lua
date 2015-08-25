@@ -867,6 +867,7 @@ end
 
 function widget:ViewResize(_,scrH)
     unitWindow:Resize(scrH*0.2,scrH*0.2)
+    unitGridWindow:Resize(scrH*0.2,scrH*0.2)
     -- ground info does not resize
 end
 

@@ -205,8 +205,12 @@ function ConstructPanels()
     allyTeamPanels = {}
     allyTeamStats = {}
     allyTeamOfTeam = {}
-     
+    
+    local notMe = false
+    local myTeamID = Spring.GetMyTeamID()
+    local myAllyTeamID = Spring.GetMyAllyTeamID()    
     local gaiaTeamID = Spring.GetGaiaTeamID()
+    
     local aList = Spring.GetAllyTeamList()
     for _,aID in ipairs(aList) do
         if aID==myAllyTeamID or amISpec then
@@ -214,6 +218,8 @@ function ConstructPanels()
             local tList = Spring.GetTeamList(aID)
             for _,tID in ipairs(tList) do
                 if tID~=gaiaTeamID then
+                    if amISpec or (tID~=myTeamID and aID==myAllyTeamID) then notMe = true end
+                
                     if not allyTeamPanels[aID] then
                         -- insert ally team
                         allyTeamPanels[aID] = ConstructAllyTeamPanel(aID)
@@ -231,6 +237,12 @@ function ConstructPanels()
                 end
             end
         end
+    end
+    
+    if not notMe then -- don't run if we are alone!
+        if window.visible then window:Hide() end
+    else
+        if window.hidden then window:Show() end 
     end
 end
 

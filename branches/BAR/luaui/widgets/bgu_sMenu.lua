@@ -248,7 +248,7 @@ local function resizeUI(scrH,i)
     menuTabs:SetPos(winW,winY+20)
     orderMenu:SetPos(minMapW,ordY,ordH*21,ordH)
     orderBG:SetPos(minMapW,ordY,ordH*#orderMenu.children,ordH)
-    stateMenu:SetPos(winY*1.05,0,200,winY)
+    stateMenu:SetPos(winY*1.05,0,200,winY)    
 end
 
 local function selectTab(self)
@@ -307,6 +307,23 @@ local function addBuild(item)
     local category = item.category
     local disabled = item.disabled
     
+    -- avoid adding too many
+    if #grid[category].children>53 then return end
+    if #grid[category].children==53 then
+        Chili.Button:New{
+            x = 5,
+            parent = grid[category],
+            caption = "(full)",
+            padding   = {0,0,0,0},
+            margin    = {0,0,0,0},
+            font = {
+                size = 16
+            }
+        }
+        return
+    end
+    
+    -- prepare the button
     local button = unit[name]
     local label = button.children[1].children[1]
     local overlay = button.children[1].children[3]
@@ -330,6 +347,9 @@ local function addBuild(item)
     end
     button.disabled = disabled
     
+    
+    
+    -- add this button
     label:SetCaption(caption)
     if not grid[category]:GetChildByName(button.name) then
         -- No duplicates
@@ -480,7 +500,7 @@ local function AddInSequence(items, t, Add, dummyAdd)
     end
     
     -- add the rest
-    for _,item in pairs(items) do
+    for n,item in pairs(items) do
         Add(item)
     end    
 end 
@@ -495,7 +515,7 @@ local function AddInSortedOrder(items, Add, Score)
         return i.score<j.score
     end
     table.sort(t,Comparator)
-    for _,v in ipairs(t) do
+    for n,v in ipairs(t) do
         Add(v.item)
     end
 end
@@ -505,7 +525,7 @@ function Cost(item)
     return 60*UnitDefs[uDID].metalCost + UnitDefs[uDID].energyCost
 end
 
-local function SetGridDimensions()
+function SetGridDimensions()
     for i=1,#catNames do
         -- work out if we have too many buttons in a grid, request more columns if so
         local n = #grid[i].children 
@@ -572,7 +592,7 @@ local function parseCmds()
     
     -- Add the units, in order of lowest cost
     if #units>0 then
-        AddInSortedOrder(units, addBuild, Cost)
+        AddInSortedOrder(units, addBuild, Cost, 53)
     end
 end
 
@@ -872,6 +892,7 @@ end
 --------------------------- 
 function widget:ViewResize(_,scrH)
     resizeUI(scrH)
+    updateRequired = true
 end
 --------------------------- 
 local selectedUnits = {}

@@ -264,7 +264,7 @@ local function showUnitInfo()
     unitResText = Chili.TextBox:New{
         parent = unitPictureOverlay,
         x        = 5,
-        bottom   = 35,
+        bottom   = 37,
         height   = 24,
         text     =  ResToolTip(Mmake, Muse, Emake, Euse),
         fontsize = 14,

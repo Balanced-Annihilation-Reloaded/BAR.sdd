@@ -500,7 +500,7 @@ local function AddInSequence(items, t, Add, dummyAdd)
     end
     
     -- add the rest
-    for n,item in pairs(items) do
+    for _,item in pairs(items) do
         Add(item)
     end    
 end 
@@ -515,7 +515,7 @@ local function AddInSortedOrder(items, Add, Score)
         return i.score<j.score
     end
     table.sort(t,Comparator)
-    for n,v in ipairs(t) do
+    for _,v in ipairs(t) do
         Add(v.item)
     end
 end
@@ -592,7 +592,7 @@ local function parseCmds()
     
     -- Add the units, in order of lowest cost
     if #units>0 then
-        AddInSortedOrder(units, addBuild, Cost, 53)
+        AddInSortedOrder(units, addBuild, Cost)
     end
 end
 

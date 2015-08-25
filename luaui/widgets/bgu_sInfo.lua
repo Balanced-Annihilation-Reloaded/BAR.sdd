@@ -13,10 +13,10 @@ end
 
 local imageDir = 'luaui/images/buildIcons/'
 
-local Chili, screen, infoWindow, groundInfo, groundText
-local unitInfo, unitName, unitPicture, unitPictureOverlay, unitHealthText, unitHealth, unitCostTextTitle, unitResText
+local Chili, screen, unitWindow, groundWindow, groundText
+local unitWindow, unitName, unitPicture, unitPictureOverlay, unitHealthText, unitHealth, unitCostTextTitle, unitResText
 local focusName, focusPicture, focusPictureOverlay, focusCost, focusBuildTime
-local selectionGrid 
+local unitGrid 
 local healthBars = {}
 
 local curTip -- general info about 
@@ -130,17 +130,25 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
         onclick = {refineSelection},       
     }
     
-    selectionGrid:AddChild(button)
+    unitGrid:AddChild(button)
 end
 
-local function addUnitGroupInfo()
+local function showUnitGrid()
+    for unitDefID, unitIDs in pairs(curTip.sortedSelUnits) do
+        if unitDefID ~= 'n' then 
+            local name    = UnitDefs[unitDefID].name
+            local texture = imageDir..'Units/' .. name .. '.dds'
+            local overlay = imageDir..'Overlays/' .. name .. '.dds'
+            addUnitGroup(name,texture,overlay,unitIDs, unitDefID)
+        end
+    end
 
     unitCostText = Chili.TextBox:New{
         name     = "unitCostText",
         x        = '70%',
         height   = 28,
         bottom   = 10,
-        text     = "", --mColour .. Mcost .. '\n' .. eColour .. Ecost,
+        text     = "", 
         fontsize = 12
     }
         
@@ -149,21 +157,22 @@ local function addUnitGroupInfo()
         x        = 5,
         bottom   = 10,
         height   = 24,
-        text     =  "", --ResToolTip(Mmake, Muse, Emake, Euse),
+        text     =  "", 
         fontsize = 12,
     }
 
-    unitInfo:AddChild(unitCostText)
-    unitInfo:AddChild(unitResText)
-    
-    infoWindow:Show()
+    unitGridWindow:AddChild(unitCostText)
+    unitGridWindow:AddChild(unitResText)
+    unitGridWindow:AddChild(unitGrid)
+
+    unitGridWindow:Show()
 end
 
 ----------------------------------
 -- single unitdef info
 
 local function ResToolTip(Mmake, Muse, Emake, Euse)
-    return white .. "M: " .. green .. '+' .. round(Mmake,1) .. '  ' .. red .. '-' .. round(Muse,1) .. "\n" ..  white .. "E:  " .. green .. '+' .. round(Emake,1) .. '  ' .. red .. "-" .. round(Euse,1)
+    return mColour .. "M: " .. green .. '+' .. round(Mmake,1) .. '  ' .. red .. '-' .. round(Muse,1) .. "\n" ..  eColour .. "E:  " .. green .. '+' .. round(Emake,1) .. '  ' .. red .. "-" .. round(Euse,1)
 end
 
 function GetOverlayColor()
@@ -211,7 +220,7 @@ local function showUnitInfo()
     if n>1 then numText = "\n " .. blue .. "(x" .. tostring(n) .. ")" end
     
     unitPicture = Chili.Image:New{
-        parent   = unitInfo,
+        parent   = unitWindow,
         file     = texture,
         color    = overlayColor,
         y        = 0,
@@ -247,25 +256,9 @@ local function showUnitInfo()
         value   = 0,
         bottom  = 5,
         x       = 5,
-        width   = '50%',
+        width   = '95%',
         height  = 10,
         color   = {0.5,1,0,1},
-    }
-        
-    unitCostTextTitle = Chili.TextBox:New{
-        parent = unitPictureOverlay,
-        x      = '60%',
-        height = 10,
-        bottom = 35,
-        text   = 'Total:',
-    }
-
-    unitCostText = Chili.TextBox:New{
-        parent = unitPictureOverlay,
-        x      = '62%',
-        height = 28,
-        bottom = 3,
-        text   = mColour .. Mcost .. '\n' .. eColour .. Ecost,
     }
     
     unitResText = Chili.TextBox:New{
@@ -274,17 +267,10 @@ local function showUnitInfo()
         bottom   = 35,
         height   = 24,
         text     =  ResToolTip(Mmake, Muse, Emake, Euse),
-        fontsize = 12,
+        fontsize = 14,
     }
-    
-    if UnitDefs[defID].customParams.iscommander then
-        unitCostText:Hide()
-    end
-    if (n==1) or UnitDefs[defID].customParams.iscommander then 
-        unitCostTextTitle:Hide() 
-    end
-    
-    infoWindow:Show()        
+
+    unitWindow:Show()        
 end
 
 ----------------------------------
@@ -293,7 +279,7 @@ end
 local function showBasicUnitInfo()
 
     basicUnitInfo = Chili.TextBox:New{
-        parent = unitInfo,
+        parent = unitGridWindow,
         x      = 5,
         y      = 5,
         right  = 0,
@@ -301,7 +287,25 @@ local function showBasicUnitInfo()
         text   = "Units selected: " .. curTip.n .. "\nUnit types: " .. curTip.nType,
     }
     
-    infoWindow:Show()
+    local mCost = 0
+    local eCost = 0
+    for uDID,t in pairs(curTip.sortedSelUnits) do
+        if uDID~="n" and UnitDefs[uDID].customParams.iscommander~="1" then
+            mCost = mCost + (#t)*UnitDefs[uDID].metalCost
+            eCost = eCost + (#t)*UnitDefs[uDID].energyCost
+        end    
+    end
+
+    basicUnitInfo = Chili.TextBox:New{
+        parent = unitGridWindow,
+        x      = 5,
+        y      = 45,
+        right  = 0,
+        bottom = 0,
+        text   = "Total cost: \n" .. mColour .. mCost .. "\n" .. eColour .. eCost,       
+    }
+    
+    unitGridWindow:Show()
 end
 
 ----------------------------------
@@ -491,7 +495,7 @@ local function showFocusInfo()
 
     -- picture
     focusPicture = Chili.Image:New{
-        parent   = unitInfo,
+        parent   = unitWindow,
         file     = texture,
         color    = overlayColor,
         y        = 0,
@@ -551,7 +555,7 @@ local function showFocusInfo()
         
 
     
-    infoWindow:Show()        
+    unitWindow:Show()        
 end
 
 ----------------------------------
@@ -579,7 +583,7 @@ local function updateGroundInfo()
     local mx, my    = spGetMouseState()
     local focus,map = spTraceScreenRay(mx,my,true)
     if map and map[1] then
-        if groundInfo.hidden then groundInfo:Show() end
+        if groundWindow.hidden then groundWindow:Show() end
         local px,pz = math.floor(map[1]),math.floor(map[3])
         local py = math.floor(spGetGroundHeight(px,pz))
         groundText:SetText(
@@ -601,70 +605,68 @@ local function updateGroundInfo()
             "\n  Hvr: " .. hvrCol .. round(hvr,2) .. white ..
             "  Ship: " .. shipCol .. round(ship,2) .. white           
         )
-    elseif groundInfo.visible then
-        groundInfo:Hide()
+    elseif groundWindow.visible then
+        groundWindow:Hide()
     end
 end
 
 ----------------------------------
 local function updateUnitInfo()
-  
-    if curTip.type == "unitDefID" then     
-        -- single unit type
-        units = spGetSelectedUnits()
-        
-        local curHealth = 0
-        local maxHealth = 0
-        local Mmake, Muse, Emake, Euse = 0,0,0,0
-        for _, uID in ipairs(units) do
-            c, m = spGetUnitHealth(uID)
-            mm, mu, em, eu = spGetUnitResources(uID)
-            curHealth = curHealth + (c or 0)
-            maxHealth = maxHealth + (m or 0)
-            Mmake = Mmake + (mm or 0)
-            Muse = Muse + (mu or 0)
-            Emake = Emake + (em or 0)
-            Euse = Euse + (eu or 0)
-        end
-        unitHealthText:SetText(math.floor(curHealth) ..' / '.. math.floor(maxHealth)) 
-        unitHealth:SetMinMax(0, maxHealth)
-        unitHealth:SetValue(curHealth) 
-        unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
-        
-    elseif curTip.type == "unitDefPics" then 
-        -- multiple units, but not so many we cant fit pics
-        local Ecost,Mcost = 0,0
-        local Mmake,Muse,Emake,Euse = 0,0,0,0
-        for a = 1, #healthBars do
-            local health,max = 0,0
-            for b = 1, #healthBars[a].unitIDs do
-                local unitID = healthBars[a].unitIDs[b]
-                local defID = spGetUnitDefID(unitID)
-                if defID then
-                    local h, m = spGetUnitHealth(unitID)
-                    max   = max + (m or 0)
-                    health = health + (h or 0)
-                    local Mm, Mu, Em, Eu = spGetUnitResources(unitID)
-                    local Ec = UnitDefs[defID].energyCost
-                    local Mc = UnitDefs[defID].metalCost
-                    Mmake = Mmake + (Mm or 0)
-                    Emake = Emake + (Em or 0)
-                    Muse = Muse + (Mu or 0)
-                    Euse = Euse + (Eu or 0)
-                    if not UnitDefs[defID].customParams.iscommander then
-                        Mcost = Mcost + Mc
-                        Ecost = Ecost + Ec                
-                    end
+    -- single unit type
+    units = spGetSelectedUnits()
+    
+    local curHealth = 0
+    local maxHealth = 0
+    local Mmake, Muse, Emake, Euse = 0,0,0,0
+    for _, uID in ipairs(units) do
+        c, m = spGetUnitHealth(uID)
+        mm, mu, em, eu = spGetUnitResources(uID)
+        curHealth = curHealth + (c or 0)
+        maxHealth = maxHealth + (m or 0)
+        Mmake = Mmake + (mm or 0)
+        Muse = Muse + (mu or 0)
+        Emake = Emake + (em or 0)
+        Euse = Euse + (eu or 0)
+    end
+    unitHealthText:SetText(math.floor(curHealth) ..' / '.. math.floor(maxHealth)) 
+    unitHealth:SetMinMax(0, maxHealth)
+    unitHealth:SetValue(curHealth) 
+    unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
+end
+
+local function updateUnitGrid()
+    -- multiple units, but not so many we cant fit pics
+    local Ecost,Mcost = 0,0
+    local Mmake,Muse,Emake,Euse = 0,0,0,0
+    for a = 1, #healthBars do
+        local health,max = 0,0
+        for b = 1, #healthBars[a].unitIDs do
+            local unitID = healthBars[a].unitIDs[b]
+            local defID = spGetUnitDefID(unitID)
+            if defID then
+                local h, m = spGetUnitHealth(unitID)
+                max   = max + (m or 0)
+                health = health + (h or 0)
+                local Mm, Mu, Em, Eu = spGetUnitResources(unitID)
+                local Ec = UnitDefs[defID].energyCost
+                local Mc = UnitDefs[defID].metalCost
+                Mmake = Mmake + (Mm or 0)
+                Emake = Emake + (Em or 0)
+                Muse = Muse + (Mu or 0)
+                Euse = Euse + (Eu or 0)
+                if not UnitDefs[defID].customParams.iscommander then
+                    Mcost = Mcost + Mc
+                    Ecost = Ecost + Ec                
                 end
             end
-            healthBars[a].max = max
-            healthBars[a]:SetValue(health)
         end
-        
-        unitInfo:GetChildByName('unitResText'):SetText(ResToolTip(Mmake, Muse, Emake, Euse))
-        if Mcost>0 then
-            unitInfo:GetChildByName('unitCostText'):SetText(mColour .. Mcost .. '\n' .. eColour .. Ecost)
-        end
+        healthBars[a].max = max
+        healthBars[a]:SetValue(health)
+    end
+    
+    unitGridWindow:GetChildByName('unitResText'):SetText(ResToolTip(Mmake, Muse, Emake, Euse))
+    if Mcost>0 then
+        unitGridWindow:GetChildByName('unitCostText'):SetText(mColour .. Mcost .. '\n' .. eColour .. Ecost)
     end
 end
 
@@ -711,10 +713,12 @@ local function ResetTip()
     -- delete/hide the old tip
     curTip = nil
     healthBars = {}
-    if infoWindow.visible then infoWindow:Hide() end
-    if groundInfo.visible then groundInfo:Hide() end
-    selectionGrid:ClearChildren()
-    unitInfo:ClearChildren()
+    if unitWindow.visible then unitWindow:Hide() end
+    if groundWindow.visible then groundWindow:Hide() end
+    if unitGridWindow.visible then unitGridWindow:Hide() end
+    unitWindow:ClearChildren()
+    unitGridWindow:ClearChildren()
+    unitGrid:ClearChildren()
     
     -- choose the new tip
     ChooseCurTip()
@@ -725,16 +729,8 @@ local function ResetTip()
         showUnitInfo()
         updateUnitInfo()
     elseif curTip.type=="unitDefPics" then
-        for unitDefID, unitIDs in pairs(curTip.sortedSelUnits) do
-            if unitDefID ~= 'n' then 
-                local name    = UnitDefs[unitDefID].name
-                local texture = imageDir..'Units/' .. name .. '.dds'
-                local overlay = imageDir..'Overlays/' .. name .. '.dds'
-                addUnitGroup(name,texture,overlay,unitIDs, unitDefID)
-            end
-        end
-        addUnitGroupInfo()
-        updateUnitInfo()
+        showUnitGrid()
+        updateUnitGrid()
     elseif curTip.type=="basicUnitInfo" then
         showBasicUnitInfo()    
     elseif curTip.type=="ground" then
@@ -743,7 +739,7 @@ local function ResetTip()
 end
 
 local function TogglePreferredUnitInfo()
-    if unitInfo.visible then
+    if unitWindow.visible then
         preferFocus = not preferFocus
         ResetTip()
     end
@@ -761,7 +757,20 @@ function widget:Initialize()
     screen = Chili.Screen0
     local winSize = screen.height * 0.2
     
-    infoWindow = Chili.Button:New{ -- parent of all the info stuffs
+    unitWindow = Chili.Button:New{ -- parent for all the single unit info stuffs (including focus)
+        parent  = screen,
+        padding = {6,6,6,6},
+        borderColor = {1,1,1,1},
+        caption = "",
+        x       = 0,
+        y       = 0,
+        width   = winSize * 1.05,
+        height  = winSize,
+        OnClick = {TogglePreferredUnitInfo},
+    }
+    
+    unitGridWindow = Chili.Window:New{ -- parent for unit grid display, children are regenerated on each change
+        parent  = screen,
         padding = {6,6,6,6},
         borderColor = {1,1,1,1},
         caption = "",
@@ -772,9 +781,7 @@ function widget:Initialize()
         height  = winSize,
         OnClick = {TogglePreferredUnitInfo},
     }
-    
-    selectionGrid = Chili.Grid:New{ -- for multiple unit info stuff
-        parent  = infoWindow,
+    unitGrid = Chili.Grid:New{ 
         x       = 0,
         y       = 0,
         height  = '100%',
@@ -784,26 +791,17 @@ function widget:Initialize()
         padding = {0,0,0,0},
         margin  = {0,0,0,0},
     }    
-    unitInfo = Chili.Control:New{ -- window for unit info stuff, children are remade on each change
-        parent  = infoWindow,
-        x       = 0,
-        y       = 0,
-        height  = '100%',
-        width   = '100%',
-        padding = {0,0,0,0},
-        margin  = {0,0,0,0},
-    }
     
-    groundInfo = Chili.Panel:New{ -- for ground info, children are permanent
-        padding = {6,6,6,6},
+    groundWindow = Chili.Panel:New{ -- parent for ground info, children are permanent
         parent  = screen,
+        padding = {6,6,6,6},
         x       = 0,
         y       = 0,
         width   = 150,
         height  = 101,
     }    
     groundText = Chili.TextBox:New{
-        parent = groundInfo,
+        parent = groundWindow,
         x      = 0,
         y      = 1,
         right  = 0,
@@ -811,7 +809,7 @@ function widget:Initialize()
         text   = '',
     }
     groundText2 = Chili.TextBox:New{
-        parent = groundInfo,
+        parent = groundWindow,
         x      = 0,
         y      = 60,
         right  = 0,
@@ -860,19 +858,21 @@ function widget:Update()
 end
 
 function widget:GameFrame()
-    if curTip.type=="unitDefID" or curTip.type=="unitDefPics" then
-        updateUnitInfo()
+    if curTip.type=="unitDefID" then
+        updateUnitInfo()    
+    elseif curTip.type=="unitDefPics" then
+        updateUnitGrid()
     end
 end
 
 function widget:ViewResize(_,scrH)
-    infoWindow:Resize(scrH*0.2,scrH*0.2)
+    unitWindow:Resize(scrH*0.2,scrH*0.2)
     -- ground info does not resize
 end
 
 function widget:Shutdown()
-    infoWindow:Dispose()
-    groundInfo:Dispose()
+    unitWindow:Dispose()
+    groundWindow:Dispose()
     Spring.SetDrawSelectionInfo(true)
 end
 

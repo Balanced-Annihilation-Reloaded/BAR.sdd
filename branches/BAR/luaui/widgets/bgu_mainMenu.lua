@@ -649,7 +649,7 @@ end
 -- Creates a tab, mostly as an auxillary function for addControl()
 local function createTab(tab)
     tabs[tab.name] = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', children = tab.children or {} }
-    menuTabs:AddChild(Chili.TabBarItem:New{caption = tab.name})
+    menuTabs:AddChild(Chili.TabBarItem:New{caption = tab.name, width = tab.tabWidth})
 end
 
 -----OPTIONS-----------------
@@ -857,8 +857,8 @@ end
 --  if tab doesn't exist, one is created
 --  this is useful if you want a widget to get it's own tab (endgraph is a good example)
 --  this function probably won't change
-local function addControl(tab,control)
-    if not tabs[tab] then createTab{name = tab} end
+local function addControl(tab,control,tabWidth)
+    if not tabs[tab] then createTab{name = tab, tabWidth = tabWidth} end
     tabs[tab]:AddChild(control)
     tabs[tab]:Invalidate()
 end

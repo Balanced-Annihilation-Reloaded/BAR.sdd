@@ -21,8 +21,36 @@ local initialText = "Welcome to the BAR Beta Release!\n\nPlease choose a mission
 
 local selectedBorderColor = {1,127/255,0,0.45}
 local normalBorderColor = {1,1,1,0.1}
+local selectedButton
 
 ------------
+
+function ReadScript(file)
+    return VFS.LoadFile('luaui/configs/beta_release_scripts/'..file, VFS.ZIP_ONLY)
+end
+
+local options = {}
+local info = {}
+local script = {}
+--[[options.chickens = {
+    ["CHICKEN_DIFFICULTY"] = {},
+    ["CHICKEN_QUEEN_DIFFICULTY"] = {},
+    ["MAPNAME"] = {},
+}]]
+options["AI Skirmish"] = {
+    ["MAPNAME"] = {
+        humanName = "Map",
+        [1] = "Tundra", --TODO: choose maps
+        [2] = "Talus",
+    },
+}
+info["AI Skirmish"] = "Fight against an AI!\n\nStart positions are randomly chosen."
+script["AI Skirmish"] = ReadScript("ai.txt")
+
+
+
+------------
+
 function round(num, idp)
   return string.format("%." .. (idp or 0) .. "f", num)
 end
@@ -36,8 +64,54 @@ end
 local function Load (self)
     DeselectButtons()
     self.borderColor = selectedBorderColor
+    selectedButton = self
+    
+    optionsBox:ClearChildren()
 
+    local gameMode = self.caption
+    local options = options[gameMode] or {} -- {} prevents crash for wip game modes
+    
+    textInfoBox:SetText(info[gameMode])
+    
+    for name,choices in pairs(options) do
+        local thisOption = Chili.LayoutPanel:New{
+            parent = optionsBox,
+            name = name,
+            width = tostring(100/math.max(2,#options)) .. '%',
+            height = '100%',
+            orientation = "vertical", 
+            resizeItems = false,
+        }
+        Chili.Label:New{
+            parent = thisOption,
+            caption = choices.humanName,
+            width = '100%',
+            height = 20,
+            
+        }
+        Chili.ComboBox:New{
+            parent = thisOption,
+            name = "comboBox",
+            items = choices,   
+            width = '100%',
+        }
+    end
 
+end
+
+function Start()
+    if not selectedButton then return end
+    local gameMode = selectedButton.caption
+    local startScript = script[gameMode]
+    
+    for _,child in ipairs(optionsBox.children) do
+        local name = child.name
+        local comboBox = child:GetChildByName("comboBox")
+        local choice = comboBox.items[comboBox.selected]
+        startScript = string.gsub(startScript, name, choice)    
+    end
+    
+    Spring.Reload(startScript)
 end
 
 ------------
@@ -98,7 +172,7 @@ local function AddToMenu()
         height = '10%',
         width = '50%',
         caption = "START",
-        OnClick = {},
+        OnClick = {Start},
         borderColor = {0.2,1,0.2,0.35}
     }
     

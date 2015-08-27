@@ -8,9 +8,9 @@
 host=1;
 isfromdemo=0;
 name=Bot1;
-shortname=KAIK;
+shortname=CHICKEN_DIFFICULTY;
 team=0;
-version=0.13;
+version=<not-versioned>;
 }
 [allyteam0]
 {
@@ -32,8 +32,8 @@ maxspeed=3;
 maxunits=500;
 minspeed=0.3;
 mo_armageddontime=0;
-mo_chickengame=0;
-mo_chickenstart=initialbox;
+mo_chickengame=1;
+mo_chickenstart=avoid;
 mo_comgate=0;
 mo_coop=0;
 mo_custom_angerbonus=0.15;
@@ -53,11 +53,11 @@ mo_newbie_placer=0;
 mo_no_close_spawns=1;
 mo_preventcombomb=0;
 mo_queenanger=1;
-mo_queendifficulty=n_chickenq;
+mo_queendifficulty=CHICKEN_QUEEN_DIFFICULTY;
 mo_queentime=40;
 mo_transportenemy=none;
 pathfinder=normal;
-relayhoststartpostype=3;
+relayhoststartpostype=1;
 shareddynamicalliancevictory=0;
 startenergy=1000;
 startmetal=1000;
@@ -80,8 +80,6 @@ allyteam=1;
 handicap=0;
 rgbcolor=0.976471 1 0;
 side=CORE;
-startposx=6554;
-startposz=7438;
 teamleader=1;
 }
 [team1]
@@ -90,8 +88,6 @@ allyteam=0;
 handicap=0;
 rgbcolor=1 0 0;
 side=CORE;
-startposx=1688;
-startposz=606;
 teamleader=1;
 }
 gametype=Balanced Annihilation Reloaded $VERSION;
@@ -99,10 +95,9 @@ hostip=;
 hostport=8452;
 ishost=1;
 mapname=MAP_NAME;
-modhash=621226380;
 myplayername=Player;
 numplayers=1;
 numrestrictions=0;
 numusers=2;
-startpostype=3;
+startpostype=1;
 }

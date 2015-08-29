@@ -3,9 +3,9 @@
 
 #define SIG_BUILD 4	
 
-piece  base, ldoor, rdoor, lturret, rturret, lplate, rplate, lnano, rnano;
+piece  base, ldoor, rdoor, lturret, rturret, lplate, rplate, lnano, rnano, smoke1, smoke2;
 
-static-var  statechg_DesiredState, statechg_StateChanging, notBuilding, nano;
+static-var  bMoving, moveSpeed, currentSpeed, animSpeed, terrain, statechg_DesiredState, statechg_StateChanging, notBuilding, nano;
 
 
 activatescr()
@@ -34,12 +34,41 @@ deactivatescr()
 
 }
 
+UnitSpeed()
+{
+	while(TRUE)
+	{
+		currentSpeed = (get CURRENT_SPEED)*20/moveSpeed;
+		if (currentSpeed<4) currentSpeed=4;
+		animSpeed = 1800 / currentSpeed;
+		sleep 142;
+	}
+}
+
+Smoke()
+{
+	while( TRUE )
+	{
+		if ( bMoving )
+		{
+			if( terrain == 4 )
+			{
+				emit-sfx 1024 + 0 from smoke1;
+				emit-sfx 1024 + 0 from smoke2;
+			}
+		}
+		sleep animSpeed;
+	}
+}
+
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
 	while( get BUILD_PERCENT_LEFT )
 	{
 		sleep 500;
 	}
+	start-script Smoke();
+	start-script UnitSpeed();
 	while( TRUE )
 	{
 		healthpercent = get HEALTH;
@@ -91,10 +120,29 @@ RequestState(requestedstate, currentstate)
 
 Create()
 {
+	bMoving = FALSE;
+	moveSpeed = get (MAX_SPEED);
+	animSpeed = 100;
 	notBuilding = 1;
 	statechg_DesiredState = TRUE;
 	statechg_StateChanging = FALSE;
 	start-script SmokeUnit();
+}
+
+setSFXoccupy(state)
+{
+	terrain = state;
+}
+
+StartMoving()
+{
+	bMoving = TRUE;
+}
+
+
+StopMoving()
+{
+	bMoving = FALSE;
 }
 
 Activate()

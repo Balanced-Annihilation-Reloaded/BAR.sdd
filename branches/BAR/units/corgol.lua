@@ -90,6 +90,7 @@ return {
 		sfxtypes = {
 			explosiongenerators = {
 				[1] = "custom:goliathflare",
+				[2] = "custom:DUST_CLOUD",
 			},
 		},
 		sounds = {

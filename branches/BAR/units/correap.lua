@@ -88,6 +88,7 @@ return {
 		sfxtypes = {
 			explosiongenerators = {
 				[1] = "custom:MEDIUMFLARE",
+				[2] = "custom:DUST_CLOUD_FAST",
 			},
 		},
 		sounds = {

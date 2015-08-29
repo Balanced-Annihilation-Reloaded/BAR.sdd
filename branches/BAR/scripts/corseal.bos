@@ -6,11 +6,37 @@
 piece  flare1, flare2, turret, base, sleeve, barrel1, barrel2,
        wake1, wake2;
 
-static-var  restore_delay, gun_1, Static_Var_3, bMoving;
+static-var  bMoving, moveSpeed, currentSpeed, animSpeed, restore_delay, gun_1, terrain;
 
 // Signal definitions
 #define SIG_AIM				2
 
+UnitSpeed()
+{
+	while(TRUE)
+	{
+		currentSpeed = (get CURRENT_SPEED)*20/moveSpeed;
+		if (currentSpeed<4) currentSpeed=4;
+		animSpeed = 1600 / currentSpeed;
+		sleep 142;
+	}
+}
+
+Smoke()
+{
+	while( TRUE )
+	{
+		if ( bMoving )
+		{
+			if( terrain == 4 )
+			{
+				emit-sfx 1024 + 0 from wake1;
+				emit-sfx 1024 + 0 from wake2;
+			}
+		}
+		sleep animSpeed;
+	}
+}
 
 HitByWeapon(Func_Var_1, Func_Var_2)
 {
@@ -40,11 +66,11 @@ EmitSFX()
 	{
 		if( bMoving )
 		{
-			if( Static_Var_3 == 3 )
+			if( terrain == 1 )
 			{
 				emit-sfx 259 from wake1;
 				emit-sfx 259 from wake2;
-			}
+			} 
 		}
 		sleep 250;
 	}
@@ -52,13 +78,26 @@ EmitSFX()
 
 Create()
 {
+	bMoving = FALSE;
+	moveSpeed = get (MAX_SPEED);
+	animSpeed = 100;
 	hide flare1;
 	hide flare2;
-	Static_Var_3 = 4;
 	bMoving = FALSE;
 	gun_1 = flare1;
 	restore_delay = 3000;
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
 	start-script EmitSFX();
+	start-script Smoke();
+	start-script UnitSpeed();
+}
+
+setSFXoccupy(state)
+{
+	terrain = state;
 }
 
 SetMaxReloadTime(Func_Var_1)

@@ -84,6 +84,11 @@ return {
 				world = "all",
 			},
 		},
+		sfxtypes = {
+			explosiongenerators = {
+				[1] = "custom:DUST_CLOUD",
+			},
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

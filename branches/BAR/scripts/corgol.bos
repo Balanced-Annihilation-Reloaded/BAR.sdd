@@ -3,13 +3,36 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, flare, turret, sleeve, barrel;
+piece  base, flare, turret, sleeve, barrel, smoke1, smoke2;
 
-static-var  restore_delay;
+static-var  bMoving, moveSpeed, currentSpeed, animSpeed, restore_delay;
 
 // Signal definitions
 #define SIG_AIM				2
 
+UnitSpeed()
+{
+	while(TRUE)
+	{
+		currentSpeed = (get CURRENT_SPEED)*20/moveSpeed;
+		if (currentSpeed<4) currentSpeed=4;
+		animSpeed = 1800 / currentSpeed;
+		sleep 142;
+	}
+}
+
+Smoke()
+{
+	while( TRUE )
+	{
+		if ( bMoving )
+		{
+			emit-sfx 1024 + 1 from smoke1;
+			emit-sfx 1024 + 1 from smoke2;
+		}
+		sleep animSpeed;
+	}
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
@@ -17,6 +40,8 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	{
 		sleep 400;
 	}
+	start-script Smoke();
+	start-script UnitSpeed();
 	while( TRUE )
 	{
 		healthpercent = get HEALTH;
@@ -60,9 +85,23 @@ HitByWeapon(Func_Var_1, Func_Var_2)
 
 Create()
 {
+	bMoving = FALSE;
+	moveSpeed = get (MAX_SPEED);
+	animSpeed = 100;
 	hide flare;
 	restore_delay = 3000;
 	start-script SmokeUnit();
+}
+
+StartMoving()
+{
+	bMoving = TRUE;
+}
+
+
+StopMoving()
+{
+	bMoving = FALSE;
 }
 
 SetMaxReloadTime(Func_Var_1)

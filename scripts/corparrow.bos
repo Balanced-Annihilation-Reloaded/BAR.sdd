@@ -3,12 +3,40 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turret, barrel, sleeve, flare;
+piece  base, turret, barrel, sleeve, flare ,smoke1, smoke2, smoke3;
 
-static-var  restore_delay;
+static-var  bMoving, moveSpeed, currentSpeed, animSpeed, terrain,  restore_delay;
 
 // Signal definitions
 #define SIG_AIM				2
+
+UnitSpeed()
+{
+	while(TRUE)
+	{
+		currentSpeed = (get CURRENT_SPEED)*20/moveSpeed;
+		if (currentSpeed<4) currentSpeed=4;
+		animSpeed = 1800 / currentSpeed;
+		sleep 142;
+	}
+}
+
+Smoke()
+{
+	while( TRUE )
+	{
+		if ( bMoving )
+		{
+			if( terrain == 4 )
+			{
+				emit-sfx 1024 + 0 from smoke1;
+				emit-sfx 1024 + 0 from smoke2;
+				emit-sfx 1024 + 0 from smoke3;
+			}
+		}
+		sleep animSpeed;
+	}
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
@@ -16,6 +44,8 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	{
 		sleep 400;
 	}
+	start-script Smoke();
+	start-script UnitSpeed();
 	while( TRUE )
 	{
 		healthpercent = get HEALTH;
@@ -59,13 +89,32 @@ RockUnit(anglex, anglez)
 
 Create()
 {
+	bMoving = FALSE;
+	moveSpeed = get (MAX_SPEED);
+	animSpeed = 100;
 	restore_delay = 3000;
 	start-script SmokeUnit();
+}
+
+setSFXoccupy(state)
+{
+	terrain = state;
 }
 
 SetMaxReloadTime(Func_Var_1)
 {
 	restore_delay = Func_Var_1 * 2;
+}
+
+StartMoving()
+{
+	bMoving = TRUE;
+}
+
+
+StopMoving()
+{
+	bMoving = FALSE;
 }
 
 RestoreAfterDelay()

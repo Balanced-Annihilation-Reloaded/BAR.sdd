@@ -17,7 +17,8 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-if (not Spring.GetGameRulesParam("difficulty")) then
+local enabled = (tonumber(Spring.GetModOptions().mo_chickengame)==1) or false
+if not enabled then 
   return false
 end
 

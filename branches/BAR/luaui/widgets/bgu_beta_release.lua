@@ -336,7 +336,7 @@ function widget:Initialize()
     Chili = WG.Chili
     AddToMenu() 
 
-    if Spring.GetGameFrame()==0 then
+    if Spring.GetGameFrame()==0 and #Spring.GetAllyTeamList()<=2 then
         WG.MainMenu.ShowHide('Beta Release')
     end
 end

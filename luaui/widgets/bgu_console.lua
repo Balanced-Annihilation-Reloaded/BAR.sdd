@@ -304,7 +304,7 @@ local function processLine(line)
             local i = sfind(ssub(line,4,slen(line)), ">")
             name = ssub(line,4,i+2)
         end
-    elseif sfind(line,'-> Version') or sfind(line,'ClientReadNet') or sfind(line,'Address') or (gameOver and sfind(line,'left the game')) or sfind(line,'video mode set to') then --surplus info when user connects
+    elseif sfind(line,'-> Version') or sfind(line,'ClientReadNet') or sfind(line,'Address') or (gameOver and sfind(line,'left the game')) or sfind(line,'video mode set to') or sfind(line, 'RectangleOptimizer') then --surplus info when user connects
         -- Filter out unwanted engine messages
         return _, true, _ --ignore
     end

@@ -250,7 +250,6 @@ end
 --  also handles tab selection (e.g. f11 was pressed and menu opens to 'Interface')
 local function showHide(tab)
     local oTab = Settings.tabSelected
-    Spring.Echo(tab)
 
     Chili.Screen0.currentTooltip = nil
     
@@ -615,6 +614,8 @@ local slider = function(obj)
         x       = 0,
         padding = {0,0,0,0}
     }
+
+    Spring.Echo(obj.name, Settings[obj.name])
 
     local function applySetting(obj, value)
         Settings[obj.name] = value

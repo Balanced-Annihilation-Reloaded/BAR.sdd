@@ -104,6 +104,21 @@ options["AI Skirmish"] = {
             [2] = "Talus",
         }
     },
+    [2] = {
+        name = "HANDICAP",
+        humanName = "Difficulty",
+        options = {
+            [1] = "Very Easy",
+            [2] = "Easy",
+            [3] = "Medium",
+        replace = {
+            [1] = "0",
+            [2] = "50",
+            [3] = "100",        
+        }
+        
+        }
+    }
 }
 info["AI Skirmish"] = "Fight against an AI!\n\nStart positions are randomly chosen."
 script["AI Skirmish"] = ReadScript("ai.txt")

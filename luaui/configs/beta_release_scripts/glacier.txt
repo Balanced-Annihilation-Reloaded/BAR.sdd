@@ -1,0 +1,45 @@
+[GAME]
+{
+	MapName=Grts_Rocky_Glacier_010;
+	StartposType=2;
+	GameType=Glacier;
+	IsHost=1;
+	OnlyLocal=1;
+	MyPlayerName=Player_1;
+	[MODOPTIONS]
+	{
+
+	}
+	[PLAYER0]
+	{
+		Name=Player_1;
+		Team=0;
+	}
+	[AI0]
+	{
+		Name=Player_2;
+		ShortName=NullAI;
+		Team=1;
+		Host=0;
+	}
+	[TEAM0]
+	{
+		TeamLeader=0;
+		AllyTeam=0;
+		RGBColor=0 0 1;
+	}
+	[TEAM1]
+	{
+		TeamLeader=0;
+		AllyTeam=1;
+		RGBColor=1 0 0;
+	}
+	[ALLYTEAM0]
+	{
+		NumAllies=0;
+		StartRectTop=0;		StartRectBottom=0;		StartRectLeft=1;		StartRectRight=1;	}
+	[ALLYTEAM1]
+	{
+		NumAllies=0;
+		StartRectTop=0;		StartRectBottom=0;		StartRectLeft=1;		StartRectRight=1;	}
+}

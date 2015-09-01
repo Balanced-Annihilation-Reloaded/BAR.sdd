@@ -111,12 +111,11 @@ options["AI Skirmish"] = {
             [1] = "Very Easy",
             [2] = "Easy",
             [3] = "Medium",
+        }
         replace = {
             [1] = "0",
             [2] = "50",
             [3] = "100",        
-        }
-        
         }
     }
 }

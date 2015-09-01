@@ -746,13 +746,14 @@ local function createInfoTab()
     -- Info --
     tabs.General = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
         children = {
-            Chili.Label:New{name = 'info caption', caption = 'test', x = 0, y = 2, width = '70%', fontsize = 20},
+            Chili.Label:New{name = 'info caption', caption = '', x = 0, y = 2, width = '70%', fontsize = 20},
             Chili.LayoutPanel:New{name  = 'info_layoutpanel', width = '70%', x=0, y=20, bottom=0},
 
-            Chili.Button:New{caption = 'Match Info', iPanel = matchInfo, height = '7%', width = '28%', right = '1%', y = '7%', OnMouseUp = {SetInfoChild}},
+            Chili.Button:New{caption = 'Introduction', iPanel = introText, height = '7%', width = '28%', right = '1%', y = '7%', OnMouseUp = {SetInfoChild}},
             Chili.Button:New{caption = 'Hotkey Info', iPanel = hotkeyInfo, height = '7%', width = '28%', right = '1%', y = '16%', OnMouseUp = {SetInfoChild}},
-            Chili.Button:New{caption = 'Changelog', iPanel = changeLog, height = '7%', width = '28%', right = '1%', y = '25%', OnMouseUp = {SetInfoChild}},
-            Chili.Button:New{caption = 'Intro', iPanel = introText, height = '7%', width = '28%', right = '1%', y = '34%', OnMouseUp = {SetInfoChild}},
+
+            Chili.Button:New{caption = 'Match Info', iPanel = matchInfo, height = '7%', width = '28%', right = '1%', y = '28%', OnMouseUp = {SetInfoChild}},
+            Chili.Button:New{caption = 'Changelog', iPanel = changeLog, height = '7%', width = '28%', right = '1%', y = '37%', OnMouseUp = {SetInfoChild}},
             
             Chili.Button:New{caption = 'Resign and Spectate', name = "ResignButton", height = '9%', width = '28%', right = '1%', y = '72%', OnMouseUp = {ResignMe}},
             Chili.Button:New{caption = 'Exit To Desktop',height = '9%',width = '28%',right = '1%', y = '82%',
@@ -761,7 +762,7 @@ local function createInfoTab()
     }
 
     if amNewbie then
-        SetInfoChild{iPanel = introText, caption = 'Intro'}
+        SetInfoChild{iPanel = introText, caption = 'Introduction'}
     else
         SetInfoChild{iPanel = matchInfo, caption = 'Match Info'}
     end
@@ -956,9 +957,10 @@ function widget:Initialize()
 
     -----------------------
     ---     Hotkeys     ---
-    local openMenu    = function() showHide('Info') end
+    local openMenu    = function() showHide('General') end
     local openWidgets = function() if mainMenu.visible then mainMenu:Hide() return end; showHide('Interface') end
     local hideMenu    = function() if mainMenu.visible then mainMenu:Hide() end end
+    local toggeMenu   = function() if mainMenu.visible then showHide('General') else mainMenu:Hide() end end
 
     spSendCommands('unbindkeyset f11')
     spSendCommands('unbindkeyset Any+i gameinfo')
@@ -966,8 +968,8 @@ function widget:Initialize()
     widgetHandler.actionHandler:AddAction(widget,'openMenu', openMenu, nil, 't')
     widgetHandler.actionHandler:AddAction(widget,'openWidgets', openWidgets, nil, 't')
     widgetHandler.actionHandler:AddAction(widget,'hideMenu', hideMenu, nil, 't')
-    spSendCommands('bind i openMenu')
-    spSendCommands('bind S+esc openMenu')
+    spSendCommands('bind i toggleMenu')
+    spSendCommands('bind S+esc toggleMenu')
     spSendCommands('bind f11 openWidgets')
     spSendCommands('bind esc hideMenu')
 end

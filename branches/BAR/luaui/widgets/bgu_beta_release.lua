@@ -97,7 +97,7 @@ options["Chickens"] = {
         },   
     },
 }
-info["Chickens"] = "Fight against hoards of oncoming chickens!\n\nThe chickens come at you in several waves. Most chickens walk, but some can climb, fly and even swim. There will be a short grace period before they being to attack. To win, you must defend yourself and then defeat the fearsomely blood-thirsty chicken queen.\n\nStart positions are randomly chosen, and chicken burrows can spawn anywhere outside your base.\n\nETA: 30-60 minutes"
+info["Chickens"] = "Fight against hoards of oncoming mutated chickens!\n\nThe chickens come at you in several waves. Most chickens walk, but some can climb, fly and even swim. There will be a short grace period before they being to attack. To win, you must defend yourself and then defeat the fearsomely blood-thirsty chicken queen.\n\nStart positions are randomly chosen, and chicken burrows can spawn anywhere outside your base.\n\nETA: 30-60 minutes"
 script["Chickens"] = ReadScript("chickens.txt")
 images["Chickens"] = ImagePath("chickens.png")
 
@@ -141,7 +141,7 @@ script["Mission 2: Magic Forest"] = ReadScript("magic_forest.txt")
 images["Mission 2: Magic Forest"] = ImagePath("magic_forest.png")
 
 options["Mission 3: Tropical"] = {}
-info["Mission 3: Tropical"] = "\nEnemy units are scattered across a tropical achepelago, in the midst of a battle between two rival factions. They will be preoccupied fighting each other, and we need you to cross the islands and destroy their aircraft plants.\n\nETA: 30-45 minutes"
+info["Mission 3: Tropical"] = "\nEnemy units are scattered across a tropical archipelago, in the midst of a battle between two rival factions. They will be preoccupied fighting each other, and we need you to cross the islands and destroy their aircraft plants.\n\nETA: 30-45 minutes"
 script["Mission 3: Tropical"] = ReadScript("tropical.txt")
 images["Mission 3: Tropical"] = ImagePath("tropical.png")
 

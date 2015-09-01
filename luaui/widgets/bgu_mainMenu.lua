@@ -250,6 +250,7 @@ end
 --  also handles tab selection (e.g. f11 was pressed and menu opens to 'Interface')
 local function showHide(tab)
     local oTab = Settings.tabSelected
+    Spring.Echo(tab)
 
     Chili.Screen0.currentTooltip = nil
     
@@ -408,6 +409,7 @@ local function loadMainMenu()
         padding   = {5,8,5,5},
         draggable = true,
         resizable = true,
+        OnChange = {function() Chili.Screen0.currentTooltip=nil end},
         OnResize  = {
             function(self)
                 Save{mainMenuSize = {x=self.x,y=self.y,width=self.width,height=self.height}}
@@ -426,7 +428,7 @@ local function loadMainMenu()
         width        = '100%',
         height       = 20,
         minItemWidth = 70,
-        selected     = Settings.tabSelected or 'Info',
+        selected     = Settings.tabSelected or 'General',
         tabs         = {'General','Interface', 'Graphics'},
         itemPadding  = {1,0,1,0},
         OnChange     = {sTab}
@@ -613,8 +615,6 @@ local slider = function(obj)
         x       = 0,
         padding = {0,0,0,0}
     }
-
-    Spring.Echo(obj.name, Settings[obj.name])
 
     local function applySetting(obj, value)
         Settings[obj.name] = value
@@ -957,20 +957,19 @@ function widget:Initialize()
 
     -----------------------
     ---     Hotkeys     ---
-    local openMenu    = function() showHide('General') end
-    local openWidgets = function() if mainMenu.visible then mainMenu:Hide() return end; showHide('Interface') end
-    local hideMenu    = function() if mainMenu.visible then mainMenu:Hide() end end
-    local toggeMenu   = function() if mainMenu.visible then showHide('General') else mainMenu:Hide() end end
+    local toggleMenu      = function() showHide('General') end
+    local hideMenu        = function() if mainMenu.visible then mainMenu:Hide() end end
+    local toggleInterface = function() showHide('Interface') end
 
     spSendCommands('unbindkeyset f11')
     spSendCommands('unbindkeyset Any+i gameinfo')
     spSendCommands('unbind S+esc quitmenu','unbind esc quitmessage')
-    widgetHandler.actionHandler:AddAction(widget,'openMenu', openMenu, nil, 't')
-    widgetHandler.actionHandler:AddAction(widget,'openWidgets', openWidgets, nil, 't')
+    widgetHandler.actionHandler:AddAction(widget,'toggleInterface', toggleInterface, nil, 't')
     widgetHandler.actionHandler:AddAction(widget,'hideMenu', hideMenu, nil, 't')
+    widgetHandler.actionHandler:AddAction(widget,'toggleMenu', toggleMenu, nil, 't')
     spSendCommands('bind i toggleMenu')
     spSendCommands('bind S+esc toggleMenu')
-    spSendCommands('bind f11 openWidgets')
+    spSendCommands('bind f11 toggleInterface')
     spSendCommands('bind esc hideMenu')
 end
 

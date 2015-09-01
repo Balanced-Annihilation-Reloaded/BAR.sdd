@@ -26,12 +26,17 @@ local selectedButton
 ------------
 
 function ReadScript(file)
-    return VFS.LoadFile('luaui/configs/beta_release_scripts/'..file, VFS.ZIP_ONLY)
+    return VFS.LoadFile('luaui/configs/beta_release/'..file, VFS.ZIP_ONLY)
+end
+function ImagePath(file)
+    return "luaui/configs/beta_release/"..file
 end
 
 local options = {}
 local info = {}
 local script = {}
+local images = {}
+
 options["Chickens"] = {
     [1] = {
         name = "MAP_NAME",
@@ -94,6 +99,7 @@ options["Chickens"] = {
 }
 info["Chickens"] = "Fight against hoards of oncoming chickens!\n\nThe chickens come at you in several waves. Most chickens walk, but some can climb, fly and even swim. There will be a short grace period before they being to attack. To win, you must defend yourself and then defeat the fearsomely blood-thirsty chicken queen.\n\nStart positions are randomly chosen, and chicken burrows can spawn anywhere outside your base.\n\nETA: 30-60 minutes"
 script["Chickens"] = ReadScript("chickens.txt")
+images["Chickens"] = ImagePath("chickens.png")
 
 options["AI Skirmish"] = {
     [1] = {
@@ -111,7 +117,7 @@ options["AI Skirmish"] = {
             [1] = "Very Easy",
             [2] = "Easy",
             [3] = "Medium",
-        }
+        },
         replace = {
             [1] = "0",
             [2] = "50",
@@ -125,16 +131,22 @@ script["AI Skirmish"] = ReadScript("ai.txt")
 options["Mission 1: Glacier"] = {}
 info["Mission 1: Glacier"] = "\nIntelligence suggests that the enemy has a control tower to the east of the glacier. Fight your way across the ice and destroy it!\n\nETA: 10 minutes"
 script["Mission 1: Glacier"] = ReadScript("glacier.txt")
+images["Mission 1: Glacier"] = ImagePath("glacier.png")
 
 options["Mission 2: Magic Forest"] = {
     
 }
 info["Mission 2: Magic Forest"] = "\nOur top spybot is in trouble! It's cloaking device failed and it was forced to hide deep inside a mountainous forest. We don't have its exact location, so we're relying on you to locate it and bring it back to our control tower.\n\nETA: 20 minutes"
 script["Mission 2: Magic Forest"] = ReadScript("magic_forest.txt")
+images["Mission 2: Magic Forest"] = ImagePath("magic_forest.png")
 
 options["Mission 3: Tropical"] = {}
 info["Mission 3: Tropical"] = "\nEnemy units are scattered across a tropical achepelago, in the midst of a battle between two rival factions. They will be preoccupied fighting each other, and we need you to cross the islands and destroy their aircraft plants.\n\nETA: 30-45 minutes"
 script["Mission 3: Tropical"] = ReadScript("tropical.txt")
+images["Mission 3: Tropical"] = ImagePath("tropical.png")
+
+
+
 ------------
 
 function round(num, idp)
@@ -157,7 +169,9 @@ local function Load (self)
     local gameMode = self.caption
     local options = options[gameMode] or {} -- {} prevents crash for wip game modes
     
-    textInfoBox:SetText(info[gameMode])
+    textInfoScrollPanel:ClearChildren()
+    textInfoBox = Chili.TextBox:New{parent=textInfoScrollPanel, width='100%', text=info[gameMode], padding = {8,8,8,8}}
+    textInfoBG = Chili.Image:New{parent=textInfoScrollPanel, width='100%', height='100%', file=images[gameMode], keepAspect=false, color={0.6,0.6,0.6,1}}
     
     local i = 0
     local w_pc = 100/3
@@ -173,8 +187,6 @@ local function Load (self)
             orientation = "vertical", 
             resizeItems = false,
             padding = {0,0,0,0},
-            --itemPadding = {0,0,0,0},
-            --itemMargin = {0,0,0,0},
             
         }
         Chili.Label:New{
@@ -218,7 +230,6 @@ function Start()
         local comboBox = child:GetChildByName("comboBox")
         if comboBox then
             local choice = comboBox.replace[comboBox.selected] or comboBox.items[comboBox.selected] 
-            --Spring.Echo(name, comboBox.replace[comboBox.selected], comboBox.items[comboBox.selected] )
             startScript = string.gsub(startScript, name, choice)    
         end
     end

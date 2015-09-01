@@ -92,7 +92,7 @@ options["Chickens"] = {
         },   
     },
 }
-info["Chickens"] = "Fight against hoards of oncoming chickens!\n\nStart positions are randomly chosen."
+info["Chickens"] = "Fight against hoards of oncoming chickens!\n\nThe chickens come at you in several waves. Most chickens walk, but some can climb, fly and even swim. There will be a short grace period before they being to attack. To win, you must defend yourself and then defeat the fearsomely blood-thirsty chicken queen.\n\nStart positions are randomly chosen, and chicken burrows can spawn anywhere outside your base.\n\nETA: 30-60 minutes"
 script["Chickens"] = ReadScript("chickens.txt")
 
 options["AI Skirmish"] = {
@@ -108,8 +108,19 @@ options["AI Skirmish"] = {
 info["AI Skirmish"] = "Fight against an AI!\n\nStart positions are randomly chosen."
 script["AI Skirmish"] = ReadScript("ai.txt")
 
+options["Mission 1: Glacier"] = {}
+info["Mission 1: Glacier"] = "\nIntelligence suggests that the enemy has a control tower to the east of the glacier. Fight your way across the ice and destroy it!\n\nETA: 10 minutes"
+script["Mission 1: Glacier"] = ReadScript("glacier.txt")
 
+options["Mission 2: Magic Forest"] = {
+    
+}
+info["Mission 2: Magic Forest"] = "\nOur top spybot is in trouble! It's cloaking device failed and it was forced to hide deep inside a mountainous forest. We don't have its exact location, so we're relying on you to locate it and bring it back to our control tower.\n\nETA: 20 minutes"
+script["Mission 2: Magic Forest"] = ReadScript("magic_forest.txt")
 
+options["Mission 3: Tropical"] = {}
+info["Mission 3: Tropical"] = "\nEnemy units are scattered across a tropical achepelago, in the midst of a battle between two rival factions. They will be preoccupied fighting each other, and we need you to cross the islands and destroy their aircraft plants.\n\nETA: 30-45 minutes"
+script["Mission 3: Tropical"] = ReadScript("tropical.txt")
 ------------
 
 function round(num, idp)
@@ -136,7 +147,9 @@ local function Load (self)
     
     local i = 0
     local w_pc = 100/3
+    local hasOptions = false
     for _,config in ipairs(options) do
+        hasOptions = true
         local thisOption = Chili.LayoutPanel:New{
             parent = optionsBox,
             name = config.name,
@@ -169,6 +182,15 @@ local function Load (self)
         
         i = i + 1
     end
+    if not hasOptions then
+        Chili.Label:New{
+            parent = optionsBox,
+            caption = "\255\150\150\150(There are no options for this game mode)",
+            x = '10%',
+            y = '45%',
+        }
+        optionsBox:Invalidate()
+    end
 
 end
 
@@ -180,9 +202,11 @@ function Start()
     for _,child in ipairs(optionsBox.children) do
         local name = child.name
         local comboBox = child:GetChildByName("comboBox")
-        local choice = comboBox.replace[comboBox.selected] or comboBox.items[comboBox.selected] 
-        Spring.Echo(name, comboBox.replace[comboBox.selected], comboBox.items[comboBox.selected] )
-        startScript = string.gsub(startScript, name, choice)    
+        if comboBox then
+            local choice = comboBox.replace[comboBox.selected] or comboBox.items[comboBox.selected] 
+            --Spring.Echo(name, comboBox.replace[comboBox.selected], comboBox.items[comboBox.selected] )
+            startScript = string.gsub(startScript, name, choice)    
+        end
     end
     
     Spring.Reload(startScript)
@@ -265,13 +289,13 @@ local function AddToMenu()
         resizeItems = true,
         children = {
             Chili.Line:New{width = '50%', height = 2},
-            Chili.Button:New{height = 70, width = '90%', caption = "AI Skirmish", OnClick = {Load},},
+            Chili.Button:New{height = 70, width = '95%', caption = "AI Skirmish", OnClick = {Load},},
             Chili.Line:New{width = '50%', height = 2},
-            Chili.Button:New{height = 70, width = '90%', caption = "Chickens", OnClick = {Load},},
+            Chili.Button:New{height = 70, width = '95%', caption = "Chickens", OnClick = {Load},},
             Chili.Line:New{width = '50%', height = 2},
-            Chili.Button:New{height = 70, width = '90%', caption = "Mission 1: Glacier", OnClick = {Load},},
-            Chili.Button:New{height = 70, width = '90%', caption = "Mission 2: ?", OnClick = {Load},},
-            Chili.Button:New{height = 70, width = '90%', caption = "Mission 3: ?", OnClick = {Load},},
+            Chili.Button:New{height = 70, width = '95%', caption = "Mission 1: Glacier", OnClick = {Load},},
+            Chili.Button:New{height = 70, width = '95%', caption = "Mission 2: Magic Forest", OnClick = {Load},},
+            Chili.Button:New{height = 70, width = '95%', caption = "Mission 3: Tropical", OnClick = {Load},},
             Chili.Line:New{width = '50%', height = 2},
         }    
     }

@@ -5,7 +5,7 @@ function widget:GetInfo()
         author  = 'Bluestone',
         date    = 'August 2015',
         license = 'GNU GPL v2',
-        layer   = 0,
+        layer   = 1,
         enabled = true
     }
 end
@@ -334,8 +334,11 @@ function widget:Initialize()
     if not WG.Chili then return end
     
     Chili = WG.Chili
-    AddToMenu()
-    
+    AddToMenu() 
+
+    if Spring.GetGameFrame()==0 then
+        WG.MainMenu.ShowHide('Beta Release')
+    end
 end
 
 function widget:ShutDown()

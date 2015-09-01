@@ -13,8 +13,8 @@ function gadget:GetInfo()
   }
 end
 
-local enabled = tonumber(Spring.GetModOptions().mo_chickengame) or 0
-if (enabled == 0) then 
+local enabled = (tonumber(Spring.GetModOptions().mo_chickengame)==1) or false
+if not enabled then 
   return false
 end
 

@@ -251,7 +251,8 @@ end
 local function showHide(tab)
     local oTab = Settings.tabSelected
 
-
+    Chili.Screen0.currentTooltip = nil
+    
     if tab then
         menuTabs:Select(tab)
     else

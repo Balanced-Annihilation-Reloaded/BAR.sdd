@@ -77,7 +77,7 @@ team=1;
 [team0]
 {
 allyteam=1;
-handicap=0;
+handicap=HANDICAP;
 rgbcolor=0.976471 1 0;
 side=CORE;
 startposx=6554;

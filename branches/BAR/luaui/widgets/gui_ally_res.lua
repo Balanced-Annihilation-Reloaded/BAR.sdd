@@ -90,7 +90,7 @@ function widget:GameFrame()
     end
     
     --update stats
-    for _,res in pairs(resources) do
+    for _,res in ipairs(resources) do
         for _,a in pairs(allyTeamStats) do
             a[res.name].lev = 0
             a[res.name].storage = 0

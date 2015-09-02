@@ -90,12 +90,12 @@ function round(num, idp)
   return math.floor(num * mult + 0.5) / mult
 end
 
-function InlineColour(a,b,c)
+function InlineColour(R,G,B)
     local r,g,b
     if type(a) == 'table' then
-        r,g,b = math.max(1,a[1]*255),math.max(1,a[2]*255),math.max(1,a[3]*255)
+        r,g,b = math.max(1,R[1]*255),math.max(1,G[2]*255),math.max(1,B[3]*255)
     else
-        r,g,b = math.max(1,a*255),math.max(1,b*255),math.max(1,c*255)
+        r,g,b = math.max(1,R*255),math.max(1,G*255),math.max(1,B*255)
     end
     return string.char(255,r,g,b)
 end

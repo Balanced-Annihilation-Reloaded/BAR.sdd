@@ -275,12 +275,12 @@ else
             playerInfoTable[playerID] = playerInfoTableEntry
 
             --mark hosted ais as controlled
-            local hostedAis = aiOwners[aiHost]
+            local hostedAis = aiOwners[playerID]
             if hostedAis then
                 --a player only needs to be connected and low enough ping to host an ai
                 if playerInfoTableEntry.connected  and playerInfoTableEntry.pingOK then
                     for _,aiTeamID in ipairs(hostedAis) do
-                        TeamToRemainingPlayers[teamID] = TeamToRemainingPlayers[teamID] +1
+                        TeamToRemainingPlayers[aiTeamID] = TeamToRemainingPlayers[aiTeamID] + 1
                     end
                 end
             end

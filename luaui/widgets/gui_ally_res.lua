@@ -119,7 +119,6 @@ function ShareResource(self)
     local currentLevel,_ = spGetTeamResources(myTeamID, res)
     local toShare = currentLevel * 0.25
    
-    Spring.Echo(targetTeamID,res,toShare)
     Spring.ShareResources(targetTeamID,res,toShare)   
 end
 

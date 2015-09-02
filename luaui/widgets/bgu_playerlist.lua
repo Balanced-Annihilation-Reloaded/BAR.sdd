@@ -92,8 +92,8 @@ end
 
 function InlineColour(R,G,B)
     local r,g,b
-    if type(a) == 'table' then
-        r,g,b = math.max(1,R[1]*255),math.max(1,G[2]*255),math.max(1,B[3]*255)
+    if type(R) == 'table' then
+        r,g,b = math.max(1,R[1]*255),math.max(1,R[2]*255),math.max(1,R[3]*255)
     else
         r,g,b = math.max(1,R*255),math.max(1,G*255),math.max(1,B*255)
     end

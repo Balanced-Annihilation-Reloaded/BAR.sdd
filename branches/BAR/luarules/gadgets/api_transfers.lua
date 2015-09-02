@@ -65,9 +65,7 @@ function AnnounceTransfer(teamID, newTeamID, object, amount)
     end
     amount = format(amount,0)
     
-    if true or Spring.AreTeamsAllied(teamID,Spring.GetMyTeamID()) then
-        SendToUnsynced("ObjectTransfered", teamID, newTeamID, object, amount) --TODO
-    end
+    SendToUnsynced("ObjectTransfered", teamID, newTeamID, object, amount) --TODO
 end
 
 function gadget:GameFrame(n)
@@ -102,6 +100,7 @@ end
 
 function ObjectTransfered(_,teamID, newTeamID, object, amount)
     if not Script.LuaUI("ObjectTransfered") then return end
+    if not Spring.AreTeamsAllied(teamID,Spring.GetMyTeamID()) then return end
     Script.LuaUI.ObjectTransfered(teamID, newTeamID, object, amount)
 end
 

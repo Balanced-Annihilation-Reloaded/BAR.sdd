@@ -86,6 +86,7 @@ function widget:GameFrame()
     if needUpdate then
         CheckMyState()
         SetupPanels()
+        needUpdate = false
     end
     
     --update stats

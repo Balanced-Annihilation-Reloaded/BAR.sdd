@@ -73,7 +73,7 @@ function UpdateTeamPanel(tID, res)
     local aID = allyTeamOfTeam[tID]
     local currentLevel, storage, pull, income, expense, share, sent, received = spGetTeamResources(tID, res.name)
 
-    teamPanels[tID]:GetChildByName(res.name):SetValue(currentLevel/storage)
+    teamPanels[tID]:GetChildByName(res.name).children[1]:SetValue(currentLevel/storage)
     
     local a = allyTeamStats[aID][res.name]
     a.lev      = a.lev + currentLevel
@@ -107,6 +107,22 @@ function widget:GameFrame()
         end
     end    
 end
+
+-----------------------
+
+function ShareResource(self)
+    local myTeamID = Spring.GetMyTeamID()
+    local targetTeamID = self.tID
+    if amISpec or targetTeamID==myTeamID then return end
+    
+    local res = self.name
+    local currentLevel,_ = spGetTeamResources(myTeamID, res)
+    local toShare = currentLevel * 0.25
+   
+    Spring.Echo(targetTeamID,res,toShare)
+    Spring.ShareResources(targetTeamID,res,toShare)   
+end
+
 
 -----------------------
 
@@ -180,19 +196,29 @@ function ConstructTeamPanel(tID)
     
     local hPos = hPadding/2
     for _,res in pairs(resources) do
-        Chili.Progressbar:New{
-            parent = panel, 
-            name   = res.name,
+        local button = Chili.Button:New{
+            parent = panel,
+            name   = res.name, 
+            tID    = tID,
+            caption = "",
             x      = imageHeight+6, 
             y      = hPos, 
-            width  = panelWidth-imageHeight-13,
+            width  = panelWidth-imageHeight-13,        
+            height = 10,
+            padding   = {0,0,0,0},
+            margin    = {0,0,0,0},
+            OnClick = {ShareResource},
+        }
+        Chili.Progressbar:New{
+            parent = button,
+            x = 0,
+            y = 0,
+            width = '100%',
+            height = '100%',
             color  = res.color,
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
-            height = 10,
             max = 1,
-            -- OnClick TODO: share res, but onclick seems to fail here, strangely onmouseout works
-            --caption= "",
         }    
         hPos = hPos + (panelHeight-hPadding)/2
     end

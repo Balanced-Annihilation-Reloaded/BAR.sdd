@@ -395,27 +395,25 @@ local function GetUnitDefKeyProperties (defID)
     -- deal with two very special cases
     if defID==UnitDefNames.commando.id then
         t[#t+1] = {"Health", green .. tostring(ud.health)}
-        t[#t+1] = {"Build Power", lilac .. round(ud.buildSpeed)}
         t[#t+1] = {"Max Speed", tomato .. round(ud.speed)}
+        t[#t+1] = {"Build Power", lilac .. round(ud.buildSpeed)}
         t[#t+1] = {"Weapon Range", turqoise .. round(GetMaxWeaponRange(ud))}
         t[#t+1] = {"Damage Per Sec", red .. round(GetDamagePerSec(ud))}    
         return t
     elseif ud.customParams.iscommander=="1" then
         t[#t+1] = {"Health", green .. tostring(ud.health)}
-        t[#t+1] = {"Build Power", lilac .. round(ud.buildSpeed)}
         t[#t+1] = {"Max Speed", tomato .. round(ud.speed)}
+        t[#t+1] = {"Build Power", lilac .. round(ud.buildSpeed)}
         t[#t+1] = {"Weapon Range", turqoise .. round(GetMaxWeaponRange(ud))}
         return t
     end
     
     -- deal with the rest
     t[#t+1] = {"Health", green .. tostring(ud.health)}
+    if ud.speed>0 then t[#t+1] = {"Max Speed", tomato .. round(ud.speed)} end
     
-    if ud.isFactory or (ud.isBuilder and ud.speed==0) then
+    if ud.isFactory or ud.isBuilder then
         t[#t+1] = {"Build Power", lilac .. round(ud.buildSpeed)}
-    elseif ud.isBuilder and ud.canMove then
-        t[#t+1] = {"Build Power", lilac .. round(ud.buildSpeed)}
-        t[#t+1] = {"Max Speed", tomato .. round(ud.speed)}
     elseif ud.energyMake>=20 and #ud.weapons==0 and ud.speed==0 then
         t[#t+1] = {"Energy Output", eColour .. round(ud.energyMake)}
     elseif (ud.radarRadius>200 or ud.sonarRadius>200) and #ud.weapons==0 then
@@ -457,7 +455,6 @@ local function GetUnitDefKeyProperties (defID)
         -- missile costs would be nice but no space
     elseif #ud.weapons>0 then
         -- mobile units & static def
-        if ud.speed>0 then t[#t+1] = {"Max Speed", tomato .. round(ud.speed)} end
         if not ud.isBomberAirUnit then t[#t+1] = {"Weapon Range", turqoise .. round(GetMaxWeaponRange(ud))} end
         if GetMaxWeaponReload(ud)>=7 then 
             t[#t+1] = {"Reload Time", blue .. round(GetMaxWeaponReload(ud)) .. "s"}

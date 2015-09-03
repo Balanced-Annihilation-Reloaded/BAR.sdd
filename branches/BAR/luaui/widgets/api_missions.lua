@@ -15,10 +15,16 @@ end
 
 --[[ 
     NOTES
-        
-    Missions have their own spawn/end behaviour and are single player only
-    The mission gives instructions/data to this GUI via WG
-        
+    
+    Missions have their own spawn/end behaviour and are single player only.
+    The mission gives instructions/data to this GUI via WG.
+    
+    Missions announce their existence by setting WG.isMission==true
+    Some mission editors don't allow to set values in WG until GamePreload. 
+    Also, we don't want to include this API inside the missions themselves, because then only BAR devs could make/update missions.
+    So, we have to remove widgets that aren't wanted during missions here, in GamePreload.
+    This means we also have to use this widget to re-instate them, next time we run and its not a mission.
+    
 ]]
 
 local isMission --= true

@@ -334,7 +334,6 @@ end
 
 function widgetHandler:SaveConfigData()
   resetWidgetDetailLevel = false
-  self:LoadConfigData()
   for _,w in ipairs(self.widgets) do
     if (w.GetConfigData) then
       local ok, err = pcall(function() 

@@ -55,7 +55,9 @@ end
 
 function widget:GamePreload()
     isMission = isMission or WG.isMission
-    Spring.Echo("Missions: Activated")
+    if isMission then
+        Spring.Echo("Missions: Activated")
+    end
     
     -- reload any widgets that were disabled because the previous game was a mission
     if not isMission then 
@@ -64,6 +66,7 @@ function widget:GamePreload()
                 widgetHandler:ToggleWidget(name)   
             end
         end
+
         to_reload = {}
         
         widgetHandler:RemoveWidget(self)
@@ -100,8 +103,11 @@ end
 
 
 function widget:Shutdown ()
-    Spring.SendCommands('console 1')
-    Spring.SetConfigString('InputTextGeo', '0.26 0.73 0.02 0.028') --default pos
+    if isMission then
+        -- for debugging
+        Spring.SendCommands('console 1')
+        Spring.SetConfigString('InputTextGeo', '0.26 0.73 0.02 0.028') 
+    end
 end
 
 function widget:GetConfigData()

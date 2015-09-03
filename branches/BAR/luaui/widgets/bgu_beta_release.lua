@@ -101,12 +101,25 @@ info["Chickens"] = "Fight against hoards of oncoming mutated chickens!\n\nThe ch
 script["Chickens"] = ReadScript("chickens.txt")
 images["Chickens"] = ImagePath("chickens.png")
 
+options["AI Assist"] = {
+    [1] = {
+        name = "MAP_NAME",
+        humanName = "Map",
+        options = {
+            [1] = "Tundra", --TODO: choose better maps
+            [2] = "Talus",
+        }
+    },
+}
+info["AI Assist"] = "Fight alongside an AI, against another AI!\n\nStart positions are randomly chosen."
+script["AI Assist"] = ReadScript("ai_assist.txt")
+
 options["AI Skirmish"] = {
     [1] = {
         name = "MAP_NAME",
         humanName = "Map",
         options = {
-            [1] = "Tundra", --TODO: choose maps
+            [1] = "Tundra", --TODO: choose better maps
             [2] = "Talus",
         }
     },
@@ -126,7 +139,7 @@ options["AI Skirmish"] = {
     }
 }
 info["AI Skirmish"] = "Fight against an AI!\n\nStart positions are randomly chosen."
-script["AI Skirmish"] = ReadScript("ai.txt")
+script["AI Skirmish"] = ReadScript("ai_skirmish.txt")
 
 options["Mission 1: Glacier"] = {}
 info["Mission 1: Glacier"] = "\nIntelligence suggests that the enemy has a control tower to the east of the glacier. Fight your way across the ice and destroy it!\n\nETA: 10 minutes"
@@ -314,6 +327,7 @@ local function AddToMenu()
         resizeItems = true,
         children = {
             Chili.Line:New{width = '50%', height = 2},
+            Chili.Button:New{height = 70, width = '95%', caption = "AI Assist", OnClick = {Load},},
             Chili.Button:New{height = 70, width = '95%', caption = "AI Skirmish", OnClick = {Load},},
             Chili.Line:New{width = '50%', height = 2},
             Chili.Button:New{height = 70, width = '95%', caption = "Chickens", OnClick = {Load},},

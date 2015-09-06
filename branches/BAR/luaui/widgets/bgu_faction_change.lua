@@ -72,6 +72,7 @@ function widget:Initialize()
     if spGetSpectatingState() or
         Spring.GetGameFrame() > 0 or
         amNewbie or
+        (#Spring.GetTeamList()<=2 and Game.startPosType~=3) or
         WG.isMission then
         widgetHandler:RemoveWidget(self)
         return

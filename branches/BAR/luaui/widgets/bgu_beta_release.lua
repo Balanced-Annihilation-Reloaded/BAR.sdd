@@ -17,7 +17,7 @@ end
 local Chili, container, stackPanel
 local playerListByTeam = {}
 
-local initialText = "Welcome to the BAR Beta Release!\n\nPlease choose from the menu on the left, or press esc to close this menu and continue in sandbox mode.\n\nIf you are new to BAR, see the general tab of this menu for an introduction."
+local initialText = "Welcome to the BAR Beta Release!\n\nPlease choose from the menu on the left, or press esc to close this menu.\n\nIf you are new to BAR, see the general tab of this menu for an introduction."
 
 local selectedBorderColor = {1,127/255,0,0.45}
 local normalBorderColor = {1,1,1,0.1}
@@ -109,16 +109,16 @@ options["AI Assist"] = {
         name = "MAP_NAME",
         humanName = "Map",
         options = {
-            [1] = "Voltic Plateau", --TODO: choose better maps?
-            [2] = "Emereld", 
-            [3] = "Throne",
-            [4] = "Kolmogorov",
+            [1] = "Throne",
+            [2] = "Kolmogorov",
+            [3] = "Dworld",
+            [4] = "Emereld",
         },
         replace = {
-            [1] = "Voltic Plateau v2",
-            [2] = "Emereld v1", 
-            [3] = "Throne v5",
-            [4] = "Kolmogorov",
+            [1] = "Throne v5",
+            [2] = "Kolmogorov",
+            [3] = "Dworld v1",
+            [4] = "Emereld v1"
         }
     },
 }
@@ -130,14 +130,16 @@ options["AI Skirmish"] = {
         name = "MAP_NAME",
         humanName = "Map",
         options = {
-            [1] = "Tundra", --TODO: choose better maps?
-            [2] = "Titan",
-            [3] = "Iceland"            
+            [1] = "Voltic Plateau",
+            [2] = "Tundra", 
+            [3] = "Titan",
+            [4] = "Iceland"            
         },
         replace = {
-            [1] = "Tundra", 
-            [2] = "TitanDuel",
-            [3] = "Iceland_v1",            
+            [1] = "Voltic Plateau v2",
+            [2] = "Tundra", 
+            [3] = "TitanDuel",
+            [4] = "Iceland_v1",            
         }
     },
     [2] = {

@@ -331,8 +331,8 @@ function widget:Initialize()
     if (Game.startPosType == 1) or            -- Don't run if start positions are random
        (Spring.GetGameFrame() > 0) or        -- Don't run if game has already started
        (amNewbie) or                        -- Don't run if i'm a newbie
-       (Spring.GetSpectatingState()) or
-       (WG.isMission) then    -- Don't run if we are a spec
+       (Spring.GetSpectatingState()) or   -- Don't run if we are a spec
+       (WG.isMission) then    
         widgetHandler:RemoveWidget(self)
         return
     end
@@ -366,7 +366,7 @@ function widget:Initialize()
 end
 
 function widget:Shutdown()
-
+    WG.InitialQueue = nil
 end
 
 ------------------------------------------------------------

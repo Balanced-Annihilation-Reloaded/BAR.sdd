@@ -874,7 +874,7 @@ function widget:Update()
     local newMouseOverUnitID
     if focus=="unit" then
         newMouseOverUnitID = n
-    elseif updateGround and focus=="ground" and spDiffTimers(timer, groundTimer)<0.05 then
+    elseif updateGround and focus=="ground" and spDiffTimers(timer, groundTimer)>0.05 then
         updateGroundInfo(n[1],n[2],n[3])
         groundTimer = timer
         newMouseOverUnitID  = nil

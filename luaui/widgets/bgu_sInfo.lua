@@ -371,7 +371,7 @@ local function GetWindString()
     local lower = round(Game.windMin)
     local upper = round(Game.windMax)
     if tonumber(lower)<tonumber(upper) then
-        return lower .. " - " .. upper
+        return lower .. " to " .. upper
     end
     return lower
 end

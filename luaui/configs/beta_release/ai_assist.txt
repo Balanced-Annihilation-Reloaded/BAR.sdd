@@ -76,10 +76,10 @@ startmetal=1000;
 }
 [player2]
 {
-countrycode=;
+countrycode=PLAYER_COUNTRY;
 isfromdemo=0;
 name=PLAYER_NAME;
-rank=0;
+rank=PLAYER_RANK;
 spectator=0;
 team=2;
 }

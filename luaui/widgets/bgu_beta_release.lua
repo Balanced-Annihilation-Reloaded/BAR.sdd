@@ -318,8 +318,10 @@ function Start()
     end
     
     local pID = Spring.GetMyPlayerID()
-    local playerName,_ = Spring.GetPlayerInfo(pID)
+    local playerName,_,_,_,_,_,_,playerCountry,playerRank = Spring.GetPlayerInfo(pID)
     startScript = string.gsub(startScript, "PLAYER_NAME", playerName)   
+    startScript = string.gsub(startScript, "PLAYER_COUNTRY", playerCountry)   
+    startScript = string.gsub(startScript, "PLAYER_RANK", playerRank)   
     
     Spring.Echo("Please wait...")
     Spring.Reload(startScript)

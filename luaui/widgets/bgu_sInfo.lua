@@ -29,6 +29,7 @@ local spGetUnitDefID            = Spring.GetUnitDefID
 local spGetUnitTooltip          = Spring.GetUnitTooltip
 local spGetSelectedUnits        = Spring.GetSelectedUnits
 local spGetUnitHealth           = Spring.GetUnitHealth
+local spGetUnitTeam             = Spring.GetUnitTeam
 local spGetSelectedUnitsSorted  = Spring.GetSelectedUnitsSorted
 local spGetMouseState           = Spring.GetMouseState
 local spTraceScreenRay          = Spring.TraceScreenRay
@@ -39,6 +40,7 @@ local spGetSelectedUnitsCounts  = Spring.GetSelectedUnitsCounts
 local floor = math.floor
 
 local r,g,b     = Spring.GetTeamColor(Spring.GetMyTeamID())
+local myTeamID  = Spring.GetMyTeamID()
 local teamColor = {r,g,b}
 
 local groundTimer = spGetTimer()
@@ -825,7 +827,8 @@ end
 function widget:CommandsChanged()
     local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
     teamColor = {r,g,b}
-
+    myTeamID  = Spring.GetMyTeamID()
+    
     ResetTip()
 end
 
@@ -839,6 +842,8 @@ function widget:Update()
         newFocusDefID = WG.InitialQueue.selDefID
     elseif WG.sMenu and WG.sMenu.mouseOverDefID then
         newFocusDefID = WG.sMenu.mouseOverDefID 
+    elseif WG.FacBar and WG.FacBar.mouseOverDefID then
+        newFocusDefID = WG.FacBar.mouseOverDefID 
     end    
     if newFocusDefID~= focusDefID then
         focusDefID = newFocusDefID

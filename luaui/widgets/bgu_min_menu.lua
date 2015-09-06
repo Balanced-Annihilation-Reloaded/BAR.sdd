@@ -74,12 +74,14 @@ local function loadMinMenu()
     
     timeLbl = Chili.Label:New{
         caption = os.date('%I:%M %p'),
-        x       = 0
+        x = 0,
+        y = 1,
     }
     
     fpsLbl = Chili.Label:New{
-        caption = 'FPS: 65',
-        x       = 65
+        caption = 'FPS:   ',
+        x = 60,
+        y = 1,
     }
     
     menuBtn = Chili.Button:New{

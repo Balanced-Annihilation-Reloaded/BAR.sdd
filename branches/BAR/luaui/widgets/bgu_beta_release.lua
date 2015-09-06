@@ -24,6 +24,8 @@ local normalBorderColor = {1,1,1,0.1}
 local selectedButton
 local playerSide
 
+local startScript = nil
+
 ------------
 
 function ReadScript(file)
@@ -301,7 +303,7 @@ end
 function Start()
     if not selectedButton then return end
     local gameMode = selectedButton.caption
-    local startScript = script[gameMode]
+    startScript = script[gameMode]
     
     for _,child in ipairs(optionsBox.children) do
         local name = child.name
@@ -318,13 +320,13 @@ function Start()
     end
     
     local pID = Spring.GetMyPlayerID()
-    local playerName,_,_,_,_,_,_,playerCountry,playerRank = Spring.GetPlayerInfo(pID)
+    local playerName,_,_,_,_,_,_,playerCountry,playerRank,_ = Spring.GetPlayerInfo(pID)
     startScript = string.gsub(startScript, "PLAYER_NAME", playerName)   
     startScript = string.gsub(startScript, "PLAYER_COUNTRY", playerCountry)   
     startScript = string.gsub(startScript, "PLAYER_RANK", playerRank)   
     
-    Spring.Echo("Please wait...")
-    Spring.Reload(startScript)
+    Spring.Echo("\255\255\255\255\255Please wait...")
+    -- wait until the next widget:Update to actually reload, so as the previous line appears in the chat
 end
 
 ------------
@@ -451,8 +453,14 @@ function widget:Initialize()
     Chili = WG.Chili
     AddToMenu() 
 
-    if Spring.GetGameFrame()==0 and #Spring.GetAllyTeamList()<=2 then
+    if Spring.GetGameFrame()==0 and #Spring.GetAllyTeamList()<=2 and Spring.GetModOptions().mo_beta_release=="1" then
         WG.MainMenu.ShowHide('Beta Release')
+    end
+end
+
+function widget:Update()
+    if startScript then
+        Spring.Reload(startScript)
     end
 end
 

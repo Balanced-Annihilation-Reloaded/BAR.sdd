@@ -24,7 +24,14 @@ local options={
        desc="Chicken Options",
        type="section",
     },
-
+    {
+		key    = "mo_beta_release",
+		name   = "Beta Release Mode",
+		desc   = "Show the Beta release menu ingame (single player only)",
+		type   = "bool",
+		def    = true,
+		section= "bar_modes",
+    },
 	{
 		key="deathmode",
 		name="Game End Mode",

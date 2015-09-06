@@ -240,7 +240,7 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
             caption = "",
             width = options.buttonsize.value*1.2,
             height = options.buttonsize.value*1.0,
-            tooltip =             'Click - '             .. GreenStr .. 'Select \n'                     
+            tooltip =             'Click - '             .. GreenStr .. 'Select factory / Build unit \n'                     
                 .. WhiteStr ..     'Middle click - '     .. GreenStr .. 'Go to \n'
                 .. WhiteStr ..     'Right click - '     .. GreenStr .. 'Quick Rallypoint Mode' 
                 ,
@@ -253,7 +253,7 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
                             local x,y,z = Spring.GetUnitPosition(unitID)
                             Spring.SetCameraTarget(x,y,z)
                         elseif button == 3 then
-                            Spring.Echo("FactoryBar: Entered easy waypoint mode")
+                            Spring.Echo("FactoryBar: Entered rallypoint mode")
                             waypointMode = 2 -- greedy mode
                             waypointFac  = stackname
                         else
@@ -264,6 +264,12 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
 
                     end
                     or nil
+            },
+            OnMouseOver = {
+                function() WG.FacBar.mouseOverDefID = unitDefID end
+            },
+            OnMouseOut = {
+                function() WG.FacBar.mouseOverDefID = nil end            
             },
             padding={3, 3, 3, 3},
             --margin={0, 0, 0, 0},
@@ -336,12 +342,10 @@ end
 local function MakeButton(unitDefID, facID, facIndex)
 
     local ud = UnitDefs[unitDefID]
-    local tooltip = "Build Unit: " .. ud.humanName .. " - " .. ud.tooltip .. "\n"
   
     return
         Button:New{
             name = unitDefID,
-            tooltip=tooltip,
             x=0,
             caption="",
             width = options.buttonsize.value,
@@ -372,6 +376,12 @@ local function MakeButton(unitDefID, facID, facIndex)
                     --UpdateFac(facIndex, facs[facIndex])
                     
                 end
+            },
+            OnMouseOver = {
+                function() WG.FacBar.mouseOverDefID = unitDefID end
+            },
+            OnMouseOut = {
+                function() WG.FacBar.mouseOverDefID = nil end            
             },
             children = {
                 Label:New {
@@ -424,7 +434,7 @@ end
 
 local function WaypointHandler(x,y,button)
   if (button==1)or(button>3) then
-    Spring.Echo("FactoryBar: Exited easy waypoint mode")
+    Spring.Echo("FactoryBar: Exited rallypoint mode")
     waypointFac  = -1
     waypointMode = 0
     return
@@ -714,9 +724,10 @@ function widget:Initialize()
         return
     end
     
-    WG.ShowFacBar = ShowFacBar
-    WG.HideFacBar = HideFacBar
-
+    WG.FacBar = {}
+    WG.FacBar.Show = ShowFacBar
+    WG.FacBar.Hide = HideFacBar
+    
     -- setup Chili
     Chili = WG.Chili
     Button = Chili.Button
@@ -774,6 +785,5 @@ end
 function widget:Shutdown()
     stack_main:Dispose()
     window_facbar:Dispose()
-    WG.ShowFacBar = nil
-    WG.HideFacBar =nil
+    WG.FacBar = nil
 end

@@ -66,7 +66,7 @@ startmetal=1000;
 {
 countrycode=;
 isfromdemo=0;
-name=Player;
+name=PLAYER_NAME;
 rank=0;
 spectator=0;
 team=1;
@@ -100,7 +100,7 @@ hostport=8452;
 ishost=1;
 mapname=MAP_NAME;
 modhash=621226380;
-myplayername=Player;
+myplayername=PLAYER_NAME;
 numplayers=1;
 numrestrictions=0;
 numusers=2;

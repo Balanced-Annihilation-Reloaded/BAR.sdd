@@ -312,11 +312,16 @@ function Start()
         end
     end
     
-    startScript = string.gsub(startScript, "PLAYER_SIDE", playerSide) -- TODO: implement PlayerSide() & GUI     
+    startScript = string.gsub(startScript, "PLAYER_SIDE", playerSide)     
     while string.find(startScript, "RANDOM_SIDE") do
         startScript = string.gsub(startScript, "RANDOM_SIDE", RandomSide(), 1)     
     end
     
+    local pID = Spring.GetMyPlayerID()
+    local playerName,_ = Spring.GetPlayerInfo(pID)
+    startScript = string.gsub(startScript, "PLAYER_NAME", playerName)   
+    
+    Spring.Echo("Please wait...")
     Spring.Reload(startScript)
 end
 

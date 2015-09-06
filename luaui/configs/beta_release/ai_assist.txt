@@ -78,7 +78,7 @@ startmetal=1000;
 {
 countrycode=;
 isfromdemo=0;
-name=Player;
+name=PLAYER_NAME;
 rank=0;
 spectator=0;
 team=2;
@@ -115,7 +115,7 @@ hostip=;
 hostport=62686;
 ishost=1;
 mapname=MAP_NAME;
-myplayername=Player;
+myplayername=PLAYER_NAME;
 numplayers=1;
 numrestrictions=0;
 numusers=3;

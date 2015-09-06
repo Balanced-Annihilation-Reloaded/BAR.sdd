@@ -80,12 +80,9 @@ end
 
 
 function GetFFAStartPoints()
-    if VFS.FileExists("luarules/configs/ffa_startpoints.lua") then
-        --load the ffaStartPoints table from the map, if it has it        
-        include("luarules/configs/ffa_startpoints.lua") 
-    else
-        --if not, see if we have a backup table for this map
-        include("luarules/configs/ffa_startpoints/ffa_startpoints.lua")
+    include("luarules/configs/ffa_startpoints/ffa_startpoints.lua") -- if we have a ffa start points config for this map, use it
+    if not ffaStartPoints and VFS.FileExists("luarules/configs/ffa_startpoints.lua") then
+        include("luarules/configs/ffa_startpoints.lua") -- if we don't have one, see if the map has one
     end
 end
 
@@ -455,7 +452,7 @@ end
 else
 ----------------------------------------------------------------
 
--- This part of the gadget manages changes to out own ready state, and informs LuaUI of changes to others ready states
+-- This part of the gadget manages changes to our own ready state, and informs LuaUI of changes to others ready states
 
 local myPlayerID = Spring.GetMyPlayerID()
 local _,_,_,myTeamID = Spring.GetPlayerInfo(myPlayerID) 

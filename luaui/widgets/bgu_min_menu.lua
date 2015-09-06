@@ -113,6 +113,9 @@ function widget:Initialize()
     if Menu then
         loadOptions()
     end
+    
+    Spring.SendCommands('fps 0')
+    Spring.SendCommands('clock 0')
 end
 
 function widget:Update()
@@ -130,4 +133,9 @@ end
 function widget:GameFrame(n)
     if n%30~=0 then return end
     if clockType=="ingame" then setGameTime(n) end
+end
+
+function widget:ShutDown()
+    Spring.SendCommands('fps 1')
+    Spring.SendCommands('clock 1')
 end

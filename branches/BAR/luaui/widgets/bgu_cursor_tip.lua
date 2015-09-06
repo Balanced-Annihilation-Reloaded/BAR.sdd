@@ -124,7 +124,7 @@ local function getTooltip()
             prevTipType = tipType; prevID = ID; prevGameFrame = gameFrame
         end
 
-        if tipType == 'unit'        then
+        if tipType == 'unit' and Spring.GetUnitTeam(ID)~=Spring.GetMyTeamID() then
             return getUnitTooltip(ID)
         elseif tipType == 'feature' then 
             return getFeatureTooltip(ID)

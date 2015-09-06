@@ -120,5 +120,5 @@ myplayername=PLAYER_NAME;
 numplayers=1;
 numrestrictions=0;
 numusers=3;
-startpostype=0;
+startpostype=1;
 }

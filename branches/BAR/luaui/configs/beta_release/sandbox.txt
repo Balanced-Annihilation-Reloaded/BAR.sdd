@@ -51,10 +51,10 @@ startmetal=START_METAL;
 }
 [player0]
 {
-countrycode=;
+countrycode=PLAYER_COUNTRY;
 isfromdemo=0;
 name=PLAYER_NAME;
-rank=0;
+rank=PLAYER_RANK;
 spectator=0;
 team=0;
 }
@@ -74,7 +74,6 @@ hostip=;
 hostport=64774;
 ishost=1;
 mapname=Throne v5;
-modhash=1529648221;
 myplayername=PLAYER_NAME;
 numplayers=1;
 numrestrictions=0;

@@ -11,8 +11,7 @@ local General = {
     {"shift + enter",          "Send chat message to spectators"},
     {blankLine=true},    
     {"Menus", title=true},
-    {"i",                   "Main menu"},
-    {"shift + esc",         "Quit menu"},
+    {"shift+esc (or i)",    "Main menu"},
     {"f11",                 "Widget list"},
     {blankLine=true},
     {"Camera movement", title=true},
@@ -46,6 +45,10 @@ local General = {
 
 local Units_I = {
 
+    {"Unit information", title=true},           
+    {"mouse over",               "Show unit information"},
+    {"right mouse (on unit)",    "Toggle unit info between health & stats"},
+    {blankLine=true},
     {"Selecting units", title=true},           
     {"left mouse (+ drag)",      "Select or deselect units"},
     {blankLine=true},    
@@ -72,16 +75,16 @@ local Units_I = {
 local Units_II ={
 
     {"Giving move orders", title=true},           
-    {"right mouse (single click or drag)",   "Give move order to unit(s)"},
+    {"right mouse (single click or drag)",   "Give move order to selected unit(s)"},
     {blankLine=true},    
     {"Giving all other orders", title=true},
-    {"left mouse (single click)",    "Give order to unit(s)"},
+    {"left mouse (single click)",    "Give order to selected unit(s)"},
     {"right mouse (single click)",   "Revert to default order"},
-    {"right mouse + drag",           "Give formation order to unit(s)"},
+    {"right mouse + drag",           "Give formation order to selected unit(s)"},
     {blankLine=true},    
     {"Queueing orders", title=true},
-    {"shift + (some order)",         "Add order to end of order queue"},
-    {"space + (some order)",         "Add order to start of order queue"},
+    {"shift + (some order)",         "Add order to end of queue"},
+    {"space + (some order)",         "Add order to start of queue"},
 }
 
 

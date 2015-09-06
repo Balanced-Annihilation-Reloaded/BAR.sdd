@@ -21,12 +21,14 @@ local healthBars = {}
 
 local curTip -- general info about 
 local focusDefID -- unitDefID of unit we are currently thinking of building
+local mouseOverUnitID, mouseOverDefID -- unitDefID of the unit the user currently has their mouse hovering over, or nil
 local preferFocusInfo = false -- when there is just a single unit,do we prefer the focus info (i.e. UnitDefs info) or the unit info?
 
 local spGetTimer                = Spring.GetTimer
 local spDiffTimers              = Spring.DiffTimers
 local spGetUnitDefID            = Spring.GetUnitDefID
 local spGetUnitTooltip          = Spring.GetUnitTooltip
+local spGetActiveCommand        = Spring.GetActiveCommand
 local spGetSelectedUnits        = Spring.GetSelectedUnits
 local spGetUnitHealth           = Spring.GetUnitHealth
 local spGetUnitTeam             = Spring.GetUnitTeam
@@ -578,46 +580,45 @@ local function speedModCol(x)
     return schar(255, r*255, g*255, b*255)
 end
 
-local function updateGroundInfo()
-    local mx, my    = spGetMouseState()
-    local focus,map = spTraceScreenRay(mx,my,true)
-    if map and map[1] then
-        if groundWindow.hidden then groundWindow:Show() end
-        local px,pz = math.floor(map[1]),math.floor(map[3])
-        local py = math.floor(spGetGroundHeight(px,pz))
-        groundText:SetText(
-            "Map Coordinates"..
-            "\n Height: " .. py ..
-            "\n X: ".. px ..
-            "\n Z: ".. pz .. "\n\n"
-        )
-
-        local _,_,_,veh,bot,hvr,ship,_ = spGetGroundInfo(px,pz)
-        vehCol = speedModCol(veh)
-        botCol = speedModCol(bot)
-        hvrCol = speedModCol(hvr)
-        shipCol = speedModCol(ship)
-        groundText2:SetText(
-            "Speeds" ..
-            "\n  Veh: " .. vehCol .. round(veh,2) .. white .. 
-            "  Bot: " .. botCol .. round(bot,2) .. white ..
-            "\n  Hvr: " .. hvrCol .. round(hvr,2) .. white ..
-            "  Ship: " .. shipCol .. round(ship,2) .. white           
-        )
-    elseif groundWindow.visible then
-        groundWindow:Hide()
+local function updateGroundInfo(x,y,z)
+    if not x then
+        local mx, my    = spGetMouseState()
+        local focus,map = spTraceScreenRay(mx,my,true)
+        if focus~="ground" then return end 
+        x,y,z = map[1],map[2],map[3]
     end
+    
+    if groundWindow.hidden then groundWindow:Show() end
+    local px,pz = math.floor(x),math.floor(z)
+    local py = math.floor(spGetGroundHeight(px,pz))
+    groundText:SetText(
+        "Map Coordinates"..
+        "\n Height: " .. py ..
+        "\n X: ".. px ..
+        "\n Z: ".. pz .. "\n\n"
+    )
+
+    local _,_,_,veh,bot,hvr,ship,_ = spGetGroundInfo(px,pz)
+    vehCol = speedModCol(veh)
+    botCol = speedModCol(bot)
+    hvrCol = speedModCol(hvr)
+    shipCol = speedModCol(ship)
+    groundText2:SetText(
+        "Speeds" ..
+        "\n  Veh: " .. vehCol .. round(veh,2) .. white .. 
+        "  Bot: " .. botCol .. round(bot,2) .. white ..
+        "\n  Hvr: " .. hvrCol .. round(hvr,2) .. white ..
+        "  Ship: " .. shipCol .. round(ship,2) .. white           
+    )
 end
 
 ----------------------------------
 local function updateUnitInfo()
     -- single unit type
-    units = spGetSelectedUnits()
-    
     local curHealth = 0
     local maxHealth = 0
     local Mmake, Muse, Emake, Euse = 0,0,0,0
-    for _, uID in ipairs(units) do
+    for _, uID in ipairs(curTip.selUnits) do
         c, m = spGetUnitHealth(uID)
         mm, mu, em, eu = spGetUnitResources(uID)
         curHealth = curHealth + (c or 0)
@@ -701,6 +702,10 @@ local function ChooseCurTip()
     elseif sortedSelUnits["n"] > 6 then
         -- so many units that we just give basic info
         curTip.type = "basicUnitInfo"
+    elseif mouseOverUnitID then
+        curTip.type = "unitDefID"
+        curTip.selDefID = mouseOverDefID
+        curTip.selUnits = {[1]=mouseOverUnitID}
     else
         --info about point on map corresponding to cursor 
         curTip.type = "ground"
@@ -824,17 +829,19 @@ end
 
 ----------------------------------
 
-function widget:CommandsChanged()
+function widget:PlayerChanged()
     local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
     teamColor = {r,g,b}
     myTeamID  = Spring.GetMyTeamID()
-    
+end    
+
+function widget:CommandsChanged()
     ResetTip()
 end
 
 function widget:Update()
     -- check if focus unit for build command has changed
-    local _,cmdID,_ = Spring.GetActiveCommand()
+    local _,cmdID,_ = spGetActiveCommand()
     local newFocusDefID
     if cmdID and cmdID<0 then
         newFocusDefID = -cmdID
@@ -844,18 +851,36 @@ function widget:Update()
         newFocusDefID = WG.sMenu.mouseOverDefID 
     elseif WG.FacBar and WG.FacBar.mouseOverDefID then
         newFocusDefID = WG.FacBar.mouseOverDefID 
+    else
+        newFocusDefID = nil
     end    
     if newFocusDefID~= focusDefID then
         focusDefID = newFocusDefID
         widget:CommandsChanged()
+        return
     end
 
-    -- update ground info, if needed
+    -- check if the mouse is over a unit
+    -- also, update ground info if needed
+    local mx,my = spGetMouseState()
+    local focus,n = spTraceScreenRay(mx,my)
     local timer = spGetTimer()
     local updateGround = (curTip.type=="ground") and spDiffTimers(timer, groundTimer) > 0.05 
-    if updateGround then
-        updateGroundInfo()
+    local newMouseOverUnitID
+    if focus=="unit" then
+        newMouseOverUnitID = n
+    elseif updateGround and focus=="ground" and spDiffTimers(timer, groundTimer)<0.05 then
+        updateGroundInfo(n[1],n[2],n[3])
         groundTimer = timer
+        newMouseOverUnitID  = nil
+    else
+        newMouseOverUnitID  = nil
+    end
+    if newMouseOverUnitID ~= mouseOverUnitID then
+        mouseOverUnitID = newMouseOverUnitID 
+        mouseOverDefID = mouseOverUnitID and spGetUnitDefID(mouseOverUnitID) or nil
+        widget:CommandsChanged()
+        return
     end
 end
 

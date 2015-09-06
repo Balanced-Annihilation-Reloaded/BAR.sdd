@@ -5,14 +5,14 @@
 	GameType=Glacier;
 	IsHost=1;
 	OnlyLocal=1;
-	MyPlayerName=Player_1;
+	MyPlayerName=PLAYER_NAME;
 	[MODOPTIONS]
 	{
 
 	}
 	[PLAYER0]
 	{
-		Name=Player_1;
+		Name=PLAYER_NAME;
 		Team=0;
 	}
 	[AI0]

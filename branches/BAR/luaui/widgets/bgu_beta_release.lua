@@ -22,6 +22,7 @@ local initialText = "Welcome to the BAR Beta Release!\n\nPlease choose from the 
 local selectedBorderColor = {1,127/255,0,0.45}
 local normalBorderColor = {1,1,1,0.1}
 local selectedButton
+local playerSide
 
 ------------
 
@@ -106,8 +107,16 @@ options["AI Assist"] = {
         name = "MAP_NAME",
         humanName = "Map",
         options = {
-            [1] = "Tundra", --TODO: choose better maps
-            [2] = "Talus",
+            [1] = "Voltic Plateau", --TODO: choose better maps?
+            [2] = "Emereld", 
+            [3] = "Throne",
+            [4] = "Kolmogorov",
+        },
+        replace = {
+            [1] = "Voltic Plateau v2",
+            [2] = "Emereld v1", 
+            [3] = "Throne v5",
+            [4] = "Kolmogorov",
         }
     },
 }
@@ -119,16 +128,22 @@ options["AI Skirmish"] = {
         name = "MAP_NAME",
         humanName = "Map",
         options = {
-            [1] = "Tundra", --TODO: choose better maps
-            [2] = "Talus",
+            [1] = "Tundra", --TODO: choose better maps?
+            [2] = "Titan",
+            [3] = "Iceland"            
+        },
+        replace = {
+            [1] = "Tundra", 
+            [2] = "TitanDuel",
+            [3] = "Iceland_v1",            
         }
     },
     [2] = {
         name = "HANDICAP",
         humanName = "Difficulty",
         options = {
-            [1] = "Very Easy",
-            [2] = "Easy",
+            [1] = "Easy",
+            [2] = "Fair",
             [3] = "Medium",
         },
         replace = {
@@ -140,6 +155,45 @@ options["AI Skirmish"] = {
 }
 info["AI Skirmish"] = "Fight against an AI!\n\nStart positions are randomly chosen."
 script["AI Skirmish"] = ReadScript("ai_skirmish.txt")
+
+options["Sandbox"] = {
+    [1] = {
+        name = "START_METAL",
+        humanName = "Starting Metal",
+        options = {
+            [1] = "1,000",
+            [2] = "3,000",
+            [3] = "10,000",
+            [4] = "100,000",
+        },
+        replace = {
+            [1] = "1000",
+            [2] = "3000",
+            [3] = "10000",
+            [4] = "100000",        
+        }
+    },
+    [2] = {
+        name = "START_ENERGY",
+        humanName = "Starting Energy",
+        options = {
+            [1] = "1,000",
+            [2] = "3,000",
+            [3] = "10,000",
+            [4] = "1,000,000",
+        },
+        replace = {
+            [1] = "1000",
+            [2] = "3000",
+            [3] = "10000",
+            [4] = "1000000",        
+        }
+    }
+}
+info["Sandbox"] = "\nThe whole map to yourself!\n\nYou can choose the amount of initial resources you want."
+script["Sandbox"] = ReadScript("sandbox.txt")
+images["Sandbox"] = ImagePath("sandbox.png")
+
 
 options["Mission 1: Glacier"] = {}
 info["Mission 1: Glacier"] = "\nIntelligence suggests that the enemy has a control tower to the east of the glacier. Fight your way across the ice and destroy it!\n\nETA: 10 minutes"
@@ -200,7 +254,6 @@ local function Load (self)
             orientation = "vertical", 
             resizeItems = false,
             padding = {0,0,0,0},
-            
         }
         Chili.Label:New{
             parent = thisOption,
@@ -208,7 +261,6 @@ local function Load (self)
             width = '100%',
             height = 20,
             y = 5,
-            
         }
         Chili.ComboBox:New{
             parent = thisOption,
@@ -216,6 +268,7 @@ local function Load (self)
             items = config.options,   
             replace = config.replace or {},
             width = '100%',
+            height = 24,
             y = 25,
         }
         
@@ -233,6 +286,18 @@ local function Load (self)
 
 end
 
+function SetPlayerSide(self)
+    playerSide = self and self.name or RandomSide()
+    
+    playerSidePanel:GetChildByName("ARM").borderColor = normalBorderColor
+    playerSidePanel:GetChildByName("CORE").borderColor = normalBorderColor
+    playerSidePanel:GetChildByName(playerSide).borderColor = selectedBorderColor    
+end
+
+function RandomSide()
+    return math.random()<0.5 and "ARM" or "CORE"
+end
+
 function Start()
     if not selectedButton then return end
     local gameMode = selectedButton.caption
@@ -245,6 +310,11 @@ function Start()
             local choice = comboBox.replace[comboBox.selected] or comboBox.items[comboBox.selected] 
             startScript = string.gsub(startScript, name, choice)    
         end
+    end
+    
+    startScript = string.gsub(startScript, "PLAYER_SIDE", playerSide) -- TODO: implement PlayerSide() & GUI     
+    while string.find(startScript, "RANDOM_SIDE") do
+        startScript = string.gsub(startScript, "RANDOM_SIDE", RandomSide(), 1)     
     end
     
     Spring.Reload(startScript)
@@ -289,27 +359,49 @@ local function AddToMenu()
         }
     }
 
-    textWarningBox = Chili.TextBox:New{width='100%',text="", padding = {8,8,8,8}}    
-    textWarningScrollPanel = Chili.ScrollPanel:New{
+    local playerSideLabel = Chili.Label:New{x='10%', y='40%', width='33%', caption = "Faction:"}
+    local arm_button = Chili.Button:New{
+        name = "ARM",
+        height = '80%',
+        width = '25%',
+        x = '30%',
+        y = '10%',
+        onclick = {SetPlayerSide},
+        caption = "",
+        children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/ARM.png'} }
+    }
+
+    local core_button = Chili.Button:New{
+        name = "CORE",
+        height = '80%',
+        width = '25%',
+        x = '60%',
+        y = '10%',
+        padding = {10,10,10,10},
+        onclick = {SetPlayerSide},
+        caption = "",
+        children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/CORE.png'} }
+    }    
+    playerSidePanel = Chili.Panel:New{
         parent      = container,
-        x           = '30%',
+        x           = '35%',
         y           = '70%',
-        width       = '70%',
+        width       = '60%',
         height      = '20%',
         resizeItems = false,
         autosize    = true,
-        padding     = {0,0,0,0},
         children = { 
-            textWarningBox
+            playerSideLabel, arm_button, core_button,
         }
     }
+    SetPlayerSide()
 
     startButton = Chili.Button:New{
         parent = container,
-        x = '50%',
+        x = '45%',
         y = '90%',
         height = '10%',
-        width = '50%',
+        width = '40%',
         caption = "START",
         OnClick = {Start},
         borderColor = {0.2,1,0.2,0.35}
@@ -326,6 +418,8 @@ local function AddToMenu()
         orientation = "vertical",
         resizeItems = true,
         children = {
+            Chili.Line:New{width = '50%', height = 2},
+            Chili.Button:New{height = 70, width = '95%', caption = "Sandbox", OnClick = {Load},},
             Chili.Line:New{width = '50%', height = 2},
             Chili.Button:New{height = 70, width = '95%', caption = "AI Assist", OnClick = {Load},},
             Chili.Button:New{height = 70, width = '95%', caption = "AI Skirmish", OnClick = {Load},},

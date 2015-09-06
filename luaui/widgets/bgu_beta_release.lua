@@ -100,7 +100,7 @@ options["Chickens"] = {
         },   
     },
 }
-info["Chickens"] = "Fight against hoards of oncoming mutated chickens!\n\nThe chickens come at you in several waves. Most chickens walk, but some can climb, fly and even swim. There will be a short grace period before they being to attack. To win, you must defend yourself and then defeat the fearsomely blood-thirsty chicken queen.\n\nStart positions are randomly chosen, and chicken burrows can spawn anywhere outside your base.\n\nETA: 30-60 minutes"
+info["Chickens"] = "\nFight against hoards of oncoming mutated chickens!\n\nThe chickens come at you in several waves. Most chickens walk, but some can climb, fly and even swim. There will be a short grace period before they being to attack. To win, you must defend yourself and then defeat the fearsomely blood-thirsty chicken queen.\n\nStart positions are randomly chosen, and chicken burrows can spawn anywhere outside your base.\n\nETA: 30-60 minutes"
 script["Chickens"] = ReadScript("chickens.txt")
 images["Chickens"] = ImagePath("chickens.png")
 
@@ -122,7 +122,7 @@ options["AI Assist"] = {
         }
     },
 }
-info["AI Assist"] = "Fight alongside an AI, against another AI!\n\nStart positions of AIs are randomly chosen."
+info["AI Assist"] = "\nFight alongside an AI, against another AI!"
 script["AI Assist"] = ReadScript("ai_assist.txt")
 
 options["AI Skirmish"] = {
@@ -155,7 +155,7 @@ options["AI Skirmish"] = {
         }
     }
 }
-info["AI Skirmish"] = "Fight against an AI!\n\nStart positions of AIs are randomly chosen."
+info["AI Skirmish"] = "\nFight against an AI!"
 script["AI Skirmish"] = ReadScript("ai_skirmish.txt")
 
 options["Sandbox"] = {
@@ -237,6 +237,13 @@ local function Load (self)
 
     local gameMode = self.caption
     local options = options[gameMode] or {} -- {} prevents crash for wip game modes
+    
+    if string.find(gameMode, "Mission") then
+        if core_button.visible then core_button:Hide() end
+        SetPlayerSide({name="ARM"})
+    else
+        if not core_button.visible then core_button:Show() end
+    end
     
     textInfoScrollPanel:ClearChildren()
     textInfoBox = Chili.TextBox:New{parent=textInfoScrollPanel, width='100%', text=info[gameMode], padding = {8,8,8,8}}
@@ -375,7 +382,7 @@ local function AddToMenu()
     }
 
     local playerSideLabel = Chili.Label:New{x='10%', y='40%', width='33%', caption = "Faction:"}
-    local arm_button = Chili.Button:New{
+    arm_button = Chili.Button:New{
         name = "ARM",
         height = '80%',
         width = '25%',
@@ -386,7 +393,7 @@ local function AddToMenu()
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/ARM.png'} }
     }
 
-    local core_button = Chili.Button:New{
+    core_button = Chili.Button:New{
         name = "CORE",
         height = '80%',
         width = '25%',

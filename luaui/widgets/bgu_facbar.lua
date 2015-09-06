@@ -428,6 +428,12 @@ end
 
 -------------------------------------------------------------------------------
 
+function Cost(uDID)
+    return 60*UnitDefs[uDID].metalCost + UnitDefs[uDID].energyCost
+end
+function CostComparator(i,j)
+    return Cost(i) < Cost(j)
+end
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
@@ -529,6 +535,7 @@ local function UpdateFactoryList()
     if UnitDefs[unitDefID].isFactory then
         local bo =  UnitDefs[unitDefID] and UnitDefs[unitDefID].buildOptions or {}
         if bo and #bo > 0 then    
+          table.sort(bo, CostComparator)
           insert(facs,{ unitID=unitID, unitDefID=unitDefID, buildList=bo })
           local _, _, _, _, buildProgress = GetUnitHealth(unitID)
           if (buildProgress)and(buildProgress<1) then
@@ -759,7 +766,6 @@ function widget:Initialize()
     label_main =  Label:New{ 
         caption='Factories', 
         fontShadow = true, 
-        visible=false
     }
     window_facbar = Window:New{
         padding = {3,3,3,3,},
@@ -778,6 +784,7 @@ function widget:Initialize()
             label_main, stack_main,
         },
     }
+    label_main:Hide()
     myTeamID = Spring.GetMyTeamID()
 
     UpdateFactoryList()

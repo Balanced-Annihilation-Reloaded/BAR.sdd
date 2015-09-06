@@ -702,6 +702,10 @@ local function ChooseCurTip()
     elseif sortedSelUnits["n"] > 6 then
         -- so many units that we just give basic info
         curTip.type = "basicUnitInfo"
+    elseif mouseOverUnitID and preferFocus then
+        curTip.type = "focusDefID"
+        curTip.focusDefID = mouseOverDefID      
+        curTip.selUnits = {[1]=mouseOverUnitID}
     elseif mouseOverUnitID then
         curTip.type = "unitDefID"
         curTip.selDefID = mouseOverDefID
@@ -763,6 +767,7 @@ function widget:Initialize()
     
     unitWindow = Chili.Button:New{ -- parent for all the single unit info stuffs (including focus)
         parent  = screen,
+        tooltip = "Click to show/hide detailed unit stats",
         padding = {6,6,6,6},
         borderColor = {1,1,1,1},
         caption = "",
@@ -890,6 +895,18 @@ function widget:GameFrame()
     elseif curTip.type=="unitDefPics" then
         updateUnitGrid()
     end
+end
+
+function widget:MousePress(mx,my,button)
+    if button==3 then
+        local focus,n = spTraceScreenRay(mx,my)
+        local _,cmdID,_ = spGetActiveCommand()
+        if focus=="unit" and curTip.selUnits[1]==n and not cmdID then
+            TogglePreferredUnitInfo()
+            return true
+        end
+    end
+    return nil
 end
 
 function widget:ViewResize(_,scrH)

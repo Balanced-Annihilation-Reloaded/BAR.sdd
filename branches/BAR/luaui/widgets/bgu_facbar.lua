@@ -41,7 +41,7 @@ local screen0
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
-local window_facbar, stack_main
+local window_facbar, stack_main, label_main
 local echo = Spring.Echo
 local imageDir = 'luaui/images/buildIcons/'
 
@@ -467,6 +467,10 @@ RecreateFacbar = function()
     if inTweak then return end
     
     stack_main:ClearChildren()
+    
+    if #facs>0 and not label_main.visible then label_main:Show() 
+    elseif label_main.visible==true then label_main:Hide() end
+    
     for i,facInfo in ipairs(facs) do
         local unitDefID = facInfo.unitDefID
         
@@ -752,6 +756,11 @@ function widget:Initialize()
         centerItems = false,
         columns=2,
     }
+    label_main =  Label:New{ 
+        caption='Factories', 
+        fontShadow = true, 
+        visible=false
+    }
     window_facbar = Window:New{
         padding = {3,3,3,3,},
         name = "facbar",
@@ -766,8 +775,7 @@ function widget:Initialize()
         minHeight = 450,
         color = {0,0,0,0},
         children = {
-            Label:New{ caption='Factories', fontShadow = true, },
-            stack_main,
+            label_main, stack_main,
         },
     }
     myTeamID = Spring.GetMyTeamID()

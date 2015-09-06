@@ -657,6 +657,13 @@ end
 -----OPTIONS-----------------
 -----------------------------
 
+function SetInfoChild(obj)
+    if not tabs.General then return end
+    tabs.General:GetChildByName('info caption'):SetCaption(obj.caption)
+    tabs.General:GetChildByName('info_layoutpanel'):ClearChildren()
+    tabs.General:GetChildByName('info_layoutpanel'):AddChild(obj.iPanel)
+end
+
 local function createInfoTab()
     local armageddonTime = 60 * (tonumber((Spring.GetModOptions() or {}).mo_armageddontime) or 0)
 
@@ -701,13 +708,6 @@ local function createInfoTab()
     local function SetHotkeyTab(_, tabName)
         hotkeyInfoBox:SetText(HotkeyInfo[tabName])
     end
-
-    local function SetInfoChild(obj)
-        if not tabs.General then return end
-        tabs.General:GetChildByName('info caption'):SetCaption(obj.caption)
-        tabs.General:GetChildByName('info_layoutpanel'):ClearChildren()
-        tabs.General:GetChildByName('info_layoutpanel'):AddChild(obj.iPanel)
-    end
     
     local hotkeyInfo = Chili.Control:New{x = 0, y = 20, bottom = 0, width = '100%', 
         children = {
@@ -750,7 +750,7 @@ local function createInfoTab()
             Chili.Label:New{name = 'info caption', caption = '', x = 0, y = 2, width = '70%', fontsize = 20},
             Chili.LayoutPanel:New{name  = 'info_layoutpanel', width = '70%', x=0, y=20, bottom=0},
 
-            Chili.Button:New{caption = 'Introduction', iPanel = introText, height = '7%', width = '28%', right = '1%', y = '7%', OnMouseUp = {SetInfoChild}},
+            Chili.Button:New{caption = 'Introduction', iPanel = introText, height = '7%', width = '28%', right = '1%', y = '7%', OnMouseUp = {SetInfoChild}, name="Introduction Button"},
             Chili.Button:New{caption = 'Hotkey Info', iPanel = hotkeyInfo, height = '7%', width = '28%', right = '1%', y = '16%', OnMouseUp = {SetInfoChild}},
 
             Chili.Button:New{caption = 'Match Info', iPanel = matchInfo, height = '7%', width = '28%', right = '1%', y = '28%', OnMouseUp = {SetInfoChild}},
@@ -961,6 +961,7 @@ function widget:Initialize()
     local toggleMenu      = function() showHide('General') end
     local hideMenu        = function() if mainMenu.visible then mainMenu:Hide() end end
     local toggleInterface = function() showHide('Interface') end
+    local showHelp        = function() showHide('General'); SetInfoChild(tabs.General:GetChildByName("Introduction Button")) end --small hack
 
     spSendCommands('unbindkeyset f11')
     spSendCommands('unbindkeyset Any+i gameinfo')
@@ -968,10 +969,12 @@ function widget:Initialize()
     widgetHandler.actionHandler:AddAction(widget,'toggleInterface', toggleInterface, nil, 't')
     widgetHandler.actionHandler:AddAction(widget,'hideMenu', hideMenu, nil, 't')
     widgetHandler.actionHandler:AddAction(widget,'toggleMenu', toggleMenu, nil, 't')
+    widgetHandler.actionHandler:AddAction(widget,'showHelp', showHelp, nil, 't')
     spSendCommands('bind i toggleMenu')
     spSendCommands('bind S+esc toggleMenu')
     spSendCommands('bind f11 toggleInterface')
     spSendCommands('bind esc hideMenu')
+    spSendCommands('bind h showHelp')
 end
 
 function widget:Update()
@@ -983,8 +986,9 @@ function widget:Update()
 end
 
 function widget:Shutdown()
-    spSendCommands('unbind S+esc openMenu')
-    spSendCommands('unbind f11 openWidgets')
+    spSendCommands('unbind i toggleMenu')
+    spSendCommands('unbind S+esc toggleMenu')
+    spSendCommands('unbind f11 toggleInterface')
     spSendCommands('unbind esc hideMenu')
     spSendCommands('bind f11 luaui selector') -- if the default one is removed or crashes, then have the backup one take over.
     spSendCommands('bind Any+i gameinfo')

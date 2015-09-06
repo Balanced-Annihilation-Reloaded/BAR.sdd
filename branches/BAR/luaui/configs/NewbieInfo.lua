@@ -3,7 +3,7 @@
 local lines = {
     [1]  = "Welcome to BAR! Some useful info:",
     [2]  = "",
-    [3]  = "You can toggle this menu by pressing \255\255\150\000i\255\255\255\255",
+    [3]  = "You can toggle this help screen by pressing \255\255\150\001h\255\255\255\255",
     [4]  = "",
     [5]  = "Click the left \255\50\200\20mouse\255\255\255\255 and drag to select units",
     [6]  = "Click the right mouse to move units",
@@ -13,7 +13,7 @@ local lines = {
     [10]  = "Hold right click and drag to give a formation order to multiple units",
     [11]  = "Hold shift to queue orders.",
     [12] = "",
-    [13] = "\255\255\255\76Energy\255\255\255\255 comes from solar collectors, wind/tidal generators and fusion plants",
+    [13] = "\255\255\255\76Energy\255\255\255\255 comes from solar collectors, wind/tidal generators and fusion",
     [14] = "\255\153\153\204Metal\255\255\255\255 comes from metal extractors, which should be placed onto metal spots",
     [15] = "You can also get metal by using constructors to reclaim dead (and live!) units",
     [16] = "",
@@ -25,11 +25,10 @@ local lines = {
     [22] = "BAR has many \255\50\200\20hotkeys\255\255\255\255",
     [23] = "You can find out all the hotkeys from this menu - see the button on the right side of this window!",
     [24] = "",
-    [25] = "For your first few online multiplayer games, a \255\50\200\20faction\255\255\255\255 and \255\50\200\20start position\255\255\255\255 will be chosen for you",
-    [26] = "After that, you will be able to choose your own",
-    [27] = "Don't forget to check our forum on \255\200\200\250springrts.com\255\255\255\255",
-    [28] = "",
-    [29] = "Good luck!",
+    [25] = "For your first few online multiplayer games, a \255\50\200\20faction\255\255\255\255 and \255\50\200\20start position\255\255\255\255 will be chosen for you - after that, you will be able to choose your own",
+    [26] = "Don't forget to check our forum on \255\200\200\250springrts.com\255\255\255\255",
+    [27] = "",
+    [28] = "Good luck!",
 }
 
 local text = ""

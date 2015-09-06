@@ -122,7 +122,7 @@ options["AI Assist"] = {
         }
     },
 }
-info["AI Assist"] = "Fight alongside an AI, against another AI!\n\nStart positions are randomly chosen."
+info["AI Assist"] = "Fight alongside an AI, against another AI!\n\nStart positions of AIs are randomly chosen."
 script["AI Assist"] = ReadScript("ai_assist.txt")
 
 options["AI Skirmish"] = {
@@ -155,7 +155,7 @@ options["AI Skirmish"] = {
         }
     }
 }
-info["AI Skirmish"] = "Fight against an AI!\n\nStart positions are randomly chosen."
+info["AI Skirmish"] = "Fight against an AI!\n\nStart positions of AIs are randomly chosen."
 script["AI Skirmish"] = ReadScript("ai_skirmish.txt")
 
 options["Sandbox"] = {
@@ -325,8 +325,14 @@ function Start()
     startScript = string.gsub(startScript, "PLAYER_COUNTRY", playerCountry)   
     startScript = string.gsub(startScript, "PLAYER_RANK", playerRank)   
     
-    Spring.Echo("\255\255\255\255\255Please wait...")
+    Spring.Echo("\255\255\255\255" .. "Please wait...")
     -- wait until the next widget:Update to actually reload, so as the previous line appears in the chat
+end
+
+function widget:Update()
+    if startScript then
+        Spring.Reload(startScript)
+    end
 end
 
 ------------
@@ -455,12 +461,6 @@ function widget:Initialize()
 
     if Spring.GetGameFrame()==0 and #Spring.GetAllyTeamList()<=2 and Spring.GetModOptions().mo_beta_release=="1" then
         WG.MainMenu.ShowHide('Beta Release')
-    end
-end
-
-function widget:Update()
-    if startScript then
-        Spring.Reload(startScript)
     end
 end
 

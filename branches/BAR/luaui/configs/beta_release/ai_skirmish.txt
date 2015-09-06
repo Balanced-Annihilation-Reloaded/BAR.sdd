@@ -81,8 +81,6 @@ allyteam=1;
 handicap=HANDICAP;
 rgbcolor=0.976471 1 0;
 side=RANDOM_SIDE;
-startposx=6554;
-startposz=7438;
 teamleader=1;
 }
 [team1]
@@ -91,8 +89,6 @@ allyteam=0;
 handicap=0;
 rgbcolor=1 0 0;
 side=PLAYER_SIDE;
-startposx=1688;
-startposz=606;
 teamleader=1;
 }
 gametype=Balanced Annihilation Reloaded $VERSION;
@@ -104,5 +100,5 @@ myplayername=PLAYER_NAME;
 numplayers=1;
 numrestrictions=0;
 numusers=2;
-startpostype=3;
+startpostype=1;
 }

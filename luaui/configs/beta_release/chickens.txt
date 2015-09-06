@@ -87,7 +87,7 @@ teamleader=1;
 allyteam=0;
 handicap=0;
 rgbcolor=1 0 0;
-side=CORE;
+side=PLAYER_SIDE;
 teamleader=1;
 }
 gametype=Balanced Annihilation Reloaded $VERSION;

@@ -321,6 +321,7 @@ function widget:Initialize()
     end
     screen = Chili.Screen0
     Menu   = WG.MainMenu
+    if not Menu then return end
     
     Menu.AddOption{
             tab = 'Interface',

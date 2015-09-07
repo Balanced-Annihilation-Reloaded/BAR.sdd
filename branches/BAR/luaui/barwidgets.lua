@@ -1600,9 +1600,9 @@ function widgetHandler:GameStart()
 end
 
 
-function widgetHandler:GameOver()
+function widgetHandler:GameOver(winningAllyTeams)
   for _,w in ipairs(self.GameOverList) do
-    w:GameOver()
+    w:GameOver(winningAllyTeams)
   end
   return
 end

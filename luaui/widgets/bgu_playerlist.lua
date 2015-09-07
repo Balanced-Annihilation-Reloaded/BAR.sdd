@@ -61,6 +61,7 @@ local gameStarted = false
 
 -- Options
 local options = {
+    ready_faction = true,
     ranks = true,
     flags = true,
     ts = true,
@@ -589,16 +590,18 @@ function PlayerPanel(pID)
         },
     }
     
-    local readystate = Chili.Image:New{
-        parent = panel,
-        name = "readystate",
-        height = 17,
-        width = width.faction,
-        right = offset.faction,
-        file = readyPic, 
-        color = ReadyColour(players[pID].readyState)
-    }
-    -- faction image is created when game starts, readystate image is then hidden
+    if options.ready_faction then
+        local readystate = Chili.Image:New{
+            parent = panel,
+            name = "readystate",
+            height = 17,
+            width = width.faction,
+            right = offset.faction,
+            file = readyPic, 
+            color = ReadyColour(players[pID].readyState)
+        }
+        -- faction image is created when game starts, readystate image is then hidden
+    end
     
     if options.ranks then
         local rank = Chili.Image:New{
@@ -1087,7 +1090,7 @@ end
 function SetupOptions()
     if not WG.MainMenu then return end
 
-    -- add options into main menu, to show/hide flags, ranks and ts values
+    -- add options into main menu, to show/hide flags, ranks and ts values (and not ready/faction)
     local function FlagState(_,show)
         options.flags = show
         OptionChange()
@@ -1147,8 +1150,20 @@ function widget:Initialize()
 
     iPanel()
     iPanel:Hide()
-    
-    SetupOptions()  
+end
+
+function widget:GamePreload()
+    if WG.isMission then
+        -- change the options in a way that won't be saved
+        options.ready_faction = false
+        options.ranks = false
+        options.flags = false
+        options.ts = false
+        OptionChange()
+    else
+        -- add player list options to main menu
+        SetupOptions()  
+    end
 end
 
 function widget:Shutdown()
@@ -1173,22 +1188,24 @@ function widget:GameFrame(n)
         gameStarted = true
         ScheduledUpdate()
         
-        for pID,_ in pairs(players) do
-            SetFaction(pID)
-        
-            players[pID].playerPanel:GetChildByName('readystate'):Hide()
-        
-            Chili.Image:New{
-                parent = players[pID].playerPanel,
-                name = 'faction',
-                height = 17,
-                width = width.faction,
-                right = offset.faction,
-                file = players[pID].factionPic,
-                color = players[pID].colour,
-            }
-        end
+        if options.ready_faction then
+            for pID,_ in pairs(players) do
+                SetFaction(pID)
             
+                players[pID].playerPanel:GetChildByName('readystate'):Hide()
+            
+                Chili.Image:New{
+                    parent = players[pID].playerPanel,
+                    name = 'faction',
+                    height = 17,
+                    width = width.faction,
+                    right = offset.faction,
+                    file = players[pID].factionPic,
+                    color = players[pID].colour,
+                }
+            end
+        end
+        
         needUpdate = true
     end
     
@@ -1432,8 +1449,12 @@ function CalculateOffsets()
     
     o = o + 2
     
-    offset.faction = o
-    o = o + width.faction
+    if options.read_faction or WG.isMission then -- if it's a mission, this will be hidden, but we want the space there to make a margin
+        offset.faction = o 
+        o = o + width.faction
+    else
+        offset.faction = 50
+    end
     
     if options.ranks then
         offset.rank = o

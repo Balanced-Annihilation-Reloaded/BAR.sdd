@@ -30,7 +30,7 @@ end
 local isMission --= true
 
 local to_unload = {
-    ["Player List"]=true, 
+    --["Player List"]=true, 
     ["Com Counter"]=true,
     ["Chat Console"]=true,
     ["Initial Queue"]=true,

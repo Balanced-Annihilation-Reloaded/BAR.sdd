@@ -47,18 +47,14 @@
 	[TEAM2]
 	{
 		TeamLeader=0;
-		AllyTeam=2;
-		RGBColor=0.9822506 0.9822506 0.9822506;
+		AllyTeam=0;
+		RGBColor=0.6444797 0.000910581 0.9559733;
 	}
 	[ALLYTEAM0]
 	{
 		NumAllies=0;
 		StartRectTop=0;		StartRectBottom=0;		StartRectLeft=1;		StartRectRight=1;	}
 	[ALLYTEAM1]
-	{
-		NumAllies=0;
-		StartRectTop=0;		StartRectBottom=0;		StartRectLeft=1;		StartRectRight=1;	}
-	[ALLYTEAM2]
 	{
 		NumAllies=0;
 		StartRectTop=0;		StartRectBottom=0;		StartRectLeft=1;		StartRectRight=1;	}

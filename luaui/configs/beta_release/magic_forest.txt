@@ -21,14 +21,14 @@
 	[AI0]
 	{
 		Name=Player_2;
-		ShortName=NullAI;
+		ShortName=Enemy;
 		Team=1;
 		Host=0;
 	}
 	[AI1]
 	{
 		Name=Spy;
-		ShortName=NullAI;
+		ShortName=Spy;
 		Team=2;
 		Host=0;
 	}

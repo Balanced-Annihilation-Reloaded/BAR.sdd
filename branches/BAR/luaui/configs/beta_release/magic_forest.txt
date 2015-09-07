@@ -9,6 +9,7 @@
 	[MODOPTIONS]
 	{
         mo_beta_release=0;
+	
 	}
 	[PLAYER0]
 	{

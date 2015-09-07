@@ -146,8 +146,8 @@ options["AI Skirmish"] = {
         name = "HANDICAP",
         humanName = "Difficulty",
         options = {
-            [1] = "Easy",
-            [2] = "Fair",
+            [1] = "Very Easy",
+            [2] = "Easy",
             [3] = "Medium",
         },
         replace = {
@@ -200,7 +200,7 @@ images["Sandbox"] = ImagePath("sandbox.png")
 
 
 options["Mission 1: Glacier"] = {}
-info["Mission 1: Glacier"] = "\nIntelligence suggests that the enemy has a control tower to the east of the glacier. Fight your way across the ice and destroy it!\n\nETA: 10 minutes"
+info["Mission 1: Glacier"] = "\nIntelligence suggests that the enemy has a control tower to the east of the glacier. Fight your way across the ice and destroy it!\n\nETA: 10-15 minutes"
 script["Mission 1: Glacier"] = ReadScript("glacier.txt")
 images["Mission 1: Glacier"] = ImagePath("glacier.png")
 

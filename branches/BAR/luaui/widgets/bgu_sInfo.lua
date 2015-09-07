@@ -706,7 +706,7 @@ local function ChooseCurTip()
         curTip.type = "focusDefID"
         curTip.focusDefID = mouseOverDefID      
         curTip.selUnits = {[1]=mouseOverUnitID}
-    elseif mouseOverUnitID then
+    elseif mouseOverUnitID and mouseOverDefID then
         curTip.type = "unitDefID"
         curTip.selDefID = mouseOverDefID
         curTip.selUnits = {[1]=mouseOverUnitID}
@@ -769,7 +769,8 @@ function widget:Initialize()
         parent  = screen,
         tooltip = "Click to show/hide detailed unit stats",
         padding = {6,6,6,6},
-        borderColor = {1,1,1,1},
+        borderColor = {0,0,0,1},
+        backgroundColor = {0,0,0,1},
         caption = "",
         x       = 0,
         y       = 0,
@@ -778,18 +779,20 @@ function widget:Initialize()
         OnClick = {TogglePreferredUnitInfo},
     }
     
-    unitGridWindow = Chili.Window:New{ -- parent for unit grid display, children are regenerated on each change
+    unitGridWindow = Chili.Button:New{ -- parent for unit grid display, children are regenerated on each change
         parent  = screen,
         padding = {6,6,6,6},
-        borderColor = {1,1,1,1},
+        borderColor = {0,0,0,1},
+        backgroundColor = {0,0,0,1},
         caption = "",
         parent  = screen,
         x       = 0,
         y       = 0,
         width   = winSize * 1.05,
         height  = winSize,
-        OnClick = {TogglePreferredUnitInfo},
+        OnClick = {}, -- this has to exist as a seperate case to unitWindow, because it can't act when clicked (or its child buttons won't work)
     }
+    
     unitGrid = Chili.Grid:New{ 
         x       = 0,
         y       = 0,
@@ -801,20 +804,22 @@ function widget:Initialize()
         margin  = {0,0,0,0},
     }    
     
-    groundWindow = Chili.Panel:New{ -- parent for ground info, children are permanent
+    groundWindow = Chili.Button:New{ -- parent for ground info, children are permanent
         parent  = screen,
-        padding = {6,6,6,6},
+        padding = {12,12,12,12},
+        borderColor = {0,0,0,1},
+        backgroundColor = {0,0,0,1},
+        caption = "",
+        parent  = screen,
         x       = 0,
         y       = 0,
-        width   = 150,
-        height  = 101,
+        width   = winSize * 1.05,
+        height  = winSize,
     }    
     groundText = Chili.TextBox:New{
         parent = groundWindow,
-        x      = 0,
-        y      = 1,
-        right  = 0,
-        bottom = 0,
+        width = '100%',
+        height = '100%',
         text   = '',
     }
     groundText2 = Chili.TextBox:New{

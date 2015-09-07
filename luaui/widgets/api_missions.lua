@@ -36,13 +36,14 @@ local to_unload = {
     ["Initial Queue"]=true,
     ["Faction Change"]=true,
     ["Ready Button"]=true,
-    ["End Graph"]=true,
+    ["Game End Graphs"]=true,
     ["Awards"]=true,
     ["Center n Select"]=true,
     ["Game Type Info"]=true,
     ["Ally Selected Units"]=true,
     ["Open Host List"]=true,
     ["Ally Resource Stats"]=true,
+    ["AutoQuit"]=true,
 }
 
 
@@ -93,6 +94,7 @@ function widget:GamePreload()
     if not string.find(Game.gameVersion, "VERSION") then
         Spring.SendCommands('console 0')
     end
+    Spring.SendCommands('endgraph 0')
     
     -- missions GUI
     CreateMissionGUI()
@@ -107,13 +109,33 @@ function widget:GameFrame()
     end
 end
 
+function widget:GameOver(winningAllyTeams)
+    local won = false
+    local myAllyTeamID = Spring.GetMyAllyTeamID()
+    for _,tID in pairs(winningAllyTeams) do
+        if myAllyTeamID==tID then
+            won = true
+            break
+        end        
+    end
+    
+    if won then  -- TODO: offer restart button?
+        NewMissionObjective("Mission complete. Good work!")
+    else
+        NewMissionObjective("Mission failed. Better luck next time!")
+    end
+    
+end
+
 
 function widget:Shutdown ()
     if isMission then
-        -- for debugging
+        -- for debugging, in case this widget crashes
         Spring.SendCommands('console 1')
         Spring.SetConfigString('InputTextGeo', '0.26 0.73 0.02 0.028') 
     end
+    
+    Spring.SendCommands('endgraph 1')
 end
 
 function widget:GetConfigData()
@@ -128,6 +150,15 @@ local green = "\255\0\255\0"
 local white = "\255\255\255\255"
 local blue = "\255\170\170\255"
 local grey = "\255\190\190\190"
+
+function NewMissionObjective(objective)
+    mission_objective_text:SetText(objective)
+    --Spring.PlaySoundStream('sounds/missions/NewObjective.wav') 
+    if mission_objective.hidden then
+        mission_objective:Show()
+    end
+    -- TODO: flashing indicator or something
+end
 
 function CreateMissionGUI()
 
@@ -186,7 +217,7 @@ function CreateMissionGUI()
             size             = 15,        
         }
     }
-
+    
     local function ShowHide()
         if mission_objective.hidden then
             showhide_button:SetCaption(grey .. "hide")
@@ -205,23 +236,30 @@ function CreateMissionGUI()
         y = 0,
         right = 0,
         height = 33,
+        width = 70,
         caption = grey .. "hide",
         onclick = {ShowHide},
     }
 
-    
-    local function NewMissionObjective(objective)
-        mission_objective_text:SetText(objective)
-        --Spring.PlaySoundStream('sounds/missions/NewObjective.wav') 
-        if mission_objective.hidden then
-            mission_objective:Show()
-        end
-        -- TODO: flashing indicator
-    end
+    --[[
+    -- TODO
+    mission_menu_button = Chili.Button:New{
+        parent = mission_nam_window;
+        y = 0;
+        right = 70,
+        height = 33,
+        width = 50,
+        caption = grey .. "menu",
+        onclick = {function() WG.MainMenu.ShowHide("Beta Release") end},   
+    }
+    ]]
 
     WG.NewMissionObjective = NewMissionObjective -- make it callable by the mission
     
 end
+
+
+
 
 
 

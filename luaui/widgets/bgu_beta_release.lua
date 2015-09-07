@@ -207,7 +207,7 @@ images["Mission 1: Glacier"] = ImagePath("glacier.png")
 options["Mission 2: Magic Forest"] = {
     
 }
-info["Mission 2: Magic Forest"] = "\nOur top spybot is in trouble! It's cloaking device failed and it was forced to hide deep inside a mountainous forest. We don't have its exact location, so we're relying on you to locate it and bring it back to our control tower.\n\nETA: 20 minutes"
+info["Mission 2: Magic Forest"] = "\nOur top spybot is in trouble! It's cloaking device failed and it was forced to hide deep inside a mountainous forest. We're relying on you to locate it and bring it back to our control tower.\n\nETA: 20 minutes"
 script["Mission 2: Magic Forest"] = ReadScript("magic_forest.txt")
 images["Mission 2: Magic Forest"] = ImagePath("magic_forest.png")
 

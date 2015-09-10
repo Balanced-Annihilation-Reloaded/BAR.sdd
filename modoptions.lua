@@ -28,9 +28,14 @@ local options={
 		key    = "mo_beta_release",
 		name   = "Beta Release Mode",
 		desc   = "Show the Beta release menu ingame (single player only)",
-		type   = "bool",
-		def    = true,
+		type   = "list",
+		def    = "on",
 		section= "bar_modes",
+		items={
+			{key="on", name="on", desc="Display the beta release menu at game start"},
+			{key="in use", name="in use", desc="Display the beta release menu at game end"},
+			{key="off", name="off", desc="Don't display the beta release menu"},
+		}
     },
 	{
 		key="deathmode",

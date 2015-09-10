@@ -106,9 +106,7 @@ end
 local prevTipType, prevID
 local function getTooltip()
 
-    -- This gives chili absolute priority
-    --  otherwise TraceSreenRay() would ignore the fact ChiliUI is underneath the mouse
-    if screen.currentTooltip then
+    if screen.currentTooltip then -- this gives chili absolute priority, otherwise TraceSreenRay() would ignore the fact ChiliUI is underneath the mouse
         tipType = 'chili'
         return screen.currentTooltip
     elseif WG.Prospector and WG.Prospector.tooltip then
@@ -124,8 +122,8 @@ local function getTooltip()
             prevTipType = tipType; prevID = ID; prevGameFrame = gameFrame
         end
 
-        if tipType == 'unit' and Spring.GetUnitTeam(ID)~=Spring.GetMyTeamID() then
-            return getUnitTooltip(ID)
+        if tipType == 'unit' then
+            return "Right click to switch between unit info/properties" --sInfo shows tooltips for units
         elseif tipType == 'feature' then 
             return getFeatureTooltip(ID)
         else

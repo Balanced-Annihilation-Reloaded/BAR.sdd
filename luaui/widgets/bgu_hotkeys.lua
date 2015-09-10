@@ -330,9 +330,7 @@ end
 
 function widget:KeyPress(key, mods, isRepeat)
     if mods.meta or (mods.ctrl and not mods.shift) then return end
-    for k,v in pairs(mods) do
-        Spring.Echo(k,v)
-    end
+
     -- if we are queueing build commands, and ZXCV is pressed, move onto the next unitDefID that at least one of our selected units can build
     local _,cmdID,_ = Spring.GetActiveCommand()
     if WG.InitialQueue and WG.InitialQueue.selDefID then

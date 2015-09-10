@@ -122,7 +122,7 @@ local function getTooltip()
             prevTipType = tipType; prevID = ID; prevGameFrame = gameFrame
         end
 
-        if tipType == 'unit' then
+        if tipType == 'unit' and #Spring.GetSelectedUnits()==0 then
             return "Right click to switch between unit info/properties" --sInfo shows tooltips for units
         elseif tipType == 'feature' then 
             return getFeatureTooltip(ID)

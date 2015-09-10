@@ -169,6 +169,7 @@ local function showUnitGrid()
     unitGridWindow:AddChild(unitResText)
     unitGridWindow:AddChild(unitGrid)
 
+    updateUnitGrid()
     unitGridWindow:Show()
 end
 
@@ -252,7 +253,7 @@ local function showUnitInfo()
         parent = unitPictureOverlay,
         x      = 5,
         bottom = 21,
-        text   = math.floor(curHealth) ..' / '.. math.floor(maxHealth),
+        text   = '',
     }
     
     unitHealth = Chili.Progressbar:New{
@@ -270,10 +271,11 @@ local function showUnitInfo()
         x        = 5,
         bottom   = 37,
         height   = 24,
-        text     =  ResToolTip(Mmake, Muse, Emake, Euse),
+        text     =  '',
         fontsize = 14,
     }
-
+    
+    updateUnitInfo()
     unitWindow:Show()        
 end
 
@@ -613,7 +615,7 @@ local function updateGroundInfo(x,y,z)
 end
 
 ----------------------------------
-local function updateUnitInfo()
+function updateUnitInfo()
     -- single unit type
     local curHealth = 0
     local maxHealth = 0
@@ -628,13 +630,19 @@ local function updateUnitInfo()
         Emake = Emake + (em or 0)
         Euse = Euse + (eu or 0)
     end
-    unitHealthText:SetText(math.floor(curHealth) ..' / '.. math.floor(maxHealth)) 
     unitHealth:SetMinMax(0, maxHealth)
     unitHealth:SetValue(curHealth) 
-    unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
+    if maxHealth>0 then -- if we can't see the units health (e.g. enemy commander)
+        unitHealthText:SetText(math.floor(curHealth) ..' / '.. math.floor(maxHealth)) 
+    else
+        unitHealthText:SetText('? / ?') 
+    end
+    if not curTip.selEnemy then
+        unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
+    end
 end
 
-local function updateUnitGrid()
+function updateUnitGrid()
     -- multiple units, but not so many we cant fit pics
     local Ecost,Mcost = 0,0
     local Mmake,Muse,Emake,Euse = 0,0,0,0
@@ -685,6 +693,7 @@ local function ChooseCurTip()
     curTip.n = #selUnits
     curTip.nType = sortedSelUnits['n']
     
+    -- choose tip type
     if focusDefID then
         -- info about a unit we are thinking to build
         curTip.type = "focusDefID"
@@ -715,6 +724,17 @@ local function ChooseCurTip()
         curTip.type = "ground"
     end
     
+    -- mark that we won't show resource stats if the selection contains a non-allies unit
+    if #curTip.selUnits==0 then return end
+    local selEnemyUnit = false
+    for _,uID in ipairs(curTip.selUnits) do
+        local tID = Spring.GetUnitTeam(uID)
+        if not Spring.AreTeamsAllied(tID, myTeamID) then
+            selEnemyUnit = true
+            break
+        end
+    end
+    curTip.selEnemy = selEnemyUnit    
 end
 
 local function ResetTip()
@@ -735,10 +755,8 @@ local function ResetTip()
         showFocusInfo()
     elseif curTip.type=="unitDefID" then
         showUnitInfo()
-        updateUnitInfo()
     elseif curTip.type=="unitDefPics" then
         showUnitGrid()
-        updateUnitGrid()
     elseif curTip.type=="basicUnitInfo" then
         showBasicUnitInfo()    
     elseif curTip.type=="ground" then
@@ -842,9 +860,9 @@ end
 ----------------------------------
 
 function widget:PlayerChanged()
-    local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
-    teamColor = {r,g,b}
     myTeamID  = Spring.GetMyTeamID()
+    local r,g,b = Spring.GetTeamColor(myTeamID)
+    teamColor = {r,g,b}
 end    
 
 function widget:CommandsChanged()

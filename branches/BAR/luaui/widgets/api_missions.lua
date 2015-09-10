@@ -103,7 +103,7 @@ end
 
 --testing only - load the GUI on luaui reload if isMission has been forced true
 function widget:GameFrame()
-    if not loadedGUI and isMission and Spring.GetGameFrame()>0 then --for testing only
+    if not loadedGUI and Spring.GetGameFrame()>0 then --for testing only
         CreateMissionGUI()
         loadedGUI = true    
     end
@@ -111,13 +111,18 @@ end
 
 function widget:GameOver(winningAllyTeams)
     local won = false
-    local myAllyTeamID = Spring.GetMyAllyTeamID()
-    for _,tID in pairs(winningAllyTeams) do
+    for i,tID in pairs(winningAllyTeams) do
+        Spring.Echo(i,tID)
         if myAllyTeamID==tID then
             won = true
             break
         end        
     end
+    -- in non-mission games, you win if your ally team has units still alive even if your team is dead
+    -- in missions, if your team is dead, or you have no units left, you lose
+    local spec,_ = Spring.GetSpectatingState()
+    local myUnits = Spring.GetTeamUnits(Spring.GetMyTeamID())
+    if spec or #myUnits==0 then won = false end
     
     if won then  -- TODO: offer restart button?
         NewMissionObjective("Mission complete. Good work!")
@@ -152,7 +157,7 @@ local blue = "\255\170\170\255"
 local grey = "\255\190\190\190"
 
 function NewMissionObjective(objective)
-    mission_objective_text:SetText(objective)
+    mission_objective_text:SetText(blue .. objective)
     --Spring.PlaySoundStream('sounds/missions/NewObjective.wav') 
     if mission_objective.hidden then
         mission_objective:Show()

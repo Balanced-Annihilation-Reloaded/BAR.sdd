@@ -468,9 +468,16 @@ function widget:Initialize()
     Chili = WG.Chili
     AddToMenu() 
 
-    if Spring.GetGameFrame()==0 and #Spring.GetAllyTeamList()<=2 and Spring.GetModOptions().mo_beta_release=="1" then
+    if Spring.GetGameFrame()==0 and #Spring.GetAllyTeamList()<=2 and Spring.GetModOptions().mo_beta_release=="on" then
         WG.MainMenu.ShowHide('Beta Release')
     end
+end
+
+function widget:GameOver()
+    -- FIXMEL fails because of http://imolarpg.dyndns.org/trac/balatest/ticket/845
+    if Spring.GetModOptions().mo_beta_release=="in use" then 
+        WG.MainMenu.ShowHide('Beta Release') -- this can be over-ridden by other tabs, such as endgraph, if they are enabled
+    end 
 end
 
 function widget:ShutDown()

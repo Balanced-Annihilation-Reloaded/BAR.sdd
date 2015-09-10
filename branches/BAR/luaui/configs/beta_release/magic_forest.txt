@@ -8,7 +8,7 @@
 	MyPlayerName=PLAYER_NAME;
 	[MODOPTIONS]
 	{
-        mo_beta_release=0;
+        mo_beta_release=in use;
 	
 	}
 	[PLAYER0]

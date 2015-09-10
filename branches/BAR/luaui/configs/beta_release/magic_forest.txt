@@ -9,7 +9,7 @@
 	[MODOPTIONS]
 	{
         mo_beta_release=in use;
-	
+deathmode=killall;
 	}
 	[PLAYER0]
 	{
@@ -20,7 +20,7 @@
 	}
 	[AI0]
 	{
-		Name=Player_2;
+		Name=Enemy;
 		ShortName=Enemy;
 		Team=1;
 		Host=0;

@@ -111,8 +111,8 @@ end
 
 function widget:GameOver(winningAllyTeams)
     local won = false
+    local myAllyTeamID = Spring.GetMyAllyTeamID()
     for i,tID in pairs(winningAllyTeams) do
-        Spring.Echo(i,tID)
         if myAllyTeamID==tID then
             won = true
             break

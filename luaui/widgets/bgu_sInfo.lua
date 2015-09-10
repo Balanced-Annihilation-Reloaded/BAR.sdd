@@ -849,7 +849,7 @@ function widget:Initialize()
         right  = 0,
         bottom = 0,
         text   = '',
-        font   = {size=10},
+        font   = {size=12},
     }
     
     Spring.SetDrawSelectionInfo(false)

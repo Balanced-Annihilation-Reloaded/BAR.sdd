@@ -103,6 +103,10 @@ end
 
 --testing only - load the GUI on luaui reload if isMission has been forced true
 function widget:GameFrame()
+    if not isMission then
+        widgetHandler:RemoveWidget(self)
+        return
+    end    
     if not loadedGUI and Spring.GetGameFrame()>0 then --for testing only
         CreateMissionGUI()
         loadedGUI = true    

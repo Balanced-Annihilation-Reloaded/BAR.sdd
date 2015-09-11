@@ -98,6 +98,7 @@ local unbinds={
     "bind , prevmenu",
     "bind . nextmenu",
     "bind Alt+enter fullscreen",
+    "bind backspace mousestate",
 }
 
 include('keysym.h.lua')

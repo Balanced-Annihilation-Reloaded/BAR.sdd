@@ -12,8 +12,8 @@ end
 
 if (gadgetHandler:IsSyncedCode()) then
 
--- this part is a synced gadget because AllowResourceTransfer is the only way to detect when a resource transfer takes place
--- otherwise, it should be an unsynced gadget and the SendToUnsycned step should be removed
+-- this part is a synced gadget because AllowResourceTransfer is the only way to detect when a resource transfer takes place, and AllowUnitTransfer is the only way to check if a "given" unit was captured or not
+-- otherwise, it should be an unsynced gadget using UnitXXX callins and the SendToUnsycned step should be removed
 
 local hadTransfer = false
 local transfers = {}
@@ -21,7 +21,9 @@ local transfers = {}
 ------------------
 -- record transfer
 
-function gadget:UnitGiven(unitID, unitDefID, newTeamID, teamID)
+function gadget:AllowUnitTransfer(unitID, unitDefID, teamID, newTeamID, captured)
+    if captured then return true end
+
     hadTransfer = true
     
     transfers[teamID] = transfers[teamID] or {}
@@ -29,6 +31,8 @@ function gadget:UnitGiven(unitID, unitDefID, newTeamID, teamID)
     transfers[teamID][newTeamID].unit = transfers[teamID][newTeamID].unit or 0
     
     transfers[teamID][newTeamID].unit = transfers[teamID][newTeamID].unit + 1
+    
+    return true
 end
 
 function gadget:AllowResourceTransfer(teamID,newTeamID,resType,amount)

@@ -116,7 +116,7 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
         width    = '100%',
         children = {
             Chili.Image:New{
-                color    = teamColor,
+                color    = teamColor, -- assume we are not cheating -> we cannot select units of enemy teams
                 height   = '100%',
                 width    = '100%',
                 file     = overlay,
@@ -180,13 +180,15 @@ local function ResToolTip(Mmake, Muse, Emake, Euse)
     return mColour .. "M: " .. green .. '+' .. round(Mmake,1) .. '  ' .. red .. '-' .. round(Muse,1) .. "\n" ..  eColour .. "E:  " .. green .. '+' .. round(Emake,1) .. '  ' .. red .. "-" .. round(Euse,1)
 end
 
-function GetOverlayColor()
+function GetOverlayColor(teamID)
+    local r,g,b = Spring.GetTeamColor(teamID)
+    local color = {r,g,b}
     local overlayColor = {} -- desaturate and aim for 0.3 brightness, else unit properties are hard to read
     overlayColor[4] = 0.75 
-    local average = 1/6 * (teamColor[1] + teamColor[2] + teamColor[3] + 0.9) 
+    local average = 1/6 * (color[1] + color[2] + color[3] + 0.9) 
     local bias = 0.3
     for i=1,3 do
-        overlayColor[i] = (1-bias)*average + bias*teamColor[i]
+        overlayColor[i] = (1-bias)*average + bias*color[i]
     end
     return overlayColor
 end
@@ -195,12 +197,13 @@ local function showUnitInfo()
     local defID = curTip.selDefID
     local selUnits = curTip.selUnits 
     local n = #selUnits
+    local unitTeamID = Spring.GetUnitTeam(selUnits[1])
 
     local description = UnitDefs[defID].tooltip or ''
     local name        = UnitDefs[defID].name
     local texture     = imageDir..'Units/' .. name .. '.dds'
     local overlay     = imageDir..'Overlays/' .. name .. '.dds'
-    local overlayColor = GetOverlayColor()
+    local overlayColor = GetOverlayColor(unitTeamID)
     local humanName   = UnitDefs[defID].humanName
 
     local Ecost = 0
@@ -233,7 +236,7 @@ local function showUnitInfo()
         width    = '100%',
     }
     unitPictureOverlay = Chili.Image:New{
-        parent = unitPicture,
+        parent   = unitPicture,
         color    = overlayColor,
         height   = '100%',
         width    = '100%',
@@ -484,12 +487,13 @@ end
 local function showFocusInfo()
     local defID = curTip.focusDefID
     local unitDef = UnitDefs[defID]
+    local unitTeamID = Spring.GetUnitTeam(curTip.selUnits[1])
 
     local description = UnitDefs[defID].tooltip or ''
     local name        = UnitDefs[defID].name
     local texture     = imageDir..'Units/' .. name .. '.dds'
     local overlay     = imageDir..'Overlays/' .. name .. '.dds'
-    local overlayColor = GetOverlayColor()
+    local overlayColor = GetOverlayColor(unitTeamID)
     local humanName   = UnitDefs[defID].humanName
 
     local Ecost = UnitDefs[defID].energyCost

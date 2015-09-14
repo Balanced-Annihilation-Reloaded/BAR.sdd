@@ -237,12 +237,10 @@ local function resizeUI(scrH,i)
     local winH = scrH * 0.5
     local winW = winH * nCols / maxRows 
     local aspect = Game.mapX/Game.mapY
-    local minMapH = scrH * 0.3
-    local minMapW = minMapH * aspect
-    if aspect > 1 then
-        minMapW = minMapH * aspect^0.5
-        minMapH = minMapW / aspect
-    end
+    
+    -- find out where minimap is
+    local minMapH = WG.MiniMap and WG.MiniMap.height or scrH * 0.3
+    local minMapW = WG.MiniMap and WG.MiniMap.width or minMapH * aspect
     
     buildMenu:SetPos(0, winY, winW, winH) -- better to keep consistent layout & not use small buttons when possible
     menuTabs:SetPos(winW,winY+20)

@@ -43,6 +43,10 @@ local function MakeMinimapWindow(screenH)
         h = w / aspect
     end
     
+    WG.MiniMap = {}
+    WG.MiniMap.width = w
+    WG.MiniMap.height = h
+    
     minimap = Chili.Panel:New{
         name      = "Minimap", 
         parent    = Chili.Screen0,
@@ -84,6 +88,8 @@ function widget:Shutdown()
     -- reset engine default minimap rendering
     gl.SlaveMiniMap(false)
     Spring.SendCommands("minimap geo " .. Spring.GetConfigString("MiniMapGeometry"))
+    
+    WG.MiniMap = nil
 end 
 
 function widget:DrawScreen() 

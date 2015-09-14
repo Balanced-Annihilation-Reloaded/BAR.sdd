@@ -1449,18 +1449,18 @@ function CalculateOffsets()
     
     o = o + 2
     
-    if options.read_faction or WG.isMission then -- if it's a mission, this will be hidden, but we want the space there to make a margin
+    if options.ready_faction or WG.isMission then -- if it's a mission, this will be hidden, but we want the space there to make a margin
         offset.faction = o 
         o = o + width.faction
     else
-        offset.faction = 50
+        offset.faction = 500
     end
     
     if options.ranks then
         offset.rank = o
         o = o + width.rank 
     else
-        offset.rank = 50 --out of the way, it will be hidden anyway
+        offset.rank = 500 --out of the way, it will be hidden anyway
     end
     
     o = o + 1
@@ -1469,7 +1469,7 @@ function CalculateOffsets()
         offset.flag = o
         o = o + width.flag
     else
-        offset.flag = 50 --out of the way, it will be hidden anyway
+        offset.flag = 500 --out of the way, it will be hidden anyway
     end
     
     o = o + 16 --left margin

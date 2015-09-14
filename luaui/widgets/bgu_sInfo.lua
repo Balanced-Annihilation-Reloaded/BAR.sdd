@@ -108,7 +108,7 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
         color   = {0.5,1,0,1},
     }
     
-    local unitTeamID = Spring.GetUnitTeam(unitIDs[1]) -- assume we are not cheating -> we cannot select units of multiple teams
+    local unitTeamID = unitIDs[1] and Spring.GetUnitTeam(unitIDs[1]) or Spring.GetMyTeamID() -- assume we are not cheating -> we cannot select units of multiple teams
     local r,g,b = Spring.GetTeamColor(unitTeamID)
     local teamColor = {r,g,b} 
     local unitIcon = Chili.Image:New{
@@ -198,7 +198,7 @@ local function showUnitInfo()
     local defID = curTip.selDefID
     local selUnits = curTip.selUnits 
     local n = #selUnits
-    local unitTeamID = Spring.GetUnitTeam(selUnits[1])
+    local unitTeamID = selUnits[1] and Spring.GetUnitTeam(selUnits[1]) or Spring.GetMyTeamID()
 
     local description = UnitDefs[defID].tooltip or ''
     local name        = UnitDefs[defID].name
@@ -488,7 +488,7 @@ end
 local function showFocusInfo()
     local defID = curTip.focusDefID
     local unitDef = UnitDefs[defID]
-    local unitTeamID = Spring.GetUnitTeam(curTip.selUnits[1])
+    local unitTeamID = curTip.selUnits[1] and Spring.GetUnitTeam(curTip.selUnits[1]) or Spring.GetMyTeamID()
 
     local description = UnitDefs[defID].tooltip or ''
     local name        = UnitDefs[defID].name

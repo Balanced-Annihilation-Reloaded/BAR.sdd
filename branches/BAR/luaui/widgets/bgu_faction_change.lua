@@ -60,12 +60,17 @@ end
 --------------------------------------------------------------------------------
 -- Callins
 --------------------------------------------------------------------------------
-local Chili, window, panel, arm_button, core_button
+local Chili, window, arm_button, core_button
 
 function widget:ViewResize(vsx,vsy)
-    window:SetPos(0,vsy*0.2-80, vsy*0.25)
-    arm_button:Resize(vsy*0.25/2-1)
-    core_button:Resize(vsy*0.25/2-1)
+    if not vsx then
+        vsx,vsy = Spring.GetViewGeometry()
+    end
+    local minMapW = WG.MiniMap and WG.MiniMap.width or 300
+
+    window:SetPos(minMapW, vsy*0.9, vsy*0.25, vsy*0.1)
+    arm_button:SetPos(0,0,vsy*0.12)
+    core_button:SetPos(vsy*0.13,0,vsy*0.12)
 end
 
 function widget:Initialize()
@@ -82,23 +87,8 @@ function widget:Initialize()
     
     Chili = WG.Chili
     
-    -- match sMenu
-    local scrH = Chili.Screen0.height
-    local winW = scrH * 0.25
-
-    window = Chili.Panel:New{
+    window = Chili.Window:New{
         parent = Chili.Screen0,
-        x = 0,
-        y = scrH*0.2-80,
-        width = winW,
-        height = 80,
-        padding     = {0,0,0,0},
-        itemPadding = {0,0,0,0},
-        itemMargin  = {0,0,0,0},
-    }
-
-    panel = Chili.LayoutPanel:New{
-        parent = window,
         height = '100%',
         width = '100%',
         padding     = {0,0,0,0},
@@ -107,23 +97,22 @@ function widget:Initialize()
     }
 
     arm_button = Chili.Button:New{
-        parent = panel,
+        parent = window,
         height = '100%',
-        width = winW/2-1,
         onclick = {SetArm},
         caption = "",
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/ARM.png'} }
     }
 
     core_button = Chili.Button:New{
-        parent = panel,
+        parent = window,
         height = '100%',
-        width = winW/2-1,
         onclick = {SetCore},
         caption = "",
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/CORE.png'} }
     }
     
+    ViewResize()
 end
 
 function widget:DrawWorld()

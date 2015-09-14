@@ -44,11 +44,9 @@ function gadget:GameFrame(n)
   if (n == 6) then
     for unitID,data in pairs(hiddenUnits) do
       if data[5] == armcomDefID then
-        Spring.Echo("armcom teleport")
         local env = Spring.UnitScript.GetScriptEnv(unitID)
         Spring.UnitScript.CallAsUnit(unitID,env.Teleport)
       else
-        Spring.Echo("corcom teleport")
         Spring.CallCOBScript(unitID, "TeleportControl", 0)
       end
       --SendToUnsynced("gatesound", data[4], data[1], data[2]+90, data[3])

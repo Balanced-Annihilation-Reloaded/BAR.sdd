@@ -513,7 +513,7 @@ function widget:GameFrame(n)
     end
     
 
-    if (comGate==0 or Spring.GetGameFrame() == 106) then --comGate takes up until frame 105
+    if (comGate==0 or Spring.GetGameFrame() == 140) then --comGate takes up until frame 105
         local tasker
         -- Search for our starting unit
         local units = Spring.GetTeamUnits(Spring.GetMyTeamID())

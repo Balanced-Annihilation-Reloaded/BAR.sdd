@@ -136,6 +136,8 @@ return {
 		sfxtypes = {
 			explosiongenerators = {
 				[1] = "custom:com_sea_laser_bubbles",
+				[2] = "custom:sky_enterance",
+				[3] = "custom:teleport_beam",
 			},
 		},
 		sounds = {
@@ -282,6 +284,35 @@ return {
 					subs = 75,
 				},
 			},
+				teleport = {
+				accuracy = 1,
+				areaofeffect = 100,
+				avoidfriendly = false,
+				beamttl = 10,
+				craterboost = 0,
+				cratermult = 0,
+				duration = 10.6,
+				explosiongenerator = "custom:none",
+				impulseboost = 0.123,
+				impulsefactor = 0.123,
+				intensity = 25,
+				name = "Lightning Transport Beam",
+				noselfdamage = true,
+				range = 3000,
+				reloadtime = 0.001,
+				rgbcolor = "0.6 0.6 0.9",
+				soundhitdry = "maghit",
+				soundstart = "krypto",
+				texture1 = "strike",
+				thickness = 40,
+				tolerance = 6,
+				turret = true,
+				weapontype = "LightningCannon",
+				weaponvelocity = 560,
+				damage = {
+					default = 0,
+				},
+			},
 		},
 		weapons = {
 			[1] = {
@@ -295,6 +326,9 @@ return {
 			[3] = {
 				def = "ARM_DISINTEGRATOR",
 				onlytargetcategory = "NOTSUB",
+			},
+			[4] = {
+				def = "TELEPORT",
 			},
 		},
 	},

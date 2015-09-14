@@ -151,6 +151,7 @@ local resources = {
 			strike='strike.png',
 			lightningball_new='lightningball.png',
 			flare1='flare1.tga',
+			puff='Shine_Smokey_256.png',
 			--Chicken Defense effects
 			uglynovaexplo='CC/uglynovaexplo.tga',
 			orangesmoke3='GPL/smoke_orange.png',

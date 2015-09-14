@@ -22,9 +22,10 @@
 	foot_r		= piece 'rfoot'
 	foot_l		= piece 'lfoot'
 	dish		= piece 'dish'
+	teleport    = piece 'teleport'
 
 -- State variables
-	isMoving, isAiming, isBuilding = false, false, false
+	isMoving, isAiming, isBuilding, counter = false, false, false, 0
 
 -- used to restore build aiming
 	buildY, buildX	= 0, 0
@@ -56,11 +57,32 @@ end
 include("include/walk.lua")
 
 --------------------------------------------------------
+--Teleport
+--------------------------------------------------------
+local function TeleportControl()
+	Move(teleport,y_axis,1850,200000)
+	Turn(teleport, x_axis, math.rad(90),math.rad(200000))
+	Sleep(100)
+	EmitSfx(teleport, 1025)
+	Sleep(2200)
+	EmitSfx(cod, 1026)
+	Sleep(100)
+	local counter = 0
+	while counter < 23 do
+		EmitSfx(teleport, 2051)
+		Sleep(88)
+		counter = counter + 1
+	end
+	Sleep(1000)
+	Move(teleport,y_axis,0,200000)
+end
+
+--------------------------------------------------------
 --start ups :)
 --------------------------------------------------------
 function script.Create()
 	-- Initial State
-	
+	StartThread(TeleportControl)
 	Turn(r_forearm, x_axis, math.rad(-15),math.rad(130))
 	Turn(lflare, x_axis,math.rad(90))
 	Turn(nano, x_axis,math.rad(90))
@@ -96,6 +118,9 @@ function script.QueryWeapon(weaponID)
 	end
 end
 
+function Teleport()
+	StartThread(TeleportControl)
+end
 
 -----------------------------------------------------------------------
 -- This coroutine is restarted with each time a unit reaims, 

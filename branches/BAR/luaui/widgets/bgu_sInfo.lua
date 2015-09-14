@@ -41,9 +41,7 @@ local spGetUnitResources        = Spring.GetUnitResources
 local spGetSelectedUnitsCounts  = Spring.GetSelectedUnitsCounts
 local floor = math.floor
 
-local r,g,b     = Spring.GetTeamColor(Spring.GetMyTeamID())
 local myTeamID  = Spring.GetMyTeamID()
-local teamColor = {r,g,b}
 
 local groundTimer = spGetTimer()
 
@@ -110,13 +108,16 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
         color   = {0.5,1,0,1},
     }
     
+    local unitTeamID = Spring.GetUnitTeam(unitIDs[1]) -- assume we are not cheating -> we cannot select units of multiple teams
+    local r,g,b = Spring.GetTeamColor(unitTeamID)
+    local teamColor = {r,g,b} 
     local unitIcon = Chili.Image:New{
         file     = texture,
         height   = '100%',
         width    = '100%',
         children = {
             Chili.Image:New{
-                color    = teamColor, -- assume we are not cheating -> we cannot select units of enemy teams
+                color    = teamColor, 
                 height   = '100%',
                 width    = '100%',
                 file     = overlay,
@@ -865,8 +866,6 @@ end
 
 function widget:PlayerChanged()
     myTeamID  = Spring.GetMyTeamID()
-    local r,g,b = Spring.GetTeamColor(myTeamID)
-    teamColor = {r,g,b}
 end    
 
 function widget:CommandsChanged()

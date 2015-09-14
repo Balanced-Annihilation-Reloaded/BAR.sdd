@@ -185,7 +185,7 @@ function GetOverlayColor(teamID)
     local r,g,b = Spring.GetTeamColor(teamID)
     local color = {r,g,b}
     local overlayColor = {} -- desaturate and aim for 0.3 brightness, else unit properties are hard to read
-    overlayColor[4] = 0.75 
+    overlayColor[4] = 1.00
     local average = 1/6 * (color[1] + color[2] + color[3] + 0.9) 
     local bias = 0.3
     for i=1,3 do

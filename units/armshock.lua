@@ -109,6 +109,9 @@ return {
 				craterareaofeffect = 192,
 				craterboost = 0,
 				cratermult = 0,
+				customparams = {
+                    lups_shockwave = "1",
+                },  
 				edgeeffectiveness = 0.5,
 				explosiongenerator = "custom:FLASHSMALLBUILDING",
 				gravityaffected = "true",

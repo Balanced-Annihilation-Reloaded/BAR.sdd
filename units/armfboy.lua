@@ -108,6 +108,9 @@ return {
 				craterareaofeffect = 240,
 				craterboost = 0,
 				cratermult = 0,
+				customparams = {
+					lups_shockwave = "1",
+      			},   
 				edgeeffectiveness = 0.7,
 				energypershot = 0,
 				explosiongenerator = "custom:FLASH224",

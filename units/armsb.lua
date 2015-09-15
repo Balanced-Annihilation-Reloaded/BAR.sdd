@@ -72,6 +72,9 @@ return {
 				craterareaofeffect = 174,
 				craterboost = 0,
 				cratermult = 0,
+				customparams = {
+                    lups_shockwave = "1",
+                },  
 				edgeeffectiveness = 0.7,
 				explosiongenerator = "custom:CORE_BIGBOMB_EXPLOSION",
 				gravityaffected = "true",

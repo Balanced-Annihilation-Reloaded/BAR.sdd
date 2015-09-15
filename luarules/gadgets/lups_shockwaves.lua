@@ -21,7 +21,7 @@ if (gadgetHandler:IsSyncedCode()) then
   for i=1,#WeaponDefs do
     local wd = WeaponDefs[i]
     local customParams = wd.customParams or {}
-    if (not customParams.lups_noshockwave) then
+    if (customParams.lups_shockwave) then
       local speed = 1
       local life = 1
       if customParams.lups_explodespeed then
@@ -30,14 +30,12 @@ if (gadgetHandler:IsSyncedCode()) then
       if wd.customParams.lups_explodelife then
         life = wd.customParams.lups_explodelife
       end
-      if (wd.damageAreaOfEffect>70 and not wd.paralyzer) then
+      if (wd.type == "DGun") then
         Script.SetWatchWeapon(wd.id,true)
         hasShockwave[wd.id] = {life = life, speed = speed}
-      elseif (wd.type == "DGun") then
+      else
         Script.SetWatchWeapon(wd.id,true)
         hasShockwave[wd.id] = {life = life, speed = speed}
-      --elseif (wd.description:find("Clogger")) then
-      --  Script.SetWatchWeapon(wd.id,true)
       end
     end
   end

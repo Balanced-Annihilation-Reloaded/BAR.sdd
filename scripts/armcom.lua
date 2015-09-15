@@ -105,6 +105,8 @@ end
 function script.AimFromWeapon(weaponID)
 	if weaponID == 3 then
 		return l_arm
+	elseif weaponID == 4 then
+		return base
 	else
 		return r_arm
 	end
@@ -148,6 +150,11 @@ local function RestoreAfterDelayRight()
 end
 
 function script.AimWeapon(weaponID, heading, pitch)
+	--Never fire fake weapon used in comGate
+	if weaponID == 4 then
+		return false
+	end
+	
 	-- Spring.Echo("AimWeapon " .. weaponID)	
 	-- weapon2 is supposed to only fire underwater, check for it.
 	if weaponID == 2 then

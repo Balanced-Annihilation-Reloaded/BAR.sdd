@@ -505,7 +505,7 @@ Create()
 	currentSpeed = 100;
 	start-script MotionControl();
 	start-script UnitSpeed();
-	call-script TeleportControl();
+	//call-script TeleportControl();
 	return (0);
 }
 

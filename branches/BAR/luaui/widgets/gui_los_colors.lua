@@ -20,21 +20,24 @@ local originalColors, colors
 local spSetLosViewColors = Spring.SetLosViewColors
 local spec,_ = Spring.GetSpectatingState()
 
+local initialized = false
+local Chili, Menu
 
-local losColorsWithoutEdges = {
-    always =  {0.10, 0.10, 0.10},
+
+local losColors = {
+    always =  {0.20, 0.20, 0.20},
     los =    {0.30, 0.30, 0.30},
     radar =  {0.17, 0.17, 0.17},
     jam =    {0.12, 0.00, 0.00},
     radar2 = {0.17, 0.17, 0.17},
 }
 
-local losColorsWithEdges = {
-    always = {0.15, 0.15, 0.15,1},
-    los =    {0.22, 0.14, 0.30,1},
-    radar =  {0.08, 0.16, 0.00,1},
-    jam =    {0.20, 0.00, 0.00,1},
-    radar2 = {0.08, 0.16, 0.00,1},
+local losColorsExtraSaturation = {
+    always = {0.20, 0.20, 0.20},
+    los =    {0.22, 0.14, 0.30},
+    radar =  {0.08, 0.16, 0.00},
+    jam =    {0.20, 0.00, 0.00},
+    radar2 = {0.08, 0.16, 0.00},
 }
 
 local losColorsWithoutRadars = {
@@ -64,10 +67,10 @@ function resetColorsLOS()
         colors = losColorsWithoutRadars
     elseif options.extraSaturation then
         --Spring.Echo(2)
-        colors = losColorsWithEdges
+        colors = losColorsExtraSaturation
     else
         --Spring.Echo(3)
-        colors = losColorsWithoutEdges
+        colors = losColors
     end
     
     spSetLosViewColors(colors.always, colors.los, colors.radar, colors.jam, colors.radar2)
@@ -90,6 +93,10 @@ function widget:Initialize()
     originalColors = {always=always,los=los,radar=radar,jam=jam,radar2=radar2}
     colors = {always=always,los=los,radar=radar,jam=jam,radar2=radar2}
     
+    if Spring.GetGameFrame()>0 then
+        TurnOnLOS()
+    end
+
     Chili  = WG.Chili
     if not Chili then return end
     screen = Chili.Screen0
@@ -103,29 +110,27 @@ function widget:Initialize()
                 Chili.Checkbox:New{caption='Show radar as spec',x='10%',width='80%',
                         checked=options.showRadarAsSpec,OnChange={function() ToggleRadarAsSpec() end}}, 
                 Chili.Checkbox:New{caption='Extra saturation',x='10%',width='80%',
-                        checked=options.showEdgeEffects,OnChange={function() ToggleExtraSaturation() end}},
+                        checked=options.extraSaturation,OnChange={function() ToggleExtraSaturation() end}},
                 Chili.Line:New{width='100%'}
         }
     }
-    
-    if Spring.GetGameFrame()>0 then
-        TurnOnLOS()
-    end
-
+        
     resetColorsLOS()
+    initialized = true
 end
 
 function widget:GameStart()
     TurnOnLOS()
 end
 
-function SetConfig(data)
+function widget:SetConfigData(data)
     for k,v in pairs(options) do
-        if data[k] then options[k] = data[k] end
+        Spring.Echo(k, options[k], data[k])
+        if data[k]~=nil then options[k] = data[k] end
     end
 end
 
-function widget:PlayerChanged(playerID)
+function widget:PlayerChanged()
     local prevSpec = spec
     spec,_ = Spring.GetSpectatingState()
     if prevSpec ~= spec then
@@ -138,7 +143,7 @@ function widget:Shutdown()
     TurnOffLOS()
 end
 
-function GetConfig()
+function widget:GetConfigData()
     return options
 end
 

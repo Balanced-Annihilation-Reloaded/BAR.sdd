@@ -69,6 +69,9 @@ return {
 				craterareaofeffect = 144,
 				craterboost = 0,
 				cratermult = 0,
+                                customParams = {
+                                    lups_shockwave = "1",
+                                },   
 				edgeeffectiveness = 0.4,
 				explosiongenerator = "custom:T1ARMBOMB",
 				gravityaffected = "true",

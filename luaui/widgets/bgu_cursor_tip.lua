@@ -103,7 +103,6 @@ local function getFeatureTooltip(fID)
     return tooltip
 end
 -----------------------------------
-local prevTipType, prevID
 local function getTooltip()
 
     if screen.currentTooltip then -- this gives chili absolute priority, otherwise TraceSreenRay() would ignore the fact ChiliUI is underneath the mouse
@@ -115,13 +114,6 @@ local function getTooltip()
     else
         tipType, ID = spTraceScreenRay(spGetMouseState())
         
-        local gameFrame = spGetGameFrame()
-        if tipType == prevTipType and ID==prevID and not (tipType=='unit' and gameFrame<=prevGameFrame+3) then --need to update because units build costs change
-            return false
-        elseif tipType then
-            prevTipType = tipType; prevID = ID; prevGameFrame = gameFrame
-        end
-
         if tipType == 'unit' and #Spring.GetSelectedUnits()==0 then
             return "Right click to switch between unit info/properties" --sInfo shows tooltips for units
         elseif tipType == 'feature' then 

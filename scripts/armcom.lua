@@ -82,7 +82,7 @@ end
 --------------------------------------------------------
 function script.Create()
 	-- Initial State
-	StartThread(TeleportControl)
+	--StartThread(TeleportControl)
 	Turn(r_forearm, x_axis, math.rad(-15),math.rad(130))
 	Turn(lflare, x_axis,math.rad(90))
 	Turn(nano, x_axis,math.rad(90))

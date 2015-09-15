@@ -16,7 +16,7 @@ end
 local enabled = tonumber(Spring.GetModOptions().mo_comgate) or 0
 
 if (enabled == 0) then 
-  --return false
+  return false
 end
 
 --synced

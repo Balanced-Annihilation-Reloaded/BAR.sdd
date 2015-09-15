@@ -15,7 +15,7 @@ end
 --------------
 
 -- Config --
-local catNames = {'ECONOMY', 'BATTLE', 'FACTORY'} -- order matters
+local catNames = {'ECONOMY', 'BATTLE', 'UNITS', 'FACTORY'} -- order matters
 local imageDir = 'luaui/images/buildIcons/'
 
 --  Will probably ignore redundant units here (e.g. floating AA, umex, etc. which are interchangeable)
@@ -172,6 +172,7 @@ local spGetFullBuildQueue = Spring.GetFullBuildQueue
 local spGetSelectedUnits  = Spring.GetSelectedUnits
 local spSendCommands      = Spring.SendCommands
 local spSetActiveCommand  = Spring.SetActiveCommand
+local max = math.max
 
 -- Local vars --
 local gameStarted = (Spring.GetGameFrame()>0)
@@ -462,8 +463,10 @@ local function addDummyOrder(cmd)
 end
 
 local function getMenuCat(ud)
-    if (ud.speed > 0 and ud.canMove) or ud.isFactory then
-        -- Factories and the units they build
+    if ud.isFactory or (ud.isBuilder and ud.speed==0) then
+        menuCat = 4
+    elseif (ud.speed > 0 and ud.canMove) then
+        -- Units
         menuCat = 3
     elseif ud.isBuilding and (ud.energyMake>=20 
                            or ud.isExtractor 
@@ -632,8 +635,8 @@ local function makeMenuTabs()
                 tooltip = 'You can scroll through the different categories with your mouse wheel!',
                 parent  = menuTabs,
                 width   = 100,
-                y       = (tabCount - 1) * 150 / #catNames + 1,
-                height  = 150/#catNames-1,
+                y       = (tabCount - 1) * 200 / max(3,#catNames) + 1, -- panel to fit into is 200 high
+                height  = 200/max(3,#catNames)-1,
                 caption = catNames[i],
                 OnClick = {selectTab},
                 backgroundColor = black,
@@ -834,7 +837,7 @@ function widget:Initialize()
         parent  = screen0,
         choice  = 1,
         prevChoice = 1,
-        height  = 150,
+        height  = 200,
         width   = 120,
         padding = {0,0,0,0},
         margin  = {0,0,0,0},

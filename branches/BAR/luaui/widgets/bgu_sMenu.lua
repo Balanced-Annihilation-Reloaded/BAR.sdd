@@ -710,6 +710,15 @@ end
 
 ---------------------------
 --
+local airFacs = { --unitDefs can't tell us this
+    [UnitDefNames.armap.id] = true,
+    [UnitDefNames.armaap.id] = true,
+    [UnitDefNames.corap.id] = true,
+    [UnitDefNames.coraap.id] = true,
+    [UnitDefNames.armplat.id] = true,
+    [UnitDefNames.corplat.id] = true,
+}
+
 local function createButton(name, unitDef)
     -- if it can attack and it's not a plane, get max range of weapons of unit
     local range = 0
@@ -760,18 +769,27 @@ local function createButton(name, unitDef)
         }
     }
  
-    local isWater = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25) 
-                    or (unitDef.minWaterDepth and unitDef.minWaterDepth>0) 
-                    or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
-    if isWater then
-        -- Add raindrop to unit icon
-        Chili.Image:New{
-            parent = unit[name].children[1],
-            x = 1, bottom = 1,
-            height = 15, width = 15,
-            file   = imageDir..'raindrop.png',
-        }
-    end    
+    local extraIcons = {
+        [1] = {image="constr.png",   used = unitDef.isBuilder},
+        [2] = {image="raindrop.png", used = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25) 
+                                             or (unitDef.minWaterDepth and unitDef.minWaterDepth>0) 
+                                             or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")},
+        [3] = {image="plane.png",    used = (unitDef.isAirUnit or unitDef.isAirBase or airFacs[unitDef.id] or (unitDef.weapons[1] and unitDef.weapons[1].onlyTargets.vtol or false))},
+    }
+    Spring.Echo(unitDef.name, unitDef.isAirUnit, unitDef.isAirBase, (unitDef.weapons[1] and unitDef.weapons[1].onlyTargets.vtol or false))
+    local y = 2
+    for _,icon in ipairs(extraIcons) do
+        if icon.used then
+            Spring.Echo(icon.image)
+            Chili.Image:New{
+                parent = unit[name].children[1].children[3],
+                x = 2, bottom = y,
+                height = 15, width = 15,
+                file   = imageDir..icon.image,
+            }
+            y = y + 16        
+        end    
+    end
 end
 
 ---------------------------

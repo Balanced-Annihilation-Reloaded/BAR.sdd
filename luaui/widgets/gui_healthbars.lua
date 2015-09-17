@@ -61,7 +61,7 @@ local featureHpThreshold        = 0.85
 local featureResurrectVisibility= true      -- draw feature bars for resurrected features on same distance as normal unit bars
 local featureReclaimVisibility  = false      -- draw feature bars for reclaimed features on same distance as normal unit bars
 
-local minPercentageDistance     = 80000     -- always show health percentage text below this distance
+local minPercentageDistance     = 800000     -- always show health percentage text below this distance
 local infoDistance              = 800000
 local maxFeatureInfoDistance    = 300000    --max squared distance at which text it drawn for features 
 local maxFeatureDistance        = 550000    --max squared distance at which any info is drawn for features 

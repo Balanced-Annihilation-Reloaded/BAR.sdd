@@ -272,7 +272,7 @@ local function selectTab(self)
     end
 
     menuTabs.choice = choice
-    if choice ~= 3 or (choice==3 and (#grid[1].children>0 or #grid[1].children>0)) then
+    if choice ~= 4 or (choice==4 and (#grid[1].children>0 or #grid[1].children>0)) then
         menuTabs.prevChoice = choice 
     end
 
@@ -540,10 +540,10 @@ end
 
 local function ChooseTab()
     -- use the most recent tab that wasn't the factory tab, if possible
-    for i=1,3 do
+    for i=1,#catNames do
         if #grid[i].children>0 and menuTabs.prevChoice==i then return i end
     end
-    for i=1,3 do
+    for i=1,#catNames do
         if #grid[i].children>0 then return i end
     end
     return nil
@@ -776,11 +776,9 @@ local function createButton(name, unitDef)
                                              or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")},
         [3] = {image="plane.png",    used = (unitDef.isAirUnit or unitDef.isAirBase or airFacs[unitDef.id] or (unitDef.weapons[1] and unitDef.weapons[1].onlyTargets.vtol or false))},
     }
-    Spring.Echo(unitDef.name, unitDef.isAirUnit, unitDef.isAirBase, (unitDef.weapons[1] and unitDef.weapons[1].onlyTargets.vtol or false))
     local y = 2
     for _,icon in ipairs(extraIcons) do
         if icon.used then
-            Spring.Echo(icon.image)
             Chili.Image:New{
                 parent = unit[name].children[1].children[3],
                 x = 2, bottom = y,

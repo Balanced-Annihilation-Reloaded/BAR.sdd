@@ -345,49 +345,49 @@ local function addToStack()
 end
 
 ----------------------------
--- Creates a stack panel which can then be used as a parent to options
+-- Creates a stack panel which can then be used as a parent 
 local function addStack(obj)
     local stack
-    if obj.scroll then
-        stack = Chili.ScrollPanel:New{
-            x        = obj.x or 0,
-            y        = obj.y or 0,
-            width    = obj.width or '50%',
-            bottom   = obj.bottom or 0,
-            children = {
-                Chili.StackPanel:New{
-                    name        = obj.name or 'Stack',
-                    x           = 0,
-                    y           = 0,
-                    width       = '100%',
-                    resizeItems = false,
-                    autosize    = true,
-                    padding     = {0,0,0,0},
-                    itemPadding = {0,0,0,0},
-                    itemMargin  = {0,0,0,0},
-                    children    = obj.children or {},
-                    preserverChildrenOrder = true
-                }
-            }
-        }
-    else
         stack = Chili.StackPanel:New{
             name        = obj.name or 'Stack',
             x           = obj.x or 0,
             y           = obj.y or 0,
             width       = obj.width or '50%',
+            --height      = '70%',
             resizeItems = false,
             autosize    = true,
             padding     = {0,0,0,0},
-            itemPadding = {0,0,0,0},
+            itemPadding = {5,0,5,0},
             itemMargin  = {0,0,0,0},
             children    = obj.children or {},
             preserverChildrenOrder = true
         }
-    end
     return stack
 end
-
+local function addScrollStack(obj)
+    local stack = Chili.ScrollPanel:New{
+        x        = obj.x or 0,
+        y        = obj.y or 0,
+        width    = obj.width or '50%',
+        bottom   = obj.bottom or 0,
+        children = {
+            Chili.StackPanel:New{
+                name        = obj.name or 'Stack',
+                x           = 0,
+                y           = 0,
+                width       = '100%',
+                resizeItems = false,
+                autosize    = true,
+                padding     = {0,0,0,0},
+                itemPadding = {0,0,0,0},
+                itemMargin  = {0,0,0,0},
+                children    = obj.children or {},
+                preserverChildrenOrder = true
+            }
+        }
+    }
+    return stack
+end
 
 ----------------------------
 -- Creates the original window in which all else is contained
@@ -470,14 +470,15 @@ local function applyDefaultSettings()
         ['DynamicSun']       = 0,
     }
 
-    local engineStack = tabs['Graphics']:GetObjectByName('EngineSettings')
+    local EngineSettingsMulti = tabs['Graphics']:GetChildByName('Settings'):GetChildByName('EngineSettingsMulti')
+    local EngineSettingsCheckBoxes = tabs['Graphics']:GetChildByName('Settings'):GetObjectByName('EngineSettingsCheckBoxes')
     
     for setting,value in pairs(comboboxes) do
         Settings[setting] = value
         if setting=='Water' then
-            engineStack:GetObjectByName(setting):Select(waterConvert_ID[value])
+            EngineSettingsMulti:GetObjectByName(setting):Select(waterConvert_ID[value])
         elseif setting=='Shadows' then
-            engineStack:GetObjectByName(setting):Select(shadowConvert_ID[value])
+            EngineSettingsMulti:GetObjectByName(setting):Select(shadowConvert_ID[value])
         --elseif setting=='ShadowMapSize' then
             --engineStack:GetObjectByName(setting):Select(shadowMapSizeConvert_ID[value] or 2)
         end
@@ -485,7 +486,7 @@ local function applyDefaultSettings()
     
     for setting,value in pairs(sliders) do
         Settings[setting] = value
-        engineStack:GetObjectByName(setting):SetValue(value)
+        EngineSettingsMulti:GetObjectByName(setting):SetValue(value)
     end
     
     for setting,value in pairs(checkboxes) do
@@ -493,7 +494,7 @@ local function applyDefaultSettings()
         if setting=='luarules cus_toggle' then
             if Spring.GetGameFrame()>3 then SetCUSstate() end -- before means it will be set automatically from GameFrame
         else
-            local checkbox = engineStack:GetObjectByName(setting)
+            local checkbox = EngineSettingsCheckBoxes:GetObjectByName(setting)
             if checkbox.checked ~= (value==1) then checkbox:Toggle() end
             spSendCommands(setting..' '..(value and 1 or 0))    
         end
@@ -534,7 +535,6 @@ local comboBox = function(obj)
 
         if setting == 'Skin' then
             Chili.theme.skin.general.skinName = value
-            Spring.Echo('To see skin changes; \'/luaui reload\'')
         elseif setting == 'Cursor' then
             setCursor(value)
             Settings['CursorName'] = value
@@ -773,7 +773,7 @@ local function createInterfaceTab()
     -- Interface --
     tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', --Control attached to tab
         children = {
-            addStack{name='widgetList',x='50%',scroll=true},
+            addScrollStack{name='widgetList',x='50%'},
             Chili.EditBox:New{name='widgetFilter',x=0,y=0,width = '35%',text=' Enter filter -> Hit Return,  or -->',OnMouseDown = {function(obj) obj.text = '' end}},
             Chili.Button:New{right='50%',y=0,height=20,width='15%',caption='Search',OnMouseUp={addFilter}},
             Chili.Checkbox:New{caption='Search Widget Name',x=0,y=40,width='35%',textalign='left',boxalign='right',checked=Settings.searchWidgetName,
@@ -786,51 +786,55 @@ local function createInterfaceTab()
             Chili.Line:New{width='50%',y=80},
 
             comboBox{name='Skin',y=90, width='45%',
-                labels=Chili.SkinHandler.GetAvailableSkins()},
+                labels=Chili.SkinHandler.GetAvailableSkins()}, --TODO: hide some skins
             comboBox{name='Cursor',y=125, width='45%',
                 labels={'Chili Default','Chili Static','Spring Default','CA Classic','CA Static','Erom','Masse','K_haos_girl'},
                 options={'zk','zk_static','ba','ca','ca_static','erom','masse','k_haos_girl'}},
             Chili.Label:New{caption='-- Widget Settings --',x='2%',width='46%',align = 'center',y=175},
-            addStack{y=190,x='2%',width='46%',scroll=true},
+            addScrollStack{y=190,x='2%',width='46%',scroll=true},
         }
     }
 end
 
 local function createGraphicsTab()
     -- Graphics --
-    tabs.Graphics = Chili.ScrollPanel:New{x = 0, y = 20, bottom = 20, width = '100%', borderColor = {0,0,0,0},backgroundColor = {0,0,0,0},
+    tabs.Graphics = Chili.Panel:New{x = 0, y = 20, bottom = 20, width = '100%', borderColor = {0,0,0,0}, backgroundColor = {0,0,0,0},
         children = {
-            addStack{x='50%'},
-            addStack{x = 0, name = 'EngineSettings',
-                children = {
-                    comboBox{y=0,title='Water',name='Water', --not 'ReflectiveWater' because we use SendCommands instead of SetConfigInt to apply settings (some settings seem to only take effect immediately this way)
-                        labels={'Basic','Reflective','Dynamic','Refractive','Bump-Mapped'},
-                        options={0,1,2,3,4},},
-                    comboBox{y=40,title='Shadows',name='Shadows',
-                        labels={'Off','On','Units Only'},
-                        options={'0','1','2'},},
-                    --[[comboBox{y=40,title='Shadow Resolution',name='ShadowMapSize', --disabled because it seems this can't be changed ingame
-                        labels={'Very Low','Low','Medium','High'},
-                        options={'32','1024','2048','4096'},},]]
-                    slider{name='UnitLodDist',title='Unit Draw Distance', max = 600, step = 1},
-                    slider{name='UnitIconDist',title='Unit Icon Distance', max = 600, step = 1},
-                    slider{name='MaxParticles',title='Max Particles', max = 5000},
-                    slider{name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
-                    checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},                    
-                    checkBox{title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
-                    checkBox{title = 'Extra Model Shading', name = 'luarules cus_toggle', tooltip = "Toggle BAR extra model shaders"}, 
-                    checkBox{title = 'Deferred Map Shading', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
-                    checkBox{title = 'Deferred Model Shading', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
-                    checkBox{title = 'Draw Engine Trees', name = '3DTrees', tooltip = "Enable/Disable rendering of engine trees"},
-                    checkBox{title = 'Ground Decals', name = 'GroundDecals', tooltip = "Enable/Disable rendering of ground decals"},
-                    checkBox{title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
-                    checkBox{title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
-                    checkBox{title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
-                    checkBox{title = 'Hide Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"}, --something is weird with parity here
-                    checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},
-                    Chili.Button:New{name="ResetDefaults",height=20,width='100%',caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},
-                }
-            }
+            Chili.ScrollPanel:New{name='Settings', x=0, y=0, width='100%', height='80%', children = {
+                    addStack{x = 0, y = '3%', name = 'EngineSettingsMulti', children = {
+                            comboBox{y=0,title='Water',name='Water', --not 'ReflectiveWater' because we use SendCommands instead of SetConfigInt to apply settings (some settings seem to only take effect immediately this way)
+                                labels={'Basic','Reflective','Dynamic','Refractive','Bump-Mapped'},
+                                options={0,1,2,3,4},},
+                            comboBox{y=40,title='Shadows',name='Shadows',
+                                labels={'Off','On','Units Only'},
+                                options={'0','1','2'},},
+                            --[[comboBox{y=40,title='Shadow Resolution',name='ShadowMapSize', --disabled because it seems this can't be changed ingame
+                                labels={'Very Low','Low','Medium','High'},
+                                options={'32','1024','2048','4096'},},]]
+                            slider{name='UnitLodDist',title='Unit Draw Distance', max = 600, step = 1},
+                            slider{name='UnitIconDist',title='Unit Icon Distance', max = 600, step = 1},
+                            slider{name='MaxParticles',title='Max Particles', max = 5000},
+                            slider{name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
+                        }
+                    },
+                    addStack{x = '50%', y = '3%', name = 'EngineSettingsCheckBoxes', children = {
+                            checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},                    
+                            checkBox{title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
+                            checkBox{title = 'Extra Model Shading', name = 'luarules cus_toggle', tooltip = "Toggle BAR extra model shaders"}, 
+                            checkBox{title = 'Deferred Map Shading', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
+                            checkBox{title = 'Deferred Model Shading', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
+                            checkBox{title = 'Draw Engine Trees', name = '3DTrees', tooltip = "Enable/Disable rendering of engine trees"},
+                            checkBox{title = 'Ground Decals', name = 'GroundDecals', tooltip = "Enable/Disable rendering of ground decals"},
+                            checkBox{title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
+                            checkBox{title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
+                            checkBox{title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
+                            checkBox{title = 'Hide Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"}, --something is weird with parity here
+                            checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},      
+                        }                    
+                    }
+                },
+            },
+            Chili.Button:New{name="ResetDefaults",x='25%',y='85%',height='10%',width='50%',caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},
         }
     }
     

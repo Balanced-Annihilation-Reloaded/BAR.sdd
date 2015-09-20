@@ -37,6 +37,14 @@ local inherited = this.inherited
 
 --//=============================================================================
 
+function Image:New(obj)
+	obj = inherited.New(self,obj)
+    if obj.cache then TextureHandler.PreLoadTexture(obj.file,self) end
+	return obj
+end
+
+--//=============================================================================
+
 local function _DrawTextureAspect(x,y,w,h ,tw,th, flipy)
   local twa = w/tw
   local tha = h/th

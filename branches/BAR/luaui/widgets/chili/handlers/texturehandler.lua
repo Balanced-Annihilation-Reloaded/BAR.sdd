@@ -60,6 +60,14 @@ end
 --//=============================================================================
 --//
 
+
+function TextureHandler.PreLoadTexture(filename, obj)
+  local tex = loaded[filename]
+  if (not tex) then
+    AddRequest(filename,obj)
+  end
+end
+
 function TextureHandler.LoadTexture(arg1,arg2,arg3)
   local activeTexID,filename,obj
   if (type(arg1)=='number') then
@@ -114,13 +122,13 @@ function TextureHandler.Update()
 
 		if (usedTime<0) then usedTime = 0 end
 	end
-
+    
 	local broken = {}
 	local timerStart = spGetTimer()
 	local finished = false
 	while (usedTime < timeLimit)and(not finished) do
 		local filename,objs = next(requested)
-
+        
 		if (filename) then
 			gl.Texture(filename)
 			gl.Texture(false)

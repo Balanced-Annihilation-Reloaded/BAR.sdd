@@ -409,7 +409,7 @@ local function MakeButton(unitDefID, facID, facIndex)
                 Image:New {
                     name = 'bp',
                     --file = "#"..unitDefID,
-                    file = imageDir..'Units/'.. UnitDefs[unitDefID].name ..'.dds',
+                    file = '#'..unitDefID,
                     keepAspect = false;
                     width = '100%', height = '80%', y = '5%',
                     children = {

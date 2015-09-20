@@ -502,6 +502,18 @@ local function applyDefaultSettings()
 
 end
 
+local function GetAllowedSkins()
+    local chiliSkins = Chili.SkinHandler.GetAvailableSkins()
+    local skins = {}
+    for k,v in pairs(chiliSkins) do
+        if v~="default" then
+            skins[#skins+1] = v
+        end
+    end
+    return skins
+end
+
+
 ----------------------------
 -- Creates a combobox style control
 local comboBox = function(obj)
@@ -786,7 +798,7 @@ local function createInterfaceTab()
             Chili.Line:New{width='50%',y=80},
 
             comboBox{name='Skin',y=90, width='45%',
-                labels=Chili.SkinHandler.GetAvailableSkins()}, --TODO: hide some skins
+                labels=GetAllowedSkins()}, 
             comboBox{name='Cursor',y=125, width='45%',
                 labels={'Chili Default','Chili Static','Spring Default','CA Classic','CA Static','Erom','Masse','K_haos_girl'},
                 options={'zk','zk_static','ba','ca','ca_static','erom','masse','k_haos_girl'}},

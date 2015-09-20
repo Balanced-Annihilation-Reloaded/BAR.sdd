@@ -60,14 +60,6 @@ end
 --//=============================================================================
 --//
 
-
-function TextureHandler.PreLoadTexture(filename, obj)
-  local tex = loaded[filename]
-  if (not tex) then
-    AddRequest(filename,obj)
-  end
-end
-
 function TextureHandler.LoadTexture(arg1,arg2,arg3)
   local activeTexID,filename,obj
   if (type(arg1)=='number') then

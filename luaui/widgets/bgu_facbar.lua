@@ -277,7 +277,7 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
                 unitID ~= 0 and
                     Image:New {
                         --file = "#"..unitDefID,
-                        file = imageDir..'Units/'.. UnitDefs[unitDefID].name ..'.dds',
+                        file = '#'..unitDefID,
                         keepAspect = false;
                         width = '100%',
                         height = '100%',

@@ -142,7 +142,7 @@ local function showUnitGrid()
     for unitDefID, unitIDs in pairs(curTip.sortedSelUnits) do
         if unitDefID ~= 'n' then 
             local name    = UnitDefs[unitDefID].name
-            local texture = imageDir..'Units/' .. name .. '.dds'
+            local texture = '#'..unitDefID
             local overlay = imageDir..'Overlays/' .. name .. '.dds'
             addUnitGroup(name,texture,overlay,unitIDs, unitDefID)
         end
@@ -202,7 +202,7 @@ local function showUnitInfo()
 
     local description = UnitDefs[defID].tooltip or ''
     local name        = UnitDefs[defID].name
-    local texture     = imageDir..'Units/' .. name .. '.dds'
+    local texture     = '#'..defID
     local overlay     = imageDir..'Overlays/' .. name .. '.dds'
     local overlayColor = GetOverlayColor(unitTeamID)
     local humanName   = UnitDefs[defID].humanName
@@ -492,7 +492,7 @@ local function showFocusInfo()
 
     local description = UnitDefs[defID].tooltip or ''
     local name        = UnitDefs[defID].name
-    local texture     = imageDir..'Units/' .. name .. '.dds'
+    local texture     = '#'..defID
     local overlay     = imageDir..'Overlays/' .. name .. '.dds'
     local overlayColor = GetOverlayColor(unitTeamID)
     local humanName   = UnitDefs[defID].humanName

@@ -747,7 +747,8 @@ local function createButton(name, unitDef)
         children  = {
             Chili.Image:New{
                 height = '100%', width = '100%',
-                file   = imageDir..'Units/'..name..'.dds',
+                file   = '#'..unitDef.id,
+                flip   = false,
                 children = {
                     Chili.Label:New{
                         caption = '',
@@ -763,7 +764,6 @@ local function createButton(name, unitDef)
                         color  = teamColor,
                         height = '100%', width = '100%',
                         file   = imageDir..'Overlays/'..name..'.dds',
-                        cache  = true,
                     },
                 }
             }

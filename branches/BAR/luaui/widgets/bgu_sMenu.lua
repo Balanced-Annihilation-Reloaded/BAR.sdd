@@ -763,6 +763,7 @@ local function createButton(name, unitDef)
                         color  = teamColor,
                         height = '100%', width = '100%',
                         file   = imageDir..'Overlays/'..name..'.dds',
+                        cache  = true,
                     },
                 }
             }
@@ -1040,6 +1041,7 @@ function widget:GameStart()
     gameStarted = true
     updateRequired = true
 end
+
 ---------------------------
 --
 function widget:Shutdown()

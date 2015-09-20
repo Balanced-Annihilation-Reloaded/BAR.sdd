@@ -250,7 +250,7 @@ local function showUnitInfo()
         y      = 5,
         right  = 0,
         bottom = 0,
-        text   = humanName .. numText,
+        text   = humanName .. '\n' .. description .. numText,
     }
     
     unitHealthText = Chili.TextBox:New{
@@ -830,7 +830,7 @@ function widget:Initialize()
     
     groundWindow = Chili.Button:New{ -- parent for ground info, children are permanent
         parent  = screen,
-        padding = {12,12,12,12},
+        padding = {6,6,6,6},
         borderColor = {0,0,0,1},
         backgroundColor = {0,0,0,1},
         focusColor = {0,0,0,1},
@@ -843,9 +843,10 @@ function widget:Initialize()
     }    
     groundText = Chili.TextBox:New{
         parent = groundWindow,
-        width = '100%',
-        height = '100%',
+        x = 5,
+        y = 5,
         text   = '',
+        
     }
     groundText2 = Chili.TextBox:New{
         parent = groundWindow,

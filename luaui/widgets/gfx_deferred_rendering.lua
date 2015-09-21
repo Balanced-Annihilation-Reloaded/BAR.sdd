@@ -530,12 +530,8 @@ function widget:DrawWorld()
                             --Spring.Echo('GetFeatureVelocity=',dx,dy,dz)
                         else --point type
                             --TODO: clip some lights based on height
-                            if y > lightparams.radius then
-                                local smoothheight=spGetSmoothMeshHeight(x, z)
-                                if smoothheight + 50 > y-lightparams.radius then 
-                                    table.insert(pointlightprojectiles,TableConcat(lightparams,{px=x,py=y,pz=z,dx=0,dy=0,dz=0}))
-                                end
-                            end
+                            --local smoothheight=spGetSmoothMeshHeight(x, z)
+                            table.insert(pointlightprojectiles,TableConcat(lightparams,{px=x,py=y,pz=z,dx=0,dy=0,dz=0}))
                         end
                     end
                 end

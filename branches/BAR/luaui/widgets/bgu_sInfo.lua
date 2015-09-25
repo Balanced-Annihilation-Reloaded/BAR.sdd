@@ -232,7 +232,6 @@ local function showUnitInfo()
         parent   = unitWindow,
         file     = texture,
         color    = overlayColor,
-        y        = 0,
         height   = '100%',
         width    = '100%',
     }
@@ -248,8 +247,6 @@ local function showUnitInfo()
         parent = unitPictureOverlay,
         x      = 5,
         y      = 5,
-        right  = 0,
-        bottom = 0,
         text   = humanName .. '\n' .. description .. numText,
     }
     
@@ -273,10 +270,9 @@ local function showUnitInfo()
     unitResText = Chili.TextBox:New{
         parent = unitPictureOverlay,
         x        = 5,
-        bottom   = 37,
-        height   = 24,
+        bottom   = 55,
         text     =  '',
-        fontsize = 14,
+        autoHeight = false,
     }
     
     updateUnitInfo()
@@ -534,15 +530,15 @@ local function showFocusInfo()
             parent = focusPictureOverlay,
             x        = 5,
             bottom   = 20,
-            height   = 24,
             text     =  "Cost: " .. mColour .. unitDef.metalCost .. " " .. eColour .. unitDef.energyCost,
+            autoHeight = false,
         }
         focusBuildTime = Chili.TextBox:New{
             parent = focusPictureOverlay,
             x        = 5,
             bottom   = 5,
-            height   = 24,
             text     =  "Build Time: " .. lilac .. unitDef.buildTime, -- this isn't very intuitive
+            autoHeight = false,
         }
     end
     
@@ -555,14 +551,13 @@ local function showFocusInfo()
             parent = focusPictureOverlay,
             x        = 5,
             bottom   = bottom,
-            height   = 24,
+            autoHeight = false,
             text     = text,
         }
         bottom = bottom - 16
     end
         
 
-    
     unitWindow:Show()        
 end
 

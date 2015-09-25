@@ -502,7 +502,6 @@ local function showFocusInfo()
         parent   = unitWindow,
         file     = texture,
         color    = overlayColor,
-        y        = 0,
         height   = '100%',
         width    = '100%',
     }
@@ -519,8 +518,6 @@ local function showFocusInfo()
         parent = focusPictureOverlay,
         x      = 5,
         y      = 5,
-        right  = 0,
-        bottom = 0,
         text   = humanName .. "\n" .. description,
     }
     

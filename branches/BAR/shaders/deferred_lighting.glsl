@@ -1,5 +1,5 @@
-//This code copyright of Peter Sarkozy aka Beherith. Contact mysterme@gmail.com for licensing.
-//License is CC-BY-ND 3.0
+//This code authored by Peter Sarkozy aka Beherith (mysterme@gmail.com )
+//License is GPL V2
 // old version with calced normals is 67 fps for 10 beamers full screen at 1440p
 // new version with buffered normals is 88 fps for 10 beamers full screen at 1440p
 #define LIGHTRADIUS lightpos.w
@@ -15,7 +15,7 @@ uniform vec4 lightpos;
 #endif
 uniform vec4 lightcolor;
 uniform mat4 viewProjectionInv;
-// uniform mat4 viewProjection;
+
 
 	float attentuate(float dist, float radius)
 	{
@@ -32,10 +32,9 @@ uniform mat4 viewProjectionInv;
 	vec4 map_normals4= texture2D( mapnormals,gl_TexCoord[0].st ) *2.0 -1.0;
 	vec4 model_normals4= texture2D( modelnormals,gl_TexCoord[0].st );// this does not need the ( *2.0 -1.0) terms because it is already done on it through customunitshaders;
 	
-	
-	//gl_FragColor=vec4(fract(modelpos4.z*0.01),sign(mappos4.z-modelpos4.z),0,1); //worldpos debugging
+	//gl_FragColor=vec4(fract(modelpos4.z*0.01),sign(mappos4.z-modelpos4.z),0,1); //world pos debugging, very useful
 	//return;
-	float model_lighting_multiplier=1;
+	float model_lighting_multiplier=1; //models recieve additional lighting, looks better.
 	if ((mappos4.z-modelpos4.z)> 0) { // this means we are processing a model fragment, not a map fragment
 		map_normals4 = model_normals4;
 		mappos4 = modelpos4;
@@ -48,7 +47,6 @@ uniform mat4 viewProjectionInv;
 	#ifndef BEAM_LIGHT
 		float dist_light_here = length(lightpos.xyz - mappos4.xyz);
 		float cosphi = max(0.0 , dot (normalize(map_normals4.xyz), normalize(lightpos.xyz - mappos4.xyz)));
-		//float reldist=dist_light_here/LIGHTRADIUS;
 		float attentuation=attentuate(dist_light_here,LIGHTRADIUS);
 	#endif
 	#ifdef BEAM_LIGHT
@@ -86,19 +84,16 @@ uniform mat4 viewProjectionInv;
 		float dist_light_here = length(v-w);
 		float cosphi = max(0.0 , dot (normalize(map_normals4.xyz), normalize(w.xyz - mappos4.xyz)));
 		//float attentuation =  max( 0,( 1*LIGHT_CONSTANT - LIGHT_SQUARED * (dist_light_here*dist_light_here)/(LIGHTRADIUS*LIGHTRADIUS) - LIGHT_LINEAR*(dist_light_here)/(LIGHTRADIUS)) );
-		float attentuation=attentuate(dist_light_here,LIGHTRADIUS);//
+		float attentuation=attentuate(dist_light_here,LIGHTRADIUS);
 	#endif
 	
-	//TODO:
-	//add a specular highlight to the lighting with eyepos
+	//TODO: add a specular highlight to the lighting with eyepos - this would be extremely nice imo
 	
-	//gl_FragColor=vec4(normalize(herenormal4.xyz), cosphi*(LIGHTRADIUS/(dist_light_here*dist_light_here)));
-	//if (attentuation > 0.001) gl_FragColor(1,0,0,1);
+	//if (attentuation > 0.001) gl_FragColor(1,0,0,1); // this is useful to visualize where the borders of each drawn texrect are.
 	//else gl_FragColor(0,1,0,1);
-	// gl_FragColor=vec4(1,1,0,0.5);
-	// return;
+	//return;
 	
-	//OK, our blending func is the following: Rr=Lr*Dr+1*Dr, 
+	//OK, our blending func is the following: Rr=Lr*Dr+1*Dr
 	float lightalpha=cosphi*attentuation;
 	//dont light underwater:
 	lightalpha = clamp(lightalpha, 0.0, lightalpha*((mappos4.y + 50.0 )* (0.02)));
@@ -106,8 +101,6 @@ uniform mat4 viewProjectionInv;
 	//if (length(lightcolor.rgb*lightalpha*model_lighting_multiplier)<(1.0/256.0)){ //shows light boudaries
 		//gl_FragColor=vec4(vec3(0.5,0,0.5),0);
 	//}
-	
-	
 	return;
   }
   

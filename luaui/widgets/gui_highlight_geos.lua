@@ -20,10 +20,12 @@ local geoDisplayList
 ----------------------------------------------------------------
 -- Speedups
 ----------------------------------------------------------------
-local glLineWidth = gl.LineWidth
+local glBeginEnd = gl.BeginEnd
 local glDepthTest = gl.DepthTest
 local glCallList = gl.CallList
 local glColor = gl.Color
+local glVertex = gl.Vertex
+local GL_TRIANGLE_FAN = GL.TRIANGLE_FAN
 local spGetMapDrawMode = Spring.GetMapDrawMode
 local SpGetSelectedUnits = Spring.GetSelectedUnits
 
@@ -42,11 +44,21 @@ local cor_geo = UnitDefNames.corgeo.id
 ----------------------------------------------------------------
 -- Functions
 ----------------------------------------------------------------
-local function PillarVerts(x, y, z)
-    gl.Color(1, 1, 0, 1)
-    gl.Vertex(x, y, z)
-    gl.Color(1, 1, 0, 0)
-    gl.Vertex(x, y + 1000, z)
+local num_segs = 20
+
+local function DrawGeo(x,y,z)
+    
+    glBeginEnd(GL_TRIANGLE_FAN, function()    
+        glColor(0.8, 0.8, 0.1, 0.9) -- colour of effect 
+        glVertex(x, y, z)
+        glColor(0,0,0,0)
+
+        local theta = 0
+        for i=0,num_segs do 
+            glVertex(x+100*math.sin(theta),y,z+100*math.cos(theta))                        
+            theta = theta + 2*math.pi/num_segs
+        end                
+    end)
 end
 
 local function HighlightGeos()
@@ -55,7 +67,7 @@ local function HighlightGeos()
         local fID = features[i]
         if FeatureDefs[Spring.GetFeatureDefID(fID)].geoThermal then
             local fx, fy, fz = Spring.GetFeaturePosition(fID)
-            gl.BeginEnd(GL.LINE_STRIP, PillarVerts, fx, fy, fz)
+            DrawGeo(fx,fy,fz)
         end
     end
 end
@@ -78,10 +90,9 @@ function widget:DrawWorld()
             geoDisplayList = gl.CreateList(HighlightGeos)
         end
         
-        glLineWidth(20)
-        glDepthTest(true)
+        glDepthTest(false)
         glCallList(geoDisplayList)
         glColor(1, 1, 1, 1)
-        glLineWidth(1)
+        glDepthTest(true)
     end
 end

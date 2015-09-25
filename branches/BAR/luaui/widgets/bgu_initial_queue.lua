@@ -506,14 +506,14 @@ function widget:GameFrame(n)
     local buildTime = GetQueueBuildTime()
     Spring.SendCommands("luarules initialQueueTime " .. buildTime)
     
-    if (n == 107) then
+    if (n == 143) then
         --Spring.Echo("> Starting unit never spawned !")
         widgetHandler:RemoveWidget(self)
         return
     end
     
 
-    if (comGate==0 or Spring.GetGameFrame() == 140) then --comGate takes up until frame 105
+    if (comGate==0 or Spring.GetGameFrame() == 142) then --comGate takes up until frame 140
         local tasker
         -- Search for our starting unit
         local units = Spring.GetTeamUnits(Spring.GetMyTeamID())

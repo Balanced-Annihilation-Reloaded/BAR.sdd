@@ -1,7 +1,7 @@
 
 function widget:GetInfo()
     return {
-        name      = "CustomFormations2",
+        name      = "Custom Formations",
         desc      = "Allows you to draw your own formation line.",
         author    = "Niobium", -- based on 'Custom Formations' by jK and gunblob
         version   = "v4.3",
@@ -208,7 +208,7 @@ local function GetUnitFinalPosition(uID)
     
     local ux, uy, uz = spGetUnitPosition(uID)
     
-    local cmds = spGetCommandQueue(uID,5000)
+    local cmds = spGetCommandQueue(uID,5000) or {}
     for i = #cmds, 1, -1 do
         
         local cmd = cmds[i]

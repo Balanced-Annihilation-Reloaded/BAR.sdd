@@ -198,6 +198,7 @@ end
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
     if obj.disabled then return end
+    updateRequired = true
     -- tell initial queue / set active command
     if button==1 then
         if not gameStarted then 

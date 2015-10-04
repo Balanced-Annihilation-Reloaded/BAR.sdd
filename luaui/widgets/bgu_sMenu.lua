@@ -1,5 +1,4 @@
--- WIP (excuse the mess)
---  TODO add build progress bar.
+--  TODO add build progress bar?
 function widget:GetInfo()
     return {
         name      = 'Selection Menu',
@@ -305,6 +304,30 @@ end
 ---------------------------------------------------------------
 ---------------------------------------------------------------
 
+-- Loads the build queue
+local function parseBuildQueue()
+    local queue = {}
+    local unitIDs = Spring.GetSelectedUnits()
+    for i=1, #unitIDs do
+        local list = Spring.GetRealBuildQueue(unitIDs[i]) or {}
+        for i=1, #list do
+            for defID, count in pairs(list[i]) do 
+                queue[defID] = queue[defID] and (queue[defID] + count) or count
+            end
+        end
+    end
+    return queue
+end
+local function parseInitialBuildQueue()
+    local queue = {}
+    local buildQueue = WG.InitialQueue and WG.InitialQueue.buildQueue or {}
+    for i=1, #buildQueue do
+        local defID = buildQueue[i][1]
+        queue[defID] = queue[defID] and (queue[defID] + 1) or 1
+    end
+    return queue
+end
+
 -- Adds icons/commands to the menu panels accordingly
 local function addBuild(item)
     -- unpack item
@@ -557,7 +580,9 @@ local function ChooseTab()
 end
 
 local function parseCmds()
+    local queue = parseBuildQueue()
     local cmdList = spGetActiveCmdDescs()
+
     local units = {}
     local orders = {}
     local states = {}
@@ -576,7 +601,7 @@ local function parseCmds()
             if menuCat and #grid[menuCat].children<=maxRows*maxCols then
                 buildMenu.active     = true
                 grid[menuCat].active = true
-                units[#units+1] = {name=cmd.name, uDID=-cmd.id, disabled=cmd.disabled, category=menuCat, buildCount=cmd.params[1]}
+                units[#units+1] = {name=cmd.name, uDID=-cmd.id, disabled=cmd.disabled, category=menuCat, buildCount=(queue[-cmd.id] or cmd.params[1])} -- cmd.params[1] helps only in godmode
             elseif #cmd.params > 1 then
                 states[cmd.action] = cmd
             elseif cmd.id > 0 and not WG.OpenHostsList then -- hide the order menu if the open host list is showing (it shows to specs who have it enabled)
@@ -607,7 +632,8 @@ end
 local function parseUnitDefCmds(uDID)
     -- load the build menu for the given unitDefID
     -- don't load the state/cmd menus
-
+    local queue = parseInitialBuildQueue()
+    
     local units = {}
     buildMenu.active = true
     orderMenu.active = false
@@ -618,7 +644,7 @@ local function parseUnitDefCmds(uDID)
         local ud = UnitDefs[bDID]
         local menuCat = getMenuCat(ud)
         grid[menuCat].active = true
-        units[#units+1] = {name=ud.name, uDID=bDID, disabled=false, category=menuCat} 
+        units[#units+1] = {name=ud.name, uDID=bDID, disabled=false, category=menuCat, buildCount=queue[bDID]} 
     end
 
     if #units>0 then
@@ -655,7 +681,6 @@ local function makeMenuTabs()
         end
     end
 end
-
 ---------------------------
 -- Loads/reloads the icon panels for commands
 local function loadPanels()
@@ -826,6 +851,7 @@ function widget:Initialize()
     if Spring.GetGameFrame()>0 then gameStarted = true end
 
     WG.sMenu = {}    
+    WG.sMenu.ForceUpdate = function() updateRequired=true end
     
     if (not WG.Chili) then
         widgetHandler:RemoveWidget()

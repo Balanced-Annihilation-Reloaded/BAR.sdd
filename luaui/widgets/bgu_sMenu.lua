@@ -556,29 +556,6 @@ function Cost(item)
     return 60*UnitDefs[uDID].metalCost + UnitDefs[uDID].energyCost
 end
 
-function SetGridDimensions()
-    for i=1,#catNames do
-        -- work out if we have too many buttons in a grid, request more columns if so
-        local n = #grid[i].children 
-        local neededColumns = math.floor((n-1)/maxRows)+1
-        local nCols = math.max(3, math.min(maxCols, neededColumns))
-        local nRows = math.floor((n-1)/nCols)+1
-        grid[i].columns = nCols
-        grid[i].rows = math.max(4, nRows)
-    end
-end
-
-local function ChooseTab()
-    -- use the most recent tab that wasn't the factory tab, if possible
-    for i=1,#catNames do
-        if #grid[i].children>0 and menuTabs.prevChoice==i then return i end
-    end
-    for i=1,#catNames do
-        if #grid[i].children>0 then return i end
-    end
-    return nil
-end
-
 local function parseCmds()
     local queue = parseBuildQueue()
     local cmdList = spGetActiveCmdDescs()
@@ -650,6 +627,29 @@ local function parseUnitDefCmds(uDID)
     if #units>0 then
         AddInSortedOrder(units, addBuild, Cost)
     end
+end
+
+function SetGridDimensions()
+    for i=1,#catNames do
+        -- work out if we have too many buttons in a grid, request more columns if so
+        local n = #grid[i].children 
+        local neededColumns = math.floor((n-1)/maxRows)+1
+        local nCols = math.max(3, math.min(maxCols, neededColumns))
+        local nRows = math.floor((n-1)/nCols)+1
+        grid[i].columns = nCols
+        grid[i].rows = math.max(4, nRows)
+    end
+end
+
+local function ChooseTab()
+    -- use the most recent tab that wasn't the factory tab, if possible
+    for i=1,#catNames do
+        if #grid[i].children>0 and menuTabs.prevChoice==i then return i end
+    end
+    for i=1,#catNames do
+        if #grid[i].children>0 then return i end
+    end
+    return nil
 end
 
 --------------------------------------------------------------

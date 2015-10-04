@@ -340,6 +340,7 @@ function widget:Initialize()
     -- expose our API to WG, its used by sMenu
     WG.InitialQueue = {}
     WG.InitialQueue.SetSelDefID = SetSelDefID
+    WG.InitialQueue.buildQueue = buildQueue
     
     -- Get our starting unit
     local _, _, _, _, mySide = Spring.GetTeamInfo(myTeamID)
@@ -591,8 +592,8 @@ function widget:MousePress(mx, my, mButton)
             local _, _, meta, shift = Spring.GetModKeyState()
                 if meta then
                     table.insert(buildQueue, 1, buildData)
-                   elseif shift then
-
+                
+                elseif shift then
                     local anyClashes = false
                     for i = #buildQueue, 1, -1 do
                         if DoBuildingsClash(buildData, buildQueue[i]) then
@@ -612,10 +613,14 @@ function widget:MousePress(mx, my, mButton)
                     SetSelDefID(nil)
                 end
             end
+            
+            if WG.sMenu then WG.sMenu.ForceUpdate() end 
             return true
             
         elseif mButton == 3 then
             SetSelDefID(nil)
+
+            if WG.sMenu then WG.sMenu.ForceUpdate() end 
             return true
         end
 

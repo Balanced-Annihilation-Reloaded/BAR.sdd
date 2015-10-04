@@ -156,7 +156,6 @@ local screen0, buildMenu, stateMenu, orderMenu, orderBG, menuTabs
 local orderArray = {}
 local stateArray = {}
 local menuTab = {}
-local queue = {}
 local grid = {}
 local unit = {}
 ----------------
@@ -334,7 +333,7 @@ local function addBuild(item)
     local button = unit[name]
     local label = button.children[1].children[1]
     local overlay = button.children[1].children[3]
-    local caption = queue[uDID] or ''
+    local caption = item.buildCount or ''
     
     if disabled then
         -- building this unit is disabled
@@ -577,7 +576,7 @@ local function parseCmds()
             if menuCat and #grid[menuCat].children<=maxRows*maxCols then
                 buildMenu.active     = true
                 grid[menuCat].active = true
-                units[#units+1] = {name=cmd.name, uDID=-cmd.id, disabled=cmd.disabled, category=menuCat}
+                units[#units+1] = {name=cmd.name, uDID=-cmd.id, disabled=cmd.disabled, category=menuCat, buildCount=cmd.params[1]}
             elseif #cmd.params > 1 then
                 states[cmd.action] = cmd
             elseif cmd.id > 0 and not WG.OpenHostsList then -- hide the order menu if the open host list is showing (it shows to specs who have it enabled)
@@ -798,20 +797,6 @@ local function createButton(name, unitDef)
         end    
     end
 end
-
----------------------------
---    This should now take into account multiple queues
-local function queueHandler()
-    local unitIDs = Spring.GetSelectedUnits()
-    for i=1, #unitIDs do
-        local list = Spring.GetRealBuildQueue(unitIDs[i]) or {}
-        for i=1, #list do
-            for defID, count in pairs(list[i]) do 
-                queue[defID] = queue[defID] and (queue[defID] + count) or count
-            end
-        end
-    end
-end
 ---------------------------
 local function LayoutHandler(xIcons, yIcons, cmdCount, commands)
     -- interaction with widgetHandler
@@ -1020,8 +1005,6 @@ function widget:Update()
         orderMenu.active = false -- if order cmd is found during parse this will become true
         buildMenu.active = false -- if build cmd is found during parse this will become true
 
-        queue = {}
-        queueHandler()
         loadPanels()
 
         if not orderMenu.active and orderBG.visible then

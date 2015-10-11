@@ -115,6 +115,7 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
         file     = texture,
         height   = '100%',
         width    = '100%',
+        flip     = false,
         children = {
             Chili.Image:New{
                 color    = teamColor, 
@@ -232,6 +233,7 @@ local function showUnitInfo()
         parent   = unitWindow,
         file     = texture,
         color    = overlayColor,
+        flip     = false,
         height   = '100%',
         width    = '100%',
     }
@@ -502,6 +504,7 @@ local function showFocusInfo()
         parent   = unitWindow,
         file     = texture,
         color    = overlayColor,
+        flip     = false,
         height   = '100%',
         width    = '100%',
     }

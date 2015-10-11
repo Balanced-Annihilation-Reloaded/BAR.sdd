@@ -278,12 +278,14 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
                     Image:New {
                         --file = "#"..unitDefID,
                         file = '#'..unitDefID,
+                        flip = false,
                         keepAspect = false;
                         width = '100%',
                         height = '100%',
                         children = {
                             Chili.Image:New{
                                 color  = teamColor,
+                                keepAspect = false;
                                 height = '100%', width = '100%',
                                 file   = imageDir..'Overlays/'..UnitDefs[unitDefID].name..'.dds',
                             },
@@ -411,11 +413,13 @@ local function MakeButton(unitDefID, facID, facIndex)
                     --file = "#"..unitDefID,
                     file = '#'..unitDefID,
                     keepAspect = false;
+                    flip   = false,
                     width = '100%', height = '80%', y = '5%',
                     children = {
                         Chili.Image:New{
                             color  = teamColor,
                             height = '100%', width = '100%',
+                            keepAspect = false;
                             file   = imageDir..'Overlays/'..UnitDefs[unitDefID].name..'.dds',
                         },
                     },

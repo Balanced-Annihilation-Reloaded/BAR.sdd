@@ -77,6 +77,7 @@ local spGetUnitViewPosition  = Spring.GetUnitViewPosition
 local spGetUnitDirection     = Spring.GetUnitDirection
 local spGetHeadingFromVector = Spring.GetHeadingFromVector
 local spGetUnitIsActive      = Spring.GetUnitIsActive
+local spGetUnitVelocity      = Spring.GetUnitVelocity 
 local spGetGameFrame         = Spring.GetGameFrame
 local spGetFrameTimeOffset   = Spring.GetFrameTimeOffset
 local spGetUnitPieceList     = Spring.GetUnitPieceList
@@ -679,10 +680,20 @@ local function IsUnitFXVisible(fx)
 	local unitIcon = false
     local unitActive = true
     local unitID = fx.unit
+	
 	if fx.onActive then
 		unitActive = spGetUnitIsActive(unitID)
 		if (unitActive == nil) then
-			unitActive = true
+			local unitDefID = Spring.GetUnitDefID(unitID)
+			if UnitDefs[unitDefID].speed > 0 then
+				local vx, vy, vz = spGetUnitVelocity(unitID)
+				-- Spring.Echo('lupsdbgvel',vx,vy,vz) 
+				if (vx~= nil and (vx*vx> 0.01  or vz*vz>0.01)) then  
+					unitActive = true
+				end
+			else
+				unitActive = true
+			end 
 		end
         unitIcon = spIsUnitIcon(unitID)
         if (unitIcon == nil) then

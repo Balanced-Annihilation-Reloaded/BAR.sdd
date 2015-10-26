@@ -845,8 +845,8 @@ function widget:Initialize()
     }
     groundText2 = Chili.TextBox:New{
         parent = groundWindow,
-        x      = 0,
-        y      = 60,
+        x      = 5,
+        y      = 65,
         right  = 0,
         bottom = 0,
         text   = '',

@@ -27,11 +27,13 @@ local files = {
 
 
 function widget:DrawGenesis()
-    for i,file in ipairs(files) do
-        gl.Texture(7,file)
-        gl.Texture(7,false)
-        Spring.Echo('Preloaded',file)
-    end
+	if Spring.GetGameFrame() < 1 then 
+		for i,file in ipairs(files) do
+			gl.Texture(7,file)
+			gl.Texture(7,false)
+			Spring.Echo('Preloaded',file)
+		end
+	end
     widgetHandler:RemoveWidget()
 end
 

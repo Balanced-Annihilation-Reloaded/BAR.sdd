@@ -729,7 +729,9 @@ local function ChooseCurTip()
     local selEnemyUnit = false
     for _,uID in ipairs(curTip.selUnits) do
         local tID = Spring.GetUnitTeam(uID)
-        if not Spring.AreTeamsAllied(tID, myTeamID) then
+		--[f=0005045] [bawidgets.lua] Error: Error in CommandsChanged(): [string "LuaUI/Widgets/bgu_sinfo.lua"]:737: bad argument #-2 to 'AreTeamsAllied' (number expected, got nil) 
+		
+        if ((tID == nil ) or (not Spring.AreTeamsAllied(tID, myTeamID))) then
             selEnemyUnit = true
             break
         end

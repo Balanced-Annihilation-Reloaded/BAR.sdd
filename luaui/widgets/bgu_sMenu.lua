@@ -170,6 +170,7 @@ local spGetFullBuildQueue = Spring.GetFullBuildQueue
 local spGetSelectedUnits  = Spring.GetSelectedUnits
 local spSendCommands      = Spring.SendCommands
 local spSetActiveCommand  = Spring.SetActiveCommand
+local spGetSpectatingState= Spring.GetSpectatingState
 local max = math.max
 
 -- Local vars --
@@ -992,7 +993,7 @@ end
 -- handle InitialQueue, if enabled
 local startUnitDefID
 local function InitialQueue()
-    if not WG.InitialQueue or gameStarted or Spring.GetSpectatingState() then 
+    if gameStarted or not WG.InitialQueue or spGetSpectatingState() then 
         return false 
     end
     

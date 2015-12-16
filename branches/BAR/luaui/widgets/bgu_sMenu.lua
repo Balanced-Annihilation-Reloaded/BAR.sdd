@@ -961,7 +961,6 @@ local skipUnitCommands = {
 }
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
     if Spring.IsUnitSelected(unitID) and not skipUnitCommands[cmdID] then
-        Spring.Echo(cmdID, skipUnitCommands[cmdID], CMD[cmdID])
         updateRequired = true
     end
 end
@@ -1035,7 +1034,6 @@ function widget:Update()
     if InitialQueue() then return end
     
     if updateRequired then
-        Spring.Echo(2)
         local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
         teamColor = {r,g,b,0.8}
         updateRequired = false

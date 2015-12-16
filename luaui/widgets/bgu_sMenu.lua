@@ -951,8 +951,17 @@ function widget:CommandsChanged()
         end
     end
 end
+local skipUnitCommands = {
+    -- in general we need to refresh when the unit we have selected receives a command
+    -- but some commands can be spammed easily, and we don't need to refresh for most of those
+    [CMD.ATTACK] = true,
+    [CMD.MOVE] = true,
+    [CMD.PATROL] = true,
+    [CMD.SET_WANTED_MAX_SPEED] = true,
+}
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
-    if Spring.IsUnitSelected(unitID) then
+    if Spring.IsUnitSelected(unitID) and not skipUnitCommands[cmdID] then
+        Spring.Echo(cmdID, skipUnitCommands[cmdID], CMD[cmdID])
         updateRequired = true
     end
 end
@@ -1026,6 +1035,7 @@ function widget:Update()
     if InitialQueue() then return end
     
     if updateRequired then
+        Spring.Echo(2)
         local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
         teamColor = {r,g,b,0.8}
         updateRequired = false

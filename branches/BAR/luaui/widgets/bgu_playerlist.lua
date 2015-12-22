@@ -1105,10 +1105,9 @@ function SetupOptions()
     end
     
     Menu = WG.MainMenu
-    Menu.AddOption{
-        tab = 'Interface',
+    Menu.AddWidgetOption{
+        title = 'Player List',
         children = {
-            Chili.Label:New{caption='Player List',x='0%',fontsize=18},
             Chili.Checkbox:New{caption='Show Flags',x='10%',width='80%',
                     checked=options.flags,OnChange={FlagState}}, --toggle doesn't work
             Chili.Checkbox:New{caption='Show Ranks',x='10%',width='80%',

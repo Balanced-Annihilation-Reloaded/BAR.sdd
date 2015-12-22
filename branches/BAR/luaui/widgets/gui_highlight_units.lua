@@ -282,10 +282,9 @@ function widget:Initialize()
     Menu   = WG.MainMenu
     if not Menu then return end
     
-    Menu.AddOption{
-            tab = 'Interface',
+    Menu.AddWidgetOption{
+            title = 'Highlight Units',
             children = {
-                Chili.Label:New{caption='Highlight Units',x='0%',fontsize=18},
                 Chili.Checkbox:New{caption='Show platters',x='10%',width='80%',
                         checked=drawPlatter,setting=drawPlatter,OnChange={function() drawPlatter = not drawPlatter; end}}, --toggle doesn't work
                 Chili.Checkbox:New{caption='Use XRay shader',x='10%',width='80%',

@@ -321,8 +321,9 @@ end
 
 ----------------------------
 --
-local function addOption(obj)
-    local stack = tabs[obj.tab]:GetObjectByName(obj.stack or 'Stack')
+local function AddWidgetOption(obj)
+    local widgetOptions = tabs.Interface:GetChildByName('widgetOptions') --scrollPanel
+    local stack = widgetOptions.children[1] -- stackPanel
 
     if obj.title then
         -- Stays if widget fails, needs to be created in widget to work
@@ -343,7 +344,7 @@ end
 ----------------------------
 --
 local function addToStack()
-    Spring.Echo('AddToStack() is depreciated, instead use AddOption{}')
+    Spring.Echo('AddToStack() is depreciated, instead use AddWidgetOption{}')
 end
 
 ----------------------------
@@ -369,7 +370,7 @@ end
 -- Creates a stack panel inside a scroll panel
 local function addScrollStack(obj)
     local stack = Chili.ScrollPanel:New{
-        name        = obj.name or 'ScrollStack',
+        name     = obj.name or 'ScrollStack',
         x        = obj.x or 0,
         y        = obj.y or 0,
         width    = obj.width or '50%',
@@ -807,7 +808,7 @@ local function createInterfaceTab()
                 labels={'Chili Default','Chili Static','Spring Default','CA Classic','CA Static','Erom','Masse','K_haos_girl'},
                 options={'zk','zk_static','ba','ca','ca_static','erom','masse','k_haos_girl'}},
             Chili.Label:New{caption='-- Widget Settings --',x='2%',width='46%',align = 'center',y=175},
-            addScrollStack{y=190,x='2%',width='46%',scroll=true},
+            addScrollStack{y=190,x='2%',width='46%',name='widgetOptions'},
         }
     }
     
@@ -899,32 +900,20 @@ local function globalize()
     Menu.UpdateList = makeWidgetList
     Menu.Save       = Save
     Menu.Load       = Load
-    Menu.AddControl = addControl
+    Menu.AddControl = addControl -- for adding new tabs
     Menu.ShowHide   = showHide
 
-    -- This will be primary function for adding options to the menu
-    --  the name may change but the general usage should stay the same
-    Menu.AddOption  = addOption
-    -- Example Usage
-    -- Menu.AddOption{
-    --   tab      = 'Interface',
-    --   children = {
-    --     Chili.Label:New{caption='Example',x='0%',fontsize=18},
-    --     Chili.ComboBox:New{
-    --        x        = '10%',
-    --        width    = '80%',
-    --        items    = {"Option 1", "Option 2", "Option 3"},
-    --        selected = 1,
-    --        OnSelect = {
-    --          function(_,sel)
-    --            Spring.Echo("Option "..sel.." Selected")
-    --          end
-    --               }
-    --         },
-    --         Chili.Line:New{width='100%'},
-    --     }
-    -- }
-
+    Menu.AddWidgetOption  = AddWidgetOption -- for registering options of widgets
+    --[[
+        Example usage for AddWidgetOption(obj)
+        (note: widgets are responsible for save/load of their own options)
+        obj = {
+            title = 'My Widget',
+            children = {
+                Chili.Checkbox:New{caption='An Option', x='10%', width='80%', checked=<initial value from widget>, OnChange={function() <effect of changing option in widget>; end}},
+            }
+        }                
+    ]]
 
 
     -- This will likely be replaced ( but will remain for now as is)

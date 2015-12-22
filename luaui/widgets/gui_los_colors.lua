@@ -103,10 +103,9 @@ function widget:Initialize()
     Menu   = WG.MainMenu
     if not Menu then return end
     
-    Menu.AddOption{
-            tab = 'Interface',
+    Menu.AddWidgetOption{
+            title = 'LOS Colors',
             children = {
-                Chili.Label:New{caption='LOS Colors',x='0%',fontsize=18},
                 Chili.Checkbox:New{caption='Show radar as spec',x='10%',width='80%',
                         checked=options.showRadarAsSpec,OnChange={function() ToggleRadarAsSpec() end}}, 
                 Chili.Checkbox:New{caption='Extra saturation',x='10%',width='80%',

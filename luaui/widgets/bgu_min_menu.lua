@@ -38,10 +38,9 @@ end
 local function loadOptions()
     clockType = Menu.Load('clockType') or clockType
 
-    Menu.AddOption{
-        tab      = 'Interface',
+    Menu.AddWidgetOption{
+        title = 'Clock',
         children = {
-            Chili.Label:New{caption='Clock',x='0%',fontsize=18},
             Chili.ComboBox:New{
                 x        = '10%',
                 width    = '80%',

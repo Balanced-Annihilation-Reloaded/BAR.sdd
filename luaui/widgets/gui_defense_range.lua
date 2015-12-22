@@ -323,10 +323,9 @@ function widget:Initialize()
     Menu   = WG.MainMenu
     if not Menu then return end
     
-    Menu.AddOption{
-            tab = 'Interface',
+    Menu.AddWidgetOption{
+            title = 'Defense Range',
             children = {
-                Chili.Label:New{caption='Defense Range',x='0%',fontsize=18},
                 Chili.Checkbox:New{caption='Ally ground',x='10%',width='80%',
                         checked=buttonConfig["enabled"]["ally"]["ground"],setting=drawPlatter,OnChange={function() buttonConfig["enabled"]["ally"]["ground"] = not buttonConfig["enabled"]["ally"]["ground"]; end}}, 
                 Chili.Checkbox:New{caption='Ally air',x='10%',width='80%',

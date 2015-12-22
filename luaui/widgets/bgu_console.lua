@@ -176,10 +176,9 @@ local function loadOptions()
         Menu.Save(cfg)
     end
 
-    Menu.AddOption{
-        tab = 'Interface',
+    Menu.AddWidgetOption{
+        title = 'Chat',
         children = {
-            Chili.Label:New{caption='Chat',fontsize=18,x='0%'},
             Chili.Checkbox:New{
                 caption  = 'Auto-Hide Chat',
                 x        = '10%',
@@ -194,7 +193,7 @@ local function loadOptions()
                 }
             },
             
-            Chili.Label:New{caption='Delay'},
+            Chili.Label:New{caption='Delay (seconds)'},
             Chili.Trackbar:New{
                 x        = '10%',
                 width    = '80%',

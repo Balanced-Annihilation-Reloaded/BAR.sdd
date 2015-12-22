@@ -420,9 +420,8 @@ function widgetHandler:Initialize()
     widgetHandler:InsertWidget(w)
   end
 
-  -- save the active widgets, and their ordering
+  -- save the order data
   self:SaveOrderList()
-  self:SaveConfigData()
 end
 
 

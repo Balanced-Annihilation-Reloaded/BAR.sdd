@@ -896,17 +896,15 @@ end
 --  look at relevant functions above for more info
 local function globalize()
     local Menu = {}
+   
+    Menu.AddControl = addControl -- for adding new tabs e.g. the end-graph widget
+    Menu.ShowHide   = showHide -- show/hide menu tabs
 
-    Menu.UpdateList = makeWidgetList
-    Menu.Save       = Save
-    Menu.Load       = Load
-    Menu.AddControl = addControl -- for adding new tabs
-    Menu.ShowHide   = showHide
-
+    
     Menu.AddWidgetOption  = AddWidgetOption -- for registering options of widgets
     --[[
         Example usage for AddWidgetOption(obj)
-        (note: widgets are responsible for save/load of their own options)
+        (note: ideally, widgets are responsible for save/load of their own options)
         obj = {
             title = 'My Widget',
             children = {
@@ -914,16 +912,10 @@ local function globalize()
             }
         }                
     ]]
-
-
-    -- This will likely be replaced ( but will remain for now as is)
-    Menu.AddToStack = addToStack
-
-    -- These will more than likely be removed
-    Menu.AddChoice  = addChoice
-    Menu.Checkbox   = checkbox
-    Menu.Slider     = slider
-    ------------------------
+    
+    -- allow access to our own Settings table (remove this?)
+    Menu.Load = Load
+    Menu.Save = Save
 
     WG.MainMenu = Menu
 end

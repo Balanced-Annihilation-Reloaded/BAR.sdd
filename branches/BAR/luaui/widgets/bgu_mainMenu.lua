@@ -250,7 +250,7 @@ end
 
 -- Toggles the menu visibility
 --  also handles tab selection (e.g. f11 was pressed and menu opens to 'Interface')
-local function showHide(tab)
+local function ShowHide(tab)
     local oTab = Settings.tabSelected
 
     Chili.Screen0.currentTooltip = nil
@@ -665,7 +665,7 @@ end
 
 
 -----------------------------
--- Creates a tab, mostly as an auxillary function for addControl()
+-- Creates a tab, mostly as an auxillary function for AddControl()
 local function createTab(tab)
     tabs[tab.name] = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', children = tab.children or {} }
     menuTabs:AddChild(Chili.TabBarItem:New{caption = tab.name, width = tab.tabWidth})
@@ -883,7 +883,7 @@ end
 --  if tab doesn't exist, one is created
 --  this is useful if you want a widget to get it's own tab (endgraph is a good example)
 --  this function probably won't change
-local function addControl(tab,control,tabWidth)
+local function AddControl(tab,control,tabWidth)
     if not tabs[tab] then createTab{name = tab, tabWidth = tabWidth} end
     tabs[tab]:AddChild(control)
     tabs[tab]:Invalidate()
@@ -897,8 +897,8 @@ end
 local function globalize()
     local Menu = {}
    
-    Menu.AddControl = addControl -- for adding new tabs e.g. the end-graph widget
-    Menu.ShowHide   = showHide -- show/hide menu tabs
+    Menu.AddControl = AddControl -- for adding new tabs e.g. the end-graph widget
+    Menu.ShowHide   = ShowHide -- show/hide menu tabs
 
     
     Menu.AddWidgetOption  = AddWidgetOption -- for registering options of widgets
@@ -956,16 +956,16 @@ function widget:Initialize()
     createGraphicsTab()
     createCreditsTab()
         
-    if amNewbie then showHide('General') else menuTabs:Select('General') end
+    if amNewbie then ShowHide('General') else menuTabs:Select('General') end
     globalize()
     makeWidgetList()
 
     -----------------------
     ---     Hotkeys     ---
-    local toggleMenu      = function() showHide('General') end
+    local toggleMenu      = function() ShowHide('General') end
     local hideMenu        = function() if mainMenu.visible then mainMenu:Hide() end end
-    local toggleInterface = function() showHide('Interface') end
-    local showHelp        = function() showHide('General'); SetInfoChild(tabs.General:GetChildByName("Introduction Button")) end --small hack
+    local toggleInterface = function() ShowHide('Interface') end
+    local showHelp        = function() ShowHide('General'); SetInfoChild(tabs.General:GetChildByName("Introduction Button")) end --small hack
 
     spSendCommands('unbindkeyset f11')
     spSendCommands('unbindkeyset Any+i gameinfo')

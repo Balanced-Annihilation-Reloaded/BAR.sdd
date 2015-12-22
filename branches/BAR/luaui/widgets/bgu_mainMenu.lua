@@ -62,6 +62,7 @@ Settings['UIwidget']         = {}
 Settings['Skin']             = 'Robocracy'
 Settings['Cursor']           = 'Default'
 Settings['CursorName']       = 'ba'
+Settings['widgetScrollPos']  = 0
 
 ------------------------------------
 local wFilterString = ""
@@ -186,7 +187,8 @@ end
 --  TODO detect widget failure, set color accordingly
 local function makeWidgetList()
     sortWidgetList()
-    local stack = tabs['Interface']:GetObjectByName('widgetList')
+    local widgetList = tabs['Interface']:GetChildByName('widgetList') --scrollPanel 
+    local stack = widgetList.children[1] --stackPanel
     stack:ClearChildren()
 
     -- Get order of categories
@@ -231,7 +233,7 @@ local function makeWidgetList()
             end
         end
         cat.list = {}
-    end
+    end    
 end
 
 ----------------------------
@@ -345,7 +347,7 @@ local function addToStack()
 end
 
 ----------------------------
--- Creates a stack panel which can then be used as a parent 
+-- Creates a stack panel 
 local function addStack(obj)
     local stack
         stack = Chili.StackPanel:New{
@@ -364,15 +366,17 @@ local function addStack(obj)
         }
     return stack
 end
+-- Creates a stack panel inside a scroll panel
 local function addScrollStack(obj)
     local stack = Chili.ScrollPanel:New{
+        name        = obj.name or 'ScrollStack',
         x        = obj.x or 0,
         y        = obj.y or 0,
         width    = obj.width or '50%',
         bottom   = obj.bottom or 0,
         children = {
             Chili.StackPanel:New{
-                name        = obj.name or 'Stack',
+                name        = 'Stack',
                 x           = 0,
                 y           = 0,
                 width       = '100%',
@@ -806,6 +810,8 @@ local function createInterfaceTab()
             addScrollStack{y=190,x='2%',width='46%',scroll=true},
         }
     }
+    
+    tabs.Interface:GetChildByName("widgetList"):SetScrollPos(x, Settings.widgetScrollPos or 0)
 end
 
 local function createGraphicsTab()
@@ -935,6 +941,7 @@ end
 -----------------------------
 
 function widget:GetConfigData()
+    Settings.widgetScrollPos = tabs['Interface']:GetChildByName('widgetList').scrollPosY
     return Settings
 end
 

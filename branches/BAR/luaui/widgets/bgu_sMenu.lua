@@ -752,18 +752,7 @@ local airFacs = { --unitDefs can't tell us this
     [UnitDefNames.corplat.id] = true,
 }
 
-local function createButton(name, unitDef)
-    -- if it can attack and it's not a plane, get max range of weapons of unit
-    local range = 0
-    local rangeText = ""
-    for _,weapon in pairs(unitDef.weapons) do
-        local weaponDefID = weapon.weaponDef
-        range = math.max(range, WeaponDefs[weaponDefID].range)
-    end
-    if range > 0 and not unitDef.canFly then
-        rangeText = '\nRange: ' .. range
-    end
-    
+local function createButton(name, unitDef)  
     -- make the button for this unit
     local hotkey = WG.buildingHotkeys and WG.buildingHotkeys[unitDef.id] or ''
     unit[name] = Chili.Button:New{

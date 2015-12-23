@@ -772,7 +772,7 @@ local function createButton(name, unitDef)
                 file   = '#'..unitDef.id,
                 flip   = false,
                 children = {
-                    Chili.Label:New{
+                    Chili.Label:New{ -- # in build queue
                         caption = '',
                         right   = 10,
                         y       = 10,

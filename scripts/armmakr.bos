@@ -47,8 +47,8 @@ ImAMetalMaker()
 		if ((get WHAT_DO) == 1)
 		{
 			if (mmState != 1) {
-				turn cover1 to z-axis <0> speed <60>;
-				turn cover2 to z-axis <0> speed <60>;
+				turn cover1 to z-axis <-60> speed <60>;
+				turn cover2 to z-axis <60> speed <60>;
 				sleep 1000;
 				mmState = 1;
 			}
@@ -56,8 +56,8 @@ ImAMetalMaker()
 		else
 		{
 			if (mmState != 0) {	
-				turn cover1 to z-axis <60> speed <60>;
-				turn cover2 to z-axis <-60> speed <60>;
+				turn cover1 to z-axis <0> speed <60>;
+				turn cover2 to z-axis <0> speed <60>;
 				sleep 1000;
 				mmState = 0;
 			}

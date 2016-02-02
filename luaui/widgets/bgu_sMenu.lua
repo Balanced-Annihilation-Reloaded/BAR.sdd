@@ -157,6 +157,8 @@ local stateArray = {}
 local menuTab = {}
 local grid = {}
 local unit = {}
+local orderButtons={}
+local stateButtons={}
 ----------------
 
 -- Spring Functions --
@@ -389,24 +391,37 @@ end
 
 local function addState(cmd)
     local param = cmd.params[cmd.params[1] + 2]
-    stateMenu:AddChild(Chili.Button:New{
-        caption   = param,
-        cmdName   = cmd.name,
-        tooltip   = cmd.tooltip,
-        cmdId     = cmd.id,
-        cmdAName  = cmd.action,
-        padding   = {0,0,0,0},
-        margin    = {0,0,0,0},
-        OnMouseUp = {cmdAction},
-        font      = {
-            color = paramColors[param] or white,
-            size  = 16,
-        },
-        backgroundColor = black,
-    })
+	--Spring.Echo("addState",param)
+	local stateButton = nil
+	if stateButtons[param]==nil then 
+		stateButton = Chili.Button:New{
+			caption   = param,
+			cmdName   = cmd.name,
+			tooltip   = cmd.tooltip,
+			cmdId     = cmd.id,
+			cmdAName  = cmd.action,
+			padding   = {0,0,0,0},
+			margin    = {0,0,0,0},
+			OnMouseUp = {cmdAction},
+			font      = {
+				color = paramColors[param] or white,
+				size  = 16,
+			},
+			backgroundColor = black,
+		}
+		stateButtons[param]=stateButton
+	else
+		stateButton= stateButtons[param]
+	end
+	stateButton.font.color=paramColors[param] or white
+	stateMenu:AddChild(stateButton)
+	--Spring.Echo("addState end",param)
 end
 
 local function addDummyState(cmd)
+
+	--Spring.Echo("addDummyState")
+	
     stateMenu:AddChild(Chili.Button:New{
         caption   = cmd.action,
         --tooltip   = cmd.tooltip, 
@@ -421,55 +436,62 @@ local function addDummyState(cmd)
     })
 end
 
-local function addOrder(cmd)
-    local borderColor = (cmd.id==activeSelCmdID) and selectedBorderColor or {1,1,1,0.1}
-
-    local button = Chili.Button:New{
-        caption   = '',
-        cmdName   = cmd.name,
-        tooltip   = cmd.tooltip,
-        cmdId     = cmd.id,
-        cmdAName  = cmd.action,
-        padding   = {0,0,0,0},
-        margin    = {0,0,0,0},
-        OnMouseUp = {cmdAction},
-        borderColor = borderColor,
-        Children  = {
-            Chili.Image:New{
-                parent  = button,
-                x       = 5,
-                bottom  = 5,
-                y       = 5,
-                right   = 5,
-                color   = orderColors[cmd.action] or {1,1,1,1},
-                file    = imageDir..'Commands/'..cmd.action..'.png',
-                children = {
-                    Chili.Label:New{
-                        caption = Hotkey[cmd.action] or "",
-                        right  = 2,
-                        y = 1,
-                    },
-                }
-            }
-        }
-    }
-
-    if cmd.id==CMD.STOCKPILE then
-        for _,uID in ipairs(sUnits) do -- we just pick the first unit that can stockpile
-            local n,q = Spring.GetUnitStockpile(uID)
-            if n and q then
-                local stockpile_q = Chili.Label:New{right=0,bottom=0,caption=n.."/"..q, font={size=14,shadow=false,outline=true,autooutlinecolor=true,outlineWidth=4,outlineWeight=6}}
-                button.children[1]:AddChild(stockpile_q)
-                break
-            end
-        end
-    end
-    
-    orderMenu:AddChild(button)
-    orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height)
+local function createOrderButton(cmd)  
+	local button = nil
+	if orderButtons[cmd.id] == nil then 
+		--Spring.Echo("Creating new chili order button:", cmd.name)
+		button = Chili.Button:New{
+			caption   = '',
+			cmdName   = cmd.name,
+			tooltip   = cmd.tooltip,
+			cmdId     = cmd.id,
+			cmdAName  = cmd.action,
+			padding   = {0,0,0,0},
+			margin    = {0,0,0,0},
+			OnMouseUp = {cmdAction},
+			borderColor = {1,1,1,0.1},
+			Children  = {
+				Chili.Image:New{
+					parent  = button,
+					x       = 5,
+					bottom  = 5,
+					y       = 5,
+					right   = 5,
+					color   = orderColors[cmd.action] or {1,1,1,1},
+					file    = imageDir..'Commands/'..cmd.action..'.png',
+					children = {
+						Chili.Label:New{
+							caption = Hotkey[cmd.action] or "",
+							right  = 2,
+							y = 1,
+						},
+					}
+				}
+			}
+		}
+		--the stockpiling had to go :(
+	   --[[if cmd.id==CMD.STOCKPILE then
+			for _,uID in ipairs(sUnits) do -- we just pick the first unit that can stockpile
+				local n,q = Spring.GetUnitStockpile(uID)
+				if n and q then
+					local stockpile_q = Chili.Label:New{right=0,bottom=0,caption=n.."/"..q, font={size=14,shadow=false,outline=true,autooutlinecolor=true,outlineWidth=4,outlineWeight=6}}
+					button.children[1]:AddChild(stockpile_q)
+					break
+				end
+			end
+		end]]--
+		orderButtons[cmd.id]=button
+	else
+		--Spring.Echo("Using existing chili order button:", cmd.name)
+		button = orderButtons[cmd.id]
+	end
+	--Spring.Echo("Button:",button)
+	button.borderColor = (cmd.id==activeSelCmdID) and selectedBorderColor or {1,1,1,0.1}
+	orderMenu:AddChild(button)
 end
 
 local function addDummyOrder(cmd)
+	--Spring.Echo("addDummyOrder",cmd.id)
     local button = Chili.Button:New{
         caption   = '',
         --tooltip   = cmd.tooltip .. getInline(orderColors[cmd.action]) .. HotkeyString(cmd.action),
@@ -489,7 +511,7 @@ local function addDummyOrder(cmd)
         }
     }
 
-    orderMenu:AddChild(button)
+    --orderMenu:AddChild(button)
     orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height)
 end
 
@@ -597,7 +619,8 @@ local function parseCmds()
     
     -- Add the orders/states in the wanted order, from L->R
     if #cmdList>0 then
-        AddInSequence(orders, topOrders, addOrder, addDummyOrder)
+        AddInSequence(orders, topOrders, createOrderButton, addDummyOrder)
+		orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height) --only resize once after adding them all
         AddInSequence(states, topStates, addState, addDummyState)
     end    
     
@@ -812,6 +835,7 @@ local function createButton(name, unitDef)
         end    
     end
 end
+
 ---------------------------
 local function LayoutHandler(xIcons, yIcons, cmdCount, commands)
     -- interaction with widgetHandler
@@ -1023,6 +1047,7 @@ function widget:Update()
     if InitialQueue() then return end
     
     if updateRequired then
+		-- Spring.Echo("sMenu updateRequired")
         local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
         teamColor = {r,g,b,0.8}
         updateRequired = false

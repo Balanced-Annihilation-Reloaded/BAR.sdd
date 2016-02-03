@@ -177,7 +177,7 @@ local max = math.max
 
 -- Local vars --
 local gameStarted = (Spring.GetGameFrame()>0)
-local updateRequired = true
+local updateRequired = ''
 local oldTimer = spGetTimer()
 local sUnits = {}
 local activeSelUDID, activeSelCmdID
@@ -199,7 +199,7 @@ end
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
     if obj.disabled then return end
-    updateRequired = true
+    updateRequired = "cmdAction"
     -- tell initial queue / set active command
     if button==1 then
         if not gameStarted then 
@@ -848,7 +848,7 @@ end
 ---------------------------
 local function ForceSelect(uDID)
     -- act as though the build button for this uDID was pushed
-    updateRequired = true
+    updateRequired = "ForceSelect"
     activeSelUDID = uDID
     WG.sMenu.mouseOverDefID = uDID
     activeSelCmdID = nil
@@ -865,7 +865,7 @@ function widget:Initialize()
     if Spring.GetGameFrame()>0 then gameStarted = true end
 
     WG.sMenu = {}    
-    WG.sMenu.ForceUpdate = function() updateRequired=true end
+    WG.sMenu.ForceUpdate = function() updateRequired='ForceUpdate' end
     
     if (not WG.Chili) then
         widgetHandler:RemoveWidget()
@@ -943,7 +943,7 @@ end
 --------------------------- 
 function widget:ViewResize(_,scrH)
     resizeUI(scrH)
-    updateRequired = true
+    updateRequired = 'ViewResize'
 end
 --------------------------- 
 local selectedUnits = {}
@@ -952,12 +952,12 @@ function widget:CommandsChanged()
     local newUnits = Spring.GetSelectedUnits()
     if not newUnits then return end
     if #selectedUnits ~= #newUnits then
-        updateRequired = true
+        updateRequired = 'CommandsChanged'
         selectedUnits = newUnits
     else
         for i,_ in ipairs(newUnits) do
             if selectedUnits[i]~=newUnits[i] then
-                updateRequired = true
+                updateRequired = 'CommandsChanged'
                 selectedUnits = newUnits
                 break
             end
@@ -974,12 +974,12 @@ local skipUnitCommands = {
 }
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
     if Spring.IsUnitSelected(unitID) and not skipUnitCommands[cmdID] then
-        updateRequired = true
+        updateRequired = 'UnitCommand'
     end
 end
 function widget:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag, cmdParams, cmdOpts)
     if Spring.IsUnitSelected(unitID) then
-        updateRequired = true
+        updateRequired = 'UnitCmdDone'
     end
 end
 function GameFrame()
@@ -989,7 +989,7 @@ function GameFrame()
     if cmdID and cmdID<0 then
         local uDID = -cmdID -- looking to build a unit of this uDID
         if activeSelCmdID or activeSelUDID~=uDID then 
-            updateRequired = true
+            updateRequired = 'GameFrame:looking to build a unit of this uDID'
             activeSelUDID = uDID
             activeSelCmdID = nil
             selectTab(menuTab[getMenuCat(UnitDefs[uDID])])
@@ -997,14 +997,14 @@ function GameFrame()
     elseif cmdID then
         -- looking to give this cmdID
         if activeSelUDID or activeSelCmdID~=cmdID then 
-            updateRequired = true
+            updateRequired = 'GameFrame:looking to give this cmdID'
             activeSelUDID = nil
             activeSelCmdID = cmdID
         end
     else
         -- no active commands
         if activeSelUDID or activeSelCmdID then 
-            updateRequired = true
+            updateRequired = 'GameFrame:no active commands'
             activeSelUDID = nil
             activeSelCmdID = nil
         end
@@ -1020,7 +1020,7 @@ local function InitialQueue()
     
     -- check if we just changed faction
     local uDID = WG.startUnit or Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'startUnit')
-    if uDID==startUnitDefID and not updateRequired then return true end 
+    if uDID==startUnitDefID and ( updateRequired == '' )then return true end 
     if not uDID then return false end
 
     -- now act as though unitDefID is selected for building
@@ -1037,7 +1037,7 @@ local function InitialQueue()
     end
     
     loadDummyPanels(startUnitDefID)
-    updateRequired = false
+    updateRequired = ''
     return true
 end
 --------------------------- 
@@ -1046,11 +1046,11 @@ end
 function widget:Update()
     if InitialQueue() then return end
     
-    if updateRequired then
-		-- Spring.Echo("sMenu updateRequired")
+    if updateRequired ~= '' then
+		Spring.Echo("sMenu updateRequired reason:", updateRequired)
         local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
         teamColor = {r,g,b,0.8}
-        updateRequired = false
+        updateRequired = ''
         orderMenu.active = false -- if order cmd is found during parse this will become true
         buildMenu.active = false -- if build cmd is found during parse this will become true
 
@@ -1079,7 +1079,7 @@ function widget:GameStart()
     end
     WG.sMenu.mouseOverDefID = nil
     gameStarted = true
-    updateRequired = true
+    updateRequired = 'GameStart'
 end
 
 ---------------------------

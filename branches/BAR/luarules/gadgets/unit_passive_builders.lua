@@ -178,6 +178,7 @@ function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpt
             passiveCons[teamID][unitID] = nil        
         end
         return false -- Allowing command causes command queue to be lost if command is unshifted
+        -- (FIXME: this has the unwanted consequence that unti commands callins are not always passed to LuaUI)
     end
     return true
 end

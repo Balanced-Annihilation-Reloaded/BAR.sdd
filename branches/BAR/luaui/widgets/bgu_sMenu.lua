@@ -199,27 +199,24 @@ end
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
     if obj.disabled then return end
+    if button~=1 and button~=3 then return false end 
     updateRequired = "cmdAction"
+    
     -- tell initial queue / set active command
-    if button==1 then
-        if not gameStarted then 
-            if  WG.InitialQueue then 
-                WG.InitialQueue.SetSelDefID(-obj.cmdId)
-            end
-        else
-            local index = spGetCmdDescIndex(obj.cmdId)
-            if (index) then
-                local left, right = (button == 1), (button == 3)
-                local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
-                spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)
-            end  
+    if not gameStarted then 
+        if  WG.InitialQueue then 
+            WG.InitialQueue.SetSelDefID(-obj.cmdId)
         end
-        return true
-    elseif button==3 then
-        spSetActiveCommand(-1)
-        return true
+    else
+        local index = spGetCmdDescIndex(obj.cmdId)
+        if (index) then
+            local left, right = (button == 1), (button == 3)
+            local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
+            spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)
+            Spring.Echo(index, button, left, right, alt, ctrl, meta, shift)
+        end  
     end
-    return false
+    return true
 end
 
 local function showGrid(num)

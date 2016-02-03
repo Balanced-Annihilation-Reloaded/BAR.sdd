@@ -971,6 +971,7 @@ local skipUnitCommands = {
     [CMD.MOVE] = true,
     [CMD.PATROL] = true,
     [CMD.SET_WANTED_MAX_SPEED] = true,
+    [CMD.FIGHT] = true,
 }
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
     if Spring.IsUnitSelected(unitID) and not skipUnitCommands[cmdID] then

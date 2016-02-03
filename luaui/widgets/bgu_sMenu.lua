@@ -487,8 +487,8 @@ local function createOrderButton(cmd)
         local num, queued = 0, 0
         for _,unitID in ipairs(units) do
             local n,q = Spring.GetUnitStockpile(unitID)
-            num = num + n
-            queued = queued + q
+            num = num + (n or 0)
+            queued = queued + (q or 0)
         end
         button.children[1]:GetChildByName("stockpile_label"):SetCaption(num.."/"..queued)
     end

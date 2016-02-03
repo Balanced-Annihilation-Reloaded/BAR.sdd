@@ -138,6 +138,7 @@ local Hotkey = {
 local CMD_UNIT_SET_TARGET = 34923
 local CMD_UNIT_CANCEL_TARGET = 34924
 local CMD_UNIT_SET_TARGET_RECTANGLE = 34925
+local CMD_PASSIVE = 34571
 
 --export to CMD table
 CMD.UNIT_SET_TARGET = CMD_UNIT_SET_TARGET
@@ -146,6 +147,9 @@ CMD.UNIT_CANCEL_TARGET = CMD_UNIT_SET_TARGET
 CMD[CMD_UNIT_CANCEL_TARGET] = 'UNIT_CANCEL_TARGET'
 CMD.UNIT_SET_TARGET_RECTANGLE = CMD_UNIT_SET_TARGET_RECTANGLE
 CMD[CMD_UNIT_SET_TARGET_RECTANGLE] = 'UNIT_SET_TARGET_RECTANGLE'
+CMD.PASSIVE = CMD_PASSIVE
+CMD[CMD_PASSIVE] = 'PASSIVE'
+
 
 
 -- Chili vars --
@@ -203,7 +207,7 @@ local function cmdAction(obj, x, y, button, mods)
     
     -- hack: we force an update for CMD.PASSIVE, see the FIXME in its gadget:AllowCommand
     -- for all other stuff our "normal"" mechanism for noticing a change should kick in
-    if obj.cmdId==34571 then updateRequired = "CMD.PASSIVE" end 
+    if obj.cmdId==CMD.PASSIVE then updateRequired = "CMD.PASSIVE" end 
     
     -- tell initial queue / set active command
     if not gameStarted then 
@@ -216,7 +220,6 @@ local function cmdAction(obj, x, y, button, mods)
             local left, right = (button == 1), (button == 3)
             local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
             spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)
-            Spring.Echo(index, button, left, right, alt, ctrl, meta, shift)
         end  
     end
     return true
@@ -469,23 +472,26 @@ local function createOrderButton(cmd)
 				}
 			}
 		}
-		--the stockpiling had to go :(
-	   --[[if cmd.id==CMD.STOCKPILE then
-			for _,uID in ipairs(sUnits) do -- we just pick the first unit that can stockpile
-				local n,q = Spring.GetUnitStockpile(uID)
-				if n and q then
-					local stockpile_q = Chili.Label:New{right=0,bottom=0,caption=n.."/"..q, font={size=14,shadow=false,outline=true,autooutlinecolor=true,outlineWidth=4,outlineWeight=6}}
-					button.children[1]:AddChild(stockpile_q)
-					break
-				end
-			end
-		end]]--
+	    if cmd.id==CMD.STOCKPILE then
+            local stockpile_q = Chili.Label:New{name="stockpile_label",right=0,bottom=0,caption="", font={size=14,shadow=false,outline=true,autooutlinecolor=true,outlineWidth=4,outlineWeight=6}}
+            button.children[1]:AddChild(stockpile_q)
+		end
 		orderButtons[cmd.id]=button
 	else
 		--Spring.Echo("Using existing chili order button:", cmd.name)
 		button = orderButtons[cmd.id]
 	end
 	--Spring.Echo("Button:",button)
+    if cmd.id==CMD.STOCKPILE then
+        local units = Spring.GetSelectedUnits()
+        local num, queued = 0, 0
+        for _,unitID in ipairs(units) do
+            local n,q = Spring.GetUnitStockpile(unitID)
+            num = num + n
+            queued = queued + q
+        end
+        button.children[1]:GetChildByName("stockpile_label"):SetCaption(num.."/"..queued)
+    end
 	button.borderColor = (cmd.id==activeSelCmdID) and selectedBorderColor or {1,1,1,0.1}
 	orderMenu:AddChild(button)
 end
@@ -622,7 +628,7 @@ local function parseCmds()
         AddInSequence(orders, topOrders, createOrderButton, addDummyOrder)
 		orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height) --only resize once after adding them all
         AddInSequence(states, topStates, addState, addDummyState)
-    end    
+    end
     
     -- Add the units, in order of lowest cost
     if #units>0 then

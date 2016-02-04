@@ -739,9 +739,13 @@ local function loadPanels()
         newUnit = true
     end
 
+    -- states and order buttons are removed and re-added on each refresh
+    -- this is needed for state buttons (e.g. changing cloak state also changes fire state, because of a widget), and a different is used for *each* possible fire state
+    -- it isn't needed for order buttons but wth
     orderMenu:ClearChildren()
     stateMenu:ClearChildren()
 
+    -- unit buttons are only removed and re-added if the unit selection changes
     if newUnit then
         sUnits = units
         for i=1,#catNames do

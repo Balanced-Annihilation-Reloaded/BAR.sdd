@@ -6,7 +6,7 @@ function widget:GetInfo()
       date      = "July 2014",
       license   = "GNU GPL, v2 or later",
       layer     = 5,
-      enabled   = true
+      enabled   = false
    }
 end
 
@@ -334,7 +334,7 @@ function widget:DrawWorldPreUnit()
     gl.Blending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)     
     for i=1, n_visibleUnits do
         local unitID = visibleUnits[i]
-        if spValidUnitID(unitID) then
+        if unitID and spValidUnitID(unitID) then
             local teamID = spGetUnitTeam(unitID)
             local allyID = spGetUnitAllyTeam(unitID)
             local unitDefID = spGetUnitDefID(unitID)

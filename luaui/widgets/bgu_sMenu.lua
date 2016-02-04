@@ -723,9 +723,9 @@ local function makeMenuTabs()
     end
 end
 ---------------------------
--- Loads/reloads the icon panels for commands
 local function loadPanels()
-
+    -- loads/reloads the build/order/state menus
+    
     local newUnit = false
     local units = spGetSelectedUnits()
     if #units == #sUnits then
@@ -1063,13 +1063,15 @@ end
 function widget:Update()
     if InitialQueue() then return end
     
-    if updateRequired ~= '' then
+    if updateRequired then
 		Spring.Echo("sMenu updateRequired reason:", updateRequired)
         local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
         teamColor = {r,g,b,0.8}
-        updateRequired = ''
+        updateRequired = nil
+        
         orderMenu.active = false -- if order cmd is found during parse this will become true
         buildMenu.active = false -- if build cmd is found during parse this will become true
+        -- every unit has states 
 
         loadPanels()
 

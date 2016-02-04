@@ -605,12 +605,15 @@ local function updateGroundInfo(x,y,z)
     botCol = speedModCol(bot)
     hvrCol = speedModCol(hvr)
     shipCol = speedModCol(ship)
+    local acidityText = ""
+    if (py<0) then acidityText = "Acidity: " .. Game.waterDamage end
     groundText2:SetText(
         "Speeds" ..
         "\n  Veh: " .. vehCol .. round(veh,2) .. white .. 
         "  Bot: " .. botCol .. round(bot,2) .. white ..
         "\n  Hvr: " .. hvrCol .. round(hvr,2) .. white ..
-        "  Ship: " .. shipCol .. round(ship,2) .. white           
+        "  Ship: " .. shipCol .. round(ship,2) .. white  ..
+        "\n" .. acidityText
     )
 end
 

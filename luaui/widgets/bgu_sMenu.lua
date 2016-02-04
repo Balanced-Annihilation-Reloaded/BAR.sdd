@@ -381,9 +381,7 @@ local function addBuild(item)
         end
     end
     button.disabled = disabled
-    
-    
-    
+        
     -- add this button
     label:SetCaption(caption)
     if not grid[category]:GetChildByName(button.name) then
@@ -395,9 +393,9 @@ end
 local function addState(cmd)
     local param = cmd.params[cmd.params[1] + 2]
     -- create the button if it does not already exist
-	local stateButton = nil
+	local button
 	if stateButtons[param]==nil then 
-		stateButton = Chili.Button:New{
+		button = Chili.Button:New{
 			caption   = param,
 			cmdName   = cmd.name,
 			tooltip   = cmd.tooltip,
@@ -412,33 +410,43 @@ local function addState(cmd)
 			},
 			backgroundColor = black,
 		}
-		stateButtons[param]=stateButton
+		stateButtons[param] = button
 	else
-		stateButton= stateButtons[param]
+		button = stateButtons[param]
 	end
 
-	stateMenu:AddChild(stateButton)
+	stateMenu:AddChild(button)
 end
 
 local function addDummyState(cmd)
-    stateMenu:AddChild(Chili.Button:New{
-        caption   = cmd.action,
-        --tooltip   = cmd.tooltip, 
-        padding   = {0,0,0,0},
-        margin    = {0,0,0,0},
-        OnMouseUp = {},
-        font      = {
-            color = grey,
-            size  = 16,
-        },
-        backgroundColor = black,
-    })
+    local param = cmd.action .. "_dummy"
+    -- create the button if it does not already exists
+    local button 
+    if not stateButtons[param] then
+        button = Chili.Button:New{
+            caption   = cmd.action,
+            --tooltip   = cmd.tooltip, 
+            padding   = {0,0,0,0},
+            margin    = {0,0,0,0},
+            OnMouseUp = {},
+            font      = {
+                color = grey,
+                size  = 16,
+            },
+            backgroundColor = black,
+        }
+        stateButtons[param] = button
+    else
+        button = stateButtons[param]
+    end
+    
+    stateMenu:AddChild(button)
 end
 
 local function addOrderButton(cmd)  
     -- create the button if it does already exist
-	local button = nil
-	if orderButtons[cmd.id] == nil then 
+	local button 
+	if orderButtons[cmd.action] == nil then 
 		--Spring.Echo("Creating new chili order button:", cmd.name)
 		button = Chili.Button:New{
 			caption   = '',
@@ -473,10 +481,10 @@ local function addOrderButton(cmd)
             local stockpile_q = Chili.Label:New{name="stockpile_label",right=0,bottom=0,caption="", font={size=14,shadow=false,outline=true,autooutlinecolor=true,outlineWidth=4,outlineWeight=6}}
             button.children[1]:AddChild(stockpile_q)
 		end
-		orderButtons[cmd.id]=button
+		orderButtons[cmd.action] = button
 	else
 		--Spring.Echo("Using existing chili order button:", cmd.name)
-		button = orderButtons[cmd.id]
+		button = orderButtons[cmd.action]
 	end
     
     -- prepare the button for display 
@@ -496,27 +504,32 @@ local function addOrderButton(cmd)
 end
 
 local function addDummyOrder(cmd)
-    local button = Chili.Button:New{
-        caption   = '',
-        --tooltip   = cmd.tooltip .. getInline(orderColors[cmd.action]) .. HotkeyString(cmd.action),
-        padding   = {0,0,0,0},
-        margin    = {0,0,0,0},
-        OnMouseUp = {},
-        Children  = {
-            Chili.Image:New{
-                parent  = button,
-                x       = 5,
-                bottom  = 5,
-                y       = 5,
-                right   = 5,
-                color   = grey,
-                file    = imageDir..'Commands/'..cmd.action..'.png',
+    local button 
+    if orderButtons[cmd.action .. "_dummy"] == nil then
+        button = Chili.Button:New{
+            caption   = '',
+            --tooltip   = cmd.tooltip .. getInline(orderColors[cmd.action]) .. HotkeyString(cmd.action),
+            padding   = {0,0,0,0},
+            margin    = {0,0,0,0},
+            OnMouseUp = {},
+            Children  = {
+                Chili.Image:New{
+                    parent  = button,
+                    x       = 5,
+                    bottom  = 5,
+                    y       = 5,
+                    right   = 5,
+                    color   = grey,
+                    file    = imageDir..'Commands/'..cmd.action..'.png',
+                }
             }
         }
-    }
-
-    --orderMenu:AddChild(button)
-    orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height)
+        orderButtons[cmd.action .. "_dummy"] = button
+    else
+        button = orderButtons[cmd.action .. "_dummy"]
+    end
+    
+    orderMenu:AddChild(button) 
 end
 
 local function getMenuCat(ud)

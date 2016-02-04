@@ -393,7 +393,7 @@ stand()
 		turn lleg to x-axis  <0> speed <200>;
 		turn l_foot to x-axis <0> speed <200>;
 
-		move pelvis to y-axis [-2] speed [20];
+		move pelvis to y-axis [0] speed [20];
 		turn head to y-axis <-2> speed <4.285714>;
 		turn pelvis to z-axis <1> speed <4.285714>;
 

@@ -158,9 +158,11 @@ local panH, panW, winW, winH, winX, winB, tabH, minMapH, minMapW
 local screen0, buildMenu, stateMenu, orderMenu, orderBG, menuTabs 
 local menuTab = {}
 local grid = {}
-local unit = {}
-local orderButtons={}
-local stateButtons={}
+
+local unitButtons = {} -- all cached
+local orderButtons = {} -- created on demand
+local stateButtons = {} -- created on demand
+
 ----------------
 
 -- Spring Functions --
@@ -357,7 +359,7 @@ local function addBuild(item)
     end
     
     -- prepare the button
-    local button = unit[name]
+    local button = unitButtons[name]
     local label = button.children[1].children[1]
     local overlay = button.children[1].children[3]
     local caption = item.buildCount or ''
@@ -392,7 +394,7 @@ end
 
 local function addState(cmd)
     local param = cmd.params[cmd.params[1] + 2]
-	--Spring.Echo("addState",param)
+    -- create the button if it does not already exist
 	local stateButton = nil
 	if stateButtons[param]==nil then 
 		stateButton = Chili.Button:New{
@@ -414,15 +416,14 @@ local function addState(cmd)
 	else
 		stateButton= stateButtons[param]
 	end
+
+    -- prepare the button for display
 	stateButton.font.color=paramColors[param] or white
+
 	stateMenu:AddChild(stateButton)
-	--Spring.Echo("addState end",param)
 end
 
 local function addDummyState(cmd)
-
-	--Spring.Echo("addDummyState")
-	
     stateMenu:AddChild(Chili.Button:New{
         caption   = cmd.action,
         --tooltip   = cmd.tooltip, 
@@ -437,7 +438,8 @@ local function addDummyState(cmd)
     })
 end
 
-local function createOrderButton(cmd)  
+local function addOrderButton(cmd)  
+    -- create the button if it does already exist
 	local button = nil
 	if orderButtons[cmd.id] == nil then 
 		--Spring.Echo("Creating new chili order button:", cmd.name)
@@ -479,7 +481,8 @@ local function createOrderButton(cmd)
 		--Spring.Echo("Using existing chili order button:", cmd.name)
 		button = orderButtons[cmd.id]
 	end
-	--Spring.Echo("Button:",button)
+    
+    -- prepare the button for display 
     if cmd.id==CMD.STOCKPILE then
         local units = Spring.GetSelectedUnits()
         local num, queued = 0, 0
@@ -491,11 +494,11 @@ local function createOrderButton(cmd)
         button.children[1]:GetChildByName("stockpile_label"):SetCaption(num.."/"..queued)
     end
 	button.borderColor = (cmd.id==activeSelCmdID) and selectedBorderColor or {1,1,1,0.1}
+    
 	orderMenu:AddChild(button)
 end
 
 local function addDummyOrder(cmd)
-	--Spring.Echo("addDummyOrder",cmd.id)
     local button = Chili.Button:New{
         caption   = '',
         --tooltip   = cmd.tooltip .. getInline(orderColors[cmd.action]) .. HotkeyString(cmd.action),
@@ -623,7 +626,7 @@ local function parseCmds()
     
     -- Add the orders/states in the wanted order, from L->R
     if #cmdList>0 then
-        AddInSequence(orders, topOrders, createOrderButton, addDummyOrder)
+        AddInSequence(orders, topOrders, addOrderButton, addDummyOrder)
 		orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height) --only resize once after adding them all
         AddInSequence(states, topStates, addState, addDummyState)
     end
@@ -777,7 +780,7 @@ local airFacs = { --unitDefs can't tell us this
 local function createButton(name, unitDef)  
     -- make the button for this unit
     local hotkey = WG.buildingHotkeys and WG.buildingHotkeys[unitDef.id] or ''
-    unit[name] = Chili.Button:New{
+    unitButtons[name] = Chili.Button:New{
         name      = name,
         cmdId     = -unitDef.id,
         tooltip   = nil,
@@ -825,7 +828,7 @@ local function createButton(name, unitDef)
     for _,icon in ipairs(extraIcons) do
         if icon.used then
             Chili.Image:New{
-                parent = unit[name].children[1].children[3],
+                parent = unitButtons[name].children[1].children[3],
                 x = 2, bottom = y,
                 height = 15, width = 15,
                 file   = imageDir..icon.image,

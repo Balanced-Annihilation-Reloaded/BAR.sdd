@@ -156,8 +156,6 @@ CMD[CMD_PASSIVE] = 'PASSIVE'
 local Chili
 local panH, panW, winW, winH, winX, winB, tabH, minMapH, minMapW
 local screen0, buildMenu, stateMenu, orderMenu, orderBG, menuTabs 
-local orderArray = {}
-local stateArray = {}
 local menuTab = {}
 local grid = {}
 local unit = {}
@@ -731,9 +729,6 @@ local function loadPanels()
     orderMenu:ClearChildren()
     stateMenu:ClearChildren()
 
-    orderArray = {}
-    stateArray = {}
-
     if newUnit then
         sUnits = units
         for i=1,#catNames do
@@ -751,11 +746,9 @@ end
 
 local function loadDummyPanels(unitDefID)
     -- load the build menu panels as though this unitDefID were selected, even though it is not
+
     orderMenu:ClearChildren()
     stateMenu:ClearChildren()
-
-    orderArray = {}
-    stateArray = {}
 
     menuTabs.choice = 1
     for i=1,#catNames do

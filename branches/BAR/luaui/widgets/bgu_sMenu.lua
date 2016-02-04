@@ -417,9 +417,6 @@ local function addState(cmd)
 		stateButton= stateButtons[param]
 	end
 
-    -- prepare the button for display
-	stateButton.font.color=paramColors[param] or white
-
 	stateMenu:AddChild(stateButton)
 end
 

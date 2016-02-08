@@ -21,7 +21,7 @@ end
 local numScatterPoints     = 32
 local aoeColor             = {1, 0, 0, 1}
 local aoeLineWidthMult     = 64
-local scatterColor         = {1, 1, 0, 1}
+local scatterColor         = {1, 0, 0, 1}
 local scatterLineWidthMult = 1024
 local circleDivs           = 64
 local minSpread            = 8 --weapons with this spread or less are ignored

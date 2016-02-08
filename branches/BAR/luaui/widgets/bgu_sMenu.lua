@@ -45,33 +45,30 @@ CMD[CMD_AUTOMEX] = 'AUTOMEX'
 -- expose order colours (matching cursors) to WG
 local orderColors = {
     -- engine
-    [CMD.WAIT]         = {0.8, 0.8, 0.8 ,1.0},
-    [CMD.ATTACK]       = {1.0, 0.0, 0.0, 1.0},
-    [CMD.FIGHT]        = {1.0, 0.3, 0.0, 1.0},
-    [CMD.AREA_ATTACK]  = {0.8, 0.0, 0.0, 1.0},
-    [CMD.MANUALFIRE]   = {0.8, 0.2, 0.0, 1.0},
-    [CMD.MOVE]         = {0.2, 1.0, 0.0, 1.0},
-    [CMD.RECLAIM]      = {0.2, 0.6, 0.0, 1.0},
-    [CMD.PATROL]       = {0.4, 0.4, 1.0, 1.0},
-    [CMD.GUARD]        = {0.0, 0.0, 1.0, 1.0},
-    [CMD.REPAIR]       = {0.2, 0.2, 0.8, 1.0},
-    [CMD.LOAD_UNITS]   = {0.5, 0.9, 0.9, 1.0},
-    [CMD.LOAD_ONTO]    = {0.5, 0.9, 0.9, 1.0},
-    [CMD.UNLOAD_UNITS] = {1.0, 0.9, 0.1, 1.0},
-    [CMD.STOCKPILE]    = {1.0, 1.0, 1.0, 1.0},
-    [CMD.CAPTURE]      = {0.6, 0.0, 0.8, 1.0},
-    [CMD.RESURRECT]    = {0.0, 0.0, 1.0, 1.0},
-    [CMD.RESTORE]      = {0.5, 1.0, 0.2, 1.0},
-    [CMD.STOP]         = {0.4, 0.0, 0.0, 1.0},
+    [CMD.MOVE]         = {0.20, 1.00, 0.00, 1.0},
+    [CMD.FIGHT]        = {1.00, 0.30, 0.00, 1.0},
+    [CMD.ATTACK]       = {1.00, 0.00, 0.00, 1.0},
+    [CMD.PATROL]       = {0.10, 0.25, 0.95, 1.0},
+    [CMD.STOP]         = {0.40, 0.00, 0.00, 1.0},
+    [CMD.REPAIR]       = {0.50, 1.00, 1.00, 1.0},
+    [CMD.GUARD]        = {0.07, 0.15, 0.65, 1.0},
+    [CMD.WAIT]         = {0.80, 0.80, 0.80 ,1.0},
+    [CMD.CAPTURE]      = {0.80, 0.00, 0.90, 1.0},
+    [CMD.RECLAIM]      = {0.00, 0.60, 0.00, 1.0},
+    [CMD.MANUALFIRE]   = {0.90, 0.90, 0.00, 1.0},
+    [CMD.LOAD_UNITS]   = {0.50, 0.90, 0.90, 1.0},
+    [CMD.LOAD_ONTO]    = {0.50, 0.90, 0.90, 1.0},
+    [CMD.UNLOAD_UNITS] = {1.00, 0.95, 0.15, 1.0},
+    [CMD.STOCKPILE]    = {1.00, 1.00, 1.00, 1.0},
+    [CMD.RESURRECT]    = {1.00, 0.20, 0.95, 1.0},
+    [CMD.RESTORE]      = {0.50, 1.00, 0.20, 1.0},
+    [CMD.AREA_ATTACK]  = {0.80, 0.00, 0.00, 1.0},
     -- custom
-    [CMD.UNIT_SET_TARGET]    = {1.0, 0.5, 0.0, 1.0},
-    [CMD.UNIT_CANCEL_TARGET] = {0.4, 0.0, 0.0, 1.0},
-    [CMD.UPGRADEMEX]         = {0.6, 0.6, 0.6, 1.0},
-    [CMD.AUTOMEX]            = {0.6, 0.6, 0.6, 1.0},
+    [CMD.UNIT_SET_TARGET]    = {1.00, 0.78, 0.30, 1.0},
+    [CMD.UNIT_CANCEL_TARGET] = {0.40, 0.00, 0.00, 1.0},
+    [CMD.UPGRADEMEX]         = {0.60, 0.60, 0.60, 1.0},
+    [CMD.AUTOMEX]            = {0.60, 0.60, 0.60, 1.0},
 }
-for k,v in pairs(orderColors) do
-    --Spring.Echo(CMD[k],k,v,v[1],v[2],v[3])
-end
 WG.OrderColours = orderColours
 
 -- commands we don't care about (wtf do some of these even do)
@@ -460,7 +457,6 @@ end
 local function addOrderButton(cmd)  
     -- create the button if it does already exist
 	local button 
-    Spring.Echo(cmd.id, cmd.action, CMD[cmd.id])
 	if orderButtons[cmd.action] == nil then 
 		--Spring.Echo("Creating new chili order button:", cmd.name)
 		button = Chili.Button:New{

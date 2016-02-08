@@ -68,78 +68,16 @@ local dotRadius     = 28
 local mapX = Game.mapSizeX
 local mapZ = Game.mapSizeZ
 
-local CONFIG = {  
-    [CMD_ATTACK] = {
-        sizeMult = 1.4,
-        colour = {1.00, 0.20, 0.20, 0.30},
-    },
-    [CMD_CAPTURE] = {
-        sizeMult = 1.4,
-        colour = {1.00, 1.00, 0.30, 0.30},
-    },
-    [CMD_FIGHT] = {
-        sizeMult = 1.2,
-        colour = {0.30, 0.50, 1.00, 0.25}, 
-    },
-    [CMD_GUARD] = {
-        sizeMult = 1,
-        colour = {0.10, 0.10, 0.50, 0.25},
-    },
-    [CMD_LOAD_ONTO] = {
-        sizeMult = 1,
-        colour = {0.30, 1.00, 1.00 ,0.25},
-    },
-    [CMD_LOAD_UNITS] = {
-        sizeMult = 1,
-        colour = {0.30, 1.00, 1.00, 0.30},
-    },
-    [CMD_MANUALFIRE] = {
-        sizeMult = 1.4,
-        colour = {1.00, 0.00, 0.00, 0.30},
-    },
-    [CMD_MOVE] = {
-        sizeMult = 1, 
-        colour = {0.00, 1.00, 0.00, 0.25},
-    },
-    [CMD_PATROL] = {
-        sizeMult = 1,
-        colour = {0.10, 0.10, 1.00, 0.25},
-    },
-    [CMD_RECLAIM] = {
-        sizeMult = 1,
-        colour = {1.00, 0.20, 1.00, 0.4},
-    },
-    [CMD_REPAIR] = {
-        sizeMult = 1,
-        colour = {0.30, 1.00, 1.00, 0.4},
-    },
-    [CMD_RESTORE] = {
-        sizeMult = 1,
-        colour = {0.00, 0.50, 0.00, 0.25},
-    },
-    [CMD_RESURRECT] = {
-        sizeMult = 1,
-        colour = {0.20, 0.60, 1.00, 0.25},
-    },
-    --[[
-    [CMD_SET_TARGET] = {
-        sizeMult = 1,
-        colour = {1.00 ,0.75 ,1.00 ,0.25},
-    },
-    ]]
-    [CMD_UNLOAD_UNIT] = {
-        sizeMult = 1,
-        colour = {1.00, 1.00 ,0.00 ,0.25},
-    },
-    [CMD_UNLOAD_UNITS] = {
-        sizeMult = 1,
-        colour = {1.00, 1.00 ,0.00 ,0.25},
-    },
-    [BUILD] = {
-        sizeMult = 1,
-        colour = {0.00, 1.00 ,0.00 ,0.25},    
-    }
-}
+local CONFIG = {}
+for k,v in pairs(WG.OrderColours) do
+    -- we need to make a copy
+    CONFIG[k] = {}
+    for key,val in pairs(v) do
+        CONFIG[k][key] = val
+    end
+    CONFIG[k][4] = 0.25 -- modify the alpha
+end
+CONFIG[BUILD] = {0.0, 1.0, 0.0, 0.25}
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -254,7 +192,7 @@ function widget:GameFrame()
         commands[i].queue = our_q
         commands[i].queueSize = #our_q 
         if #our_q>0 then
-            commands[i].highlight = CONFIG[our_q[1].id].colour
+            commands[i].highlight = CONFIG[our_q[1].id]
             commands[i].draw = true
         end
         
@@ -308,7 +246,7 @@ function widget:DrawWorldPreUnit()
             -- draw set target command (TODO)
             --[[
             if prevX and commands[i].set_target and commands[i].set_target.params and commands[i].set_target.params[1] then
-                local lineColour = CONFIG[CMD_SET_TARGET].colour
+                local lineColour = CONFIG[CMD_SET_TARGET]
                 local lineAlpha = opacity * lineColour[4] * (1-progress)
                 gl.Color(lineColour[1],lineColour[2],lineColour[3],lineAlpha)
                 if commands[i].set_target.params[3] then
@@ -330,7 +268,7 @@ function widget:DrawWorldPreUnit()
                     -- draw
                     if X and validCoord then
                         -- lines
-                        local lineColour = CONFIG[commands[i].queue[j].id].colour
+                        local lineColour = CONFIG[commands[i].queue[j].id]
                         local lineAlpha = opacity * lineColour[4] * (1-progress)
                         gl.Color(lineColour[1],lineColour[2],lineColour[3],lineAlpha)
                         gl.BeginEnd(GL.QUADS, DrawLine, prevX,prevY,prevZ, X, Y, Z, lineWidth)
@@ -347,7 +285,7 @@ function widget:DrawWorldPreUnit()
                         prevX, prevY, prevZ = X, Y, Z
                         -- dot 
                         if j==commands[i].queueSize and not spIsUnitIcon(unitID) and not spIsUnitSelected(unitID) then
-                            local size = dotRadius * CONFIG[commands[i].queue[j].id].sizeMult
+                            local size = dotRadius
                             gl.BeginEnd(GL.TRIANGLE_FAN, DrawDot, size, lineColour[1],lineColour[2],lineColour[4],lineAlpha, X,Y,Z)
                         end
                     end

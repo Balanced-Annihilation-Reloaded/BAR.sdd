@@ -43,7 +43,7 @@ CMD.AUTOMEX = CMD_AUTOMEX
 CMD[CMD_AUTOMEX] = 'AUTOMEX'
 
 -- expose order colours (matching cursors) to WG
-local orderColors = {
+local orderColours = {
     -- engine
     [CMD.MOVE]         = {0.20, 1.00, 0.00, 1.0},
     [CMD.FIGHT]        = {1.00, 0.30, 0.00, 1.0},
@@ -111,7 +111,7 @@ local orange = {1,0.5,0,1}
 local red = {1,0,0,1}
 local grey = {0.2,0.2,0.2,1}
 
-local paramColors = {
+local paramColours = {
     ['Hold fire']    = red,
     ['Return fire']  = orange,
     ['Fire at will'] = green,
@@ -416,7 +416,7 @@ local function addState(cmd)
 			margin    = {0,0,0,0},
 			OnMouseUp = {cmdAction},
 			font      = {
-				color = paramColors[param] or white,
+				color = paramColours[param] or white,
 				size  = 16,
 			},
 			backgroundColor = black,
@@ -476,7 +476,7 @@ local function addOrderButton(cmd)
 					bottom  = 5,
 					y       = 5,
 					right   = 5,
-					color   = orderColors[cmd.id] or {1,1,1,1},
+					color   = orderColours[cmd.id] or {1,1,1,1},
 					file    = imageDir..'Commands/'..cmd.action..'.png',
 					children = {
 						Chili.Label:New{
@@ -519,7 +519,7 @@ local function addDummyOrder(cmd)
     if orderButtons[cmd.action .. "_dummy"] == nil then
         button = Chili.Button:New{
             caption   = '',
-            --tooltip   = cmd.tooltip .. getInline(orderColors[cmd.action]) .. HotkeyString(cmd.action),
+            --tooltip   = cmd.tooltip .. getInline(orderColours[cmd.action]) .. HotkeyString(cmd.action),
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
             OnMouseUp = {},

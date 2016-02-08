@@ -1064,7 +1064,7 @@ function widget:Update()
     if InitialQueue() then return end
     
     if updateRequired then
-		Spring.Echo("sMenu updateRequired reason:", updateRequired)
+		--Spring.Echo("sMenu updateRequired reason:", updateRequired)
         local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
         teamColor = {r,g,b,0.8}
         updateRequired = nil

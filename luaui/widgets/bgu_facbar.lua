@@ -77,28 +77,21 @@ options = {
 -- list and interface vars
 local facs = {}
 local unfinished_facs = {}
-local pressedFac  = -1
 local waypointFac = -1
 local waypointMode = 0   -- 0 = off; 1=lazy; 2=greedy (greedy means: you have to left click once before leaving waypoint mode and you can have units selected)
 
 local myTeamID = 0
-local inTweak  = false
-local leftTweak, enteredTweak = false, false
 local cycle_half_s = 1
 local cycle_2_s = 1
 
 local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
 
--------------------------------------------------------------------------------
-
-local image_repeat    = LUAUI_DIRNAME .. 'Images/repeat.png'
 
 -------------------------------------------------------------------------------
 -- SCREENSIZE FUNCTIONS
 -------------------------------------------------------------------------------
 local vsx, vsy   = widgetHandler:GetViewSizes()
-
 function widget:ViewResize(viewSizeX, viewSizeY)
   vsx = viewSizeX
   vsy = viewSizeY
@@ -136,7 +129,6 @@ local function GetBuildQueue(unitID)
   end
   return result
 end
-
 
 
 local function UpdateFac(i, facInfo)
@@ -189,6 +181,7 @@ local function UpdateFac(i, facInfo)
         qCount:SetCaption(amount > 0 and amount or '')
     end
 end
+
 local function UpdateFacQ(i, facInfo)
     local unitBuildDefID = -1
     local unitBuildID    = -1
@@ -223,9 +216,8 @@ local function UpdateFacQ(i, facInfo)
     end
 end                
 
-
-
 local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
+    -- add the button for this factory
     tocontrol:AddChild(
         Button:New{
             caption = "",
@@ -343,7 +335,6 @@ local function MakeButton(unitDefID, facID, facIndex)
             width = options.buttonsize.value,
             height = options.buttonsize.value,
             padding = {4, 4, 4, 4},
-            --padding = {0,0,0,0},
             --margin={0, 0, 0, 0},
             backgroundColor = queueColor,
             OnClick = {
@@ -463,9 +454,6 @@ end
 RecreateFacbar = function()
     -- recreate our chili controls from scratch, based on facs[]
 
-    enteredTweak = false
-    if inTweak then return end
-    
     stack_main:ClearChildren()
     
     if #facs>0 and not label_main.visible then label_main:Show() 
@@ -515,7 +503,6 @@ end
 
 local function UpdateFactoryList()
   -- recreate our table of our own factories from scratch (without touching chili)
-
   facs = {}
 
   local teamUnits = Spring.GetTeamUnits(myTeamID)
@@ -569,7 +556,6 @@ function widget:UnitCreated(unitID, unitDefID, unitTeam)
     end
     if bo and #bo > 0 then
         insert(facs,{ unitID=unitID, unitDefID=unitDefID, buildList=UnitDefs[unitDefID].buildOptions })
-        --UpdateFactoryList()
         needsRecreate = true
     end
   end
@@ -590,7 +576,6 @@ function widget:UnitDestroyed(unitID, unitDefID, unitTeam)
         
         table.remove(facs,i)
         unfinished_facs[unitID] = nil
-        --UpdateFactoryList()
         needsRecreate = true
         return
       end
@@ -609,7 +594,6 @@ function widget:Update()
         teamColor = {r,g,b}
         UpdateFactoryList()
     end
-    inTweak = widgetHandler:InTweakMode()
   
     cycle_half_s = (cycle_half_s % 16) + 1
     cycle_2_s = (cycle_2_s % (32*2)) + 1
@@ -629,57 +613,16 @@ function widget:Update()
             end
         end
     end
-        
-    if inTweak and not enteredTweak then
-        enteredTweak = true
-        stack_main:ClearChildren()
-        for i = 1,5 do
-            local facStack, boStack, qStack, qStore = AddFacButton(0, 0, stack_main, i)
-        end
-        stack_main:Invalidate()
-        stack_main:UpdateLayout()
-        leftTweak = true
-    end
-    
-    if not inTweak and leftTweak then
-        enteredTweak = false
-        leftTweak = false
-        RecreateFacbar()
-    end
+
 end
 
 
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
-
-
-function widget:SelectionChanged(selectedUnits)
-    if facs[pressedFac] then
-        local qStack = facs[pressedFac].qStack
-        local boStack = facs[pressedFac].boStack
-        facs[pressedFac].facStack:RemoveChild(boStack)
-        facs[pressedFac].facStack:AddChild(qStack)
-    end
-
-    pressedFac = -1
-    
-    if (#selectedUnits == 1) then 
-        for cnt, f in ipairs(facs) do 
-            if f.unitID == selectedUnits[1] then 
-                pressedFac = cnt
-                
-                local qStack = facs[pressedFac].qStack
-                local boStack = facs[pressedFac].boStack
-                facs[pressedFac].facStack:RemoveChild(qStack)
-                facs[pressedFac].facStack:AddChild(boStack)
-            end
-        end
-    end
-end
 
 function widget:MouseRelease(x, y, button)
-    if (waypointMode>0)and(not inTweak) and (waypointMode>0)and(waypointFac>0) then
+    if waypointMode>0 and waypointMode>0 and waypointFac>0 then
         WaypointHandler(x,y,button)    
     end
     return -1
@@ -770,7 +713,6 @@ function widget:Initialize()
         parent = Chili.Screen0,
         draggable = false,
         resizable = false,
-        dragUseGrip = false,
         minWidth = 200,
         minHeight = 450,
         color = {0,0,0,0},

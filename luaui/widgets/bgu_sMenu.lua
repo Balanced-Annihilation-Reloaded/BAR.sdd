@@ -64,7 +64,7 @@ local orderColours = {
     [CMD.RESTORE]      = {0.50, 1.00, 0.20, 1.0},
     [CMD.AREA_ATTACK]  = {0.80, 0.00, 0.00, 1.0},
     -- custom
-    [CMD.UNIT_SET_TARGET]    = {1.00, 0.78, 0.30, 1.0},
+    [CMD.UNIT_SET_TARGET]    = {1.00, 0.65, 0.10, 1.0},
     [CMD.UNIT_CANCEL_TARGET] = {0.40, 0.00, 0.00, 1.0},
     [CMD.UPGRADEMEX]         = {0.60, 0.60, 0.60, 1.0},
     [CMD.AUTOMEX]            = {0.60, 0.60, 0.60, 1.0},

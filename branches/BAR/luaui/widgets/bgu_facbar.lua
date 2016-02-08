@@ -151,15 +151,6 @@ local function UpdateFac(i, facInfo)
     if unitBuildID then
         unitBuildDefID = GetUnitDefID(unitBuildID)
         _, _, _, _, progress = GetUnitHealth(unitBuildID)
-        --unitDefID      = unitBuildDefID
-        --[[
-    elseif (unfinished_facs[facInfo.unitID]) then
-        _, _, _, _, progress = GetUnitHealth(facInfo.unitID)
-        if (progress>=1) then 
-            progress = -1
-            unfinished_facs[facInfo.unitID] = nil
-        end
-        --]]
     end
 
     local buildList   = facInfo.buildList
@@ -167,7 +158,7 @@ local function UpdateFac(i, facInfo)
     for j,unitDefIDb in ipairs(buildList) do
         local unitDefIDb = unitDefIDb
         
-        --DEBUG #780 Spring.Echo("BUILDLISTLOOP",i,j,unitDefIDb,facs[i],facs[i].boStack,facs[i].qStore)
+        --DEBUG Spring.Echo("BUILDLISTLOOP",i,j,unitDefIDb,facs[i],facs[i].boStack,facs[i].qStore)
         local boButton = facs[i].boStack.childrenByName[unitDefIDb]
         local qButton = facs[i].qStore[i .. '|' .. unitDefIDb]
         
@@ -220,7 +211,7 @@ local function UpdateFacQ(i, facInfo)
             
             local qButton = facs[i].qStore[i .. '|' .. unitDefIDb]
             
-            --DEBUG #780 Spring.Echo("BUILDQLOOP",i,n,unitDefIDb,qButton)
+            --DEBUG Spring.Echo("BUILDQLOOP",i,n,unitDefIDb,qButton)
             if not facs[i].qStack:GetChildByName(qButton.name) then
                 facs[i].qStack:AddChild(qButton)
             end
@@ -276,7 +267,6 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
             children = {
                 unitID ~= 0 and
                     Image:New {
-                        --file = "#"..unitDefID,
                         file = '#'..unitDefID,
                         flip = false,
                         keepAspect = false;

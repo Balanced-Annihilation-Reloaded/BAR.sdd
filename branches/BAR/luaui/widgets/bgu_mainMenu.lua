@@ -60,8 +60,8 @@ Settings['searchWidgetName'] = true
 Settings['widget']           = {}
 Settings['UIwidget']         = {}
 Settings['Skin']             = 'Robocracy'
-Settings['Cursor']           = 'Default'
-Settings['CursorName']       = 'ba'
+Settings['Cursor']           = 'Dynamic'
+Settings['CursorName']       = 'bar'
 Settings['widgetScrollPos']  = 0
 
 ------------------------------------
@@ -104,7 +104,7 @@ local function setCursor(cursorSet)
 
     for i=1, #cursorNames do
         local topLeft = (cursorNames[i] == 'cursornormal' and cursorSet ~= 'k_haos_girl')
-        if cursorSet == 'ba' then Spring.ReplaceMouseCursor(cursorNames[i], cursorNames[i], topLeft)
+        if cursorSet == 'bar' then Spring.ReplaceMouseCursor(cursorNames[i], cursorNames[i], topLeft)
         else Spring.ReplaceMouseCursor(cursorNames[i], cursorSet..'/'..cursorNames[i], topLeft) end
     end
 end
@@ -794,19 +794,24 @@ local function createInterfaceTab()
             Chili.EditBox:New{name='widgetFilter',x=0,y=0,width = '35%',text=' Enter filter -> Hit Return,  or -->',OnMouseDown = {function(obj) obj.text = '' end}},
             Chili.Button:New{right='50%',y=0,height=20,width='15%',caption='Search',OnMouseUp={addFilter}},
             Chili.Checkbox:New{caption='Search Widget Name',x=0,y=40,width='35%',textalign='left',boxalign='right',checked=Settings.searchWidgetName,
-                OnChange = {function() Settings.searchWidgetName = not Settings.searchWidgetName end}},
+                OnChange = {function() Settings.searchWidgetName = not Settings.searchWidgetName end}
+            },
             Chili.Checkbox:New{caption='Search Description',x=0,y=20,width='35%',textalign='left',boxalign='right',checked=Settings.searchWidgetDesc,
-                OnChange = {function() Settings.searchWidgetDesc = not Settings.searchWidgetDesc end}},
+                OnChange = {function() Settings.searchWidgetDesc = not Settings.searchWidgetDesc end}
+            },
             Chili.Checkbox:New{caption='Search Author',x=0,y=60,width='35%',textalign='left',boxalign='right',checked=Settings.searchWidgetAuth,
-                OnChange = {function() Settings.searchWidgetAuth = not Settings.searchWidgetAuth end}},
+                OnChange = {function() Settings.searchWidgetAuth = not Settings.searchWidgetAuth end}
+            },
 
             Chili.Line:New{width='50%',y=80},
 
             comboBox{name='Skin',y=90, width='45%',
-                labels=GetAllowedSkins()}, 
+                labels=GetAllowedSkins()
+            }, 
             comboBox{name='Cursor',y=125, width='45%',
-                labels={'Chili Default','Chili Static','Spring Default','CA Classic','CA Static','Erom','Masse','K_haos_girl'},
-                options={'zk','zk_static','ba','ca','ca_static','erom','masse','k_haos_girl'}},
+                labels={'Dynamic','Static'},
+                options={'bar','static'}
+            },
             Chili.Label:New{caption='-- Widget Settings --',x='2%',width='46%',align = 'center',y=175},
             addScrollStack{y=190,x='2%',width='46%',name='widgetOptions'},
         }
@@ -945,7 +950,7 @@ end
 function widget:Initialize()
     Chili = WG.Chili
     Chili.theme.skin.general.skinName = Settings['Skin'] or 'Robocracy'
-    setCursor(Settings['CursorName'] or 'ba')
+    setCursor(Settings['CursorName'] or 'bar')
 
     loadMainMenu()
     

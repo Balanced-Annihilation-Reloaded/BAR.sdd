@@ -59,7 +59,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 197,
-				object = "decade_dead.s3o.3do",
+				object = "decade_dead.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

@@ -3,8 +3,8 @@ function widget:GetInfo()
     return {
         name      = 'Selection Menu',
         desc      = 'Interface for issuing build orders and unit commands',
-        author    = 'Funkencool',
-        date      = 'Sep 2013',
+        author    = 'Funkencool, Bluestone',
+        date      = '2013+',
         license   = 'GNU GPL v2',
         layer     = 0,
         enabled   = true,
@@ -17,7 +17,64 @@ end
 local catNames = {'ECONOMY', 'BATTLE', 'UNITS', 'FACTORY'} -- order matters
 local imageDir = 'luaui/images/buildIcons/'
 
---  Will probably ignore redundant units here (e.g. floating AA, umex, etc. which are interchangeable)
+-- custom command IDs for LuaUIs CMD table
+local CMD_UNIT_SET_TARGET = 34923
+CMD.UNIT_SET_TARGET = CMD_UNIT_SET_TARGET
+CMD[CMD_UNIT_SET_TARGET] = 'UNIT_SET_TARGET'
+
+local CMD_UNIT_CANCEL_TARGET = 34924
+CMD.UNIT_CANCEL_TARGET = CMD_UNIT_CANCEL_TARGET
+CMD[CMD_UNIT_CANCEL_TARGET] = 'UNIT_CANCEL_TARGET'
+
+local CMD_UNIT_SET_TARGET_RECTANGLE = 34925
+CMD.UNIT_SET_TARGET_RECTANGLE = CMD_UNIT_SET_TARGET_RECTANGLE
+CMD[CMD_UNIT_SET_TARGET_RECTANGLE] = 'UNIT_SET_TARGET_RECTANGLE'
+
+local CMD_PASSIVE = 34571
+CMD.PASSIVE = CMD_PASSIVE
+CMD[CMD_PASSIVE] = 'PASSIVE'
+
+local CMD_UPGRADEMEX = 31244 
+CMD.UPGRADEMEX = CMD_UPGRADEMEX
+CMD[CMD_UPGRADEMEX] = 'UPGRADEMEX'
+
+local CMD_AUTOMEX = 31143 
+CMD.AUTOMEX = CMD_AUTOMEX
+CMD[CMD_AUTOMEX] = 'AUTOMEX'
+
+-- expose order colours (matching cursors) to WG
+local orderColors = {
+    -- engine
+    [CMD.WAIT]         = {0.8, 0.8, 0.8 ,1.0},
+    [CMD.ATTACK]       = {1.0, 0.0, 0.0, 1.0},
+    [CMD.FIGHT]        = {1.0, 0.3, 0.0, 1.0},
+    [CMD.AREA_ATTACK]  = {0.8, 0.0, 0.0, 1.0},
+    [CMD.MANUALFIRE]   = {0.8, 0.2, 0.0, 1.0},
+    [CMD.MOVE]         = {0.2, 1.0, 0.0, 1.0},
+    [CMD.RECLAIM]      = {0.2, 0.6, 0.0, 1.0},
+    [CMD.PATROL]       = {0.4, 0.4, 1.0, 1.0},
+    [CMD.GUARD]        = {0.0, 0.0, 1.0, 1.0},
+    [CMD.REPAIR]       = {0.2, 0.2, 0.8, 1.0},
+    [CMD.LOAD_UNITS]   = {0.5, 0.9, 0.9, 1.0},
+    [CMD.LOAD_ONTO]    = {0.5, 0.9, 0.9, 1.0},
+    [CMD.UNLOAD_UNITS] = {1.0, 0.9, 0.1, 1.0},
+    [CMD.STOCKPILE]    = {1.0, 1.0, 1.0, 1.0},
+    [CMD.CAPTURE]      = {0.6, 0.0, 0.8, 1.0},
+    [CMD.RESURRECT]    = {0.0, 0.0, 1.0, 1.0},
+    [CMD.RESTORE]      = {0.5, 1.0, 0.2, 1.0},
+    [CMD.STOP]         = {0.4, 0.0, 0.0, 1.0},
+    -- custom
+    [CMD.UNIT_SET_TARGET]    = {1.0, 0.5, 0.0, 1.0},
+    [CMD.UNIT_CANCEL_TARGET] = {0.4, 0.0, 0.0, 1.0},
+    [CMD.UPGRADEMEX]         = {0.6, 0.6, 0.6, 1.0},
+    [CMD.AUTOMEX]            = {0.6, 0.6, 0.6, 1.0},
+}
+for k,v in pairs(orderColors) do
+    --Spring.Echo(CMD[k],k,v,v[1],v[2],v[3])
+end
+WG.OrderColours = orderColours
+
+-- commands we don't care about (wtf do some of these even do)
 local ignoreCMDs = {
     selfd          = '',
     loadonto        = '',
@@ -25,39 +82,9 @@ local ignoreCMDs = {
     deathwait    = '',
     squadwait       = '',
     gatherwait     = '',
-    --coruwms      = '',
-    --coruwes      = '',
-    --coruwadves   = '',
-    --coruwadvms   = '',
-    --coruwfus     = '',
-    --coruwmex     = '',
-    --coruwmme     = '',
-    --coruwmmm     = '',
 }
 
-local orderColors = {
-    wait        = {0.8, 0.8, 0.8 ,1.0},
-    attack      = {1.0, 0.0, 0.0, 1.0},
-    settarget   = {1.0, 0.5, 0.0, 0.7},
-    fight       = {1.0, 0.3, 0.0, 1.0},
-    areaattack  = {0.8, 0.0, 0.0, 1.0},
-    manualfire  = {0.8, 0.2, 0.0, 1.0},
-    move        = {0.2, 1.0, 0.0, 1.0},
-    reclaim     = {0.2, 0.6, 0.0, 1.0},
-    patrol      = {0.4, 0.4, 1.0, 1.0},
-    guard       = {0.0, 0.0, 1.0, 1.0},
-    repair      = {0.2, 0.2, 0.8, 1.0},
-    loadunits   = {0.5, 0.9, 0.9, 1.0},
-    unloadunits = {1.0, 0.9, 0.1, 1.0},
-    stockpile   = {1.0, 1.0, 1.0, 1.0},
-    upgrademex  = {0.6, 0.6, 0.6, 1.0},
-    capture     = {0.6, 0.0, 0.8, 1.0},
-    resurrect   = {0.0, 0.0, 1.0, 1.0},
-    restore     = {0.5, 1.0, 0.2, 1.0},
-    stop        = {0.4, 0.0, 0.0, 1.0},
-    canceltarget= {0.4, 0.0, 0.0, 1.0},
-}
-
+-- orders that are always displayed
 local topOrders = {
     [1] = "move",
     [2] = "fight",
@@ -71,12 +98,14 @@ local topOrders = {
     [10] = "wait",
 }
 
+-- states that are always displayed
 local topStates = {
     [1] = "movestate",
     [2] = "firestate",
     [3] = "repeat",
 }
 
+-- state colours
 local white = {1,1,1,1}
 local black = {0,0,0,1}
 local green = {0,1,0,1}
@@ -112,6 +141,7 @@ local paramColors = {
     ['High traj']    = green,
 }
 
+-- order hotkeys
 local Hotkey = {
     ["attack"] = "A",
     ["guard"] = "G",
@@ -133,22 +163,6 @@ local Hotkey = {
     ["canceltarget"] = "J", --cancel target
 }
 ------------
-
--- set target custom command IDs
-local CMD_UNIT_SET_TARGET = 34923
-local CMD_UNIT_CANCEL_TARGET = 34924
-local CMD_UNIT_SET_TARGET_RECTANGLE = 34925
-local CMD_PASSIVE = 34571
-
---export to CMD table
-CMD.UNIT_SET_TARGET = CMD_UNIT_SET_TARGET
-CMD[CMD_UNIT_SET_TARGET] = 'UNIT_SET_TARGET'
-CMD.UNIT_CANCEL_TARGET = CMD_UNIT_SET_TARGET
-CMD[CMD_UNIT_CANCEL_TARGET] = 'UNIT_CANCEL_TARGET'
-CMD.UNIT_SET_TARGET_RECTANGLE = CMD_UNIT_SET_TARGET_RECTANGLE
-CMD[CMD_UNIT_SET_TARGET_RECTANGLE] = 'UNIT_SET_TARGET_RECTANGLE'
-CMD.PASSIVE = CMD_PASSIVE
-CMD[CMD_PASSIVE] = 'PASSIVE'
 
 
 
@@ -446,6 +460,7 @@ end
 local function addOrderButton(cmd)  
     -- create the button if it does already exist
 	local button 
+    Spring.Echo(cmd.id, cmd.action, CMD[cmd.id])
 	if orderButtons[cmd.action] == nil then 
 		--Spring.Echo("Creating new chili order button:", cmd.name)
 		button = Chili.Button:New{
@@ -465,7 +480,7 @@ local function addOrderButton(cmd)
 					bottom  = 5,
 					y       = 5,
 					right   = 5,
-					color   = orderColors[cmd.action] or {1,1,1,1},
+					color   = orderColors[cmd.id] or {1,1,1,1},
 					file    = imageDir..'Commands/'..cmd.action..'.png',
 					children = {
 						Chili.Label:New{

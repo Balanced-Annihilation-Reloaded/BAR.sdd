@@ -409,11 +409,12 @@ local function addBuild(item)
 end
 
 local function addState(cmd)
-    local param = cmd.params[cmd.params[1] + 2]
+    local name = cmd.action .. " " .. cmd.params[cmd.params[1] + 2]
     -- create the button if it does not already exist
 	local button
-	if stateButtons[param]==nil then 
+	if stateButtons[name]==nil then 
 		button = Chili.Button:New{
+            name      = name,
 			caption   = param,
 			cmdName   = cmd.name,
 			tooltip   = cmd.tooltip,
@@ -423,24 +424,25 @@ local function addState(cmd)
 			margin    = {0,0,0,0},
 			OnMouseUp = {cmdAction},
 			font      = {
-				color = paramColours[param] or white,
+				color = paramColours[cmd.params[cmd.params[1] + 2]] or white,
 				size  = 16,
 			},
 			backgroundColor = black,
 		}
-		stateButtons[param] = button
+		stateButtons[name] = button
 	else
-		button = stateButtons[param]
+        -- use existing button
+		button = stateButtons[name]
 	end
 
 	stateMenu:AddChild(button)
 end
 
 local function addDummyState(cmd)
-    local param = cmd.action .. "_dummy"
+    local name = cmd.action .. "_dummy"
     -- create the button if it does not already exists
     local button 
-    if not stateButtons[param] then
+    if not stateButtons[name] then
         button = Chili.Button:New{
             caption   = cmd.action,
             --tooltip   = cmd.tooltip, 
@@ -453,21 +455,22 @@ local function addDummyState(cmd)
             },
             backgroundColor = black,
         }
-        stateButtons[param] = button
+        stateButtons[name] = button
     else
-        button = stateButtons[param]
+        button = stateButtons[name]
     end
     
     stateMenu:AddChild(button)
 end
 
 local function addOrderButton(cmd)  
-    -- create the button if it does already exist
+    -- create the button if it does not already exist
 	local button 
-	if orderButtons[cmd.action] == nil then 
-		--Spring.Echo("Creating new chili order button:", cmd.name)
+    local name = cmd.action
+	if orderButtons[name] == nil then 
 		button = Chili.Button:New{
-			caption   = '',
+			name      = cmd.action,
+            caption   = '',
 			cmdName   = cmd.name,
 			tooltip   = cmd.tooltip,
 			cmdId     = cmd.id,
@@ -487,7 +490,7 @@ local function addOrderButton(cmd)
 					file    = imageDir..'Commands/'..cmd.action..'.png',
 					children = {
 						Chili.Label:New{
-							caption = Hotkey[cmd.action] or "",
+							caption = Hotkey[name] or "",
 							right  = 2,
 							y = 1,
 						},
@@ -499,10 +502,10 @@ local function addOrderButton(cmd)
             local stockpile_q = Chili.Label:New{name="stockpile_label",right=0,bottom=0,caption="", font={size=14,shadow=false,outline=true,autooutlinecolor=true,outlineWidth=4,outlineWeight=6}}
             button.children[1]:AddChild(stockpile_q)
 		end
-		orderButtons[cmd.action] = button
+		orderButtons[name] = button
 	else
-		--Spring.Echo("Using existing chili order button:", cmd.name)
-		button = orderButtons[cmd.action]
+        -- use existing button
+		button = orderButtons[name]
 	end
     
     -- prepare the button for display 
@@ -523,8 +526,10 @@ end
 
 local function addDummyOrder(cmd)
     local button 
-    if orderButtons[cmd.action .. "_dummy"] == nil then
+    local name = cmd.action .. "_dummy"
+    if orderButtons[name] == nil then
         button = Chili.Button:New{
+            name      = name,
             caption   = '',
             --tooltip   = cmd.tooltip .. getInline(orderColours[cmd.action]) .. HotkeyString(cmd.action),
             padding   = {0,0,0,0},
@@ -542,9 +547,9 @@ local function addDummyOrder(cmd)
                 }
             }
         }
-        orderButtons[cmd.action .. "_dummy"] = button
+        orderButtons[name] = button
     else
-        button = orderButtons[cmd.action .. "_dummy"]
+        button = orderButtons[name]
     end
     
     orderMenu:AddChild(button) 
@@ -928,6 +933,7 @@ function widget:Initialize()
     }
     
     orderMenu = Chili.Grid:New{
+        name    = "order grid",
         parent  = screen0,
         active  = false,
         columns = 21,
@@ -941,6 +947,7 @@ function widget:Initialize()
 
 
     stateMenu = Chili.Grid:New{
+        name    = "state grid",
         parent  = screen0,
         columns = 2,
         rows    = 8,
@@ -951,7 +958,7 @@ function widget:Initialize()
     -- Creates a container for each category of build commands.
     for i=1,#catNames do
         grid[i] = Chili.Grid:New{
-            name     = catNames[i],
+            name     = "unit grid " .. catNames[i],
             parent   = buildMenu,
             x        = 0,
             y        = 0,

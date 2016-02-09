@@ -53,7 +53,6 @@ local CMD_INSERT = CMD.INSERT
 local CMD_OPT_INTERNAL = CMD.OPT_INTERNAL 
 
 local CMD_AUTOMEX = 31143 
-
 local CMD_UPGRADEMEX = 31244 
 
 local ONTooltip = "Metal makers are upgraded automatically\nby this builder." 

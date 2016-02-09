@@ -313,8 +313,9 @@ function Start()
     if not selectedButton then return end
     local gameMode = selectedButton.caption
     startScript = script[gameMode]
-    
-    startScript = string.gsub(startScript, "GameType=[^;]+;", "GameType=" .. Game.gameName .. " " .. Game.gameVersion .. ";", 1)
+
+    -- replace GameType=...; with the current running gameVersion (case insensitive replace)
+    startScript = string.gsub(startScript, "[Gg][Aa][Mm][Ee][Tt][Yy][Pp][Ee]=[^;]+;", "GameType=" .. Game.gameName .. " " .. Game.gameVersion .. ";", 1)
     for _,child in ipairs(optionsBox.children) do
         local name = child.name
         local comboBox = child:GetChildByName("comboBox")

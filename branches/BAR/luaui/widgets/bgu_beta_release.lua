@@ -314,8 +314,6 @@ function Start()
     local gameMode = selectedButton.caption
     startScript = script[gameMode]
 
-    -- replace GameType=...; with the current running gameVersion (case insensitive replace)
-    startScript = string.gsub(startScript, "[Gg][Aa][Mm][Ee][Tt][Yy][Pp][Ee]=[^;]+;", "GameType=" .. Game.gameName .. " " .. Game.gameVersion .. ";", 1)
     for _,child in ipairs(optionsBox.children) do
         local name = child.name
         local comboBox = child:GetChildByName("comboBox")

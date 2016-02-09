@@ -24,6 +24,16 @@ deactivatescr()
 	return (0);
 }
 
+HitByWeapon(anglex, anglez)
+{
+	turn base to z-axis <0> - anglez speed <105.000000>;
+	turn base to x-axis <0> - anglex speed <105.000000>;
+	wait-for-turn base around z-axis;
+	wait-for-turn base around x-axis;
+	turn base to z-axis <0.000000> speed <15.000000>;
+	turn base to x-axis <0.000000> speed <15.000000>;
+}
+
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
 	while( get BUILD_PERCENT_LEFT )

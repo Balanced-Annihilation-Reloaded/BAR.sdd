@@ -429,6 +429,17 @@ MotionControl(moving, aiming, justmoved)
 	}
 }
 
+
+HitByWeapon(anglex, anglez)
+{
+	turn pelvis to z-axis <0> - anglez speed <55.000000>;
+	turn pelvis to x-axis <0> - anglex speed <55.000000>;
+	wait-for-turn pelvis around z-axis;
+	wait-for-turn pelvis around x-axis;
+	turn pelvis to z-axis <0.000000> speed <15.000000>;
+	turn pelvis to x-axis <0.000000> speed <15.000000>;
+}
+
 Create()
 {
 	spin thing around x-axis speed <30> accelerate <1>;

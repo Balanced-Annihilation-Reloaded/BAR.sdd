@@ -44,7 +44,7 @@ local featureBarHeight          = 1.6
 local featureBarWidth           = 7
 local featureBarAlpha           = 0.6
 
-local drawBarTitles             = true          -- (I disabled the healthbar text, cause that one doesnt need an explanation)
+local drawBarTitles             = true          
 local titlesAlpha               = 0.3*barAlpha
 
 local drawBarPercentage         = 0                -- wont draw heath percentage text above this percentage
@@ -878,7 +878,7 @@ do
           glColor(1,1,1,barAlpha)
           glText(barInfo.text,barStart,yoffset-outlineSize,4,"r")
         end
-        if (drawBarTitles and barInfo.title ~= "health") then
+        if (drawBarTitles) then
           glColor(1,1,1,titlesAlpha)
           glText(barInfo.title,0,yoffset-outlineSize,2.35,"cd")
         end

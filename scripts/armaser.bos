@@ -270,6 +270,7 @@ HitByWeapon(Func_Var_1, Func_Var_2)
 	{
 		Static_Var_5 = 1;
 	}
+
 	if( Static_Var_5 )
 	{
 		signal 4;
@@ -280,6 +281,8 @@ HitByWeapon(Func_Var_1, Func_Var_2)
 		set ACTIVATION to 100;
 	}
 	return (0);
+
+
 }
 
 StartMoving()

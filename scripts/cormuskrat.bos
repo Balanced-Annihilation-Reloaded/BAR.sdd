@@ -37,6 +37,16 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	}
 }
 
+HitByWeapon(anglex, anglez)
+{
+	turn base to z-axis <0> - anglez speed <105.000000>;
+	turn base to x-axis <0> - anglex speed <105.000000>;
+	wait-for-turn base around z-axis;
+	wait-for-turn base around x-axis;
+	turn base to z-axis <0.000000> speed <30.000000>;
+	turn base to x-axis <0.000000> speed <30.000000>;
+}
+
 Go()
 {
 	turn beam to y-axis Static_Var_1 speed <160.038462>;

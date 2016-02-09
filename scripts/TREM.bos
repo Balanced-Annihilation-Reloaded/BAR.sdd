@@ -41,43 +41,18 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	return (0);
 }
 
+HitByWeapon(anglex, anglez)
+{
+	turn base to z-axis <0> - anglez speed <65.000000>;
+	turn base to x-axis <0> - anglex speed <65.000000>;
+	wait-for-turn base around z-axis;
+	wait-for-turn base around x-axis;
+	turn base to z-axis <0.000000> speed <20.000000>;
+	turn base to x-axis <0.000000> speed <20.000000>;
+}
+
 Create()
 {
-	dont-shade barrel1;
-	dont-shade barrel2;
-	dont-shade barrel3;
-	dont-shade barrel4;
-	dont-shade barrel5;
-	dont-shade barrel6;
-	dont-shade base;
-	dont-shade sleeve1;
-	dont-shade sleeve2;
-	dont-shade sleeve3;
-	dont-shade sleeve4;
-	dont-shade sleeve5;
-	dont-shade sleeve6;
-	dont-shade turret;
-	dont-shade spindle;
-	dont-cache turret;
-	dont-cache spindle;
-	dont-cache barrel1;
-	dont-cache barrel2;
-	dont-cache barrel3;
-	dont-cache barrel4;
-	dont-cache barrel5;
-	dont-cache barrel6;
-	dont-cache sleeve1;
-	dont-cache sleeve2;
-	dont-cache sleeve3;
-	dont-cache sleeve4;
-	dont-cache sleeve5;
-	dont-cache sleeve6;
-	dont-cache flare1;
-	dont-cache flare2;
-	dont-cache flare3;
-	dont-cache flare4;
-	dont-cache flare5;
-	dont-cache flare6;
 	hide flare1;
 	hide flare2;
 	hide flare3;

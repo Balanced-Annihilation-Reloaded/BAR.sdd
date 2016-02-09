@@ -223,6 +223,17 @@ MotionControl(moving, aiming, justmoved)
 	}
 }
 
+
+HitByWeapon(anglex, anglez)
+{
+	turn hip to z-axis <0> - anglez speed <105.000000>;
+	turn hip to x-axis <0> - anglex speed <105.000000>;
+	wait-for-turn hip around z-axis;
+	wait-for-turn hip around x-axis;
+	turn hip to z-axis <0.000000> speed <30.000000>;
+	turn hip to x-axis <0.000000> speed <30.000000>;
+}
+
 Go()
 {
 	turn luparm to x-axis <0.000000> now;

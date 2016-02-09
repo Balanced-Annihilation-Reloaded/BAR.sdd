@@ -69,7 +69,7 @@ local mapX = Game.mapSizeX
 local mapZ = Game.mapSizeZ
 
 local CONFIG = {}
-for k,v in pairs(WG.OrderColours) do
+for k,v in pairs(WG.OrderColours) do -- provided by sMenu
     -- we need to make a copy
     CONFIG[k] = {}
     for key,val in pairs(v) do

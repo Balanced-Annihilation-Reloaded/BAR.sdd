@@ -11,6 +11,7 @@ uniform sampler2D modelnormals;
 uniform sampler2D modeldepths;
 uniform sampler2D mapnormals;
 uniform sampler2D mapdepths;
+uniform sampler2D modelExtra;
 
 uniform vec3 eyePos;
 uniform vec4 lightpos;
@@ -34,12 +35,16 @@ void main(void)
 	vec4 modelpos4 = vec4(vec3(gl_TexCoord[0].st, texture2D(modeldepths, gl_TexCoord[0].st).x) * 2.0 - 1.0, 1.0);
 	vec4 map_normals4   = texture2D(mapnormals,   gl_TexCoord[0].st) * 2.0 - 1.0;
 	vec4 model_normals4 = texture2D(modelnormals, gl_TexCoord[0].st) * 2.0 - 1.0;
-	
+	vec4 model_extra4 = texture2D(modelExtra, gl_TexCoord[0].st) * 2.0 - 1.0;
+	float specularHighlight = 1.0;
 	float model_lighting_multiplier = 1.0; //models recieve additional lighting, looks better.
 	if ((mappos4.z-modelpos4.z) > 0.0) { // this means we are processing a model fragment, not a map fragment
+		if (model_extra4.a > 0.5){
 		map_normals4 = model_normals4;
 		mappos4 = modelpos4;
 		model_lighting_multiplier=1.5;
+		specularHighlight= specularHighlight + 2*model_extra4.g;
+		}
 	}
 	mappos4 = viewProjectionInv * mappos4;
 	mappos4.xyz = mappos4.xyz / mappos4.w;
@@ -89,10 +94,10 @@ void main(void)
 	
 
 	vec3 viewDirection = normalize(vec3(eyePos - mappos4.xyz));
-	float specularHighlight = 0;
+	
 	if (dot(map_normals4.xyz, light_direction) > 0.0) // light source on the wrong side?
 	{
-		specularHighlight = 0.5* pow(max(0.0, dot(reflect( -light_direction, map_normals4.xyz), viewDirection)), 8);
+		specularHighlight = specularHighlight * (0.5* pow(max(0.0, dot(reflect( -light_direction, map_normals4.xyz), viewDirection)), 8));
 	}
 	
 	//OK, our blending func is the following: Rr=Lr*Dr+1*Dr

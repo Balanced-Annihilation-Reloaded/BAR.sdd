@@ -337,7 +337,7 @@ local function checkStatus()
     playedTime = playedTime or 0
     totalTime  = totalTime or 0
     
-    if playedTime >= totalTime - 1 then
+    if playedTime >= totalTime - 1 and Spring.GetConfigInt("Sound")~=0 then
         playNew = true
     end
     

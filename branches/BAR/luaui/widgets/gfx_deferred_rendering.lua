@@ -239,6 +239,7 @@ function widget:Initialize()
 					modeldepths = 1,
 					mapnormals = 2,
 					mapdepths = 3,
+					modelExtra = 4,
 					
 				},
 			})
@@ -263,6 +264,7 @@ function widget:Initialize()
 					modeldepths = 1,
 					mapnormals = 2,
 					mapdepths = 3,
+					modelExtra = 4,
 					
 				},
 			})
@@ -326,6 +328,7 @@ local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
 	glTexture(1, "$model_gbuffer_zvaltex")
 	glTexture(2, "$map_gbuffer_normtex")
 	glTexture(3, "$map_gbuffer_zvaltex")
+	glTexture(4, "$model_gbuffer_spectex")
 	
 	local screenratio=vsy/vsx --so we dont overdraw and only always draw a square
 			

@@ -44,7 +44,7 @@ CMD[CMD_AUTOMEX] = 'AUTOMEX'
 
 -- expose order colours (matching cursors) to WG
 local orderColours = {
-    -- engine
+    -- standard
     [CMD.MOVE]         = {0.20, 1.00, 0.00, 1.0},
     [CMD.FIGHT]        = {1.00, 0.30, 0.00, 1.0},
     [CMD.ATTACK]       = {1.00, 0.00, 0.00, 1.0},
@@ -59,10 +59,17 @@ local orderColours = {
     [CMD.LOAD_UNITS]   = {0.50, 0.90, 0.90, 1.0},
     [CMD.LOAD_ONTO]    = {0.50, 0.90, 0.90, 1.0},
     [CMD.UNLOAD_UNITS] = {1.00, 0.95, 0.15, 1.0},
+    [CMD.UNLOAD_UNIT] = {1.00, 0.95, 0.15, 1.0},
     [CMD.STOCKPILE]    = {1.00, 1.00, 1.00, 1.0},
     [CMD.RESURRECT]    = {1.00, 0.20, 0.95, 1.0},
     [CMD.RESTORE]      = {0.50, 1.00, 0.20, 1.0},
     [CMD.AREA_ATTACK]  = {0.80, 0.00, 0.00, 1.0},
+    -- etc
+    [CMD.TIMEWAIT]     = {0.80, 0.80, 0.80 ,1.0},
+    [CMD.DEATHWAIT]    = {0.80, 0.80, 0.80 ,1.0},
+    [CMD.SQUADWAIT]    = {0.80, 0.80, 0.80 ,1.0},
+    [CMD.GATHERWAIT]   = {0.80, 0.80, 0.80 ,1.0},
+    [CMD.SELFD]        = {1.00, 1.00, 0.00, 1.0},  
     -- custom
     [CMD.UNIT_SET_TARGET]    = {1.00, 0.65, 0.10, 1.0},
     [CMD.UNIT_CANCEL_TARGET] = {0.40, 0.00, 0.00, 1.0},

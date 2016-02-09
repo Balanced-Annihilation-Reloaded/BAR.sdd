@@ -409,13 +409,14 @@ local function addBuild(item)
 end
 
 local function addState(cmd)
-    local name = cmd.action .. " " .. cmd.params[cmd.params[1] + 2]
+    local caption = cmd.params[cmd.params[1] + 2]
+    local name = cmd.action .. " " .. caption
     -- create the button if it does not already exist
 	local button
 	if stateButtons[name]==nil then 
 		button = Chili.Button:New{
             name      = name,
-			caption   = param,
+			caption   = caption,
 			cmdName   = cmd.name,
 			tooltip   = cmd.tooltip,
 			cmdId     = cmd.id,
@@ -424,7 +425,7 @@ local function addState(cmd)
 			margin    = {0,0,0,0},
 			OnMouseUp = {cmdAction},
 			font      = {
-				color = paramColours[cmd.params[cmd.params[1] + 2]] or white,
+				color = paramColours[caption] or white,
 				size  = 16,
 			},
 			backgroundColor = black,

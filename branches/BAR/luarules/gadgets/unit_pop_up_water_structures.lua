@@ -104,7 +104,7 @@ function gadget:Initialize()
 end
 
 function SplashSound(_,x,y,z)
-  if (Spring.IsPosInLos(x,y,z)) then
+  if (Spring.IsPosInLos(x,y,z, Spring.GetMyAllyTeamID())) then
     Spring.PlaySoundFile("sounds/splslrg.wav", ((Spring.GetConfigInt("snd_volmaster") or 100) / 100), x,y,z)
   end
 end

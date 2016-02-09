@@ -314,6 +314,7 @@ function Start()
     local gameMode = selectedButton.caption
     startScript = script[gameMode]
     
+    startScript = string.gsub(startScript, "GameType=[^;]+;", "GameType=" .. Game.gameName .. " " .. Game.gameVersion .. ";", 1)
     for _,child in ipairs(optionsBox.children) do
         local name = child.name
         local comboBox = child:GetChildByName("comboBox")
@@ -333,7 +334,7 @@ function Start()
     startScript = string.gsub(startScript, "PLAYER_NAME", playerName)   
     startScript = string.gsub(startScript, "PLAYER_COUNTRY", playerCountry)   
     startScript = string.gsub(startScript, "PLAYER_RANK", playerRank)   
-    
+
     Spring.Echo("\255\255\255\255" .. "Please wait...")
     -- wait until the next widget:Update to actually reload, so as the previous line appears in the chat
 end

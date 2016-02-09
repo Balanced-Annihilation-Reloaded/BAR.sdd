@@ -38,6 +38,8 @@ end
 -- Var
 ----------------------------------------------------------------
 local CMD_PASSIVE = 34571
+CMD.PASSIVE = CMD_PASSIVE
+CMD[CMD_PASSIVE] = "PASSIVE"
 
 local stallMarginInc = 0.2
 local stallMarginSto = 0.01

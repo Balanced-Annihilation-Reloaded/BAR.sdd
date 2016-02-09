@@ -1,7 +1,7 @@
 
 local skin = {
   info = {
-    name    = "Robocracy Alternate 1",
+    name    = "Robocracy (alternate)",
     version = "162",
     author  = "JK,Funk",
 		depend = {

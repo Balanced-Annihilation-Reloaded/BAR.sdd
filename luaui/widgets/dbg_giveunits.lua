@@ -1,10 +1,10 @@
 function widget:GetInfo()
    return {
-      name      = "Give units, givecore, givearm",
+      name      = "Give units, givecore, givearm, givefeatures",
       desc      = "use /luaui givecore, /luaui givearm and /luaui givefeatures",
       author    = "Beherith",
-      version   = "v1.0",
-      date      = "2013",
+      version   = "v1.1",
+      date      = "2016",
       license   = "GNU GPL, v3 or later",
       layer     = 200,
       enabled   = false,

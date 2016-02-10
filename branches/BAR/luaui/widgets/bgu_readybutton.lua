@@ -52,7 +52,7 @@ function widget:Initialize()
         name = 'readybutton_window',
         parent = Chili.Screen0,
         right = 300,
-        y = 200,
+        y = 225,
         height = 50,
         width = amSpec and offerWidth or readyWidth,
         padding     = {0,0,0,0},

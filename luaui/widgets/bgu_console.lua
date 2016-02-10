@@ -28,13 +28,12 @@ local sfind = string.find
 
 
 -- Config --
---local minChatWidth  = 500 --width of the console
---local maxChatWidth  = 625 --width of the console
 local cfg = {
     msgTime  = 8, -- time to display messages in seconds
     hideChat = true,
     msgCap   = 50,
 }
+local fontSize = 16
 ------------
 
 -- Chili elements --
@@ -90,7 +89,8 @@ local function hideChat()
 end
 
 local function getConsoleDimensions(vsx, vsy)
-    local w = vsx*0.5
+    local w1 = math.max(vsx-450,0)/vsx-0.26 -- width proportion to avoid resbars
+    local w = math.min(vsx*0.5, vsx*w1) 
     local x = vsx*0.26
     local h = vsy*0.18
     return x,w,h
@@ -111,9 +111,8 @@ local function loadWindow()
         parent  = screen,
         width   = minChatWidth,
         color   = {0,0,0,0},
-        height  = 150,
+        height  = 0,
         padding = {0,0,0,0},
-        right   = 450,
         y       = 0,
     }
     
@@ -366,6 +365,7 @@ function NewConsoleLine(text)
             autoOutlineColor = true,
             outlineWidth     = 4,
             outlineWeight    = 3,
+            size             = fontSize,
         },
     }
     

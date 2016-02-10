@@ -11,7 +11,7 @@ local yellow = { 1, 1, 0, 1 }
 config = {
 	console = {
 		x = 0.26,
-		y = 0.25,
+		y = 0.18,
 		w = 0.5,
 		--fontFile = "LuaUI/fonts/dejavu-sans-mono/DejaVuSansMono.ttf",
 	},

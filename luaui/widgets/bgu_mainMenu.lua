@@ -26,6 +26,8 @@ local Chili, mainMenu, menuTabs, menuBtn
 local Settings = {}
 local DefaultSettings = {}
 
+local fullyLoaded = false -- set to true at the end of widget:Initialize 
+
 local white = '\255\255\255\255'
 
 function LoadSpringSettings()
@@ -552,6 +554,10 @@ local comboBox = function(obj)
 
         if setting == 'Skin' then
             Chili.theme.skin.general.skinName = value
+            if fullyLoaded then 
+                Spring.Echo("Reloading skin, please wait...")
+                Spring.SendCommands("luarules reloadluaui") 
+            end -- avoid doing this during Initialize!
         elseif setting == 'Cursor' then
             setCursor(value)
             Settings['CursorName'] = value
@@ -984,6 +990,8 @@ function widget:Initialize()
     spSendCommands('bind f11 toggleInterface')
     spSendCommands('bind esc hideMenu')
     spSendCommands('bind h showHelp')
+    
+    fullyLoaded = true
 end
 
 function widget:Update()

@@ -3,11 +3,11 @@ function widget:GetInfo()
     return {
         name    = 'Faction Change',
         desc    = 'Adds buttons to switch faction before the game starts',
-        author    = 'Niobium',
+        author  = 'Niobium, Bluestone',
         date    = 'May 2011',
-        license    = 'GNU GPL v2',
-        layer    = 1002, -- must go after initial queue, or depthtest is wrong
-        enabled    = true,
+        license = 'GNU GPL v2',
+        layer   = 1002, -- must go after initial queue, or depthtest is wrong
+        enabled = true,
     }
 end
 
@@ -77,7 +77,7 @@ function widget:Initialize()
     if spGetSpectatingState() or
         Spring.GetGameFrame() > 0 or
         amNewbie or
-        (#Spring.GetTeamList()<=2 and Game.startPosType~=3) or
+        (#Spring.GetTeamList()<=2 and Game.startPosType~=2) or
         WG.isMission then
         widgetHandler:RemoveWidget(self)
         return

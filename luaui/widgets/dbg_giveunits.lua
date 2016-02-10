@@ -68,8 +68,10 @@ function GiveFeatures()
 			x=0
 			y=y+spacing
 		end
-		cmd="give 1 " .. featureDef.name .. " 0 @"..math.floor(pos[1])+x .. "," ..  math.floor(pos[2]) ..",".. math.floor( pos[3]+y ) 
-		Spring.Echo(cmd)
-		Spring.SendCommands({cmd})
+		if string.find(featureDef.name,"treetype") == nil then 
+			cmd="give 1 " .. featureDef.name .. " @"..math.floor(pos[1])+x .. "," ..  math.floor(pos[2]) ..",".. math.floor( pos[3]+y ) 
+			Spring.Echo(cmd)
+			Spring.SendCommands({cmd})
+		end
 	end
 end

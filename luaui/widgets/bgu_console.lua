@@ -28,8 +28,8 @@ local sfind = string.find
 
 
 -- Config --
-local minChatWidth  = 500 --width of the console
-local maxChatWidth  = 625 --width of the console
+--local minChatWidth  = 500 --width of the console
+--local maxChatWidth  = 625 --width of the console
 local cfg = {
     msgTime  = 8, -- time to display messages in seconds
     hideChat = true,
@@ -89,15 +89,18 @@ local function hideChat()
     end
 end
 
-local function getChatWidth(viewSizeX)
-    return math.min(maxChatWidth, math.max(minChatWidth, viewSizeX * 0.4))
+local function getConsoleDimensions(vsx, vsy)
+    local w = vsx*0.5
+    local x = vsx*0.26
+    local h = vsy*0.18
+    return x,w,h
 end
 
 
 local screenResized = true
 function widget:ViewResize(viewSizeX, viewSizeY)
-    local w = getChatWidth(viewSizeX)
-    window:Resize(w,_)
+    local x,w,h = getConsoleDimensions(viewSizeX, viewSizeY)
+    window:SetPos(x,0,w,h)
     screenResized = true    
 end
 
@@ -222,7 +225,7 @@ function widget:Update()
         -- without this, chili mangles the children of the console stackpanel when the screen is resized
         -- for some reason, it usually un-mangles as soon as a new chat message is sent
         -- so we block the engines message about window resized and send our own just afterwards to make it un-mangle 
-        -- this is a hacky workaround, and it doesn't always work
+        -- this is a hacky workaround, but it works!
         local vsx,vsy = Spring.GetViewGeometry()
         Spring.Echo("Set view resolution: " .. vsx .. " x " .. vsy)
         screenResized = false

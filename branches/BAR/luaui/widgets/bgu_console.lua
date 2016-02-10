@@ -2,7 +2,7 @@
 function widget:GetInfo()
     return {
         name    = 'Chat Console',
-        desc    = 'Lets you talk to other players',
+        desc    = 'Displays the chat history', -- chonsole handles chat input
         author  = 'Funkencool, Bluestone',
         date    = '2013',
         license = 'GNU GPL v2',
@@ -41,7 +41,6 @@ local cfg = {
 local Chili
 local screen
 local window
-local input
 local msgWindow
 local log
 --------------------
@@ -68,7 +67,7 @@ local color = {
 local function mouseIsOverChat()
     local x,y = Spring.GetMouseState()
     y = screen.height - y -- chili has y axis with 0 at top!    
-    if x > window.x and x < window.x + window.width and y > 0 and ((msgWindow.visible and y < window.height) or (msgWindow.hidden and y < input.height)) then
+    if x > window.x and x < window.x + window.width and y > 0 and ((msgWindow.visible and y < window.height) or (msgWindow.hidden and y < 60)) then
         return true
     else
         return false
@@ -94,22 +93,11 @@ local function getChatWidth(viewSizeX)
     return math.min(maxChatWidth, math.max(minChatWidth, viewSizeX * 0.4))
 end
 
-local function SetInputTextGeo(windowW, windowY, viewSizeX, viewSizeY)
-    -- move input to line up with new console
-    local windowX = viewSizeX - window.right - windowW
-    windowX = math.max(0, windowX)
-    sendCommands('inputtextgeo '
-        ..((windowX+5) / viewSizeX)..' '
-        ..(1 - (windowY + 30) / viewSizeY)
-        ..' 0.1 '
-        ..(windowW / viewSizeX) )
-end
 
 local screenResized = true
 function widget:ViewResize(viewSizeX, viewSizeY)
     local w = getChatWidth(viewSizeX)
     window:Resize(w,_)
-    SetInputTextGeo(w, window.y, viewSizeX, viewSizeY) -- at this point, GetXXXGeometry and window.XXX both still return previous values
     screenResized = true    
 end
 
@@ -126,16 +114,6 @@ local function loadWindow()
         y       = 0,
     }
     
-    -- input text box
-    input = Chili.Panel:New{
-        parent    = window,
-        minHeight = 10,
-        width     = '100%',
-        height    = 30,
-        y         = 0,
-        x         = 0,
-    }
-    
     -- chat box
     msgWindow = Chili.ScrollPanel:New{
         verticalSmartScroll = true,
@@ -143,7 +121,7 @@ local function loadWindow()
         scrollPosY  = 0,        
         parent      = window,
         x           = 0,
-        y           = 30,
+        y           = 0,
         right       = 0,
         bottom      = 0,
         padding     = {0,0,0,0},
@@ -406,6 +384,4 @@ function widget:KeyPress(key, mods, isRepeat)
 end
 
 function widget:Shutdown()
-    sendCommands({'console 1', 'inputtextgeo default'})
-    setConfigString('InputTextGeo', '0.26 0.73 0.02 0.028') 
 end

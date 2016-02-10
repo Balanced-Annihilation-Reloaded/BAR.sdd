@@ -797,7 +797,7 @@ function widget:Initialize()
         caption = "",
         x       = 0,
         y       = 0,
-        width   = winSize * 1.05,
+        width   = winSize,
         height  = winSize,
         OnClick = {TogglePreferredUnitInfo},
     }
@@ -812,7 +812,7 @@ function widget:Initialize()
         parent  = screen,
         x       = 0,
         y       = 0,
-        width   = winSize * 1.05,
+        width   = winSize,
         height  = winSize,
         OnClick = {}, -- this has to exist as a seperate case to unitWindow, because it can't act when clicked (or its child buttons won't work)
     }
@@ -838,7 +838,7 @@ function widget:Initialize()
         parent  = screen,
         x       = 0,
         y       = 0,
-        width   = winSize * 1.05,
+        width   = winSize,
         height  = winSize,
     }    
     groundText = Chili.TextBox:New{
@@ -941,7 +941,7 @@ end
 function widget:ViewResize(_,scrH)
     unitWindow:Resize(scrH*0.2,scrH*0.2)
     unitGridWindow:Resize(scrH*0.2,scrH*0.2)
-    -- ground info does not resize
+    groundWindow:Resize(scrH*0.2,scrH*0.2)
 end
 
 function widget:Shutdown()

@@ -1130,6 +1130,11 @@ function widget:Initialize()
     
     CalculateOffsets()
 
+    -- disable engine player info 
+    if (Spring.GetConfigInt("ShowPlayerInfo")==1) then
+        Spring.SendCommands("info 0")
+    end
+
     -- add players
     local playerList = Spring.GetPlayerList()
     for _,pID in ipairs(playerList) do
@@ -1175,6 +1180,11 @@ function widget:Shutdown()
     end
     
     Spring.SendCommands('bind Any+h sharedialog')
+
+    -- re-enable engine player info 
+    if (Spring.GetConfigInt("ShowPlayerInfo")==0) then
+        Spring.SendCommands("info 1")
+    end
 end
 
 function widget:PlayerChanged(pID)

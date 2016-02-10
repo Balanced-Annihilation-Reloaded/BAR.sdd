@@ -99,6 +99,7 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
     }
     
     healthBars[#healthBars + 1] = Chili.Progressbar:New{
+        name    = "healthbar " .. #healthBars,
         unitIDs = unitIDs,
         value   = 0,
         bottom  = 1,
@@ -260,6 +261,7 @@ local function showUnitInfo()
     }
     
     unitHealth = Chili.Progressbar:New{
+        name   = "unitHealth",
         parent = unitPictureOverlay,
         value   = 0,
         bottom  = 5,

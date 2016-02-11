@@ -5,7 +5,7 @@
 
 #define SIG_BUILD		4	
 
-piece  base,doorlf, doorlb, doorrf, doorrb, nano, turret, ground;
+piece  base,doorlf, doorlb, doorrf, doorrb, nano, turret, ground, wake1, wake2;
 
 static-var  statechg_DesiredState, statechg_StateChanging,
 			notBuilding, oldHead;
@@ -115,8 +115,8 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from base;
-		emit-sfx 2 from base;
+		emit-sfx 2 from wake1;
+		emit-sfx 2 from wake2;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 15000 / waketime;

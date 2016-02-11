@@ -3,8 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  flarea1, flarea2, flareb, base, turret, sleeves, wake1, wake2,
-       barrel1, barrel2;
+piece  flarea1, flarea2, flareb, base, turret, sleeves, wake1, barrel1, barrel2;
 
 static-var  Static_Var_1, restore_delay;
 
@@ -72,7 +71,6 @@ StartMoving()
 	while( TRUE )
 	{
 		emit-sfx 2 from wake1;
-		emit-sfx 4 from wake2;
 		sleep 300;
 	}
 	return (0);
@@ -179,7 +177,6 @@ Killed(severity, corpsetype)
 		explode barrel2 type BITMAPONLY;
 		explode flarea2 type BITMAPONLY;
 		explode wake1 type BITMAPONLY;
-		explode wake2 type BITMAPONLY;
 		explode flareb type BITMAPONLY;
 		return(0);
 	}
@@ -194,7 +191,6 @@ Killed(severity, corpsetype)
 		explode barrel2 type FIRE | SMOKE | FALL;
 		explode flarea2 type FIRE | SMOKE | FALL;
 		explode wake1 type FIRE | SMOKE | FALL;
-		explode wake2 type FIRE | SMOKE | FALL;
 		explode flareb type FIRE | SMOKE | FALL;
 		return(0);
 	}
@@ -209,7 +205,6 @@ Killed(severity, corpsetype)
 		explode barrel2 type FIRE | SMOKE | FALL;
 		explode flarea2 type EXPLODE_ON_HIT | SMOKE | FALL;
 		explode wake1 type FIRE | SMOKE | FALL;
-		explode wake2 type SMOKE | FALL;
 		explode flareb type SMOKE | FALL;
 		return(0);
 	}
@@ -222,6 +217,5 @@ Killed(severity, corpsetype)
 		explode barrel2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode flarea2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode wake1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
-		explode wake2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode flareb type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 }

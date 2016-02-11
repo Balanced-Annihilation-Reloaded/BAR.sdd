@@ -622,6 +622,7 @@ end
 ----------------------------------
 function updateUnitInfo()
     -- single unit type
+    Spring.Echo("updateUnitInfo start")
     local curHealth = 0
     local maxHealth = 0
     local Mmake, Muse, Emake, Euse = 0,0,0,0
@@ -635,6 +636,7 @@ function updateUnitInfo()
         Emake = Emake + (em or 0)
         Euse = Euse + (eu or 0)
     end
+    Spring.Echo(curHealth, maxHealth)
     unitHealth:SetMinMax(0, maxHealth)
     unitHealth:SetValue(curHealth) 
     if maxHealth>0 then -- if we can't see the units health (e.g. enemy commander)
@@ -645,6 +647,7 @@ function updateUnitInfo()
     if not curTip.selEnemy then
         unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
     end
+    Spring.Echo("updateUnitInfo end")
 end
 
 function updateUnitGrid()

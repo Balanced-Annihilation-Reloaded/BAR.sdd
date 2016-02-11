@@ -148,7 +148,7 @@ function widget:Initialize()
 	screen0 = Chili.Screen0
 	i18n = WG.i18n
 	if not i18n then
-		-- add optional support for i18n
+		-- optional support for i18n
 		i18n = function(key, data)
 			data = data or {}
 			return data.default or key
@@ -182,6 +182,7 @@ function widget:Initialize()
 			end
 		end
 		-- Load extension
+		commands = nil
 		local success, err = pcall(function() VFS.Include(f, nil, VFS.DEF_MODE) end)
 		if not success then
 			Spring.Log("Chonsole", LOG.ERROR, "Error loading extension file: " .. f)
@@ -622,20 +623,6 @@ function GenerateSuggestions()
 		suggestion.id = i
 		suggestionNameMapping[suggestion.command:lower()] = i
 	end
--- 	if txt:lower():starts("/gamerules") then
--- 		local txt = txt:sub(#"/gamerules"+1):trim()
--- 		txt = explode(" ", txt)[1]
--- 		for index, rule in pairs(Spring.GetGameRulesParams()) do
--- 			if type(rule) == "table" then
--- 				for name, value in pairs(rule) do
--- 					if txt == nil or txt == "" or name:starts(txt) then
--- 						table.insert(suggestions, { command = "/gamerules " .. name, text = name, description = value })
--- 					end
--- 				end
--- 			end
--- 		end
--- 	else
--- 		
 	spSuggestions.ctrls = {}
 	for _, suggestion in pairs(suggestions) do
 		local ctrlSuggestion = CreateSuggestion(suggestion)
@@ -751,11 +738,11 @@ end
 function UpdateSuggestionDisplay(suggestion, ctrlSuggestion, row)
 	if suggestion.visible then
 		ctrlSuggestion.y = (row - 1) * (config.suggestions.fontSize + config.suggestions.padding)
-		
+
 		if not ctrlSuggestion.visible then
 			ctrlSuggestion:Show()
 		end
-		
+
 		if currentSubSuggestion == 0 and suggestion.id ~= nil and suggestion.id == filteredSuggestions[currentSuggestion] then
 			ctrlSuggestion.backgroundColor = config.suggestions.suggestionColor
 		elseif suggestion.dynId ~= nil and suggestion.dynId == currentSubSuggestion then
@@ -765,7 +752,7 @@ function UpdateSuggestionDisplay(suggestion, ctrlSuggestion, row)
 		else
 			ctrlSuggestion.backgroundColor = { 0, 0, 0, 0 }
 		end
-		
+
 		if suggestion.cheat then
 			local cheatColor
 			if Spring.IsCheatingEnabled() then
@@ -778,11 +765,11 @@ function UpdateSuggestionDisplay(suggestion, ctrlSuggestion, row)
 			ctrlSuggestion.lblCheat.font.color = cheatColor
 			ctrlSuggestion.lblCheat:Invalidate()
 		end
-		
+
 		ctrlSuggestion:Invalidate()
 	elseif ctrlSuggestion.visible then
 		ctrlSuggestion:Hide()
-	end	
+	end
 end
 
 function UpdateSuggestions()
@@ -793,17 +780,17 @@ function UpdateSuggestions()
 		if suggestion.visible then
 			count = count + 1
 		end
-		UpdateSuggestionDisplay(suggestion, ctrlSuggestion, count)	
+		UpdateSuggestionDisplay(suggestion, ctrlSuggestion, count)
 	end
 	for _, dynamicSuggestion in pairs(dynamicSuggestions) do
 		count = count + 1
 		dynamicSuggestion.x = 50
 		UpdateSuggestionDisplay(dynamicSuggestion.suggestion, dynamicSuggestion, count)
 	end
-	
+
 	-- FIXME: magic numbers and fake controls ^_^
 	spSuggestions.fakeCtrl.y = (count-1+1) * (config.suggestions.fontSize + config.suggestions.padding)
-	
+
 	if currentSuggestion ~= 0 and scrollSuggestions.visible then
 		local suggestion = suggestions[filteredSuggestions[currentSuggestion]]
 		local selY = spSuggestions.ctrls[suggestion.id].y
@@ -815,7 +802,7 @@ function UpdateSuggestions()
 	elseif count == 0 and scrollSuggestions.visible then
 		scrollSuggestions:Hide()
 	end
-	
+
 	spSuggestions:Invalidate()
 end
 

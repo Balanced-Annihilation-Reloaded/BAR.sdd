@@ -9,6 +9,7 @@ local General = {
     {"enter",               "Send chat message"},
     {"alt + enter",            "Send chat message to allies"},
     {"shift + enter",          "Send chat message to spectators"},
+    {"ctrl + enter",           "Send chat message to all"},
     {blankLine=true},      
     {"Menus", title=true},
     {"shift+esc (or i)",    "Main menu"},

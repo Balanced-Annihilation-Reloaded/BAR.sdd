@@ -311,7 +311,15 @@ end
 
 function widget:KeyPress(key, ...)
 	if key == Spring.GetKeyCode("enter") or key == Spring.GetKeyCode("numpad_enter") then
-		if not ebConsole.visible then
+        if not ebConsole.visible then
+            local alt,ctrl,meta,shift = Spring.GetModKeyState()
+            if alt then
+                currentContext = { display = i18n("allies_context", {default="Allies:"}), name = "allies", persist = true }
+            elseif shift then
+                currentContext = { display = i18n("spectators_context", {default="Spectators:"}), name = "spectators", persist = true }
+            elseif ctrl then
+                currentContext = { display = i18n("say_context", {default="Say:"}), name = "say", persist = true }
+            end
 			ebConsole:Show()
 		end
 		screen0:FocusControl(ebConsole)
@@ -360,10 +368,20 @@ function SuggestionsDown()
 end
 
 function ParseKey(ebConsole, key, mods, ...)
-	if key == Spring.GetKeyCode("enter") or 
-		key == Spring.GetKeyCode("numpad_enter") then
-		ProcessText(ebConsole.text)
-		HideConsole()
+	if key == Spring.GetKeyCode("enter") or key == Spring.GetKeyCode("numpad_enter") then
+        if mods.alt and currentContext.name~="allies" then
+        	currentContext = { display = i18n("allies_context", {default="Allies:"}), name = "allies", persist = true }
+            ShowContext()
+        elseif mods.shift and currentContext.name~="spec" then
+            currentContext = { display = i18n("spectators_context", {default="Spectators:"}), name = "spectators", persist = true }
+            ShowContext()
+        elseif mods.ctrl and currentContext.name~="" then
+            currentContext = { display = i18n("say_context", {default="Say:"}), name = "say", persist = true }
+            ShowContext()
+        else
+            ProcessText(ebConsole.text)
+            HideConsole()
+        end
 	elseif key == Spring.GetKeyCode("esc") then
 		HideConsole()
 	elseif key == Spring.GetKeyCode("up") then

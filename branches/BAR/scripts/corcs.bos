@@ -6,10 +6,7 @@
 piece  base, beam, door1, door2, wake, nano1, nano2;
 
 
-#define TA			// This is a TA script
-
-#include "sfxtype.h"
-#include "exptype.h"
+#define SIG_MOVE		4
 
 static-var  Static_Var_1, statechg_DesiredState, statechg_StateChanging;
 
@@ -41,6 +38,26 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 		}
 		sleep sleeptime;
 	}
+}
+
+
+StartMoving()
+{
+	signal SIG_MOVE;
+	set-signal-mask SIG_MOVE;
+	var waketime;
+	while( TRUE )
+	{
+		emit-sfx 2 from wake;
+		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
+		if( waketime < 50 ) waketime = 50;
+		sleep 10000 / waketime;
+	}
+}
+
+StopMoving()
+{
+	signal SIG_MOVE;
 }
 
 Go()

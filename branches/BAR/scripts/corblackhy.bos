@@ -192,8 +192,6 @@ StartMoving()
 		emit-sfx 2 from wake1;
 		emit-sfx 2 from wake2;
 		emit-sfx 2 from wake3;
-		emit-sfx 2 from wake4;
-		emit-sfx 2 from wake5;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 12000 / waketime;

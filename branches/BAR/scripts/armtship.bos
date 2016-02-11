@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turret, arm1, arm2, arm3, link, door1, door2, door3, magnet, arm4, arm5, arm6, arm7, ground;
+piece  base, turret, arm1, arm2, arm3, link, door1, door2, door3, magnet, arm4, arm5, arm6, arm7, ground, wake;
 
 static-var  Static_Var_1, TurretToUnitDistance, TurretToUnitAngleY, TurretToUnitAngleX, bInDistance;
 
@@ -84,8 +84,8 @@ StartMoving()
 	start-script waveSplash();
 	while( TRUE )
 	{
-		emit-sfx 2 from base;
-		emit-sfx 2 from base;
+		emit-sfx 2 from wake;
+		emit-sfx 2 from wake;
 		waketime = (get CURRENT_SPEED) * 100 / get MAX_SPEED;
 		if( waketime < 50 ) waketime = 50;
 		sleep 10000 / waketime;

@@ -695,6 +695,9 @@ local function ChooseCurTip()
     -- determine if we have any selected units
     local selUnits = spGetSelectedUnits()
     local sortedSelUnits = spGetSelectedUnitsSorted()
+    if selUnits == nil or sortedSelUnits == nil then -- seems to happen rarely due to engine weirdness
+         curTip.type = "ground"
+    end
     
     curTip.selUnits = selUnits
     curTip.sortedSelUnits = sortedSelUnits

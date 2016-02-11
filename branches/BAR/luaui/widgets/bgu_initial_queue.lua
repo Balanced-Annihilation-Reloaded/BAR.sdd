@@ -196,6 +196,7 @@ end
 ------------------------------------------------------------
 -- Local functions
 ------------------------------------------------------------
+
 local function GetBuildingDimensions(uDefID, facing)
     local bDef = UnitDefs[uDefID]
     if (facing % 2 == 1) then
@@ -204,6 +205,7 @@ local function GetBuildingDimensions(uDefID, facing)
         return 4 * bDef.xsize, 4 * bDef.zsize
     end
 end
+
 local function DrawBuilding(buildData, borderColor, buildingAlpha, drawRanges)
 
     local bDefID, bx, by, bz, facing = buildData[1], buildData[2], buildData[3], buildData[4], buildData[5]
@@ -231,37 +233,25 @@ local function DrawBuilding(buildData, borderColor, buildingAlpha, drawRanges)
         end
     end
 
-    gl.DepthTest(GL.LEQUAL)
-    gl.DepthMask(true)
-    if buildingAlpha == 1 then gl.Lighting(true) end
-    gl.Color(1.0, 1.0, 1.0, buildingAlpha)
+    gl.Color(1.0, 1.0, 1.0, buildingAlpha) -- fixme
 
     gl.PushMatrix()
         gl.Translate(bx, by, bz)
         gl.Rotate(90 * facing, 0, 1, 0)
-        gl.UnitShape(bDefID, Spring.GetMyTeamID())
+        gl.UnitShape(bDefID, Spring.GetMyTeamID(), false, true)
     gl.PopMatrix()
-
-    gl.Lighting(false)
-    gl.DepthTest(false)
-    gl.DepthMask(false)
-end
-local function DrawUnitDef(uDefID, uTeam, ux, uy, uz)
 
     gl.Color(1.0, 1.0, 1.0, 1.0)
-    gl.DepthTest(GL.LEQUAL)
-    gl.DepthMask(true)
-    gl.Lighting(true)
+end
 
+local function DrawUnitDef(uDefID, uTeam, ux, uy, uz)
+    gl.Color(1.0, 1.0, 1.0, 1.0)
     gl.PushMatrix()
         gl.Translate(ux, uy, uz)
-        gl.UnitShape(uDefID, uTeam)
+        gl.UnitShape(uDefID, uTeam, false, true)
     gl.PopMatrix()
-
-    gl.Lighting(false)
-    gl.DepthTest(false)
-    gl.DepthMask(false)
 end
+
 local function DoBuildingsClash(buildData1, buildData2)
 
     local w1, h1 = GetBuildingDimensions(buildData1[1], buildData1[5])
@@ -270,6 +260,7 @@ local function DoBuildingsClash(buildData1, buildData2)
     return math.abs(buildData1[2] - buildData2[2]) < w1 + w2 and
            math.abs(buildData1[4] - buildData2[4]) < h1 + h2
 end
+
 local function GetUnitCanCompleteQueue(uID)
 
     local uDefID = Spring.GetUnitDefID(uID)
@@ -293,6 +284,7 @@ local function GetUnitCanCompleteQueue(uID)
 
     return true
 end
+
 local function GetQueueBuildTime()
     local t = 0
     for i = 1, #buildQueue do
@@ -300,6 +292,7 @@ local function GetQueueBuildTime()
     end
     return t / sDef.buildSpeed
 end
+
 local function GetQueueCosts()
     local mCost = 0
     local eCost = 0

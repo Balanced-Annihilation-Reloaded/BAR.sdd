@@ -226,7 +226,6 @@ function widget:DrawWorldPreUnit()
     if spIsGUIHidden() then return end
     
     osClock = os.clock()
-    gl.Blending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     gl.DepthTest(false)
         
     local i = minCommand
@@ -278,7 +277,7 @@ function widget:DrawWorldPreUnit()
                             gl.Translate(X,Y+1,Z)
                             gl.Rotate(90 * commands[i].queue[j].params[4], 0, 1, 0)
                             gl.Color(1.0,1.0,1.0, lineAlpha)
-                            gl.UnitShape(commands[i].queue[j].buildingID, Spring.GetMyTeamID(), false, false, false)
+                            gl.UnitShape(commands[i].queue[j].buildingID, Spring.GetMyTeamID(), false, true, false)
                             gl.Rotate(-90 * commands[i].queue[j].params[4], 0, 1, 0)
                             gl.Translate(-X,-Y-1,-Z)
                             gl.PopMatrix()
@@ -298,6 +297,7 @@ function widget:DrawWorldPreUnit()
         i = i + 1
     end
     
+    gl.DepthTest(true)
     gl.Scale(1,1,1)
     gl.Color(1,1,1,1)
 end

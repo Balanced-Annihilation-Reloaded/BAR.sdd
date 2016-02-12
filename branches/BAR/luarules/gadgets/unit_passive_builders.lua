@@ -68,6 +68,7 @@ local cmdPassiveDesc = {
       name    = 'passive',
       action  = 'passive',
       type    = CMDTYPE.ICON_MODE,
+      queueing = false,
       tooltip = 'Building Mode: Passive wont build when stalling',
       params  = {0, 'Active', 'Passive'}
 }
@@ -179,8 +180,6 @@ function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpt
             currentBuildSpeed[unitID] = realBuildSpeed[unitID]
             passiveCons[teamID][unitID] = nil        
         end
-        return false -- Allowing command causes command queue to be lost if command is unshifted
-        -- (FIXME: this has the unwanted consequence that unti commands callins are not always passed to LuaUI)
     end
     return true
 end

@@ -223,10 +223,6 @@ local function cmdAction(obj, x, y, button, mods)
     if obj.disabled then return end
     if button~=1 and button~=3 then return false end 
     
-    -- hack: we force an update for CMD.PASSIVE, see the FIXME in its gadget:AllowCommand
-    -- for all other stuff our "normal"" mechanism for noticing a change should kick in
-    if obj.cmdId==CMD.PASSIVE then updateRequired = "CMD.PASSIVE" end 
-    
     -- tell initial queue / set active command
     if not gameStarted then 
         if  WG.InitialQueue then 
@@ -1090,7 +1086,7 @@ function widget:Update()
     if InitialQueue() then return end
     
     if updateRequired then
-		--Spring.Echo("sMenu updateRequired reason:", updateRequired)
+		Spring.Echo("sMenu updateRequired reason:", updateRequired)
         local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
         teamColor = {r,g,b,0.8}
         updateRequired = nil

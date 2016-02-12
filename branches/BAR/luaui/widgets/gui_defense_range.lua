@@ -191,8 +191,7 @@ lineConfig["circleDivs"] = 40.0
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 local GL_LINE_LOOP          = GL.LINE_LOOP
-local glTexEnv                = gl.TexEnv
-local glUnitShape            = gl.UnitShape
+local glTexEnv              = gl.TexEnv
 local glFeatureShape        = gl.FeatureShape
 local glBeginEnd            = gl.BeginEnd
 local glBillboard           = gl.Billboard
@@ -208,18 +207,18 @@ local glText                = gl.Text
 local glTexture             = gl.Texture
 local glTranslate           = gl.Translate
 local glVertex              = gl.Vertex
-local glAlphaTest            = gl.AlphaTest
+local glAlphaTest           = gl.AlphaTest
 local glBlending            = gl.Blending
 local glRect                = gl.Rect
-local glCallList             = gl.CallList
-local glCreateList            = gl.CreateList
-local glDeleteList            = gl.DeleteList
+local glCallList            = gl.CallList
+local glCreateList          = gl.CreateList
+local glDeleteList          = gl.DeleteList
 
 local huge                  = math.huge
-local max                    = math.max
-local min                    = math.min
-local sqrt                    = math.sqrt
-local abs                    = math.abs
+local max                   = math.max
+local min                   = math.min
+local sqrt                  = math.sqrt
+local abs                   = math.abs
 local lower                 = string.lower
 local sub                   = string.sub
 local upper                 = string.upper
@@ -239,16 +238,16 @@ local spGetUnitDefID        = Spring.GetUnitDefID
 local spGetUnitPosition     = Spring.GetUnitPosition
 local spTraceScreenRay      = Spring.TraceScreenRay
 local spGetCameraPosition   = Spring.GetCameraPosition
-local spGetMyTeamID            = Spring.GetMyTeamID
+local spGetMyTeamID         = Spring.GetMyTeamID
 local spGetGroundHeight     = Spring.GetGroundHeight
 local spIsGUIHidden         = Spring.IsGUIHidden
-local spGetLocalTeamID         = Spring.GetLocalTeamID
-local spGetActiveCommand     = Spring.GetActiveCommand
-local spGetActiveCmdDesc     = Spring.GetActiveCmdDesc
+local spGetLocalTeamID      = Spring.GetLocalTeamID
+local spGetActiveCommand    = Spring.GetActiveCommand
+local spGetActiveCmdDesc    = Spring.GetActiveCmdDesc
 local spIsSphereInView      = Spring.IsSphereInView
 
-local udefTab                = UnitDefs
-local weapTab                = WeaponDefs
+local udefTab               = UnitDefs
+local weapTab               = WeaponDefs
 
 --functions
 local printDebug

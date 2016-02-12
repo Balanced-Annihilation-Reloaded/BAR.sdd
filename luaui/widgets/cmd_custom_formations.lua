@@ -368,7 +368,6 @@ local function GetCmdOpts(alt, ctrl, meta, shift, right)
     return opts
 end
 local function GiveNotifyingOrder(cmdID, cmdParams, cmdOpts)
-    
     if widgetHandler:CommandNotify(cmdID, cmdParams, cmdOpts) then
         return
     end
@@ -521,7 +520,6 @@ function widget:MouseMove(mx, my, dx, dy, mButton)
     return false
 end
 function widget:MouseRelease(mx, my, mButton)
-    
     -- It is possible for MouseRelease to fire after MouseRelease
     if #fNodes == 0 then
         return false
@@ -602,7 +600,7 @@ function widget:MouseRelease(mx, my, mButton)
                 -- Give order (i.e. pass the command to the engine to use as normal)
                 GiveNotifyingOrder(usingCmd, {targetID}, cmdOpts)            
             elseif usingCmd == CMD_MOVE then 
-                GiveNotifyingOrder(usingCmd, fNodes[1], cmdOpts)            
+                GiveNotifyingOrder(usingCmd, {fNodes[1][1],fNodes[1][2],fNodes[1][3]}, cmdOpts)            
             else
                 -- Deselect command, select default command instead
                 spSetActiveCommand(0)

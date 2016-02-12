@@ -234,7 +234,7 @@ local function DrawBuilding(buildData, borderColor, buildingAlpha, drawRanges)
     end
 
     gl.DepthTest(true)
-    gl.Color(1.0, 1.0, 1.0, buildingAlpha) -- fixme
+    gl.Color(1.0, 1.0, 1.0, buildingAlpha)
 
     gl.PushMatrix()
         gl.Translate(bx, by, bz)

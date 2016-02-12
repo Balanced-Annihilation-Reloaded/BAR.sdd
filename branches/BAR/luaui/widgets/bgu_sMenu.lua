@@ -1028,7 +1028,7 @@ function GameFrame()
     if cmdID and cmdID<0 then
         local uDID = -cmdID -- looking to build a unit of this uDID
         if activeSelCmdID or activeSelUDID~=uDID then 
-            updateRequired = 'GameFrame:looking to build a unit of this uDID'
+            updateRequired = 'GameFrame: looking to build a unit of this uDID'
             activeSelUDID = uDID
             activeSelCmdID = nil
             selectTab(menuTab[getMenuCat(UnitDefs[uDID])])
@@ -1036,14 +1036,14 @@ function GameFrame()
     elseif cmdID then
         -- looking to give this cmdID
         if activeSelUDID or activeSelCmdID~=cmdID then 
-            updateRequired = 'GameFrame:looking to give this cmdID'
+            updateRequired = 'GameFrame: looking to give this cmdID'
             activeSelUDID = nil
             activeSelCmdID = cmdID
         end
     else
         -- no active commands
         if activeSelUDID or activeSelCmdID then 
-            updateRequired = 'GameFrame:no active commands'
+            updateRequired = 'GameFrame: no active commands'
             activeSelUDID = nil
             activeSelCmdID = nil
         end
@@ -1086,7 +1086,7 @@ function widget:Update()
     if InitialQueue() then return end
     
     if updateRequired then
-		Spring.Echo("sMenu updateRequired reason:", updateRequired)
+		--Spring.Echo("sMenu updateRequired reason:", updateRequired)
         local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
         teamColor = {r,g,b,0.8}
         updateRequired = nil

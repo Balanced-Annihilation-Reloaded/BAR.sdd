@@ -607,6 +607,8 @@ function MakeSuggestion(suggestion)
 		}
 		ctrlSuggestion.lblCheat = lblCheat
 	end
+	ctrlSuggestion.MouseOver = function() end
+	ctrlSuggestion.MouseOut = function() end
 	return ctrlSuggestion
 end
 

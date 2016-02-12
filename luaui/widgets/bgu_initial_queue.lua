@@ -233,12 +233,13 @@ local function DrawBuilding(buildData, borderColor, buildingAlpha, drawRanges)
         end
     end
 
+    gl.DepthTest(true)
     gl.Color(1.0, 1.0, 1.0, buildingAlpha) -- fixme
 
     gl.PushMatrix()
         gl.Translate(bx, by, bz)
         gl.Rotate(90 * facing, 0, 1, 0)
-        gl.UnitShape(bDefID, Spring.GetMyTeamID(), false, true)
+        gl.UnitShape(bDefID, Spring.GetMyTeamID(), false, true, false)
     gl.PopMatrix()
 
     gl.Color(1.0, 1.0, 1.0, 1.0)
@@ -248,7 +249,7 @@ local function DrawUnitDef(uDefID, uTeam, ux, uy, uz)
     gl.Color(1.0, 1.0, 1.0, 1.0)
     gl.PushMatrix()
         gl.Translate(ux, uy, uz)
-        gl.UnitShape(uDefID, uTeam, false, true)
+        gl.UnitShape(uDefID, uTeam, false, true, true)
     gl.PopMatrix()
 end
 

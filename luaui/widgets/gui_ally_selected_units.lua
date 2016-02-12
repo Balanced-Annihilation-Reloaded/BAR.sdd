@@ -19,9 +19,9 @@ end
 --"hot" units
 
 local floor                 = math.floor
-local abs                    = math.abs
+local abs                   = math.abs
 
-local udefTab                = UnitDefs
+local udefTab               = UnitDefs
 local spGetUnitDefID        = Spring.GetUnitDefID
 local spEcho                = Spring.Echo
 local spGetUnitPosition     = Spring.GetUnitPosition
@@ -29,14 +29,14 @@ local spGetUnitBasePosition = Spring.GetUnitBasePosition
 local spGetGameSeconds      = Spring.GetGameSeconds
 local spGetMyPlayerID       = Spring.GetMyPlayerID
 local spGetPlayerInfo       = Spring.GetPlayerInfo
-local spGetLocalTeamID        = Spring.GetLocalTeamID
+local spGetLocalTeamID      = Spring.GetLocalTeamID
 local spSendLuaUIMsg        = Spring.SendLuaUIMsg
-local spIsUnitSelected         = Spring.IsUnitSelected
+local spIsUnitSelected      = Spring.IsUnitSelected
 local spGetSelectedUnits    = Spring.GetSelectedUnits
-local spGetUnitDefDimensions = Spring.GetUnitDefDimensions
-local spSelectUnitMap        = Spring.SelectUnitMap
-local spArePlayersAllied     = Spring.ArePlayersAllied
-local spGetTeamColor         = Spring.GetTeamColor
+local spGetUnitDefDimensions= Spring.GetUnitDefDimensions
+local spSelectUnitMap       = Spring.SelectUnitMap
+local spArePlayersAllied    = Spring.ArePlayersAllied
+local spGetTeamColor        = Spring.GetTeamColor
 local spGetGroundHeight     = Spring.GetGroundHeight
 local spIsSphereInView      = Spring.IsSphereInView
 
@@ -44,24 +44,23 @@ local spZlibCompress        = Spring.ZlibCompress
 local spZlibDecompress      = Spring.ZlibDecompress
 
 local vfsPackU16            = VFS.PackU16
-local vfsUnpackU16            = VFS.UnpackU16
+local vfsUnpackU16          = VFS.UnpackU16
 
-local glDrawGroundCircle     = gl.DrawGroundCircle
+local glDrawGroundCircle    = gl.DrawGroundCircle
 local glColor               = gl.Color
 local glDepthTest           = gl.DepthTest
-local glUnitShape            = gl.UnitShape
 local glPopMatrix           = gl.PopMatrix
 local glPushMatrix          = gl.PushMatrix
 local glTranslate           = gl.Translate
 local glText                = gl.Text
 local glBillboard           = gl.Billboard
-local glLineWidth             = gl.LineWidth
+local glLineWidth           = gl.LineWidth
 local glBeginEnd            = gl.BeginEnd
-local glScale                = gl.Scale
+local glScale               = gl.Scale
 local glVertex              = gl.Vertex
-local glCallList               = gl.CallList
+local glCallList            = gl.CallList
 
-local GL_LINE_LOOP            = GL.LINE_LOOP
+local GL_LINE_LOOP          = GL.LINE_LOOP
 
 ----------------------------------------------------------------
 

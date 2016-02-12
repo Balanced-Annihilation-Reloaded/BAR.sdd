@@ -27,7 +27,6 @@ local glDrawGroundCircle = gl.DrawGroundCircle
 local glPushMatrix       = gl.PushMatrix
 local glRotate           = gl.Rotate
 local glTranslate        = gl.Translate
-local glUnitShape        = gl.UnitShape
 local glPopMatrix        = gl.PopMatrix
 
 local cmdColorsTbl = {

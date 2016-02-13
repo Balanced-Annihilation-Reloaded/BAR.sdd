@@ -90,7 +90,6 @@ end
 
 
 function FindAirBase(unitID)
-  Spring.Echo("looking")
    local minDist = math.huge
    local closestAirbaseID
    local closestPieceNum
@@ -220,7 +219,9 @@ function gadget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpti
    end
 end
 
-function gadget:GameFrame()
+function gadget:GameFrame(n)
+    if n%15~=0 then return end
+
    for unitID, _ in pairs(planes) do
       if not landingPlanes[unitID] and not landedPlanes[unitID] and NeedsRepair(unitID) then
          pendingLanders[unitID] = true
@@ -267,7 +268,9 @@ function gadget:Initialize()
    local allUnits = Spring.GetAllUnits()
    for i=1,#allUnits do
       local unitID = allUnits[i]
-      gadget:UnitCreated(unitID, Spring.GetUnitDefID(unitID))
+      local unitDefID = Spring.GetUnitDefID(unitID)
+      local teamID = Spring.GetUnitTeam(unitID)
+      gadget:UnitCreated(unitID, unitDefID)
    end
 end
 
@@ -289,24 +292,33 @@ function gadget:Initialize()
    Spring.SetCustomCommandDrawData(LAND_CMD_ID, "Land for repairs", {1,0.5,0,.8}, false)
 end
 
+local spGetMouseState = Spring.GetMouseState
+local spTraceScreenRay = Spring.TraceScreenRay
+local spAreTeamsAllied = Spring.AreTeamsAllied
+local spGetUnitTeam = Spring.GetUnitTeam
+local spGetSelectedUnits = Spring.GetSelectedUnits
+local spGetUnitDefID = Spring.GetUnitDefID
+
 function gadget:DefaultCommand()
-   local mx, my = Spring.GetMouseState()
-   local s, targetID = Spring.TraceScreenRay(mx, my)
+   local mx, my = spGetMouseState()
+   local s, targetID = spTraceScreenRay(mx, my)
    if s ~= "unit" then
       return false
    end
 
-   if not Spring.AreTeamsAllied(Spring.GetMyTeamID(), Spring.GetUnitTeam(targetID)) then
+   if not spAreTeamsAllied(spGetMyTeamID(), spGetUnitTeam(targetID)) then
       return false
    end
 
-   if not UnitDefs[Spring.GetUnitDefID(targetID)].isAirBase then
+   if not UnitDefs[spGetUnitDefID(targetID)].isAirBase then
       return false
    end
 
 
-   for _, unitID in pairs(Spring.GetSelectedUnits()) do
-      if UnitDefs[Spring.GetUnitDefID(unitID)].canFly then
+   local sUnits = spGetSelectedUnits()
+   for i=1,#sUnits do
+      local unitID = sUnits[i]
+      if UnitDefs[spGetUnitDefID(unitID)].canFly then
          return LAND_CMD_ID
       end
    end

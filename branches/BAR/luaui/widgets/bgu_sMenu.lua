@@ -13,9 +13,11 @@ function widget:GetInfo()
 end
 --------------
 
--- Config --
-local catNames = {'ECONOMY', 'BATTLE', 'UNITS', 'FACTORY'} -- order matters
 local imageDir = 'luaui/images/buildIcons/'
+
+-- menu categories --
+local catNames = {'ECONOMY', 'BATTLE', 'UNITS', 'FACTORY', 'LOADED'} -- order matters
+local loadedMenuCat = 5
 
 -- custom command IDs for LuaUIs CMD table
 local CMD_UNIT_SET_TARGET = 34923
@@ -184,17 +186,19 @@ local stateButtons = {} -- created on demand
 ----------------
 
 -- Spring Functions --
-local spGetTimer          = Spring.GetTimer
-local spDiffTimers        = Spring.DiffTimers
-local spGetActiveCmdDesc  = Spring.GetActiveCmdDesc
-local spGetActiveCmdDescs = Spring.GetActiveCmdDescs
-local spGetActiveCommand  = Spring.GetActiveCommand
-local spGetCmdDescIndex   = Spring.GetCmdDescIndex
-local spGetFullBuildQueue = Spring.GetFullBuildQueue
-local spGetSelectedUnits  = Spring.GetSelectedUnits
-local spSendCommands      = Spring.SendCommands
-local spSetActiveCommand  = Spring.SetActiveCommand
-local spGetSpectatingState= Spring.GetSpectatingState
+local spGetTimer              = Spring.GetTimer
+local spDiffTimers            = Spring.DiffTimers
+local spGetActiveCmdDesc      = Spring.GetActiveCmdDesc
+local spGetActiveCmdDescs     = Spring.GetActiveCmdDescs
+local spGetActiveCommand      = Spring.GetActiveCommand
+local spGetCmdDescIndex       = Spring.GetCmdDescIndex
+local spGetFullBuildQueue     = Spring.GetFullBuildQueue
+local spGetSelectedUnits      = Spring.GetSelectedUnits
+local spSendCommands          = Spring.SendCommands
+local spSetActiveCommand      = Spring.SetActiveCommand
+local spGetSpectatingState    = Spring.GetSpectatingState
+local spGetUnitDefID          = Spring.GetUnitDefID
+local spGetUnitIsTransporting = Spring.GetUnitIsTransporting
 local max = math.max
 
 -- Local vars --
@@ -202,6 +206,7 @@ local gameStarted = (Spring.GetGameFrame()>0)
 local updateRequired = ''
 local oldTimer = spGetTimer()
 local sUnits = {}
+local onlyTransportSelected
 local activeSelUDID, activeSelCmdID
 
 local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
@@ -223,7 +228,20 @@ local function cmdAction(obj, x, y, button, mods)
     if obj.disabled then return end
     if button~=1 and button~=3 then return false end 
     
-    -- tell initial queue / set active command
+    -- if we are called from the LOADED tab, select the unload command
+    -- TODO: implement new transporters and per unitDef unloading
+    if obj.parent.name=="grid_LOADED" then
+        local index = spGetCmdDescIndex(CMD.UNLOAD_UNITS)
+        if (index) then
+            local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
+            local left, right = (button == 1), (button == 3)
+            spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)   
+        end
+        return
+    end
+    
+    -- if we are called from any other tab
+    -- tell initial queue / set active command that we want to build this unit
     if not gameStarted then 
         if  WG.InitialQueue then 
             WG.InitialQueue.SetSelDefID(-obj.cmdId)
@@ -376,7 +394,7 @@ local function addBuild(item)
     local button = unitButtons[name]
     local label = button.children[1].children[1]
     local overlay = button.children[1].children[3]
-    local caption = item.buildCount or ''
+    local caption = item.count or ''
     
     if disabled then
         -- building this unit is disabled
@@ -638,7 +656,7 @@ local function parseCmds()
             if menuCat and #grid[menuCat].children<=maxRows*maxCols then
                 buildMenu.active     = true
                 grid[menuCat].active = true
-                units[#units+1] = {name=cmd.name, uDID=-cmd.id, disabled=cmd.disabled, category=menuCat, buildCount=(queue[-cmd.id] or cmd.params[1])} -- cmd.params[1] helps only in godmode
+                units[#units+1] = {name=cmd.name, uDID=-cmd.id, disabled=cmd.disabled, category=menuCat, count=(queue[-cmd.id] or cmd.params[1])} -- cmd.params[1] helps only in godmode
             elseif #cmd.params > 1 then
                 states[cmd.action] = cmd
             elseif cmd.id > 0 and not WG.OpenHostsList then -- hide the order menu if the open host list is showing (it shows to specs who have it enabled)
@@ -667,6 +685,33 @@ local function parseCmds()
     end
 end
 
+local function parseTransported()
+    -- work out how many of each unitDefID we are transporting
+    local tUnitDefIDs = {}
+    for i=1,#sUnits do
+        local unitID = sUnits[i] --is a transporter
+        local transported = spGetUnitIsTransporting(unitID)
+        for j=1,#transported do
+            local tID = transported[j] 
+            local tDID = spGetUnitDefID(tID)
+            tUnitDefIDs[tDID] = (tUnitDefIDs[tDID] or 0) +1 
+        end
+    end    
+    
+    -- add to grid
+    local units = {}
+    for uDID,count in pairs(tUnitDefIDs) do
+        local name = UnitDefs[uDID].name
+        units[#units+1] = {name=name, uDID=uDID, disabled=false, category=loadedMenuCat, count=count} 
+        grid[loadedMenuCat].active = true
+        buildMenu.active = true
+    end
+    
+    if #units>0 then
+        AddInSortedOrder(units, addBuild, Cost)
+    end
+end
+
 local function parseUnitDefCmds(uDID)
     -- load the build menu for the given unitDefID
     -- don't load the state/cmd menus
@@ -682,7 +727,7 @@ local function parseUnitDefCmds(uDID)
         local ud = UnitDefs[bDID]
         local menuCat = getMenuCat(ud)
         grid[menuCat].active = true
-        units[#units+1] = {name=ud.name, uDID=bDID, disabled=false, category=menuCat, buildCount=queue[bDID]} 
+        units[#units+1] = {name=ud.name, uDID=bDID, disabled=false, category=menuCat, count=queue[bDID]} 
     end
 
     if #units>0 then
@@ -746,6 +791,7 @@ end
 local function loadPanels()
     -- loads/reloads the build/order/state menus
     
+    -- check for change in selected units
     local newUnit = false
     local units = spGetSelectedUnits()
     if #units == #sUnits then
@@ -759,6 +805,19 @@ local function loadPanels()
         newUnit = true
     end
 
+    -- check if we have only transports selected
+    if newUnit then
+        local notTransport = false
+        for i = 1, #units do
+            local unitDefID = spGetUnitDefID(units[i])
+            if not UnitDefs[unitDefID].isTransport then
+                notTransport = true
+                break
+            end
+        end    
+        onlyTransportSelected = not notTransport
+    end
+    
     -- states and order buttons are removed and re-added on each refresh
     -- this is needed for state buttons (e.g. changing cloak state also changes fire state, because of a widget), and a different is used for *each* possible fire state
     -- it isn't needed for order buttons but wth
@@ -766,7 +825,8 @@ local function loadPanels()
     stateMenu:ClearChildren()
 
     -- unit buttons are only removed and re-added if the unit selection changes
-    if newUnit then
+    -- or if transports are enabled, in case we loaded/unloaded
+    if newUnit or onlyTransportSelected then
         sUnits = units
         for i=1,#catNames do
             grid[i]:ClearChildren()
@@ -774,8 +834,14 @@ local function loadPanels()
         end
     end
 
+    -- set up the new menus
     parseCmds()
+    if onlyTransportSelected then
+        parseTransported()
+    end
     SetGridDimensions()
+    
+    -- choose active menu cat
     makeMenuTabs()
     menuTabs.choice = ChooseTab()
     if menuTabs.choice and buildMenu.active and menuTab[menuTabs.choice] then selectTab(menuTab[menuTabs.choice]) end
@@ -955,7 +1021,7 @@ function widget:Initialize()
     -- Creates a container for each category of build commands.
     for i=1,#catNames do
         grid[i] = Chili.Grid:New{
-            name     = "unit grid " .. catNames[i],
+            name     = "grid_" .. catNames[i],
             parent   = buildMenu,
             x        = 0,
             y        = 0,
@@ -1019,6 +1085,16 @@ end
 function widget:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag, cmdParams, cmdOpts)
     if Spring.IsUnitSelected(unitID) then
         updateRequired = 'UnitCmdDone'
+    end
+end
+function widget:UnitLoaded(unitID, unitDefID, unitTeam, transportID, transportTeam)
+    if Spring.IsUnitSelected(transportID) or Spring.IsUnitSelected(unitID) then
+        updateRequired = 'UnitLoaded'
+    end
+end
+function widget:UnitUnloaded(unitID, unitDefID, unitTeam, transportID, transportTeam)
+    if Spring.IsUnitSelected(transportID) or Spring.IsUnitSelected(unitID) then
+        updateRequired = 'UnitUnloaded'
     end
 end
 function GameFrame()

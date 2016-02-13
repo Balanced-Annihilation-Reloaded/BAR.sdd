@@ -298,6 +298,7 @@ local spAreTeamsAllied = Spring.AreTeamsAllied
 local spGetUnitTeam = Spring.GetUnitTeam
 local spGetSelectedUnits = Spring.GetSelectedUnits
 local spGetUnitDefID = Spring.GetUnitDefID
+local spGetMyTeamID = Spring.GetMyTeamID
 
 function gadget:DefaultCommand()
    local mx, my = spGetMouseState()

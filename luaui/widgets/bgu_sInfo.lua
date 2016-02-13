@@ -69,18 +69,7 @@ local function getInline(r,g,b)
         return string.char(255, (r*255), (g*255), (b*255))
     end
 end
-
-----------------------------------
--- converting losRadius to elmos
-local modRules = VFS.Include("gamedata/modrules.lua")
-local losResMult = modRules["sensors"]["los"]["losMul" ]
-local losMipLevel = modRules["sensors"]["los"]["losMipLevel"]
-local losSqSize = Game.squareSize * math.pow(2, losMipLevel)
-local losToElmos = losSqSize / losResMult
-function losRadiusInElmos(ud)
-    return ud.losRadius * losToElmos
-end
-    
+  
 ----------------------------------
 -- multi-unitdef info
 
@@ -429,7 +418,7 @@ local function GetUnitDefKeyProperties (defID)
     elseif (ud.radarRadius>200 or ud.sonarRadius>200) and #ud.weapons==0 then
         if ud.radarRadius>200 then t[#t+1] = {"Radar Range", turqoise .. round(ud.radarRadius)} end
         if ud.sonarRadius>200 then t[#t+1] = {"Sonar Range", turqoise .. round(ud.sonarRadius)} end
-        if ud.losRadius>0 then t[#t+1] = {"LOS Range", turqoise .. round(losRadiusInElmos(ud))} end
+        if ud.losRadius>0 then t[#t+1] = {"LOS Range", turqoise .. round(ud.losRadius)} end
     elseif ud.jammerRadius>0 and #ud.weapons==0 then
         t[#t+1] = {"Jammer Radius", turqoise .. round(ud.jammerRadius)}
         -- note: there are no sonar jammers

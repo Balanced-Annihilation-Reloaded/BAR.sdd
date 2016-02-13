@@ -5,7 +5,7 @@ function widget:GetInfo()
     name      = "Factory Bar", 
     desc      = "Always displays a build menu for factories",
     author    = "CarRepairer (converted from jK's Buildbar), Bluestone",
-    date      = "2010-11-10",
+    date      = "2010+",
     license   = "GNU GPL, v2 or later",
     layer     = 1001,
     enabled   = true,
@@ -66,17 +66,14 @@ options = {
         name = 'Button Size',
         min = 40, max = 100, step=5,
         value = 50,
-        OnChange = function() RecreateFacbar() end,
     },
 }
 
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
-
 -- list and interface vars
 local facs = {}
-local unfinished_facs = {}
 local waypointFac = -1
 local waypointMode = 0   -- 0 = off; 1=lazy; 2=greedy (greedy means: you have to left click once before leaving waypoint mode and you can have units selected)
 
@@ -150,34 +147,21 @@ local function UpdateFac(i, facInfo)
     for j,unitDefIDb in ipairs(buildList) do
         local unitDefIDb = unitDefIDb
         
-        --DEBUG Spring.Echo("BUILDLISTLOOP",i,j,unitDefIDb,facs[i],facs[i].boStack,facs[i].qStore)
-        local boButton = facs[i].boStack.childrenByName[unitDefIDb]
+        --DEBUG Spring.Echo("BUILDLISTLOOP",i,j,unitDefIDb,facs[i],facs[i].qStore)
         local qButton = facs[i].qStore[i .. '|' .. unitDefIDb]
         
-        local boBar = boButton.childrenByName['prog']
         local qBar = qButton.childrenByName['prog']
         
         local amount = buildQueue[unitDefIDb] or 0
-        local boCount = boButton.childrenByName['count']
         local qCount = qButton.childrenByName['count']            
         
         facs[i].qStack:RemoveChild(qButton)
         
-        boBar:SetValue(0)
         qBar:SetValue(0)
         if unitDefIDb == unitBuildDefID then
-            boBar:SetValue(progress)
             qBar:SetValue(progress)
         end
         
-        if amount > 0 then
-            boButton.backgroundColor = queueColor
-        else
-            boButton.backgroundColor = buttonColor
-        end
-        boButton:Invalidate()
-        
-        boCount:SetCaption(amount > 0 and amount or '')
         qCount:SetCaption(amount > 0 and amount or '')
     end
 end
@@ -278,19 +262,6 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
         }
     )
 
-    local boStack = StackPanel:New{
-        name = stackname .. '_bo',
-        itemMargin={0,0,0,0},
-        itemPadding={0,0,0,0},
-        padding={0,0,0,0},
-        --margin={0, 0, 0, 0},
-        x=0,
-        width=700,
-        height = options.buttonsize.value,
-        resizeItems = false,
-        orientation = 'horizontal',
-        centerItems = false,
-    }
     local qStack = StackPanel:New{
         name = stackname .. '_q',
         itemMargin={0,0,0,0},
@@ -320,7 +291,7 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
     
     facStack:AddChild( qStack )
     tocontrol:AddChild( facStack )
-    return facStack, boStack, qStack, qStore
+    return facStack, qStack, qStore
 end
 
 local function MakeButton(unitDefID, facID, facIndex)
@@ -355,8 +326,6 @@ local function MakeButton(unitDefID, facID, facIndex)
                     end
                     
                     Spring.GiveOrderToUnit(facID, -(unitDefID), {}, opt)
-                    
-                    --UpdateFac(facIndex, facs[facIndex])
                     
                 end
             },
@@ -448,7 +417,6 @@ local function WaypointHandler(x,y,button)
     Spring.GiveOrderToUnit(facs[waypointFac].unitID, CMD.MOVE,param,opt)
   end
 
-  --if not shift then waypointMode = 0; return true end
 end
 
 RecreateFacbar = function()
@@ -466,24 +434,9 @@ RecreateFacbar = function()
         local unitBuildID    = -1
         local progress
 
-        -- building?
-        unitBuildID      = GetUnitIsBuilding(facInfo.unitID)
-        if unitBuildID then
-            unitBuildDefID = GetUnitDefID(unitBuildID)
-            _, _, _, _, progress = GetUnitHealth(unitBuildID)
-            unitDefID      = unitBuildDefID
-        elseif (unfinished_facs[facInfo.unitID]) then
-            _, _, _, _, progress = GetUnitHealth(facInfo.unitID)
-            if (progress>=1) then 
-                progress = -1
-                unfinished_facs[facInfo.unitID] = nil
-            end
-        end
-
-        local facStack, boStack, qStack, qStore = AddFacButton(facInfo.unitID, unitDefID, stack_main, i)
-        --DEBUG #780 Spring.Echo("ADDFACBUTTON", i, unitDefID, facStack, boStack, qStack, qStore)
+        local facStack, qStack, qStore = AddFacButton(facInfo.unitID, unitDefID, stack_main, i)
+        --DEBUG #780 Spring.Echo("ADDFACBUTTON", i, unitDefID, facStack, qStack, qStore)
         facs[i].facStack     = facStack
-        facs[i].boStack     = boStack
         facs[i].qStack         = qStack
         facs[i].qStore         = qStore
         
@@ -491,7 +444,6 @@ RecreateFacbar = function()
         local buildQueue  = GetBuildQueue(facInfo.unitID)
         for j,unitDefIDb in ipairs(buildList) do
             local unitDefIDb = unitDefIDb
-            boStack:AddChild( MakeButton(unitDefIDb, facInfo.unitID, i) )
             qStore[i .. '|' .. unitDefIDb] = MakeButton(unitDefIDb, facInfo.unitID, i)
         end
         
@@ -518,10 +470,6 @@ local function UpdateFactoryList()
         if bo and #bo > 0 then    
           table.sort(bo, CostComparator)
           insert(facs,{ unitID=unitID, unitDefID=unitDefID, buildList=bo })
-          local _, _, _, _, buildProgress = GetUnitHealth(unitID)
-          if (buildProgress)and(buildProgress<1) then
-            unfinished_facs[unitID] = true
-          end
         end
         t = t + 1
         if t>=MAX_FACS then break end
@@ -534,7 +482,7 @@ end
 ------------------------------------------------------
 
 function widget:DrawWorld()
-    -- Draw factories command lines
+    -- draw factories command lines
     if waypointMode>1 then
         local unitID
         if waypointMode>1 then 
@@ -559,7 +507,6 @@ function widget:UnitCreated(unitID, unitDefID, unitTeam)
         needsRecreate = true
     end
   end
-  unfinished_facs[unitID] = true
 end
 
 function widget:UnitGiven(unitID, unitDefID, unitTeam, oldTeam)
@@ -575,7 +522,6 @@ function widget:UnitDestroyed(unitID, unitDefID, unitTeam)
       if unitID==facInfo.unitID then
         
         table.remove(facs,i)
-        unfinished_facs[unitID] = nil
         needsRecreate = true
         return
       end

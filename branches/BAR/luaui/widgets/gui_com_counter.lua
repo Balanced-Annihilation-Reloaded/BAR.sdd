@@ -2,11 +2,11 @@ function widget:GetInfo()
     return {
         name        = "Com Counter",
         desc        = "Shows the number of bois left",
-        author        = "BrainDamage, Bluestone",
+        author      = "BrainDamage, Bluestone",
         date        = "Feb, 2014",
-        license        = "GNU GPL, v2 or later",
-        layer        = 0,
-        enabled        = true
+        license     = "GNU GPL, v2 or later",
+        layer       = 0,
+        enabled     = true
     }
 end
 
@@ -17,23 +17,24 @@ end
 local armcomDefID = UnitDefNames.armcom.id
 local corcomDefID = UnitDefNames.corcom.id
 
-local spGetMyTeamID            = Spring.GetMyTeamID
+local spGetMyTeamID         = Spring.GetMyTeamID
 local spGetGameFrame        = Spring.GetGameFrame
 
-local allyComs                = 0
-local enemyComs                = 0 
+local receiveCount          = (tostring(Spring.GetModOptions().mo_enemycomcount) == "1") or nil
+
+local allyComs              = 0
+local enemyComs             = 0 
 local prevEnemyComs         = 0 -- track changes when receiving TeamRulesParam
-local amISpec                = Spring.GetSpectatingState()
-local myTeamID                 = spGetMyTeamID()
-local myAllyTeamID            = Spring.GetMyAllyTeamID()
+local amISpec               = Spring.GetSpectatingState()
+local myTeamID              = spGetMyTeamID()
+local myAllyTeamID          = Spring.GetMyAllyTeamID()
 local inProgress            = spGetGameFrame() > 0
-local countChanged            = true
-local flickerLastState        = nil
-local is1v1                    = Spring.GetTeamList() == 3 -- +1 because of gaia
-local receiveCount            = (tostring(Spring.GetModOptions().mo_enemycomcount) == "1") or nil
+local countChanged          = true
+local flickerLastState      = nil
+local is1v1                 = Spring.GetTeamList() == 3 -- +1 because of gaia
 local comMarkers            = {}
-local removeMarkerFrame        = -1
-local lastMarkerFrame        = -1
+local removeMarkerFrame     = -1
+local lastMarkerFrame       = -1
 
 
 ---------------------------------------------------------------------------------------------------
@@ -77,7 +78,7 @@ function widget:Initialize()
                         height = 45,
                         width = 34.5,
                         caption  = makeText(allyComs),
-                        align = "right", --hack because label center alignment don't take acount of text length
+                        align = "right", --hack because label center alignment don't take account of text length
                         valign = "center",
                         margin = {0,0,0,0},
                         font = {
@@ -111,19 +112,18 @@ function widget:Initialize()
                 width       = '100%',
                 height      = '100%',
                 children = {
-                    enemyComText, allyComText, yellowOverlay 
+                    yellowOverlay, enemyComText, allyComText
                 },
             }
     
         }
     }
 
+    enemyComText:Hide()
+    allyComText:Hide()    
+    
     if Spring.GetGameFrame() > 0 then
-        Recount()
-        UpdateCaptions()
-    else
-        enemyComText:Hide()
-        allyComText:Hide()    
+        widget:GameStart()
     end
     
 end
@@ -227,7 +227,7 @@ function CheckStatus()
     amISpec    = Spring.GetSpectatingState()
     myAllyTeamID = Spring.GetMyAllyTeamID()
     myTeamID = Spring.GetMyTeamID()
-    if amISpec and enemyComText.hiden then
+    if amISpec and enemyComText.hidden then
         enemyComText:Show()
     end
 end
@@ -242,7 +242,7 @@ function widget:GameStart()
     Recount()
     
     allyComText:Show()
-    if recieveCount then
+    if receiveCount then
         enemyComText:Show()
     end
 end

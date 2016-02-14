@@ -66,14 +66,14 @@ commands = {
 								local teamText = text .. " " .. teamID
 								local teamDesc = desc .. " to team " .. teamID
 								if uDef.name ~= uDef.tooltip then
-									teamDesc = teamDesc .. uDef.tooltip
+									teamDesc = teamDesc .. ". " .. uDef.tooltip
 								end
 								table.insert(suggestions, { command = "/give " .. teamText, text = teamText, description = teamDesc })
 							end
 						end
 					else
 						if uDef.name ~= uDef.tooltip then
-							desc = desc .. uDef.tooltip
+							desc = desc .. ". " .. uDef.tooltip
 						end
 						table.insert(suggestions, { command = "/give " .. text, text = text, description = desc })
 					end

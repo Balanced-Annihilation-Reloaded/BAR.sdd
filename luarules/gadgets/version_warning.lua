@@ -14,23 +14,43 @@ if (gadgetHandler:IsSyncedCode()) then
     return
 end
 
-local minEngineVersion = 99 -- major engine version as number
+local minEngineVersion = 101 -- major engine version as number
 local maxEngineVersion = 101 -- don't forget to update it!
+local wantedEngineVersions = ""
+if minEngineVersion == maxEngineVersion then
+    wantedEngineVersions = tostring(minEngineVersion) .. " or equivalent."
+else
+    wantedEngineVersions = tostring(minEngineVersion) .. " - " .. tostring(maxEngineVersion) .. " or equivalent."
+end
 
 local red = "\255\255\1\1"
 
-function gadget:GameStart()
-    local n = string.find(Game.version,".",1,true) or string.len(Game.version) -- see http://stackoverflow.com/questions/15258313/finding-with-string-find, lua is so *** stupid
-    local reportedMajorVersion = string.sub(Game.version,1,n+1)
-    if reportedMajorVersion and tonumber(reportedMajorVersion) then
-        if tonumber(reportedMajorVersion)<minEngineVersion then
-            Spring.Echo(red .. "WARNING: YOU ARE USING SPRING " .. Game.version .. " WHICH IS TOO OLD FOR THIS GAME.")
-            Spring.Echo(red .. "PLEASE UPDATE YOUR ENGINE TO SPRING " .. tostring(minEngineVersion) .. " - " .. tostring(maxEngineVersion) .. ".")
-        elseif tonumber(reportedMajorVersion)>maxEngineVersion then
-            Spring.Echo(red .. "WARNING: YOU ARE USING SPRING " .. Game.version .. " WHICH IS TOO RECENT FOR THIS GAME.")
-            Spring.Echo(red .. "PLEASE DOWNGRADE YOUR ENGINE TO SPRING " .. tostring(minEngineVersion) .. " - " .. tostring(maxEngineVersion) .. ".")
-        end           
+function Warning()
+    local reportedMajorVersion
+    local devEngine
+    if string.find(Game.version,".",1,true) then 
+        local n = string.find(Game.version,".",1,true)
+        reportedMajorVersion = string.sub(Game.version,1,n+1)    
+        devEngine = true
+    else 
+        local n = string.len(Game.version)
+        reportedMajorVersion = string.sub(Game.version,1,n+1)  
+        devEngine = false
     end
+    if not reportedMajorVersion then return end
+    
+    reportedMajorVersion = tonumber(reportedMajorVersion)
+    if (not devEngine and reportedMajorVersion<minEngineVersion) or (devEngine and reportedMajorVersion+1<minEngineVersion) then
+        Spring.Echo(red .. "WARNING: You are using Spring " .. Game.version .. ", which is too old for this game.")
+        Spring.Echo(red .. "Please update your engine to  " .. wantedEngineVersions)
+    elseif reportedMajorVersion>maxEngineVersion then
+        Spring.Echo(red .. "WARNING: You are using Spring " .. Game.version .. " which is too recent for this game.")
+        Spring.Echo(red .. "Please downgrade your engine to " .. wantedEngineVersions)
+    end           
+end
+
+function gadget:GameStart()
+    Warning()
 end
 
 

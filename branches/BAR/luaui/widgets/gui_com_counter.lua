@@ -58,7 +58,7 @@ function widget:Initialize()
                         file   = 'LuaUI/Images/comIcon.png',
                     }
                     
-    enemyComText = Chili.Label:New{ --why doesn't this display?
+    enemyComText = Chili.Label:New{ 
                         height = 45.6,
                         width = 48,
                         caption  = makeText(enemyComs),

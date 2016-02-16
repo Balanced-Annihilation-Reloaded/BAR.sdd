@@ -36,21 +36,23 @@ local plantList = {}
 local buildingUnits = {}
 
 local landCmd = {
-      id      = 34569,
-      name    = "apLandAt",
-      action  = "apLandAt",
-      type    = CMDTYPE.ICON_MODE,
-      tooltip = "Plant Land Mode: settings for Aircraft leaving the plant",
-      params  = { '1', ' Fly ', 'Land'}
+      id       = 34569,
+      name     = "apLandAt",
+      action   = "apLandAt",
+      type     = CMDTYPE.ICON_MODE,
+      tooltip  = "Plant Land Mode: settings for Aircraft leaving the plant",
+      queueing = false,
+      params   = { '1', ' Fly ', 'Land'}
 }
 
 local airCmd = {
-      id      = 34570,
-      name    = "apAirRepair",
-      action  = "apAirRepair",
-      type    = CMDTYPE.ICON_MODE,
-      tooltip = "Plant Repair Level: settings for Aircraft leaving the plant",
-      params  = { '1', 'LandAt 0', 'LandAt 30', 'LandAt 50', 'LandAt 80'}
+      id       = 34570,
+      name     = "apAirRepair",
+      action   = "apAirRepair",
+      type     = CMDTYPE.ICON_MODE,
+      tooltip  = "Plant Repair Level: settings for Aircraft leaving the plant",
+      queueing = false,
+      params   = { '1', 'LandAt 0', 'LandAt 30', 'LandAt 50', 'LandAt 80'}
 }
 
 function gadget:UnitCreated(unitID, unitDefID, unitTeam, builderID)
@@ -85,14 +87,12 @@ function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpt
       EditUnitCmdDesc(unitID, cmdDescID, landCmd)
       plantList[unitID].landAt = cmdParams[1]
       landCmd.params[1] = 1
-      return false
     elseif (cmdID == 34570) then
       local cmdDescID = FindUnitCmdDesc(unitID, 34570)
       airCmd.params[1] = cmdParams[1]
       EditUnitCmdDesc(unitID, cmdDescID, airCmd)
       plantList[unitID].repairAt = cmdParams[1]
       airCmd.params[1] = 1
-      return false
     end
   end
   return true

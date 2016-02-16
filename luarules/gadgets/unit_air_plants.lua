@@ -42,7 +42,7 @@ local landCmd = {
       type     = CMDTYPE.ICON_MODE,
       tooltip  = "Plant Land Mode: settings for Aircraft leaving the plant",
       queueing = false,
-      params   = { '1', ' Fly ', 'Land'}
+      params   = { '1', 'Fly', 'Land'}
 }
 
 local airCmd = {
@@ -52,7 +52,7 @@ local airCmd = {
       type     = CMDTYPE.ICON_MODE,
       tooltip  = "Plant Repair Level: settings for Aircraft leaving the plant",
       queueing = false,
-      params   = { '1', 'LandAt 0', 'LandAt 30', 'LandAt 50', 'LandAt 80'}
+      params   = { '1', 'Land at 0', 'Land at 30', 'Land at 50', 'Land at 80'}
 }
 
 function gadget:UnitCreated(unitID, unitDefID, unitTeam, builderID)

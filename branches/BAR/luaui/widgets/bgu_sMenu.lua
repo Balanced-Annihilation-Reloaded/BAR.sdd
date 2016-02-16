@@ -438,6 +438,7 @@ local function addState(cmd)
 			cmdAName  = cmd.action,
 			padding   = {0,0,0,0},
 			margin    = {0,0,0,0},
+            minheight = 25,
 			OnMouseUp = {cmdAction},
 			font      = {
 				color = paramColours[caption] or white,
@@ -464,6 +465,7 @@ local function addDummyState(cmd)
             --tooltip   = cmd.tooltip, 
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
+            minheight = 25,
             OnMouseUp = {},
             font      = {
                 color = grey,

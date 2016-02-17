@@ -28,7 +28,8 @@ function GetTeamPlayerName(teamID)
     
     local skirmishAIID, name, hostPlayerID, shortName, version = Spring.GetAIInfo(teamID)
     local playerList = Spring.GetPlayerList(teamID)
-    local name = shortName or select(1,Spring.GetPlayerInfo(playerList[1])) or ""
+    local teamLeader = playerList[1] and select(1,Spring.GetPlayerInfo(playerList[1])) or ""
+    local name = shortName or teamLeader or ""
     
     if #playerList<=1 then return colourString .. name
     else return colourString .. name .. " (coop)"

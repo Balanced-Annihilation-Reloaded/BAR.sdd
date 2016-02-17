@@ -8,7 +8,7 @@
 	MyPlayerName=PLAYER_NAME;
 	[MODOPTIONS]
 	{
-        mo_beta_release=in use;
+		mo_beta_release=in use;		
 deathmode=killall;
 	}
 	[PLAYER0]

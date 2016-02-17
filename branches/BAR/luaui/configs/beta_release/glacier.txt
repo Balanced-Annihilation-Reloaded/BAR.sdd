@@ -8,7 +8,7 @@
 	MyPlayerName=PLAYER_NAME;
 	[MODOPTIONS]
 	{
-        mo_beta_release=in use;
+		mo_beta_release=in use;		
 		deathmode=killall;
 	}
 	[PLAYER0]
@@ -22,7 +22,7 @@
 	{
 		Name=Enemy;
 		ShortName=Enemy;
-	Team=1;
+		Team=1;
 		Host=0;
 	}
 	[TEAM0]

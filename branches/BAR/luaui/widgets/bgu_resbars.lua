@@ -44,25 +44,25 @@ local fullyLoaded = false -- to stop making "set X to Y" remarks when we are jus
 -------------------------------------------
 -- Auxiliary functions
 -------------------------------------------
-function format(num, idp)
+function round(num, idp)
   return string.format("%." .. (idp or 0) .. "f", num)
 end
 local function readable(num)
     local s = ""
     if num < 0 then
         s = '-'
-    else
+    elseif num < 0 then
         s = '+'
     end
     num = math.abs(num)
     if num < 10 then
-        s = s .. format(num,1)
-    elseif num >10000 then
-        s = s .. format(num/1000,0)..'k'
+        s = s .. round(num,1)
+    elseif num >100000 then
+        s = s .. round(num/1000,0)..'k'
     elseif num >1000 then
-        s = s .. format(num/1000,1)..'k'
+        s = s .. round(num/1000,1)..'k'
     else
-        s = s .. format(num,0)
+        s = s .. round(num,0)
     end
     return s
 end

@@ -59,10 +59,6 @@ local lilac = "\255\200\162\200"
 local tomato = "\255\255\99\71"
 local turqoise = "\255\48\213\200"
 
-function round(num, idp)
-    return string.format("%." .. (idp or 0) .. "f", num) -- lua is such a great language that this is the only reliable way to round
-end 
-
 local function getInline(r,g,b)
     if type(r) == 'table' then
         return string.char(255, (r[1]*255), (r[2]*255), (r[3]*255))
@@ -71,10 +67,39 @@ local function getInline(r,g,b)
     end
 end
 
+local function round(num, idp)
+  return string.format("%." .. (idp or 0) .. "f", num)
+end
+
+local function readable(num)
+    local s = ""
+    if num < 0 then
+        s = '-'
+    elseif num < 0 then 
+        s = '+'
+    end
+    num = math.abs(num)
+    if num < 10 then
+        s = s .. round(num,1)
+    elseif num >100000 then
+        s = s .. round(num/1000,0)..'k'
+    elseif num >1000 then
+        s = s .. round(num/1000,1)..'k'
+    else
+        s = s .. round(num,0)
+    end
+    return s
+end
+
 local function ResToolTip(Mmake, Muse, Emake, Euse)
-    return mColour .. "M: " .. green .. '+' .. round(Mmake,1) .. '  ' .. red .. '-' .. round(Muse,1) .. "\n" ..  eColour .. "E:  " .. green .. '+' .. round(Emake,1) .. '  ' .. red .. "-" .. round(Euse,1)
+    return mColour .. "M: " .. green .. readable(Mmake) .. '  ' .. red .. readable(Muse) .. "\n" ..  eColour .. "E:  " .. green .. readable(Emake) .. '  ' .. red .. readable(Euse)
+end
+
+local function CostToolTip(Mcost, Ecost)
+    return mColour .. readable(Mcost) .. '\n' .. eColour .. readable(Ecost)
 end
   
+ 
 ----------------------------------
 -- multi-unitdef info
 
@@ -146,20 +171,20 @@ local function showUnitGrid()
 
     unitCostText = Chili.TextBox:New{
         name     = "unitCostText",
-        x        = '70%',
+        x        = '67%',
+        y        = '70%',
         height   = 28,
-        bottom   = 10,
         text     = "", 
-        fontsize = 12
+        fontsize = 14
     }
         
     unitResText = Chili.TextBox:New{
         name     = "unitResText",
         x        = 5,
-        bottom   = 10,
+        y        = '70%',
         height   = 24,
         text     =  "", 
-        fontsize = 12,
+        fontsize = 14,
     }
 
     unitGridWindow:AddChild(unitCostText)
@@ -201,9 +226,9 @@ function updateUnitGrid()
         healthBars[a]:SetValue(health)
     end
     
-    unitGridWindow:GetChildByName('unitResText'):SetText(ResToolTip(Mmake, Muse, Emake, Euse))
+    unitGridWindow:GetChildByName('unitResText'):SetText("Resources:\n" .. ResToolTip(Mmake, Muse, Emake, Euse))
     if Mcost>0 then
-        unitGridWindow:GetChildByName('unitCostText'):SetText(mColour .. Mcost .. '\n' .. eColour .. Ecost)
+        unitGridWindow:GetChildByName('unitCostText'):SetText("Cost:\n" .. CostToolTip(Mcost, Ecost))
     end
 end
 

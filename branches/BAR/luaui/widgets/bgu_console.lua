@@ -89,10 +89,14 @@ local function hideChat()
 end
 
 local function getConsoleDimensions(vsx, vsy)
-    local w1 = math.max(vsx-450,0)/vsx-0.26 -- width proportion to avoid resbars
-    local w = math.min(vsx*0.5, vsx*w1) 
-    local x = vsx*0.26
+    local r_avoid = 450/vsx -- distance/vsx of left edge of resbars from right of screen
+    local l_avoid = vsy*0.2*1.06/vsx+200/vsx -- distance/vsx of right edge of state menu from left of screen
+    local l_loc = math.max(l_avoid, 0.26) -- chonsole is at 0.26
+    local r_loc = math.max(0, 1.0-r_avoid)
+    local w = math.max(0, r_loc-l_loc)*vsx
+    local x = l_loc*vsx
     local h = vsy*0.18
+    Spring.Echo(x,w,h)
     return x,w,h
 end
 

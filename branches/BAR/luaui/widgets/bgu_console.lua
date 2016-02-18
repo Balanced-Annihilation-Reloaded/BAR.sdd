@@ -96,7 +96,6 @@ local function getConsoleDimensions(vsx, vsy)
     local w = math.max(0, r_loc-l_loc)*vsx
     local x = l_loc*vsx
     local h = vsy*0.18
-    Spring.Echo(x,w,h)
     return x,w,h
 end
 

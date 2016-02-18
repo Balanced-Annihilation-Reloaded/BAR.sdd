@@ -70,6 +70,10 @@ local function getInline(r,g,b)
         return string.char(255, (r*255), (g*255), (b*255))
     end
 end
+
+local function ResToolTip(Mmake, Muse, Emake, Euse)
+    return mColour .. "M: " .. green .. '+' .. round(Mmake,1) .. '  ' .. red .. '-' .. round(Muse,1) .. "\n" ..  eColour .. "E:  " .. green .. '+' .. round(Emake,1) .. '  ' .. red .. "-" .. round(Euse,1)
+end
   
 ----------------------------------
 -- multi-unitdef info
@@ -205,10 +209,6 @@ end
 
 ----------------------------------
 -- single unitdef info
-
-local function ResToolTip(Mmake, Muse, Emake, Euse)
-    return mColour .. "M: " .. green .. '+' .. round(Mmake,1) .. '  ' .. red .. '-' .. round(Muse,1) .. "\n" ..  eColour .. "E:  " .. green .. '+' .. round(Emake,1) .. '  ' .. red .. "-" .. round(Euse,1)
-end
 
 function GetOverlayColor(teamID)
     local r,g,b = Spring.GetTeamColor(teamID)

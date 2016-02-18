@@ -169,12 +169,27 @@ local function showUnitGrid()
         end
     end
 
+    for a = 1, #healthBars do
+        for b = 1, #healthBars[a].unitIDs do
+            local unitID = healthBars[a].unitIDs[b]
+            local defID = spGetUnitDefID(unitID)
+            if defID then
+                local Ec = UnitDefs[defID].energyCost
+                local Mc = UnitDefs[defID].metalCost
+                if not UnitDefs[defID].customParams.iscommander then
+                    Mcost = Mcost + Mc
+                    Ecost = Ecost + Ec                
+                end
+            end
+        end
+    end
+        
     unitCostText = Chili.TextBox:New{
         name     = "unitCostText",
         x        = '67%',
         y        = '70%',
         height   = 28,
-        text     = "", 
+        text     = "Cost:\n" .. CostToolTip(Mcost, Ecost),
         fontsize = 14
     }
         
@@ -198,7 +213,6 @@ end
 
 function updateUnitGrid()
     -- multiple units, but not so many we cant fit pics
-    local Ecost,Mcost = 0,0
     local Mmake,Muse,Emake,Euse = 0,0,0,0
     for a = 1, #healthBars do
         local health,max = 0,0
@@ -210,16 +224,10 @@ function updateUnitGrid()
                 max   = max + (m or 0)
                 health = health + (h or 0)
                 local Mm, Mu, Em, Eu = spGetUnitResources(unitID)
-                local Ec = UnitDefs[defID].energyCost
-                local Mc = UnitDefs[defID].metalCost
                 Mmake = Mmake + (Mm or 0)
                 Emake = Emake + (Em or 0)
                 Muse = Muse + (Mu or 0)
                 Euse = Euse + (Eu or 0)
-                if not UnitDefs[defID].customParams.iscommander then
-                    Mcost = Mcost + Mc
-                    Ecost = Ecost + Ec                
-                end
             end
         end
         healthBars[a].max = max
@@ -227,9 +235,6 @@ function updateUnitGrid()
     end
     
     unitGridWindow:GetChildByName('unitResText'):SetText("Resources:\n" .. ResToolTip(Mmake, Muse, Emake, Euse))
-    if Mcost>0 then
-        unitGridWindow:GetChildByName('unitCostText'):SetText("Cost:\n" .. CostToolTip(Mcost, Ecost))
-    end
 end
 
 ----------------------------------
@@ -393,7 +398,7 @@ local function showBasicUnitInfo()
         y      = '23%',
         right  = 0,
         bottom = 0,
-        text   = "Total cost: \n" .. mColour .. mCost .. "\n" .. eColour .. eCost,       
+        text   = "Cost:\n" .. CostToolTip(mCost, eCost),       
     }
 
     basicResText = Chili.TextBox:New{

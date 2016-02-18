@@ -16,6 +16,7 @@ local imageDir = 'luaui/images/buildIcons/'
 local Chili, screen, unitWindow, groundWindow, groundText
 local unitWindow, unitName, unitPicture, unitPictureOverlay, unitHealthText, unitHealth, unitCostTextTitle, unitResText
 local focusName, focusPicture, focusPictureOverlay, focusCost, focusBuildTime
+local basicHealth, basicHealthText, basicResText, basicUnitInfo
 local unitGrid 
 local healthBars = {}
 
@@ -165,6 +166,43 @@ local function showUnitGrid()
     unitGridWindow:Show()
 end
 
+
+function updateUnitGrid()
+    -- multiple units, but not so many we cant fit pics
+    local Ecost,Mcost = 0,0
+    local Mmake,Muse,Emake,Euse = 0,0,0,0
+    for a = 1, #healthBars do
+        local health,max = 0,0
+        for b = 1, #healthBars[a].unitIDs do
+            local unitID = healthBars[a].unitIDs[b]
+            local defID = spGetUnitDefID(unitID)
+            if defID then
+                local h, m = spGetUnitHealth(unitID)
+                max   = max + (m or 0)
+                health = health + (h or 0)
+                local Mm, Mu, Em, Eu = spGetUnitResources(unitID)
+                local Ec = UnitDefs[defID].energyCost
+                local Mc = UnitDefs[defID].metalCost
+                Mmake = Mmake + (Mm or 0)
+                Emake = Emake + (Em or 0)
+                Muse = Muse + (Mu or 0)
+                Euse = Euse + (Eu or 0)
+                if not UnitDefs[defID].customParams.iscommander then
+                    Mcost = Mcost + Mc
+                    Ecost = Ecost + Ec                
+                end
+            end
+        end
+        healthBars[a].max = max
+        healthBars[a]:SetValue(health)
+    end
+    
+    unitGridWindow:GetChildByName('unitResText'):SetText(ResToolTip(Mmake, Muse, Emake, Euse))
+    if Mcost>0 then
+        unitGridWindow:GetChildByName('unitCostText'):SetText(mColour .. Mcost .. '\n' .. eColour .. Ecost)
+    end
+end
+
 ----------------------------------
 -- single unitdef info
 
@@ -272,6 +310,35 @@ local function showUnitInfo()
     unitWindow:Show()        
 end
 
+function updateUnitInfo()
+    -- single unit type
+    local curHealth = 0
+    local maxHealth = 0
+    local Mmake, Muse, Emake, Euse = 0,0,0,0
+    for _, uID in ipairs(curTip.selUnits) do
+        c, m = spGetUnitHealth(uID)
+        mm, mu, em, eu = spGetUnitResources(uID)
+        curHealth = curHealth + (c or 0)
+        maxHealth = maxHealth + (m or 0)
+        Mmake = Mmake + (mm or 0)
+        Muse = Muse + (mu or 0)
+        Emake = Emake + (em or 0)
+        Euse = Euse + (eu or 0)
+    end
+    if maxHealth>0 then 
+        unitHealthText:SetText(math.floor(curHealth) ..' / '.. math.floor(maxHealth)) 
+        unitHealth:SetMinMax(0, maxHealth)
+        unitHealth:SetValue(curHealth) 
+    else -- if we can't see the units health (e.g. enemy commander)
+        unitHealthText:SetText('? / ?') 
+        unitHealth:SetMinMax(0, 1)
+        unitHealth:SetValue(0) 
+    end
+    if not curTip.selEnemy then
+        unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
+    end
+end
+
 ----------------------------------
 -- basic unit info
 
@@ -298,13 +365,68 @@ local function showBasicUnitInfo()
     basicUnitInfo = Chili.TextBox:New{
         parent = unitGridWindow,
         x      = 5,
-        y      = 45,
+        y      = '23%',
         right  = 0,
         bottom = 0,
         text   = "Total cost: \n" .. mColour .. mCost .. "\n" .. eColour .. eCost,       
     }
+
+    basicResText = Chili.TextBox:New{
+        parent = unitGridWindow,
+        x      = 5,
+        y      = '52%',
+        right  = 0,
+        bottom = 0,
+        text   = '',       
+    }
     
+    basicHealthText = Chili.TextBox:New{
+        parent = unitGridWindow,
+        x      = 5,
+        bottom = 21,
+        text   = 'Health:',
+    }
+    
+    basicHealth = Chili.Progressbar:New{
+        name   = "basicHealth",
+        parent = unitGridWindow,
+        value   = 0,
+        bottom  = 5,
+        x       = 5,
+        width   = '95%',
+        height  = 10,
+        color   = {0.5,1,0,1},
+    }    
+    
+    updateBasicUnitInfo()
     unitGridWindow:Show()
+end
+
+function updateBasicUnitInfo()
+    -- many different units types
+    local curHealth = 0
+    local maxHealth = 0
+    local Mmake, Muse, Emake, Euse = 0,0,0,0
+    for _, uID in ipairs(curTip.selUnits) do
+        c, m = spGetUnitHealth(uID)
+        mm, mu, em, eu = spGetUnitResources(uID)
+        curHealth = curHealth + (c or 0)
+        maxHealth = maxHealth + (m or 0)
+        Mmake = Mmake + (mm or 0)
+        Muse = Muse + (mu or 0)
+        Emake = Emake + (em or 0)
+        Euse = Euse + (eu or 0)
+    end
+    if maxHealth>0 then 
+        basicHealth:SetMinMax(0, maxHealth)
+        basicHealth:SetValue(curHealth) 
+    else -- if we can't see the units health (e.g. enemy commander)
+        basicHealth:SetMinMax(0, 1)
+        basicHealth:SetValue(0) 
+    end
+    if not curTip.selEnemy then
+        basicResText:SetText('Resources:\n' .. ResToolTip(Mmake, Muse, Emake, Euse))
+    end
 end
 
 ----------------------------------
@@ -608,71 +730,6 @@ local function updateGroundInfo(x,y,z)
     )
 end
 
-----------------------------------
-function updateUnitInfo()
-    -- single unit type
-    local curHealth = 0
-    local maxHealth = 0
-    local Mmake, Muse, Emake, Euse = 0,0,0,0
-    for _, uID in ipairs(curTip.selUnits) do
-        c, m = spGetUnitHealth(uID)
-        mm, mu, em, eu = spGetUnitResources(uID)
-        curHealth = curHealth + (c or 0)
-        maxHealth = maxHealth + (m or 0)
-        Mmake = Mmake + (mm or 0)
-        Muse = Muse + (mu or 0)
-        Emake = Emake + (em or 0)
-        Euse = Euse + (eu or 0)
-    end
-    if maxHealth>0 then 
-        unitHealthText:SetText(math.floor(curHealth) ..' / '.. math.floor(maxHealth)) 
-        unitHealth:SetMinMax(0, maxHealth)
-        unitHealth:SetValue(curHealth) 
-    else -- if we can't see the units health (e.g. enemy commander)
-        unitHealthText:SetText('? / ?') 
-        unitHealth:SetMinMax(0, 1)
-        unitHealth:SetValue(0) 
-    end
-    if not curTip.selEnemy then
-        unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
-    end
-end
-
-function updateUnitGrid()
-    -- multiple units, but not so many we cant fit pics
-    local Ecost,Mcost = 0,0
-    local Mmake,Muse,Emake,Euse = 0,0,0,0
-    for a = 1, #healthBars do
-        local health,max = 0,0
-        for b = 1, #healthBars[a].unitIDs do
-            local unitID = healthBars[a].unitIDs[b]
-            local defID = spGetUnitDefID(unitID)
-            if defID then
-                local h, m = spGetUnitHealth(unitID)
-                max   = max + (m or 0)
-                health = health + (h or 0)
-                local Mm, Mu, Em, Eu = spGetUnitResources(unitID)
-                local Ec = UnitDefs[defID].energyCost
-                local Mc = UnitDefs[defID].metalCost
-                Mmake = Mmake + (Mm or 0)
-                Emake = Emake + (Em or 0)
-                Muse = Muse + (Mu or 0)
-                Euse = Euse + (Eu or 0)
-                if not UnitDefs[defID].customParams.iscommander then
-                    Mcost = Mcost + Mc
-                    Ecost = Ecost + Ec                
-                end
-            end
-        end
-        healthBars[a].max = max
-        healthBars[a]:SetValue(health)
-    end
-    
-    unitGridWindow:GetChildByName('unitResText'):SetText(ResToolTip(Mmake, Muse, Emake, Euse))
-    if Mcost>0 then
-        unitGridWindow:GetChildByName('unitCostText'):SetText(mColour .. Mcost .. '\n' .. eColour .. Ecost)
-    end
-end
 
 ----------------------------------
 -- (re-)setting up 
@@ -915,11 +972,14 @@ function widget:Update()
     end
 end
 
-function widget:GameFrame()
+function widget:GameFrame(n)
     if curTip.type=="unitDefID" then
         updateUnitInfo()    
     elseif curTip.type=="unitDefPics" then
         updateUnitGrid()
+    elseif curTip.type=="basicUnitInfo" and n%15==0 then
+        -- delayed update, we might have many units to process
+        updateBasicUnitInfo()
     end
 end
 

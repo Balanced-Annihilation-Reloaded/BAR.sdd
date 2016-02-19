@@ -10,6 +10,7 @@ return {
 		builddistance = 200,
 		builder = true,
 		buildtime = 1800,
+		buildpic = "chickend1.dds",
 		canattack = true,
 		canreclaim = true,
 		canrestore = false,

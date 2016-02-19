@@ -9,6 +9,7 @@ return {
 		buildcostmetal = 400,
 		builddistance = 90,
 		builder = true,
+		buildpic = "roost.dds",
 		buildtime = 7000,
 		category = "NOTAIR NOTSUB NOTSHIP NOTHOVER ALL SURFACE",
 		collisionvolumeoffsets = "0 0 0",

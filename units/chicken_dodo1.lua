@@ -9,6 +9,7 @@ return {
 		buildcostmetal = 128,
 		builder = false,
 		buildtime = 3000,
+		buildpic = "chicken_dodo1.dds",
 		canguard = true,
 		canhover = "1",
 		canmove = true,

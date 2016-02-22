@@ -169,13 +169,15 @@ local function showUnitGrid()
         end
     end
 
+    local Ecost = 0
+    local Mcost = 0
     for a = 1, #healthBars do
         for b = 1, #healthBars[a].unitIDs do
             local unitID = healthBars[a].unitIDs[b]
             local defID = spGetUnitDefID(unitID)
             if defID then
-                local Ec = UnitDefs[defID].energyCost
-                local Mc = UnitDefs[defID].metalCost
+                local Ec = UnitDefs[defID].energyCost or 0
+                local Mc = UnitDefs[defID].metalCost or 0
                 if not UnitDefs[defID].customParams.iscommander then
                     Mcost = Mcost + Mc
                     Ecost = Ecost + Ec                

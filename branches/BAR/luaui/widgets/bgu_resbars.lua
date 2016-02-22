@@ -304,12 +304,12 @@ local function setBar(res)
     
     local net = income-expense
     
-    -- if there is a net gain
     if net > 0 then
+        -- if there is a net gain
         netLabel[res].font.color = green
         netLabel[res].font.outlineColor = greenOutline
-    -- if there is a net loss
     else
+        -- if there is a net loss
         netLabel[res].font.color = red
         netLabel[res].font.outlineColor = redOutline
     end

@@ -311,7 +311,7 @@ Killed(severity, corpsetype)
 		explode boom9 type FIRE | SMOKE | FALL;
 		explode link type BITMAPONLY;
 		explode wake type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -333,7 +333,7 @@ Killed(severity, corpsetype)
 		explode boom9 type FIRE | SMOKE | FALL;
 		explode link type FIRE | SMOKE | FALL;
 		explode wake type FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -355,7 +355,7 @@ Killed(severity, corpsetype)
 		explode boom9 type EXPLODE_ON_HIT | SMOKE | FALL;
 		explode link type SMOKE | FALL;
 		explode wake type EXPLODE_ON_HIT | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type BITMAPONLY;
@@ -375,4 +375,5 @@ Killed(severity, corpsetype)
 		explode boom9 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode link type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode wake type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

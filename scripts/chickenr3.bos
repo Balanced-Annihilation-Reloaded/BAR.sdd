@@ -195,4 +195,5 @@ Killed(severity, corpsetype)
 	explode rshin type FALL | EXPLODE_ON_HIT;
 	explode rsack type FALL | EXPLODE_ON_HIT;
 	explode lsack type FALL | EXPLODE_ON_HIT;
+	return corpsetype;
 }

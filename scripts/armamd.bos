@@ -210,7 +210,7 @@ Killed(severity, corpsetype)
 /*   27f:*/		explode door1 type BITMAPONLY | BITMAP2;
 /*   286:*/		explode door2 type BITMAPONLY | BITMAP3;
 /*   29b:*/		explode flare type BITMAPONLY | BITMAP1;
-/*   2b4:*/		return (0);
+/*   2b4:*/		return (corpsetype);
 /*   2b5:*/	}
 /*   2ba:*/	if( severity <= 50 )
 /*   2bc:*/	{
@@ -219,7 +219,7 @@ Killed(severity, corpsetype)
 /*   2cc:*/		explode door1 type BITMAPONLY | BITMAP2;
 /*   2d3:*/		explode door2 type BITMAPONLY | BITMAP3;
 /*   2e8:*/		explode flare type FALL | BITMAP1;
-/*   301:*/		return (0);
+/*   301:*/		return (corpsetype);
 /*   302:*/	}
 /*   307:*/	if( severity <= 99 )
 /*   309:*/	{
@@ -228,12 +228,12 @@ Killed(severity, corpsetype)
 /*   319:*/		explode door1 type BITMAPONLY | BITMAP2;
 /*   320:*/		explode door2 type BITMAPONLY | BITMAP3;
 /*   33e:*/		explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-/*   369:*/		return (0);
+/*   369:*/		return (corpsetype);
 /*   36a:*/	}
 /*   36c:*/	corpsetype = 3;
 /*   373:*/	explode base type BITMAPONLY | BITMAP1;
 /*   37a:*/	explode door1 type BITMAPONLY | BITMAP2;
 /*   381:*/	explode door2 type BITMAPONLY | BITMAP3;
 /*   39f:*/	explode flare type FALL | SMOKE | FIRE | EXPLODE_ON_HIT | BITMAP1;
-/*   3cd:*/	return (0);
+/*   3cd:*/	return (corpsetype);
 /*   3ce:*/}

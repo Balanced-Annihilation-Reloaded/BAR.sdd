@@ -164,7 +164,7 @@ Killed(severity, corpsetype)
 		explode fan type FIRE | SMOKE | FALL;
 		explode tank1 type BITMAPONLY;
 		explode tank2 type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -173,7 +173,7 @@ Killed(severity, corpsetype)
 		explode fan type FALL;
 		explode tank1 type BITMAPONLY;
 		explode tank2 type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -182,11 +182,12 @@ Killed(severity, corpsetype)
 		explode fan type SMOKE | FALL;
 		explode tank1 type BITMAPONLY;
 		explode tank2 type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type BITMAPONLY;
 		explode fan type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode tank1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode tank2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

@@ -49,7 +49,7 @@ Killed( severity, corpsetype )
 {
 	corpsetype = 1;
 	emit-sfx 1025 from body;
-	return( 0 );
+	return(corpsetype);
 }
 
 StartBuilding(Func_Var_1, Func_Var_2)

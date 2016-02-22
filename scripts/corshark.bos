@@ -56,7 +56,7 @@ Killed(severity, corpsetype)
 		explode torp2 type BITMAPONLY;
 		explode torp1 type BITMAPONLY;
 		explode wake type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -65,7 +65,7 @@ Killed(severity, corpsetype)
 		explode torp2 type FALL;
 		explode torp1 type FIRE | SMOKE | FALL;
 		explode wake type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -74,11 +74,12 @@ Killed(severity, corpsetype)
 		explode torp2 type FIRE | SMOKE | FALL;
 		explode torp1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode wake type EXPLODE_ON_HIT | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode torp2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode torp1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode wake type EXPLODE_ON_HIT | FIRE | FALL;
+	return corpsetype;
 }

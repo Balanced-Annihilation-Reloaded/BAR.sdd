@@ -240,7 +240,7 @@ Killed(severity, corpsetype)
 		explode fan1 type BITMAPONLY;
 		explode fan2 type BITMAPONLY;
 		explode wake type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -253,7 +253,7 @@ Killed(severity, corpsetype)
 		explode fan1 type FALL;
 		explode fan2 type FALL;
 		explode wake type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -266,7 +266,7 @@ Killed(severity, corpsetype)
 		explode fan1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode fan2 type SMOKE | FALL;
 		explode wake type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -277,4 +277,5 @@ Killed(severity, corpsetype)
 		explode fan1 type EXPLODE_ON_HIT | FIRE | FALL;
 		explode fan2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode wake type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

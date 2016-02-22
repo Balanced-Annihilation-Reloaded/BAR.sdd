@@ -985,7 +985,7 @@ Killed(severity, corpsetype)
 		explode eyeflare type BITMAPONLY;
 		explode mpack type BITMAPONLY;
 		explode eyegun type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -1008,7 +1008,7 @@ Killed(severity, corpsetype)
 		explode eyeflare type FIRE | SMOKE | FALL;
 		explode mpack type FIRE | SMOKE | FALL;
 		explode eyegun type FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -1038,7 +1038,7 @@ Killed(severity, corpsetype)
 		explode eyeflare type SMOKE | FALL;
 		explode mpack type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode eyegun type EXPLODE_ON_HIT | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -1066,4 +1066,5 @@ Killed(severity, corpsetype)
 		explode eyeflare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode mpack type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode eyegun type EXPLODE_ON_HIT | FIRE | FALL;
+	return corpsetype;
 }

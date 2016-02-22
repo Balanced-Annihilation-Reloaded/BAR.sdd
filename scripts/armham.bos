@@ -623,7 +623,7 @@ Killed(severity, corpsetype)
 		explode lvent type BITMAPONLY;
 		explode lbarrel type BITMAPONLY;
 		explode lflare type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -644,7 +644,7 @@ Killed(severity, corpsetype)
 		explode lvent type FIRE | SMOKE | FALL;
 		explode lbarrel type FALL;
 		explode lflare type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -665,7 +665,7 @@ Killed(severity, corpsetype)
 		explode lvent type SHATTER;
 		explode lbarrel type SMOKE | FALL;
 		explode lflare type SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode pelvis type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -684,4 +684,5 @@ Killed(severity, corpsetype)
 		explode lvent type SHATTER;
 		explode lbarrel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode lflare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

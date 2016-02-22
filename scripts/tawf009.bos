@@ -127,7 +127,7 @@ Killed(severity, corpsetype)
 		explode lprop type BITMAPONLY;
 		explode lturret type BITMAPONLY;
 		explode bprop type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -138,7 +138,7 @@ Killed(severity, corpsetype)
 		explode lprop type FIRE | SMOKE | FALL;
 		explode lturret type FALL;
 		explode bprop type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -149,7 +149,7 @@ Killed(severity, corpsetype)
 		explode lprop type SMOKE | FALL;
 		explode lturret type EXPLODE_ON_HIT | SMOKE | FALL;
 		explode bprop type EXPLODE_ON_HIT | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type BITMAPONLY;
@@ -158,4 +158,5 @@ Killed(severity, corpsetype)
 		explode lprop type EXPLODE_ON_HIT | FIRE | FALL;
 		explode lturret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode bprop type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

@@ -446,7 +446,7 @@ Killed(severity, corpsetype)
 		explode leg5a type BITMAPONLY;
 		explode leg5b type BITMAPONLY;
 		explode leg5c type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -474,7 +474,7 @@ Killed(severity, corpsetype)
 		explode leg5a type FIRE | SMOKE | FALL;
 		explode leg5b type FIRE | SMOKE | FALL;
 		explode leg5c type FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -502,7 +502,7 @@ Killed(severity, corpsetype)
 		explode leg5a type EXPLODE_ON_HIT | SMOKE | FALL;
 		explode leg5b type SMOKE | FALL;
 		explode leg5c type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -528,4 +528,5 @@ Killed(severity, corpsetype)
 		explode leg5a type EXPLODE_ON_HIT | FIRE | FALL;
 		explode leg5b type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode leg5c type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

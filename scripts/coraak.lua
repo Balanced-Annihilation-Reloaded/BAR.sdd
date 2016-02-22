@@ -205,6 +205,6 @@ function script.Killed(recentDamage, maxHealth)
 		for i=1, #parts do
 			Explode(parts[i], sfxFall + sfxSmoke + sfxFire + sfxExplode)
 		end
-		return 2
+		return 3
 	end
 end

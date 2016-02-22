@@ -199,5 +199,5 @@ Killed( severity, corpsetype )
 	explode rfoot type FALL | EXPLODE_ON_HIT;
 	explode lfoot type FALL | EXPLODE_ON_HIT;
 
-	return( 0 );
+	return(corpsetype);
 	}

@@ -228,7 +228,7 @@ Killed(severity, corpsetype)
 		explode finl type BITMAPONLY;
 		explode wingr type BITMAPONLY;
 		explode wingl type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -241,7 +241,7 @@ Killed(severity, corpsetype)
 		explode finl type FIRE | SMOKE | FALL;
 		explode wingr type FALL;
 		explode wingl type FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -254,7 +254,7 @@ Killed(severity, corpsetype)
 		explode finl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode wingr type FIRE | SMOKE | FALL;
 		explode wingl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -265,4 +265,5 @@ Killed(severity, corpsetype)
 		explode finl type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode wingr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode wingl type EXPLODE_ON_HIT | FIRE | FALL;
+	return corpsetype;
 }

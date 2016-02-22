@@ -203,7 +203,7 @@ Killed(severity, corpsetype)
 		explode door1 type FIRE | SMOKE | FALL;
 		explode door2 type BITMAPONLY;
 		explode flare type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -212,7 +212,7 @@ Killed(severity, corpsetype)
 		explode door1 type FIRE | SMOKE | FALL;
 		explode door2 type FALL;
 		explode flare type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -221,11 +221,12 @@ Killed(severity, corpsetype)
 		explode door1 type SMOKE | FALL;
 		explode door2 type FIRE | SMOKE | FALL;
 		explode flare type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type BITMAPONLY;
 		explode door1 type EXPLODE_ON_HIT | FIRE | FALL;
 		explode door2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode flare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

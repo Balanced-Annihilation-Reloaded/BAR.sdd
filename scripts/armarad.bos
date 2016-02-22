@@ -120,7 +120,7 @@ Killed(severity, corpsetype)
 		explode turret type BITMAPONLY;
 		explode spinner type FIRE | SMOKE | FALL;
 		explode dish type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -129,7 +129,7 @@ Killed(severity, corpsetype)
 		explode turret type SMOKE | FALL;
 		explode spinner type FIRE | FALL;
 		explode dish type FIRE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -138,11 +138,12 @@ Killed(severity, corpsetype)
 		explode turret type SMOKE | FALL;
 		explode spinner type SMOKE | FALL;
 		explode dish type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type BITMAPONLY;
 		explode turret type EXPLODE_ON_HIT | FIRE | FALL;
 		explode spinner type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode dish type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

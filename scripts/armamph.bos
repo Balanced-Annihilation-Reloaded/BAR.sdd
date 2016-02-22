@@ -502,7 +502,7 @@ Killed(severity, corpsetype)
 		explode misbarrel type BITMAPONLY;
 		explode lmisflare type BITMAPONLY;
 		explode rmisflare type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -522,7 +522,7 @@ Killed(severity, corpsetype)
 		explode misbarrel type FIRE | SMOKE | FALL;
 		explode lmisflare type FIRE | SMOKE | FALL;
 		explode rmisflare type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -542,7 +542,7 @@ Killed(severity, corpsetype)
 		explode misbarrel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode lmisflare type FIRE | SMOKE | FALL;
 		explode rmisflare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode pelvis type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -560,4 +560,5 @@ Killed(severity, corpsetype)
 		explode misbarrel type EXPLODE_ON_HIT | FIRE | FALL;
 		explode lmisflare type EXPLODE_ON_HIT | FIRE | FALL;
 		explode rmisflare type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

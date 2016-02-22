@@ -136,14 +136,14 @@ Killed(severity, corpsetype)
 		corpsetype = 1 ;
 		explode base type BITMAPONLY;
 		explode dish type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
 		corpsetype = 2 ;
 		explode base type BITMAPONLY;
 		explode dish type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -151,9 +151,10 @@ Killed(severity, corpsetype)
 		explode base type BITMAPONLY;
 		explode dish type BITMAPONLY;
 		explode dish type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type BITMAPONLY;
 		explode dish type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

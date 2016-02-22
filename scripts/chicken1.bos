@@ -182,5 +182,5 @@ Killed( severity, corpsetype )
 	explode tail type FALL | NOHEATCLOUD;
 	explode lblade type FALL | NOHEATCLOUD;
 	explode rblade type FALL | NOHEATCLOUD;
-	return( 0 );
+	return(corpsetype);
 	}

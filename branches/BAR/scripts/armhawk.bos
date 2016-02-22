@@ -162,7 +162,7 @@ Killed(severity, corpsetype)
 		explode thrust type BITMAPONLY;
 		explode cowl type BITMAPONLY;
 		explode fan type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -173,7 +173,7 @@ Killed(severity, corpsetype)
 		explode thrust type FIRE | SMOKE | FALL;
 		explode cowl type FIRE | SMOKE | FALL;
 		explode fan type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -184,7 +184,7 @@ Killed(severity, corpsetype)
 		explode thrust type SMOKE | FALL;
 		explode cowl type SMOKE | FALL;
 		explode fan type EXPLODE_ON_HIT | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -193,4 +193,5 @@ Killed(severity, corpsetype)
 		explode thrust type EXPLODE_ON_HIT | FIRE | FALL;
 		explode cowl type EXPLODE_ON_HIT | FIRE | FALL;
 		explode fan type EXPLODE_ON_HIT | FIRE | FALL;
+	return corpsetype;
 }

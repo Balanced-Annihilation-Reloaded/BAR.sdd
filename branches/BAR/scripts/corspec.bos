@@ -365,7 +365,7 @@ Killed(severity, corpsetype)
 		explode head type BITMAPONLY;
 		explode rotator type BITMAPONLY;
 		explode dish type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -380,7 +380,7 @@ Killed(severity, corpsetype)
 		explode head type FIRE | SMOKE | FALL;
 		explode rotator type FIRE | SMOKE | FALL;
 		explode dish type FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -395,7 +395,7 @@ Killed(severity, corpsetype)
 		explode head type FIRE | SMOKE | FALL;
 		explode rotator type SMOKE | FALL;
 		explode dish type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode pelvis type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -408,4 +408,5 @@ Killed(severity, corpsetype)
 		explode head type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode rotator type EXPLODE_ON_HIT | FIRE | FALL;
 		explode dish type EXPLODE_ON_HIT | FIRE | FALL;
+	return corpsetype;
 }

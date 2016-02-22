@@ -476,7 +476,7 @@ Killed(severity, corpsetype)
 		explode cover type BITMAPONLY;
 		explode gun type BITMAPONLY;
 		explode nano type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -492,7 +492,7 @@ Killed(severity, corpsetype)
 		explode cover type FALL;
 		explode gun type FIRE | SMOKE | FALL;
 		explode nano type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -508,7 +508,7 @@ Killed(severity, corpsetype)
 		explode cover type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode gun type SMOKE | FALL;
 		explode nano type EXPLODE_ON_HIT | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode pelvis type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -522,4 +522,5 @@ Killed(severity, corpsetype)
 		explode cover type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode gun type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode nano type EXPLODE_ON_HIT | FIRE | FALL;
+	return corpsetype;
 }

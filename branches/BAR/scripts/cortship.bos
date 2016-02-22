@@ -259,7 +259,7 @@ Killed(severity, corpsetype)
 		explode rdoor type BITMAPONLY;
 		explode ldoor type BITMAPONLY;
 		explode wake type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -278,7 +278,7 @@ Killed(severity, corpsetype)
 		explode rdoor type FALL;
 		explode ldoor type FIRE | SMOKE | FALL;
 		explode wake type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -297,7 +297,7 @@ Killed(severity, corpsetype)
 		explode rdoor type SMOKE | FALL;
 		explode ldoor type FIRE | SMOKE | FALL;
 		explode wake type EXPLODE_ON_HIT | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type BITMAPONLY;
@@ -314,4 +314,5 @@ Killed(severity, corpsetype)
 		explode rdoor type EXPLODE_ON_HIT | FIRE | FALL;
 		explode ldoor type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode wake type EXPLODE_ON_HIT | FIRE | FALL;
+	return corpsetype;
 }

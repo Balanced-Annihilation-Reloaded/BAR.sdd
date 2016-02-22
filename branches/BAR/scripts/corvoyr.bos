@@ -326,7 +326,7 @@ Killed(severity, corpsetype)
 		explode lens2 type BITMAPONLY;
 		explode cover1 type BITMAPONLY;
 		explode cover3 type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -348,7 +348,7 @@ Killed(severity, corpsetype)
 		explode lens2 type FALL;
 		explode cover1 type FIRE | SMOKE | FALL;
 		explode cover3 type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -370,7 +370,7 @@ Killed(severity, corpsetype)
 		explode lens2 type SMOKE | FALL;
 		explode cover1 type FIRE | SMOKE | FALL;
 		explode cover3 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode pelvis type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -390,4 +390,5 @@ Killed(severity, corpsetype)
 		explode lens2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode cover1 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode cover3 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

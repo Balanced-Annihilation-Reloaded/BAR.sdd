@@ -157,7 +157,7 @@ Killed(severity, corpsetype)
 		explode lwing type FIRE | SMOKE | FALL;
 		explode rwing type BITMAPONLY;
 		explode thrust type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -166,7 +166,7 @@ Killed(severity, corpsetype)
 		explode lwing type FIRE | SMOKE | FALL;
 		explode rwing type FIRE | SMOKE | FALL;
 		explode thrust type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -175,11 +175,12 @@ Killed(severity, corpsetype)
 		explode lwing type EXPLODE_ON_HIT | SMOKE | FALL;
 		explode rwing type FIRE | SMOKE | FALL;
 		explode thrust type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode lwing type EXPLODE_ON_HIT | FIRE | FALL;
 		explode rwing type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode thrust type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

@@ -181,7 +181,7 @@ Killed(severity, corpsetype)
 		explode thrustrr type BITMAPONLY;
 		explode thrustrra type BITMAPONLY;
 		explode link type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -196,7 +196,7 @@ Killed(severity, corpsetype)
 		explode thrustrr type FIRE | SMOKE | FALL;
 		explode thrustrra type FIRE | SMOKE | FALL;
 		explode link type FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -211,7 +211,7 @@ Killed(severity, corpsetype)
 		explode thrustrr type EXPLODE_ON_HIT | SMOKE | FALL;
 		explode thrustrra type FIRE | SMOKE | FALL;
 		explode link type EXPLODE_ON_HIT | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type BITMAPONLY;
@@ -224,4 +224,5 @@ Killed(severity, corpsetype)
 		explode thrustrr type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode thrustrra type EXPLODE_ON_HIT | FIRE | FALL;
 		explode link type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

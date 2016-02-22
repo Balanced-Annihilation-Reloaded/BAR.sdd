@@ -280,7 +280,7 @@ Killed(severity, corpsetype)
 		explode end4 type BITMAPONLY;
 		explode nano4 type BITMAPONLY;
 		explode beam4 type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -307,7 +307,7 @@ Killed(severity, corpsetype)
 		explode end4 type FIRE | SMOKE | FALL;
 		explode nano4 type FIRE | SMOKE | FALL;
 		explode beam4 type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -334,7 +334,7 @@ Killed(severity, corpsetype)
 		explode end4 type FIRE | SMOKE | FALL;
 		explode nano4 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode beam4 type SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type BITMAPONLY;
@@ -359,4 +359,5 @@ Killed(severity, corpsetype)
 		explode end4 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode nano4 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode beam4 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

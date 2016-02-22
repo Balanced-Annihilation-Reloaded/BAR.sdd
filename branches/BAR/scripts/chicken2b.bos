@@ -179,4 +179,5 @@ Killed(severity, corpsetype)
 {
 	corpsetype = 1;
 	emit-sfx 1025 from body;
+	return corpsetype;
 }

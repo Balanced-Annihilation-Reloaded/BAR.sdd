@@ -422,4 +422,5 @@ Killed(severity, corpsetype)
 	explode rkneeb type FALL | EXPLODE_ON_HIT;
 	explode rshinb type FALL | EXPLODE_ON_HIT;
 	explode rfootb type FALL | EXPLODE_ON_HIT;
+	return corpsetype;
 }

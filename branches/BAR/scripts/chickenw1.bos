@@ -114,5 +114,5 @@ Killed( severity, corpsetype )
 	explode lwing type FALL;
 	explode rwing type FALL;
 	explode mblade type FALL | EXPLODE_ON_HIT;
-	return( 0 );
+	return(corpsetype);
 	}

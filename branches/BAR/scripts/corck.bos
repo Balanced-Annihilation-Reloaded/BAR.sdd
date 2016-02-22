@@ -402,7 +402,7 @@ Killed(severity, corpsetype)
 		explode beamhinge type BITMAPONLY;
 		explode beamcase type FIRE | SMOKE | FALL;
 		explode nano type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -418,7 +418,7 @@ Killed(severity, corpsetype)
 		explode beamhinge type FIRE | SMOKE | FALL;
 		explode beamcase type FIRE | SMOKE | FALL;
 		explode nano type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -434,7 +434,7 @@ Killed(severity, corpsetype)
 		explode beamhinge type SMOKE | FALL;
 		explode beamcase type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode nano type SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode pelvis type SHATTER;
@@ -448,4 +448,5 @@ Killed(severity, corpsetype)
 		explode beamhinge type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode beamcase type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode nano type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

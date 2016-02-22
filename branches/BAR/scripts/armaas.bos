@@ -271,7 +271,7 @@ Killed(severity, corpsetype)
 		explode turretmis2 type BITMAPONLY;
 		explode missilebox2 type BITMAPONLY;
 		explode missileflare2 type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -289,7 +289,7 @@ Killed(severity, corpsetype)
 		explode turretmis2 type FIRE | SMOKE | FALL;
 		explode missilebox2 type FALL;
 		explode missileflare2 type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -308,7 +308,7 @@ Killed(severity, corpsetype)
 		explode turretmis2 type FIRE | SMOKE | FALL;
 		explode missilebox2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode missileflare2 type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode ground type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -325,4 +325,5 @@ Killed(severity, corpsetype)
 		explode turretmis2 type EXPLODE_ON_HIT | FIRE | FALL;
 		explode missilebox2 type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode missileflare2 type EXPLODE_ON_HIT | FIRE | FALL;
+	return corpsetype;
 }

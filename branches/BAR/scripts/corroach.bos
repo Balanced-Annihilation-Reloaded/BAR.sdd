@@ -227,7 +227,7 @@ Killed(severity, corpsetype)
 		explode lega2 type BITMAPONLY;
 		explode legb5 type BITMAPONLY;
 		explode legb2 type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -245,7 +245,7 @@ Killed(severity, corpsetype)
 		explode lega2 type FIRE | SMOKE | FALL;
 		explode legb5 type FIRE | SMOKE | FALL;
 		explode legb2 type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -263,7 +263,7 @@ Killed(severity, corpsetype)
 		explode lega2 type SHATTER;
 		explode legb5 type SHATTER;
 		explode legb2 type SHATTER;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -279,4 +279,5 @@ Killed(severity, corpsetype)
 		explode lega2 type SHATTER;
 		explode legb5 type SHATTER;
 		explode legb2 type SHATTER;
+	return corpsetype;
 }

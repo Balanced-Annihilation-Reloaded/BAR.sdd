@@ -283,7 +283,7 @@ Killed(severity, corpsetype)
 		explode flare1a type BITMAPONLY;
 		explode barrel1b type BITMAPONLY;
 		explode flare1b type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -302,7 +302,7 @@ Killed(severity, corpsetype)
 		explode flare1a type FIRE | SMOKE | FALL;
 		explode barrel1b type FIRE | SMOKE | FALL;
 		explode flare1b type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -321,7 +321,7 @@ Killed(severity, corpsetype)
 		explode flare1a type SMOKE | FALL;
 		explode barrel1b type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode flare1b type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode ground type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -338,4 +338,5 @@ Killed(severity, corpsetype)
 		explode flare1a type EXPLODE_ON_HIT | FIRE | FALL;
 		explode barrel1b type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode flare1b type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

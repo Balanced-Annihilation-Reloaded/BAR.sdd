@@ -228,7 +228,7 @@ Killed(severity, corpsetype)
 		explode nanoturret type BITMAPONLY;
 		explode nanoemit type BITMAPONLY;
 		explode door2 type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -239,7 +239,7 @@ Killed(severity, corpsetype)
 		explode nanoturret type FIRE | SMOKE | FALL;
 		explode nanoemit type FIRE | SMOKE | FALL;
 		explode door2 type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -250,7 +250,7 @@ Killed(severity, corpsetype)
 		explode nanoturret type SMOKE | FALL;
 		explode nanoemit type SMOKE | FALL;
 		explode door2 type SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode ground type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -259,4 +259,5 @@ Killed(severity, corpsetype)
 		explode nanoturret type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode nanoemit type EXPLODE_ON_HIT | FIRE | FALL;
 		explode door2 type EXPLODE_ON_HIT | FIRE | FALL;
+	return corpsetype;
 }

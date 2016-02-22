@@ -95,4 +95,5 @@ Killed(severity, corpsetype)
 	explode coolerb2 type FALL | FIRE | SMOKE |BITMAP1;
 	explode coolerb3 type FALL | FIRE | SMOKE |BITMAP1;
 	explode coolerb4 type FALL | FIRE | SMOKE |BITMAP1;
+	return corpsetype;
 }

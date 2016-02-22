@@ -361,7 +361,7 @@ Killed(severity, corpsetype)
 		explode boreb type BITMAPONLY;
 		explode barrelb type BITMAPONLY;
 		explode flareb type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -381,7 +381,7 @@ Killed(severity, corpsetype)
 		explode boreb type FALL;
 		explode barrelb type FALL;
 		explode flareb type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -403,7 +403,7 @@ Killed(severity, corpsetype)
 		explode boreb type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode barrelb type FIRE | SMOKE | FALL;
 		explode flareb type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type BITMAPONLY;
@@ -423,4 +423,5 @@ Killed(severity, corpsetype)
 		explode boreb type EXPLODE_ON_HIT | FIRE | FALL;
 		explode barrelb type EXPLODE_ON_HIT | FIRE | FALL;
 		explode flareb type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
+	return corpsetype;
 }

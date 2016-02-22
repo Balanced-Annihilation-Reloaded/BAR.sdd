@@ -137,7 +137,7 @@ Killed(severity, corpsetype)
 		explode lfwheel type BITMAPONLY;
 		explode lbwheel type BITMAPONLY;
 		explode rbwheel type BITMAPONLY;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 50 )
 	{
@@ -150,7 +150,7 @@ Killed(severity, corpsetype)
 		explode lfwheel type FIRE | SMOKE | FALL;
 		explode lbwheel type FIRE | SMOKE | FALL;
 		explode rbwheel type FIRE | SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	if( severity <= 99 )
 	{
@@ -163,7 +163,7 @@ Killed(severity, corpsetype)
 		explode lfwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode lbwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode rbwheel type SMOKE | FALL;
-		return(0);
+		return(corpsetype);
 	}
 	corpsetype = 3 ;
 		explode base type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
@@ -174,4 +174,5 @@ Killed(severity, corpsetype)
 		explode lfwheel type EXPLODE_ON_HIT | FIRE | SMOKE | FALL;
 		explode lbwheel type EXPLODE_ON_HIT | FIRE | FALL;
 		explode rbwheel type EXPLODE_ON_HIT | FIRE | FALL;
+	return corpsetype;
 }

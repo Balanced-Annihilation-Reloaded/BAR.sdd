@@ -183,5 +183,5 @@ Killed( severity, corpsetype )
 	explode lblade type FALL;
 	explode rblade type FALL;
 	explode tail type FALL;
-	return( 0 );
+	return(corpsetype);
 	}

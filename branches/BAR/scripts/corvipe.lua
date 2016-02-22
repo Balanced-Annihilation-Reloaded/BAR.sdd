@@ -98,7 +98,7 @@ function script.Killed(recentDamage, maxHealth)
 	end
 	if (severity <= 99) then
 		if (not is_open) then corpsetype = 3; end
-		if (is_open) then corpsetype = 4; end
+		if (is_open) then corpsetype = 3; end
 		UnitScript.Explode(base, SFX.NONE);
 		UnitScript.Explode(door1, SFX.NONE);
 		UnitScript.Explode(door2, SFX.NONE);
@@ -106,7 +106,7 @@ function script.Killed(recentDamage, maxHealth)
 		UnitScript.Explode(flare, SFX.NONE);
 		return corpsetype;
 	end
-	corpsetype = 4;
+	corpsetype = 3;
 	UnitScript.Explode(base, SFX.NONE);
 	UnitScript.Explode(door1, SFX.NONE);
 	UnitScript.Explode(door2, SFX.NONE);

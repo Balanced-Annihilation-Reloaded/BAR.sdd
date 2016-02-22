@@ -42,7 +42,7 @@ local landCmd = {
       type     = CMDTYPE.ICON_MODE,
       tooltip  = "Plant Land Mode: settings for Aircraft leaving the plant",
       queueing = false,
-      params   = { '1', 'Fly', 'Land'}
+      params   = { '1', ' Fly ', 'Land'}
 }
 
 local airCmd = {

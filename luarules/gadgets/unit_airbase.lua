@@ -20,7 +20,10 @@ if (gadgetHandler:IsSyncedCode()) then
 -- Synced
 --------------------------------------------------------------------------------
 
-local airbaseDefIDs = {}
+local airbaseDefIDs = {
+    [UnitDefNames["armasp"].id] = true,
+    [UnitDefNames["corasp"].id] = true,
+}
 
 local planes = {}
 local airbases = {} -- airbaseID = { int pieceNum = unitID reservedFor }
@@ -53,7 +56,7 @@ function AddAirBase(unitID)
    local pieceMap = Spring.GetUnitPieceMap(unitID)
    for pieceName, pieceNum in pairs(pieceMap) do
       if pieceName:find("pad") then
-         airBasePads[pieceNum] = false
+         airBasePads[pieceNum] = false -- value is whether or not the pad is reserved
       end
    end
    airbases[unitID] = airBasePads
@@ -80,7 +83,7 @@ function CanLandAt(unitID, airbaseID)
       if not reservedBy then
          padPieceNum = pieceNum
       end
-      if reservedBy == unitID then
+      if not reservedBy or reservedBy == unitID then
          padPieceNum = pieceNum
          break
       end
@@ -104,7 +107,7 @@ function FindAirBase(unitID)
          end
       end
    end
-
+   
    return closestAirbaseID, closestPieceNum
 end
 
@@ -236,7 +239,7 @@ function gadget:GameFrame(n)
       local r = Spring.GetUnitRadius(unitID)
       local dist = dx * dx + dy * dy + dz * dz
       -- check if we're close enough
-      if dist < 4 * r * r then
+      if dist < 0.5 * r * r then
          Spring.GiveOrderToUnit(unitID, CMD.STOP,{},{})
          Spring.UnitAttach(airbaseID, unitID, padPieceNum)
          landingPlanes[unitID] = nil

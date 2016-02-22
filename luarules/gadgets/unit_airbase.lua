@@ -25,11 +25,11 @@ local airbaseDefIDs = {
     [UnitDefNames["corasp"].id] = true,
 }
 
-local planes = {}
 local airbases = {} -- airbaseID = { int pieceNum = unitID reservedFor }
-local pendingLanders = {}
-local landingPlanes = {}
-local landedPlanes = {}
+
+local pendingLanders = {} -- unitIDs of planes that are waiting to be assigned airbases to fly too
+local landingPlanes = {} -- planes that are in the process of landing (including flying too) airbases; [1]=airBaseID, [2]=pieceNum 
+local landedPlanes = {} -- unitIDs of planes that are landed
 
 local forceLandCmd = {
    id      = FORCE_LAND_CMD_ID,
@@ -49,9 +49,10 @@ local landCmd = {
    hidden  = true,
 }
 
+-- fixme: add custom commands to CMD table
 
--- add logic for deciding which pad to use here
 function AddAirBase(unitID)
+   -- add the pads of this airBase to our register
    local airBasePads = {}
    local pieceMap = Spring.GetUnitPieceMap(unitID)
    for pieceName, pieceNum in pairs(pieceMap) do
@@ -63,27 +64,29 @@ function AddAirBase(unitID)
 end
 
 
--- returns either false or the piece number of the free pad
 function CanLandAt(unitID, airbaseID)
+   -- returns either false or the piece number of the free pad
+   
+   -- check that this airbase has pads (needed?)
    local airbasePads = airbases[airbaseID]
    if not airbasePads then
       return false
    end
 
+   -- check that this airbase is on our team
    local unitTeamID = Spring.GetUnitTeam(unitID)
    local airbaseTeamID = Spring.GetUnitTeam(airbaseID)
    if not Spring.AreTeamsAllied(unitTeamID, airbaseTeamID) then
       return false
    end
 
+   -- try to find a vacant pad within this airbase
    local padPieceNum = false
-
    for pieceNum, reservedBy in pairs(airbasePads) do
-      -- if somehow no pad expects you, find a vacant one
       if not reservedBy then
          padPieceNum = pieceNum
       end
-      if not reservedBy or reservedBy == unitID then
+      if reservedBy == false then
          padPieceNum = pieceNum
          break
       end
@@ -93,6 +96,7 @@ end
 
 
 function FindAirBase(unitID)
+   -- find the nearest airbase with a free pad
    local minDist = math.huge
    local closestAirbaseID
    local closestPieceNum
@@ -112,6 +116,7 @@ function FindAirBase(unitID)
 end
 
 function RemoveLander(unitID)
+   -- free up the pad that this landingPlane had reserved
    if landingPlanes[unitID] then
       local airbaseID, pieceNum = landingPlanes[unitID][1], landingPlanes[unitID][2]
       local airbasePads = airbases[airBaseID]
@@ -124,11 +129,15 @@ function RemoveLander(unitID)
 end
 
 function NeedsRepair(unitID)
+   -- check if this unitID (which is assumed to be a plane) would want to land
    local health, maxHealth = Spring.GetUnitHealth(unitID)
    local landAtState = Spring.GetUnitStates(unitID).autorepairlevel
    return health < maxHealth * landAtState;
 end
 
+function IsPlane(unitDefID)
+    return UnitDefs[unitDefID].isAirUnit
+end
 
 function gadget:UnitCreated(unitID, unitDefID, unitTeam, builderID)
    if UnitDefs[unitDefID].canFly then
@@ -144,8 +153,8 @@ end
 
 function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
    RemoveLander(unitID)
-   planes[unitID] = nil
    airbases[unitID] = nil
+   -- fixme: release units from the air base, they might not be dead
    landingPlanes[unitID] = nil
    landedPlanes[unitID] = nil
    pendingLanders[unitID] = nil
@@ -155,10 +164,9 @@ function gadget:UnitFinished(unitID, unitDefID, unitTeam)
    if airbaseDefIDs[unitDefID] then
       AddAirBase(unitID)
    end
-   if UnitDefs[unitDefID].canFly then
-      planes[unitID] = true
-   end
 end
+
+-- fixme: missing UnitGiven, etc
 
 function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
    if cmdID == LAND_CMD_ID then
@@ -169,6 +177,8 @@ function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpt
 end
 
 function gadget:CommandFallback(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
+   -- handle our two custom commands
+   
    if cmdID == LAND_CMD_ID then
       -- clear old pad
       RemoveLander(unitID)
@@ -178,7 +188,6 @@ function gadget:CommandFallback(unitID, unitDefID, teamID, cmdID, cmdParams, cmd
       end
 
       local airbaseID = cmdParams[1]
-
       local padPieceNum = CanLandAt(unitID, airbaseID)
 
       -- failed to land
@@ -191,6 +200,7 @@ function gadget:CommandFallback(unitID, unitDefID, teamID, cmdID, cmdParams, cmd
       landingPlanes[unitID] = {airbaseID, padPieceNum}
       return true, false
    end
+   
    if cmdID == FORCE_LAND_CMD_ID then
       pendingLanders[unitID] = true
       return true, true
@@ -200,11 +210,21 @@ function gadget:CommandFallback(unitID, unitDefID, teamID, cmdID, cmdParams, cmd
 end
 
 function gadget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
-   if not planes[unitID] then
+   -- detach planes from their pads once they are finished
+   -- fixme: currently only acts once the landed unit receives a command
+   -- fixme: this also acts on landingPlanes, and removes them + frees their reserved pad, but they'll just get given a new one next frame so its pointless
+   if not IsPlane(unitDefID) then
       return
    end
+   
+   -- remove from our system (fixme)
+   landingPlanes[unitID] = nil
    landedPlanes[unitID] = nil
-   RemoveLander(unitID)
+   pendingLanders[unitID] = nil
+
+   RemoveLander(unitID) -- if it was landing, free up the pad that it had reserved
+
+   -- if this unitID was in a pad, detach the unit and release that pad
    local airBaseID = Spring.GetUnitTransporter(unitID)
    if not airBaseID then
       return
@@ -213,24 +233,37 @@ function gadget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpti
    if not airbasePads then
       return
    end
-   Spring.UnitDetach(unitID)
-
    for pieceNum, reservedBy in pairs(airbasePads) do
       if reservedBy == unitID then
          airbasePads[pieceNum] = false
       end
+   end   
+   Spring.UnitDetach(unitID)
+end
+
+function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, weaponDefID)
+   if IsPlane(unitDefID) and not landingPlanes[unitID] and not landedPlanes[unitID] and NeedsRepair(unitID) then
+      pendingLanders[unitID] = true
    end
 end
 
-function gadget:GameFrame(n)
-    if n%15~=0 then return end
 
-   for unitID, _ in pairs(planes) do
-      if not landingPlanes[unitID] and not landedPlanes[unitID] and NeedsRepair(unitID) then
-         pendingLanders[unitID] = true
+
+function gadget:GameFrame(n)
+   if n%12~=0 then return end
+
+   -- assign airbases & pads to units in pendingLanders
+   -- once found, move into landingPlanes
+   for unitID, _ in pairs(pendingLanders) do
+      local closestAirbaseID, closestPieceNum = FindAirBase(unitID)
+      if closestAirbaseID then
+         Spring.GiveOrderToUnit(unitID, CMD.INSERT,{0, LAND_CMD_ID, 0, closestAirbaseID},{"alt"})
+         landingPlanes[unitID] = {closestAirbaseID, closestPieceNum}
+         pendingLanders[unitID] = nil
       end
    end
 
+   -- snap landingPlanes into pads, if 'close enough'
    for unitID, t in pairs(landingPlanes) do
       local airbaseID, padPieceNum = t[1], t[2]
       local px, py, pz = Spring.GetUnitPiecePosDir(airbaseID, padPieceNum)
@@ -238,9 +271,9 @@ function gadget:GameFrame(n)
       local dx, dy ,dz = ux - px, uy - py, uz - pz
       local r = Spring.GetUnitRadius(unitID)
       local dist = dx * dx + dy * dy + dz * dz
+      
       -- check if we're close enough
-      if dist < 0.5 * r * r then
-         Spring.GiveOrderToUnit(unitID, CMD.STOP,{},{})
+      if dist < 0.5 * r * r then -- probably needs more attention
          Spring.UnitAttach(airbaseID, unitID, padPieceNum)
          landingPlanes[unitID] = nil
          landedPlanes[unitID] = true
@@ -250,24 +283,17 @@ function gadget:GameFrame(n)
    end
 
 
-   for unitID, _ in pairs(pendingLanders) do
-      local closestAirbaseID, closestPieceNum = FindAirBase(unitID)
-      if closestAirbaseID then
-         Spring.GiveOrderToUnit(unitID, CMD.INSERT,{0, LAND_CMD_ID, 0, closestAirbaseID},{"alt"})
-         landingPlanes[unitID] = {closestAirbaseID, closestPieceNum}
-         pendingLanders[unitID] = nil
-      end
-   end
 end
 
 function gadget:Initialize()
+   -- fixme: when using new transport mechanics, this is the proper way to define airbases
    for unitDefID, unitDef in pairs(UnitDefs) do
       if unitDef.isAirBase then
          airbaseDefIDs[unitDefID] = true
       end
    end
 
-   -- Fake UnitCreated events for existing units. (for '/luarules reload')
+   -- fake UnitCreated events for existing units, for luarules reload
    local allUnits = Spring.GetAllUnits()
    for i=1,#allUnits do
       local unitID = allUnits[i]
@@ -278,7 +304,9 @@ function gadget:Initialize()
 end
 
 function gadget:UnitLoaded(unitID, unitDefID, unitTeam, transportID, transportTeam)
-    if (planes[unitID]) then
+    -- wtf
+    -- fixme: if this has to be here, need to undo in UnitUnloaded
+    if IsPlane(unitDefID) then
         Spring.SetUnitNoDraw(unitID, false)
         Spring.SetUnitStealth(unitID, false)
         Spring.SetUnitSonarStealth(unitID, false)

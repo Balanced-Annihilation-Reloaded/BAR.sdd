@@ -40,6 +40,7 @@ local function loadOptions()
 
     Menu.AddWidgetOption{
         title = 'Clock',
+        name = widget:GetInfo().name,
         children = {
             Chili.ComboBox:New{
                 x        = '10%',
@@ -59,7 +60,6 @@ local function loadOptions()
                     end
                 }
             },
-            Chili.Line:New{width='100%'},
         }
     }
     

@@ -209,7 +209,7 @@ local function makeWidgetList()
         local cat = wCategories[inv_pos[i]]
         local list = cat.list
         if #list>0 then
-            stack:AddChild(Chili.Label:New{caption  = cat.label,x='0%',fontsize=18})
+            stack:AddChild(Chili.Label:New{caption =cat.label, x=0, fontsize=18})
             -- Second loop adds each widget
             for b=1,#list do
                 local green  = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
@@ -218,7 +218,7 @@ local function makeWidgetList()
 
                 local enabled = (widgetHandler.orderList[list[b].name] or 0)>0
                 local active  = list[b].wData.active
-                local author = list[b].wData.author or "Unkown"
+                local author = list[b].wData.author or "Unknown"
                 local desc = list[b].wData.desc or "No Description"
                 local fromZip = list[b].wData.fromZip and "" or "*"
                 stack:AddChild(Chili.Checkbox:New{
@@ -236,6 +236,42 @@ local function makeWidgetList()
         end
         cat.list = {}
     end    
+end
+
+local function AddWidgetOption(obj)
+    if not obj.title or not obj.name then return end
+
+    local widgetOptions = tabs.Interface:GetChildByName('widgetOptions') --scrollPanel
+    local stack = widgetOptions.children[1] -- stackPanel
+
+    local oldOptions = stack:GetChildByName(obj.name)
+    local panel --contains this widgets options
+    if oldOptions then
+        panel = oldOptions
+        panel:ClearChildren()
+    else
+        panel = Chili.StackPanel:New{
+            name        = obj.name,
+            x           = 0,
+            y           = 0,
+            width       = '100%',
+            resizeItems = false,
+            autosize    = true,
+            padding     = {0,0,0,0},
+            itemPadding = {0,0,0,0},
+            itemMargin  = {0,0,0,0},
+            preserverChildrenOrder = true    
+        }     
+    end
+        
+    panel:AddChild(Chili.Label:New{caption=obj.title,x='0%',fontsize=18})
+    for i = 1, #obj.children do
+        panel:AddChild(obj.children[i]) -- chili controls created by widget
+        -- if the widget is unloaded, these will disappear, but the title will still remain (and no options showing)
+    end
+    panel:AddChild(Chili.Line:New{width='100%'})
+    panel:AddChild(Chili.Line:New{width='100%'})
+    stack:AddChild(panel)
 end
 
 ----------------------------
@@ -320,35 +356,6 @@ local function Load(index)
         return nil
     end
 end
-
-----------------------------
---
-local function AddWidgetOption(obj)
-    local widgetOptions = tabs.Interface:GetChildByName('widgetOptions') --scrollPanel
-    local stack = widgetOptions.children[1] -- stackPanel
-
-    if obj.title then
-        -- Stays if widget fails, needs to be created in widget to work
-        stack:AddChild(Chili.Label:New{caption=obj.title,x='0%',fontsize=18})
-    end
-
-    for i = 1, #obj.children do
-        stack:AddChild(obj.children[i])
-    end
-
-    if obj.bLine then
-        -- Stays if widget fails, needs to be created in widget to work
-        stack:AddChild(Chili.Line:New{width='100%'})
-    end
-
-end
-
-----------------------------
---
-local function addToStack()
-    Spring.Echo('AddToStack() is depreciated, instead use AddWidgetOption{}')
-end
-
 ----------------------------
 -- Creates a stack panel 
 local function addStack(obj)
@@ -912,19 +919,19 @@ local function globalize()
     Menu.ShowHide   = ShowHide -- show/hide menu tabs
 
     
-    Menu.AddWidgetOption  = AddWidgetOption -- for registering options of widgets
+    Menu.AddWidgetOption  = AddWidgetOption -- for registering options of widgets (note: ideally, widgets are responsible for save/load of their own options)
     --[[
-        Example usage for AddWidgetOption(obj)
-        (note: ideally, widgets are responsible for save/load of their own options)
+        -- Example usage for AddWidgetOption(obj)
         obj = {
-            title = 'My Widget',
+            title = 'My Title',
+            name = widget:GetInfo().name, -- required!
             children = {
                 Chili.Checkbox:New{caption='An Option', x='10%', width='80%', checked=<initial value from widget>, OnChange={function() <effect of changing option in widget>; end}},
             }
         }                
     ]]
     
-    -- allow access to our own Settings table (remove this?)
+    -- allow access to our own Settings table (todo: remove this)
     Menu.Load = Load
     Menu.Save = Save
 

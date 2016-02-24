@@ -105,12 +105,12 @@ function widget:Initialize()
     
     Menu.AddWidgetOption{
             title = 'LOS Colors',
+            name = widget:GetInfo().name,
             children = {
                 Chili.Checkbox:New{caption='Show radar as spec',x='10%',width='80%',
                         checked=options.showRadarAsSpec,OnChange={function() ToggleRadarAsSpec() end}}, 
                 Chili.Checkbox:New{caption='Extra saturation',x='10%',width='80%',
                         checked=options.extraSaturation,OnChange={function() ToggleExtraSaturation() end}},
-                Chili.Line:New{width='100%'}
         }
     }
         

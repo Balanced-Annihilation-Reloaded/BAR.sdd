@@ -161,6 +161,7 @@ local function loadOptions()
 
     Menu.AddWidgetOption{
         title = 'Chat',
+        name = widget:GetInfo().name,
         children = {
             Chili.Checkbox:New{
                 caption  = 'Auto-Hide Chat',
@@ -185,9 +186,7 @@ local function loadOptions()
                 step     = 1,
                 value    = cfg.msgTime,
                 OnChange = {function(_,value) cfg.msgTime=value; Menu.Save{msgTime=value} end}
-            },
-            
-            Chili.Line:New{width='100%'}
+            },            
         }
     }
 end

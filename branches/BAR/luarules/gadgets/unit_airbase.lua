@@ -42,7 +42,7 @@ local landedPlanes = {} -- unitIDs of planes that are landed
 -- todo: names, etc
 
 local forceLandCmd = {
-   id      = LAND_AT_ANY_AIRBASE,
+   id      = CMD_LAND_AT_ANY_AIRBASE,
    name    = "Land At Any Airbase",
    action  = "land_at_any_airbase",
    type    = CMDTYPE.ICON,
@@ -50,7 +50,7 @@ local forceLandCmd = {
 }
 
 local landCmd = {
-   id      = LAND_AT_AIRBASE,
+   id      = CMD_LAND_AT_AIRBASE,
    name    = "Land At Airbase",
    action  = "land_at_airbase",
    cursor  = 'Repair',
@@ -288,7 +288,7 @@ function gadget:GameFrame(n)
       Spring.Echo("pending", unitID)
       local closestAirbaseID, closestPieceNum = FindAirBase(unitID)
       if closestAirbaseID then
-         Spring.GiveOrderToUnit(unitID, CMD.INSERT,{0, LAND_AT_AIRBASE, 0, closestAirbaseID},{"alt"})
+         Spring.GiveOrderToUnit(unitID, CMD.INSERT,{0, CMD_LAND_AT_AIRBASE, 0, closestAirbaseID},{"alt"})
          landingPlanes[unitID] = {closestAirbaseID, closestPieceNum}
          pendingLanders[unitID] = nil
       end
@@ -391,7 +391,7 @@ function gadget:DefaultCommand()
    for i=1,#sUnits do
       local unitID = sUnits[i]
       if UnitDefs[spGetUnitDefID(unitID)].canFly then
-         return LAND_AT_AIRBASE
+         return CMD_LAND_AT_AIRBASE
       end
    end
    return false

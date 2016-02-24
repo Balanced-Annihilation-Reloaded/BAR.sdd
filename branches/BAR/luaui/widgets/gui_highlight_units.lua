@@ -281,9 +281,10 @@ function widget:Initialize()
     screen = Chili.Screen0
     Menu   = WG.MainMenu
     if not Menu then return end
-    
+
     Menu.AddWidgetOption{
-            title = 'Highlight Units',
+            title = "Highlight Units",
+            name = widget:GetInfo().name,
             children = {
                 Chili.Checkbox:New{caption='Show platters',x='10%',width='80%',
                         checked=drawPlatter,setting=drawPlatter,OnChange={function() drawPlatter = not drawPlatter; end}}, --toggle doesn't work
@@ -291,10 +292,8 @@ function widget:Initialize()
                         checked=drawXRayShader,setting=drawXRayShader,OnChange={function() drawXRayShader = not drawXRayShader; end}},
                 Chili.Checkbox:New{caption='Highlight allies',x='10%',width='80%',
                         checked=highlightAllyTeam,setting=highlightAllyTeam,OnChange={function() highlightAllyTeam = not highlightAllyTeam; end}},
-                Chili.Line:New{width='100%'}
         }
     }
-    
 end
 
 function widget:Shutdown()

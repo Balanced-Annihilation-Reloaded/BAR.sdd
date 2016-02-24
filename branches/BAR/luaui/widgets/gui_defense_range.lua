@@ -106,24 +106,6 @@ modConfig["BAR"]["dps"]["ground"]["max"] = 500
 modConfig["BAR"]["dps"]["air"]["min"] = 80
 modConfig["BAR"]["dps"]["air"]["max"] = 500
 
---implement this if you want custom colors - we dont want it for BA
---[[
-modConfig["BA"]["color"] = {}
-modConfig["BA"]["color"]["enemy"] = {}
-modConfig["BA"]["color"]["enemy"]["ground"] = {}
-modConfig["BA"]["color"]["enemy"]["air"] = {}
-modConfig["BA"]["color"]["enemy"]["nuke"] = {}                                     
-modConfig["BA"]["color"]["enemy"]["ground"]["min"] = { 1.0, 0.0, 0.0 }
-modConfig["BA"]["color"]["enemy"]["ground"]["max"] = { 1.0, 1.0, 0.0 }
-modConfig["BA"]["color"]["enemy"]["air"]["min"] = { 0.0, 1.0, 0.0 }
-modConfig["BA"]["color"]["enemy"]["air"]["max"] = { 0.0, 0.0, 1.0 }
-modConfig["BA"]["color"]["enemy"]["nuke"] =  { 1.0, 1.0, 1.0 }
-modConfig["BA"]["color"]["ally"] = modConfig["BA"]["color"]["enemy"]
---]]
---end of custom colors
---end of BA
-
-
     
 --DEFAULT COLOR CONFIG
 --is used when no game-specfic color config is found in current game-definition
@@ -324,6 +306,7 @@ function widget:Initialize()
     
     Menu.AddWidgetOption{
             title = 'Defense Range',
+            name = widget:GetInfo().name,
             children = {
                 Chili.Checkbox:New{caption='Ally ground',x='10%',width='80%',
                         checked=buttonConfig["enabled"]["ally"]["ground"],setting=drawPlatter,OnChange={function() buttonConfig["enabled"]["ally"]["ground"] = not buttonConfig["enabled"]["ally"]["ground"]; end}}, 
@@ -337,7 +320,6 @@ function widget:Initialize()
                         checked=buttonConfig["enabled"]["enemy"]["air"],setting=drawPlatter,OnChange={function() buttonConfig["enabled"]["enemy"]["air"] = not buttonConfig["enabled"]["enemy"]["air"]; end}}, 
                 Chili.Checkbox:New{caption='Enemy anti-nuke',x='10%',width='80%',
                         checked=buttonConfig["enabled"]["enemy"]["nuke"],setting=drawPlatter,OnChange={function() buttonConfig["enabled"]["enemy"]["nuke"] = not buttonConfig["enabled"]["enemy"]["nuke"]; end}}, 
-                Chili.Line:New{width='100%'}
         }
     }
 end

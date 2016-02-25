@@ -1,9 +1,9 @@
 function gadget:GetInfo()
    return {
-      name      = "Airbase Repair Command",
-      desc      = "Add command to return to airbase for repairs",
+      name      = "Airbase Manager",
+      desc      = "Automated and manual use of air repair pads",
       author    = "ashdnazg, Bluestone",
-      date      = "12 February 2016",
+      date      = "February 2016",
       license   = "GNU GPL, v2 or later",
       layer     = 1,
       enabled   = true  --  loaded by default?
@@ -491,7 +491,7 @@ local nSelUnits = 0
 local strUnit = "unit"
 
 function gadget:PlayerChanged()
-   myTeamID = spGetMyTeamID()
+   myTeamID = Spring.GetMyTeamID()
    myAllyTeamID = Spring.GetMyAllyTeamID()
    amISpec = Spring.GetSpectatingState()
 end

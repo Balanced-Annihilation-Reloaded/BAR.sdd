@@ -6,7 +6,7 @@ function gadget:GetInfo()
       date      = "12 February 2016",
       license   = "GNU GPL, v2 or later",
       layer     = 1,
-      enabled   = false  --  loaded by default?
+      enabled   = true  --  loaded by default?
    }
 end
 
@@ -19,18 +19,19 @@ CMD[CMD_LAND_AT_ANY_AIRBASE] = "LAND_AT_ANY_AIRBASE"
 CMD.LAND_AT_AIRBASE = CMD_LAND_AT_AIRBASE
 CMD[CMD_LAND_AT_AIRBASE] = "LAND_AT_AIRBASE"
 
-if (gadgetHandler:IsSyncedCode()) then
+local airbaseDefIDs = {
+    [UnitDefNames["armasp"].id] = 250, -- distance in elmos for snap onto pad
+    [UnitDefNames["corasp"].id] = 250,
+    [UnitDefNames["armcarry"].id] = 450,
+    [UnitDefNames["corcarry"].id] = 450,
+}
+local snapDist = nil -- default snap distance, if not found in table
+    
 
 --------------------------------------------------------------------------------
 -- Synced
+if (gadgetHandler:IsSyncedCode()) then
 --------------------------------------------------------------------------------
-
-local airbaseDefIDs = {
-    [UnitDefNames["armasp"].id] = true,
-    [UnitDefNames["corasp"].id] = true,
-    [UnitDefNames["armcarry"].id] = true,
-    [UnitDefNames["corcarry"].id] = true,
-}
 
 local airbases = {} -- airbaseID = { int pieceNum = unitID reservedFor }
 
@@ -43,7 +44,7 @@ local previousHealFrame = 0
 ---------------------------
 -- custom commands
 
-local landAtAnyCmd = {
+local landAtAnyAirbaseCmd = {
    id      = CMD_LAND_AT_ANY_AIRBASE,
    name    = "Land At Any Airbase",
    action  = "land_at_any_airbase",
@@ -51,7 +52,7 @@ local landAtAnyCmd = {
    tooltip = "Lands at the nearest available airbase",
 }
 
-local landAtSpecificCmd = {
+local landAtSpecificAirbaseCmd = {
    id      = CMD_LAND_AT_AIRBASE,
    name    = "Land At Airbase",
    action  = "land_at_airbase",
@@ -60,9 +61,16 @@ local landAtSpecificCmd = {
    tooltip = "Lands at a specific airbase",
 }
 
+function SetupLandAtAirbaseCommands()
+   -- register cursor
+   --Spring.AssignMouseCursor("settarget", "cursorsettarget", false)
+   --show the command in the queue
+   --Spring.SetCustomCommandDrawData(CMD_UNIT_SET_TARGET,"settarget",queueColour,true)
+end
+
 function InsertLandAtAirbaseCommands(unitID)
-   Spring.InsertUnitCmdDesc(unitID, landAtSpecificCmd)
-   Spring.InsertUnitCmdDesc(unitID, landAtAnyCmd)
+   Spring.InsertUnitCmdDesc(unitID, landAtSpecificAirbaseCmd)
+   Spring.InsertUnitCmdDesc(unitID, landAtAnyAirbaseCmd)
 end
 
 ---------------------------------------
@@ -120,9 +128,7 @@ function CanLandAt(unitID, airbaseID)
    local padPieceNum = false
    for pieceNum, reservedBy in pairs(airbasePads) do
       if reservedBy == false then
-         Spring.Echo("reserved", unitID, airbaseID, padPieceNum)
          padPieceNum = pieceNum
-         airbasePads[pieceNum] = unitID
          break
       end
    end
@@ -135,6 +141,7 @@ end
 function RemoveLandingPlane(unitID)
    -- free up the pad that this landingPlane had reserved
    if landingPlanes[unitID] then
+      SendToUnsynced("SetUnitLandGoal", unitID, nil)
       local airbaseID, pieceNum = landingPlanes[unitID][1], landingPlanes[unitID][2]
       local airbasePads = airbases[airbaseID]
       if airbasePads then
@@ -209,9 +216,9 @@ function FlyAway(unitID, airbaseID)
    Spring.GiveOrderToUnit(unitID, CMD.WAIT, {}, {})
    Spring.GiveOrderToUnit(unitID, CMD.WAIT, {}, {})
    --
+   
    -- if the unit has no orders, tell it to move a little away from the airbase
    local q = Spring.GetUnitCommands(unitID, 0)
-   Spring.Echo(q)
    if q==0 then
       local px,_,pz = Spring.GetUnitPosition(airbaseID)
       local theta = math.random()*2*math.pi
@@ -258,6 +265,7 @@ function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
    if not IsPlane(unitDefID) and not airbases[unitID] then return end
    
    RemoveLandingPlane(unitID)
+
    airbases[unitID] = nil
    landingPlanes[unitID] = nil
    landedPlanes[unitID] = nil
@@ -269,10 +277,7 @@ end
 
 function gadget:CommandFallback(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
    -- handle our two custom commands
-   -- todo: combine the two custom commands into one?
-   Spring.Echo(cmdID, CMD[cmdID])
    
-   -- land at a specific airbase
    if cmdID == CMD_LAND_AT_AIRBASE then
       -- ignore if we are already in a pad
       if landedPlanes[unitID] then
@@ -283,18 +288,19 @@ function gadget:CommandFallback(unitID, unitDefID, teamID, cmdID, cmdParams, cmd
       RemoveLandingPlane(unitID)
 
       -- find out if this airbase has a free pad
-      local padPieceNum = CanLandAt(unitID, airbaseID)
-      if not padPieceNum then
+      local airbaseID = cmdParams[1]
+      local pieceNum = CanLandAt(unitID, airbaseID)
+      if not pieceNum then
          return true, true
       end
 
-      -- add details
-      airbases[airbaseID][padPieceNum] = unitID
-      landingPlanes[unitID] = {airbaseID, padPieceNum}
-      return true, false
+      -- reserve pad
+      airbases[airbaseID][pieceNum] = unitID
+      landingPlanes[unitID] = {airbaseID, pieceNum}
+      SendToUnsynced("SetUnitLandGoal", unitID, airbaseID, pieceNum)
+      return true, true
    end
    
-   -- land at a non-specific airbase
    if cmdID == CMD_LAND_AT_ANY_AIRBASE then
       pendingLanders[unitID] = true
       return true, true
@@ -330,7 +336,7 @@ end
 
 function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, weaponDefID)
    -- when a plane is damaged, check to see if it needs repair, move to pendingLanders if so
-   Spring.Echo("damaged", unitID)
+   --Spring.Echo("damaged", unitID)
    if IsPlane(unitDefID) and not landingPlanes[unitID] and not landedPlanes[unitID] and NeedsRepair(unitID) then
       pendingLanders[unitID] = true
    end
@@ -350,14 +356,16 @@ function gadget:GameFrame(n)
    -- once done, move into landingPlanes
    if n%16==0 then
       for unitID, _ in pairs(pendingLanders) do
-         Spring.Echo("pending", unitID)
+         --Spring.Echo("pending", unitID)
          local h, mh = Spring.GetUnitHealth(unitID)
          if h and h<mh then -- don't check NeedsRepair because the user may have given an explicit order to repair
             local airbaseID, pieceNum = FindAirBase(unitID)
             if airbaseID then 
                -- reserve pad
                Spring.SetUnitLoadingTransport(unitID, airbaseID)    
+               airbases[airbaseID][pieceNum] = unitID
                landingPlanes[unitID] = {airbaseID, pieceNum}
+               SendToUnsynced("SetUnitLandGoal", unitID, airbaseID, pieceNum)
                pendingLanders[unitID] = nil
             end
          end
@@ -368,19 +376,21 @@ function gadget:GameFrame(n)
    -- once 'close enough' snap into pads, then move into landedPlanes
    if n%2==0 then
       for unitID, t in pairs(landingPlanes) do
-         Spring.Echo("landing", unitID)
+         --Spring.Echo("landing", unitID)
          local airbaseID, padPieceNum = t[1], t[2]
          local px, py, pz = Spring.GetUnitPiecePosDir(airbaseID, padPieceNum)
          local dist = GetDistanceToPoint(unitID, px,py,pz)
          if dist then
             -- check if we're close enough, attach if so
             local r = Spring.GetUnitRadius(unitID)
-            if dist < 0.75 * r * r or dist < 400 then -- probably needs tweaking
+            local airbaseDefID = Spring.GetUnitDefID(airbaseID)
+            if airbaseDefID and dist < airbaseDefIDs[airbaseDefID] then 
                -- land onto pad
                landingPlanes[unitID] = nil
+               SendToUnsynced("SetUnitLandGoal", unitID, nil)
                landedPlanes[unitID] = airbaseID
                AttachToPad(unitID, airbaseID, padPieceNum)
-               Spring.SetUnitLoadingTransport(unitID, nil)    
+               Spring.SetUnitLoadingTransport(unitID, nil)
             else
                -- fly towards pad (the pad may move!)
                Spring.SetUnitLandGoal(unitID, px, py, pz, r)
@@ -391,14 +401,14 @@ function gadget:GameFrame(n)
    
    -- heal landedPlanes
    -- release if fully healed
-   if n%16==0 then
+   if n%8==0 then
       local resourceFrames = (n-previousHealFrame)/32
       for unitID, airbaseID in pairs(landedPlanes) do
-         Spring.Echo("landed", unitID)
+         --Spring.Echo("landed", unitID)
          local h,mh = Spring.GetUnitHealth(unitID)
          if h and h==mh then
             -- fully healed
-            Spring.Echo("released", unitID)
+            --Spring.Echo("released", unitID)
             landedPlanes[unitID] = nil
             DetachFromPad(unitID)
             FlyAway(unitID, airbaseID)
@@ -415,7 +425,7 @@ function gadget:Initialize()
    -- fixme: when using new transport mechanics, this is the proper way to define airbases
    for unitDefID, unitDef in pairs(UnitDefs) do
       if unitDef.isAirBase then
-         airbaseDefIDs[unitDefID] = true
+         airbaseDefIDs[unitDefID] = airbaseDefIDs[unitDefID] or snapDist 
       end
    end
 
@@ -429,7 +439,7 @@ function gadget:Initialize()
       gadget:UnitCreated(unitID, unitDefID)
       
       local transporterID = Spring.GetUnitTransporter(unitID)
-      if transporterID then
+      if transporterID and IsPlane(unitDefID) then
          Spring.UnitDetach(unitID)
       end
    end
@@ -441,34 +451,73 @@ end
 else
 --------------------------------------------------------------------------------
 
+local landAtAirBaseCmdColor = {0.50, 1.00, 1.00, 0.8} -- same colour as repair
+local landAtAirBaseQueueColor = {0.50, 1.00, 1.00, 0.8}
+local lineWidth = 1.4
+
 function gadget:Initialize()
-   Spring.AssignMouseCursor("Land for repairs", "cursorrepair", false, false)
-   Spring.SetCustomCommandDrawData(CMD_LAND_AT_AIRBASE, "Land for repairs", {1,0.5,0,.8}, false)
+	gadgetHandler:AddSyncAction("SetUnitLandGoal", SetUnitLandGoal)
+
+   Spring.AssignMouseCursor("Land for repairs", "cursorrepair", false, false) --fixme
+   Spring.SetCustomCommandDrawData(CMD_LAND_AT_AIRBASE, "Land for repairs", landAtAirBaseQueueColor, false)
+end
+
+function gadget:Shutdown()
+   gadgetHandler:RemoveSyncAction("SetUnitLandGoal")
 end
 
 local spGetMouseState = Spring.GetMouseState
 local spTraceScreenRay = Spring.TraceScreenRay
 local spAreTeamsAllied = Spring.AreTeamsAllied
 local spGetUnitTeam = Spring.GetUnitTeam
-local spGetSelectedUnits = Spring.GetSelectedUnits
 local spGetUnitDefID = Spring.GetUnitDefID
-local spGetMyTeamID = Spring.GetMyTeamID
+local spGetUnitPiecePosDir = Spring.GetUnitPiecePosDir
+local spGetUnitPosition = Spring.GetUnitPosition
+local spGetUnitAllyTeam = Spring.GetUnitAllyTeam
+local spIsUnitSelected = Spring.IsUnitSelected
+local spGetSelectedUnits = Spring.GetSelectedUnits
+
+local glVertex 		= gl.Vertex
+local glPushAttrib	= gl.PushAttrib
+local glLineStipple	= gl.LineStipple
+local glDepthTest	= gl.DepthTest
+local glLineWidth	= gl.LineWidth
+local glColor		= gl.Color
+local glBeginEnd	= gl.BeginEnd
+local glPopAttrib	= gl.PopAttrib
+local GL_LINE_STRIP	= GL.LINE_STRIP
+local GL_LINES		= GL.LINES
+
+local myTeamID = Spring.GetMyTeamID()
+local myAllyTeamID = Spring.GetMyAllyTeamID()
+local amISpec = Spring.GetSpectatingState()
+
+local targetList = {}
+local selUnits = {}
+local nSelUnits = 0
+local strUnit = "unit"
+
+function gadget:PlayerChanged()
+   myTeamID = spGetMyTeamID()
+   myAllyTeamID = Spring.GetMyAllyTeamID()
+   amISpec = Spring.GetSpectatingState()
+end
 
 function gadget:DefaultCommand()
    local mx, my = spGetMouseState()
    local s, targetID = spTraceScreenRay(mx, my)
-   if s ~= "unit" then
+   if s ~= strUnit then
       return false
    end
 
-   if not spAreTeamsAllied(spGetMyTeamID(), spGetUnitTeam(targetID)) then
+   if not spAreTeamsAllied(myTeamID, spGetUnitTeam(targetID)) then
       return false
    end
 
-   if not UnitDefs[spGetUnitDefID(targetID)].isAirBase then
+   local targetDefID = spGetUnitDefID(targetID)
+   if not (UnitDefs[targetDefID].isAirBase or airbaseDefIDs[targetDefID]) then
       return false
    end
-
 
    local sUnits = spGetSelectedUnits()
    for i=1,#sUnits do
@@ -480,4 +529,44 @@ function gadget:DefaultCommand()
    return false
 end
 
+function SetUnitLandGoal(_, unitID, airbaseID, pieceNum) 
+   if airbaseID then
+      targetList[unitID] = {airbaseID, pieceNum}   
+   else
+      targetList[unitID] = nil
+   end
+end
+
+
+local function drawCurrentTarget(unitID, airbaseID, padPieceNum)
+	local _,_,_,x1,y1,z1 = spGetUnitPosition(unitID,true)
+   local x2,y2,z2 = spGetUnitPiecePosDir(airbaseID, padPieceNum)
+   if x1 and x2 then
+      glVertex(x1,y1,z1)
+      glVertex(x2,y2,z2)
+   end
+end
+
+function gadget:DrawWorld()
+	glPushAttrib(GL.LINE_BITS)
+	glLineStipple("any") -- use default line stipple pattern
+	glDepthTest(false)
+	glLineWidth(lineWidth)
+	for unitID, t in pairs(targetList) do
+		if spIsUnitSelected(unitID) then
+			if spectator or spGetUnitAllyTeam(unitID) == myAllyTeamID then
+            glColor(landAtAirBaseCmdColor)
+            glBeginEnd(GL_LINES, drawCurrentTarget, unitID, t[1], t[2])
+			end
+		end
+	end
+	glColor(1,1,1,1)
+	glLineStipple(false)
+	glPopAttrib()
+	drawTarget = {}
+end
+
+
+
+--------------------------------------------------------------------------------
 end

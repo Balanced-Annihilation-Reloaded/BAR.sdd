@@ -395,7 +395,7 @@ function gadget:GameFrame(n)
    -- heal landedPlanes
    -- release if fully healed
    if n%8==0 then
-      local resourceFrames = (n-previousHealFrame)/32
+      local resourceFrames = (n-previousHealFrame)/30
       for unitID, airbaseID in pairs(landedPlanes) do
          --Spring.Echo("landed", unitID)
          local h,mh = Spring.GetUnitHealth(unitID)

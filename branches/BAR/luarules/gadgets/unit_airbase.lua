@@ -61,13 +61,6 @@ local landAtSpecificAirbaseCmd = {
    tooltip = "Lands at a specific airbase",
 }
 
-function SetupLandAtAirbaseCommands()
-   -- register cursor
-   --Spring.AssignMouseCursor("settarget", "cursorsettarget", false)
-   --show the command in the queue
-   --Spring.SetCustomCommandDrawData(CMD_UNIT_SET_TARGET,"settarget",queueColour,true)
-end
-
 function InsertLandAtAirbaseCommands(unitID)
    Spring.InsertUnitCmdDesc(unitID, landAtSpecificAirbaseCmd)
    Spring.InsertUnitCmdDesc(unitID, landAtAnyAirbaseCmd)
@@ -458,8 +451,8 @@ local lineWidth = 1.4
 function gadget:Initialize()
 	gadgetHandler:AddSyncAction("SetUnitLandGoal", SetUnitLandGoal)
 
-   Spring.AssignMouseCursor("Land for repairs", "cursorrepair", false, false) --fixme
    Spring.SetCustomCommandDrawData(CMD_LAND_AT_AIRBASE, "Land for repairs", landAtAirBaseQueueColor, false)
+   Spring.AssignMouseCursor("Land for repairs", "cursorrepair", false, false) --fixme
 end
 
 function gadget:Shutdown()

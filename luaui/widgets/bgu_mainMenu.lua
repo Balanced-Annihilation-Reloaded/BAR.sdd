@@ -940,7 +940,8 @@ end
 -----------------------------
 
 function widget:GetConfigData()
-    Settings.widgetScrollPos = tabs['Interface']:GetChildByName('widgetList').scrollPosY
+    local widgetList = tabs['Interface']:GetChildByName('widgetList')
+    Settings.widgetScrollPos = widgetList and widgetList.scrollPosY or 0 --guard against removing ourself
     return Settings
 end
 

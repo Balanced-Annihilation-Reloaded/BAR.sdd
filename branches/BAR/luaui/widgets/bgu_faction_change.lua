@@ -126,13 +126,16 @@ function widget:DrawWorld()
             if spGetTeamRulesParam(teamID, 'startUnit') == armcomDefID then
                 glTexture('LuaUI/Images/arm.png')
                 glBeginEnd(GL_QUADS, QuadVerts, tsx, tsz, 80)
+                glTexture(false)
             else
                 glTexture('LuaUI/Images/core.png')
                 glBeginEnd(GL_QUADS, QuadVerts, tsx, tsz, 64)
+                glTexture(false)
             end
         end
     end
-    glTexture(false)
+    glColor(1,1,1,1)
+    glDepthTest(false)
 end
 
 function SetArm()

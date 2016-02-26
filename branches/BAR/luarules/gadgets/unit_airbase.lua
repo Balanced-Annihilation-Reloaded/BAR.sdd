@@ -279,8 +279,7 @@ function gadget:CommandFallback(unitID, unitDefID, teamID, cmdID, cmdParams, cmd
    -- handle our two custom commands
    
    if cmdID == CMD_LAND_AT_SPECIFIC_AIRBASE then
-      local h,mh = Spring.GetUnitHealth(unitID)
-      if landedPlanes[unitID] then --fixme: unit might have landed and taken off again without a slowupdate happening in between
+      if landedPlanes[unitID] then 
          -- this order is now completed
          return true, true
       end
@@ -330,7 +329,7 @@ function gadget:AllowCommand(unitID, unitDefID, unitTeam, cmdID, cmdParams, cmdO
    return true
 end
 
-function gadget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdOptions, cmdParams) --fixme: last two args order, engine bug
+function gadget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
    -- if a plane is given a command, assume the user wants that command to be actioned and release control
    -- (unless its one of our custom commands, etc)
    if not IsPlane(unitDefID) then return end

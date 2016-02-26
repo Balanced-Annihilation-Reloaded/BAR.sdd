@@ -107,7 +107,7 @@ unitTargets = {} -- data holds all unitID data
 --------------------------------------------------------------------------------
 -- Commands
 
-local tooltipText = 'Sets a top priority attack target, to be used if within range (not removed by move commands)'
+local tooltipText = 'Set Target: Sets a top priority attack target, to be used if within range'
 
 local unitSetTargetRectangleCmdDesc = { --currently not used
 	id		= CMD_UNIT_SET_TARGET_RECTANGLE,
@@ -135,7 +135,7 @@ local unitCancelTargetCmdDesc = {
 	type	= CMDTYPE.ICON,
 	name	= '\nCancel\nTarget\n',
 	action	= 'canceltarget',
-	tooltip	= 'Removes top priority target, if set',
+	tooltip	= 'Cancel Target: Removes top priority target, if set',
 	hidden	= false,
 }
 

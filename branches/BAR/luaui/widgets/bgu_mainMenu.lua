@@ -123,13 +123,6 @@ function SetCUSstate()
    end
 end
 
-function widget:GameFrame(n)
-    if n>=3 then -- because can't do it before...
-        SetCUSstate()
-        widgetHandler:RemoveWidgetCallIn("GameFrame", self)
-    end    
-end
-
 ----------------------------
 -- Toggles widgets, enabled/disabled when clicked
 --  does not account for failed initialization of widgets yet
@@ -505,13 +498,8 @@ local function applyDefaultSettings()
     
     for setting,value in pairs(checkboxes) do
         Settings[setting] = value
-        if setting=='luarules cus_toggle' then
-            if Spring.GetGameFrame()>3 then SetCUSstate() end -- before means it will be set automatically from GameFrame
-        else
-            local checkbox = EngineSettingsCheckBoxes:GetObjectByName(setting)
-            if checkbox.checked ~= (value==1) then checkbox:Toggle() end
-            spSendCommands(setting..' '..(value and 1 or 0))    
-        end
+        local checkbox = EngineSettingsCheckBoxes:GetObjectByName(setting)
+        if checkbox.checked ~= (value==1) then checkbox:Toggle() end
     end
 
 end
@@ -606,10 +594,6 @@ local checkBox = function(obj)
     local obj = obj
 
     local toggle = function(self)
-        if string.find(self.name, "luarules") and Spring.GetGameFrame()<=2 then
-            Spring.Echo("Cannot change this setting until the game has started (luarules)")
-            return 
-        end
         Settings[self.name] = not self.checked --self.checked hasn't changed yet!
         spSendCommands(self.name)
     end
@@ -969,6 +953,7 @@ function widget:Initialize()
     loadMainMenu()
     
     LoadSpringSettings()
+    SetCUSstate()
     
     createInfoTab()
     createInterfaceTab()

@@ -47,7 +47,8 @@ local previousHealFrame = 0
 local landAtAnyAirbaseCmd = {
    id      = CMD_LAND_AT_AIRBASE,
    name    = "Land At Any Airbase",
-   action  = "landatanyairbase",
+   action  = "landatairbase",
+   cursor  = 'landatairbase',
    type    = CMDTYPE.ICON,
    tooltip = "Airbase: Tells the unit to land at the nearest available airbase for repairs",
 }
@@ -55,7 +56,8 @@ local landAtAnyAirbaseCmd = {
 local landAtSpecificAirbaseCmd = {
    id      = CMD_LAND_AT_SPECIFIC_AIRBASE,
    name    = "Land At Specific Airbase",
-   action  = "landatairbase",
+   action  = "landatspecificairbase",
+   cursor  = 'landatspecificairbase',
    type    = CMDTYPE.ICON_UNIT,
    tooltip = "Airbase: Tells the unit to land at an airbase for repairs ",
 }
@@ -472,9 +474,9 @@ else
 local landAtAirBaseCmdColor = {0.50, 1.00, 1.00, 0.8} -- same colour as repair
 
 function gadget:Initialize()
-   Spring.SetCustomCommandDrawData(CMD_LAND_AT_SPECIFIC_AIRBASE, "Land for repairs", landAtAirBaseCmdColor, false)
-   Spring.SetCustomCommandDrawData(CMD_LAND_AT_AIRBASE, "Land for repairs", landAtAirBaseCmdColorr, false)
-   Spring.AssignMouseCursor("Land for repairs", "cursorrepair", false, false) --fixme
+   Spring.SetCustomCommandDrawData(CMD_LAND_AT_SPECIFIC_AIRBASE, "landatairbase", landAtAirBaseCmdColor, false)
+   Spring.SetCustomCommandDrawData(CMD_LAND_AT_AIRBASE, "landatspecificairbase", landAtAirBaseCmdColorr, false)
+   Spring.AssignMouseCursor("landatspecificairbase", "cursorrepair", false, false) 
 end
 
 local spGetMouseState = Spring.GetMouseState

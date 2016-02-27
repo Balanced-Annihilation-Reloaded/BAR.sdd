@@ -116,29 +116,6 @@ function widget:Initialize()
     gaiaAllyTeamID = atid
   end
 
-  -- flip and scale  (using x & y for gl.Rect())
-  xformList = gl.CreateList(function()
-    gl.LoadIdentity()
-    gl.Translate(0, 1, 0)
-    gl.Scale(1 / msx, -1 / msz, 1)
-  end)
-
-  -- cone list for world start positions
-  coneList = gl.CreateList(function()
-    local h = 100
-    local r = 8
-    local divs = 32
-    gl.BeginEnd(GL.TRIANGLE_FAN, function()
-      gl.Vertex( 0, h,  0)
-      for i = 0, divs do
-        local a = i * ((math.pi * 2) / divs)
-        local cosval = math.cos(a)
-        local sinval = math.sin(a)
-        gl.Vertex(r * sinval, 0, r * cosval)
-      end
-    end)
-  end)
-
   if (drawGroundQuads) then
     startboxDListStencil = gl.CreateList(function()
       local minY,maxY = Spring.GetGroundExtremes()
@@ -190,8 +167,6 @@ end
 
 
 function widget:Shutdown()
-  gl.DeleteList(xformList)
-  gl.DeleteList(coneList)
   gl.DeleteList(startboxDListStencil)
   gl.DeleteList(startboxDListColor)
 end
@@ -282,31 +257,8 @@ end
 function widget:DrawWorld()
   gl.Fog(false)
   
-  local time = Spring.DiffTimers(Spring.GetTimer(), startTimer)
-
   -- show the ally startboxes
   DrawStartboxes3dWithStencil()
-
-  -- show the team start positions
-  --[[
-  for _, teamID in ipairs(Spring.GetTeamList()) do
-    local _,leader = Spring.GetTeamInfo(teamID)
-    local _,_,spec = Spring.GetPlayerInfo(leader)
-    if ((not spec) and (teamID ~= gaiaTeamID)) then
-      local x, y, z = Spring.GetTeamStartPosition(teamID)
-      local isNewbie = (Spring.GetTeamRulesParam(teamID, 'isNewbie') == 1) -- =1 means the startpoint will be replaced and chosen by initial_spawn
-      if (x ~= nil and x > 0 and z > 0 and y > -500) and not isNewbie then
-        local color = GetTeamColor(teamID)
-        local alpha = 0.5 + math.abs(((time * 3) % 1) - 0.5)
-        gl.PushMatrix()
-        gl.Translate(x, y, z)
-        gl.Color(color[1], color[2], color[3], alpha)
-        gl.CallList(coneList)
-        gl.PopMatrix()
-      end
-    end
-  end
-  ]]
 
   gl.Fog(true)
 end

@@ -92,7 +92,7 @@ function widget:Initialize()
 
 
 
-    window = Chili.Panel:New{
+    window = Chili.Window:New{
         parent    = Chili.Screen0,
         right     = 395, 
         y         = 60,

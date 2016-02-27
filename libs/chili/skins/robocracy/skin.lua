@@ -133,13 +133,18 @@ skin.imagelistviewitem = {
 --]]
 
 skin.panel = {
-  TileImageBK = ":c:tech_dragwindow.png",
-  TileImageFG = ":cl:tech_dragwindow.png",
+  TileImageBK = ":c:tech_dragwindow_clear.png",
+  TileImageFG = ":cl:tech_dragwindow_clear.png",
   tiles = {62, 62, 62, 62},
   backgroundColor = {0.1, 0.1, 0.1, 0.7},
   borderColor = {1,1,1,0.8},
 
   DrawControl = DrawPanel,
+  
+  boxes = {
+    resize = {-21, -21, -10, -10},
+    drag = {0, 0, "100%", 10},
+  },
 }
 
 skin.progressbar = {
@@ -209,9 +214,6 @@ skin.treeview = {
 
 skin.window = {
   TileImage = ":c:tech_dragwindow.png",
-  --TileImage = ":cl:tech_window.png",
-  --TileImage = ":cl:window_tooltip.png",
-  --tiles = {25, 25, 25, 25}, --// tile widths: left,top,right,bottom
   tiles = {62, 62, 62, 62}, --// tile widths: left,top,right,bottom
   padding = {13, 13, 13, 13},
   hitpadding = {4, 4, 4, 4},

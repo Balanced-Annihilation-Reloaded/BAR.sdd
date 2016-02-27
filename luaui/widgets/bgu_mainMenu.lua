@@ -744,7 +744,7 @@ local function createInfoTab()
         }
     }
 
-    matchInfo = Chili.Panel:New{width = '100%', height = '100%', autosize = true, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0},
+    matchInfo = Chili.Window:New{width = '100%', height = '100%', autosize = true, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0},
         children = {
             InfoTextBox{y=1, name = "Map:", value = Game.mapName},
             InfoTextBox{y=2, value = "(" .. Game.mapX .. " x " .. Game.mapY .. ")", size = 15},
@@ -819,7 +819,7 @@ end
 
 local function createGraphicsTab()
     -- Graphics --
-    tabs.Graphics = Chili.Panel:New{x = 0, y = 20, bottom = 20, width = '100%', borderColor = {0,0,0,0}, backgroundColor = {0,0,0,0},
+    tabs.Graphics = Chili.Window:New{x = 0, y = 20, bottom = 20, width = '100%', borderColor = {0,0,0,0}, backgroundColor = {0,0,0,0},
         children = {
             Chili.ScrollPanel:New{name='Settings', x=0, y=0, width='100%', height='80%', children = {
                     addStack{x = 0, y = '3%', name = 'EngineSettingsMulti', children = {

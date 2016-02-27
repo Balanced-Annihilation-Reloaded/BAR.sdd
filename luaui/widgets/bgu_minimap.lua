@@ -48,13 +48,15 @@ local function MakeMinimapWindow(screenH)
     WG.MiniMap.height = h
     
     minimap = Chili.Panel:New{
-        name      = "Minimap", 
+        name      = "minimap", 
         parent    = Chili.Screen0,
         draggable = false,
         width     = w, 
         height    = h,
         x         = 0,
         bottom    = 0,
+        borderColor = {0,0,0,0.5},
+        borderColor2 = {0,0,0,0.5},
         padding   = {6,6,6,6},
     }
     
@@ -95,29 +97,28 @@ end
 function widget:DrawScreen() 
     
     if minimap.hidden then
-        -- a phantom map is still clickable if this is not present.
+        -- a phantom map is still click-able if this is not present.
         glConfigMiniMap(0,0,0,0)
         return 
-    else
-        local vsx,vsy = glGetViewSizes()
-        local cx,cy,cw,ch = Chili.unpack4(minimap.clientArea)
-        cx,cy = minimap:LocalToScreen(cx,cy)
-        glConfigMiniMap(cx,vsy-ch-cy,cw,ch)        
     end
+    
+    local vsx,vsy = glGetViewSizes()
+    local cx,cy,cw,ch = Chili.unpack4(minimap.clientArea)
+    cx,cy = minimap:LocalToScreen(cx,cy)
+    glConfigMiniMap(cx,vsy-ch-cy,cw,ch)        
 
-
-    glPushAttrib(GL_ALL_ATTRIB_BITS)
+    --[[glPushAttrib(GL_ALL_ATTRIB_BITS)
     glMatrixMode(GL_PROJECTION)
     glPushMatrix()
     glMatrixMode(GL_MODELVIEW)
-    glPushMatrix()
-    
+    glPushMatrix()]]
+
     glDrawMiniMap()
     
-    glMatrixMode(GL_PROJECTION)
+    --[[glMatrixMode(GL_PROJECTION)
     glPopMatrix()
     glMatrixMode(GL_MODELVIEW)
     glPopMatrix()
-    glPopAttrib()
+    glPopAttrib()]]
 end 
 

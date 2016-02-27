@@ -48,7 +48,7 @@ function widget:Initialize()
    
     Chili = WG.Chili
     
-    window = Chili.Panel:New{
+    window = Chili.Window:New{
         name = 'readybutton_window',
         parent = Chili.Screen0,
         right = 300,

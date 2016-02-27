@@ -201,7 +201,7 @@ end
 
 function iPanel()
     -- setup iPanel
-    iPanel = Chili.Panel:New{
+    iPanel = Chili.Window:New{
         parent    = Chili.Screen0,
         right     = 0,
         bottom    = 0,
@@ -1488,7 +1488,7 @@ function SetupStack()
 
     SetupAllyTeams()
 
-    window = Chili.Panel:New{
+    window = Chili.Window:New{
         parent    = Chili.Screen0,
         right     = 0,
         bottom    = 0,

@@ -63,7 +63,7 @@ local landAtSpecificAirbaseCmd = {
 }
 
 function InsertLandAtAirbaseCommands(unitID)
-   Spring.InsertUnitCmdDesc(unitID, landAtSpecificAirbaseCmd)
+   --Spring.InsertUnitCmdDesc(unitID, landAtSpecificAirbaseCmd)
    Spring.InsertUnitCmdDesc(unitID, landAtAnyAirbaseCmd)
 end
 

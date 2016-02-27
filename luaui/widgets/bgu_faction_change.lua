@@ -44,7 +44,7 @@ local corcomDefID = UnitDefNames.corcom.id
 local commanderDefID = spGetTeamRulesParam(myTeamID, 'startUnit')
 local amNewbie = (spGetTeamRulesParam(myTeamID, 'isNewbie') == 1)
 
-local factionChangeList
+local black = {0,0,0,1}
 
 --------------------------------------------------------------------------------
 -- Funcs
@@ -60,7 +60,7 @@ end
 --------------------------------------------------------------------------------
 -- Callins
 --------------------------------------------------------------------------------
-local Chili, window, arm_button, core_button
+local Chili, control, arm_button, core_button
 
 function widget:ViewResize(vsx,vsy)
     if not vsx then
@@ -68,7 +68,7 @@ function widget:ViewResize(vsx,vsy)
     end
     local minMapW = WG.MiniMap and WG.MiniMap.width or 300
 
-    window:SetPos(minMapW, vsy*0.9, vsy*0.25, vsy*0.1)
+    control:SetPos(minMapW, vsy*0.9, vsy*0.25, vsy*0.1)
     arm_button:SetPos(0,0,vsy*0.12)
     core_button:SetPos(vsy*0.13,0,vsy*0.12)
 end
@@ -87,7 +87,7 @@ function widget:Initialize()
     
     Chili = WG.Chili
     
-    window = Chili.Window:New{
+    control = Chili.Control:New{
         parent = Chili.Screen0,
         height = '100%',
         width = '100%',
@@ -97,18 +97,20 @@ function widget:Initialize()
     }
 
     arm_button = Chili.Button:New{
-        parent = window,
+        parent = control,
         height = '100%',
         onclick = {SetArm},
         caption = "",
+        backgroundColor = black,
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/ARM.png'} }
     }
 
     core_button = Chili.Button:New{
-        parent = window,
+        parent = control,
         height = '100%',
         onclick = {SetCore},
         caption = "",
+        backgroundColor = black,
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/CORE.png'} }
     }
     
@@ -157,7 +159,7 @@ end
 
 function widget:GameFrame(n)
     if n>0 then
-        window:Dispose()
+        control:Dispose()
         widgetHandler:RemoveWidget(self)
     end
 end

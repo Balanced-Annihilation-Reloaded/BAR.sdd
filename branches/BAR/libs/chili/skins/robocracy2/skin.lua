@@ -31,13 +31,6 @@ skin.general = {
   },
 }
 
-skin.panel = {
-	TileImageBK = ":cl:tech_window.png",
-	TileImageFG = ":cl:empty.png",
-	tiles = {62, 62, 62, 62},
-	backgroundColor = {1, 1, 1, 1},
-	DrawControl = DrawPanel,
-}
 
 skin.control = skin.general
 

@@ -357,7 +357,7 @@ local function AddToMenu()
         height   = '100%',
     }
     
-    optionsBox = Chili.Panel:New{
+    optionsBox = Chili.Window:New{
         parent  = container,
         x       = '30%',
         y       = '0%',
@@ -406,7 +406,7 @@ local function AddToMenu()
         caption = "",
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/CORE.png'} }
     }    
-    playerSidePanel = Chili.Panel:New{
+    playerSidePanel = Chili.Window:New{
         parent      = container,
         x           = '35%',
         y           = '70%',

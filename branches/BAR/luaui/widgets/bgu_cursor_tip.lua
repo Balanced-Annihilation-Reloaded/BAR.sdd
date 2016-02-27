@@ -35,7 +35,7 @@ function firstToUpper(str)
 end
 -----------------------------------
 local function initWindow()
-    tipWindow = Chili.Panel:New{
+    tipWindow = Chili.Window:New{
         parent    = screen,
         width     = 75,
         height    = 75,

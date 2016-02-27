@@ -186,7 +186,7 @@ local Hotkey = {
 -- Chili vars --
 local Chili
 local panH, panW, winW, winH, winX, winB, tabH, minMapH, minMapW
-local screen0, buildMenu, stateMenu, orderMenu, orderBG, menuTabs 
+local screen0, buildMenu, stateMenu, orderMenu, menuTabs 
 local menuTab = {}
 local grid = {}
 
@@ -301,7 +301,7 @@ local function resizeUI(scrH,i)
     buildMenu:SetPos(0, winY, winW, winH) -- better to keep consistent layout & not use small buttons when possible
     menuTabs:SetPos(winW,winY+20)
     orderMenu:SetPos(minMapW,ordY,ordH*21,ordH)
-    orderBG:SetPos(minMapW,ordY,ordH*#orderMenu.children,ordH)
+    -- orderBG:SetPos(minMapW,ordY,ordH*#orderMenu.children,ordH) --background for order menu, if it had one!
     stateMenu:SetPos(winY*1.05,0,200,winY)    
 end
 
@@ -450,11 +450,11 @@ local function addState(cmd)
 			margin    = {0,0,0,0},
             minheight = 25,
 			OnMouseUp = {cmdAction},
+			backgroundColor = black,
 			font      = {
 				color = paramColours[caption] or white,
 				size  = 16,
 			},
-			backgroundColor = black,
 		}
 		stateButtons[name] = button
 	else
@@ -477,11 +477,11 @@ local function addDummyState(cmd)
             margin    = {0,0,0,0},
             minheight = 25,
             OnMouseUp = {},
+			backgroundColor = black,
             font      = {
                 color = grey,
                 size  = 16,
             },
-            backgroundColor = black,
         }
         stateButtons[name] = button
     else
@@ -507,6 +507,7 @@ local function addOrderButton(cmd)
 			margin    = {0,0,0,0},
 			OnMouseUp = {cmdAction},
 			borderColor = {1,1,1,0.1},
+			backgroundColor = black,
 			Children  = {
 				Chili.Image:New{
 					parent  = button,
@@ -521,6 +522,12 @@ local function addOrderButton(cmd)
 							caption = Hotkey[name] or "",
 							right  = 2,
 							y = 1,
+                            font = {
+                                outline          = true,
+                                autoOutlineColor = true,
+                                outlineWidth     = 5,
+                                outlineWeight    = 3,
+                            }
 						},
 					}
 				}
@@ -563,6 +570,7 @@ local function addDummyOrder(cmd)
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
             OnMouseUp = {},
+			backgroundColor = black,
             Children  = {
                 Chili.Image:New{
                     parent  = button,
@@ -688,7 +696,6 @@ local function parseCmds()
     -- Add the orders/states in the wanted order, from L->R
     if #cmdList>0 then
         AddInSequence(orders, topOrders, addOrderButton, addDummyOrder)
-		orderBG:Resize(orderMenu.height*#orderMenu.children,orderMenu.height) --only resize once after adding them all
         AddInSequence(states, topStates, addState, addDummyState)
     end
     
@@ -890,7 +897,7 @@ local airFacs = { --unitDefs can't tell us this
     [UnitDefNames.corplat.id] = true,
 }
 
-local function createButton(name, unitDef)  
+local function creatUnitButton(name, unitDef)  
     -- make the button for this unit
     local hotkey = WG.buildingHotkeys and WG.buildingHotkeys[unitDef.id] or ''
     unitButtons[name] = Chili.Button:New{
@@ -904,6 +911,7 @@ local function createButton(name, unitDef)
         OnMouseUp = {cmdAction},
         OnMouseOver = {function() WG.sMenu.mouseOverDefID = unitDef.id end},
         OnMouseOut   = {function() WG.sMenu.mouseOverDefID = nil end}, 
+        backgroundColor = black,
         children  = {
             Chili.Image:New{
                 height = '100%', width = '100%',
@@ -990,7 +998,7 @@ function widget:Initialize()
     Chili = WG.Chili
     screen0 = Chili.Screen0
     
-    buildMenu = Chili.Panel:New{
+    buildMenu = Chili.Control:New{
         parent       = screen0,
         name         = 'buildMenu',
         active       = false,
@@ -1015,10 +1023,6 @@ function widget:Initialize()
         columns = 21,
         rows    = 1,
         padding = {0,0,0,0},
-    }
-    
-    orderBG = Chili.Panel:New{
-        parent = screen0,
     }
 
 
@@ -1050,7 +1054,7 @@ function widget:Initialize()
 
     -- Create a cache of buttons stored in the unit array
     for name, unitDef in pairs(UnitDefNames) do
-        createButton(name,unitDef)
+        creatUnitButton(name,unitDef)
     end
 
     -- offer the option to force select build menu buttons
@@ -1160,9 +1164,6 @@ local function InitialQueue()
     if WG.HideFacBar then WG.HideFacBar() end
     buildMenu.active = false
     orderMenu.active = false
-    if orderBG.visible then
-        orderBG:Hide()
-    end
     
     loadDummyPanels(startUnitDefID)
     updateRequired = ''
@@ -1185,12 +1186,6 @@ function widget:Update()
         -- every unit has states 
 
         loadPanels()
-
-        if not orderMenu.active and orderBG.visible then
-            orderBG:Hide()
-        elseif orderMenu.active and orderBG.hidden then
-            orderBG:Show()
-        end
         
         if not buildMenu.active and buildMenu.visible then
             buildMenu:Hide()

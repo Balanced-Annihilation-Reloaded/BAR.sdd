@@ -429,19 +429,21 @@ end
 --------------------------------------------------------------------------------
 
 function TurnOn()
+    --Spring.Echo("CUS on")
+    if isOn then return end
     isOn = true
     for i,uid in ipairs(Spring.GetAllUnits()) do
         if not select(3,Spring.GetUnitIsStunned(uid)) then --// inbuild?
             gadget:UnitFinished(uid,Spring.GetUnitDefID(uid),Spring.GetUnitTeam(uid))
         end
     end
-    --Spring.Echo("on")
 end
 
 function TurnOff()
+    --Spring.Echo("CUS off")
+    if isOn==false then return end
     isOn = false
     drawUnitList = {}
-    --Spring.Echo("off")
 end
 
 function Toggle()

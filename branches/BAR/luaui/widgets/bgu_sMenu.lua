@@ -32,6 +32,14 @@ local CMD_UNIT_SET_TARGET_RECTANGLE = 34925
 CMD.UNIT_SET_TARGET_RECTANGLE = CMD_UNIT_SET_TARGET_RECTANGLE
 CMD[CMD_UNIT_SET_TARGET_RECTANGLE] = 'UNIT_SET_TARGET_RECTANGLE'
 
+local CMD_LAND_AT_AIRBASE = 35430
+CMD.LAND_AT_AIRBASE = CMD_LAND_AT_AIRBASE
+CMD[CMD_LAND_AT_AIRBASE] = "LAND_AT_AIRBASE"
+
+local CMD_LAND_AT_SPECIFIC_AIRBASE = 35431
+CMD.LAND_AT_SPECIFIC_AIRBASE = CMD_LAND_AT_SPECIFIC_AIRBASE
+CMD[CMD_LAND_AT_SPECIFIC_AIRBASE] = "LAND_AT_SPECIFIC_AIRBASE"
+
 local CMD_PASSIVE = 34571
 CMD.PASSIVE = CMD_PASSIVE
 CMD[CMD_PASSIVE] = 'PASSIVE'
@@ -77,6 +85,8 @@ local orderColours = {
     [CMD.UNIT_CANCEL_TARGET] = {0.40, 0.00, 0.00, 1.0},
     [CMD.UPGRADEMEX]         = {0.60, 0.60, 0.60, 1.0},
     [CMD.AUTOMEX]            = {0.60, 0.60, 0.60, 1.0},
+    [CMD.LAND_AT_AIRBASE]    = {0.50, 1.00, 1.00, 1.0},
+    [CMD.LAND_AT_SPECIFIC_AIRBASE]= {0.50, 1.00, 1.00, 1.0},
 }
 WG.OrderColours = orderColours
 
@@ -671,7 +681,7 @@ local function parseCmds()
     
     -- Include stop command, if needed
     if orderMenu.active then
-        local stop_cmd = {name="Stop", action='stop', id=CMD.STOP, tooltip="Clears the command queue"}
+        local stop_cmd = {name="Stop", action='stop', id=CMD.STOP, tooltip="Stop: Clears the command queue"}
         orders[stop_cmd.action] = stop_cmd
     end
     

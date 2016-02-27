@@ -195,11 +195,11 @@ function GiveCat(_,line)
         local Condition = function (ud) return ud.isFactory end
         Accept[#Accept+1] = Condition
     end
-    if string.find(line, "building") then
+    if string.find(line, "immobile") then
         local Condition = function (ud) return ud.isImmobile end
         Accept[#Accept+1] = Condition
     end
-    if string.find(line, "unit") then
+    if string.find(line, "mobile") then
         local Condition = function (ud) return not ud.isImmobile end
         Accept[#Accept+1] = Condition
     end
@@ -218,11 +218,11 @@ function GiveCat(_,line)
             end
         end
         if give then
-            Spring.Echo(ud.name)
             giveUnits[#giveUnits+1] = ud.id
         end
     end
     
+    Spring.Echo("givecat found " .. #giveUnits .. " units")
     if #giveUnits==0 then return end
     
     local mx,my = Spring.GetMouseState()

@@ -16,6 +16,7 @@ local sformat = string.format
 
 
 local amISpec
+local amIFullView
 local myAllyTeamID
 
 local panels = {}
@@ -74,7 +75,7 @@ end
 function UpdateTeamPanel(tID, res)
     local aID = allyTeamOfTeam[tID]
     local currentLevel, storage, pull, income, expense, share, sent, received = spGetTeamResources(tID, res.name)
-
+    
     teamPanels[tID]:GetChildByName(res.name).children[1]:SetValue(currentLevel/storage)
     
     local a = allyTeamStats[aID][res.name]
@@ -85,8 +86,8 @@ function UpdateTeamPanel(tID, res)
 end
 
 function widget:GameFrame()
+    needUpdate = needUpdate or CheckMyState()
     if needUpdate then
-        CheckMyState()
         SetupPanels()
         needUpdate = false
     end
@@ -246,9 +247,10 @@ function ConstructPanels()
             for _,tID in ipairs(tList) do
                 if tID~=gaiaTeamID then
                     local notMe = amISpec or (tID~=myTeamID and aID==myAllyTeamID)
+                    local canView = notMe and not (amIFullView and aID~=myAllyTeamID)
                     notAlone = notAlone or notMe
                 
-                    if not allyTeamPanels[aID] then
+                    if canView and not allyTeamPanels[aID] then
                         -- insert ally team
                         allyTeamPanels[aID] = ConstructAllyTeamPanel(aID)
                         panels[#panels+1] = allyTeamPanels[aID]
@@ -259,7 +261,7 @@ function ConstructPanels()
                     end
                     
                     -- insert team         
-                    if notMe then
+                    if canView then
                         teamPanels[tID] = ConstructTeamPanel(tID)
                         panels[#panels+1] = teamPanels[tID]
                         allyTeamOfTeam[tID] = aID
@@ -297,9 +299,10 @@ end
 
 function CheckMyState()
     local changed = false
-    local spec = Spring.GetSpectatingState()
-    if spec~=amISpec then
+    local spec, notFullView, fullSelect = Spring.GetSpectatingState()
+    if spec~=amISpec or (not notFullView)~=amIFullView then
         changed = true
+        amIFullView = not notFullView 
         amISpec = spec
     end
     local aID = Spring.GetMyAllyTeamID()

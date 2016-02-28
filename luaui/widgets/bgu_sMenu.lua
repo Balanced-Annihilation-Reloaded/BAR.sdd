@@ -18,6 +18,14 @@ local imageDir = 'luaui/images/buildIcons/'
 -- menu categories --
 local catNames = {'ECONOMY', 'BATTLE', 'UNITS', 'FACTORY', 'LOADED'} -- order matters
 local loadedMenuCat = 5
+local buildMenuCat = 4
+
+local wantedCols = 3 --min
+local wantedRows = 4
+local maxCols = 5
+local maxRows = 6
+local wantedPaddingCols = 1 -- determines how the shape of the unit buttons vary as their number/grid changes, see resizeUI
+local wantedPaddingRows = 3
 
 -- custom command IDs for LuaUIs CMD table
 local CMD_UNIT_SET_TARGET = 34923
@@ -278,20 +286,15 @@ local function showGrid(num)
     end
 end
 
-local maxCols = 6
-local maxRows = 8
-
 local function resizeUI(scrH,i)
-    -- ideally, our grid wants =3 columns, in which case we give it space for 4 & use wider buttons-
-    -- if our grid wants >3 cols, we use smaller buttons & possibly widen
-    -- we always display space for the maximum number of rows
-    local nCols = (i) and math.max(4, math.min(maxCols, grid[i].columns)) or 4 
+    local nCols = (i) and math.max(wantedCols+wantedPaddingCols, math.min(maxCols, grid[i].columns)) or wantedCols
+    local nRows = (i) and math.max(wantedRows+wantedPaddingRows, math.min(maxRows, grid[i].rows)) or wantedRows
     
     local ordH = scrH * 0.05
     local ordY = scrH - ordH
     local winY = scrH * 0.2
     local winH = scrH * 0.5
-    local winW = winH * nCols / maxRows 
+    local winW = winH * nCols / nRows
     local aspect = Game.mapX/Game.mapY
     
     -- find out where minimap is
@@ -327,7 +330,7 @@ local function selectTab(self)
     end
 
     menuTabs.choice = choice
-    if choice ~= 4 or (choice==4 and (#grid[1].children>0 or #grid[1].children>0)) then
+    if choice ~= buildMenuCat or (choice==buildMenuCat and (#grid[1].children>0 or #grid[1].children>0)) then
         menuTabs.prevChoice = choice 
     end
 
@@ -386,8 +389,8 @@ local function addBuild(item)
     local disabled = item.disabled
     
     -- avoid adding too many
-    if #grid[category].children>53 then return end
-    if #grid[category].children==53 then
+    if #grid[category].children>maxCols*maxRows-1 then return end
+    if #grid[category].children==maxCols*maxRows-1 then
         Chili.Button:New{
             x = 5,
             parent = grid[category],
@@ -760,10 +763,11 @@ function SetGridDimensions()
         -- work out if we have too many buttons in a grid, request more columns if so
         local n = #grid[i].children 
         local neededColumns = math.floor((n-1)/maxRows)+1
-        local nCols = math.max(3, math.min(maxCols, neededColumns))
-        local nRows = math.floor((n-1)/nCols)+1
+        local neededRows = math.floor((n-1)/maxCols)+1
+        local nCols = math.max(wantedCols, math.min(maxCols, neededColumns))
+        local nRows = math.max(wantedRows, math.min(maxRows, neededRows))
         grid[i].columns = nCols
-        grid[i].rows = math.max(4, nRows)
+        grid[i].rows = nRows
     end
 end
 

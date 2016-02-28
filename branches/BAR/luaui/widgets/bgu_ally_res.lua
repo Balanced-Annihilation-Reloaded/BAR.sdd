@@ -25,6 +25,9 @@ local allyTeamPanels = {}
 local allyTeamStats = {}
 local allyTeamOfTeam = {}
 
+local nAllyTeams
+local nTeams
+
 local resources = { -- if the number of resources changes from 2, the display panels must be redesigned
     [1] = {name="metal", color={0.6, 0.6, 0.8, 0.8},},
     [2] = {name="energy", color={1.0, 1.0, 0.3, 0.6},},
@@ -34,7 +37,8 @@ local Chili, window, stack
 local height, width
 local settings = {}
 
-local panelHeight = 35
+local allyTeamPanelHeight = 18
+local teamPanelHeight = 20
 local panelWidth = 110
 
 local black = {0,0,0,1}
@@ -129,6 +133,7 @@ end
 -----------------------
 
 function ConstructAllyTeamPanel(aID)
+    local panelHeight = allyTeamPanelHeight
     local panel = Chili.Control:New{
         bordercolor = {0,0,0,0},
         width     = panelWidth,
@@ -140,22 +145,24 @@ function ConstructAllyTeamPanel(aID)
     if aID~=0 then
     local separator = Chili.Line:New{
         parent = panel,
-        x = panelWidth/6,
-        width   = 2*panelWidth/3,
+        x = 0,
+        width   = '100%',
+        maxheight = 3,
     }    
     end
 
-    local wPos = 9
+    local wPos = 13
     for _,res in pairs(resources) do
         Chili.TextBox:New{
             parent = panel,
             name = res.name,
             x = wPos,
-            y = panelHeight/2-2,
+            y = panelHeight/2-3,
             height = 14,
             width = (panelWidth-2*wPos)/2 + 1,
             text = "+0",
             font = {
+                size = 13,
                 color = res.color,
                 outline          = true,
                 autoOutlineColor = true,
@@ -171,6 +178,7 @@ function ConstructAllyTeamPanel(aID)
 end
 
 function ConstructTeamPanel(tID)
+    local panelHeight = teamPanelHeight
     local panel = Chili.Control:New{
         bordercolor = {0,0,0,0},
         width     = panelWidth,
@@ -182,14 +190,14 @@ function ConstructTeamPanel(tID)
     local hPadding = 3
 
     local r,g,b = Spring.GetTeamColor(tID)
-    local imageHeight = 15
+    local imageHeight = 10
     Chili.Image:New{
         parent = panel,
         name = 'factionpic',
         height = imageHeight,
         width = imageHeight,
         x=10,
-        y=panelHeight/2 - imageHeight + 2,
+        y=panelHeight/2 - imageHeight + 4,
         file = "LuaUI/Images/playerlist/default.png", --TODO
         color = {r,g,b},
     }
@@ -232,7 +240,9 @@ function ConstructPanels()
     teamPanels = {}
     allyTeamPanels = {}
     allyTeamStats = {}
-    allyTeamOfTeam = {}
+    allyTeamOfTeam = {}    
+    nAllyTeams = 0
+    nTeams = 0
     
     local notAlone = false
     local myTeamID = Spring.GetMyTeamID()
@@ -257,7 +267,8 @@ function ConstructPanels()
                         allyTeamStats[aID] = {}
                         for _,res in pairs(resources) do
                             allyTeamStats[aID][res.name] = {}
-                        end                    
+                        end
+                        nAllyTeams = nAllyTeams + 1
                     end
                     
                     -- insert team         
@@ -265,6 +276,7 @@ function ConstructPanels()
                         teamPanels[tID] = ConstructTeamPanel(tID)
                         panels[#panels+1] = teamPanels[tID]
                         allyTeamOfTeam[tID] = aID
+                        nTeams = nTeams + 1
                     end
                 end
             end
@@ -288,7 +300,7 @@ function SetupPanels()
     ConstructPanels()
 
     -- set the dimensions
-    height = #panels * panelHeight
+    height = nTeams * teamPanelHeight + nAllyTeams * allyTeamPanelHeight + 2    
     window:SetPos(_,_,width,height+5)
     
     --add the panels into the stack    
@@ -320,7 +332,7 @@ function widget:Initialize()
     window = Chili.Button:New{
         name      = 'ally res window',
         parent    = Chili.Screen0,
-        right     = 0,
+        right     = 400,
         y         = 175,
         height    = panelHeight,
         width     = panelWidth,

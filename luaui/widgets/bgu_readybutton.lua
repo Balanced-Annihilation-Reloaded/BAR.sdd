@@ -48,28 +48,19 @@ function widget:Initialize()
    
     Chili = WG.Chili
     
-    window = Chili.Window:New{
-        name = 'readybutton_window',
+    button_text = amSpec and offerSubText or readyText
+    
+    button = Chili.Button:New{
+        name = 'button',
         parent = Chili.Screen0,
         right = 300,
         y = 225,
         height = 50,
         width = amSpec and offerWidth or readyWidth,
-        padding     = {0,0,0,0},
-        itemPadding = {0,0,0,0},
-        itemMargin  = {0,0,0,0},
-    }
-
-    button_text = amSpec and offerSubText or readyText
-    
-    button = Chili.Button:New{
-        name = 'button',
-        parent = window,
-        height = 50,
-        minwidth = 100,
         width = amSpec and offerWidth or readyWidth,
         caption = button_text,   
         onclick = {ButtonPress},
+        backgroundColor = {0,0,0,1},
         font = {
             size = 22,
         }
@@ -113,13 +104,13 @@ function StartPointChosen()
 end
 
 function ReadyButtonState(n) -- called by game_initial_spawn
-    if n==0 and not window.hidden then
-        window:Hide()
-    elseif n==1 and window.hidden then
-        window:Show()
+    if n==0 and not button.hidden then
+        button:Hide()
+    elseif n==1 and button.hidden then
+        button:Show()
     elseif n==2 then
-        if not window.hidden then
-            window:Hide()
+        if not button.hidden then
+            button:Hide()
         end
         panel:Show()
         startTime = Spring.GetTimer()

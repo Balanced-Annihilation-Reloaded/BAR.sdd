@@ -194,7 +194,7 @@ local function createUI()
         parent   = screen0,
         right    = 0, 
         y        = 105, 
-        height   = 45, 
+        height   = 65, 
         width    = 200, 
         children = {battle_pic, battle_volume, music_pic, music_volume},
     }
@@ -229,7 +229,7 @@ local function createUI()
         right  = 4, 
         bottom = 0,
         hidden = true,
-        file   = 'luaUI/Images/playsong.png'
+        file   = 'luaUI/Images/playsong.png',
     }
     
     pauseIcon = Chili.Image:New{
@@ -286,7 +286,7 @@ local function createUI()
     musicControl = Chili.Control:New{
         parent   = screen0,
         right    = 0, 
-        y        = 75, 
+        y        = 95, 
         height   = 40, 
         width    = 300, 
         children = {skipButton, playButton, master_volume, vol_button},
@@ -297,8 +297,8 @@ local function createUI()
     window0    = Chili.Window:New{
         parent    = screen0,
         minHeight = 0, 
-        right     = 0, 
-        y         = 60, 
+        right     = 5, 
+        y         = 80, 
         height    = 20,
         width     = 200,
         padding   = {5,2,5,0},

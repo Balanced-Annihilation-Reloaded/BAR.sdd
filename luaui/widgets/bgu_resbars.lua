@@ -13,7 +13,7 @@ end
 -------------------------------------------
 -- Chili vars
 -------------------------------------------
-local Chili, window0
+local Chili, resourceWindow
 -------------------------------------------
 -- Local vars
 -------------------------------------------
@@ -36,8 +36,9 @@ local settings = {}
 -- Colors
 local green        = {0.2, 1.0, 0.2, 1.0}
 local red          = {1.0, 0.2, 0.2, 1.0}
-local greenOutline = {0.2, 1.0, 0.2, 0.2}
-local redOutline   = {1.0, 0.2, 0.2, 0.2}
+local black        = {0,0,0,1}
+--local greenOutline = {0.2, 1.0, 0.2, 0.2}
+--local redOutline   = {1.0, 0.2, 0.2, 0.2}
 local fullyLoaded = false -- to stop making "set X to Y" remarks when we are just reloading the config on init
 --
 
@@ -55,7 +56,7 @@ local function readable(num)
         s = '+'
     end
     num = math.abs(num)
-    if num < 10 then
+    if num <= 1000 then
         s = s .. round(num,1)
     elseif num >100000 then
         s = s .. round(num/1000,0)..'k'
@@ -69,15 +70,13 @@ end
 -------------------------------------------
 -- Main
 -------------------------------------------
-local function ToggleConversionPanel()
-    if conversionPanel.hidden then
-        conversionPanel:Show()
-        conversionButton2:Show()
-        window0:Hide()
+local function ToggleconversionWindow()
+    if conversionWindow.hidden then
+        conversionWindow:Show()
+        resourceWindow:Hide()
     else
-        conversionPanel:Hide()    
-        conversionButton2:Hide()
-        window0:Show()
+        conversionWindow:Hide()    
+        resourceWindow:Show()
     end
     return true
 end
@@ -85,14 +84,18 @@ end
 local function initWindow()
     local screen0 = Chili.Screen0
     
-    window0 = Chili.Window:New{
+    resourceWindow = Chili.Button:New{
         parent    = screen0,
         right     = 0, 
         y         = 0, 
         width     = 450, 
-        height    = 60, 
+        height    = 80, 
         minHeight = 20, 
         padding   = {0,0,0,0},
+        borderColor = black,
+        backgroundColor = black,
+        caption = "",
+        OnClick = {ToggleconversionWindow},
     }
 
 end
@@ -100,117 +103,97 @@ end
 local function makeBar(res, barX, barY)
     
     local control = Chili.Control:New{
-        parent    = window0,
+        parent    = resourceWindow,
         name      = res,
         x         = barX,
         y         = barY,
-        height    = 30,
+        height    = 32,
         minHeight = 20, 
-        width     = 420,
+        width     = 430,
         padding   = {0,0,0,0},
     }
     
     meter[res] = Chili.Progressbar:New{
         parent = control, 
-        x      = 110, 
+        x      = 122, 
         height = 20, 
         bottom = 5, 
-        right  = 0,
+        right  = 3,
     }
     
     Chili.Image:New{
         file   = image[res],
         height = 24,
         width  = 24,
-        x      = 86, 
+        right  = 308, 
         y      = 3, 
         parent = control
     }
     
     netLabel[res] = Chili.Label:New{
         caption = "",
-        right   = 380,
+        right   = 373,
         bottom  = 7,
         parent  = control,
         height  = 16,
-        font    = {size = 15}
+        font    = {
+            size = 15,
+            outline          = true,
+            autoOutlineColor = true,
+            outlineWidth     = 5,
+            outlineWeight    = 3,        
+        }
     }
     
     incomeLabel[res] = Chili.Label:New{
         caption  = '+0.0',
-        right    = 334, 
+        right    = 332, 
         y        = 0,
         parent   = control,
         align    = 'right',
         height   = 14,
         font     = {
-            size         = 13,
+            size         = 14,
             color        = green,
-            outlineColor = greenOutline,
+            outline          = true,
+            autoOutlineColor = true,
+            outlineWidth     = 5,
+            outlineWeight    = 3,
         },
     }
 
     expenseLabel[res] = Chili.Label:New{
         caption  = '-0.0',
-        right    = 334,
+        right    = 332,
         bottom   = 0,
         parent   = control,
         align    = 'right',
         height   = 14,
         font     = {
-            size         = 13,
+            size         = 14,
             color        = red,
-            outlineColor = redOutline,
+            outline          = true,
+            autoOutlineColor = true,
+            outlineWidth     = 5,
+            outlineWeight    = 3,
         },
     }
     
 end
 
-local function makeConversionPanel()
-    conversionButton = Chili.Button:New{ --for when window0 is shown
-        parent = window0,
-        x = 1,
-        bottom = 30-1,
-        height = 30,
-        width = 30,
-        onclick = {ToggleConversionPanel},
-        caption = "",
-        padding = {6,6,6,6},
-        children = {Chili.Image:New{width='100%',height='100%',file=conversionPic,keepAspect=false}},
-    }
-    
-    conversionPanel = Chili.Window:New{
+local function makeconversionWindow()
+    conversionWindow = Chili.Button:New{
         parent = Chili.Screen0,
-        height = 60,
-        width = 450-30,
+        height = 80,
+        width = 450,
         right = 0,
         y = 0,
-        padding = {10,10,10,10}
-    }    
-    
-    conversionButton2 = Chili.Button:New{ --for when conversionPanel is shown
-        parent = Chili.Screen0,
-        right = 420-1, -- 450-
-        y = 1,
-        height = 30,
-        width = 30,
-        onclick = {ToggleConversionPanel},
+        padding = {10,10,10,10},
+        borderColor = black,
+        backgroundColor = black,
         caption = "",
-        padding = {6,6,6,6},
-        children = {Chili.Image:New{width='100%',height='100%',file=conversionPic,keepAspect=false}},
-    }
-
-    conversionText = Chili.TextBox:New{
-        parent = conversionPanel,
-        x = 0,
-        y = 0,
-        height = 18,
-        width = 197,
-        text = " E to M conversion above this %",
-        font = {
-            size = 12,
-        }    
-    }
+        OnClick = {ToggleconversionWindow},
+    }    
     
     local function SetConversion(obj, value)
         local alterLevelFormat = string.char(137) .. '%i'
@@ -234,12 +217,24 @@ local function makeConversionPanel()
         end
     end
     
+    conversionText = Chili.TextBox:New{
+        parent = conversionWindow,
+        x = 10,
+        y = 10,
+        height = 18,
+        width = 212,
+        text = " E to M conversion above this %",
+        font = {
+            size = 12,
+        }    
+    }
+
     conversionSlider = Chili.Trackbar:New{
-        parent = conversionPanel,
+        parent = conversionWindow,
         height = 25,
-        width = 190,
-        x = 0,
-        y = 18,
+        width = 207,
+        x = 5,
+        y = 27,
         min = 0,
         max = 100,
         step = 5,
@@ -248,23 +243,23 @@ local function makeConversionPanel()
     }
     
     shareText = Chili.TextBox:New{
-        parent = conversionPanel,
-        x = 197,
-        y = 0,
+        parent = conversionWindow,
+        x = 228,
+        y = 10,
         height = 18,
-        width = 197,
-        text = " share (E,M) to allies above this %",
+        width = 190,
+        text = "share (E,M) to allies above this %",
         font = {
             size = 12,
         }    
     }
 
     EshareSlider = Chili.Trackbar:New{
-        parent = conversionPanel,
+        parent = conversionWindow,
         height = 25,
-        width = 95,
-        x = 197,
-        y = 18,
+        width = 97,
+        x = 222,
+        y = 27,
         min = 0,
         max = 100,
         step = 5,
@@ -273,11 +268,11 @@ local function makeConversionPanel()
     }
 
     MshareSlider = Chili.Trackbar:New{
-        parent = conversionPanel,
+        parent = conversionWindow,
         height = 25,
-        width = 95,
-        x = 197+95+5,
-        y = 18,
+        width = 97,
+        x = 222+97+5,
+        y = 27,
         min = 0,
         max = 100,
         step = 5,
@@ -285,8 +280,7 @@ local function makeConversionPanel()
         onchange = {SetMShare},
     }
 
-    conversionPanel:Hide()
-    conversionButton2:Hide()
+    conversionWindow:Hide()
 end
 
 -- Updates 
@@ -348,9 +342,9 @@ function widget:Initialize()
     Spring.SendCommands('resbar 0')
     Chili = WG.Chili
     initWindow()
-    makeBar('metal',25,0)
-    makeBar('energy',25,30)
-    makeConversionPanel()
+    makeBar('metal',10,9)
+    makeBar('energy',10,39)
+    makeconversionWindow()
     if Spring.GetGameFrame()>0 then
         SetBarColors()
     else
@@ -363,8 +357,8 @@ function widget:Initialize()
 end
 
 function widget:KeyPress()
-    if window0.hidden then
-        ToggleConversionPanel()
+    if resourceWindow.hidden then
+        ToggleconversionWindow()
     end
 end
 

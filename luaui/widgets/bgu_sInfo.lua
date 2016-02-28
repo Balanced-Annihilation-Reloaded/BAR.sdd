@@ -75,11 +75,11 @@ local function readable(num)
     local s = ""
     if num < 0 then
         s = '-'
-    elseif num < 0 then 
+    elseif num < 0 then
         s = '+'
     end
     num = math.abs(num)
-    if num < 10 then
+    if num <= 1000 then
         s = s .. round(num,1)
     elseif num >100000 then
         s = s .. round(num/1000,0)..'k'

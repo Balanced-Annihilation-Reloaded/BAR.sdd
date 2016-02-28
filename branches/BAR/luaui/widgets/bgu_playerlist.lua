@@ -32,6 +32,8 @@ local pingPic         = "LuaUI/Images/playerlist/ping.png"
 local cpuPic          = "LuaUI/Images/playerlist/cpu.png"
 local readyPic        = "LuaUI/Images/playerlist/blob_small.png"
 
+local black = {0,0,0,1}
+
 local needUpdate = true
 
 -- local player info
@@ -201,7 +203,7 @@ end
 
 function iPanel()
     -- setup iPanel
-    iPanel = Chili.Window:New{
+    iPanel = Chili.Panel:New{
         parent    = Chili.Screen0,
         right     = 0,
         bottom    = 0,
@@ -211,6 +213,7 @@ function iPanel()
         autosize  = false,
         children  = {},
         padding     = {0,0,0,0},
+        borderColor = {0,0,0,1},
         itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},
     }
@@ -236,6 +239,8 @@ function iPanel()
         caption = 'share units',
         right = 0,
         onclick = {ShareUnits},
+        borderColor = black,
+        backgroundColor = black,
     }
     shareres_button = Chili.Button:New{
         minheight = iPanelItemHeight,
@@ -243,6 +248,8 @@ function iPanel()
         caption = 'share res',
         right = 0,
         onclick = {ShareRes},
+        borderColor = black,
+        backgroundColor = black,
     }
     
     shareE_text = Chili.TextBox:New{
@@ -355,6 +362,8 @@ function iPanel()
         caption = 'watch camera',
         right = 0,
         onclick ={WatchCamera},
+        borderColor = black,
+        backgroundColor = black,
     }
 
     watchres = Chili.Button:New{
@@ -362,6 +371,8 @@ function iPanel()
         width = '100%',
         caption = 'watch res',
         onclick ={WatchRes},
+        borderColor = black,
+        backgroundColor = black,
     }
 
     watchlos = Chili.Button:New{
@@ -369,6 +380,8 @@ function iPanel()
         width = '100%',
         caption = 'watch los',
         onclick ={WatchLos},
+        borderColor = black,
+        backgroundColor = black,
     }
 
     ignore = Chili.Button:New{
@@ -376,6 +389,8 @@ function iPanel()
         width = '100%',
         caption = 'ignore',
         onclick ={Ignore},
+        borderColor = black,
+        backgroundColor = black,
     }
 
     slap = Chili.Button:New{
@@ -383,6 +398,8 @@ function iPanel()
         width = '100%',
         caption = 'slap',
         onclick ={Slap},
+        borderColor = black,
+        backgroundColor = black,
     }
 
     take = Chili.Button:New{
@@ -390,6 +407,8 @@ function iPanel()
         width = '100%',
         caption = 'take',
         onclick ={TakeTeam},
+        borderColor = black,
+        backgroundColor = black,
     }
     
 end
@@ -1488,7 +1507,7 @@ function SetupStack()
 
     SetupAllyTeams()
 
-    window = Chili.Window:New{
+    window = Chili.Button:New{
         parent    = Chili.Screen0,
         right     = 0,
         bottom    = 0,
@@ -1496,6 +1515,10 @@ function SetupStack()
         minHeight = 50,
         minWidth  = 1,
         autosize  = true,
+        borderColor = black,
+        backgroundColor = black,
+        focusColor = black,
+        caption = "",
         children  = {},
     }
 

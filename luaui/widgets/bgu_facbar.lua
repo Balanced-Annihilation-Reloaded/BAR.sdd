@@ -20,7 +20,7 @@ WhiteStr   = "\255\255\255\255"
 GreyStr    = "\255\210\210\210"
 GreenStr   = "\255\092\255\092"
 
-local buttonColor = {0,0,0,0.5}
+local buttonColor = {0,0,0,1}
 local queueColor = {0.0,0.4,0.4,0.9}
 local progColor = {0,0.9,0.2,0.7}
 

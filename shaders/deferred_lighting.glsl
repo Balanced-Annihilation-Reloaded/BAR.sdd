@@ -95,11 +95,14 @@ void main(void)
 
 	vec3 viewDirection = normalize(vec3(eyePos - mappos4.xyz));
 	
-	if (dot(map_normals4.xyz, light_direction) > 0.0) // light source on the wrong side?
+	if (dot(map_normals4.xyz, light_direction) > 0.02) // light source on the wrong side?
 	{
-		specularHighlight = specularHighlight * (0.5* pow(max(0.0, dot(reflect( -light_direction, map_normals4.xyz), viewDirection)), 8));
+		vec3 reflection = reflect(-1.0 * light_direction, map_normals4.xyz);
+		float highlight = pow(max(0.0, dot( reflection, viewDirection)), 8);
+		specularHighlight = specularHighlight * (0.5* highlight);
+	}else{
+		specularHighlight = 0.0;
 	}
-	
 	//OK, our blending func is the following: Rr=Lr*Dr+1*Dr
 	float lightalpha = cosphi * attentuation + attentuation * specularHighlight;
 	//dont light underwater:
@@ -107,8 +110,7 @@ void main(void)
 	gl_FragColor = vec4(lightcolor.rgb * lightalpha * model_lighting_multiplier, 1.0);
 	#ifdef DEBUG
 		gl_FragColor = vec4(map_normals4.xyz, 1); //world normals debugging
-		gl_FragColor = vec4(fract(modelpos4.z * 0.01),
-							sign(mappos4.z - modelpos4.z), 0, 1); //world pos debugging, very useful
+		gl_FragColor = vec4(fract(modelpos4.z * 0.01),sign(mappos4.z - modelpos4.z), 0, 1); //world pos debugging, very useful
 		if (length(lightcolor.rgb * lightalpha * model_lighting_multiplier) < (1.0 / 256.0)){ //shows light boudaries
 			gl_FragColor=vec4(vec3(0.5, 0.0, 0.5), 0.0);
 		}

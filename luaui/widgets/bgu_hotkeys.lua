@@ -6,7 +6,7 @@ function widget:GetInfo()
         author = "Bluestone", --incorporates Context Build widget by BD and Dizekat
         date = "30 July 2009",
         license = "GNU LGPL, v2.1 or later",
-        layer = 0,
+        layer = -500,
         enabled = true
     }
 end

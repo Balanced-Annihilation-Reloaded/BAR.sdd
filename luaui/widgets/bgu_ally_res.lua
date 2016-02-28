@@ -238,7 +238,7 @@ function ConstructPanels()
     allyTeamStats = {}
     allyTeamOfTeam = {}
     
-    local notMe = false
+    local notAlone = false
     local myTeamID = Spring.GetMyTeamID()
     local myAllyTeamID = Spring.GetMyAllyTeamID()    
     local gaiaTeamID = Spring.GetGaiaTeamID()
@@ -250,7 +250,8 @@ function ConstructPanels()
             local tList = Spring.GetTeamList(aID)
             for _,tID in ipairs(tList) do
                 if tID~=gaiaTeamID then
-                    if amISpec or (tID~=myTeamID and aID==myAllyTeamID) then notMe = true end
+                    local notMe = amISpec or (tID~=myTeamID and aID==myAllyTeamID)
+                    notAlone = notAlone or notMe
                 
                     if not allyTeamPanels[aID] then
                         -- insert ally team
@@ -263,15 +264,17 @@ function ConstructPanels()
                     end
                     
                     -- insert team         
-                    teamPanels[tID] = ConstructTeamPanel(tID)
-                    panels[#panels+1] = teamPanels[tID]
-                    allyTeamOfTeam[tID] = aID
+                    if notMe then
+                        teamPanels[tID] = ConstructTeamPanel(tID)
+                        panels[#panels+1] = teamPanels[tID]
+                        allyTeamOfTeam[tID] = aID
+                    end
                 end
             end
         end
     end
     
-    if not notMe then -- don't run if we are alone!
+    if not notAlone then -- don't run if we are alone!
         if window.visible then window:Hide() end
     else
         if window.hidden then window:Show() end 
@@ -319,12 +322,11 @@ function widget:Initialize()
     window = Chili.Button:New{
         name      = 'ally res window',
         parent    = Chili.Screen0,
-        right     = panelWidth+50,
-        bottom    = 400,
+        right     = 0,
+        y         = 175,
         height    = panelHeight,
         width     = panelWidth,
         padding   = {0,0,0,0},
-        tweakdraggable = true,
         borderColor = black,
         backgroundColor = black,
         focusColor = black,
@@ -347,7 +349,7 @@ function widget:Initialize()
     SetupPanels()
 
     if settings.x and settings.y then
-        window:SetPos(settings.x,settings.y)
+        --window:SetPos(settings.x,settings.y) -- disabled, currently not moveable
     end    
 end
 
@@ -355,6 +357,7 @@ function widget:PlayerChanged()
     needUpdate = true
 end
 
+--[[
 function widget:GetConfigData()
     local data = {}
     if window then
@@ -367,4 +370,4 @@ end
 function widget:SetConfigData(data)
     settings = data
 end
-
+]]

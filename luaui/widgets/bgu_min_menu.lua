@@ -25,9 +25,10 @@ local function setGameTime(n)
     -- Possibly add option to include time paused?
     -- local gameSeconds = Spring.GetGameSeconds()
     local gameSeconds = math.floor(n / 30)
-    local seconds = gameSeconds % 60
-    local minutes = (gameSeconds - seconds) / 60
-    timeLbl:SetCaption('\255\255\127\1 '.. round(minutes) .. ":" .. round(seconds))
+    local seconds = round(gameSeconds % 60)
+    if string.len(seconds)==1 then seconds = "0" .. seconds end
+    local minutes = round((gameSeconds - seconds) / 60)
+    timeLbl:SetCaption('\255\255\127\1 '.. minutes .. ":" .. seconds)
 end
 
 local function setRealTime(rTime)

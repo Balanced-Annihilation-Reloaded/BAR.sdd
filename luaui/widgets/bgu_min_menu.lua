@@ -15,9 +15,10 @@ local spGetFPS = Spring.GetFPS
 local Chili, Menu
 local clockType = "ingame" -- or "system", meaning ingame time or system time
 local oTime,rTime
+local timeFormatStr = '%I:%M:%S'
 
-local function dbl(s)
-    if s<9 then return "0" .. s else return s end
+local function round(num, idp)
+  return string.format("%." .. (idp or 0) .. "f", num)
 end
 
 local function setGameTime(n)
@@ -26,13 +27,13 @@ local function setGameTime(n)
     local gameSeconds = math.floor(n / 30)
     local seconds = gameSeconds % 60
     local minutes = (gameSeconds - seconds) / 60
-    timeLbl:SetCaption('\255\255\127\0 '.. dbl(minutes) .. ":" .. dbl(seconds))
+    timeLbl:SetCaption('\255\255\127\1 '.. round(minutes) .. ":" .. round(seconds))
 end
 
 local function setRealTime(rTime)
     oTime = rTime
     if string.find(rTime,'0')==1 then rTime = string.sub(rTime,2) end
-    timeLbl:SetCaption('\255\255\127\0'..string.lower(rTime))
+    timeLbl:SetCaption('\255\255\127\1'..string.lower(rTime))
 end
 
 local function loadOptions()
@@ -53,7 +54,7 @@ local function loadOptions()
                             setGameTime(Spring.GetGameFrame())
                             clockType = 'ingame'
                         else
-                            setRealTime(os.date('%I:%M %p'))
+                            setRealTime(os.date(timeFormatStr))
                             clockType = 'system'
                         end
                         Menu.Save{["clockType"]=clockType}
@@ -125,7 +126,7 @@ function widget:Update()
     fpsLbl:SetCaption(fps)
     
     if clockType=="system" then
-        local rTime = os.date('%I:%M %p')
+        local rTime = os.date(timeFormatStr)
         if oTime ~= rTime then setRealTime(rTime) end
     end
 

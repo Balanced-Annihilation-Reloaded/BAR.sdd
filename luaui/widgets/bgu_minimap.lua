@@ -105,7 +105,7 @@ function widget:DrawScreen()
     local vsx,vsy = glGetViewSizes()
     local cx,cy,cw,ch = Chili.unpack4(minimap.clientArea)
     cx,cy = minimap:LocalToScreen(cx,cy)
-    glConfigMiniMap(cx,vsy-ch-cy+1,cw+1,ch)        
+    glConfigMiniMap(cx,vsy-ch-cy,cw+1,ch+1)        
 
     --[[glPushAttrib(GL_ALL_ATTRIB_BITS)
     glMatrixMode(GL_PROJECTION)

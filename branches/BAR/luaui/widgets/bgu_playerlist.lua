@@ -1444,6 +1444,7 @@ function HalfSeparator()
     local separator = Chili.Line:New{
         width   = 100,
         x       = offset.max - offset.name - width.name + 100,
+        maxheight = 2,
     }
     return separator
 end

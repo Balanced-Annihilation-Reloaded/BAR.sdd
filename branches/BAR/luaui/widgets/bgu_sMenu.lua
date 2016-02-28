@@ -202,6 +202,9 @@ local unitButtons = {} -- all cached
 local orderButtons = {} -- created on demand
 local stateButtons = {} -- created on demand
 
+local darkenedMenuTabColor = {1,1,1,1}
+local menuTabColor = {1,1,1,1}
+
 ----------------
 
 -- Spring Functions --
@@ -315,7 +318,7 @@ local function selectTab(self)
     
     local highLight = menuTab[menuTabs.choice] 
     if highLight then
-        highLight.font.color = {.5,.5,.5,1}
+        highLight.font.color = darkenedMenuTabColor
         highLight.font.size  = 14
         highLight.width = 100
         highLight:Invalidate()
@@ -323,7 +326,7 @@ local function selectTab(self)
     
     local old = menuTab[choice] 
     if old then
-        old.font.color = {1,1,1,1}
+        old.font.color = menuTabColor
         old.width = 120
         old.font.size  = 18
         old:Invalidate()
@@ -816,7 +819,12 @@ local function makeMenuTabs()
                 backgroundColor = black,
                 OnMouseWheel = {scrollMenus},
                 font    = {
-                    color = {.5, .5, .5, 1}
+                    size             = 14,
+                    color            = darkenedMenuTabColor,
+                    outline          = true,
+                    autoOutlineColor = true,
+                    outlineWidth     = 4,
+                    outlineWeight    = 5,        
                 },
             }
         end

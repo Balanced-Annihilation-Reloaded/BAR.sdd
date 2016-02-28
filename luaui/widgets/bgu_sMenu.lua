@@ -760,12 +760,23 @@ end
 
 function SetGridDimensions()
     for i=1,#catNames do
-        -- work out if we have too many buttons in a grid, request more columns if so
+        -- work out what size grid to use for build menu
+        -- start from wanted; then add a new row, then new col, in turn, if needed
         local n = #grid[i].children 
-        local neededColumns = math.floor((n-1)/maxRows)+1
-        local neededRows = math.floor((n-1)/maxCols)+1
-        local nCols = math.max(wantedCols, math.min(maxCols, neededColumns))
-        local nRows = math.max(wantedRows, math.min(maxRows, neededRows))
+        local nCols = wantedCols
+        local nRows = wantedRows
+        local included = nRows * nCols
+        if (n>maxRows*maxCols) then
+            Spring.Echo("sMenu error: can't fit icons into build menu")
+        end
+        while (true) do
+            nRows =  math.min(nRows + 1, maxRows)
+            included = nRows * nCols
+            if included >= n then break end
+            nCols = math.min(nCols + 1, maxCols)
+            included = nRows * nCols
+            if included >= n then break end            
+        end
         grid[i].columns = nCols
         grid[i].rows = nRows
     end

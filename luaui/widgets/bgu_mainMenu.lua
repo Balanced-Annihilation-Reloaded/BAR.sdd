@@ -684,7 +684,7 @@ local function createInfoTab()
     local endModes = { com = "Kill all enemy Commanders", killall = "Kill all enemy units", neverend = "Never end"}
     local gameEndMode = endModes[Spring.GetModOptions().deathmode]
     
-    local changeLog, matchInfo, introText, hotkeyInfo
+    local changeLog, introText, hotkeyInfo
     
     local function ParseChangelog(changelog)
         -- parse the changelog and add a small amount of colour
@@ -744,20 +744,6 @@ local function createInfoTab()
         }
     }
 
-    matchInfo = Chili.Window:New{width = '100%', height = '100%', autosize = true, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0},
-        children = {
-            InfoTextBox{y=1, name = "Map:", value = Game.mapName},
-            InfoTextBox{y=2, value = "(" .. Game.mapX .. " x " .. Game.mapY .. ")", size = 15},
-            InfoTextBox{y=3, name = "Wind:", value = math.floor(Game.windMin) .. " - " .. math.floor(Game.windMax)},
-            InfoTextBox{y=4, name = "Tidal:", value = math.floor(Game.tidal)},
-            InfoTextBox{y=5, name = "Acidity:", value = math.floor(Game.waterDamage)},
-            InfoTextBox{y=6, name = "Gravity:", value = math.floor(Game.gravity)},
-            Chili.Line:New{width='100%',y=7*25+5},-------------------------------
-            InfoTextBox{y=8, name = "Game End:", value = gameEndMode, size = 15},
-            InfoLineBox(9.5, (armageddonTime>0) and "Armageddon at " .. math.floor(armageddonTime/60) .. " minutes" or ""),
-        }
-    }
-
     -- Info --
     tabs.General = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
         children = {
@@ -767,7 +753,6 @@ local function createInfoTab()
             Chili.Button:New{caption = 'Introduction', iPanel = introText, height = '7%', width = '28%', right = '1%', y = '7%', OnMouseUp = {SetInfoChild}, name="Introduction Button"},
             Chili.Button:New{caption = 'Hotkey Info', iPanel = hotkeyInfo, height = '7%', width = '28%', right = '1%', y = '16%', OnMouseUp = {SetInfoChild}},
 
-            Chili.Button:New{caption = 'Match Info', iPanel = matchInfo, height = '7%', width = '28%', right = '1%', y = '28%', OnMouseUp = {SetInfoChild}},
             Chili.Button:New{caption = 'Changelog', iPanel = changeLog, height = '7%', width = '28%', right = '1%', y = '37%', OnMouseUp = {SetInfoChild}},
             
             Chili.Button:New{caption = 'Resign and Spectate', name = "ResignButton", height = '9%', width = '28%', right = '1%', y = '72%', OnMouseUp = {ResignMe}},
@@ -776,11 +761,7 @@ local function createInfoTab()
         }
     }
 
-    if amNewbie then
-        SetInfoChild{iPanel = introText, caption = 'Introduction'}
-    else
-        SetInfoChild{iPanel = matchInfo, caption = 'Match Info'}
-    end
+    SetInfoChild{iPanel = introText, caption = 'Introduction'}
 end
 
 local function createInterfaceTab()

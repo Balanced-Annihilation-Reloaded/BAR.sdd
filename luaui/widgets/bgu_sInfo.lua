@@ -727,15 +727,19 @@ local function speedModCol(x)
     return schar(255, r*255, g*255, b*255)
 end
 
-local function updateGroundInfo(x,y,z)
-    if not x then
-        local mx, my    = spGetMouseState()
-        local focus,map = spTraceScreenRay(mx,my,true)
-        if focus~="ground" then return end 
-        x,y,z = map[1],map[2],map[3]
-    end
-    
+local function updateGroundInfo()
     if groundWindow.hidden then groundWindow:Show() end
+
+    local mx, my    = spGetMouseState()
+    local focus,map = spTraceScreenRay(mx,my,true)
+    if focus~="ground" then
+        -- todo: general map info here
+        groundText:SetText("")
+        groundText2:SetText("")
+        return
+    end 
+    
+    x,y,z = map[1],map[2],map[3]    
     local px,pz = math.floor(x),math.floor(z)
     local py = math.floor(spGetGroundHeight(px,pz))
     groundText:SetText(
@@ -818,8 +822,6 @@ local function ChooseCurTip()
     local selEnemyUnit = false
     for _,uID in ipairs(curTip.selUnits) do
         local tID = Spring.GetUnitTeam(uID)
-		--[f=0005045] [bawidgets.lua] Error: Error in CommandsChanged(): [string "LuaUI/Widgets/bgu_sinfo.lua"]:737: bad argument #-2 to 'AreTeamsAllied' (number expected, got nil) 
-		
         if ((tID == nil ) or (not Spring.AreTeamsAllied(tID, myTeamID))) then
             selEnemyUnit = true
             break
@@ -989,8 +991,8 @@ function widget:Update()
     local newMouseOverUnitID
     if focus=="unit" then
         newMouseOverUnitID = n
-    elseif updateGround and focus=="ground" and spDiffTimers(timer, groundTimer)>0.05 then
-        updateGroundInfo(n[1],n[2],n[3])
+    elseif updateGround and spDiffTimers(timer, groundTimer)>0.05 then
+        updateGroundInfo()
         groundTimer = timer
         newMouseOverUnitID  = nil
     else

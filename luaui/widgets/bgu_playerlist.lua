@@ -137,9 +137,6 @@ end
 
 function WatchRes()
     local _,notFullView,fullSelect = Spring.GetSpectatingState()
-    if fullView then
-        Spring.SendCommands("specfullview")    
-    end
     Spring.SendCommands("specteam "..iPaneltID)
 
     iPanel:Hide()

@@ -927,6 +927,12 @@ local function creatUnitButton(name, unitDef)
                         caption = hotkey,
                         right   = 5,
                         bottom = 5,
+                        font = {
+                            outline          = true,
+                            autoOutlineColor = true,
+                            outlineWidth     = 5,
+                            outlineWeight    = 3,
+                        }
                     },
                     Chili.Image:New{
                         color  = teamColor,

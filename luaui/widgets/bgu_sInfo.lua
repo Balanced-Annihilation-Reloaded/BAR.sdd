@@ -107,7 +107,7 @@ local function refineSelection(obj)
     Spring.SelectUnitArray(obj.unitIDs)
 end
 
-local function addUnitGroup(name,texture,overlay,unitIDs)
+local function addUnitGroup(name,texture,overlay,unitIDs, teamColour)
     local count = #unitIDs
     if count == 1 then count = '' end
     
@@ -128,9 +128,6 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
         color   = {0.5,1,0,1},
     }
     
-    local unitTeamID = unitIDs[1] and Spring.GetUnitTeam(unitIDs[1]) or Spring.GetMyTeamID() -- assume we are not cheating -> we cannot select units of multiple teams
-    local r,g,b = Spring.GetTeamColor(unitTeamID)
-    local teamColor = {r,g,b} 
     local unitIcon = Chili.Image:New{
         file     = texture,
         height   = '100%',
@@ -160,12 +157,32 @@ local function addUnitGroup(name,texture,overlay,unitIDs)
 end
 
 local function showUnitGrid()
-    for unitDefID, unitIDs in pairs(curTip.sortedSelUnits) do
+    local selUnits = curTip.selUnits 
+    local sortedSelUnits = curTip.sortedSelUnits 
+    local teamColor = {r,g,b} 
+
+    -- choose colour by majority vote
+    local unitTeams = {}
+    for _,unitID in ipairs(selUnits) do
+        local teamID = Spring.GetUnitTeam(unitID)
+        unitTeams[teamID] = (unitTeams[teamID] or 0) + 1
+    end
+    local mostTeam, mostCount = nil,0
+    for teamID,n in pairs(unitTeams) do
+        if n>mostCount then
+            mostTeam = teamID
+            mostCount = n        
+        end
+    end
+    local r,g,b = Spring.GetTeamColor(mostTeam)
+    local teamColor = {r,g,b}
+    
+    for unitDefID, unitIDs in pairs(sortedSelUnits) do
         if unitDefID ~= 'n' then 
             local name    = UnitDefs[unitDefID].name
             local texture = '#'..unitDefID
             local overlay = imageDir..'Overlays/' .. name .. '.dds'
-            addUnitGroup(name,texture,overlay,unitIDs, unitDefID)
+            addUnitGroup(name, texture, overlay, unitIDs, unitDefID, teamColor)
         end
     end
 
@@ -259,8 +276,9 @@ local function showUnitInfo()
     local defID = curTip.selDefID
     local selUnits = curTip.selUnits 
     local n = #selUnits
-    local unitTeamID = selUnits[1] and Spring.GetUnitTeam(selUnits[1]) or Spring.GetMyTeamID()
-
+    local unitTeamID = selUnits[1] and Spring.GetUnitTeam(selUnits[1]) or Spring.GetMyTeamID() --colour used 
+    local multipleTeams = "" 
+    
     local description = UnitDefs[defID].tooltip or ''
     local name        = UnitDefs[defID].name
     local texture     = '#'..defID
@@ -284,10 +302,12 @@ local function showUnitInfo()
         Muse = Muse + (mu or 0)
         Emake = Emake + (em or 0)
         Euse = Euse + (eu or 0)
+        if (Spring.GetUnitTeam(uID)~=unitTeam) then multipleTeams = ", multiple teams" end
     end
 
     local numText = ""
-    if n>1 then numText = "\n " .. blue .. "(x" .. tostring(n) .. ")" end
+    if n>1 then numText = "\n " .. blue .. "(x" .. tostring(n) .. multipleTeams .. ")" end
+    if description ~= "" then description = "\n" .. description end
     
     unitPicture = Chili.Image:New{
         parent   = unitWindow,
@@ -309,7 +329,7 @@ local function showUnitInfo()
         parent = unitPictureOverlay,
         x      = 5,
         y      = 5,
-        text   = humanName .. '\n' .. description .. numText,
+        text   = humanName .. description .. numText,
     }
     
     unitHealthText = Chili.TextBox:New{

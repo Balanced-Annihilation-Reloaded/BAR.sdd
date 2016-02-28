@@ -739,8 +739,12 @@ local generalInfo = "" ..
     "Game End:\n" .. 
     " " .. green .. gameEndMode  
 local armageddonTime = tonumber((Spring.GetModOptions() or {}).mo_armageddontime) or 0
-if armageddonTime and tonumber(armageddonTime>0) then
+if armageddonTime and tonumber(armageddonTime)>0 then
     generalInfo = generalInfo .. "\n " .. red .. "Armageddon at " .. armageddonTime .. ":00"
+end
+local preventCombombs = (tonumber(Spring.GetModOptions().mo_preventcombomb) or 0) ~= 0
+if preventCombombs then
+    generalInfo = generalInfo .. "\n" .. red .. " No combombs"
 end
 
 local function updateGroundInfo()

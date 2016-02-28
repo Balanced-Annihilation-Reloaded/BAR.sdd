@@ -151,7 +151,7 @@ local function makeBar(res, barX, barY)
         y        = 0,
         parent   = control,
         align    = 'right',
-        height   = 14,
+        --height   = 13,
         font     = {
             size         = 14,
             color        = green,
@@ -168,7 +168,7 @@ local function makeBar(res, barX, barY)
         bottom   = 0,
         parent   = control,
         align    = 'right',
-        height   = 14,
+        --height   = 13,
         font     = {
             size         = 14,
             color        = red,
@@ -301,11 +301,9 @@ local function setBar(res)
     if net > 0 then
         -- if there is a net gain
         netLabel[res].font.color = green
-        netLabel[res].font.outlineColor = greenOutline
     else
         -- if there is a net loss
         netLabel[res].font.color = red
-        netLabel[res].font.outlineColor = redOutline
     end
     
     netLabel[res]:SetCaption(readable(net))

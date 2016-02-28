@@ -45,8 +45,6 @@ function makeText(i) return (i~=nil) and tostring(i) or "" end
 
 local green        = {0.2, 1.0, 0.2, 1.0}
 local red          = {1.0, 0.2, 0.2, 1.0}
-local greenOutline = {0.2, 0.7, 0.2, 1.0}
-local redOutline   = {1.0, 0.2, 0.2, 0.2}
 
 function widget:Initialize()
     Chili = WG.Chili
@@ -59,8 +57,8 @@ function widget:Initialize()
                     }
                     
     enemyComText = Chili.Label:New{ 
-                        height = 45.6,
-                        width = 48,
+                        height = 40.6,
+                        width = 43,
                         caption  = makeText(enemyComs),
                         align = "right",
                         valign = "bottom", 
@@ -68,15 +66,16 @@ function widget:Initialize()
                         font = {
                             size = 16,
                             color = red,
-                            outline = true,
-                            outlineColor = redOutline,
-                            shadow = false,
+                            outline          = true,
+                            autoOutlineColor = true,
+                            outlineWidth     = 5,
+                            outlineWeight    = 3,
                         },
                     } 
 
     allyComText = Chili.Label:New{
                         height = 45,
-                        width = 34.5,
+                        width = 32.0,
                         caption  = makeText(allyComs),
                         align = "right", --hack because label center alignment don't take account of text length
                         valign = "center",
@@ -84,26 +83,31 @@ function widget:Initialize()
                         font = {
                             size = 25,
                             color = green,
-                            outline = true,
-                            outlineColor = greenOutline,
-                            shadow = false,
+                            outline          = true,
+                            autoOutlineColor = true,
+                            outlineWidth     = 5,
+                            outlineWeight    = 3,
                         },
                     }
 
 
 
-    window = Chili.Window:New{
+    window = Chili.Button:New{
         parent    = Chili.Screen0,
         right     = 395, 
-        y         = 60,
-        width     = 55,
-        height    = 55,
-        padding   = {5,5,5,5}, 
+        y         = 80,
+        width     = 60,
+        height    = 60,
+        padding   = {10,10,10,10}, 
         draggable = false,
         tweakDraggable = true,
         resizable = false,
         tweakResizable = false,
         onClick   = {MarkComs},
+        borderColor = {0,0,0,0},
+        borderColor2 = {0,0,0,0},
+        backgroundColor = {0,0,0,1},
+        caption = "",
         children  = {
             Chili.Image:New {
                 color       = {1,1,1,0.3},

@@ -79,7 +79,7 @@ local function loadMinMenu()
     
     fpsLbl = Chili.Label:New{
         caption = 'FPS:   ',
-        x = 60,
+        x = 59,
         y = 1,
     }
     
@@ -98,7 +98,7 @@ local function loadMinMenu()
     minMenu = Chili.Window:New{
         parent    = Chili.Screen0,
         right     = 210, 
-        y         = 60, 
+        y         = 80, 
         width     = 180,
         minheight = 20, 
         height    = 20,

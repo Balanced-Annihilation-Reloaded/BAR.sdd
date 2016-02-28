@@ -321,12 +321,9 @@ end
 -- Callins
 -------------------------------------------
 function widget:GameFrame(n)
+    myTeamID = spGetMyTeamID()
     setBar('metal')
     setBar('energy')
-end
-
-function widget:CommandsChanged()
-    myTeamID = spGetMyTeamID()
 end
 
 function SetValues()

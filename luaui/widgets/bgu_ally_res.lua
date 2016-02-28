@@ -256,7 +256,7 @@ function ConstructPanels()
             local tList = Spring.GetTeamList(aID)
             for _,tID in ipairs(tList) do
                 if tID~=gaiaTeamID then
-                    local notMe = amISpec or (tID~=myTeamID and aID==myAllyTeamID)
+                    local notMe = amISpec or (tID~=myTeamID)
                     local canView = notMe and not (amIFullView and aID~=myAllyTeamID)
                     notAlone = notAlone or notMe
                 
@@ -300,7 +300,7 @@ function SetupPanels()
     ConstructPanels()
 
     -- set the dimensions
-    height = nTeams * teamPanelHeight + nAllyTeams * allyTeamPanelHeight + 2    
+    height = nTeams * teamPanelHeight + nAllyTeams * allyTeamPanelHeight + 13    
     window:SetPos(_,_,width,height+5)
     
     --add the panels into the stack    
@@ -332,7 +332,7 @@ function widget:Initialize()
     window = Chili.Button:New{
         name      = 'ally res window',
         parent    = Chili.Screen0,
-        right     = 400,
+        right     = 0,
         y         = 175,
         height    = panelHeight,
         width     = panelWidth,

@@ -34,7 +34,9 @@ local height, width
 local settings = {}
 
 local panelHeight = 35
-local panelWidth = 100
+local panelWidth = 110
+
+local black = {0,0,0,1}
 
 
 -----------------------
@@ -158,7 +160,11 @@ function ConstructAllyTeamPanel(aID)
             width = 30,
             text = "+0",
             font = {
-                color = res.color
+                color = res.color,
+                outline          = true,
+                autoOutlineColor = true,
+                outlineWidth     = 5,
+                outlineWeight    = 3,
             }
         }    
         wPos = wPos + 3*panelWidth/8 + 1
@@ -186,7 +192,7 @@ function ConstructTeamPanel(tID)
         name = 'factionpic',
         height = imageHeight,
         width = imageHeight,
-        x=5,
+        x=10,
         y=panelHeight/2 - imageHeight + 2,
         file = "LuaUI/Images/playerlist/default.png", --TODO
         color = {r,g,b},
@@ -200,10 +206,10 @@ function ConstructTeamPanel(tID)
             name   = res.name, 
             tID    = tID,
             caption = "",
-            x      = imageHeight+6, 
+            x      = imageHeight+10, 
             y      = hPos, 
-            width  = panelWidth-imageHeight-13,        
-            height = 10,
+            width  = panelWidth-imageHeight-20,        
+            height = 8,
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
             OnClick = {ShareResource},
@@ -310,7 +316,7 @@ function widget:Initialize()
     Chili = WG.Chili
 
     -- construct window, stack
-    window = Chili.Window:New{
+    window = Chili.Button:New{
         name      = 'ally res window',
         parent    = Chili.Screen0,
         right     = panelWidth+50,
@@ -318,10 +324,12 @@ function widget:Initialize()
         height    = panelHeight,
         width     = panelWidth,
         padding   = {0,0,0,0},
-        itemPadding = {0,0,0,0},
-        itemMargin  = {0,0,0,0},
         tweakdraggable = true,
-    }
+        borderColor = black,
+        backgroundColor = black,
+        focusColor = black,
+        caption = "",
+     }
     stack = Chili.LayoutPanel:New{
         parent      = window,
         name        = 'ally res stack',

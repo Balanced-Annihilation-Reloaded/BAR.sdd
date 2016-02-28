@@ -52,11 +52,11 @@ local function readable(num)
         s = '+'
     end
     num = abs(num)
-    if num < 10 then
+    if num < 1000 then
         s = s .. format(num,1)
-    elseif num >10000 then
+    elseif num >= 10000 then
         s = s .. format(num/1000,0)..'k'
-    elseif num >1000 then
+    elseif num >= 1000 then
         s = s .. format(num/1000,1)..'k'
     else
         s = s .. format(num,0)
@@ -127,11 +127,6 @@ end
 
 -----------------------
 
-function ConstructFactionPic(tID) 
-    -- actually, we could get them from the player list?
-    -- TODO    
-end
-
 function ConstructAllyTeamPanel(aID)
     local panel = Chili.Control:New{
         bordercolor = {0,0,0,0},
@@ -149,7 +144,7 @@ function ConstructAllyTeamPanel(aID)
     }    
     end
 
-    local wPos = panelWidth/8
+    local wPos = 9
     for _,res in pairs(resources) do
         Chili.TextBox:New{
             parent = panel,
@@ -157,17 +152,17 @@ function ConstructAllyTeamPanel(aID)
             x = wPos,
             y = panelHeight/2-2,
             height = 14,
-            width = 30,
+            width = (panelWidth-2*wPos)/2 + 1,
             text = "+0",
             font = {
                 color = res.color,
                 outline          = true,
                 autoOutlineColor = true,
-                outlineWidth     = 5,
+                outlineWidth     = 7,
                 outlineWeight    = 3,
             }
         }    
-        wPos = wPos + 3*panelWidth/8 + 1
+        wPos = wPos + (panelWidth-2*wPos)/2 + 2
     end
 
 

@@ -49,6 +49,7 @@ local glPushMatrix           = gl.PushMatrix
 local glResetMatrices        = gl.ResetMatrices
 local glTexCoord             = gl.TexCoord
 local glTexture              = gl.Texture
+local glTexRect              = gl.TexRect
 local glRect                 = gl.Rect
 local glUniform              = gl.Uniform
 local glUniformMatrix        = gl.UniformMatrix
@@ -86,6 +87,7 @@ local GLSLRenderer = true
 local vsx, vsy
 local ivsx = 1.0 
 local ivsy = 1.0 
+local screenratio = 1.0
 
 local depthPointShader
 local depthBeamShader
@@ -196,11 +198,12 @@ function widget:ViewResize()
 	ivsx = 1.0 / vsx --we can do /n here!
 	ivsy = 1.0 / vsy
 	if (Spring.GetMiniMapDualScreen()=='left') then
-		vsx=vsx/2;
+		vsx = vsx / 2;
 	end
 	if (Spring.GetMiniMapDualScreen()=='right') then
-		vsx=vsx/2
+		vsx = vsx / 2
 	end
+	screenratio = vsy / vsx --so we dont overdraw and only always draw a square
 end
 
 widget:ViewResize()
@@ -283,6 +286,7 @@ function widget:Initialize()
 			end
 		end
 		projectileLightTypes=GetLightsFromUnitDefs()
+		screenratio = vsy / vsx --so we dont overdraw and only always draw a square
 	else
 		GLSLRenderer = false
 	end
@@ -329,52 +333,23 @@ local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
 	glTexture(2, "$map_gbuffer_normtex")
 	glTexture(3, "$map_gbuffer_zvaltex")
 	glTexture(4, "$model_gbuffer_spectex")
-	
-	local screenratio=vsy/vsx --so we dont overdraw and only always draw a square
 			
 	local cx,cy,cz = spGetCameraPosition()
 	for key,light in pairs(lights) do
-		
 		if verbose then 
 			Spring.Echo('gfx_deferred_rendering.lua: Light being drawn:',key,to_string(light))
 		end
-		
-		local lightradius=0
-
-		local px=light.px+light.dx*0.5
-		local py=light.py+light.dy*0.5
-		local pz=light.pz+light.dz*0.5
-		if lighttype==0 then --point
-			lightradius=light.radius
-			--inview=spIsSphereInView(light.px,light.py,light.pz,light.radius)
-		end
-		if lighttype==1 then --beam
-			lightradius=light.radius+math.sqrt(light.dx^2+light.dy^2+light.dz^2)*0.5
-			--inview=spIsSphereInView(light.px+light.dx*0.5,light.py+light.dy*0.5,light.pz+light.dz*0.5,lightradius)
-		end
-		if true then
+		if lighttype == 0 then 
+			local lightradius=light.radius
 			--Spring.Echo("Drawlighttype position=",light.px,light.py,light.pz)
-			local sx,sy,sz = spWorldToScreenCoords(light.px+light.dx*0.5,light.py+light.dy*0.5,light.pz+light.dz*0.5) -- returns x,y,z, where x and y are screen pixels, and z is z buffer depth.
+			local sx,sy,sz = spWorldToScreenCoords(light.px,light.py,light.pz) -- returns x,y,z, where x and y are screen pixels, and z is z buffer depth.
 			sx = sx/vsx
 			sy = sy/vsy --since FOV is static in the Y direction, the Y ratio is the correct one
-			local dist_sq = (px-cx)^2 + (py-cy)^2 + (pz-cz)^2
-			local ratio= lightradius / math.sqrt(dist_sq)
-			ratio=ratio*2
-			if lighttype==0 then
-				glUniform(lightposlocPoint, light.px,light.py,light.pz, light.radius) --in world space
-				glUniform(lightcolorlocPoint, light.r,light.g,light.b, 1) 
-			end
-			if lighttype==1 then
-				
-				glUniform(lightposlocBeam, light.px,light.py,light.pz, light.radius) --in world space
-				glUniform(lightpos2locBeam, light.px+light.dx,light.py+light.dy+24,light.pz+light.dz, light.radius) --in world space,the magic constant of +24 in the Y pos is needed because of our beam distance calculator function in GLSL
-				glUniform(lightcolorlocBeam, light.r,light.g,light.b, 1) 
-				
-			end
-			
-			--Spring.Echo('screenratio',ratio,sx,sy,sz)
-			
-			gl.TexRect(
+			local dist_sq = (light.px-cx)^2 + (light.py-cy)^2 + (light.pz-cz)^2
+			local ratio= lightradius / math.sqrt(dist_sq) * 1.5
+			glUniform(lightposlocPoint, light.px,light.py,light.pz, light.radius) --in world space
+			glUniform(lightcolorlocPoint, light.r,light.g,light.b, 1) 
+			glTexRect(
 				math.max(-1 , (sx-0.5)*2-ratio*screenratio), 
 				math.max(-1 , (sy-0.5)*2-ratio), 
 				math.min( 1 , (sx-0.5)*2+ratio*screenratio), 
@@ -383,8 +358,34 @@ local function DrawLightType(lights,lighttype) -- point = 0 beam = 1
 				math.max( 0 , sy - 0.5*ratio), 
 				math.min( 1 , sx + 0.5*ratio*screenratio),
 				math.min( 1 , sy + 0.5*ratio)) -- screen size goes from -1,-1 to 1,1; uvs go from 0,0 to 1,1
-			
-			
+		end 
+		if lighttype == 1 then 
+			local lightradius=0
+			local px=light.px+light.dx*0.5
+			local py=light.py+light.dy*0.5
+			local pz=light.pz+light.dz*0.5
+			local lightradius=light.radius+math.sqrt(light.dx^2+light.dy^2+light.dz^2)*0.5
+			--Spring.Echo("Drawlighttype position=",light.px,light.py,light.pz)
+			local sx,sy,sz = spWorldToScreenCoords(px,py,pz) -- returns x,y,z, where x and y are screen pixels, and z is z buffer depth.
+			sx = sx/vsx
+			sy = sy/vsy --since FOV is static in the Y direction, the Y ratio is the correct one
+			local dist_sq = (px-cx)^2 + (py-cy)^2 + (pz-cz)^2
+			local ratio= lightradius / math.sqrt(dist_sq)
+			ratio=ratio*2
+
+			glUniform(lightposlocBeam, light.px,light.py,light.pz, light.radius) --in world space
+			glUniform(lightpos2locBeam, light.px+light.dx,light.py+light.dy+24,light.pz+light.dz, light.radius) --in world space,the magic constant of +24 in the Y pos is needed because of our beam distance calculator function in GLSL
+			glUniform(lightcolorlocBeam, light.r,light.g,light.b, 1) 
+			--TODO: use gl.Shape instead, to avoid overdraw
+			glTexRect(
+				math.max(-1 , (sx-0.5)*2-ratio*screenratio), 
+				math.max(-1 , (sy-0.5)*2-ratio), 
+				math.min( 1 , (sx-0.5)*2+ratio*screenratio), 
+				math.min( 1 , (sy-0.5)*2+ratio), 
+				math.max( 0 , sx - 0.5*ratio*screenratio), 
+				math.max( 0 , sy - 0.5*ratio), 
+				math.min( 1 , sx + 0.5*ratio*screenratio),
+				math.min( 1 , sy + 0.5*ratio)) -- screen size goes from -1,-1 to 1,1; uvs go from 0,0 to 1,1
 		end
 	end
 	glUseShader(0)

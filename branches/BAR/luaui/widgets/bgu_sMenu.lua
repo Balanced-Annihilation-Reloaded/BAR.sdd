@@ -922,11 +922,17 @@ local function creatUnitButton(name, unitDef)
                         caption = '',
                         right   = 10,
                         y       = 10,
+                        font = {
+                            outline          = true,
+                            autoOutlineColor = true,
+                            outlineWidth     = 5,
+                            outlineWeight    = 3,
+                        }
                     },
                     Chili.Label:New{
                         caption = hotkey,
-                        right   = 5,
-                        bottom = 5,
+                        right   = 10,
+                        bottom = 10,
                         font = {
                             outline          = true,
                             autoOutlineColor = true,
@@ -951,12 +957,12 @@ local function creatUnitButton(name, unitDef)
                                              or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")},
         [3] = {image="plane.png",    used = (unitDef.isAirUnit or unitDef.isAirBase or airFacs[unitDef.id] or (unitDef.weapons[1] and unitDef.weapons[1].onlyTargets.vtol or false))},
     }
-    local y = 2
+    local y = 10
     for _,icon in ipairs(extraIcons) do
         if icon.used then
             Chili.Image:New{
                 parent = unitButtons[name].children[1].children[3],
-                x = 2, bottom = y,
+                x = 10, bottom = y,
                 height = 15, width = 15,
                 file   = imageDir..icon.image,
             }

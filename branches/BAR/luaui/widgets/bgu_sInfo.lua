@@ -748,7 +748,7 @@ local function speedModCol(x)
 end
 
 local endModes = { com = "Kill all enemy coms", killall = "Kill all enemy units", neverend = "Never end"}
-local gameEndMode = endModes[Spring.GetModOptions().deathmode]        
+local gameEndMode = endModes[Spring.GetModOptions().deathmode] or ""        
 local generalInfo = "" ..
     "Map: " .. green .. Game.mapName .. "\n" .. white ..
     "Map Size: " .. green .. Game.mapX .. " x " .. Game.mapY .. "\n" .. white ..

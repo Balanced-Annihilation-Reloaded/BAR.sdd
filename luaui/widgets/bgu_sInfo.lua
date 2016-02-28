@@ -727,14 +727,29 @@ local function speedModCol(x)
     return schar(255, r*255, g*255, b*255)
 end
 
+local endModes = { com = "Kill all enemy coms", killall = "Kill all enemy units", neverend = "Never end"}
+local gameEndMode = endModes[Spring.GetModOptions().deathmode]        
+local generalInfo = "" ..
+    "Map: " .. green .. Game.mapName .. "\n" .. white ..
+    "Map Size: " .. green .. Game.mapX .. " x " .. Game.mapY .. "\n" .. white ..
+    "Wind: " .. yellow .. math.floor(Game.windMin) .. " - " .. math.floor(Game.windMax) .. "\n" .. white ..
+    "Tidal: " .. blue .. math.floor(Game.tidal) .. "\n" .. white ..
+    "Acidity: " .. turqoise .. math.floor(Game.waterDamage) .. "\n" .. white ..
+    "Gravity: " .. tomato .. math.floor(Game.gravity) .. "\n\n" .. white ..
+    "Game End:\n" .. 
+    " " .. green .. gameEndMode  
+local armageddonTime = tonumber((Spring.GetModOptions() or {}).mo_armageddontime) or 0
+if armageddonTime and tonumber(armageddonTime>0) then
+    generalInfo = generalInfo .. "\n " .. red .. "Armageddon at " .. armageddonTime .. ":00"
+end
+
 local function updateGroundInfo()
     if groundWindow.hidden then groundWindow:Show() end
 
     local mx, my    = spGetMouseState()
     local focus,map = spTraceScreenRay(mx,my,true)
-    if focus~="ground" then
-        -- todo: general map info here
-        groundText:SetText("")
+    if focus~="ground" then         
+        groundText:SetText(generalInfo)
         groundText2:SetText("")
         return
     end 
@@ -744,9 +759,9 @@ local function updateGroundInfo()
     local py = math.floor(spGetGroundHeight(px,pz))
     groundText:SetText(
         "Map Coordinates"..
-        "\n Height: " .. py ..
-        "\n X: ".. px ..
-        "\n Z: ".. pz .. "\n\n"
+        "\n Height: " .. lilac .. py ..
+        white .. "\n X: ".. blue .. px ..
+        white .. "\n Z: ".. blue .. pz .. "\n\n"
     )
 
     local _,_,_,veh,bot,hvr,ship,_ = spGetGroundInfo(px,pz)
@@ -931,15 +946,15 @@ function widget:Initialize()
     }    
     groundText = Chili.TextBox:New{
         parent = groundWindow,
-        x = 5,
-        y = 5,
+        x = 6,
+        y = 6,
         text   = '',
         
     }
     groundText2 = Chili.TextBox:New{
         parent = groundWindow,
-        x      = 5,
-        y      = 65,
+        x      = 6,
+        y      = 66,
         right  = 0,
         bottom = 0,
         text   = '',

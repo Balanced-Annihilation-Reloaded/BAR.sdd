@@ -25,7 +25,7 @@ return {
   #endif
 	varying float aoTerm;
     varying vec3 cameraDir;
-    varying vec3 teamColor;
+    //varying vec3 teamColor;
     //varying float fogFactor;
 
   #ifdef use_normalmapping
@@ -76,7 +76,7 @@ return {
 	#ifndef use_treadoffset
 		gl_TexCoord[0].st = gl_MultiTexCoord0.st;
     #endif
-	  teamColor = gl_TextureEnvColor[0].rgb;
+	  //teamColor = gl_TextureEnvColor[0].rgb;
 
       //float fogCoord = length(gl_Position.xyz);
       //fogFactor = (gl_Fog.end - fogCoord) * gl_Fog.scale; //gl_Fog.scale := 1.0 / (gl_Fog.end - gl_Fog.start)
@@ -113,7 +113,7 @@ return {
     uniform float shadowDensity;
   #endif
 	varying float aoTerm;
-    varying vec3 teamColor;
+    uniform vec4 teamColor;
     varying vec3 cameraDir;
     //varying float fogFactor;
 

@@ -75,7 +75,7 @@ SweetSpot(piecenum)
 /*    70:*/	return (0);
 /*    71:*/}
 
-HitByWeapon(Func_Var_1, Func_Var_2)
+HitByWeapon(anglex, anglez)
 /*    73:*/{
 /*    75:*/	signal 2;
 /*    78:*/	set-signal-mask 2;

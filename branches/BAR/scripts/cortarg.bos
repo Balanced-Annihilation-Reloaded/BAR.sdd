@@ -114,7 +114,7 @@ Deactivate()
 /*   18f:*/	return (0);
 /*   190:*/}
 
-HitByWeapon(Func_Var_1, Func_Var_2)
+HitByWeapon(anglex, anglez)
 /*   192:*/{
 /*   195:*/	while( get BUILD_PERCENT_LEFT )
 /*   197:*/	{

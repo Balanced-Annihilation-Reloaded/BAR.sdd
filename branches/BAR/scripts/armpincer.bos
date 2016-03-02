@@ -39,10 +39,10 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	// Build by COBBLER Ver4.0 Copyright @1998 DIGITAL CONCEPT SOFTWARE (MANU@inext.fr) / http://www.annihilationcenter.com/DCS/  
 }
 
-HitByWeapon(Func_Var_1, Func_Var_2)
+HitByWeapon(anglex, anglez)
 {
-	turn base to z-axis <0> - Func_Var_2 speed <105.000000>;
-	turn base to x-axis <0> - Func_Var_1 speed <105.000000>;
+	turn base to z-axis anglez speed <105.000000>;
+	turn base to x-axis <0> - anglex speed <105.000000>;
 	wait-for-turn base around z-axis;
 	wait-for-turn base around x-axis;
 	turn base to z-axis <0.000000> speed <30.000000>;

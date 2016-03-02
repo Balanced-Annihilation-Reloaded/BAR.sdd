@@ -170,10 +170,15 @@ Shot1()
 	move lsack to x-axis [0.000000] speed [0.300000];
 }
 
-HitByWeaponId()
+HitByWeapon(anglex, anglez)
 {
 	emit-sfx 1024 from body;
-	return (100);
+	turn body to z-axis anglez speed <105.000000>;
+	turn body to x-axis <0> - anglex speed <105.000000>;
+	wait-for-turn body around z-axis;
+	wait-for-turn body around x-axis;
+	turn body to z-axis <0.000000> speed <30.000000>;
+	turn body to x-axis <0.000000> speed <30.000000>;
 }
 
 

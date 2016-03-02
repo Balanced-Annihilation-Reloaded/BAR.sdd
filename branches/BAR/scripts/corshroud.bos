@@ -123,7 +123,7 @@ Deactivate()
 /*   11e:*/	return (0);
 /*   11f:*/}
 
-HitByWeapon(Func_Var_1, Func_Var_2)
+HitByWeapon(anglex, anglez)
 /*   121:*/{
 /*   124:*/	if( get ACTIVATION )
 /*   126:*/	{

@@ -213,7 +213,7 @@ Stop()
 
 HitByWeapon(anglex, anglez)
 {
-	turn torso to z-axis <0> - anglez speed <105.000000>;
+	turn torso to z-axis anglez speed <105.000000>;
 	turn torso to x-axis <0> - anglex speed <105.000000>;
 	wait-for-turn torso around z-axis;
 	wait-for-turn torso around x-axis;

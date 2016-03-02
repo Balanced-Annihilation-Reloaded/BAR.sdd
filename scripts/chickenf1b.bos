@@ -1,0 +1,131 @@
+#define TA			// This is a TA script
+
+#include "sfxtype.h"
+#include "exptype.h"
+
+piece  body, head, tail, lwing, rwing, lblade, mblade, rblade,
+       rsack, lsack;
+
+static-var  bMoving;
+
+// Signal definitions
+#define SIG_AIM				2
+
+
+fly()
+{
+	if( bMoving )
+	{
+		turn lwing to z-axis <-40.00000> speed <60.00000>;
+		turn rwing to z-axis <40.00000> speed <60.00000>;
+		wait-for-turn lwing around z-axis;
+		turn lwing to z-axis <40.00000> speed <120.00000>;
+		turn rwing to z-axis <-40.00000> speed <120.00000>;
+		wait-for-turn lwing around z-axis;
+		start-script fly();
+	}
+	return (0);
+}
+
+stopfly()
+{
+	turn lwing to z-axis <0.00000> speed <200.00000>;
+	turn rwing to z-axis <0.00000> speed <200.00000>;
+	return (0);
+}
+
+StartMoving()
+{
+	bMoving = TRUE;
+	start-script fly();
+	return (0);
+}
+
+StopMoving()
+{
+	bMoving = FALSE;
+	start-script stopfly();
+	return (0);
+}
+
+Create()
+{
+	emit-sfx 1024 + 2 from body;
+	return (0);
+}
+
+SweetSpot(piecenum)
+{
+	piecenum = body;
+	return (0);
+}
+
+AimFromPrimary(piecenum)
+{
+	piecenum = head;
+	return (0);
+}
+
+QueryPrimary(piecenum)
+{
+	piecenum = head;
+	return (0);
+}
+
+RestoreAfterDelay()
+{
+	sleep 1000;
+	return (0);
+}
+
+AimPrimary(heading, pitch)
+{
+	signal SIG_AIM;
+	set-signal-mask SIG_AIM;
+	turn head to x-axis <0.00000> - pitch speed <200.00000>;
+	wait-for-turn head around y-axis;
+	start-script RestoreAfterDelay();
+	return (1);
+}
+
+Shot1()
+{
+	turn lsack to y-axis <40.00000> speed <900.21978>;
+	turn rsack to y-axis <-40.00000> speed <900.21978>;
+	move rsack to x-axis [-2.50000] speed [2.50000];
+	move lsack to x-axis [2.50000] speed [2.50000];
+	move mblade to z-axis [-20.00000] speed [250.00000];
+	wait-for-turn lsack around y-axis;
+	turn lsack to y-axis <0.00000> speed <270.06593>;
+	turn rsack to y-axis <0.00000> speed <270.06593>;
+	move rsack to x-axis [0.00000] speed [0.75000];
+	move lsack to x-axis [0.00000] speed [0.75000];
+	move mblade to z-axis [0.00000] speed [7.50000];
+	return (0);
+}
+
+HitByWeapon(anglex, anglez)
+{
+	emit-sfx 1024 from body;
+	turn body to z-axis anglez speed <105.000000>;
+	turn body to x-axis <0> - anglex speed <105.000000>;
+	wait-for-turn body around z-axis;
+	wait-for-turn body around x-axis;
+	turn body to z-axis <0.000000> speed <30.000000>;
+	turn body to x-axis <0.000000> speed <30.000000>;
+}
+
+Killed(severity, corpsetype)
+{
+	corpsetype = 1;
+	emit-sfx 1025 from body;
+	emit-sfx 1024 from lwing;
+	emit-sfx 1024 from rwing;
+	explode body type SHATTER;
+	explode head type FALL;
+	explode tail type FALL;
+	explode lwing type FALL;
+	explode rwing type FALL;
+	explode mblade type FALL | EXPLODE_ON_HIT;
+	return (corpsetype);
+}

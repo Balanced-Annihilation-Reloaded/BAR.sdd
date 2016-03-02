@@ -12,28 +12,33 @@ def blocksize(bosfile, start):
 		offset+=1
 	return offset-start
 	
-
+hits=0
 for filename in os.listdir(os.getcwd()):
 	#try to open the lua def
 	
 	if '.bos' in filename:
 		fpx=3
-		try:
+		
 		bosfile=open(filename).readlines()
-		info[filename]=[0,0]
-		for i in range(len(bosfile)):
+		#info[filename]=[0,0]
+		i=0
+		while  i< len(bosfile):
 			line=bosfile[i]
-			if 'RockUnit' in line:
-				info[filename][0]=blocksize(bosfile,i)
-			if 'HitByWeapon' in line:
-				info[filename][1]=blocksize(bosfile,i)
-for key in sorted(info.keys()):
-	print '%s	%i	%i'%(key, info[key][0],info[key][1])
-	
-	
-	
-	'''
-//////////////AIR HITBY
+			if 'hitbyweapon' in line.lower():
+				info= filename+'	'+line.strip()
+				while(i<len(bosfile)):
+					i+=1
+					if '}' in bosfile[i]:
+						break
+					if 'turn' in bosfile[i] and 'to z-axis' in bosfile[i]:
+						info=info+'	'+bosfile[i].strip()
+						break
+				print info
+				hits+=1
+			i+=1
+print 'Total hits:',hits
+
+'''//////////////AIR HITBY
 HitByWeapon(anglex, anglez)
 {
 	turn base to z-axis <0> - anglez speed <105.000000>;
@@ -48,7 +53,7 @@ HitByWeapon(anglex, anglez)
 ////// ground hitby
 HitByWeapon(anglex, anglez)
 {
-	turn base to z-axis <0> - anglez speed <105.000000>;
+	turn base to z-axis anglez speed <105.000000>;
 	turn base to x-axis <0> - anglex speed <105.000000>;
 	wait-for-turn base around z-axis;
 	wait-for-turn base around x-axis;
@@ -75,6 +80,15 @@ HitByWeapon(anglex, anglez)
 	wait-for-turn torso around x-axis;
 	turn torso to z-axis <0.000000> speed <30.000000>;
 	turn torso to x-axis <0.000000> speed <30.000000>;
+}
+HitByWeapon(anglex, anglez)
+{
+	turn body to z-axis anglez speed <105.000000>;
+	turn body to x-axis <0> - anglex speed <105.000000>;
+	wait-for-turn body around z-axis;
+	wait-for-turn body around x-axis;
+	turn body to z-axis <0.000000> speed <30.000000>;
+	turn body to x-axis <0.000000> speed <30.000000>;
 }
 HitByWeapon(anglex, anglez)
 {

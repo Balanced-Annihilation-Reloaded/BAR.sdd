@@ -168,8 +168,16 @@ sleep 1; //need for some odd reason (does not open/close otherwise)
 }
 
 
-HitByWeapon(Func_Var_1, Func_Var_2)
+HitByWeapon(anglex, anglez)
 {
+
+	turn base to z-axis anglez speed <105.000000>;
+	turn base to x-axis <0> - anglex speed <105.000000>;
+	wait-for-turn base around z-axis;
+	wait-for-turn base around x-axis;
+	turn base to z-axis <0.000000> speed <30.000000>;
+	turn base to x-axis <0.000000> speed <30.000000>;
+	
 	if( get ACTIVATION )
 	{
 		Static_Var_1 = 1;
@@ -178,7 +186,6 @@ HitByWeapon(Func_Var_1, Func_Var_2)
 	{
 		signal 2;
 		set-signal-mask 2;
-		turn base to z-axis <0> speed 400;
 		set ACTIVATION to 0;
 		sleep 8000;
 		Static_Var_1 = 0;

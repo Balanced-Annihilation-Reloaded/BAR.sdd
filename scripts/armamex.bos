@@ -112,7 +112,7 @@ SetSpeed(Func_Var_1)
 	Static_Var_1 = Func_Var_1 * 10;
 }
 
-HitByWeapon(Func_Var_1, Func_Var_2)
+HitByWeapon(anglex, anglez)
 {
 	signal 2;
 	set-signal-mask 2;

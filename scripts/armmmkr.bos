@@ -113,7 +113,7 @@ Create()
 	start-script ImAMetalMaker();
 }
 
-HitByWeapon(Func_Var_1, Func_Var_2)
+HitByWeapon(anglex, anglez)
 {
 	if( get ACTIVATION )
 	{

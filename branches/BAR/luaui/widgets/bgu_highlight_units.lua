@@ -1,7 +1,7 @@
 function widget:GetInfo()
     return {
         name = "Highlight Selected Units",
-        desc = "Highlights Selected Units",
+        desc = "Highlights Selected Units, also sets cmdcolors",
         author = "Bluestone", 
         date = "Horse",
         license = "Tarquin Fin-tim-lin-bin-whin-bim-lim-bus-stop-F'tang-F'tang-Olé-Biscuitbarrel",
@@ -115,7 +115,7 @@ function widget:Initialize()
         
     GetUnitScales()
     InitializeGL()
-    HijackCmdColors()
+    SetCmdColors() -- we do it in this widget because we remove the engines own selected unit gfx, but this also sets up the colours to match sMenu
 
     local units = Spring.GetAllUnits()
     for _,unitID in ipairs(units) do
@@ -725,10 +725,7 @@ end
 -- cmd colors
 ------------------------------------------------------
 
-
-function HijackCmdColors()
-    --todo
-end
-function UnhijackCmdColors()
-    --todo
+function SetCmdColors()
+    local cmdColors = VFS.LoadFile('luaui/configs/cmdcolors.txt')
+    Spring.LoadCmdColorsConfig(cmdColors) 
 end

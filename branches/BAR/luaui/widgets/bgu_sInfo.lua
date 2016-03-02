@@ -15,6 +15,7 @@ local imageDir = 'luaui/images/buildIcons/'
 
 local Chili, screen, unitWindow, groundWindow, groundText
 local unitWindow, unitName, unitPicture, unitPictureOverlay, unitHealthText, unitHealth, unitCostTextTitle, unitResText
+local featureName, featurePicture, featurePictureOverlay, featureHealthText, featureHealth, featureResText
 local focusName, focusPicture, focusPictureOverlay, focusCost, focusBuildTime
 local basicHealth, basicHealthText, basicResText, basicUnitInfo
 local unitGrid 
@@ -22,8 +23,8 @@ local healthBars = {}
 
 local curTip -- general info about 
 local focusDefID -- unitDefID of unit we are currently thinking of building
-local mouseOverUnitID, mouseOverDefID -- unitDefID of the unit the user currently has their mouse hovering over, or nil
-local preferFocusInfo = false -- when there is just a single unit,do we prefer the focus info (i.e. UnitDefs info) or the unit info?
+local mouseOverUnitID, mouseOverUnitDefID -- unitDefID of the unit the user currently has their mouse hovering over, or nil
+local preferFocus -- do we prefer to display the focus window or the unit window?
 
 local spGetTimer                = Spring.GetTimer
 local spDiffTimers              = Spring.DiffTimers
@@ -40,7 +41,16 @@ local spGetGroundHeight         = Spring.GetGroundHeight
 local spGetGroundInfo           = Spring.GetGroundInfo
 local spGetUnitResources        = Spring.GetUnitResources
 local spGetSelectedUnitsCounts  = Spring.GetSelectedUnitsCounts
+local spGetFeatureDefID         = Spring.GetFeatureDefID
+local spGetFeatureResources     = Spring.GetFeatureResources
+local spGetFeatureHealth        = Spring.GetFeatureHealth
+local spGetFeatureTeam          = Spring.GetFeatureTeam
+local spGetFeatureResurrect      = Spring.GetFeatureResurrect
+
 local floor = math.floor
+local max = math.max
+local min = math.min
+local schar = string.char
 
 local myTeamID  = Spring.GetMyTeamID()
 
@@ -94,6 +104,7 @@ end
 local function ResToolTip(Mmake, Muse, Emake, Euse)
     return mColour .. "M: " .. green .. readable(Mmake) .. '  ' .. red .. readable(Muse) .. "\n" ..  eColour .. "E:  " .. green .. readable(Emake) .. '  ' .. red .. readable(Euse)
 end
+
 
 local function CostToolTip(Mcost, Ecost)
     return mColour .. readable(Mcost) .. '\n' .. eColour .. readable(Ecost)
@@ -649,6 +660,7 @@ local function GetUnitDefKeyProperties (defID)
 end
 
 local function showFocusInfo()
+    -- uses unitWindow
     local defID = curTip.focusDefID
     local unitDef = UnitDefs[defID]
     local unitTeamID = curTip.selUnits[1] and Spring.GetUnitTeam(curTip.selUnits[1]) or Spring.GetMyTeamID()
@@ -694,14 +706,14 @@ local function showFocusInfo()
         focusCost = Chili.TextBox:New{
             parent = focusPictureOverlay,
             x        = 5,
-            bottom   = 20,
+            bottom   = 22,
             text     =  "Cost: " .. mColour .. unitDef.metalCost .. " " .. eColour .. unitDef.energyCost,
             autoHeight = false,
         }
         focusBuildTime = Chili.TextBox:New{
             parent = focusPictureOverlay,
             x        = 5,
-            bottom   = 5,
+            bottom   = 7,
             text     =  "Build Time: " .. lilac .. unitDef.buildTime, -- this isn't very intuitive
             autoHeight = false,
         }
@@ -709,7 +721,7 @@ local function showFocusInfo()
     
     -- key properties
     local keyProperties = GetUnitDefKeyProperties(defID)
-    local bottom = 25+16*(#keyProperties)
+    local bottom = 27+16*(#keyProperties)
     for _,v in pairs(keyProperties) do
         local text = tostring(v[1]) .. ": " .. tostring(v[2])
         local property = Chili.TextBox:New{
@@ -726,12 +738,110 @@ local function showFocusInfo()
     unitWindow:Show()        
 end
 
+
+----------------------------------
+-- single feature info
+
+function showFeatureInfo()
+    -- uses unitWindow
+    local fID = curTip.featureID
+    local defID = curTip.featureDefID
+    local fTeamID = Spring.GetFeatureTeam(fID)
+        
+    local description = FeatureDefs[defID].tooltip or ''
+    --local texture = "%-" .. tostring(defID) .. ":0" --fixme https://springrts.com/wiki/Lua_OpenGL_Api#Textures
+    --local overlay     = imageDir..'Overlays/' .. name .. '.dds'
+    local overlayColor = GetOverlayColor(fTeamID)
+
+    featurePicture = Chili.Image:New{
+        parent   = unitWindow,
+        color    = overlayColor,
+        flip     = false,
+        height   = '100%',
+        width    = '100%',
+        file     = nil, --texture, fixme
+    }
+    featurePictureOverlay = Chili.Image:New{
+        parent   = featurePicture,
+        color    = overlayColor,
+        height   = '100%',
+        width    = '100%',
+        file     = nil, --overlay, fixme
+    }
+    
+    featureName = Chili.TextBox:New{
+        parent = featurePictureOverlay,
+        x      = 5,
+        y      = 5,
+        width  = '100%',
+        text   = description,
+    }
+    
+    featureHealthText = Chili.TextBox:New{
+        parent = featurePictureOverlay,
+        x      = 5,
+        bottom = 21,
+        text   = '',
+    }
+    
+    featureHealth = Chili.Progressbar:New{
+        name   = "featureHealth",
+        parent = featurePictureOverlay,
+        value   = 0,
+        bottom  = 5,
+        x       = 5,
+        width   = '95%',
+        height  = 10,
+        color   = {0.5,1,0,1},
+    }
+    
+    featureResText = Chili.TextBox:New{
+        parent = featurePictureOverlay,
+        x        = 5,
+        bottom   = 85,
+        text     =  '',
+        autoHeight = false,
+    }    
+    
+    unitWindow:Show()    
+end
+
+function FeatureToolTip(rMetal, mMetal, rEnergy, mEnergy, reclaimLeft, rezProg, rezDefName)
+    local tip =  mColour .. round(rMetal) .. "  / " .. round(mMetal) .. "" .. "\n" ..
+                 eColour .. round(rEnergy) .. "  / " .. round(mEnergy) .. "" .. "\n" .. white ..
+                "Reclaim left: " .. green .. round(100*reclaimLeft) .. "%" .. "\n" .. white
+    if rezDefName then             
+        tip = tip .. "Resurrected: " .. lilac .. round(100*rezProg) .. "%"
+    end
+    return tip
+end
+
+function updateFeatureInfo()
+    local fID = curTip.featureID
+    local rMetal, mMetal, rEnergy, mEnergy, reclaimLeft = spGetFeatureResources(fID) -- remaining, max
+    local fDID = spGetFeatureDefID(fID)
+    local curHealth, maxHealth, rezProg = spGetFeatureHealth(fID)
+    local fTeamID = spGetFeatureTeam(fID)
+    local rezDefName,_ = spGetFeatureResurrect(fID)
+    
+    if maxHealth>0 then 
+        featureHealthText:SetText(math.floor(curHealth) ..' / '.. math.floor(maxHealth)) 
+        featureHealth:SetMinMax(0, maxHealth)
+        featureHealth:SetValue(curHealth) 
+    else -- if we can't see the units health (e.g. enemy commander)
+        featureHealthText:SetText('? / ?') 
+        featureHealth:SetMinMax(0, 1)
+        featureHealth:SetValue(0) 
+    end
+    if not curTip.selEnemy then
+        featureResText:SetText(FeatureToolTip(rMetal, mMetal, rEnergy, mEnergy, reclaimLeft, rezProg, rezDefName))
+    end
+
+end
+    
 ----------------------------------
 -- ground info
 
-local max = math.max
-local min = math.min
-local schar = string.char
 local modColScale = 2
 local function speedModCol(x)
     x = (x-1)*modColScale + 1
@@ -845,12 +955,16 @@ local function ChooseCurTip()
         curTip.type = "basicUnitInfo"
     elseif mouseOverUnitID and preferFocus then
         curTip.type = "focusDefID"
-        curTip.focusDefID = mouseOverDefID      
+        curTip.focusDefID = mouseOverUnitDefID      
         curTip.selUnits = {[1]=mouseOverUnitID}
-    elseif mouseOverUnitID and mouseOverDefID then
+    elseif mouseOverUnitID and mouseOverUnitDefID then
         curTip.type = "unitDefID"
-        curTip.selDefID = mouseOverDefID
+        curTip.selDefID = mouseOverUnitDefID
         curTip.selUnits = {[1]=mouseOverUnitID}
+    elseif mouseOverFeatureID and mouseOverFeatureDefID then
+        curTip.type = "feature"
+        curTip.featureID = mouseOverFeatureID
+        curTip.featureDefID = mouseOverFeatureDefID    
     else
         --info about point on map corresponding to cursor 
         curTip.type = "ground"
@@ -890,7 +1004,9 @@ local function ResetTip()
     elseif curTip.type=="unitDefPics" then
         showUnitGrid()
     elseif curTip.type=="basicUnitInfo" then
-        showBasicUnitInfo()    
+        showBasicUnitInfo() 
+    elseif curTip.type=="feature" then
+        showFeatureInfo()
     elseif curTip.type=="ground" then
         updateGroundInfo()
     end
@@ -1008,10 +1124,10 @@ function widget:Update()
         newFocusDefID = -cmdID
     elseif WG.InitialQueue and WG.InitialQueue.selDefID then
         newFocusDefID = WG.InitialQueue.selDefID
-    elseif WG.sMenu and WG.sMenu.mouseOverDefID then
-        newFocusDefID = WG.sMenu.mouseOverDefID 
-    elseif WG.FacBar and WG.FacBar.mouseOverDefID then
-        newFocusDefID = WG.FacBar.mouseOverDefID 
+    elseif WG.sMenu and WG.sMenu.mouseOverUnitDefID then
+        newFocusDefID = WG.sMenu.mouseOverUnitDefID 
+    elseif WG.FacBar and WG.FacBar.mouseOverUnitDefID then
+        newFocusDefID = WG.FacBar.mouseOverUnitDefID 
     else
         newFocusDefID = nil
     end    
@@ -1021,27 +1137,39 @@ function widget:Update()
         return
     end
 
-    -- check if the mouse is over a unit
+    -- check if the mouse moves on/off a unit/feature, call CommandsChanged if so
     -- also, update ground info if needed
     local mx,my = spGetMouseState()
     local focus,n = spTraceScreenRay(mx,my)
     local timer = spGetTimer()
     local updateGround = (curTip.type=="ground") and spDiffTimers(timer, groundTimer) > 0.05 
-    local newMouseOverUnitID
+    local newMouseOverUnitID, newMouseOverFeatureID
+    local focusChange = false
     if focus=="unit" then
         newMouseOverUnitID = n
-    elseif updateGround and spDiffTimers(timer, groundTimer)>0.05 then
+    elseif focus=="feature" then
+        newMouseOverFeatureID = n
+    elseif updateGround then
         updateGroundInfo()
         groundTimer = timer
         newMouseOverUnitID  = nil
+        newMouseOverFeatureID = nil
     else
         newMouseOverUnitID  = nil
+        newMouseOverFeatureID = nil
     end
     if newMouseOverUnitID ~= mouseOverUnitID then
         mouseOverUnitID = newMouseOverUnitID 
-        mouseOverDefID = mouseOverUnitID and spGetUnitDefID(mouseOverUnitID) or nil
+        mouseOverUnitDefID = mouseOverUnitID and spGetUnitDefID(mouseOverUnitID) or nil
+        focusChange = true
+    end
+    if newMouseOverFeatureID ~= mouseOverFeatureID then
+        mouseOverFeatureID = newMouseOverFeatureID
+        mouseOverFeatureDefID = mouseOverFeatureID and spGetFeatureDefID(mouseOverFeatureID) or nil
+        focusChange = true
+    end
+    if focusChange then
         widget:CommandsChanged()
-        return
     end
 end
 
@@ -1053,6 +1181,8 @@ function widget:GameFrame(n)
     elseif curTip.type=="basicUnitInfo" and n%15==0 then
         -- delayed update, we might have many units to process
         updateBasicUnitInfo()
+    elseif curTip.type=="feature" then
+        updateFeatureInfo()
     end
 end
 

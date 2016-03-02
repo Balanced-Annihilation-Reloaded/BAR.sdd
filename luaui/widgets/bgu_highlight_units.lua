@@ -14,6 +14,7 @@ end
 local amISpec,_ = Spring.GetSpectatingState()
 local myPlayerID = Spring.GetMyPlayerID()
 local myAllyTeamID = Spring.GetMyAllyTeamID()
+local mo_noowner = (tonumber(Spring.GetModOptions().mo_noowner)==1) or false 
 
 -- selected unit tracking
 local selUnits = {} --indexed by unitID, value is table with lots of info
@@ -41,7 +42,7 @@ local fadeTime = 1/4
 
 -- constants for platter visuals
 local platterSize = 1.3 -- fade size compared to circle scale (1 = not rendered)
-local platterColours = { -- default color values
+local platterColourBank = { -- default color values
     {0,0,1} , {1,0,1} , {0,1,1} , {0,1,0} , {1,0.5,0} , {0,1,1} , {1,1,0} , {1,1,1} , 
     {0.5,0.5,0.5} , {0,0,0} , {0.5,0,0} , {0,0.5,0} , {0,0,0.5} , {0.5,0.5,0} , {0.5,0,0.5} , 
     {0,0.5,0.5} , {1,0.5,0.5} , {0.5,0.5,0.1} , {0.5,0.1,0.5},
@@ -54,17 +55,17 @@ local xRayOpacity = 1.7
 -- vars 
 local rot = 0
 local curTime = 0
+local lineWidth 
 local guiHidden 
 local visibleUnits = {}
 local n_visibleUnits
-
 
 
 -- option & defaults
 local options = {
     -- todo: implement option changes & chili options
     selected = {
-        useTeamColour = false,
+        colourMode = "green", -- also, "team"
         useThickLines = false,
         showAllySelected = true,
         useXRayShader = false,
@@ -72,12 +73,9 @@ local options = {
     platter = {
         showPlatters = true,
         colourMode = "auto", -- also "team" and "ally team"; "auto" means only in mo_noowner
-        showOwnAllyTeam = "auto", -- also "on" and "off"; "auto" means only if spectator
+        showAllyPlatters = "auto", -- also "on" and "off"; "auto" means only if spectator
     }
 }
-
-local lineWidth = options.selected.useThickLines and thickLineWidth or thinLineWidth
-local mo_noowner = (tonumber(Spring.GetModOptions().mo_noowner)==1) or false 
 
 ------------------------------------------------------
 -- helpers
@@ -112,6 +110,8 @@ function widget:Initialize()
 	widgetHandler:RegisterGlobal('selectedUnitsRemove', SelectedUnitsRemove_Wrapper)
 	widgetHandler:RegisterGlobal('selectedUnitsClear', SelectedUnitsClear_Wrapper)
 	widgetHandler:RegisterGlobal('selectedUnitsAdd', SelectedUnitsAdd_Wrapper)
+        
+    SetupMenuOptions()    
         
     GetUnitScales()
     InitializeGL()
@@ -187,8 +187,12 @@ end
 ------------------------------------------------------
 
 function widget:PlayerChanged(playerID)
+    local wasSpec = amISpec
     amISpec,_ = Spring.GetSpectatingState()
     myAllyTeamID = Spring.GetMyAllyTeamID()
+    if wasSpec~=amISpec then
+        UpdateEverything()
+    end
 end
     
 function SelectedUnitsClear(playerID)
@@ -233,14 +237,14 @@ function UpdateSelectedUnit(unitID, playerID)
     t.unitDefID = t.unitDefID or Spring.GetUnitDefID(unitID)
     
     local r,g,b
-    if teamID and options.selected.useTeamColour then
-        r,g,b = Spring.GetTeamColor(teamID)
+    if t.teamID and options.selected.colourMode=="team" then
+        r,g,b = Spring.GetTeamColor(t.teamID)
     else 
         r,g,b = 0,1,0
     end
-    t.r = t.r or r
-    t.g = t.g or g
-    t.b = t.b or b
+    t.r = r 
+    t.g = g
+    t.b = b
 
     t.unitScale = t.unitScale or unitScales[t.unitDefID] * selScaleFactor
 
@@ -248,7 +252,9 @@ function UpdateSelectedUnit(unitID, playerID)
     t.randomSign = t.randomSign or ((math.random()<0.5) and 1 or -1)
 
     t.selectedBy = t.selectedBy or {} 
-    t.selectedBy[playerID] = true
+    if playerID then -- option changes won't send a playerID
+        t.selectedBy[playerID] = true
+    end
     RecheckIsSelected(t) --t.selected, t.selectedChangeTime
 
     -- these only get updated when the unit is on screen
@@ -267,8 +273,8 @@ function UpdatePlatterUnit(unitID)
     t.allyTeamID = Spring.GetUnitAllyTeam(unitID)
     t.unitDefID = t.unitDefID or Spring.GetUnitDefID(unitID)
     if t.allyTeamID==myAllyTeamID then 
-        if options.platter.showOwnAllyTeam=="false" then return nil end
-        if (not amISpec) and options.platter.showOwnAllyTeam=="auto" then return nil end
+        if options.platter.showAllyPlatters=="false" then return nil end
+        if (not amISpec) and options.platter.showAllyPlatters=="auto" then return nil end
     end
 
     t.unitScale = unitScales[t.unitDefID] * platterScaleFactor
@@ -413,7 +419,7 @@ function GetPlatterColour(teamID)
         a = 0.15
     else
         -- use colour bank, per allyteam
-        local _,_,_,_,_,_allyTeamID = Spring.GetTeamInfo(teamID)   
+        local _,_,_,_,_,allyTeamID = Spring.GetTeamInfo(teamID)   
         if allyTeamID+1<#platterColourBank then return 0,0,0,1 end
         local col = platterColourBank[allyTeamID+1]
         r,g,b = col[1],col[2],col[3]
@@ -589,6 +595,7 @@ function widget:DrawWorld()
         unitID = visibleUnits[i]
         t = selUnits[unitID]
         if t then
+            -- draw xRay shader
             gl_Color(t.r, t.g, t.b, t.alpha*t.alphaMax)
             gl_Unit(unitID, true)
         end
@@ -606,7 +613,113 @@ end
 -- options 
 ------------------------------------------------------
 
--- todo
+
+function SetupMenuOptions()
+    Chili  = WG.Chili
+    if not Chili then return end
+    screen = Chili.Screen0
+    Menu   = WG.MainMenu
+    
+    if not Menu then return end    
+    
+    Menu.AddWidgetOption{
+        title = "Highlight Units",
+        name = widget:GetInfo().name,
+        children = {
+            Chili.Label:New{x='5%',width='95%',height=15, caption="Selected unit highlights:"},
+            Chili.Control:New{x='10%',width='80%',autoSize=true,padding={0,0,0,0},
+                children = {
+                    Chili.TextBox:New{x='0%',width='50%',text="Colour mode:"},
+                    Chili.ComboBox:New{x='50%',width='50%',
+                        items    = {"green", "team"},
+                        selected = (options.selected.colourMode=="green" and 1) or (options.selected.colourMode=="team" and 2),
+                        OnSelect = {
+                            function(_,sel)
+                                if sel==1 then options.selected.colourMode="green"
+                                elseif sel==2 then options.selected.colourMode="team"
+                                end
+                                UpdateEverything()
+                            end
+                            }
+                        }
+                    }                
+            },
+            Chili.Checkbox:New{caption='Show allies selected units',x='10%',width='80%',
+                    checked=options.selected.showAllySelected, OnChange={function() options.selected.showAllySelected = not options.selected.showAllySelected; UpdateEverything(); end}},
+            Chili.Checkbox:New{caption='Thickened lines',x='10%',width='80%',
+                    checked=options.selected.useThickLines, OnChange={function() options.selected.useThickLines = not options.selected.useThickLines; UpdateEverything(); end}},
+            Chili.Checkbox:New{caption='Use XRay shader',x='10%',width='80%',
+                    checked=options.selected.useXRayShader,OnChange={function() options.selected.useXRayShader = not options.selected.useXRayShader; UpdateEverything(); end}},
+
+            Chili.Label:New{x='5%',width='95%',height=15, caption="Unit platters:"},
+            Chili.Checkbox:New{caption='Show platters',x='10%',width='80%',
+                    checked=options.platter.showPlatters, OnChange={function() options.platter.showPlatters = not options.platter.showPlatters; UpdateEverything(); end}}, 
+            Chili.Control:New{x='10%',width='80%',autoSize=true,padding={0,0,0,0},
+                children = {
+                    Chili.TextBox:New{x='0%',width='50%',text="Colour mode:"},
+                    Chili.ComboBox:New{x='50%',width='50%',
+                        items    = {"team", "auto", "ally team"},
+                        selected = (options.platter.colourMode=="team" and 1) or (options.platter.colourMode=="auto" and 2) or (options.platter.colourMode=="ally team" and 3),
+                        OnSelect = {
+                            function(_,sel)
+                                if sel==1 then options.platter.colourMode="team"
+                                elseif sel==2 then options.platter.colourMode="auto"
+                                elseif sel==3 then options.platter.colourMode="ally team"
+                                end
+                                UpdateEverything()
+                            end
+                            }
+                        }
+                    }                
+            },
+            Chili.Control:New{x='10%',width='80%',autoSize=true,padding={0,0,0,0},
+                children = {
+                    Chili.TextBox:New{x='0%',width='50%',text="Ally platters:"},
+                    Chili.ComboBox:New{x='50%',width='50%',
+                        items    = {"on", "if spectating", "off"},
+                        selected = (options.platter.colourMode=="on" and 1) or (options.platter.colourMode=="auto" and 2) or (options.platter.colourMode=="off" and 3),
+                        OnSelect = {
+                            function(_,sel)
+                                if sel==1 then options.platter.showAllyPlatters="on"
+                                elseif sel==2 then options.platter.showAllyPlatters="auto"
+                                elseif sel==3 then options.platter.showAllyPlatters="off"
+                                end
+                                UpdateEverything()
+                            end
+                            }
+                        }
+                    }                
+            }
+        }
+    }
+    
+
+end
+
+function UpdateEverything()
+    -- update everything, re-initialize GL
+    for unitID,_ in pairs(selUnits) do        
+        selUnits[unitID] = UpdateSelectedUnit(unitID)
+    end
+    local units = Spring.GetAllUnits()
+    for _,unitID in pairs(units) do
+        platterUnits[unitID] = UpdatePlatterUnit(unitID)
+    end
+    
+    lineWidth = options.selected.useThickLines and thickLineWidth or thinLineWidth    
+    ShutdownGL()
+    InitializeGL()
+end
+
+function widget:GetConfigData()
+    return options
+end
+
+function widget:SetConfigData(data)
+    if data then
+        options = data
+    end
+end
 
 ------------------------------------------------------
 -- cmd colors

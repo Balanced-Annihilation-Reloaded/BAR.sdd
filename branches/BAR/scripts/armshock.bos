@@ -366,7 +366,7 @@ HitByWeapon(anglex, anglez)
 RockUnit(anglex, anglez)
 {
 	turn body to x-axis anglex speed <50.000000>;
-	turn body to z-axis anglez speed <50.000000>;
+	turn body to z-axis <0> - anglez speed <50.000000>;
 	wait-for-turn body around z-axis;
 	wait-for-turn body around x-axis;
 	turn body to z-axis <0.000000> speed <20.000000>;

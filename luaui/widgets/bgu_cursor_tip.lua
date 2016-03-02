@@ -23,10 +23,6 @@ local spGetTimer                = Spring.GetTimer
 local spDiffTimers              = Spring.DiffTimers
 local spTraceScreenRay          = Spring.TraceScreenRay
 local spGetMouseState           = Spring.GetMouseState
-local spGetUnitTooltip          = Spring.GetUnitTooltip
-local spGetUnitResources        = Spring.GetUnitResources
-local spGetFeatureResources     = Spring.GetFeatureResources
-local spGetFeatureDefID         = Spring.GetFeatureDefID
 local screenWidth, screenHeight = Spring.GetWindowGeometry()
 -----------------------------------
 function firstToUpper(str)
@@ -67,44 +63,8 @@ function widget:ViewResize(vsx, vsy)
 end
 
 -----------------------------------
-local function formatresource(description, res)
-    color = ""
-    if res < 0 then color = '\255\255\127\0' end
-    if res > 0 then color = '\255\127\255\0' end
-    
-    if math.abs(res) > 20 then -- no decimals for small numbers
-        res = string.format("%d", res)
-        else
-        res = string.format("%.1f",res)
-    end
-    return color .. description .. res
-end
------------------------------------
-local function getUnitTooltip(uID)
-    local tooltip = spGetUnitTooltip(uID)
-    if tooltip==nil then
-        tooltip=""
-    end
-    local metalMake, metalUse, energyMake, energyUse = spGetUnitResources(uID)
-    
-    local metal = ((metalMake or 0) - (metalUse or 0))
-    local energy = ((energyMake or 0) - (energyUse or 0))
-    
-    tooltip = tooltip..'\n'..formatresource("Metal: ", metal)..'/s\b\n' .. formatresource("Energy: ", energy)..'/s'
-    return tooltip
-end
------------------------------------
-local function getFeatureTooltip(fID)
-    local rMetal, mMetal, rEnergy, mEnergy, reclaimLeft = spGetFeatureResources(fID)
-    local fDID = spGetFeatureDefID(fID)
-    local fName = FeatureDefs[fDID].tooltip
-    local tooltip = "Metal: "..rMetal..'\n'.."Energy: "..rEnergy
-    if fName then tooltip = firstToUpper(fName) .. '\n' .. tooltip end
-    return tooltip
-end
------------------------------------
+local unitTooltip = "Right click to switch between unit info/properties"
 local function getTooltip()
-
     if screen.currentTooltip then -- this gives chili absolute priority, otherwise TraceSreenRay() would ignore the fact ChiliUI is underneath the mouse
         tipType = 'chili'
         return screen.currentTooltip
@@ -115,9 +75,7 @@ local function getTooltip()
         tipType, ID = spTraceScreenRay(spGetMouseState())
         
         if tipType == 'unit' and #Spring.GetSelectedUnits()==0 then
-            return "Right click to switch between unit info/properties" --sInfo shows tooltips for units
-        elseif tipType == 'feature' then 
-            return getFeatureTooltip(ID)
+            return unitTooltip --sInfo shows 'tooltips' for units (and features)
         else
             tipType = false
             return ''

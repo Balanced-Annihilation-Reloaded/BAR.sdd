@@ -24,7 +24,7 @@ for filename in os.listdir(os.getcwd()):
 		i=0
 		while  i< len(bosfile):
 			line=bosfile[i]
-			if 'hitbyweapon' in line.lower():
+			if 'rockunit' in line.lower():
 				info= filename+'	'+line.strip()
 				while(i<len(bosfile)):
 					i+=1

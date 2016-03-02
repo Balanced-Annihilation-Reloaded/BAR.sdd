@@ -26,7 +26,7 @@ HitByWeapon(anglex, anglez)
 RockUnit(anglex, anglez)
 {
 	turn pelvis to x-axis anglex speed <50.000000>;
-	turn pelvis to z-axis anglez speed <50.000000>;
+	turn pelvis to z-axis <0> - anglez speed <50.000000>;
 	wait-for-turn pelvis around z-axis;
 	wait-for-turn pelvis around x-axis;
 	turn pelvis to z-axis <0.000000> speed <20.000000>;

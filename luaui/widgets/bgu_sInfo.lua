@@ -137,13 +137,11 @@ local function addUnitGroup(name,texture,overlay,unitIDs, teamColour)
         height  = 6,
         color   = {0.5,1,0,1},
     }
-    local chickenflip = false
-	if string.find(name, "chicken") ~= nil then chickenflip = true end
     local unitIcon = Chili.Image:New{
         file     = texture,
         height   = '100%',
         width    = '100%',
-        flip     = chickenflip,
+        flip     = false,
         children = {
             Chili.Image:New{
                 color    = teamColor, 
@@ -319,14 +317,12 @@ local function showUnitInfo()
     local numText = ""
     if n>1 then numText = "\n " .. blue .. "(x" .. tostring(n) .. multipleTeams .. ")" end
     if description ~= "" then description = "\n" .. description end
-    local chickenflip = false
-    if string.find(name, "chicken") ~= nil then chickenflip = true end
 
     unitPicture = Chili.Image:New{
         parent   = unitWindow,
         file     = texture,
         color    = overlayColor,
-        flip     = chickenflip,
+        flip     = false,
         height   = '100%',
         width    = '100%',
     }

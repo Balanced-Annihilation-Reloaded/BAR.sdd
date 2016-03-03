@@ -8,7 +8,7 @@ return {
 		buildcostmetal = 150,
 		builder = false,
 		buildtime = 7000,
-		buildpic = "chicken2b.dds",
+		buildpic = "CHICKEN2B.DDS",
 		canattack = true,
 		canguard = true,
 		canmove = true,

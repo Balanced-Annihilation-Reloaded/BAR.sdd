@@ -10,7 +10,7 @@ return {
 		buildcostenergy = 2200,
 		buildcostmetal = 72,
 		builder = false,
-		buildpic = "chickenw2.dds",
+		buildpic = "CHICKENW2.DDS",
 		buildtime = 1300,
 		cancrash = false,
 		canfly = true,

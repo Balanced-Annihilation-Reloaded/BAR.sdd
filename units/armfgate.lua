@@ -8,7 +8,7 @@ return {
 		buildcostenergy = 72048,
 		buildcostmetal = 3917,
 		builder = 0,
-		buildpic = "armfgate.pcx",
+		buildpic = "ARMFGATE.DDS",
 		buildtime = 59060,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR",
 		corpse = "DEAD",

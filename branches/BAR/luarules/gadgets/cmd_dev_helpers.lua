@@ -39,13 +39,27 @@ function gadget:Initialize()
 end
 
 function gadget:RecvLuaMsg(msg, playerID)
-    local _,_,_,teamID = Spring.GetPlayerInfo(playerID)
+    if not Spring.IsCheatingEnabled() then return end
     
     local words = {}
     for word in msg:gmatch("%w+") do table.insert(words, word) end
-    if words[1] ~= "givecat" then return end
+    if words[1] == "givecat" then 
+        GiveCat(words,playerID)
+    elseif words[1] == "destroyselunits" then
+        DestroySelUnits(words,playerID)
+    end
+end
+
+
+function gadget:Shutdown()
+    gadgetHandler:RemoveChatAction('loadmissiles')
+    gadgetHandler:RemoveChatAction('halfhealth')
+end
+
+function GiveCat(words,playerID)
     if #words<4 then return end
     
+    local _,_,_,teamID = Spring.GetPlayerInfo(playerID)
     local ox = tonumber(words[2])
     local oz = tonumber(words[3])
     local giveUnits = {}
@@ -68,15 +82,19 @@ function gadget:RecvLuaMsg(msg, playerID)
             x = x + spacing
         end    
     end
+end
 
+function DestroySelUnits(words, playerID)
+    if #words<2 then return end
     
+    for n=2,#words do
+        local unitID = tonumber(words[n])
+        local h,mh = Spring.GetUnitHealth(unitID)
+        Spring.DestroyUnit(unitID)        
+    end
 end
+    
 
-
-function gadget:Shutdown()
-    gadgetHandler:RemoveChatAction('loadmissiles')
-    gadgetHandler:RemoveChatAction('halfhealth')
-end
 
 ----------------------------------------
 -- UNSYNCED
@@ -84,11 +102,24 @@ else
 ----------------------------------------
 function gadget:Initialize()
     gadgetHandler:AddChatAction('givecat', GiveCat, "")
+    gadgetHandler:AddChatAction('destroyselunits', MakeWreck, "")
 end
 
 
 function gadget:Shutdown()
     gadgetHandler:RemoveChatAction('givecat')
+    gadgetHandler:RemoveChatAction('destroyselunits')
+end
+
+function MakeWreck (_,line)
+    if not Spring.IsCheatingEnabled() then return end
+
+    local selUnits = Spring.GetSelectedUnits()
+    local msg = "destroyselunits"
+    for _,unitID in ipairs(selUnits) do
+        msg = msg .. " " .. tostring(unitID)
+    end
+    Spring.SendLuaRulesMsg(msg)    
 end
 
 function GiveCat(_,line)

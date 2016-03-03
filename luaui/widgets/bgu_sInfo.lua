@@ -15,7 +15,7 @@ local imageDir = 'luaui/images/buildIcons/'
 
 local Chili, screen, unitWindow, groundWindow, groundText
 local unitWindow, unitName, unitPicture, unitPictureOverlay, unitHealthText, unitHealth, unitCostTextTitle, unitResText
-local featureName, featurePicture, featurePictureOverlay, featureHealthText, featureHealth, featureResText
+local featureName, featureHealthText, featureHealth, featureResText
 local focusName, focusPicture, focusPictureOverlay, focusCost, focusBuildTime
 local basicHealth, basicHealthText, basicResText, basicUnitInfo
 local unitGrid 
@@ -104,7 +104,6 @@ end
 local function ResToolTip(Mmake, Muse, Emake, Euse)
     return mColour .. "M: " .. green .. readable(Mmake) .. '  ' .. red .. readable(Muse) .. "\n" ..  eColour .. "E:  " .. green .. readable(Emake) .. '  ' .. red .. readable(Euse)
 end
-
 
 local function CostToolTip(Mcost, Ecost)
     return mColour .. readable(Mcost) .. '\n' .. eColour .. readable(Ecost)
@@ -752,28 +751,9 @@ function showFeatureInfo()
     local fTeamID = Spring.GetFeatureTeam(fID)
         
     local description = FeatureDefs[defID].tooltip or ''
-    --local texture = "%-" .. tostring(defID) .. ":0" --fixme https://springrts.com/wiki/Lua_OpenGL_Api#Textures
-    --local overlay     = imageDir..'Overlays/' .. name .. '.dds'
-    local overlayColor = GetOverlayColor(fTeamID)
-
-    featurePicture = Chili.Image:New{
-        parent   = unitWindow,
-        color    = overlayColor,
-        flip     = false,
-        height   = '100%',
-        width    = '100%',
-        file     = nil, --texture, fixme
-    }
-    featurePictureOverlay = Chili.Image:New{
-        parent   = featurePicture,
-        color    = overlayColor,
-        height   = '100%',
-        width    = '100%',
-        file     = nil, --overlay, fixme
-    }
-    
+    -- there is no buildpic for features
     featureName = Chili.TextBox:New{
-        parent = featurePictureOverlay,
+        parent = unitWindow,
         x      = 5,
         y      = 5,
         width  = '100%',
@@ -781,7 +761,7 @@ function showFeatureInfo()
     }
     
     featureHealthText = Chili.TextBox:New{
-        parent = featurePictureOverlay,
+        parent = unitWindow,
         x      = 5,
         bottom = 21,
         text   = '',
@@ -789,7 +769,7 @@ function showFeatureInfo()
     
     featureHealth = Chili.Progressbar:New{
         name   = "featureHealth",
-        parent = featurePictureOverlay,
+        parent = unitWindow,
         value   = 0,
         bottom  = 5,
         x       = 5,
@@ -799,7 +779,7 @@ function showFeatureInfo()
     }
     
     featureResText = Chili.TextBox:New{
-        parent = featurePictureOverlay,
+        parent = unitWindow,
         x        = 5,
         bottom   = 85,
         text     =  '',

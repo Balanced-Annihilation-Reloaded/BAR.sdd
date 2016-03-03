@@ -49,7 +49,7 @@ function LoadSpringSettings()
     Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles', 1000)
     Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 -- turn 0/1 to bool
     Settings['3DTrees']                     = Spring.GetConfigInt('3DTrees') == 1
-    --Settings['luarules cus_toggle'] --not a Spring setting         
+    --Settings['luarules cus_state'] --not a Spring setting         
     Settings['GroundDecals']                = Spring.GetConfigInt('GroundDecals') == 1    
     Settings['MapMarks']                    = Spring.GetConfigInt('MapMarks') == 1
     Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSky') == 1
@@ -116,7 +116,7 @@ end
 
 function SetCUSstate()
     -- tell luarules if we want BARs customunitshader 
-    if Settings['luarules cus_toggle'] then
+    if Settings['luarules cus_state'] then
         Spring.SendCommands('luarules cus_on')
     else
         Spring.SendCommands('luarules cus_off')        
@@ -466,7 +466,7 @@ local function applyDefaultSettings()
     local checkboxes = {
         ['AdvMapShading']    = 1,
         ['AdvModelShading']  = 1,
-        ['luarules cus_toggle'] = 1,
+        ['luarules cus_state'] = 1,
         ['AllowDeferredMapRendering']   = 1,
         ['AllowDeferredModelRendering'] = 1,
         ['MapBorder']        = 1,
@@ -822,7 +822,7 @@ local function createGraphicsTab()
                     addStack{x = '50%', y = '3%', name = 'EngineSettingsCheckBoxes', children = {
                             checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},                    
                             checkBox{title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
-                            checkBox{title = 'Extra Model Shading', name = 'luarules cus_toggle', tooltip = "Toggle BAR extra model shaders"}, 
+                            checkBox{title = 'Extra Model Shading', name = 'luarules cus_state', tooltip = "Toggle BAR extra model shaders"}, 
                             checkBox{title = 'Deferred Map Shading', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
                             checkBox{title = 'Deferred Model Shading', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
                             checkBox{title = 'Draw Engine Trees', name = '3DTrees', tooltip = "Enable/Disable rendering of engine trees"},

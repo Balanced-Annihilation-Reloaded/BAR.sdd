@@ -446,10 +446,6 @@ function TurnOff()
     drawUnitList = {}
 end
 
-function Toggle()
-    if isOn then TurnOff() else TurnOn() end
-end
-
 --// Workaround: unsynced LuaRules doesn't receive Shutdown events
 Shutdown = Script.CreateScream()
 Shutdown.func = function()
@@ -520,7 +516,6 @@ function gadget:Initialize()
     gadgetHandler:AddSyncAction("unitshaders_decloak", UnitDecloaked)
   end
   gadgetHandler:AddChatAction("normalmapping", ToggleNormalmapping)
-  gadgetHandler:AddChatAction("cus_toggle", Toggle)
   gadgetHandler:AddChatAction("cus_on", TurnOn)
   gadgetHandler:AddChatAction("cus_off", TurnOff)
 end

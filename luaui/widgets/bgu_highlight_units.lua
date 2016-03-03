@@ -130,7 +130,6 @@ function widget:Shutdown()
 	widgetHandler:DeregisterGlobal('selectedUnitsAdd')
     
     ShutdownGL()
-    UnhijackCmdColors()
 end
 
 function widget:CommandsChanged()

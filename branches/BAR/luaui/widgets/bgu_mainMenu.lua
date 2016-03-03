@@ -583,15 +583,6 @@ local checkBox = function(obj)
 
     local toggle = function(self)
         Settings[self.name] = not self.checked --self.checked hasn't changed yet!
-        --[[if self.name=="NormalMapping" then -- special case because its a spring 'setting' that's implemented by a gadget
-            if self.checked==false then
-                spSendCommands("luarules normalmapping_on")
-                return
-            else
-                spSendCommands("luarules normalmapping_off")
-                return            
-            end            
-        end]]
         spSendCommands(self.name)
     end
     

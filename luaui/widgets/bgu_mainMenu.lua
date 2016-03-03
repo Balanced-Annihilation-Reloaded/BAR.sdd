@@ -49,7 +49,7 @@ function LoadSpringSettings()
     Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles', 1000)
     Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 -- turn 0/1 to bool
     Settings['3DTrees']                     = Spring.GetConfigInt('3DTrees') == 1
-    --Settings['luarules cus_state'] --not a Spring setting         
+    Settings['NormalMapping']               = Spring.GetConfigInt('NormalMapping') == 1         
     Settings['GroundDecals']                = Spring.GetConfigInt('GroundDecals') == 1    
     Settings['MapMarks']                    = Spring.GetConfigInt('MapMarks') == 1
     Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSky') == 1
@@ -109,18 +109,6 @@ local function setCursor(cursorSet)
         if cursorSet == 'bar' then Spring.ReplaceMouseCursor(cursorNames[i], cursorNames[i], topLeft)
         else Spring.ReplaceMouseCursor(cursorNames[i], cursorSet..'/'..cursorNames[i], topLeft) end
     end
-end
-
-------------------------------------
--- control custom unit shader gadget
-
-function SetCUSstate()
-    -- tell luarules if we want BARs customunitshader 
-    if Settings['luarules cus_state'] then
-        Spring.SendCommands('luarules cus_on')
-    else
-        Spring.SendCommands('luarules cus_off')        
-   end
 end
 
 ----------------------------
@@ -466,7 +454,7 @@ local function applyDefaultSettings()
     local checkboxes = {
         ['AdvMapShading']    = 1,
         ['AdvModelShading']  = 1,
-        ['luarules cus_state'] = 1,
+        ['NormalMapping']    = 1,
         ['AllowDeferredMapRendering']   = 1,
         ['AllowDeferredModelRendering'] = 1,
         ['MapBorder']        = 1,
@@ -595,10 +583,17 @@ local checkBox = function(obj)
 
     local toggle = function(self)
         Settings[self.name] = not self.checked --self.checked hasn't changed yet!
+        --[[if self.name=="NormalMapping" then -- special case because its a spring 'setting' that's implemented by a gadget
+            if self.checked==false then
+                spSendCommands("luarules normalmapping_on")
+                return
+            else
+                spSendCommands("luarules normalmapping_off")
+                return            
+            end            
+        end]]
         spSendCommands(self.name)
     end
-    
-    Spring.Echo(obj.name, Settings[obj.name])
     
     local checkBox = Chili.Checkbox:New{
         name      = obj.name,
@@ -822,7 +817,7 @@ local function createGraphicsTab()
                     addStack{x = '50%', y = '3%', name = 'EngineSettingsCheckBoxes', children = {
                             checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},                    
                             checkBox{title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
-                            checkBox{title = 'Extra Model Shading', name = 'luarules cus_state', tooltip = "Toggle BAR extra model shaders"}, 
+                            checkBox{title = 'Extra Model Shading', name = 'luarules normalmapping', tooltip = "Toggle BARs extra model shaders"}, 
                             checkBox{title = 'Deferred Map Shading', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
                             checkBox{title = 'Deferred Model Shading', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
                             checkBox{title = 'Draw Engine Trees', name = '3DTrees', tooltip = "Enable/Disable rendering of engine trees"},
@@ -934,7 +929,6 @@ function widget:Initialize()
     loadMainMenu()
     
     LoadSpringSettings()
-    SetCUSstate()
     
     createInfoTab()
     createInterfaceTab()

@@ -86,7 +86,6 @@ VFS.Include("luarules/utilities/unitrendering.lua", nil, VFS.BASE)
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local isOn = false
 local shadows = false
 local advShading = false
 local normalmapping = false
@@ -302,7 +301,6 @@ function ToggleAdvShading()
   end
 end
 
-
 function ToggleNormalmapping(_,_,_, playerID)
   if (playerID ~= Spring.GetMyPlayerID()) then
     return
@@ -334,10 +332,9 @@ end
 
 local n = -1
 function gadget:Update()
-  if not isOn then return end
   if (n<Spring.GetDrawFrame()) then
     n = Spring.GetDrawFrame() + Spring.GetFPS()
-
+    
     if (advShading ~= Spring.HaveAdvShading()) then
       ToggleAdvShading()
     elseif (advShading)and(normalmapping)and(shadows ~= Spring.HaveShadows()) then
@@ -350,7 +347,6 @@ end
 --------------------------------------------------------------------------------
 
 function gadget:UnitFinished(unitID,unitDefID,teamID)
-  if not isOn then return end
   local unitMat = unitMaterialInfos[unitDefID]
   if (unitMat) then
     local mat = materialDefs[unitMat[1]]
@@ -374,7 +370,6 @@ function gadget:UnitFinished(unitID,unitDefID,teamID)
 end
 
 function gadget:UnitDestroyed(unitID,unitDefID)
-  if not isOn then return end
   Spring.UnitRendering.DeactivateMaterial(unitID,3)
 
   local mat = drawUnitList[unitID]
@@ -427,24 +422,6 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-
-function TurnOn()
-    --Spring.Echo("CUS on")
-    if isOn then return end
-    isOn = true
-    for i,uid in ipairs(Spring.GetAllUnits()) do
-        if not select(3,Spring.GetUnitIsStunned(uid)) then --// inbuild?
-            gadget:UnitFinished(uid,Spring.GetUnitDefID(uid),Spring.GetUnitTeam(uid))
-        end
-    end
-end
-
-function TurnOff()
-    --Spring.Echo("CUS off")
-    if isOn==false then return end
-    isOn = false
-    drawUnitList = {}
-end
 
 --// Workaround: unsynced LuaRules doesn't receive Shutdown events
 Shutdown = Script.CreateScream()
@@ -516,8 +493,6 @@ function gadget:Initialize()
     gadgetHandler:AddSyncAction("unitshaders_decloak", UnitDecloaked)
   end
   gadgetHandler:AddChatAction("normalmapping", ToggleNormalmapping)
-  gadgetHandler:AddChatAction("cus_on", TurnOn)
-  gadgetHandler:AddChatAction("cus_off", TurnOff)
 end
 
 

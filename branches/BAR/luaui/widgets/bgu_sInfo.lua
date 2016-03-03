@@ -807,10 +807,10 @@ function showFeatureInfo()
 end
 
 function FeatureToolTip(rMetal, mMetal, rEnergy, mEnergy, reclaimLeft, rezProg, rezDefName)
-    local tip =  mColour .. round(rMetal) .. "  / " .. round(mMetal) .. "" .. "\n" ..
-                 eColour .. round(rEnergy) .. "  / " .. round(mEnergy) .. "" .. "\n" .. white ..
+    local tip =  "Metal: " .. mColour .. round(rMetal) .. "  / " .. round(mMetal) .. "" .. "\n" ..
+                white .. "Energy: " .. eColour .. round(rEnergy) .. "  / " .. round(mEnergy) .. "" .. "\n" .. white ..
                 "Reclaim left: " .. green .. round(100*reclaimLeft) .. "%" .. "\n" .. white
-    if rezDefName then             
+    if rezDefName ~= "" then             
         tip = tip .. "Resurrected: " .. lilac .. round(100*rezProg) .. "%"
     end
     return tip
@@ -823,7 +823,6 @@ function updateFeatureInfo()
     local curHealth, maxHealth, rezProg = spGetFeatureHealth(fID)
     local fTeamID = spGetFeatureTeam(fID)
     local rezDefName,_ = spGetFeatureResurrect(fID)
-    
     if maxHealth>0 then 
         featureHealthText:SetText(math.floor(curHealth) ..' / '.. math.floor(maxHealth)) 
         featureHealth:SetMinMax(0, maxHealth)

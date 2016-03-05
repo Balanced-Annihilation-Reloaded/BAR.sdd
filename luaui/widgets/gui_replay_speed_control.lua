@@ -59,8 +59,8 @@ end
 -------------------
 
 function ChooseAllowedSpeeds()
-    minSpeed = tonumber(Spring.GetModOptions().minspeed) 
-    maxSpeed = tonumber(Spring.GetModOptions().maxspeed) 
+    minSpeed = tonumber(Spring.GetModOptions().minspeed) or 0
+    maxSpeed = tonumber(Spring.GetModOptions().maxspeed) or math.huge
     allowedSpeeds[1] = "pause"
     local usedSpeeds = {}
     for _,speed in pairs(wantedAllowedSpeeds) do
@@ -116,6 +116,7 @@ function widget:Initialize()
         bottom    = 100,
         height    = (#allowedSpeeds) * buttonH + labelH,
         width     = buttonW,
+        draggable = true,
         padding     = {0,0,0,0},
         itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},

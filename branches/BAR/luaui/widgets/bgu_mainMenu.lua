@@ -49,7 +49,7 @@ function LoadSpringSettings()
     Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles', 1000)
     Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 -- turn 0/1 to bool
     Settings['3DTrees']                     = Spring.GetConfigInt('3DTrees') == 1
-    Settings['NormalMapping']               = Spring.GetConfigInt('NormalMapping') == 1         
+    Settings['NormalMapping']               = (Spring.GetConfigInt("NormalMapping", 1) > 0) -- api_custom_unit_shaders.lua
     Settings['GroundDecals']                = Spring.GetConfigInt('GroundDecals') == 1    
     Settings['MapMarks']                    = Spring.GetConfigInt('MapMarks') == 1
     Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSky') == 1
@@ -454,7 +454,7 @@ local function applyDefaultSettings()
     local checkboxes = {
         ['AdvMapShading']    = 1,
         ['AdvModelShading']  = 1,
-        ['NormalMapping']    = 1,
+        ['luarules normalmapping']    = 1,
         ['AllowDeferredMapRendering']   = 1,
         ['AllowDeferredModelRendering'] = 1,
         ['MapBorder']        = 1,

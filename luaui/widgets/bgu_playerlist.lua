@@ -783,10 +783,11 @@ function GetSkill(playerID)
     
     local customtable = select(10,Spring.GetPlayerInfo(playerID)) -- player custom table
     local tsMu = customtable.skill
+    local tsMuNumber = tsMu and tonumber(tsMu:match("%d+%.?%d*"))
     local tsSigma = customtable.skilluncertainty
     local tskill = ""
     if tsMu then
-        tskill = tsMu and tonumber(tsMu:match("%d+%.?%d*")) or 0
+        tskill = tsMuNumber or 0
         tskill = round(tskill,0)
         if string.find(tsMu, ")") then
             tskill = "\255"..string.char(190)..string.char(140)..string.char(140) .. tskill -- ')' means inferred from lobby rank
@@ -819,7 +820,7 @@ function GetSkill(playerID)
     else
         tskill = "" --"\255"..string.char(160)..string.char(160)..string.char(160) .. "?"
     end
-    return tskill, tsMu
+    return tskill, tsMuNumber
 end
 
 function ReadyColour(readyState, isAI)
@@ -896,7 +897,7 @@ function NewPlayer(pID)
     
     local tskill,tsMu = GetSkill(pID, isAI)
     players[pID].skill = tskill --string
-    players[pID].tsMu = tsMu --number
+    players[pID].tsMu = tonumber(tsMu) --number
         
     players[pID].active = active
     players[pID].spec = spec

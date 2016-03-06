@@ -275,7 +275,7 @@ function UpdatePlatterUnit(unitID)
     t.teamID = Spring.GetUnitTeam(unitID)    
     t.allyTeamID = Spring.GetUnitAllyTeam(unitID)
     t.unitDefID = t.unitDefID or Spring.GetUnitDefID(unitID)
-    if not t.teamID or not team.unitDefID then return nil end
+    if not t.teamID or not t.unitDefID then return nil end
     
     if t.allyTeamID==myAllyTeamID then 
         if options.platter.showAllyPlatters=="false" then return nil end

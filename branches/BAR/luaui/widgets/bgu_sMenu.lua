@@ -926,14 +926,14 @@ local function creatUnitButton(name, unitDef)
     unitButtons[name] = Chili.Button:New{
         name      = name,
         cmdId     = -unitDef.id,
-        tooltip   = unitDef.humanName,
+        tooltip   = nil,
         caption   = '',
         disabled  = false,
         padding   = {0,0,0,0},
         margin    = {0,0,0,0},
         OnMouseUp = {cmdAction},
-        OnMouseOver = {function() WG.sMenu.mouseOverDefID = unitDef.id end},
-        OnMouseOut   = {function() WG.sMenu.mouseOverDefID = nil end}, 
+        OnMouseOver = {function() WG.sMenu.mouseOverUnitDefID = unitDef.id end},
+        OnMouseOut   = {function() WG.sMenu.mouseOverUnitDefID = nil end}, 
         backgroundColor = black,
         children  = {
             Chili.Image:New{

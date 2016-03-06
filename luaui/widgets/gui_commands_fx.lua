@@ -389,18 +389,6 @@ local function IsPointInView(x,y,z)
     return false
 end
 
---[[
-local selUnitsHash = {}
-function widget:CommandsChanged()
-    selUnitsHash = {}
-    local selUnits = Spring.GetSelectedUnits()
-    for k=1,#selUnits do
-        local unitID = selUnits[k]
-        selUnitsHash[unitID] = true
-    end
-end
-]]
-
 function widget:DrawWorldPreUnit()
     --Spring.Echo(maxCommand-minCommand) --EXPENSIVE! often handling hundreds of command queues at once 
     if spIsGUIHidden() then return end
@@ -457,7 +445,6 @@ function widget:DrawWorldPreUnit()
 							if shaderObj ~= nil then
 								gl.PushMatrix()
 								gl.DepthTest(GL.LEQUAL)
-								gl.DepthMask(true)
 								gl.UseShader(shaderObj.shader)
 								gl.Uniform(shaderObj.teamColorID, commands[i].teamColor)
 

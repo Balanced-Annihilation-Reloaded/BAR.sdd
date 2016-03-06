@@ -6,7 +6,7 @@ function gadget:GetInfo()
     date      = "2013-07-06",
     license   = "GPLv2",
     layer     = -1, 
-    enabled   = true -- loaded by default?
+    enabled   = false -- disabled until there is a GUI end of it
   }
 end
 

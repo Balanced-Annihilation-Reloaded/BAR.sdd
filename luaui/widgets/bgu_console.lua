@@ -301,8 +301,10 @@ local function processLine(line)
         local nameColor = color.other
         
         if player.spec then
-            name = '(s) '.. name
-            textColor = color.spec
+            nameColor = color.spec
+            if text:find('Spectators: ') or text:find('Allies: ') then
+                textColor = color.spec
+            end
         else
             nameColor = player.color
             if text:find('Allies: ') then
@@ -312,7 +314,7 @@ local function processLine(line)
                     textColor = color.oAlly
                 end
             elseif text:find('Spectators: ') then
-                textColor = color.spec
+                textColor = color.spec            
             end
         end
         -- Get rid of any (now) unneeded info in the text

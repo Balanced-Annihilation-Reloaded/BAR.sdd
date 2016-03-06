@@ -295,7 +295,7 @@ end
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, _, _)
     -- record that a command was given (note: cmdID is not used, but useful to record for debugging)
     if unitID and (CONFIG[cmdID] or cmdID==CMD_INSERT or cmdID<0) then
-        local el = {ID=cmdID,time=os.clock(),unitID=unitID,draw=false} -- command queue is not updated until next gameframe
+        local el = {ID=cmdID,time=os.clock(),unitID=unitID,teamID=teamID,draw=false} -- command queue is not updated until next gameframe
         maxCommand = maxCommand + 1
         --Spring.Echo("Adding " .. maxCommand)
         commands[maxCommand] = el
@@ -446,14 +446,14 @@ function widget:DrawWorldPreUnit()
 								gl.DepthTest(GL.LEQUAL)
 								gl.DepthMask(true)
 								gl.UseShader(shaderObj.shader)
-								gl.Uniform(shaderObj.teamColorID, Spring.GetTeamColor(Spring.GetMyTeamID()))
+								gl.Uniform(shaderObj.teamColorID, commands[i].teamID)
 
 								gl.Uniform(shaderObj.unitAlpha, opacity * (1-progress)) --TODO, actually make this proper!
 
-								gl.Translate(X,Y+1,Z)
+								gl.Translate(X,Y,Z)
 								gl.Rotate(90 * commands[i].queue[j].params[4], 0, 1, 0)
 								gl.UnitShapeTextures(commands[i].queue[j].buildingID, true)
-								gl.UnitShape(commands[i].queue[j].buildingID, Spring.GetMyTeamID(), true)
+								gl.UnitShape(commands[i].queue[j].buildingID, commands[i].teamID, true)
 								gl.UnitShapeTextures(commands[i].queue[j].buildingID, false)
 								gl.UseShader(0)
 								gl.PopMatrix()
@@ -463,7 +463,7 @@ function widget:DrawWorldPreUnit()
 								gl.Rotate(90 * commands[i].queue[j].params[4], 0, 1, 0)
 								gl.Color(1.0,1.0,1.0, lineAlpha)
 								--gl.Blending("alpha")
-								gl.UnitShape(commands[i].queue[j].buildingID, Spring.GetMyTeamID(), false, true, false)
+								gl.UnitShape(commands[i].queue[j].buildingID, commands[i].teamID, false, true, false)
 								gl.Rotate(-90 * commands[i].queue[j].params[4], 0, 1, 0)
 								gl.Translate(-X,-Y-1,-Z)
 								gl.PopMatrix()

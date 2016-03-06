@@ -85,22 +85,16 @@ local shaderObj = nil
 
 function InitShader()
   shaderVertSrc = [[
-//#define use_normalmapping
 //#define flip_normalmap
 //#define use_shadows
-    %%VERTEX_GLOBAL_NAMESPACE%%
 
     uniform mat4 camera;   //ViewMatrix (gl_ModelViewMatrix is ModelMatrix!)
-    //uniform mat4 cameraInv;
     uniform vec3 cameraPos;
     uniform vec3 sunPos;
     uniform vec3 sunDiffuse;
     uniform vec3 sunAmbient;
 	uniform vec3 etcLoc;
-	//uniform float frameLoc;
-	#ifdef use_treadoffset
-		uniform float treadOffset;
-	#endif
+
   #ifdef use_shadows
     uniform mat4 shadowMatrix;
     varying vec4 shadowpos;
@@ -108,36 +102,16 @@ function InitShader()
       uniform vec4 shadowParams;
     #endif
   #endif
-	varying float aoTerm;
     varying vec3 cameraDir;
-    //varying vec3 teamColor;
-    //varying float fogFactor;
 
-  #ifdef use_normalmapping
-    varying vec3 t;
-    varying vec3 b;
-    varying vec3 n;
-  #else
     varying vec3 normalv;
-  #endif
 
     void main(void)
     {
       vec4 vertex = gl_Vertex;
       vec3 normal = gl_Normal;
-	 // vertex.xyz+=normal*40*frameLoc;
 
-      %%VERTEX_PRE_TRANSFORM%%
-
-    #ifdef use_normalmapping
-      vec3 tangent   = gl_MultiTexCoord5.xyz;
-      vec3 bitangent = gl_MultiTexCoord6.xyz;
-      t = gl_NormalMatrix * tangent;
-      b = gl_NormalMatrix * bitangent;
-      n = gl_NormalMatrix * normal;
-    #else
       normalv = gl_NormalMatrix * normal;
-    #endif
 
       vec4 worldPos = gl_ModelViewMatrix * vertex;
       gl_Position   = gl_ProjectionMatrix * (camera * worldPos);
@@ -149,31 +123,12 @@ function InitShader()
         shadowpos.st = shadowpos.st * (inversesqrt(abs(shadowpos.st) + shadowParams.z) + shadowParams.w) + shadowParams.xy;
       #endif
     #endif
-	#ifdef use_treadoffset
-		gl_TexCoord[0].st = gl_MultiTexCoord0.st;
-		if (gl_MultiTexCoord0.s < 0.74951171875 && gl_MultiTexCoord0.s > 0.6279296875 && gl_MultiTexCoord0.t > 0.5702890625 && gl_MultiTexCoord0.t <0.6220703125){
-			gl_TexCoord[0].s = gl_MultiTexCoord0.s + etcLoc.z;
-		}
-	#endif
-	 aoTerm= max(0.4,fract(gl_MultiTexCoord0.s*16384.0)*1.3); // great
-	  //aoTerm= max(0.5,min(1.0.fract(gl_MultiTexCoord0.s*16384.0)*1.3)); // pretty good, if a bit heavy
-	  //aoTerm=1.0; // pretty good, if a bit heavy
-	#ifndef use_treadoffset
-		gl_TexCoord[0].st = gl_MultiTexCoord0.st;
-    #endif
-	  //teamColor = gl_TextureEnvColor[0].rgb;
 
-      //float fogCoord = length(gl_Position.xyz);
-      //fogFactor = (gl_Fog.end - fogCoord) * gl_Fog.scale; //gl_Fog.scale := 1.0 / (gl_Fog.end - gl_Fog.start)
-      //fogFactor = clamp(fogFactor, 0.0, 1.0);
-
-      %%VERTEX_POST_TRANSFORM%%
     }
   ]]
   
     shaderFragStr =
 [[
-//#define use_normalmapping
 //#define flip_normalmap
 //#define use_shadows
 //#define flipAlpha
@@ -201,12 +156,7 @@ function InitShader()
   varying vec3 cameraDir;
   varying float fogFactor;
 
-#ifdef use_normalmapping
-  uniform sampler2D normalMap;
-  varying mat3 tbnMatrix;
-#else
   varying vec3 normalv;
-#endif
 
 float GetShadowCoeff(vec4 shadowCoors)
 {
@@ -223,16 +173,8 @@ float GetShadowCoeff(vec4 shadowCoors)
 
 void main(void)
 {
-#ifdef use_normalmapping
-   vec2 tc = gl_TexCoord[0].st;
-   #ifdef flip_normalmap
-      tc.t = 1.0 - tc.t;
-   #endif
-   vec3 nvTS  = normalize((texture2D(normalMap, tc).xyz - 0.5) * 2.0);
-   vec3 normal = tbnMatrix * nvTS;
-#else
+
    vec3 normal = normalize(normalv);
-#endif
 
    vec3 light = max(dot(normal, sunDir), 0.0) * sunDiffuse + sunAmbient;
 
@@ -240,28 +182,28 @@ void main(void)
    vec4 extraColor  = texture2D(textureS3o2, gl_TexCoord[0].st);
 
    vec3 reflectDir = reflect(cameraDir, normal);
-   vec3 specular   = vec3(0.0,0.0,0.0);// textureCube(specularTex, reflectDir).rgb * extraColor.g * 4.0;
-   vec3 reflection = vec3(0.0,0.0,0.0);//textureCube(reflectTex,  reflectDir).rgb;
+   //vec3 specular   = vec3(0.0,0.0,0.0);// textureCube(specularTex, reflectDir).rgb * extraColor.g * 4.0;
+   //vec3 reflection = vec3(0.0,0.0,0.0);//textureCube(reflectTex,  reflectDir).rgb;
+   //vec3 reflection = textureCube(reflectTex,  reflectDir).rgb;
 
    float shadow = GetShadowCoeff(gl_TexCoord[1] + vec4(0.0, 0.0, -0.00005, 0.0));
 
    // no highlights if in shadow; decrease light to ambient level
-   specular *= shadow;
+   //specular *= shadow;
    light = mix(sunAmbient, light, shadow);
 
 
-   reflection  = mix(light, reflection, extraColor.g); // reflection
-   reflection += extraColor.rrr; // self-illum
+   //reflection  = mix(light, reflection, extraColor.g); // reflection
+   //reflection += extraColor.rrr; // self-illum
 
    gl_FragColor     = diffuse;
    gl_FragColor.rgb = mix(gl_FragColor.rgb, teamColor.rgb, gl_FragColor.a); // teamcolor
-   //gl_FragColor.rgb = vec3(shadow,shadow,shadow);
-   gl_FragColor.rgb = gl_FragColor.rgb * light + specular;
-   
 
+   gl_FragColor.rgb = gl_FragColor.rgb * (light + extraColor.rrr);// + specular;
+   
    //gl_FragColor.rgb = mix(gl_Fog.color.rgb, gl_FragColor.rgb, fogFactor); // fog
    //gl_FragColor.a   = extraColor.a * teamColor.a;
-   gl_FragColor.a   = unitAlpha;
+   gl_FragColor.a     = extraColor.a * unitAlpha;
 }
 
 ]]
@@ -274,7 +216,6 @@ void main(void)
             shadowTex   = 2,
             specularTex = 3,
             reflectTex  = 4,
-            normalMap   = 5,
             --detailMap   = 6,
         },
         uniform = {
@@ -506,8 +447,8 @@ function widget:DrawWorldPreUnit()
 								gl.DepthMask(true)
 								gl.UseShader(shaderObj.shader)
 								gl.Uniform(shaderObj.teamColorID, Spring.GetTeamColor(Spring.GetMyTeamID()))
-								--gl.Uniform(shaderObj.unitAlpha, lineAlpha)
-								gl.Uniform(shaderObj.unitAlpha, opacity * (1-progress))
+
+								gl.Uniform(shaderObj.unitAlpha, opacity * (1-progress)) --TODO, actually make this proper!
 
 								gl.Translate(X,Y+1,Z)
 								gl.Rotate(90 * commands[i].queue[j].params[4], 0, 1, 0)

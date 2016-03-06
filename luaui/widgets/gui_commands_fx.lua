@@ -295,7 +295,8 @@ end
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, _, _)
     -- record that a command was given (note: cmdID is not used, but useful to record for debugging)
     if unitID and (CONFIG[cmdID] or cmdID==CMD_INSERT or cmdID<0) then
-        local el = {ID=cmdID,time=os.clock(),unitID=unitID,teamID=teamID,draw=false} -- command queue is not updated until next gameframe
+        local teamColor = Spring.GetTeamColor(teamID)
+        local el = {ID=cmdID,time=os.clock(),unitID=unitID,teamID=teamID,teamColor=teamColor,draw=false} -- command queue is not updated until next gameframe
         maxCommand = maxCommand + 1
         --Spring.Echo("Adding " .. maxCommand)
         commands[maxCommand] = el
@@ -388,6 +389,18 @@ local function IsPointInView(x,y,z)
     return false
 end
 
+--[[
+local selUnitsHash = {}
+function widget:CommandsChanged()
+    selUnitsHash = {}
+    local selUnits = Spring.GetSelectedUnits()
+    for k=1,#selUnits do
+        local unitID = selUnits[k]
+        selUnitsHash[unitID] = true
+    end
+end
+]]
+
 function widget:DrawWorldPreUnit()
     --Spring.Echo(maxCommand-minCommand) --EXPENSIVE! often handling hundreds of command queues at once 
     if spIsGUIHidden() then return end
@@ -446,9 +459,9 @@ function widget:DrawWorldPreUnit()
 								gl.DepthTest(GL.LEQUAL)
 								gl.DepthMask(true)
 								gl.UseShader(shaderObj.shader)
-								gl.Uniform(shaderObj.teamColorID, commands[i].teamID)
+								gl.Uniform(shaderObj.teamColorID, commands[i].teamColor)
 
-								gl.Uniform(shaderObj.unitAlpha, opacity * (1-progress)) --TODO, actually make this proper!
+								gl.Uniform(shaderObj.unitAlpha,  opacity * (1-progress)) --TODO, actually make this proper!
 
 								gl.Translate(X,Y,Z)
 								gl.Rotate(90 * commands[i].queue[j].params[4], 0, 1, 0)

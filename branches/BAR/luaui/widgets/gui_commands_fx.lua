@@ -80,6 +80,228 @@ end
 CONFIG[BUILD] = {0.0, 1.0, 0.0, 0.25}
 
 --------------------------------------------------------------------------------
+--Shader stuff
+local shaderObj = nil
+
+function InitShader()
+  shaderVertSrc = [[
+//#define use_normalmapping
+//#define flip_normalmap
+//#define use_shadows
+    %%VERTEX_GLOBAL_NAMESPACE%%
+
+    uniform mat4 camera;   //ViewMatrix (gl_ModelViewMatrix is ModelMatrix!)
+    //uniform mat4 cameraInv;
+    uniform vec3 cameraPos;
+    uniform vec3 sunPos;
+    uniform vec3 sunDiffuse;
+    uniform vec3 sunAmbient;
+	uniform vec3 etcLoc;
+	//uniform float frameLoc;
+	#ifdef use_treadoffset
+		uniform float treadOffset;
+	#endif
+  #ifdef use_shadows
+    uniform mat4 shadowMatrix;
+    varying vec4 shadowpos;
+    #ifndef use_perspective_correct_shadows
+      uniform vec4 shadowParams;
+    #endif
+  #endif
+	varying float aoTerm;
+    varying vec3 cameraDir;
+    //varying vec3 teamColor;
+    //varying float fogFactor;
+
+  #ifdef use_normalmapping
+    varying vec3 t;
+    varying vec3 b;
+    varying vec3 n;
+  #else
+    varying vec3 normalv;
+  #endif
+
+    void main(void)
+    {
+      vec4 vertex = gl_Vertex;
+      vec3 normal = gl_Normal;
+	 // vertex.xyz+=normal*40*frameLoc;
+
+      %%VERTEX_PRE_TRANSFORM%%
+
+    #ifdef use_normalmapping
+      vec3 tangent   = gl_MultiTexCoord5.xyz;
+      vec3 bitangent = gl_MultiTexCoord6.xyz;
+      t = gl_NormalMatrix * tangent;
+      b = gl_NormalMatrix * bitangent;
+      n = gl_NormalMatrix * normal;
+    #else
+      normalv = gl_NormalMatrix * normal;
+    #endif
+
+      vec4 worldPos = gl_ModelViewMatrix * vertex;
+      gl_Position   = gl_ProjectionMatrix * (camera * worldPos);
+      cameraDir     = worldPos.xyz - cameraPos;
+
+    #ifdef use_shadows
+      shadowpos = shadowMatrix * worldPos;
+      #ifndef use_perspective_correct_shadows
+        shadowpos.st = shadowpos.st * (inversesqrt(abs(shadowpos.st) + shadowParams.z) + shadowParams.w) + shadowParams.xy;
+      #endif
+    #endif
+	#ifdef use_treadoffset
+		gl_TexCoord[0].st = gl_MultiTexCoord0.st;
+		if (gl_MultiTexCoord0.s < 0.74951171875 && gl_MultiTexCoord0.s > 0.6279296875 && gl_MultiTexCoord0.t > 0.5702890625 && gl_MultiTexCoord0.t <0.6220703125){
+			gl_TexCoord[0].s = gl_MultiTexCoord0.s + etcLoc.z;
+		}
+	#endif
+	 aoTerm= max(0.4,fract(gl_MultiTexCoord0.s*16384.0)*1.3); // great
+	  //aoTerm= max(0.5,min(1.0.fract(gl_MultiTexCoord0.s*16384.0)*1.3)); // pretty good, if a bit heavy
+	  //aoTerm=1.0; // pretty good, if a bit heavy
+	#ifndef use_treadoffset
+		gl_TexCoord[0].st = gl_MultiTexCoord0.st;
+    #endif
+	  //teamColor = gl_TextureEnvColor[0].rgb;
+
+      //float fogCoord = length(gl_Position.xyz);
+      //fogFactor = (gl_Fog.end - fogCoord) * gl_Fog.scale; //gl_Fog.scale := 1.0 / (gl_Fog.end - gl_Fog.start)
+      //fogFactor = clamp(fogFactor, 0.0, 1.0);
+
+      %%VERTEX_POST_TRANSFORM%%
+    }
+  ]]
+  
+    shaderFragStr =
+[[
+//#define use_normalmapping
+//#define flip_normalmap
+//#define use_shadows
+//#define flipAlpha
+//#define tex1Alpha
+
+  uniform sampler2D textureS3o1;
+  uniform sampler2D textureS3o2;
+  uniform samplerCube specularTex;
+  uniform samplerCube reflectTex;
+
+  uniform vec3 sunDir;
+  uniform vec3 sunDiffuse;
+  uniform vec3 sunAmbient;
+
+#ifdef use_shadows
+  uniform sampler2DShadow shadowTex;
+  uniform float shadowDensity;
+#endif
+
+  uniform vec4 teamColor;
+  uniform float alphaPass;
+  uniform float unitAlpha;
+  
+  varying vec4 vertexWorldPos;
+  varying vec3 cameraDir;
+  varying float fogFactor;
+
+#ifdef use_normalmapping
+  uniform sampler2D normalMap;
+  varying mat3 tbnMatrix;
+#else
+  varying vec3 normalv;
+#endif
+
+float GetShadowCoeff(vec4 shadowCoors)
+{
+   #ifdef use_shadows
+   float coeff = shadow2DProj(shadowTex, shadowCoors).r;
+
+   coeff  = (1.0 - coeff);
+   coeff *= shadowDensity;
+   return (1.0 - coeff);
+   #else
+   return 1.0;
+   #endif
+}
+
+void main(void)
+{
+#ifdef use_normalmapping
+   vec2 tc = gl_TexCoord[0].st;
+   #ifdef flip_normalmap
+      tc.t = 1.0 - tc.t;
+   #endif
+   vec3 nvTS  = normalize((texture2D(normalMap, tc).xyz - 0.5) * 2.0);
+   vec3 normal = tbnMatrix * nvTS;
+#else
+   vec3 normal = normalize(normalv);
+#endif
+
+   vec3 light = max(dot(normal, sunDir), 0.0) * sunDiffuse + sunAmbient;
+
+   vec4 diffuse     = texture2D(textureS3o1, gl_TexCoord[0].st);
+   vec4 extraColor  = texture2D(textureS3o2, gl_TexCoord[0].st);
+
+   vec3 reflectDir = reflect(cameraDir, normal);
+   vec3 specular   = vec3(0.0,0.0,0.0);// textureCube(specularTex, reflectDir).rgb * extraColor.g * 4.0;
+   vec3 reflection = vec3(0.0,0.0,0.0);//textureCube(reflectTex,  reflectDir).rgb;
+
+   float shadow = GetShadowCoeff(gl_TexCoord[1] + vec4(0.0, 0.0, -0.00005, 0.0));
+
+   // no highlights if in shadow; decrease light to ambient level
+   specular *= shadow;
+   light = mix(sunAmbient, light, shadow);
+
+
+   reflection  = mix(light, reflection, extraColor.g); // reflection
+   reflection += extraColor.rrr; // self-illum
+
+   gl_FragColor     = diffuse;
+   gl_FragColor.rgb = mix(gl_FragColor.rgb, teamColor.rgb, gl_FragColor.a); // teamcolor
+   //gl_FragColor.rgb = vec3(shadow,shadow,shadow);
+   gl_FragColor.rgb = gl_FragColor.rgb * light + specular;
+   
+
+   //gl_FragColor.rgb = mix(gl_Fog.color.rgb, gl_FragColor.rgb, fogFactor); // fog
+   //gl_FragColor.a   = extraColor.a * teamColor.a;
+   gl_FragColor.a   = unitAlpha;
+}
+
+]]
+    local shaderTemplate = {
+        fragment = shaderFragStr,
+        vertex = shaderVertStr,
+        uniformInt = {
+            textureS3o1 = 0,
+            textureS3o2 = 1,
+            shadowTex   = 2,
+            specularTex = 3,
+            reflectTex  = 4,
+            normalMap   = 5,
+            --detailMap   = 6,
+        },
+        uniform = {
+            sunDir = {gl.GetSun("pos")},
+            sunAmbient = {gl.GetSun("ambient", "unit")},
+            sunDiffuse = {gl.GetSun("diffuse", "unit")},
+            shadowDensity = {gl.GetSun("shadowDensity" ,"unit")},
+            shadowParams  = {gl.GetShadowMapParams()},
+        },
+        uniformMatrix = {
+            shadowMatrix = {gl.GetMatrixData("shadow")},
+        }
+    }
+
+    local shader = gl.CreateShader(shaderTemplate)
+    local errors = gl.GetShaderLog(shader)
+    if errors ~= "" then
+        Spring.Echo(errors)
+        return
+    end
+    shaderObj = {
+        shader = shader,
+        teamColorID = gl.GetUniformLocation(shader, "teamColor"),
+        unitAlpha = gl.GetUniformLocation(shader, "unitAlpha"),
+    }
+end
+
 --------------------------------------------------------------------------------
 
 local pi = math.pi
@@ -137,6 +359,10 @@ function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, _, _)
         --Spring.Echo("Adding " .. maxCommand)
         commands[maxCommand] = el
     end
+end
+
+function widget:Initialize()
+	InitShader()
 end
 
 function ExtractTargetLocation(a,b,c,d,cmdID)
@@ -269,18 +495,38 @@ function widget:DrawWorldPreUnit()
                         -- lines
                         local lineColour = CONFIG[commands[i].queue[j].id]
                         local lineAlpha = opacity * lineColour[4] * (1-progress)
+						--Spring.Echo("linealpha", lineAlpha)
                         gl.Color(lineColour[1],lineColour[2],lineColour[3],lineAlpha)
                         gl.BeginEnd(GL.QUADS, DrawLine, prevX,prevY,prevZ, X, Y, Z, lineWidth)
                         if commands[i].queue[j].buildingID then
                             -- ghost of build queue
-                            gl.PushMatrix()
-                            gl.Translate(X,Y+1,Z)
-                            gl.Rotate(90 * commands[i].queue[j].params[4], 0, 1, 0)
-                            gl.Color(1.0,1.0,1.0, lineAlpha)
-                            gl.UnitShape(commands[i].queue[j].buildingID, Spring.GetMyTeamID(), false, true, false)
-                            gl.Rotate(-90 * commands[i].queue[j].params[4], 0, 1, 0)
-                            gl.Translate(-X,-Y-1,-Z)
-                            gl.PopMatrix()
+							if shaderObj ~= nil then
+								gl.PushMatrix()
+								gl.DepthTest(GL.LEQUAL)
+								gl.DepthMask(true)
+								gl.UseShader(shaderObj.shader)
+								gl.Uniform(shaderObj.teamColorID, Spring.GetTeamColor(Spring.GetMyTeamID()))
+								--gl.Uniform(shaderObj.unitAlpha, lineAlpha)
+								gl.Uniform(shaderObj.unitAlpha, opacity * (1-progress))
+
+								gl.Translate(X,Y+1,Z)
+								gl.Rotate(90 * commands[i].queue[j].params[4], 0, 1, 0)
+								gl.UnitShapeTextures(commands[i].queue[j].buildingID, true)
+								gl.UnitShape(commands[i].queue[j].buildingID, Spring.GetMyTeamID(), true)
+								gl.UnitShapeTextures(commands[i].queue[j].buildingID, false)
+								gl.UseShader(0)
+								gl.PopMatrix()
+							else
+								gl.PushMatrix()
+								gl.Translate(X,Y+1,Z)
+								gl.Rotate(90 * commands[i].queue[j].params[4], 0, 1, 0)
+								gl.Color(1.0,1.0,1.0, lineAlpha)
+								--gl.Blending("alpha")
+								gl.UnitShape(commands[i].queue[j].buildingID, Spring.GetMyTeamID(), false, true, false)
+								gl.Rotate(-90 * commands[i].queue[j].params[4], 0, 1, 0)
+								gl.Translate(-X,-Y-1,-Z)
+								gl.PopMatrix()
+							end
                         end
                         prevX, prevY, prevZ = X, Y, Z
                         -- dot 

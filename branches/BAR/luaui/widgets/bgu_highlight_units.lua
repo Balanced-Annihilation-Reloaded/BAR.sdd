@@ -204,8 +204,8 @@ end
 
 function SelectedUnitsAdd(playerID, unitID)
     -- newly selected unit
-    selUnits[unitID] = selUnits[unitID] or {}
     selUnits[unitID] = UpdateSelectedUnit(unitID, playerID)
+    if not selUnits[unitID] then return end
     playerSelUnits[playerID] = playerSelUnits[playerID] or {}
     playerSelUnits[playerID][unitID] = true
 end
@@ -220,11 +220,12 @@ end
 
 function SelectedUnitsDelete(unitID)
     -- and here is where we remove it! shortly after de-selection, once the alpha has faded to zero
-    if not selUnits[unitID] then return end 
-    for playerID,_ in pairs(selUnits[unitID].selectedBy) do
-        playerSelUnits[playerID][unitID] = nil
-    end
     selUnits[unitID] = nil
+    if playerSelUnits[playerID] and playerSelUnits[playerID][unitID] then  
+        for playerID,_ in pairs(selUnits[unitID].selectedBy) do
+            playerSelUnits[playerID][unitID] = nil
+        end
+    end
 end
 
 function UpdateSelectedUnit(unitID, playerID)
@@ -234,6 +235,9 @@ function UpdateSelectedUnit(unitID, playerID)
     t.teamID = Spring.GetUnitTeam(unitID)
     t.allyTeamID = Spring.GetUnitAllyTeam(unitID)
     t.unitDefID = t.unitDefID or Spring.GetUnitDefID(unitID)
+    if not t.teamID or not t.unitDefID then 
+        return nil -- unit died before the 'was selected' message reached us, or suchlike
+    end 
     
     local r,g,b
     if t.teamID and options.selected.colourMode=="team" then

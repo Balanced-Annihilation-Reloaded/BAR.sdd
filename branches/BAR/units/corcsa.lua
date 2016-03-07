@@ -57,6 +57,7 @@ return {
 			[13] = "corason",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

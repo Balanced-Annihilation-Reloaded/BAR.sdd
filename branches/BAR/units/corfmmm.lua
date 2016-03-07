@@ -33,6 +33,7 @@ return {
 		waterline = 20,
 		yardmap = "ooooooooooooooooooooooooo",
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

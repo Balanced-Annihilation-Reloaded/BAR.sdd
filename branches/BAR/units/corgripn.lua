@@ -33,6 +33,7 @@ return {
 		stealth = true,
 		turnrate = 396,
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

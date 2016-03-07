@@ -33,6 +33,7 @@ return {
 		sonardistance = 1200,
 		turnrate = 392,
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

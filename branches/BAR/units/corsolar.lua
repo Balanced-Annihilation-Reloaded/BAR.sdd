@@ -15,8 +15,8 @@ return {
 		corpse = "DEAD",
 		damagemodifier = 0.5,
 		description = "",
-		energystorage = 50,
 		energymake = 20,
+		energystorage = 50,
 		explodeas = "SMALL_BUILDINGEX",
 		footprintx = 5,
 		footprintz = 5,
@@ -35,6 +35,7 @@ return {
 		usebuildinggrounddecal = true,
 		yardmap = "ooooo ooooo ooooo ooooo ooooo",
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

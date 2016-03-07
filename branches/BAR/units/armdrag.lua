@@ -27,6 +27,9 @@ return {
 		seismicsignature = 0,
 		sightdistance = 1,
 		yardmap = "ffff",
+		customparams = {
+			faction = "arm",
+		},
 		featuredefs = {
 			rockteeth = {
 				animating = 0,

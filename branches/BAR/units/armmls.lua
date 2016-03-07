@@ -62,6 +62,7 @@ return {
 			[18] = "armfmine3",
 		},
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

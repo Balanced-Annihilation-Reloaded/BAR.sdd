@@ -42,6 +42,7 @@ return {
 		turnrate = 445,
 		customparams = {
 			canareaattack = 1,
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

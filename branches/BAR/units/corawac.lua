@@ -33,6 +33,7 @@ return {
 		sonardistance = 1200,
 		turnrate = 402,
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

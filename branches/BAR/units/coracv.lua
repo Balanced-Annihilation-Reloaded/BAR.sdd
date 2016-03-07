@@ -77,6 +77,7 @@ return {
 			[28] = "coravp",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

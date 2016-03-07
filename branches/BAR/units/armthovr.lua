@@ -41,6 +41,7 @@ return {
 		turnrate = 395,
 		waterline = 4,
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

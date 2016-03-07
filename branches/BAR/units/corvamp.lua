@@ -30,6 +30,7 @@ return {
 		stealth = true,
 		turnrate = 1337,
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

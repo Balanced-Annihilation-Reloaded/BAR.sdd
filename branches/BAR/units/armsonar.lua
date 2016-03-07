@@ -35,6 +35,7 @@ return {
 		sonardistance = 1200,
 		yardmap = "oooo",
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

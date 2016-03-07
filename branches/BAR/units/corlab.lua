@@ -49,6 +49,7 @@ return {
 			[6] = "corcrash",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

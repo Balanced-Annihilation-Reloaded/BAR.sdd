@@ -64,6 +64,7 @@ return {
 			[22] = "corroy",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

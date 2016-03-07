@@ -54,6 +54,7 @@ return {
 			[10] = "cormist",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

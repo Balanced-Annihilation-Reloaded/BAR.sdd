@@ -42,6 +42,7 @@ return {
 		upright = true,
 		usebuildinggrounddecal = true,
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

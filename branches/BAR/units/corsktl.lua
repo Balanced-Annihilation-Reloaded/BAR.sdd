@@ -43,6 +43,7 @@ return {
 		turnrate = 1122,
 		upright = true,
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

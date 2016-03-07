@@ -50,6 +50,7 @@ return {
 			[11] = "corsjam",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

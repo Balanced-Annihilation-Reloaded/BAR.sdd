@@ -55,6 +55,7 @@ return {
 		windgenerator = 0.001,
 		workertime = 1000,
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

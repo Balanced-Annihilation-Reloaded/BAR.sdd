@@ -50,6 +50,7 @@ return {
 			[6] = "bladew",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

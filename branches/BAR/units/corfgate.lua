@@ -2,7 +2,6 @@ return {
 	corfgate = {
 		acceleration = 0,
 		activatewhenbuilt = true,
-		bmcode = 0,
 		brakerate = 0,
 		buildangle = 2048,
 		buildcostenergy = 73949,
@@ -36,16 +35,15 @@ return {
 		onoffable = 1,
 		seismicsignature = 0,
 		selfdestructas = "MINE_NUKE",
-		side = "CORE",
 		sightdistance = 600,
-		smoothanim = 1,
-		tedclass = "Water",
 		turninplaceanglelimit = 140,
 		turninplacespeedlimit = 0,
 		turnrate = 0,
-		unitname = "corfgate",
 		waterline = 0,
 		workertime = 0,
+		customparams = {
+			faction = "core",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

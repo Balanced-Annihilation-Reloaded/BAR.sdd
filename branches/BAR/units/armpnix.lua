@@ -33,6 +33,7 @@ return {
 		sightdistance = 260,
 		turnrate = 402,
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},
@@ -68,9 +69,6 @@ return {
 				craterareaofeffect = 168,
 				craterboost = 0,
 				cratermult = 0,
-				customparams = {
-                    lups_shockwave = "1",
-                },  
 				edgeeffectiveness = 0.7,
 				explosiongenerator = "custom:ARM_BIGBOMB_EXPLOSION",
 				gravityaffected = "true",
@@ -87,6 +85,9 @@ return {
 				soundhitwetvolume = 0.5,
 				soundstart = "bombrel",
 				weapontype = "AircraftBomb",
+				customparams = {
+					lups_shockwave = "1",
+				},
 				damage = {
 					antibomber = 100,
 					default = 250,

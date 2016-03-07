@@ -88,6 +88,7 @@ return {
 			[42] = "cortl",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

@@ -55,6 +55,7 @@ return {
 			[7] = "corjamt",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

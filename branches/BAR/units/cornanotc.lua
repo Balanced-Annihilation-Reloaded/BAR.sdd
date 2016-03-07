@@ -33,6 +33,7 @@ return {
 		upright = true,
 		workertime = 200,
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

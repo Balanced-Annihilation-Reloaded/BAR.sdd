@@ -36,6 +36,7 @@ return {
 		windgenerator = 25,
 		yardmap = "ooooooooo",
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

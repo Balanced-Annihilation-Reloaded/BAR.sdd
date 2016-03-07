@@ -35,6 +35,7 @@ return {
 		turninplacespeedlimit = 0.726,
 		turnrate = 231,
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},
@@ -109,9 +110,6 @@ return {
 				craterareaofeffect = 192,
 				craterboost = 0,
 				cratermult = 0,
-				customparams = {
-                    lups_shockwave = "1",
-                },  
 				edgeeffectiveness = 0.5,
 				explosiongenerator = "custom:FLASHSMALLBUILDING",
 				gravityaffected = "true",
@@ -132,6 +130,9 @@ return {
 				turret = true,
 				weapontype = "Cannon",
 				weaponvelocity = 500,
+				customparams = {
+					lups_shockwave = "1",
+				},
 				damage = {
 					default = 1100,
 					subs = 5,

@@ -71,6 +71,7 @@ return {
 			[14] = "armfmkr",
 		},
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 			paralyzemultiplier = 0.025,

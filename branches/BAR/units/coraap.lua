@@ -49,6 +49,7 @@ return {
 			[8] = "corcrw",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

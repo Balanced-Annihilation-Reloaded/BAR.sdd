@@ -38,6 +38,9 @@ return {
 		selfdestructcountdown = 0,
 		sightdistance = 83.2,
 		stealth = true,
+		customparams = {
+			faction = "core",
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

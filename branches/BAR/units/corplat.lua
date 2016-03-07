@@ -41,6 +41,7 @@ return {
 			[6] = "corhunt",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

@@ -41,6 +41,9 @@ return {
 		turnrate = 0,
 		upright = true,
 		usebuildinggrounddecal = true,
+		customparams = {
+			faction = "arm",
+		},
 		featuredefs = {
 			dead = {
 				autoreclaimable = 0,

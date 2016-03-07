@@ -57,6 +57,7 @@ return {
 		windgenerator = 0.001,
 		workertime = 1000,
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

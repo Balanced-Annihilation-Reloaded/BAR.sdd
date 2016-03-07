@@ -33,6 +33,7 @@ return {
 		sightdistance = 865,
 		turnrate = 880,
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

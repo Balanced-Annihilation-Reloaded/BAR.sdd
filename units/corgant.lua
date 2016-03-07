@@ -45,6 +45,7 @@ return {
 			[5] = "armraven",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

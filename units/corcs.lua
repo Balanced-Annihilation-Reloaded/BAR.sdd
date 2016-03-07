@@ -67,6 +67,7 @@ return {
 			[21] = "corplat",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

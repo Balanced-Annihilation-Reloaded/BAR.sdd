@@ -2,7 +2,6 @@ return {
 	armfgate = {
 		acceleration = 0,
 		activatewhenbuilt = true,
-		bmcode = 0,
 		brakerate = 0,
 		buildangle = 2048,
 		buildcostenergy = 72048,
@@ -33,16 +32,15 @@ return {
 		onoffable = 1,
 		seismicsignature = 0,
 		selfdestructas = "MINE_NUKE",
-		side = "ARM",
 		sightdistance = 600,
-		smoothanim = 1,
-		tedclass = "SPECIAL",
 		turninplaceanglelimit = 140,
 		turninplacespeedlimit = 0,
 		turnrate = 0,
-		unitname = "armfgate",
 		waterline = 0,
 		workertime = 0,
+		customparams = {
+			faction = "arm",
+		},
 		featuredefs = {
 			dead = {
 				blocking = true,

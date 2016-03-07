@@ -27,5 +27,8 @@ return {
 		sightdistance = 1,
 		waterline = 0,
 		yardmap = "wwww",
+		customparams = {
+			faction = "arm",
+		},
 	},
 }

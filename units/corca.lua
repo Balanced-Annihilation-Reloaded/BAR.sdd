@@ -74,6 +74,7 @@ return {
 			[31] = "corsy",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

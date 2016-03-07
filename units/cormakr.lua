@@ -34,6 +34,7 @@ return {
 		usebuildinggrounddecal = true,
 		yardmap = "oooooooooooo",
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

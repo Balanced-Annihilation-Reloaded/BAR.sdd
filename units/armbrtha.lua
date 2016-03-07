@@ -33,6 +33,7 @@ return {
 		yardmap = "oooooooooooooooo",
 		customparams = {
 			canareaattack = 1,
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

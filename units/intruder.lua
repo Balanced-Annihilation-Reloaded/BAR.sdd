@@ -46,6 +46,7 @@ return {
 		turnrate = 215.60001,
 		unloadspread = 3,
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

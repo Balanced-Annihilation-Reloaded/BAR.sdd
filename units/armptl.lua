@@ -28,6 +28,9 @@ return {
 		selfdestructas = "MEDIUM_BUILDING",
 		sightdistance = 300,
 		yardmap = "ooooooooo",
+		customparams = {
+			faction = "arm",
+		},
 		featuredefs = {
 			dead = {
 				blocking = false,

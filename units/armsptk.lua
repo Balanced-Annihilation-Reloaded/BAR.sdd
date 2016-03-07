@@ -32,6 +32,7 @@ return {
 		turninplacespeedlimit = 1.1352,
 		turnrate = 1122,
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

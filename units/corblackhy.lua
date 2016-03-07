@@ -45,6 +45,7 @@ return {
 		waterline = 10,
 		windgenerator = 0.001,
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 			paralyzemultiplier = 0,

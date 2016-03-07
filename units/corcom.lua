@@ -88,6 +88,7 @@ return {
 			[26] = "corfrad",
 		},
 		customparams = {
+			faction = "core",
 			iscommander = true,
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
@@ -179,9 +180,6 @@ return {
 				craterareaofeffect = 0,
 				craterboost = 0,
 				cratermult = 0,
-				customparams = {
-					lups_shockwave = "1",
-      			},  
 				energypershot = 500,
 				explosiongenerator = "custom:DGUNTRACE",
 				firestarter = 100,
@@ -202,6 +200,9 @@ return {
 				weapontimer = 4.2,
 				weapontype = "DGun",
 				weaponvelocity = 300,
+				customparams = {
+					lups_shockwave = "1",
+				},
 				damage = {
 					chicken = 12000,
 					default = 99999,

@@ -47,6 +47,7 @@ return {
 			[8] = "armrecl",
 		},
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

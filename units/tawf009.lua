@@ -39,6 +39,7 @@ return {
 		upright = true,
 		waterline = 30,
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

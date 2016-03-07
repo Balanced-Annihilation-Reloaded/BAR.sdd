@@ -27,6 +27,9 @@ return {
 		seismicsignature = 0,
 		sightdistance = 1,
 		yardmap = "ffff",
+		customparams = {
+			faction = "core",
+		},
 		featuredefs = {
 			fortification_core = {
 				autoreclaimable = 0,

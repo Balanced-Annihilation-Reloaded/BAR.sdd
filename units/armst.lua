@@ -42,6 +42,7 @@ return {
 		turnrate = 701.79999,
 		customparams = {
 			arm_tank = "1",
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

@@ -27,6 +27,9 @@ return {
 		sightdistance = 1,
 		usebuildinggrounddecal = true,
 		yardmap = "ffff",
+		customparams = {
+			faction = "arm",
+		},
 		featuredefs = {
 			fortification = {
 				autoreclaimable = 0,

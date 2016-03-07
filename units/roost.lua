@@ -3,7 +3,6 @@ return {
 		acceleration = 0,
 		activatewhenbuilt = true,
 		autoheal = 1.8,
-		bmcode = "0",
 		brakerate = 0,
 		buildcostenergy = 25000,
 		buildcostmetal = 400,
@@ -34,16 +33,15 @@ return {
 		radardistance = 900,
 		seismicsignature = 4,
 		selfdestructas = "ROOST_DEATH",
-		side = "ARM",
 		sightdistance = 450,
-		smoothanim = true,
-		tedclass = "ENERGY",
 		turnrate = 0,
-		unitname = "roost",
 		upright = false,
 		waterline = 0,
 		workertime = 1500,
 		yardmap = "ooooooooo",
+		customparams = {
+			faction = "chicken",
+		},
 		featuredefs = {},
 		sfxtypes = {
 			explosiongenerators = {

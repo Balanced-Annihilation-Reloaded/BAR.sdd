@@ -53,6 +53,7 @@ return {
 			[12] = "armjam",
 		},
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

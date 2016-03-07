@@ -67,6 +67,7 @@ return {
 			[21] = "armplat",
 		},
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

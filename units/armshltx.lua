@@ -45,6 +45,7 @@ return {
 			[4] = "armshock",
 		},
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

@@ -33,6 +33,7 @@ return {
 		turnrate = 770,
 		upright = true,
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

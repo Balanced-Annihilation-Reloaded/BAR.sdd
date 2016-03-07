@@ -46,6 +46,7 @@ return {
 			[4] = "corparrow",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

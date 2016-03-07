@@ -71,6 +71,7 @@ return {
 			[14] = "corfmkr",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 			paralyzemultiplier = 0.025,

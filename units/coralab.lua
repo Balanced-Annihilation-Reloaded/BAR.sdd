@@ -61,6 +61,7 @@ return {
 			[17] = "commando",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

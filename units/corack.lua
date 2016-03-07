@@ -71,6 +71,7 @@ return {
 			[28] = "coralab",
 		},
 		customparams = {
+			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
 		},

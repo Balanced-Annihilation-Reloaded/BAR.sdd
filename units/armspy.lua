@@ -45,6 +45,7 @@ return {
 		upright = true,
 		workertime = 50,
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

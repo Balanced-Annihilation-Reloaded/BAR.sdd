@@ -30,6 +30,7 @@ return {
 		waterline = 30,
 		yardmap = "oooooooooooooooo",
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

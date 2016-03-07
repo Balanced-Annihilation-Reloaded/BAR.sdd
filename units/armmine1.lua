@@ -40,6 +40,7 @@ return {
 		stealth = true,
 		yardmap = "y",
 		customparams = {
+			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
 		},

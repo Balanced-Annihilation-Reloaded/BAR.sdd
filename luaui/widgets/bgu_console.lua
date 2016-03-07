@@ -13,14 +13,14 @@ end
 
 -- Spring Functions --
 include("keysym.h.lua")
-local getTimer         = Spring.GetTimer
-local diffTimers       = Spring.DiffTimers
-local sendCommands     = Spring.SendCommands
-local setConfigString  = Spring.SetConfigString
-local getConsoleBuffer = Spring.GetConsoleBuffer
-local getPlayerRoster  = Spring.GetPlayerRoster
-local getTeamColor     = Spring.GetTeamColor
-local getMouseState    = Spring.GetMouseState
+local spGetTimer         = Spring.GetTimer
+local spDiffTimers       = Spring.DiffTimers
+local spSendCommands     = Spring.SendCommands
+local spGetConsoleBuffer = Spring.GetConsoleBuffer
+local spGetPlayerRoster  = Spring.GetPlayerRoster
+local spGetTeamColor     = Spring.GetTeamColor
+local spGetMouseState    = Spring.GetMouseState
+local spGetDrawFrame   = Spring.GetDrawFrame
 local ssub = string.sub
 local slen = string.len
 local sfind = string.find
@@ -46,7 +46,7 @@ local log
 
 -- Local Variables --
 local messages = {}
-local endTime = getTimer() 
+local endTime = spGetTimer() 
 local startTime = endTime --time of last message (or last time at which we checked to hide the console and then didn't)
 local myID = Spring.GetMyPlayerID()
 local myAllyID = Spring.GetMyAllyTeamID()
@@ -64,7 +64,7 @@ local color = {
 }
 
 local function mouseIsOverChat()
-    local x,y = Spring.GetMouseState()
+    local x,y = spGetMouseState()
     y = screen.height - y -- chili has y axis with 0 at top!    
     if x > window.x and x < window.x + window.width and y > 0 and ((msgWindow.visible and y < window.height) or (msgWindow.hidden and y < msgWindow.height)) then
         return true
@@ -75,7 +75,7 @@ end
 
 local function showChat()
     -- show chat
-    startTime = getTimer()
+    startTime = spGetTimer()
     if msgWindow.hidden then
         msgWindow:Show()
     end
@@ -101,10 +101,12 @@ end
 
 
 local screenResized = true
+local hackResize = true
 function widget:ViewResize(viewSizeX, viewSizeY)
     local x,w,h = getConsoleDimensions(viewSizeX, viewSizeY)
     window:SetPos(x,1,w,h)
-    screenResized = true    
+    hackResize = spGetDrawFrame()+1
+    screenResized = true  
 end
 
 local function loadWindow()
@@ -211,14 +213,14 @@ function widget:Initialize()
     loadWindow()
     
     -- disable engine console
-    sendCommands('console 0')    
+    spSendCommands('console 0')    
 end
 
 
 function widget:Update()
     -- if console has been visible for longer than msgTime since last event, see if its not needed anymore
-    endTime = getTimer()
-    if diffTimers(endTime, startTime) > cfg.msgTime then
+    endTime = spGetTimer()
+    if spDiffTimers(endTime, startTime) > cfg.msgTime then
         startTime = endTime
         hideChat()
     end
@@ -229,7 +231,13 @@ function widget:Update()
         -- this is a hacky workaround, but it works!
         local vsx,vsy = Spring.GetViewGeometry()
         Spring.Echo("Set view resolution: " .. vsx .. " x " .. vsy)
-        screenResized = false
+        screenResized = nil
+    end   
+    if hackResize==spGetDrawFrame() then
+        -- another mechanism to wake chili up when it needs to redraw the stackpanel
+        window:Resize(window.width-1)
+        window:Resize(window.width+1)
+        hackResize = nil
     end    
 end
 
@@ -240,7 +248,7 @@ end
 local function processLine(line)
 
     -- get data from player roster 
-    local roster = getPlayerRoster()
+    local roster = spGetPlayerRoster()
     local names = {}
     
     for i=1,#roster do
@@ -249,7 +257,7 @@ local function processLine(line)
             allyID = roster[i][4],
             spec   = roster[i][5],
             teamID = roster[i][3],
-            color  = getInline(getTeamColor(roster[i][3])),
+            color  = getInline(spGetTeamColor(roster[i][3])),
         }
     end
     -------------------------------
@@ -374,6 +382,7 @@ function NewConsoleLine(text)
     }
     
     showChat()
+    hackResize = spGetDrawFrame()+1
 end
 
 function widget:KeyPress(key, mods, isRepeat)

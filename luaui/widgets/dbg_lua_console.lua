@@ -173,7 +173,7 @@ local function processLine(line)
     end
     
     local lowerLine = slower(line) 
-    if sfind(lowerLine,"error") then
+    if sfind(lowerLine,"error") or sfind(lowerLine,"failed") then
         textColor = color.red
     elseif sfind(lowerLine,"warning") then
         textColor = color.orange

@@ -1,6 +1,6 @@
 function gadget:GetInfo()
   return {
-    name      = "Version Warning",
+    name      = "Version Check",
     desc      = "Prints a warning if engine version is too low/high",
     author    = "Bluestone",
     date      = "Horses",

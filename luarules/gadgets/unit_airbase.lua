@@ -206,8 +206,7 @@ end
 function FlyAway(unitID, airbaseID)
    --
    -- hack, after detaching units don't always continue with their command q 
-   Spring.GiveOrderToUnit(unitID, CMD.WAIT, {}, {})
-   Spring.GiveOrderToUnit(unitID, CMD.WAIT, {}, {})
+   GiveWaitWaitOrder(unitID)
    --
    
    -- if the unit has no orders, tell it to move a little away from the airbase
@@ -243,6 +242,18 @@ function RemoveOrderFromQueue(unitID, cmdID)
    Spring.GiveOrderToUnit(unitID, CMD.REMOVE, {cmdID}, {"alt"})
 end
 
+function GiveFakeMoveOrder(unitID)
+    -- hack
+    local x,y,z = Spring.GetUnitPosition(unitID)
+    Spring.GiveOrderToUnit(unitID, CMD.MOVE, {x,y,z}, {})
+end
+
+function GiveWaitWaitOrder(unitID)
+    -- hack
+   Spring.GiveOrderToUnit(unitID, CMD.WAIT, {}, {})
+   Spring.GiveOrderToUnit(unitID, CMD.WAIT, {}, {})
+end
+
 ---------------------------------------
 -- unit creation, destruction, etc
 
@@ -276,11 +287,15 @@ function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
    if airbases[unitID] then
       for pieceNum,planeID in pairs(airbases[unitID]) do
          if planeID then
-             RemoveLandingPlane(planeID)
-             landingPlanes[planeID] = nil
-             landedPlanes[planeID] = nil
-             pendingLanders[planeID] = nil
-             RemoveOrderFromQueue(planeID, CMD_LAND_AT_SPECIFIC_AIRBASE)
+            RemoveLandingPlane(planeID)
+            landingPlanes[planeID] = nil
+            landedPlanes[planeID] = nil
+            pendingLanders[planeID] = nil
+            RemoveOrderFromQueue(planeID, CMD_LAND_AT_SPECIFIC_AIRBASE)
+            local q = Spring.GetUnitCommands(planeID, 0)
+            if q==0 then
+               GiveFakeMoveOrder(planeID)
+            end
          end
       end
       airbases[unitID] = nil

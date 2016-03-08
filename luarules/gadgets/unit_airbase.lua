@@ -266,12 +266,25 @@ end
 function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
    if not IsPlane(unitDefID) and not airbases[unitID] then return end
    
-   RemoveLandingPlane(unitID)
-
-   airbases[unitID] = nil
-   landingPlanes[unitID] = nil
-   landedPlanes[unitID] = nil
-   pendingLanders[unitID] = nil
+   if IsPlane then
+       RemoveLandingPlane(unitID)
+       landingPlanes[unitID] = nil
+       landedPlanes[unitID] = nil
+       pendingLanders[unitID] = nil
+   end
+   
+   if airbases[unitID] then
+      for pieceNum,planeID in pairs(airbases[unitID]) do
+         if planeID then
+             RemoveLandingPlane(planeID)
+             landingPlanes[planeID] = nil
+             landedPlanes[planeID] = nil
+             pendingLanders[planeID] = nil
+             RemoveOrderFromQueue(unitID, CMD_LAND_AT_SPECIFIC_AIRBASE)
+         end
+      end
+      airbases[unitID] = nil
+   end
 end
 
 ---------------------------------------

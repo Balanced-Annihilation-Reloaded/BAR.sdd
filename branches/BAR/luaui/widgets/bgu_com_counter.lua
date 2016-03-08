@@ -46,6 +46,8 @@ function makeText(i) return (i~=nil) and tostring(i) or "" end
 local green        = {0.2, 1.0, 0.2, 1.0}
 local red          = {1.0, 0.2, 0.2, 1.0}
 
+local buttonColour = {0,0,0,1}
+
 function widget:Initialize()
     Chili = WG.Chili
 
@@ -106,7 +108,7 @@ function widget:Initialize()
         onClick   = {MarkComs},
         borderColor = {0,0,0,0},
         borderColor2 = {0,0,0,0},
-        backgroundColor = {0,0,0,1},
+        backgroundColor = buttonColour,
         caption = "",
         children  = {
             Chili.Image:New {

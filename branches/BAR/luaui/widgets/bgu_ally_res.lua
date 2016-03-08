@@ -41,7 +41,7 @@ local allyTeamPanelHeight = 18
 local teamPanelHeight = 20
 local panelWidth = 110
 
-local black = {0,0,0,1}
+local buttonColour = {0,0,0,1}
 
 
 -----------------------
@@ -328,9 +328,9 @@ function widget:Initialize()
         width     = panelWidth,
         autosize = true,
         padding   = {0,0,0,0},
-        borderColor = black,
-        backgroundColor = black,
-        focusColor = black,
+        borderColor = buttonColour,
+        backgroundColor = buttonColour,
+        focusColor = buttonColour,
         caption = "",
      }
     stack = Chili.StackPanel:New{

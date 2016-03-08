@@ -44,7 +44,7 @@ local corcomDefID = UnitDefNames.corcom.id
 local commanderDefID = spGetTeamRulesParam(myTeamID, 'startUnit')
 local amNewbie = (spGetTeamRulesParam(myTeamID, 'isNewbie') == 1)
 
-local black = {0,0,0,1}
+local buttonColour = {0,0,0,1}
 
 --------------------------------------------------------------------------------
 -- Funcs
@@ -101,7 +101,7 @@ function widget:Initialize()
         height = '100%',
         onclick = {SetArm},
         caption = "",
-        backgroundColor = black,
+        backgroundColor = buttonColour,
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/ARM.png'} }
     }
 
@@ -110,7 +110,7 @@ function widget:Initialize()
         height = '100%',
         onclick = {SetCore},
         caption = "",
-        backgroundColor = black,
+        backgroundColor = buttonColour,
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/CORE.png'} }
     }
     

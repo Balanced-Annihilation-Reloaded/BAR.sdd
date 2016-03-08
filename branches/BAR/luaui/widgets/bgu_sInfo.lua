@@ -53,8 +53,9 @@ local min = math.min
 local schar = string.char
 
 local myTeamID  = Spring.GetMyTeamID()
-
 local groundTimer = spGetTimer()
+
+local buttonColour = {0,0,0,1}
 
 local green = '\255\0\255\0'
 local red = '\255\255\0\0'
@@ -1013,8 +1014,8 @@ function widget:Initialize()
         parent  = screen,
         tooltip = "Click to show/hide detailed unit stats",
         padding = {6,6,6,6},
-        borderColor = {0,0,0,1},
-        backgroundColor = {0,0,0,1},
+        borderColor = buttonColour,
+        backgroundColor = buttonColour,
         caption = "",
         x       = 0,
         y       = 0,
@@ -1026,9 +1027,9 @@ function widget:Initialize()
     unitGridWindow = Chili.Button:New{ -- parent for unit grid display, children are regenerated on each change
         parent  = screen,
         padding = {6,6,6,6},
-        borderColor = {0,0,0,1},
-        backgroundColor = {0,0,0,1},
-        focusColor = {0,0,0,1},
+        borderColor = buttonColour,
+        backgroundColor = buttonColour,
+        focusColor = buttonColour,
         caption = "",
         parent  = screen,
         x       = 0,
@@ -1052,9 +1053,9 @@ function widget:Initialize()
     groundWindow = Chili.Button:New{ -- parent for ground info, children are permanent
         parent  = screen,
         padding = {6,6,6,6},
-        borderColor = {0,0,0,1},
-        backgroundColor = {0,0,0,1},
-        focusColor = {0,0,0,1},
+        borderColor = buttonColour,
+        backgroundColor = buttonColour,
+        focusColor = buttonColour,
         caption = "",
         parent  = screen,
         x       = 0,

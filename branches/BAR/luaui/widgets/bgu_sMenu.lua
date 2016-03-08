@@ -129,15 +129,18 @@ local topStates = {
     [3] = "repeat",
 }
 
+
+local buttonColour = {0,0,0,1}
+
 -- state colours
 local white = {1,1,1,1}
+local grey = {0.2,0.2,0.2,1}
 local black = {0,0,0,1}
 local green = {0,1,0,1}
 local darkgreen = {0,0.8,0,1}
 local yellow = {1,1,0,1}
 local orange = {1,0.5,0,1}
 local red = {1,0,0,1}
-local grey = {0.2,0.2,0.2,1}
 
 local paramColours = {
     ['Hold fire']    = red,
@@ -456,7 +459,8 @@ local function addState(cmd)
 			margin    = {0,0,0,0},
             minheight = 25,
 			OnMouseUp = {cmdAction},
-			backgroundColor = black,
+			borderColor = {1,1,1,0.1},
+			backgroundColor = buttonColour,
 			font      = {
 				color = paramColours[caption] or white,
 				size  = 16,
@@ -483,7 +487,8 @@ local function addDummyState(cmd)
             margin    = {0,0,0,0},
             minheight = 25,
             OnMouseUp = {},
-			backgroundColor = black,
+            borderColor = {1,1,1,0.1},
+            backgroundColor = buttonColour,
             font      = {
                 color = grey,
                 size  = 16,
@@ -513,7 +518,7 @@ local function addOrderButton(cmd)
 			margin    = {0,0,0,0},
 			OnMouseUp = {cmdAction},
 			borderColor = {1,1,1,0.1},
-			backgroundColor = black,
+			backgroundColor = buttonColour,
 			Children  = {
 				Chili.Image:New{
 					parent  = button,
@@ -576,7 +581,7 @@ local function addDummyOrder(cmd)
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
             OnMouseUp = {},
-			backgroundColor = black,
+			backgroundColor = buttonColour,
             Children  = {
                 Chili.Image:New{
                     parent  = button,
@@ -816,7 +821,7 @@ local function makeMenuTabs()
                 height  = 200/max(3,#catNames)-1,
                 caption = catNames[i],
                 OnClick = {selectTab},
-                backgroundColor = black,
+                backgroundColor = buttonColour,
                 OnMouseWheel = {scrollMenus},
                 font    = {
                     size             = 14,
@@ -934,7 +939,7 @@ local function creatUnitButton(name, unitDef)
         OnMouseUp = {cmdAction},
         OnMouseOver = {function() WG.sMenu.mouseOverUnitDefID = unitDef.id end},
         OnMouseOut   = {function() WG.sMenu.mouseOverUnitDefID = nil end}, 
-        backgroundColor = black,
+        backgroundColor = buttonColour,
         children  = {
             Chili.Image:New{
                 height = '100%', width = '100%',

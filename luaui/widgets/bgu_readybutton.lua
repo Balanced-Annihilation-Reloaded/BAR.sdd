@@ -27,6 +27,8 @@ local amSpec = Spring.GetSpectatingState()
 local eligibleSub 
 local wantSub = false
 
+local buttonColour = {0,0,0,1}
+
 local yellow = "\255\255\230\0"
 local white = "\255\255\255\255"
 
@@ -60,7 +62,7 @@ function widget:Initialize()
         width = amSpec and offerWidth or readyWidth,
         caption = button_text,   
         onclick = {ButtonPress},
-        backgroundColor = {0,0,0,1},
+        backgroundColor = buttonColour,
         font = {
             size = 22,
         }

@@ -27,6 +27,17 @@ local files = {
 
 
 function widget:DrawGenesis()
+    --
+    -- workaround for https://springrts.com/mantis/view.php?id=5136
+    for udid, ud in pairs(UnitDefs) do
+        local temp = ud.model.midx
+    end
+    for fdid, fd in pairs(FeatureDefs) do
+        local temp = fd.model.midx
+    end
+    --
+    
+    
 	if Spring.GetGameFrame() < 1 then 
 		for i,file in ipairs(files) do
 			gl.Texture(7,file)

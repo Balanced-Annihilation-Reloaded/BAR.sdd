@@ -20,12 +20,12 @@ CMD.LAND_AT_SPECIFIC_AIRBASE = CMD_LAND_AT_SPECIFIC_AIRBASE
 CMD[CMD_LAND_AT_SPECIFIC_AIRBASE] = "LAND_AT_SPECIFIC_AIRBASE"
 
 local airbaseDefIDs = {
-    [UnitDefNames["armasp"].id] = 100^2, -- sqr distance in elmos for snap onto pad
+    [UnitDefNames["armasp"].id] = 100^2, -- sqr distance in elmos for starting tractor beam (i.e. movectrl) onto pad
     [UnitDefNames["corasp"].id] = 100^2,
     [UnitDefNames["armcarry"].id] = 100^2,
     [UnitDefNames["corcarry"].id] = 100^2,
 }
-local snapDist = nil -- default snap distance, if not found in table
+local tractorDist = 100^2 -- default sqr tractor distance, if not found in table
 
 --------------------------------------------------------------------------------
 -- Synced
@@ -518,7 +518,7 @@ function gadget:Initialize()
    -- fixme: when using new transport mechanics, this is the proper way to define airbases
    for unitDefID, unitDef in pairs(UnitDefs) do
       if unitDef.isAirBase then
-         airbaseDefIDs[unitDefID] = airbaseDefIDs[unitDefID] or snapDist 
+         airbaseDefIDs[unitDefID] = airbaseDefIDs[unitDefID] or tractorDist 
       end
    end
 

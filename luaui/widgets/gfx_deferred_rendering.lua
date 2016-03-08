@@ -8,7 +8,7 @@ function widget:GetInfo()
 	author    = "beherith",
 	date      = "2015 Sept.",
 	license   = "GPL V2",
-	layer     = -1000000000,
+	layer     = 1000000000,
 	enabled   = true
   }
 end

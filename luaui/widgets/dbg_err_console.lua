@@ -1,7 +1,7 @@
 -- WIP
 function widget:GetInfo()
     return {
-        name    = 'Debug Console',
+        name    = 'Debug Err Console',
         desc    = 'Displays errors', 
         author  = 'Bluestone',
         date    = '2016',
@@ -11,45 +11,20 @@ function widget:GetInfo()
     }
 end
 
--- Spring Functions --
-include("keysym.h.lua")
-local getTimer         = Spring.GetTimer
-local diffTimers       = Spring.DiffTimers
-local sendCommands     = Spring.SendCommands
-local setConfigString  = Spring.SetConfigString
-local getConsoleBuffer = Spring.GetConsoleBuffer
-local getPlayerRoster  = Spring.GetPlayerRoster
-local getTeamColor     = Spring.GetTeamColor
-local getMouseState    = Spring.GetMouseState
 local ssub = string.sub
 local slen = string.len
 local sfind = string.find
 local slower = string.lower
-----------------------
 
+local Chili,screen,window,msgWindow,clearButton,reloadButton,log
 
 -- Config --
 local cfg = {
-    msgCap   = 20, 
+    msgCap      = 50, 
+    reloadLines = 2000,
 }
 local fontSize = 16
-------------
 
--- Chili elements --
-local Chili
-local screen
-local window
-local msgWindow
-local log
---------------------
-
--- Local Variables --
-local messages = {}
-local endTime = getTimer() 
-local startTime = endTime --time of last message (or last time at which we checked to hide the console and then didn't)
-local myID = Spring.GetMyPlayerID()
-local myAllyID = Spring.GetMyAllyTeamID()
-local gameOver = false --is the game over?
 ---------------------
 
 -- Text Colour Config --
@@ -74,7 +49,7 @@ function loadWindow()
         resizable = true,
         width   = '35%',
         x = '60%',
-        y = '25%',
+        y = '30%',
         height = '40%',
         itemPadding = {5,5,10,10},
     }
@@ -88,7 +63,7 @@ function loadWindow()
         x           = 0,
         y           = 0,
         right       = 0,
-        bottom      = 0,
+        height      = '85%',
         padding     = {0,0,0,0},
         borderColor = {0,0,0,0},
     }
@@ -107,6 +82,38 @@ function loadWindow()
         preserveChildrenOrder = true,
     }   
     
+    clearButton = Chili.Button:New{
+        parent = window,
+        x = '2.5%',
+        y = '85%',
+        width = '30%',
+        height = '15%',
+        caption = "clear",
+        tooltip = "clear all messages",
+        OnClick = {function() RemoveAllMessages() end}
+    }
+    
+    clearBeforeLastReset = Chili.Button:New{
+        parent = window,
+        x = '35%',
+        y = '85%',
+        width = '30%',
+        height = '15%',
+        tooltip = 'show messages since the most recent luaui/luarules reload',
+        caption = "soft reload",
+        OnClick = {function() RemoveAllMessages(); SoftReload() end}
+    }
+
+    clearButton = Chili.Button:New{
+        parent = window,
+        x = '67.5%',
+        y = '85%',
+        width = '30%',
+        height = '15%',
+        tooltip = 'show all messages',
+        caption = "hard reload",
+        OnClick = {function() RemoveAllMessages(); ReloadAllMessages() end}
+    }        
 end
 
 function widget:Initialize()
@@ -115,15 +122,7 @@ function widget:Initialize()
     Menu   = WG.MainMenu
     
     loadWindow()
-    
-    local buffer = getConsoleBuffer(500)
-    for _,l in ipairs(buffer) do
-        if sfind(l.text, "LuaUI Entry Point:") then -- luaui reload happened here
-            RemoveAllMessages()
-        end
-        widget:AddConsoleLine(l.text)    
-    end    
-    
+    ReloadAllMessages()    
 end
 
 function widget:Update()
@@ -139,7 +138,7 @@ end
 local function processLine(line)
 
     -- get data from player roster 
-    local roster = getPlayerRoster()
+    local roster = Spring.GetPlayerRoster()
     local names = {}
     
     for i=1,#roster do
@@ -230,11 +229,27 @@ function NewConsoleLine(text)
             outlineWeight    = 3,
             size             = fontSize,
         },
-    }    
-    
-    invalidate = true
+    }        
 end
 
 function RemoveAllMessages()
     log:ClearChildren()
+end
+
+function ReloadAllMessages()
+    local buffer = Spring.GetConsoleBuffer(cfg.reloadLines)
+    for _,l in ipairs(buffer) do
+        widget:AddConsoleLine(l.text)    
+    end    
+end
+
+function SoftReload()
+    local buffer = Spring.GetConsoleBuffer(cfg.reloadLines)
+    for _,l in ipairs(buffer) do
+        if sfind(l.text,"LuaUI Entry Point") or sfind(l.text,"LuaRules Entry Point") then
+            RemoveAllMessages()
+        end
+        widget:AddConsoleLine(l.text)    
+    end    
+
 end

@@ -280,7 +280,7 @@ function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
              landingPlanes[planeID] = nil
              landedPlanes[planeID] = nil
              pendingLanders[planeID] = nil
-             RemoveOrderFromQueue(unitID, CMD_LAND_AT_SPECIFIC_AIRBASE)
+             RemoveOrderFromQueue(planeID, CMD_LAND_AT_SPECIFIC_AIRBASE)
          end
       end
       airbases[unitID] = nil

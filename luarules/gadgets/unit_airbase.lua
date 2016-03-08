@@ -249,19 +249,10 @@ function HealUnit(unitID, airbaseID, resourceFrames, h, mh)
 end
 
 function RemoveOrderFromQueue(unitID, cmdID)
-   -- hack
-   -- we need this because CommandFallback is only called every slow update
-   -- and we need to remove commands from the front of the queue when events *actually* happen i.e. in gameframes in between slow update
-   -- doing anything else fails to edge cases e.g. unitID is recycle from a landingPlane that dies into a second place that becomes a landedPlane *all* in between slow updates
    if not Spring.ValidUnitID(unitID) then return end
    Spring.GiveOrderToUnit(unitID, CMD.REMOVE, {cmdID}, {"alt"})
 end
 
-function GiveFakeMoveOrder(unitID)
-    -- hack
-    local x,y,z = Spring.GetUnitPosition(unitID)
-    Spring.GiveOrderToUnit(unitID, CMD.MOVE, {x,y,z}, {})
-end
 
 function GiveWaitWaitOrder(unitID)
     -- hack
@@ -301,10 +292,6 @@ function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
          if planeID then
             RemovePlane(planeID)
             
-            --local q = Spring.GetUnitCommands(planeID, 0)
-            --if q==0 then
-               --GiveFakeMoveOrder(planeID) --fixme: clear land goal in 102
-            --end
             Spring.ClearUnitGoal(planeID)
          end
       end

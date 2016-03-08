@@ -293,20 +293,11 @@ end
 -----------------------
 
 function SetupPanels()
-    -- dispose of any old panels in the stack
     stack:ClearChildren()
-
-    -- choose which aIDs/tID will be visible and make panels for them
     ConstructPanels()
-
-    -- set the dimensions
-    height = nTeams * teamPanelHeight + nAllyTeams * allyTeamPanelHeight + 13    
-    window:SetPos(_,_,width,height+5)
-    
-    --add the panels into the stack    
     for _,panel in ipairs(panels) do
         stack:AddChild(panel)
-    end
+    end    
 end
 
 function CheckMyState()
@@ -334,21 +325,21 @@ function widget:Initialize()
         parent    = Chili.Screen0,
         right     = 0,
         y         = 175,
-        height    = panelHeight,
         width     = panelWidth,
+        autosize = true,
         padding   = {0,0,0,0},
         borderColor = black,
         backgroundColor = black,
         focusColor = black,
         caption = "",
      }
-    stack = Chili.LayoutPanel:New{
+    stack = Chili.StackPanel:New{
         parent      = window,
         name        = 'ally res stack',
         width       = '100%',
-        height      = '100%',
+        autosize = true,
         resizeItems = false,
-        padding     = {0,0,0,0},
+        padding     = {0,5,0,13},
         itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},
         children    = {},

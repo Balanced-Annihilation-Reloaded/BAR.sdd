@@ -6,4 +6,6 @@ if (select == nil) then
   end
 end
 
+Spring.Echo('LuaRules Entry Point: \"main.lua\"')
+
 VFS.Include(Script.GetName() .. '/gadgets.lua', nil, VFS.ZIP_ONLY)

@@ -122,10 +122,11 @@ function widget:Initialize()
     Menu   = WG.MainMenu
     
     loadWindow()
-    ReloadAllMessages()    
+    ReloadAllMessages()  
+    hack = true
 end
 
-function widget:Update()
+function widget:DrawScreen()
     if not hack then return end
     local hack2 = Spring.GetDrawFrame()
     if hack2~=hack then
@@ -251,5 +252,4 @@ function SoftReload()
         end
         widget:AddConsoleLine(l.text)    
     end    
-
 end

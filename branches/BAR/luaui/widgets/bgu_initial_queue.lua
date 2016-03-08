@@ -6,7 +6,7 @@ function widget:GetInfo()
         author    = "Niobium",
         date      = "7 April 2010",
         license   = "GNU GPL, v2 or later",
-        layer     = 1001, -- runs after chili, else it would intercept mouse clicks
+        layer     = 1003, -- runs after chili, else it would intercept mouse clicks
         enabled   = true,
     }
 end

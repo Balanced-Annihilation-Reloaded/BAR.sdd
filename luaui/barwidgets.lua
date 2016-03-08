@@ -6,7 +6,7 @@
 --  brief:   the widget manager, a call-in router
 --  author:  Dave Rodgers
 --
---  modified by jK and quantum
+--  modified by jK, quantum, Bluestone
 --
 --  Copyright (C) 2007,2008,2009.
 --  Licensed under the terms of the GNU GPL, v2 or later.
@@ -238,24 +238,28 @@ do
   end
 end
 
-
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
---  Reverse integer iterator for drawing
+--  array-table reverse iterator
 --
+--  all callin handlers use this so that widget can
+--  RemoveWidget() themselves (during iteration over
+--  a callin list) without causing a miscount
+--
+--  c.f. Array{Insert,Remove}
+--
+local function r_ipairs(tbl)
+  local function r_iter(tbl, key)
+    if (key <= 1) then
+      return nil
+    end
 
-local function rev_iter(t, key)
-  if (key <= 1) then
-    return nil
-  else
-    local nkey = key - 1
-    return nkey, t[nkey]
+    -- next idx, next val
+    return (key - 1), tbl[key - 1]
   end
-end
 
-local function ripairs(t)
-  return rev_iter, t, (1 + #t)
+  return r_iter, tbl, (1 + #tbl)
 end
 
 
@@ -294,7 +298,7 @@ end
 
 function widgetHandler:SaveOrderList()
   -- update the current order
-  for i,w in ipairs(self.widgets) do
+  for i,w in ipairs(self.widgets) do 
     self.orderList[w.whInfo.name] = i
   end
   table.save(self.orderList, ORDER_FILENAME,
@@ -334,7 +338,7 @@ end
 
 function widgetHandler:SaveConfigData()
   resetWidgetDetailLevel = false
-  for _,w in ipairs(self.widgets) do
+  for _,w in r_ipairs(self.widgets) do
     if (w.GetConfigData) then
       local ok, err = pcall(function() 
 		self.configData[w.whInfo.name] = w:GetConfigData()
@@ -348,7 +352,7 @@ end
 
 function widgetHandler:SendConfigData()
   self:LoadConfigData()
-  for _,w in ipairs(self.widgets) do
+  for _,w in r_ipairs(self.widgets) do
     local data = self.configData[w.whInfo.name]
     if (w.SetConfigData and data) then
       w:SetConfigData(data)
@@ -771,20 +775,24 @@ end
 
 --------------------------------------------------------------------------------
 
-local function ArrayInsert(t, f, w)
-  if (f) then
-    local layer = w.whInfo.layer
-    local index = 1
-    for i,v in ipairs(t) do
-      if (v == w) then
-        return -- already in the table
-      end
-      if (layer >= v.whInfo.layer) then
-        index = i + 1
-      end
+local function ArrayInsert(t, w)
+  local layer = w.whInfo.layer
+  local index = 1
+
+  for i,v in ipairs(t) do
+    if (v == w) then
+      return -- already in the table
     end
-    table.insert(t, index, w)
+
+    -- insert-sort the widget based on its layer
+    -- note: reversed value ordering, highest to lowest
+    -- iteration over the callin lists is also reversed
+    if (layer < v.whInfo.layer) then
+      index = i + 1
+    end
   end
+
+  table.insert(t, index, w)
 end
 
 
@@ -805,11 +813,11 @@ function widgetHandler:InsertWidget(widget)
 
   SafeWrapWidget(widget)
 
-  ArrayInsert(self.widgets, true, widget)
+  ArrayInsert(self.widgets, widget)
   for _,listname in ipairs(callInLists) do
     local func = widget[listname]
     if (type(func) == 'function') then
-      ArrayInsert(self[listname..'List'], func, widget)
+      ArrayInsert(self[listname..'List'], widget)
     end
   end
   self:UpdateCallIns()
@@ -878,7 +886,7 @@ function widgetHandler:UpdateWidgetCallIn(name, w)
   if (ciList) then
     local func = w[name]
     if (type(func) == 'function') then
-      ArrayInsert(ciList, func, w)
+      ArrayInsert(ciList, w)
     else
       ArrayRemove(ciList, w)
     end
@@ -982,45 +990,49 @@ local function FindWidgetIndex(t, w)
 end
 
 
-local function FindLowestIndex(t, i, layer)
-  for x = (i - 1), 1, -1 do
-    if (t[x].whInfo.layer < layer) then
-      return x + 1
-    end
-  end
-  return 1
-end
 
 
 function widgetHandler:RaiseWidget(widget)
   if (widget == nil) then
     return
   end
-  local function Raise(t, f, w)
-    if (f == nil) then return end
-    local i = FindWidgetIndex(t, w)
-    if (i == nil) then return end
-    local n = FindLowestIndex(t, i, w.whInfo.layer)
-    if (n and (n < i)) then
-      table.remove(t, i)
-      table.insert(t, n, w)
+
+  local function FindLowestIndex(t, i, layer)
+    local n = #t
+    for x = (i + 1), n, 1 do
+      if (t[x].whInfo.layer < layer) then
+        return (x - 1)
+      end
+    end
+    return n
+  end
+
+  local function Raise(callinList, gadget)
+    local widgetIdx = FindWidgetIndex(callinList, widget)
+    if (widgetIdx == nil) then
+      return
+    end
+
+    -- starting from gIdx and counting up, find the index
+    -- of the first gadget whose layer is lower** than g's
+    -- and move g to right before (lowestIdx - 1) it
+    -- ** lists are in reverse layer order, lowest at back
+    local lowestIdx = FindLowestIndex(callinList, widgetIdx, widget.whInfo.layer)
+
+    if (lowestIdx > widgetIdx) then
+      -- insert first since lowestIdx is larger
+      table.insert(callinList, lowestIdx, widget)
+      table.remove(callinList, widgetIdx)
     end
   end
-  Raise(self.widgets, true, widget)
+
+  Raise(self.widgets, widget)
+
   for _,listname in ipairs(callInLists) do
-    Raise(self[listname..'List'], widget[listname], widget)
-  end
-end
-
-
-local function FindHighestIndex(t, i, layer)
-  local ts = #t
-  for x = (i + 1),ts do
-    if (t[x].whInfo.layer > layer) then
-      return (x - 1)
+    if (widget[listname] ~= nil) then
+      Raise(self[listname .. 'List'], widget)
     end
   end
-  return (ts + 1)
 end
 
 
@@ -1028,19 +1040,41 @@ function widgetHandler:LowerWidget(widget)
   if (widget == nil) then
     return
   end
-  local function Lower(t, f, w)
-    if (f == nil) then return end
-    local i = FindWidgetIndex(t, w)
-    if (i == nil) then return end
-    local n = FindHighestIndex(t, i, w.whInfo.layer)
-    if (n and (n > i)) then
-      table.insert(t, n, w)
-      table.remove(t, i)
+
+  local function FindHighestIndex(t, i, layer)
+    for x = (i - 1), 1, -1 do
+      if (t[x].whInfo.layer > layer) then
+        return (x + 1)
+      end
+    end
+    return 1
+  end
+
+  local function Lower(callinList, gadget)
+    local widgetIdx = FindWidgetIndex(callinList, widget)
+    if (widgetIdx == nil) then
+      return
+    end
+
+    -- starting from wIdx and counting down, find the index
+    -- of the first widget whose layer is higher** than g's
+    -- and move g to right after (highestIdx + 1) it
+    -- ** lists are in reverse layer order, highest at front
+    local highestIdx = FindHighestIndex(callinList, widgetIdx, widget.whInfo.layer)
+
+    if (highestIdx < widgetIdx) then
+      -- remove first since highestIdx is smaller
+      table.remove(callinList, widgetIdx)
+      table.insert(callinList, highestIdx, widget)
     end
   end
-  Lower(self.widgets, true, widget)
+
+  Lower(self.widgets, widget)
+
   for _,listname in ipairs(callInLists) do
-    Lower(self[listname..'List'], widget[listname], widget)
+    if (widget[listname] ~= nil) then
+      Lower(self[listname .. 'List'], widget)
+    end
   end
 end
 
@@ -1049,7 +1083,7 @@ function widgetHandler:FindWidget(name)
   if (type(name) ~= 'string') then
     return nil
   end
-  for k,v in ipairs(self.widgets) do
+  for k,v in ipairs(self.widgets) do 
     if (name == v.whInfo.name) then
       return v,k
     end
@@ -1149,13 +1183,13 @@ end
 function widgetHandler:Shutdown()
   if self.__reset_luaui then
     table.save({}, CONFIG_FILENAME, '-- Widget Custom Data (reset)')
-    table.save({}, ORDER_FILENAME, '-- Widget Custom Data (reset)')
+    table.save({}, ORDER_FILENAME, '-- Widget Order Data (reset)')
   else
     self:SaveOrderList()
     self:SaveConfigData()  
   end
  
-  for _,w in ipairs(self.ShutdownList) do
+  for _,w in r_ipairs(self.ShutdownList) do
     w:Shutdown()
   end
   return
@@ -1165,7 +1199,7 @@ function widgetHandler:Update()
   local deltaTime = Spring.GetLastUpdateSeconds()
   -- update the hour timer
   hourTimer = (hourTimer + deltaTime)%3600
-  for _,w in ipairs(self.UpdateList) do
+  for _,w in r_ipairs(self.UpdateList) do
     w:Update(deltaTime)
   end
   return
@@ -1181,7 +1215,7 @@ function widgetHandler:ConfigureLayout(command)
     self:SendConfigData()
     return true
   elseif (command == 'selector') then
-    for _,w in ipairs(self.widgets) do
+    for _,w in r_ipairs(self.widgets) do
       if (w.whInfo.basename == SELECTOR_BASENAME) then
         return true  -- there can only be one
       end
@@ -1205,7 +1239,7 @@ function widgetHandler:ConfigureLayout(command)
     return true
   end
 
-  for _,w in ipairs(self.TextCommandList) do
+  for _,w in r_ipairs(self.TextCommandList) do
     if (w:TextCommand(command)) then
       return true
     end
@@ -1215,7 +1249,7 @@ end
 
 
 function widgetHandler:CommandNotify(id, params, options)
-  for _,w in ipairs(self.CommandNotifyList) do
+  for _,w in r_ipairs(self.CommandNotifyList) do
     if (w:CommandNotify(id, params, options)) then
       return true
     end
@@ -1225,7 +1259,7 @@ end
 
 function widgetHandler:AddConsoleLine(msg, priority)
   if msg:find("<<IGNOREME>>") then return end --TODO: Remove this
-  for _,w in ipairs(self.AddConsoleLineList) do
+  for _,w in r_ipairs(self.AddConsoleLineList) do
     w:AddConsoleLine(msg, priority)
   end
   return
@@ -1234,7 +1268,7 @@ end
 
 
 function widgetHandler:GroupChanged(groupID)
-  for _,w in ipairs(self.GroupChangedList) do
+  for _,w in r_ipairs(self.GroupChangedList) do
     w:GroupChanged(groupID)
   end
   return
@@ -1244,7 +1278,7 @@ end
 function widgetHandler:CommandsChanged()
   self.inCommandsChanged = true
   self.customCommands = {}
-  for _,w in ipairs(self.CommandsChangedList) do
+  for _,w in r_ipairs(self.CommandsChangedList) do
     w:CommandsChanged()
   end
   self.inCommandsChanged = false
@@ -1262,7 +1296,7 @@ function widgetHandler:ViewResize(viewGeometry)
   local vsx = viewGeometry.viewSizeX
   local vsy = viewGeometry.viewSizeY
 
-  for _,w in ipairs(self.ViewResizeList) do
+  for _,w in r_ipairs(self.ViewResizeList) do
     w:ViewResize(vsx, vsy, viewGeometry)
   end
   return
@@ -1281,7 +1315,7 @@ function widgetHandler:DrawScreen()
     })
     gl.Color(1, 1, 1)
   end
-  for _,w in ripairs(self.DrawScreenList) do
+  for _,w in r_ipairs(self.DrawScreenList) do
     w:DrawScreen()
     if (self.tweakMode and w.TweakDrawScreen) then
       w:TweakDrawScreen()
@@ -1292,7 +1326,7 @@ end
 
 
 function widgetHandler:DrawGenesis()
-  for _,w in ripairs(self.DrawGenesisList) do
+  for _,w in r_ipairs(self.DrawGenesisList) do
     w:DrawGenesis()
   end
   return
@@ -1300,7 +1334,7 @@ end
 
 
 function widgetHandler:DrawWorld()
-  for _,w in ripairs(self.DrawWorldList) do
+  for _,w in r_ipairs(self.DrawWorldList) do
     w:DrawWorld()
   end
   return
@@ -1308,7 +1342,7 @@ end
 
 
 function widgetHandler:DrawWorldPreUnit()
-  for _,w in ripairs(self.DrawWorldPreUnitList) do
+  for _,w in r_ipairs(self.DrawWorldPreUnitList) do
     w:DrawWorldPreUnit()
   end
   return
@@ -1316,7 +1350,7 @@ end
 
 
 function widgetHandler:DrawWorldShadow()
-  for _,w in ripairs(self.DrawWorldShadowList) do
+  for _,w in r_ipairs(self.DrawWorldShadowList) do
     w:DrawWorldShadow()
   end
   return
@@ -1324,7 +1358,7 @@ end
 
 
 function widgetHandler:DrawWorldReflection()
-  for _,w in ripairs(self.DrawWorldReflectionList) do
+  for _,w in r_ipairs(self.DrawWorldReflectionList) do
     w:DrawWorldReflection()
   end
   return
@@ -1332,7 +1366,7 @@ end
 
 
 function widgetHandler:DrawWorldRefraction()
-  for _,w in ripairs(self.DrawWorldRefractionList) do
+  for _,w in r_ipairs(self.DrawWorldRefractionList) do
     w:DrawWorldRefraction()
   end
   return
@@ -1340,7 +1374,7 @@ end
 
 
 function widgetHandler:DrawScreenEffects(vsx, vsy)
-  for _,w in ripairs(self.DrawScreenEffectsList) do
+  for _,w in r_ipairs(self.DrawScreenEffectsList) do
     w:DrawScreenEffects(vsx, vsy)
   end
   return
@@ -1348,7 +1382,7 @@ end
 
 
 function widgetHandler:DrawInMiniMap(xSize, ySize)
-  for _,w in ripairs(self.DrawInMiniMapList) do
+  for _,w in r_ipairs(self.DrawInMiniMapList) do
     w:DrawInMiniMap(xSize, ySize)
   end
   return
@@ -1361,7 +1395,7 @@ end
 --
 
 function widgetHandler:TextInput(utf8, ...)
-  for _,w in ipairs(self.TextInputList) do
+  for _,w in r_ipairs(self.TextInputList) do
     if (w:TextInput(utf8, ...)) then
       return true
     end
@@ -1382,7 +1416,7 @@ function widgetHandler:KeyPress(key, mods, isRepeat, label, unicode)
     return true
   end
 
-  for _,w in ipairs(self.KeyPressList) do
+  for _,w in r_ipairs(self.KeyPressList) do
     if (w:KeyPress(key, mods, isRepeat, label, unicode)) then
       return true
     end
@@ -1407,7 +1441,7 @@ function widgetHandler:KeyRelease(key, mods, label, unicode)
     return true
   end
 
-  for _,w in ipairs(self.KeyReleaseList) do
+  for _,w in r_ipairs(self.KeyReleaseList) do
     if (w:KeyRelease(key, mods, label, unicode)) then
       return true
     end
@@ -1440,14 +1474,14 @@ do
     lasty = y
  
     if (not self.tweakMode) then
-      for _,w in ipairs(self.IsAboveList) do
+      for _,w in r_ipairs(self.IsAboveList) do
         if (w:IsAbove(x, y)) then
           lastWidget = w
           return w
         end
       end
     else
-      for _,w in ipairs(self.TweakIsAboveList) do
+      for _,w in r_ipairs(self.TweakIsAboveList) do
         if (w:TweakIsAbove(x, y)) then
           lastWidget = w
           return w
@@ -1467,7 +1501,7 @@ function widgetHandler:MousePress(x, y, button)
       mo:MousePress(x, y, button)
       return true  --  already have an active press
     end
-    for _,w in ipairs(self.MousePressList) do
+    for _,w in r_ipairs(self.MousePressList) do
       if (w:MousePress(x, y, button)) then
         self.mouseOwner = w
         return true
@@ -1479,7 +1513,7 @@ function widgetHandler:MousePress(x, y, button)
       mo:TweakMousePress(x, y, button)
       return true  --  already have an active press
     end
-    for _,w in ipairs(self.TweakMousePressList) do
+    for _,w in r_ipairs(self.TweakMousePressList) do
       if (w:TweakMousePress(x, y, button)) then
         self.mouseOwner = w
         return true
@@ -1528,14 +1562,14 @@ end
 
 function widgetHandler:MouseWheel(up, value)
   if (not self.tweakMode) then
-    for _,w in ipairs(self.MouseWheelList) do
+    for _,w in r_ipairs(self.MouseWheelList) do
       if (w:MouseWheel(up, value)) then
         return true
       end
     end
     return false
   else
-    for _,w in ipairs(self.TweakMouseWheelList) do
+    for _,w in r_ipairs(self.TweakMouseWheelList) do
       if (w:TweakMouseWheel(up, value)) then
         return true
       end
@@ -1555,7 +1589,7 @@ end
 
 function widgetHandler:GetTooltip(x, y)
   if (not self.tweakMode) then
-    for _,w in ipairs(self.GetTooltipList) do
+    for _,w in r_ipairs(self.GetTooltipList) do
       if (w:IsAbove(x, y)) then
         local tip = w:GetTooltip(x, y)
         if ((type(tip) == 'string') and (#tip > 0)) then
@@ -1565,7 +1599,7 @@ function widgetHandler:GetTooltip(x, y)
     end
     return ""
   else
-    for _,w in ipairs(self.TweakGetTooltipList) do
+    for _,w in r_ipairs(self.TweakGetTooltipList) do
       if (w:TweakIsAbove(x, y)) then
         local tip = w:TweakGetTooltip(x, y) or ''
         if ((type(tip) == 'string') and (#tip > 0)) then
@@ -1584,7 +1618,7 @@ end
 --
 
 function widgetHandler:GamePreload()
-  for _,w in ipairs(self.GamePreloadList) do
+  for _,w in r_ipairs(self.GamePreloadList) do
     w:GamePreload()
   end
   return
@@ -1592,7 +1626,7 @@ end
 
 
 function widgetHandler:GameStart()
-  for _,w in ipairs(self.GameStartList) do
+  for _,w in r_ipairs(self.GameStartList) do
     w:GameStart()
   end
   return
@@ -1600,7 +1634,7 @@ end
 
 
 function widgetHandler:GameOver(winningAllyTeams)
-  for _,w in ipairs(self.GameOverList) do
+  for _,w in r_ipairs(self.GameOverList) do
     w:GameOver(winningAllyTeams)
   end
   return
@@ -1608,7 +1642,7 @@ end
 
 
 function widgetHandler:TeamDied(teamID)
-  for _,w in ipairs(self.TeamDiedList) do
+  for _,w in r_ipairs(self.TeamDiedList) do
     w:TeamDied(teamID)
   end
   return
@@ -1616,7 +1650,7 @@ end
 
 
 function widgetHandler:TeamChanged(teamID)
-  for _,w in ipairs(self.TeamChangedList) do
+  for _,w in r_ipairs(self.TeamChangedList) do
     w:TeamChanged(teamID)
   end
   return
@@ -1625,7 +1659,7 @@ end
 
 function widgetHandler:PlayerAdded(playerID, reason)
   --ListMutedPlayers()
-  for _,w in ipairs(self.PlayerAddedList) do
+  for _,w in r_ipairs(self.PlayerAddedList) do
     w:PlayerAdded(playerID, reason)
   end
   return
@@ -1633,7 +1667,7 @@ end
 
 
 function widgetHandler:PlayerChanged(playerID)
-  for _,w in ipairs(self.PlayerChangedList) do
+  for _,w in r_ipairs(self.PlayerChangedList) do
     w:PlayerChanged(playerID)
   end
   return
@@ -1641,7 +1675,7 @@ end
 
 
 function widgetHandler:PlayerRemoved(playerID, reason)
-  for _,w in ipairs(self.PlayerRemovedList) do
+  for _,w in r_ipairs(self.PlayerRemovedList) do
     w:PlayerRemoved(playerID, reason)
   end
   return
@@ -1649,7 +1683,7 @@ end
 
 
 function widgetHandler:GameFrame(frameNum)
-  for _,w in ipairs(self.GameFrameList) do
+  for _,w in r_ipairs(self.GameFrameList) do
     w:GameFrame(frameNum)
   end
   return
@@ -1657,7 +1691,7 @@ end
 
 
 function widgetHandler:ShockFront(power, dx, dy, dz)
-  for _,w in ipairs(self.ShockFrontList) do
+  for _,w in r_ipairs(self.ShockFrontList) do
     w:ShockFront(power, dx, dy, dz)
   end
   return
@@ -1665,7 +1699,7 @@ end
 
 
 function widgetHandler:WorldTooltip(ttType, ...)
-  for _,w in ipairs(self.WorldTooltipList) do
+  for _,w in r_ipairs(self.WorldTooltipList) do
     local tt = w:WorldTooltip(ttType, ...)
     if ((type(tt) == 'string') and (#tt > 0)) then
       return tt
@@ -1677,7 +1711,7 @@ end
 
 function widgetHandler:MapDrawCmd(playerID, cmdType, px, py, pz, ...)
   local retval = false
-  for _,w in ipairs(self.MapDrawCmdList) do
+  for _,w in r_ipairs(self.MapDrawCmdList) do
     local takeEvent = w:MapDrawCmd(playerID, cmdType, px, py, pz, ...)
     if (takeEvent) then
       retval = true
@@ -1688,7 +1722,7 @@ end
 
 
 function widgetHandler:GameSetup(state, ready, playerStates)
-  for _,w in ipairs(self.GameSetupList) do
+  for _,w in r_ipairs(self.GameSetupList) do
     local success, newReady = w:GameSetup(state, ready, playerStates)
     if (success) then
       return true, newReady
@@ -1699,7 +1733,7 @@ end
 
 
 function widgetHandler:DefaultCommand(...)
-  for _,w in ripairs(self.DefaultCommandList) do
+  for _,w in r_ipairs(self.DefaultCommandList) do
     local result = w:DefaultCommand(...)
     if (type(result) == 'number') then
       return result
@@ -1715,7 +1749,7 @@ end
 --
 
 function widgetHandler:UnitCreated(unitID, unitDefID, unitTeam, builderID)
-  for _,w in ipairs(self.UnitCreatedList) do
+  for _,w in r_ipairs(self.UnitCreatedList) do
     w:UnitCreated(unitID, unitDefID, unitTeam, builderID)
   end
   return
@@ -1723,7 +1757,7 @@ end
 
 
 function widgetHandler:UnitFinished(unitID, unitDefID, unitTeam)
-  for _,w in ipairs(self.UnitFinishedList) do
+  for _,w in r_ipairs(self.UnitFinishedList) do
     w:UnitFinished(unitID, unitDefID, unitTeam)
   end
   return
@@ -1732,7 +1766,7 @@ end
 
 function widgetHandler:UnitFromFactory(unitID, unitDefID, unitTeam,
                                        factID, factDefID, userOrders)
-  for _,w in ipairs(self.UnitFromFactoryList) do
+  for _,w in r_ipairs(self.UnitFromFactoryList) do
     w:UnitFromFactory(unitID, unitDefID, unitTeam,
                       factID, factDefID, userOrders)
   end
@@ -1741,7 +1775,7 @@ end
 
 
 function widgetHandler:UnitDestroyed(unitID, unitDefID, unitTeam)
-  for _,w in ipairs(self.UnitDestroyedList) do
+  for _,w in r_ipairs(self.UnitDestroyedList) do
     w:UnitDestroyed(unitID, unitDefID, unitTeam)
   end
   return
@@ -1750,7 +1784,7 @@ end
 
 function widgetHandler:UnitExperience(unitID,     unitDefID,     unitTeam,
                                       experience, oldExperience)
-  for _,w in ipairs(self.UnitExperienceList) do
+  for _,w in r_ipairs(self.UnitExperienceList) do
     w:UnitExperience(unitID,     unitDefID,     unitTeam,
                     experience, oldExperience)
   end
@@ -1759,7 +1793,7 @@ end
 
 
 function widgetHandler:UnitTaken(unitID, unitDefID, unitTeam, newTeam)
-  for _,w in ipairs(self.UnitTakenList) do
+  for _,w in r_ipairs(self.UnitTakenList) do
     w:UnitTaken(unitID, unitDefID, unitTeam, newTeam)
   end
   return
@@ -1767,7 +1801,7 @@ end
 
 
 function widgetHandler:UnitGiven(unitID, unitDefID, unitTeam, oldTeam)
-  for _,w in ipairs(self.UnitGivenList) do
+  for _,w in r_ipairs(self.UnitGivenList) do
     w:UnitGiven(unitID, unitDefID, unitTeam, oldTeam)
   end
   return
@@ -1775,7 +1809,7 @@ end
 
 
 function widgetHandler:UnitIdle(unitID, unitDefID, unitTeam)
-  for _,w in ipairs(self.UnitIdleList) do
+  for _,w in r_ipairs(self.UnitIdleList) do
     w:UnitIdle(unitID, unitDefID, unitTeam)
   end
   return
@@ -1784,7 +1818,7 @@ end
 
 function widgetHandler:UnitCommand(unitID, unitDefID, unitTeam,
                                    cmdId, cmdOpts, cmdParams, cmdTag)
-  for _,w in ipairs(self.UnitCommandList) do
+  for _,w in r_ipairs(self.UnitCommandList) do
     w:UnitCommand(unitID, unitDefID, unitTeam,
                   cmdId, cmdOpts, cmdParams, cmdTag)
   end
@@ -1793,7 +1827,7 @@ end
 
 
 function widgetHandler:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag, cmdParams, cmdOpts)
-  for _,w in ipairs(self.UnitCmdDoneList) do
+  for _,w in r_ipairs(self.UnitCmdDoneList) do
     w:UnitCmdDone(unitID, unitDefID, unitTeam, cmdID, cmdTag, cmdParams, cmdOpts)
   end
   return
@@ -1802,7 +1836,7 @@ end
 
 function widgetHandler:UnitDamaged(unitID, unitDefID, unitTeam,
                                    damage, paralyzer)
-  for _,w in ipairs(self.UnitDamagedList) do
+  for _,w in r_ipairs(self.UnitDamagedList) do
     w:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer)
   end
   return
@@ -1810,7 +1844,7 @@ end
 
 
 function widgetHandler:UnitEnteredRadar(unitID, unitTeam)
-  for _,w in ipairs(self.UnitEnteredRadarList) do
+  for _,w in r_ipairs(self.UnitEnteredRadarList) do
     w:UnitEnteredRadar(unitID, unitTeam)
   end
   return
@@ -1818,7 +1852,7 @@ end
 
 
 function widgetHandler:UnitEnteredLos(unitID, unitTeam)
-  for _,w in ipairs(self.UnitEnteredLosList) do
+  for _,w in r_ipairs(self.UnitEnteredLosList) do
     w:UnitEnteredLos(unitID, unitTeam)
   end
   return
@@ -1826,7 +1860,7 @@ end
 
 
 function widgetHandler:UnitLeftRadar(unitID, unitTeam)
-  for _,w in ipairs(self.UnitLeftRadarList) do
+  for _,w in r_ipairs(self.UnitLeftRadarList) do
     w:UnitLeftRadar(unitID, unitTeam)
   end
   return
@@ -1834,7 +1868,7 @@ end
 
 
 function widgetHandler:UnitLeftLos(unitID, unitDefID, unitTeam)
-  for _,w in ipairs(self.UnitLeftLosList) do
+  for _,w in r_ipairs(self.UnitLeftLosList) do
     w:UnitLeftLos(unitID, unitDefID, unitTeam)
   end
   return
@@ -1842,7 +1876,7 @@ end
 
 
 function widgetHandler:UnitEnteredWater(unitID, unitDefID, unitTeam)
-  for _,w in ipairs(self.UnitEnteredWaterList) do
+  for _,w in r_ipairs(self.UnitEnteredWaterList) do
     w:UnitEnteredWater(unitID, unitDefID, unitTeam)
   end
   return
@@ -1850,7 +1884,7 @@ end
 
 
 function widgetHandler:UnitEnteredAir(unitID, unitDefID, unitTeam)
-  for _,w in ipairs(self.UnitEnteredAirList) do
+  for _,w in r_ipairs(self.UnitEnteredAirList) do
     w:UnitEnteredAir(unitID, unitDefID, unitTeam)
   end
   return
@@ -1858,7 +1892,7 @@ end
 
 
 function widgetHandler:UnitLeftWater(unitID, unitDefID, unitTeam)
-  for _,w in ipairs(self.UnitLeftWaterList) do
+  for _,w in r_ipairs(self.UnitLeftWaterList) do
     w:UnitLeftWater(unitID, unitDefID, unitTeam)
   end
   return
@@ -1866,7 +1900,7 @@ end
 
 
 function widgetHandler:UnitLeftAir(unitID, unitDefID, unitTeam)
-  for _,w in ipairs(self.UnitLeftAirList) do
+  for _,w in r_ipairs(self.UnitLeftAirList) do
     w:UnitLeftAir(unitID, unitDefID, unitTeam)
   end
   return
@@ -1874,7 +1908,7 @@ end
 
 
 function widgetHandler:UnitSeismicPing(x, y, z, strength)
-  for _,w in ipairs(self.UnitSeismicPingList) do
+  for _,w in r_ipairs(self.UnitSeismicPingList) do
     w:UnitSeismicPing(x, y, z, strength)
   end
   return
@@ -1883,7 +1917,7 @@ end
 
 function widgetHandler:UnitLoaded(unitID, unitDefID, unitTeam,
                                   transportID, transportTeam)
-  for _,w in ipairs(self.UnitLoadedList) do
+  for _,w in r_ipairs(self.UnitLoadedList) do
     w:UnitLoaded(unitID, unitDefID, unitTeam,
                  transportID, transportTeam)
   end
@@ -1893,7 +1927,7 @@ end
 
 function widgetHandler:UnitUnloaded(unitID, unitDefID, unitTeam,
                                     transportID, transportTeam)
-  for _,w in ipairs(self.UnitUnloadedList) do
+  for _,w in r_ipairs(self.UnitUnloadedList) do
     w:UnitUnloaded(unitID, unitDefID, unitTeam,
                    transportID, transportTeam)
   end
@@ -1902,7 +1936,7 @@ end
 
 
 function widgetHandler:UnitCloaked(unitID, unitDefID, unitTeam)
-  for _,w in ipairs(self.UnitCloakedList) do
+  for _,w in r_ipairs(self.UnitCloakedList) do
     w:UnitCloaked(unitID, unitDefID, unitTeam)
   end
   return
@@ -1910,7 +1944,7 @@ end
 
 
 function widgetHandler:UnitDecloaked(unitID, unitDefID, unitTeam)
-  for _,w in ipairs(self.UnitDecloakedList) do
+  for _,w in r_ipairs(self.UnitDecloakedList) do
     w:UnitDecloaked(unitID, unitDefID, unitTeam)
   end
   return
@@ -1918,7 +1952,7 @@ end
 
 
 function widgetHandler:UnitMoveFailed(unitID, unitDefID, unitTeam)
-  for _,w in ipairs(self.UnitMoveFailedList) do
+  for _,w in r_ipairs(self.UnitMoveFailedList) do
     w:UnitMoveFailed(unitID, unitDefID, unitTeam)
   end
   return
@@ -1927,7 +1961,7 @@ end
 
 function widgetHandler:RecvLuaMsg(msg, playerID)
   local retval = false
-  for _,w in ipairs(self.RecvLuaMsgList) do
+  for _,w in r_ipairs(self.RecvLuaMsgList) do
     if (w:RecvLuaMsg(msg, playerID)) then
       retval = true
     end
@@ -1938,7 +1972,7 @@ end
 
 function widgetHandler:StockpileChanged(unitID, unitDefID, unitTeam,
                                         weaponNum, oldCount, newCount)
-  for _,w in ipairs(self.StockpileChangedList) do
+  for _,w in r_ipairs(self.StockpileChangedList) do
     w:StockpileChanged(unitID, unitDefID, unitTeam,
                        weaponNum, oldCount, newCount)
   end
@@ -1947,7 +1981,7 @@ end
 
 
 function widgetHandler:GameProgress(frame)
-  for _,w in ipairs(self.GameProgressList) do
+  for _,w in r_ipairs(self.GameProgressList) do
     w:GameProgress(frame)
   end
   return
@@ -1955,7 +1989,7 @@ end
 
 
 function widgetHandler:UnsyncedHeightMapUpdate(x1,z1,x2,z2)
-  for _,w in ipairs(self.UnsyncedHeightMapUpdateList) do
+  for _,w in r_ipairs(self.UnsyncedHeightMapUpdateList) do
     w:UnsyncedHeightMapUpdate(x1,z1,x2,z2)
   end
   return
@@ -1966,7 +2000,7 @@ end
 -- 
  
 function widgetHandler:FeatureCreated(featureID, allyTeam) 
- for _,w in ipairs(self.FeatureCreatedList) do 
+ for _,w in r_ipairs(self.FeatureCreatedList) do 
    w:FeatureCreated(featureID, allyTeam) 
   end 
   return 
@@ -1974,7 +2008,7 @@ end
 
 
 function widgetHandler:FeatureDestroyed(featureID, allyTeam) 
-  for _,w in ipairs(self.FeatureDestroyedList) do 
+  for _,w in r_ipairs(self.FeatureDestroyedList) do 
     w:FeatureDestroyed(featureID, allyTeam) 
   end 
  return 

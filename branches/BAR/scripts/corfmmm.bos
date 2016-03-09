@@ -1,18 +1,3 @@
-//            * Header Info *
-// VersionSignature                     4
-// NumberOfScripts                     14
-// NumberOfPieces                      16
-// LengthOfScripts                     454
-// NumberOfStaticVars                  3
-// UKZero                              0
-// OffsetToScriptCodeIndexArray        117c
-// OffsetToScriptNameOffsetArray       11b4
-// OffsetToPieceNameOffsetArray        11ec
-// OffsetToScriptCode                  2c
-// OffsetToNameArray                   122c
-
-// OffsetToFirstName                   122c
-
 #define TA			// This is a TA script
 
 #include "sfxtype.h"
@@ -20,69 +5,121 @@
 
 piece  base;
 
+static-var  mmState, Active;
 
+MMStatus(State)
+{
+	Active = State;
+	//get PRINT(Active);
+}
+
+ImAMetalMaker()
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 150;
+	}
+	mmState = -1;
+	while( TRUE )
+	{
+		if( Active == 1 )
+		{
+			if( mmState != 1 )
+			{
+			set ACTIVATION to 1;
+			mmState = 1;
+			}
+		}
+		else 
+		if( mmState != 0 )
+		{
+			set ACTIVATION to 0;
+			mmState = 0;
+		}
+		sleep 10;
+	}
+}
+
+RockOnWaves()
+{
+	var rockDir, rockAng, rockSpeed;
+	rockDir = <-0.1>;
+	rockAng = <-0.1>;
+	while( TRUE )
+	{
+		while( get ABS(rockAng) < <1.31> )
+		{
+			rockSpeed = <1.45> - get ABS(rockAng);
+			turn base to x-axis rockAng speed rockSpeed*5;
+			turn base to z-axis rockAng speed rockSpeed*5;
+			wait-for-turn base around x-axis;
+			wait-for-turn base around z-axis;
+			rockAng = rockAng + rockDir;
+		}
+		rockDir = 0 - rockDir;
+		rockAng = rockAng + rockDir + rockDir;
+	}
+}
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
-/*     3:*/{
-/*     6:*/	while( get BUILD_PERCENT_LEFT )
-/*     8:*/	{
-/*     a:*/		sleep 400;
-/*     d:*/	}
-/*     f:*/	while( TRUE )
-/*    11:*/	{
-/*    14:*/		healthpercent = get HEALTH;
-/*    1b:*/		if( healthpercent < 66 )
-/*    1d:*/		{
-/*    22:*/			smoketype = 256 | 2;
-/*    2c:*/			if( Rand( 1, 66 ) < healthpercent )
-/*    2e:*/			{
-/*    33:*/				smoketype = 256 | 1;
-/*    35:*/			}
-/*    37:*/			emit-sfx smoketype from base;
-/*    39:*/		}
-/*    3e:*/		sleeptime = healthpercent * 50;
-/*    45:*/		if( sleeptime < 200 )
-/*    47:*/		{
-/*    49:*/			sleeptime = 200;
-/*    4b:*/		}
-/*    4d:*/		sleep sleeptime;
-/*    50:*/	}
-/*    52:*/	return (0);
-/*    53:*/}
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	start-script RockOnWaves();
+	while( TRUE )
+	{
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
+	}
+}
 
 Create()
-/*    53:*/{
-/*    57:*/	start-script SmokeUnit();
-/*    5c:*/	return (0);
-/*    5d:*/}
+{
+	start-script SmokeUnit();
+}
 
 SweetSpot(piecenum)
-/*    5e:*/{
-/*    60:*/	piecenum = base;
-/*    64:*/	return (0);
-/*    65:*/}
+{
+	piecenum = base;
+}
 
 Killed(severity, corpsetype)
 {
 	if( severity <= 25 )
 	{
-		corpsetype = 1 ;
+		corpsetype = 1;
 		explode base type BITMAPONLY;
-		return(corpsetype);
+		return (corpsetype);
 	}
 	if( severity <= 50 )
 	{
-		corpsetype = 2 ;
+		corpsetype = 2;
 		explode base type BITMAPONLY;
-		return(corpsetype);
+		return (corpsetype);
 	}
 	if( severity <= 99 )
 	{
-		corpsetype = 3 ;
+		corpsetype = 3;
 		explode base type BITMAPONLY;
-		return(corpsetype);
+		return (corpsetype);
 	}
-	corpsetype = 3 ;
-		explode base type BITMAPONLY;
-	return corpsetype;
+	corpsetype = 3;
+	explode base type BITMAPONLY;
+	return (corpsetype);
 }

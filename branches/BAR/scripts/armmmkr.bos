@@ -5,9 +5,7 @@
 
 piece  base, cover1, cover2;
 
-static-var  Static_Var_1;
-
-#define WHAT_DO 1024
+static-var  Static_Var_1, mmState, Active;
 
 activatescr()
 {
@@ -73,7 +71,12 @@ Stop()
 	call-script deactivatescr();
 }
 
-static-var  mmState;
+MMStatus(State)
+{
+	Active = State;
+	//get PRINT(Active);
+}
+
 ImAMetalMaker()
 {
 	while( get BUILD_PERCENT_LEFT )
@@ -83,7 +86,7 @@ ImAMetalMaker()
 	mmState = -1;
 	while( TRUE )
 	{
-		if ((get WHAT_DO) == 1)
+		if (Active == 1)
 		{
 			if (mmState != 1) {
 				call-script Go();
@@ -113,7 +116,7 @@ Create()
 	start-script ImAMetalMaker();
 }
 
-HitByWeapon(anglex, anglez)
+HitByWeapon(anglex, anglez)  //Can be removed does nothing at all only visualy they will look closed (MM are controled by gadget and still producing metal)
 {
 	if( get ACTIVATION )
 	{

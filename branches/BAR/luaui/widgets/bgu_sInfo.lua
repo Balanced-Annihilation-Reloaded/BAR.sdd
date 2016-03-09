@@ -55,14 +55,15 @@ local schar = string.char
 local myTeamID  = Spring.GetMyTeamID()
 local groundTimer = spGetTimer()
 
-local buttonColour = {0,0,0,1}
+local buttonColour, panelColour, sliderColour 
+
+local mColour = '\255\153\153\204'
+local eColour = '\255\255\255\76'
 
 local green = '\255\0\255\0'
 local red = '\255\255\0\0'
 local grey = '\255\150\150\150'
 local white = '\255\255\255\255'
-local mColour = '\255\153\153\204'
-local eColour = '\255\255\255\76'
 local blue = "\255\200\200\255"
 local darkblue = "\255\100\100\255"
 local yellow = "\255\255\255\0"
@@ -1006,7 +1007,9 @@ function widget:Initialize()
         return
     end
     
-    Chili   = WG.Chili
+    Chili = WG.Chili
+    buttonColour = WG.buttonColour
+
     screen = Chili.Screen0
     local winSize = screen.height * 0.2
     
@@ -1051,6 +1054,7 @@ function widget:Initialize()
     }    
     
     groundWindow = Chili.Button:New{ -- parent for ground info, children are permanent
+        name    = "ground window",
         parent  = screen,
         padding = {6,6,6,6},
         borderColor = buttonColour,

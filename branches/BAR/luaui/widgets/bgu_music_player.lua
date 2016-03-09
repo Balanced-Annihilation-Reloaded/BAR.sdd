@@ -38,6 +38,7 @@ local masterVolume    = Spring.GetConfigInt('snd_volmaster')
 local notePic  = "LuaUI/Images/musical_note.png"
 local tankPic  = "LuaUI/Images/small_tank.png"
 
+local buttonColour, panelColour, sliderColour 
 
 local tracks = VFS.Include('Music/music.lua') or false
 local myTeamID  = Spring.GetMyTeamID()
@@ -162,7 +163,9 @@ local function createUI()
         bottom   = 0, 
         width    = 100, 
         value    = battleVolume,
-        OnChange = {function(self)    Spring.SendCommands('set snd_volbattle ' .. self.value) end},
+        borderColor = sliderColour,
+        backgroundColor = sliderColour,
+       OnChange = {function(self)    Spring.SendCommands('set snd_volbattle ' .. self.value) end},
     }
 
     battle_pic = Chili.Image:New{
@@ -179,6 +182,8 @@ local function createUI()
         bottom   = 20, 
         width    = 100, 
         value    = musicVolume,
+        borderColor = sliderColour,
+        backgroundColor = sliderColour,
         OnChange = {function(self)    Spring.SendCommands('set snd_volmusic ' .. self.value) end},
     }
 
@@ -209,6 +214,8 @@ local function createUI()
         right   = 150,
         width   = 35,
         height  = 22,
+        borderColor = buttonColour,
+        backgroundColor = buttonColour,
         onclick = {ToggleSepSliders},
     }
 
@@ -220,7 +227,9 @@ local function createUI()
         bottom   = 10, 
         width    = 60, 
         value    = masterVolume,
-        OnChange = {function(self)    Spring.SendCommands('set snd_volmaster ' .. self.value) end},
+        borderColor = sliderColour,
+        backgroundColor = sliderColour,
+          OnChange = {function(self)    Spring.SendCommands('set snd_volmaster ' .. self.value) end},
     }
     
     playIcon = Chili.Image:New{
@@ -247,6 +256,8 @@ local function createUI()
         width    = 40,
         height   = 40,
         padding     = {8,8,8,8},
+        borderColor = buttonColour,
+        backgroundColor = buttonColour,
         caption  = '', 
         children = {pauseIcon, playIcon},
         OnClick  = {
@@ -270,6 +281,8 @@ local function createUI()
         width    = 40, 
         height   = 40, 
         padding     = {8,8,8,8}, 
+        borderColor = buttonColour,
+        backgroundColor = buttonColour,
         caption  = '',
         OnClick  = {function() playNew = true end},
         children = {
@@ -302,6 +315,7 @@ local function createUI()
         height    = 20,
         width     = 200,
         padding   = {5,2,5,0},
+        color = buttonColour,
         children  = {songLabel},
     }
 end
@@ -420,6 +434,9 @@ function widget:Initialize()
     isSpec = Spring.GetSpectatingState()
     
     Chili = WG.Chili
+    buttonColour = WG.buttonColour
+    panelColour = WG.panelColour
+    sliderColour = WG.sliderColour
     createUI()
     
     Menu = WG.MainMenu

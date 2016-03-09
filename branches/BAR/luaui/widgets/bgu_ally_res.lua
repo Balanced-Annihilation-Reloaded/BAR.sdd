@@ -196,7 +196,7 @@ function ConstructTeamPanel(tID)
         name = 'factionpic',
         height = imageHeight,
         width = imageHeight,
-        x=10,
+        x=7,
         y=panelHeight/2 - imageHeight + 4,
         file = "LuaUI/Images/playerlist/default.png", --TODO
         color = {r,g,b},
@@ -210,9 +210,9 @@ function ConstructTeamPanel(tID)
             name   = res.name, 
             tID    = tID,
             caption = "",
-            x      = imageHeight+10, 
+            x      = imageHeight+9, 
             y      = hPos, 
-            width  = panelWidth-imageHeight-20,        
+            width  = panelWidth-imageHeight-15,        
             height = 8,
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
@@ -318,19 +318,19 @@ end
 
 function widget:Initialize()
     Chili = WG.Chili
-
+    buttonColour = WG.buttonColour
+    
     -- construct window, stack
-    window = Chili.Button:New{
+    window = Chili.Window:New{
         name      = 'ally res window',
         parent    = Chili.Screen0,
         right     = 0,
         y         = 175,
         width     = panelWidth,
+        resizeable = false,
         autosize = true,
-        padding   = {0,0,0,0},
-        borderColor = buttonColour,
-        backgroundColor = buttonColour,
-        focusColor = buttonColour,
+        padding   = {0,0,0,6},
+        color = buttonColour,
         caption = "",
      }
     stack = Chili.StackPanel:New{
@@ -339,7 +339,7 @@ function widget:Initialize()
         width       = '100%',
         autosize = true,
         resizeItems = false,
-        padding     = {0,5,0,13},
+        padding     = {0,2,0,0},
         itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},
         children    = {},

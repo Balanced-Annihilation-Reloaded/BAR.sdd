@@ -32,7 +32,7 @@ local pingPic         = "LuaUI/Images/playerlist/ping.png"
 local cpuPic          = "LuaUI/Images/playerlist/cpu.png"
 local readyPic        = "LuaUI/Images/playerlist/blob_small.png"
 
-local buttonColour = {0,0,0,1}
+local buttonColour, panelColour, sliderColour 
 
 local needUpdate = true
 
@@ -200,7 +200,7 @@ end
 
 function iPanel()
     -- setup iPanel
-    iPanel = Chili.Panel:New{
+    iPanel = Chili.Window:New{
         parent    = Chili.Screen0,
         right     = 0,
         bottom    = 0,
@@ -209,7 +209,8 @@ function iPanel()
         minHeight = 25,
         autosize  = false,
         children  = {},
-        padding     = {0,0,0,0},
+        color = buttonColour,
+        padding     = {1,0,1,0},
         borderColor = {0,0,0,1},
         itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},
@@ -537,6 +538,8 @@ function PlayerPanel(pID)
         padding     = {5,0,0,0},
         itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},
+        borderColor = {0,0,0,0},
+        backgroundColor = sliderColour,
         caption     = "",
         onclick     = {iPanelPress},
         children    = {},
@@ -653,6 +656,8 @@ function DeadPanel(pID)
         padding     = {0,0,0,0},
         itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},
+        borderColor = {0,0,0,0},
+        backgroundColor = sliderColour,
         children    = {},
         caption     = "",
         onclick     = {iPanelPress},
@@ -694,6 +699,8 @@ function SpecPanel(pID)
         padding     = {0,0,0,0},
         itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},
+        borderColor = {0,0,0,0},
+        backgroundColor = sliderColour,
         children    = {},
         caption     = "",
         onclick     = {iPanelPress},
@@ -1143,6 +1150,9 @@ function widget:Initialize()
     Spring.SendCommands('unbind Any+h sharedialog')
 
     Chili = WG.Chili
+    buttonColour = WG.buttonColour
+    panelColour = WG.panelColour
+    sliderColour = WG.sliderColour
     
     CalculateOffsets()
 
@@ -1506,7 +1516,7 @@ function SetupStack()
 
     SetupAllyTeams()
 
-    window = Chili.Button:New{
+    window = Chili.Window:New{
         parent    = Chili.Screen0,
         right     = 0,
         bottom    = 0,
@@ -1514,9 +1524,7 @@ function SetupStack()
         minHeight = 50,
         minWidth  = 1,
         autosize  = true,
-        borderColor = buttonColour,
-        backgroundColor = buttonColour,
-        focusColor = buttonColour,
+        color = buttonColour,
         caption = "",
         children  = {},
     }

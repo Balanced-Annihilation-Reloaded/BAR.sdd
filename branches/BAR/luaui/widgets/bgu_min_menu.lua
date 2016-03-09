@@ -21,6 +21,8 @@ local function round(num, idp)
   return string.format("%." .. (idp or 0) .. "f", num)
 end
 
+local buttonColour, panelColour, sliderColour 
+
 local function setGameTime(n)
     -- Possibly add option to include time paused?
     -- local gameSeconds = Spring.GetGameSeconds()
@@ -90,6 +92,8 @@ local function loadMinMenu()
         right   = 0,
         height  = '100%', 
         width   = 50,
+        borderColor = {0,0,0,0},
+        backgroundColor = sliderColour,
         Onclick = {
             function() 
                 WG.MainMenu.ShowHide() 
@@ -105,12 +109,18 @@ local function loadMinMenu()
         minheight = 20, 
         height    = 20,
         padding   = {5,0,0,0},
+        color = buttonColour,
+        caption = "",
         children  = {timeLbl,fpsLbl,menuBtn}
     }
 end
 
 function widget:Initialize()
-    Chili = WG.Chili    
+    Chili = WG.Chili  
+    buttonColour = WG.buttonColour
+    panelColour = WG.panelColour
+    sliderColour = WG.sliderColour
+    
     Menu = WG.MainMenu
     loadMinMenu()
     if Menu then

@@ -36,11 +36,12 @@ local settings = {}
 -- Colors
 local green        = {0.2, 1.0, 0.2, 1.0}
 local red          = {1.0, 0.2, 0.2, 1.0}
-local black        = {0,0,0,1}
 --local greenOutline = {0.2, 1.0, 0.2, 0.2}
 --local redOutline   = {1.0, 0.2, 0.2, 0.2}
 local fullyLoaded = false -- to stop making "set X to Y" remarks when we are just reloading the config on init
 --
+
+local buttonColour, panelColour, sliderColour 
 
 -------------------------------------------
 -- Auxiliary functions
@@ -92,8 +93,8 @@ local function initWindow()
         height    = 80, 
         minHeight = 20, 
         padding   = {0,0,0,0},
-        borderColor = black,
-        backgroundColor = black,
+        borderColor = buttonColour,
+        backgroundColor = buttonColour,
         caption = "",
         OnClick = {ToggleconversionWindow},
     }
@@ -189,8 +190,8 @@ local function makeconversionWindow()
         right = 0,
         y = 0,
         padding = {10,10,10,10},
-        borderColor = black,
-        backgroundColor = black,
+        borderColor = buttonColour,
+        backgroundColor = buttonColour,
         caption = "",
         OnClick = {ToggleconversionWindow},
     }    
@@ -199,21 +200,21 @@ local function makeconversionWindow()
         local alterLevelFormat = string.char(137) .. '%i'
         Spring.SendLuaRulesMsg(string.format(alterLevelFormat, value))
         if fullyLoaded then
-            Spring.Echo("Conversion of energy to metal will only occur when energy is above " .. value .. "% full")
+            Spring.Echo("Conversion of energy to metal will only occur when energy is above " .. round(value) .. "% full")
         end
     end
     
     local function SetEShare (obj, value)
         Spring.SetShareLevel('energy', value)
         if fullyLoaded then
-            Spring.Echo("Energy will be shared to allies when over " .. value .. "% full")
+            Spring.Echo("Energy will be shared to allies when over " .. round(value) .. "% full")
         end
     end
 
     local function SetMShare (obj, value)
         Spring.SetShareLevel('metal', value)        
         if fullyLoaded then
-            Spring.Echo("Metal will be shared to allies when over " .. value .. "% full")
+            Spring.Echo("Metal will be shared to allies when over " .. round(value) .. "% full")
         end
     end
     
@@ -336,6 +337,8 @@ end
 function widget:Initialize()
     Spring.SendCommands('resbar 0')
     Chili = WG.Chili
+    buttonColour = WG.buttonColour
+
     initWindow()
     makeBar('metal',10,9)
     makeBar('energy',10,39)

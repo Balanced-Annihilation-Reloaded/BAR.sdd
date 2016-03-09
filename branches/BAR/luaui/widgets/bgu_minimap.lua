@@ -28,6 +28,8 @@ local GL_PROJECTION      = GL.PROJECTION
 local GL_MODELVIEW       = GL.MODELVIEW
 --
 
+local buttonColour, panelColour, sliderColour 
+
 local function MakeMinimapWindow(screenH)
     
     if (minimap) then
@@ -55,8 +57,8 @@ local function MakeMinimapWindow(screenH)
         height    = h,
         x         = 0,
         bottom    = 0,
-        borderColor = {0,0,0,0.5},
-        borderColor2 = {0,0,0,0.5},
+        borderColor = {0,0,0,0},
+        backgroundColor = panelColour,
         padding   = {6,6,6,6},
     }
     
@@ -74,10 +76,8 @@ function widget:Initialize()
         return
     end
 
-    if not WG.Chili then
-        widgetHandler:RemoveWidget()
-        return
-    end
+    buttonColour = WG.buttonColour
+    panelColour = WG.panelColour
     
     Chili = WG.Chili
     

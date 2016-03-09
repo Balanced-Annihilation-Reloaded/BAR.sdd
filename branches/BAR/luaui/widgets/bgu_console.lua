@@ -42,6 +42,7 @@ local screen
 local window
 local msgWindow
 local log
+local buttonColour, panelColour, sliderColour 
 --------------------
 
 -- Local Variables --
@@ -133,6 +134,9 @@ local function loadWindow()
         bottom      = 0,
         padding     = {0,0,0,0},
         borderColor = {0,0,0,0},
+        backgroundColor = sliderColour, -- controls the scroll slider
+        knobcolorselected = {1,1,1,1}, -- slider button when hovered
+        
     }
 
     log = Chili.StackPanel:New{
@@ -204,6 +208,9 @@ end
 function widget:Initialize()
     Chili  = WG.Chili
     screen = Chili.Screen0
+    buttonColour = WG.buttonColour
+    panelColour = WG.panelColour
+    sliderColour = WG.sliderColour    
     Menu   = WG.MainMenu
     
     if Menu then 

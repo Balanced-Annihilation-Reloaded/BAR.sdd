@@ -234,7 +234,7 @@ function widget:Initialize()
 	scrollSuggestions = Chili.ScrollPanel:New {
 		borderColor = { 0, 0, 0, 0 },
 		focusColor = { 0, 0, 0, 0 },
-		backgroundColor = { 0, 0, 0, 1 },
+		backgroundColor = WG.sliderColour, -- (only) affects the colour of the sliders
 		parent = screen0,
 		scrollbarSize = 4,
 	}

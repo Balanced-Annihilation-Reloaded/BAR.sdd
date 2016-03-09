@@ -60,8 +60,6 @@ Settings['searchWidgetDesc'] = true
 Settings['searchWidgetAuth'] = true
 Settings['searchWidgetName'] = true
 Settings['widget']           = {}
-Settings['UIwidget']         = {}
-Settings['Skin']             = 'Robocracy'
 Settings['Cursor']           = 'Dynamic'
 Settings['CursorName']       = 'bar'
 Settings['widgetScrollPos']  = 0
@@ -492,18 +490,6 @@ local function applyDefaultSettings()
 
 end
 
-local function GetAllowedSkins()
-    local chiliSkins = Chili.SkinHandler.GetAvailableSkins()
-    local skins = {}
-    for k,v in pairs(chiliSkins) do
-        if v~="default" then
-            skins[#skins+1] = v
-        end
-    end
-    return skins
-end
-
-
 ----------------------------
 -- Creates a combobox style control
 local comboBox = function(obj)
@@ -536,11 +522,7 @@ local comboBox = function(obj)
         local setting = obj.name or ''
 
         if setting == 'Skin' then
-            Chili.theme.skin.general.skinName = value
-            if fullyLoaded then 
-                Spring.Echo("Reloading skin, please wait...")
-                Spring.SendCommands("luarules reloadluaui") 
-            end -- avoid doing this during Initialize!
+            --fixme, colourmode & alphamode
         elseif setting == 'Cursor' then
             setCursor(value)
             Settings['CursorName'] = value
@@ -769,10 +751,42 @@ local function createInterfaceTab()
 
             Chili.Line:New{width='50%',y=80},
 
-            comboBox{name='Skin',y=90, width='45%',
-                labels=GetAllowedSkins()
-            }, 
-            comboBox{name='Cursor',y=125, width='45%',
+            Chili.TextBox:New{text='Skin',y=90, width='45%',},
+            Chili.Control:New{x='2%', y=100, width='40%',autoSize=true,padding={0,4,0,0},
+                children = {
+                    Chili.TextBox:New{x='0%',width='35%',text="Colour mode:"},
+                    Chili.ComboBox:New{x='35%',width='65%',
+                        items    = {"black", "white", "team"},
+                        selected = (WG.GetSkinColourMode()=="black" and 1) or (WG.GetSkinColourMode()=="white" and 2) or (WG.GetSkinColourMode()=="team" and 3),
+                        OnSelect = {
+                            function(self,sel)
+                                local mode = self.items[sel]
+                                WG.SetSkinColourMode(mode)
+                                Spring.Echo("Setting skin colour to " .. WG.GetSkinColourMode())
+                                if fullyLoaded then
+                                    WG.ExposeNewSkinColours() -- causes luaui reload -> don't do this in initialise
+                                end
+                            end
+                            }
+                        },
+                    Chili.TextBox:New{y=17, x='0%',width='35%',text="Alpha:"},
+                    Chili.ComboBox:New{y=17, x='35%',width='65%',
+                        items    = {"low", "med", "high", "max"},
+                        selected = (WG.GetSkinAlphaMode()=="low" and 1) or (WG.GetSkinAlphaMode()=="med" and 2) or (WG.GetSkinAlphaMode()=="high" and 3) or (WG.GetSkinAlphaMode()=="max" and 4),
+                        OnSelect = {
+                            function(self,sel)
+                                local alpha = self.items[sel]
+                                WG.SetSkinAlphaMode(self.items[sel])  
+                                Spring.Echo("Setting skin alpha to " .. WG.GetSkinAlphaMode(), sel)
+                                if fullyLoaded then
+                                    WG.ExposeNewSkinColours() -- causes luaui reload -> don't do this in initialise
+                                end
+                            end
+                            }
+                        },
+                    },                
+            },
+            comboBox{name='Cursor',y=135, width='45%',
                 labels={'Dynamic','Static'},
                 options={'bar','static'}
             },
@@ -914,7 +928,6 @@ end
 -- Initial function called by widget handler
 function widget:Initialize()
     Chili = WG.Chili
-    Chili.theme.skin.general.skinName = Settings['Skin'] or 'Robocracy'
     setCursor(Settings['CursorName'] or 'bar')
 
     loadMainMenu()

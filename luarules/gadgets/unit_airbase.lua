@@ -291,8 +291,6 @@ function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
       for pieceNum,planeID in pairs(airbases[unitID]) do
          if planeID then
             RemovePlane(planeID)
-            
-            Spring.ClearUnitGoal(planeID)
          end
       end
       airbases[unitID] = nil
@@ -354,6 +352,12 @@ local CMD_REMOVE = CMD.REMOVE
 
 function gadget:AllowCommand(unitID, unitDefID, unitTeam, cmdID, cmdParams, cmdOptions, cmdTag, synced)
    return true
+end
+
+function gadget:UnitCmdDone(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
+	if cmdID ~= CMD_LAND_AT_SPECIFIC_AIRBASE then return end
+
+	Spring.ClearUnitGoal(unitID)
 end
 
 function gadget:UnitCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
@@ -441,7 +445,6 @@ function gadget:GameFrame(n)
                -- land onto pad
                landingPlanes[unitID] = nil
                tractorPlanes[unitID] = {airbaseID, padPieceNum}
-               Spring.ClearUnitGoal(unitID)
                Spring.MoveCtrl.Enable(unitID)
             else
                -- fly towards pad (the pad may move!)
@@ -468,7 +471,7 @@ function gadget:GameFrame(n)
          AttachToPad(unitID, airbaseID, padPieceNum)
          Spring.MoveCtrl.Disable(unitID)
          Spring.SetUnitLoadingTransport(unitID, nil)
-         RemoveOrderFromQueue(unitID, CMD_LAND_AT_SPECIFIC_AIRBASE) 
+         RemoveOrderFromQueue(unitID, CMD_LAND_AT_SPECIFIC_AIRBASE) -- also clears the move goal by triggering widget:UnitCmdDone
       else
          -- tractor towards pad
          if sqrDist >=2 then
@@ -509,7 +512,7 @@ function gadget:GameFrame(n)
    
    
    -- get rid of planes that have (auto-)healed themselves before reaching the pad
-   for _,unitID in pairs(toRemove) do
+   for _,unitID in ipairs(toRemove) do
       RemovePlane(unitID)
    end
 end

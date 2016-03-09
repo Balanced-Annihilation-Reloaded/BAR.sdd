@@ -4,7 +4,7 @@
 local etcLocID
 
 local function DrawFeature(featureID, material)
-	Spring.Echo('Im drawing a feature!',featureID)
+	--Spring.Echo('Im drawing a feature!',featureID)
   if etcLocID == nil then
     etcLocID = gl.GetUniformLocation(material.shader, "etcLoc")
   end
@@ -51,6 +51,9 @@ local materials = {
 				vertex.z+=distancefromtrunk*factor2;
 				vertex.x+=distancefromtrunk*factor2;
 			]],
+			FRAGMENT_POST_SHADING = [[
+				//gl_FragColor.r=1.0;
+			]]
 		},
 		usecamera = false,
 		culling   = GL.BACK,
@@ -63,6 +66,7 @@ local materials = {
 			[5] = '%NORMALTEX',
 		},
 		DrawFeature = DrawFeature,
+		DrawObject = DrawFeature,
 		feature = true, --// This is used to define that this is a feature shader
 	},
 }

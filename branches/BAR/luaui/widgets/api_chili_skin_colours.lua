@@ -139,6 +139,14 @@ function widget:Initialize()
     WG.ExposeNewSkinColours = ExposeNewSkinColours
 end
 
+function widget:Shutdown()
+    WG.GetSkinColourMode = nil
+    WG.GetSkinAlphaMode = nil  
+    WG.SetSkinColourMode = nil 
+    WG.SetSkinAlphaMode = nil  
+    WG.ExposeNewSkinColours = nil
+end
+
 function widget:GetConfigData()
     return options
 end

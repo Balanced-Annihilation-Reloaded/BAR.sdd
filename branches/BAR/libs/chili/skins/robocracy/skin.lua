@@ -179,6 +179,7 @@ skin.scrollpanel = {
   HKnobTiles     = {6,8,6,8},
 
   KnobColorSelected = {1,0.7,0.1,0.8},
+  backgroundColor = {1,1,1,1},
 
   padding = {5, 5, 5, 0},
 

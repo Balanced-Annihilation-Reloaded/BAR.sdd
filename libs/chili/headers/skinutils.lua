@@ -605,7 +605,7 @@ function DrawScrollPanel(obj)
     if obj._vscrolling or obj._vHovered then
       gl.Color(obj.KnobColorSelected)
     else
-      gl.Color(1,1,1,1)
+      gl.Color(obj.backgroundColor)
     end
 
     TextureHandler.LoadTexture(0,obj.KnobTileImage,obj)
@@ -647,7 +647,7 @@ function DrawScrollPanel(obj)
     if obj._hscrolling or obj._hHovered then
       gl.Color(obj.KnobColorSelected)
     else
-      gl.Color(1,1,1,1)
+      gl.Color(obj.backgroundColor)
     end
 
     TextureHandler.LoadTexture(0,obj.HKnobTileImage,obj)
@@ -758,7 +758,7 @@ function DrawTrackbar(self)
   local skLeft,skTop,skRight,skBottom = unpack4(self.tiles)
   local pdLeft,pdTop,pdRight,pdBottom = unpack4(self.hitpadding)
 
-  gl.Color(1,1,1,1)
+  gl.Color(self.backgroundColor)
 
   TextureHandler.LoadTexture(0,self.TileImage,self)
     local texInfo = gl.TextureInfo(self.TileImage) or {xsize=1, ysize=1}
@@ -806,7 +806,7 @@ function DrawTrackbar(self)
   if (self.state.hovered) then
     gl.Color(self.focusColor)
   else
-    gl.Color(1,1,1,1)
+    gl.Color(self.backgroundColor)
   end
 
   TextureHandler.LoadTexture(0,self.ThumbImage,self)

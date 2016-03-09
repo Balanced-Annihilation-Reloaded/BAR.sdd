@@ -421,7 +421,7 @@ function gadget:UnitFinished(unitID, unitDefID)
 end
 
 function gadget:FeatureCreated(featureID)
-	Spring.Echo("FeatureCreated",featureID)
+	-- Spring.Echo("FeatureCreated",featureID)
   ObjectFinished(featureRendering, featureID, Spring.GetFeatureDefID(featureID))
 end
 
@@ -548,7 +548,9 @@ local function _LoadMaterialConfigFiles(path)
   
   for i = 1, #files do
     local mats, unitMats = VFS.Include(files[i])
+	
     for k, v in pairs(mats) do
+		-- Spring.Echo(files[i],'is a feature?',v.feature)
       local rendering
       if v.feature then
         rendering = featureRendering
@@ -562,7 +564,7 @@ local function _LoadMaterialConfigFiles(path)
     for k, v in pairs(unitMats) do
       --// we check if the material is defined as a unit or as feature material (one namespace for both!!)
       local materialDefs
-      if featureRendering.materialDefs[v] then
+      if featureRendering.materialDefs[v[1]] then
         materialDefs = featureMaterialDefs
       else
         materialDefs = unitMaterialDefs
@@ -606,7 +608,8 @@ function gadget:Initialize()
   --// load the materials config files
   local MATERIALS_DIR = "ModelMaterials/"
   local unitMaterialDefs, featureMaterialDefs = _LoadMaterialConfigFiles(MATERIALS_DIR)
-
+	-- Spring.Echo('unitMaterialDefs',to_string(unitMaterialDefs))
+	-- Spring.Echo('featureMaterialDefs',to_string(featureMaterialDefs))
   --// process the materials (compile shaders, load textures, ...)
   _ProcessMaterials(unitRendering,    unitMaterialDefs)
   _ProcessMaterials(featureRendering, featureMaterialDefs)
@@ -615,4 +618,44 @@ function gadget:Initialize()
 
   gadgetHandler:AddSyncAction("unitshaders_reverse", UnitReverseBuild)
   gadgetHandler:AddChatAction("normalmapping", ToggleNormalmapping)
+end
+
+function to_string(data, indent)
+	local str = ""
+
+	if(indent == nil) then
+		indent = 0
+	end
+
+	-- Check the type
+	if(type(data) == "string") then
+		str = str .. ("    "):rep(indent) .. data .. "\n"
+	elseif(type(data) == "number") then
+		str = str .. ("    "):rep(indent) .. data .. "\n"
+	elseif(type(data) == "boolean") then
+		if(data == true) then
+			str = str .. "true"
+		else
+			str = str .. "false"
+		end
+	elseif(type(data) == "table") then
+		local i, v
+		for i, v in pairs(data) do
+			-- Check for a table in a table
+			if(type(v) == "table") then
+				str = str .. ("    "):rep(indent) .. i .. ":\n"
+				str = str .. to_string(v, indent + 2)
+			else
+				str = str .. ("    "):rep(indent) .. i .. ": " .. to_string(v, 0)
+			end
+		end
+	elseif (data ==nil) then
+		str=str..'nil'
+	else
+		--print_debug(1, "Error: unknown data type: %s", type(data))
+		str=str.. "Error: unknown data type:" .. type(data)
+		Spring.Echo('X data type')
+	end
+
+	return str
 end

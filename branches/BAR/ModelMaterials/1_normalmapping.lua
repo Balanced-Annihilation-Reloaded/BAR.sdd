@@ -9,14 +9,13 @@ local maximum=math.max
 
 
 
-local function DrawUnit(unitID, material,drawMode)
-	--if unitID%100==0 then  Spring.Echo('drawmode',drawMode) end
+local function DrawUnit(unitID, material,drawMode) -- This function is no longer used!
+	
 	if (drawMode ==1)then -- we can skip setting the uniforms as they only affect fragment color, not fragment alpha or vertex positions, so they dont have an effect on shadows, and drawmode 2 is shadows, 1 is normal mode.
 		--Spring.Echo('drawing',UnitDefs[Spring.GetUnitDefID(unitID)].name,GetGameFrame())
 		local  health,maxhealth=GetUnitHealth(unitID)
 		health= 2*maximum(0, (-2*health)/(maxhealth)+1) --inverse of health, 0 if health is 100%-50%, goes to 1 by 0 health
 		glUniform(material.etcLoc, 2* maximum(0,sine((unitID%10)+GetGameFrame()/((unitID%7)+6))), health,0 )
-	  
 	end
 
   --// engine should still draw it (we just set the uniforms for the shader)
@@ -52,7 +51,7 @@ local materials = {
          [4] = '$reflection',
          [5] = '%NORMALTEX',
        },
-	   DrawUnit = DrawUnit,
+	   --DrawUnit = DrawUnit,
    },
 }
 

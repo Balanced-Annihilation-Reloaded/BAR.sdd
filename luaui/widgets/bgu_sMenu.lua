@@ -129,8 +129,7 @@ local topStates = {
     [3] = "repeat",
 }
 
-
-local buttonColour = {0,0,0,1}
+local buttonColour, panelColour, sliderColour 
 
 -- state colours
 local white = {1,1,1,1}
@@ -1030,12 +1029,8 @@ function widget:Initialize()
     WG.sMenu = {}    
     WG.sMenu.ForceUpdate = function() updateRequired='ForceUpdate' end
     
-    if (not WG.Chili) then
-        widgetHandler:RemoveWidget()
-        return
-    end
-
     Chili = WG.Chili
+    buttonColour = WG.buttonColour
     screen0 = Chili.Screen0
     
     buildMenu = Chili.Control:New{

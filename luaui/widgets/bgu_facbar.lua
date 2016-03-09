@@ -617,6 +617,7 @@ function widget:Initialize()
         widgetHandler:RemoveWidget(widget)
         return
     end
+    buttonColour = WG.buttonColour
     
     WG.FacBar = {}
     WG.FacBar.Show = ShowFacBar

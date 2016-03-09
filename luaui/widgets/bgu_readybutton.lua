@@ -27,7 +27,7 @@ local amSpec = Spring.GetSpectatingState()
 local eligibleSub 
 local wantSub = false
 
-local buttonColour = {0,0,0,1}
+local buttonColour, panelColour, sliderColour 
 
 local yellow = "\255\255\230\0"
 local white = "\255\255\255\255"
@@ -49,6 +49,7 @@ function widget:Initialize()
     eligibleSub = tsMu and tsSigma and (tsSigma<=2) and (not string.find(tsMu, ")")) and amSpec
    
     Chili = WG.Chili
+    buttonColour = WG.buttonColour
     
     button_text = amSpec and offerSubText or readyText
     

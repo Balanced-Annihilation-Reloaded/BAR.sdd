@@ -44,7 +44,7 @@ local corcomDefID = UnitDefNames.corcom.id
 local commanderDefID = spGetTeamRulesParam(myTeamID, 'startUnit')
 local amNewbie = (spGetTeamRulesParam(myTeamID, 'isNewbie') == 1)
 
-local buttonColour = {0,0,0,1}
+local buttonColour, panelColour, sliderColour 
 
 --------------------------------------------------------------------------------
 -- Funcs
@@ -86,6 +86,7 @@ function widget:Initialize()
     WG.startUnit = commanderDefID
     
     Chili = WG.Chili
+    buttonColour = WG.buttonColour
     
     control = Chili.Control:New{
         parent = Chili.Screen0,

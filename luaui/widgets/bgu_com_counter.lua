@@ -46,10 +46,11 @@ function makeText(i) return (i~=nil) and tostring(i) or "" end
 local green        = {0.2, 1.0, 0.2, 1.0}
 local red          = {1.0, 0.2, 0.2, 1.0}
 
-local buttonColour = {0,0,0,1}
+local buttonColour, panelColour, sliderColour 
 
 function widget:Initialize()
     Chili = WG.Chili
+    buttonColour = WG.buttonColour
 
     yellowOverlay = Chili.Image:New{
                         color  = {1,0.95,0.4, 0.2},

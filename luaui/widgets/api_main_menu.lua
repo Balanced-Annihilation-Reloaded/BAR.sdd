@@ -1,9 +1,6 @@
 
 -- Look at the globalize function for an explanation on the 'API' to add options to menu from other widgets
 
--- TODO add popup window/API
--- TODO possible separate some tabs into separate widgets
-
 function widget:GetInfo()
     return {
         name    = 'Main Menu',
@@ -11,7 +8,7 @@ function widget:GetInfo()
         author  = 'Funkencool, Bluestone',
         date    = '2013',
         license = 'GNU GPL v2',
-        layer   = -100,
+        layer   = -100, -- load after chili API stuff
         handler = true,
         enabled = true
     }

@@ -259,7 +259,7 @@ local function GetObjectMaterial(rendering, objectDefID)
 
   local luaMat = rendering.spGetMaterial("opaque", {
     shader          = mat.shader,
-    deferred		= mat.deferred
+    deferred		= mat.deferred,
     cameraposloc    = mat.cameraPosLoc,
     cameraloc       = mat.cameraLoc,
     camerainvloc    = mat.cameraInvLoc,
@@ -290,7 +290,7 @@ function ToggleShadows()
   for _, unitID in pairs(units) do
     local unitDefID = Spring.GetUnitDefID(unitID)
     local teamID    = Spring.GetUnitTeam(unitID)
-    UnitDestroyed(nil, unitID)
+    ObjectDestroyed(unitRendering, unitID, unitDefID)
     Spring.UnitRendering.DeactivateMaterial(unitID, 3)
     if not select(3,Spring.GetUnitIsStunned(unitID)) then --// inbuild?
       UnitFinished(nil,unitID,unitDefID,teamID)
@@ -350,7 +350,8 @@ function ToggleNormalmapping(_,_,_, playerID)
       if (unitMat) then
         local mat = unitRendering.materialDefs[unitMat[1]]
         if (not mat.force) then
-          gadget:UnitDestroyed(unitID,unitDefID)
+		ObjectDestroyed(unitRendering, unitID, unitDefID)
+         
         end
       end
     end
@@ -420,6 +421,7 @@ function gadget:UnitFinished(unitID, unitDefID)
 end
 
 function gadget:FeatureCreated(featureID)
+	Spring.Echo("FeatureCreated",featureID)
   ObjectFinished(featureRendering, featureID, Spring.GetFeatureDefID(featureID))
 end
 
@@ -610,13 +612,6 @@ function gadget:Initialize()
   _ProcessMaterials(featureRendering, featureMaterialDefs)
 
   --// insert synced actions
-  if (not engineIsMin97) then
-    gadgetHandler:AddSyncAction("unitshaders_finished", UnitFinished)
-    gadgetHandler:AddSyncAction("unitshaders_destroyed", RenderUnitDestroyed)
-    gadgetHandler:AddSyncAction("unitshaders_given", UnitGiven)
-    gadgetHandler:AddSyncAction("unitshaders_cloak", UnitCloaked)
-    gadgetHandler:AddSyncAction("unitshaders_decloak", UnitDecloaked)
-  end
 
   gadgetHandler:AddSyncAction("unitshaders_reverse", UnitReverseBuild)
   gadgetHandler:AddChatAction("normalmapping", ToggleNormalmapping)

@@ -133,7 +133,7 @@ skin.imagelistviewitem = {
 --]]
 
 skin.panel = {
-  TileImageBK = ":c:tech_dragwindow_clear.png",
+  TileImageBK = ":cl:tech_dragwindow_clear.png",
   TileImageFG = ":cl:tech_dragwindow_clear.png",
   tiles = {62, 62, 62, 62},
   backgroundColor = {0.1, 0.1, 0.1, 0.7},

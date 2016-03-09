@@ -5,7 +5,7 @@
 
 piece  base, cover1, cover2;
 
-static-var  Static_Var_1, Static_Var_2;
+static-var  mmState, Active;
 
 
 activatescr()
@@ -101,27 +101,33 @@ Stop()
 	cache cover1;
 }
 
+MMStatus(State)
+{
+	Active = State;
+	//get PRINT(Active);
+}
+
 ImAMetalMaker()
 {
 	while( get BUILD_PERCENT_LEFT )
 	{
 		sleep 150;
 	}
-	Static_Var_1 = -1;
+	mmState = -1;
 	while( TRUE )
 	{
-		if( get UNKNOWN_UNIT_VALUE(1024) == 1 )
+		if( Active == 1 )
 		{
-			if( Static_Var_1 != 1 )
+			if( mmState != 1 )
 			{
 				call-script Go();
-				Static_Var_1 = 1;
+				mmState = 1;
 			}
 		}
-		else if( Static_Var_1 != 0 )
+		else if( mmState != 0 )
 		{
 			call-script Stop();
-			Static_Var_1 = 0;
+			mmState = 0;
 		}
 		sleep 1000;
 	}

@@ -7,19 +7,19 @@
 
 piece  base, fan, tank1, tank2;
 
-static-var  Static_Var_1, Static_Var_2;
+static-var  Static_Var_1, mmState, Active;
 
 
 activatescr()
 {
 	spin fan around y-axis speed <300.000000> accelerate <10>;
 	
-	set-signal-mask SIG_ANIM;
+	//set-signal-mask SIG_ANIM;
 	while (TRUE)
 	{
 	
-		move tank1 to y-axis [5.000000] speed [5.000000];
-		move tank2 to y-axis [-5.000000] speed [5.000000];
+		move tank1 to y-axis [1.800000] speed [5.000000];
+		move tank2 to y-axis [-2.300000] speed [5.000000];
 
 		sleep 1000;
 		
@@ -73,7 +73,7 @@ Go()
 		set ACTIVATION to 0;
 		return (0);
 	}
-	signal SIG_ANIM;
+	//signal SIG_ANIM;
 	call-script activatescr();
 	set ARMORED to 0;
 }
@@ -81,7 +81,14 @@ Go()
 Stop()
 {
 	set ARMORED to 1;
+	//signal SIG_ANIM;
 	call-script deactivatescr();
+}
+
+MMStatus(State)
+{
+	Active = State;
+	//get PRINT(Active);
 }
 
 ImAMetalMaker()
@@ -90,21 +97,21 @@ ImAMetalMaker()
 	{
 		sleep 150;
 	}
-	Static_Var_2 = -1;
+	mmState = -1;
 	while( TRUE )
 	{
-		if( get UNKNOWN_UNIT_VALUE(1024) == 1 )
+		if( Active == 1 )
 		{
-			if( Static_Var_2 != 1 )
+			if( mmState != 1 )
 			{
 				call-script Go();
-				Static_Var_2 = 1;
+				mmState = 1;
 			}
 		}
-		else if( Static_Var_2 != 0 )
+		else if( mmState != 0 )
 		{
 			call-script Stop();
-			Static_Var_2 = 0;
+			mmState = 0;
 		}
 		sleep 1000;
 	}
@@ -121,16 +128,6 @@ Create()
 		sleep 1000;
 	}
 	set ARMORED to 1;
-}
-
-Activate()
-{
-	start-script activatescr();
-}
-
-Deactivate()
-{
-	start-script deactivatescr();
 }
 
 HitByWeapon(anglex, anglez)

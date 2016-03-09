@@ -162,7 +162,7 @@ return {
     #endif
 
        reflection  = mix(light, reflection, extraColor.g); // reflection
-       reflection += (extraColor.rrr * etcLoc.r); // self-illum
+       reflection += (extraColor.rrr); // self-illum
 
        outColor.rgb = mix(outColor.rgb, teamColor.rgb,        outColor.a -  extraColor.b          * trimColor.a); // teamcolor
        outColor.rgb = mix(outColor.rgb, vec3(0.0, 0.0, 0.0),                extraColor.b          * trimColor.a); // trimcolor
@@ -175,7 +175,7 @@ return {
        #endif
 
        outColor.a   = extraColor.a;
-       outColor.rgb = outColor.rgb + outColor.rgb * (normaltex.a - 0.5) * etcLoc.g;
+       //outColor.rgb = outColor.rgb + outColor.rgb * (normaltex.a - 0.5) * etcLoc.g; // no more wreck color blending
 
 	   //AO term test:
 	   //aoTerm=1.2*aoTerm-0.2;
@@ -195,7 +195,7 @@ return {
        gl_FragData[0] = vec4(normal, 1.0);
        gl_FragData[1] = outColor;
        gl_FragData[2] = vec4(specular, 1.0);
-       gl_FragData[3] = vec4(extraColor.rrr * etcLoc.r, 1.0);
+       gl_FragData[3] = vec4(extraColor.rrr, 1.0);
        #endif
 
        %%FRAGMENT_POST_SHADING%%

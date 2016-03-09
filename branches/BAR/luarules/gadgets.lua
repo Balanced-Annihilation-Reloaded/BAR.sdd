@@ -1828,7 +1828,7 @@ function gadgetHandler:MousePress(x, y, button)
     return true  --  already have an active press
   end
   for _,g in r_ipairs(self.MousePressList) do
-    if (g:MousePress(x, y, button)) then
+    if (g:MousePress(x, y, button)) and g.MouseRelease then
       self.mouseOwner = g
       return true
     end

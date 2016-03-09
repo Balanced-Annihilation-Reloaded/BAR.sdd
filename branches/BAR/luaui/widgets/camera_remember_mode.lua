@@ -14,11 +14,6 @@ end
 local camName
 local defaultCamName = 'ta'
 
-function GetModeFromName(name)
-    local camNames = Spring.GetCameraNames()
-    return camNames[name]
-end
-
 function widget:SetConfigData(data)
     camName = data and data.name or defaultCamName
 end
@@ -26,13 +21,16 @@ end
 function widget:Initialize()
     --Spring.Echo("wanted", camName)
     if camName then
-        local camState = Spring.GetCameraState()
-        camState.name = camName
-        camState.mode = GetModeFromName(camName)
-        --Spring.Echo("set", camName, camState.mode)
-        Spring.SetCameraState(camState, 0)
+        Spring.SendCommands("view" .. camName)
     end
 end
+
+--[[
+function widget:GameFrame()
+    local camState = Spring.GetCameraState()
+    Spring.Echo(camState.name)
+end
+]]
 
 function widget:GetConfigData()
     local camState = Spring.GetCameraState()

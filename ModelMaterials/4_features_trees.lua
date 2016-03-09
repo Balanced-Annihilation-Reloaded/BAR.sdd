@@ -75,6 +75,7 @@ local featureNameStubs = {"ad0_", "btree", "art"} -- all of the 0ad, beherith an
 local tex1_to_normaltex = {}
 -- All feature defs that contain the string "aleppo" will be affected by it
 for id, featureDef in pairs(FeatureDefs) do
+	Spring.PreloadFeatureDefModel(fdid)
 	for _,stub in ipairs (featureNameStubs) do 
 		if featureDef.name:find(stub) and featureDef.name:find(stub)[1]== 0 then --also starts with
 			--if featureDef.customParam.normaltex then

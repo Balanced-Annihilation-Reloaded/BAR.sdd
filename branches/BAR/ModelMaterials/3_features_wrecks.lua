@@ -41,6 +41,7 @@ local materials = {
 
 
 for id, featureDef in pairs(FeatureDefs) do
+	Spring.PreloadFeatureDefModel(fdid)
 	-- how to check if its a wreck or a heap?
 	if featureDef.name:find("_dead")
 		featureMaterials[featureDef.name] = {"feature_wreck", NORMALTEX = "unittextures/Arm_wreck_color_normal.dds"}

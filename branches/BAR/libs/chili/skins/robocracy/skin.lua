@@ -194,6 +194,9 @@ skin.trackbar = {
 
   ThumbImage = ":cl:trackbar_thumb.png",
   StepImage  = ":cl:trackbar_step.png",
+  
+  borderColor = {1,1,1,1},
+  backgroundColor = {1,1,1,1},
 
   hitpadding  = {4, 4, 5, 4},
 

@@ -431,10 +431,10 @@ function widget:DrawWorld()
 
 		glBlending(GL.DST_COLOR,GL.ONE) -- VERY IMPORTANT: ResultR=LightR*DestinationR+1*DestinationR
 		--http://www.andersriggelsen.dk/glblendfunc.php
-		--glBlending(GL.ONE,GL.ZERO) --default
+		--Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA) --default
 		if #beamlightprojectiles>0 then DrawLightType(beamlightprojectiles, 1) end
 		if #pointlightprojectiles>0 then DrawLightType(pointlightprojectiles, 0) end
-		glBlending(GL.ONE,GL.ZERO) --default
+		Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA) --default
 		-- glBlending(false)
 	else
 		Spring.Echo('Removing deferred rendering widget: failed to use GLSL shader')

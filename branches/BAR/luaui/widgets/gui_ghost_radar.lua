@@ -53,7 +53,9 @@ function widget:UnitEnteredLos(unitID, allyTeam )
     local udefID = spGetUnitDefID(unitID)
     local udef = udefTab[udefID]
         
-    --skip buildings, they get ghosted anyway
+    -- skip buildings, they get drawn ghosted anyway by the engine
+    -- but mobile units don't
+    -- (but both buildings and mobile units do get 'ghosted' radar dots)
     if ( udef.isBuilding == false and udef.isFactory == false ) then 
         dots[unitID] = {}
         dots[unitID]["unitDefId"] = udefID
@@ -97,12 +99,13 @@ function widget:DrawWorld()
     glDepthTest(true)
 
     for unitID, dot in pairs( dots ) do
+        Spring.Echo(0, dot["radar"] , dot["los"] , dot["unitDefId"])
         if ( dot["radar"] == true ) and ( dot["los"] == false ) and ( dot["unitDefId"] ~= nil ) then
             local x, y, z = spGetUnitPosition(unitID)
             if x and ( spIsUnitInView(unitID) ) then
                 glPushMatrix()
                 glTranslate( x, y + 5 , z)
-                glUnitShape( dot["unitDefId"], dot["teamId"], false, false, false)                          
+                glUnitShape( dot["unitDefId"], dot["teamId"], false, true, false)                          
                 glPopMatrix()
             end
         end

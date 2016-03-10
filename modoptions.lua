@@ -123,6 +123,14 @@ local options={
         section= "bar_others",
     },
     {
+        key    = "mo_freefusion",
+        name   = "Free Fusion",
+        desc   = "Commanders can build free fusion reactors",
+        type   = "bool",
+        def    = false,
+        section= "bar_others",
+    },
+    {
         key    = 'FixedAllies',
         name   = 'Fixed ingame alliances',
         desc   = 'Disables the possibility of players to dynamically change alliances ingame',

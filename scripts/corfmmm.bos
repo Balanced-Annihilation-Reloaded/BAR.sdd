@@ -3,9 +3,66 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base;
+piece  base, fan;
 
-static-var  mmState, Active;
+static-var  Static_Var_1, mmState, Active;
+
+activatescr()
+{
+	spin fan around y-axis speed <300.000000> accelerate <10>;
+}
+
+deactivatescr()
+{
+	stop-spin fan around y-axis decelerate <5>;
+	sleep 30;
+}
+
+SmokeUnit(healthpercent, sleeptime, smoketype)
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	while( TRUE )
+	{
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
+	}
+}
+
+Go()
+{
+	if( Static_Var_1 )
+	{
+		set ACTIVATION to 0;
+		return (0);
+	}
+	//signal SIG_ANIM;
+	call-script activatescr();
+	set ARMORED to 0;
+}
+
+Stop()
+{
+	set ARMORED to 1;
+	//signal SIG_ANIM;
+	call-script deactivatescr();
+}
 
 MMStatus(State)
 {
@@ -26,19 +83,19 @@ ImAMetalMaker()
 		{
 			if( mmState != 1 )
 			{
-			set ACTIVATION to 1;
-			mmState = 1;
+				call-script Go();
+				mmState = 1;
 			}
 		}
-		else 
-		if( mmState != 0 )
+		else if( mmState != 0 )
 		{
-			set ACTIVATION to 0;
+			call-script Stop();
 			mmState = 0;
 		}
-		sleep 10;
+		sleep 1000;
 	}
 }
+
 
 RockOnWaves()
 {
@@ -61,36 +118,11 @@ RockOnWaves()
 	}
 }
 
-SmokeUnit(healthpercent, sleeptime, smoketype)
-{
-	while( get BUILD_PERCENT_LEFT )
-	{
-		sleep 400;
-	}
-	start-script RockOnWaves();
-	while( TRUE )
-	{
-		healthpercent = get HEALTH;
-		if( healthpercent < 66 )
-		{
-			smoketype = 256 | 2;
-			if( Rand( 1, 66 ) < healthpercent )
-			{
-				smoketype = 256 | 1;
-			}
-			emit-sfx smoketype from base;
-		}
-		sleeptime = healthpercent * 50;
-		if( sleeptime < 200 )
-		{
-			sleeptime = 200;
-		}
-		sleep sleeptime;
-	}
-}
 
 Create()
-{
+{	
+	call-script ImAMetalMaker();
+	Static_Var_1 = 0;
 	start-script SmokeUnit();
 }
 

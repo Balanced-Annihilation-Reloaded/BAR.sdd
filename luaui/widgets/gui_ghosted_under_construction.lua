@@ -2,8 +2,8 @@ local versionNumber = "1.3"
 
 function widget:GetInfo()
     return {
-        name      = "Ghost Site",
-        desc      = "Displays ghosted buildings for buildings in progress",
+        name      = "Ghosted Under Construction",
+        desc      = "Displays ghosted buildings, for enemy buildings still in progress",
         author    = "very_bad_soldier, Bluestone",
         date      = "April 7, 2009",
         license   = "GNU GPL v2",

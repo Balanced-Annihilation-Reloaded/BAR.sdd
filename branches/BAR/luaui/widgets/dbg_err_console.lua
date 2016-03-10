@@ -21,7 +21,7 @@ local Chili,screen,window,msgWindow,clearButton,reloadButton,log
 -- Config --
 local cfg = {
     msgCap      = 50, 
-    reloadLines = 2000,
+    reloadLines = 50000,
 }
 local fontSize = 16
 
@@ -47,10 +47,10 @@ function loadWindow()
         parent  = screen,
         draggable = true,
         resizable = true,
-        width   = '35%',
-        x = '60%',
-        y = '30%',
-        height = '40%',
+        width   = 520,
+        right = 100,
+        y = '33%',
+        height = 520,
         itemPadding = {5,5,10,10},
     }
 
@@ -63,7 +63,7 @@ function loadWindow()
         x           = 0,
         y           = 0,
         right       = 0,
-        height      = '85%',
+        height      = '73%',
         padding     = {0,0,0,0},
         borderColor = {0,0,0,0},
     }
@@ -76,7 +76,7 @@ function loadWindow()
         width       = '100%',
         autosize    = true,
         resizeItems = false,
-        padding     = {0,0,0,0},
+        padding     = {0,5,0,0},
         itemPadding = {3,0,3,8},
         itemMargin  = {3,0,3,2},
         preserveChildrenOrder = true,
@@ -85,9 +85,9 @@ function loadWindow()
     clearButton = Chili.Button:New{
         parent = window,
         x = '2.5%',
-        y = '85%',
+        y = '73%',
         width = '30%',
-        height = '15%',
+        height = '9%',
         caption = "clear",
         tooltip = "clear all messages",
         OnClick = {function() RemoveAllMessages() end}
@@ -96,34 +96,133 @@ function loadWindow()
     clearBeforeLastReset = Chili.Button:New{
         parent = window,
         x = '35%',
-        y = '85%',
+        y = '73%',
         width = '30%',
-        height = '15%',
+        height = '9%',
         tooltip = 'show messages since the most recent luaui/luarules reload',
-        caption = "soft reload",
+        caption = "show since reload",
         OnClick = {function() RemoveAllMessages(); SoftReload() end}
     }
 
     clearButton = Chili.Button:New{
         parent = window,
         x = '67.5%',
-        y = '85%',
+        y = '73%',
         width = '30%',
-        height = '15%',
+        height = '9%',
         tooltip = 'show all messages',
-        caption = "hard reload",
+        caption = "show all",
         OnClick = {function() RemoveAllMessages(); ReloadAllMessages() end}
     }        
+
+    luauiReloadButton = Chili.Button:New{
+        parent = window,
+        x = '0.8%',
+        y = '82%',
+        width = '24%',
+        height = '9%',
+        caption = "luaui reload",
+        OnClick = {function() Spring.SendCommands("luaui reload") end}
+    }        
+
+    luauiDisableButton = Chili.Button:New{
+        parent = window,
+        x = '25.6%',
+        y = '82%',
+        width = '24%',
+        height = '9%',
+        caption = "luaui disable",
+        OnClick = {function() Spring.SendCommands("luaui disable") end}
+    }        
+
+    luarulesReloadButton = Chili.Button:New{
+        parent = window,
+        x = '50.4%',
+        y = '82%',
+        width = '24%',
+        height = '9%',
+        caption = "luarules reload",
+        OnClick = {function() CheatIfNeeded(); Spring.SendCommands("luarules reload") end}
+    }        
+    
+    luarulesDisableButton = Chili.Button:New{
+        parent = window,
+        x = '75.2%',
+        y = '82%',
+        width = '24%',
+        height = '9%',
+        caption = "luarules disable",
+        OnClick = {function() CheatIfNeeded(); Spring.SendCommands("luarules disable") end}
+    }        
+
+    cheatButton = Chili.Button:New{
+        parent = window,
+        x = '0.8%',
+        y = '91%',
+        width = '24%',
+        height = '9%',
+        caption = "cheat",
+        OnClick = {function() Spring.SendCommands("cheat") end}
+    }        
+
+    globallosButton = Chili.Button:New{
+        parent = window,
+        x = '25.6%',
+        y = '91%',
+        width = '24%',
+        height = '9%',
+        caption = "globallos",
+        OnClick = {function() CheatIfNeeded(); Spring.SendCommands("globallos") end}
+    }        
+
+    godmodeButton = Chili.Button:New{
+        parent = window,
+        x = '50.4%',
+        y = '91%',
+        width = '24%',
+        height = '9%',
+        caption = "godmode",
+        OnClick = {function() CheatIfNeeded(); Spring.SendCommands("godmode") end}
+    }        
+    
+    reloadButton = Chili.Button:New{
+        parent = window,
+        x = '75.2%',
+        y = '91%',
+        width = '24%',
+        height = '9%',
+        caption = "Spring.Reload",
+        OnClick = {function() Spring.Reload(VFS.LoadFile("_script.txt")) end} -- this file is (hopefully) the script.txt used to most recently start spring
+    }        
+    
+end
+
+function CheatIfNeeded()
+    if not Spring.IsCheatingEnabled() then 
+        Spring.SendCommands("cheat")
+    end
+end
+
+function ToggleErrConsole()
+    Spring.Echo("Mooo")
+    window:ToggleVisibility()
 end
 
 function widget:Initialize()
     Chili  = WG.Chili
     screen = Chili.Screen0
     Menu   = WG.MainMenu
+
+    widgetHandler:AddAction(widget,'toggleErrConsole', ToggleErrConsole, nil, 't')
+    Spring.SendCommands('bind f8 toggleErrConsole')
     
     loadWindow()
-    ReloadAllMessages()  
+    ReloadAllMessages(true)
     hack = true
+end
+
+function widget:Shutdown()
+    Spring.SendCommands('unbind f8 toggleErrConsole')
 end
 
 function widget:DrawScreen()
@@ -185,7 +284,6 @@ local function processLine(line)
     return line, false, dedup
 end
 
-local consoleBuffer = ""
 function widget:AddConsoleLine(msg)
     -- parse the new line
     local text, ignore, dedup = processLine(msg)
@@ -207,7 +305,7 @@ function widget:AddConsoleLine(msg)
 end
 
 function NewConsoleLine(text)
-    --    avoid creating insane numbers of children (chili can't handle it)
+    -- avoid creating insane numbers of children (chili can't handle it)
     if #log.children > cfg.msgCap then
         log:RemoveChild(log.children[1])
     end
@@ -237,9 +335,17 @@ function RemoveAllMessages()
     log:ClearChildren()
 end
 
-function ReloadAllMessages()
+function ReloadAllMessages(initialLoad)
+    local reloadCount = 0
     local buffer = Spring.GetConsoleBuffer(cfg.reloadLines)
     for _,l in ipairs(buffer) do
+        if initialLoad and sfind(l.text,"LuaUI Entry Point") or sfind(l.text,"LuaRules Entry Point") then
+            reloadCount = reloadCount + 1
+            if reloadCount>2 then -- allow one for initial luaui load, and one for initial luarules load; beyond that, on initial load, show only msgs since last reload; fails if we don't have enough buffer
+                RemoveAllMessages()
+            end
+        end
+        
         widget:AddConsoleLine(l.text)    
     end    
 end
@@ -250,6 +356,14 @@ function SoftReload()
         if sfind(l.text,"LuaUI Entry Point") or sfind(l.text,"LuaRules Entry Point") then
             RemoveAllMessages()
         end
+        
         widget:AddConsoleLine(l.text)    
     end    
 end
+
+--[[
+function widget:GameFrame(n)
+    n = n + math.floor(2-4*math.random())
+    Spring.Echo("Error "..n)
+end
+]]

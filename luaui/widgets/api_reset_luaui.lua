@@ -4,7 +4,7 @@
 function widget:GetInfo()
   return {
     name      = "LuaUI Reset",
-    desc      = "Provides a '/luaui reset' command, to wipe the luaui config and reload luaui",
+    desc      = "Provides luaui reset, factoryreset, and disable/enable_user_widgets",
     author    = "Bluestone",
     date      = "",
     license   = "GPLv2",
@@ -26,8 +26,27 @@ function widget:TextCommand(s)
     
     if n==1 and token[1]=="reset" then
         Spring.Echo("LuaUI Reset Requested")
-        widgetHandler.__reset_luaui = true
-        Spring.SendCommands("luarules reloadluaui")    
+        widgetHandler.__blankOutConfig = true
+        Spring.SendCommands("luaui reload")    
+    end    
+    
+    if n==1 and token[1]=="factoryreset" then
+        Spring.Echo("LuaUI Factory Reset Requested")
+        widgetHandler.__blankOutConfig = true
+        widgetHandler.__allowUserWidgets = false        
+        Spring.SendCommands("luaui reload")    
+    end    
+    
+    if n==1 and token[1]=="disable_user_widgets" then
+        Spring.Echo("LuaUI Reset Requested")
+        widgetHandler.__allowUserWidgets = false        
+        Spring.SendCommands("luaui reload")    
+    end    
+    
+    if n==1 and token[1]=="enable_user_widgets" then
+        Spring.Echo("LuaUI Reset Requested")
+        widgetHandler.__allowUserWidgets = true
+        Spring.SendCommands("luaui reload")    
     end    
 end
 

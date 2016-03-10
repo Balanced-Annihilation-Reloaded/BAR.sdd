@@ -204,7 +204,6 @@ function CheatIfNeeded()
 end
 
 function ToggleErrConsole()
-    Spring.Echo("Mooo")
     window:ToggleVisibility()
 end
 
@@ -213,7 +212,7 @@ function widget:Initialize()
     screen = Chili.Screen0
     Menu   = WG.MainMenu
 
-    widgetHandler:AddAction(widget,'toggleErrConsole', ToggleErrConsole, nil, 't')
+    widgetHandler:AddAction('toggleErrConsole', ToggleErrConsole, nil, 't')
     Spring.SendCommands('bind f8 toggleErrConsole')
     
     loadWindow()

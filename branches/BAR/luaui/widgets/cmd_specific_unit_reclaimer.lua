@@ -2,7 +2,7 @@
 function widget:GetInfo()
     return {
         name            = "Specific Unit Reclaimer",
-        desc            = "Reclaim your own units; hold down alt and give an area reclaim order, centered on a unit of the type to reclaim",
+        desc            = "Reclaim your own units: hold down shift, alt and give an area reclaim order, centered on a unit of the type to reclaim",
         author        = "Google Frog",
         date            = "May 12, 2008",
         license     = "GNU GPL, v2 or later",

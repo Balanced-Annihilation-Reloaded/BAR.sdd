@@ -41,7 +41,6 @@ local function GetLODCount(rendering, objectID)
 end
 
 local function ActivateMaterial(rendering, objectID, lod)
-
 	local activeMats = rendering.activeMats[objectID]
 	if not activeMats then
 		activeMats = {current = math.huge}
@@ -54,7 +53,7 @@ local function ActivateMaterial(rendering, objectID, lod)
 		SetLODCount(rendering, objectID, lod)
 	end
 
-	rendering.activeMats[lod] = true
+	activeMats[lod] = true
 
 	if lod > rendering.curHighestLOD then
 		rendering.curHighestLOD = lod
@@ -65,12 +64,14 @@ local function ActivateMaterial(rendering, objectID, lod)
 
 		rendering.spSetMaterialLastLOD(objectID, "opaque", lod)
 	end
+	-- Spring.Echo('We left ActivateMaterial with activeMats:',to_string(activeMats))
 end
 
 
 local function DeactivateMaterial(rendering, objectID, lod)
 
 	local activeMats = rendering.activeMats[objectID]
+	-- Spring.Echo('lod=',lod,'activeMats',to_string(activeMats))
 	if not activeMats then
 		return
 	end
@@ -129,4 +130,44 @@ end
 
 function Spring.FeatureRendering.DeactivateMaterial(featureID, lod)
 	DeactivateMaterial(featureRendering, featureID, lod)
+end
+
+function to_string(data, indent)
+	local str = ""
+
+	if(indent == nil) then
+		indent = 0
+	end
+
+	-- Check the type
+	if(type(data) == "string") then
+		str = str .. ("    "):rep(indent) .. data .. "\n"
+	elseif(type(data) == "number") then
+		str = str .. ("    "):rep(indent) .. data .. "\n"
+	elseif(type(data) == "boolean") then
+		if(data == true) then
+			str = str .. "true"
+		else
+			str = str .. "false"
+		end
+	elseif(type(data) == "table") then
+		local i, v
+		for i, v in pairs(data) do
+			-- Check for a table in a table
+			if(type(v) == "table") then
+				str = str .. ("    "):rep(indent) .. i .. ":\n"
+				str = str .. to_string(v, indent + 2)
+			else
+				str = str .. ("    "):rep(indent) .. i .. ": " .. to_string(v, 0)
+			end
+		end
+	elseif (data ==nil) then
+		str=str..'nil'
+	else
+		--print_debug(1, "Error: unknown data type: %s", type(data))
+		str=str.. "Error: unknown data type:" .. type(data)
+		Spring.Echo('X data type')
+	end
+
+	return str
 end

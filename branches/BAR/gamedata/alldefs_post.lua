@@ -78,6 +78,12 @@ function ModOptions_Post (UnitDefs, WeaponDefs)
         ud.transportbyenemy = false
       end
     end
+    
+    -- free fusion
+    if (modOptions.mo_freefusion == "1") then
+      table.insert(UnitDefs.armcom.buildoptions, "freefusion")
+      table.insert(UnitDefs.corcom.buildoptions, "freefusion")    
+    end
   end
   
 end

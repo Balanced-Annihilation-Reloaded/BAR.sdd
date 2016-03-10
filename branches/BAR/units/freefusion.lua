@@ -29,6 +29,10 @@ return {
 		selfdestructas = "FUSIONX_BLAST",
 		sightdistance = 250,
 		yardmap = "ooooooooooooooooooooooooo",
+        
+        customparams = {
+            faction = "none",
+        },
 
 		featuredefs = {
 			free_fusion_dead = {

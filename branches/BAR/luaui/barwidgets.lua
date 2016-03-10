@@ -16,10 +16,6 @@
 
 -- stable release?
 local isStable = false
-local resetWidgetDetailLevel = false -- has widget detail level changed
-
-local ORDER_VERSION = 1 --- change this to reset enabled/disabled widgets
-local DATA_VERSION = 1 -- change this to reset widget settings
 
 function includeZIPFirst(filename, envTable)
   if (string.find(filename, '.h.lua', 1, true)) then
@@ -40,7 +36,7 @@ local ORDER_FILENAME     = LUAUI_DIRNAME .. 'Config/' .. Game.modShortName:upper
 local CONFIG_FILENAME    = LUAUI_DIRNAME .. 'Config/' .. Game.modShortName:upper() .. '_data.lua'
 local WIDGET_DIRNAME     = LUAUI_DIRNAME .. 'Widgets/'
 
-local HANDLER_BASENAME = "bawidgets.lua"
+local HANDLER_BASENAME = "barwidgets.lua"
 local SELECTOR_BASENAME = 'selector.lua'
 
 
@@ -74,8 +70,6 @@ VFSMODE = localWidgetsFirst and VFS.RAW_FIRST
 VFSMODE = VFSMODE or localWidgets and VFS.ZIP_FIRST
 VFSMODE = VFSMODE or VFS.ZIP
 
-local detailLevel = Spring.GetConfigInt("widgetDetailLevel", 3)
-
 --------------------------------------------------------------------------------
 
 -- install bindings for TweakMode and the Widget Selector
@@ -106,12 +100,12 @@ widgetHandler = {
   knownWidgets = {},
   knownCount = 0,
   knownChanged = true,
+  
+  allowUserWidgets = true,
 
   commands = {},
   customCommands = {},
   inCommandsChanged = false,
-
-  autoModWidgets = false,
 
   actionHandler = include("actions.lua"),
 
@@ -284,15 +278,6 @@ function widgetHandler:LoadOrderList()
     if (not self.orderList) then
 		self.orderList = {} -- safety
     end
-	if (self.orderList.version or 0) < ORDER_VERSION then 
-		self.orderList = {}
-		self.orderList.version = ORDER_VERSION
-	end 
-	local detailLevel = Spring.GetConfigInt("widgetDetailLevel", 2)
-	if (self.orderList.lastWidgetDetailLevel ~= detailLevel) then
-		resetWidgetDetailLevel = true
-		self.orderList.lastWidgetDetailLevel = detailLevel
-	end 
 end
 
 
@@ -329,15 +314,10 @@ function widgetHandler:LoadConfigData()
     if (not self.configData) then
 		self.configData = {} -- safety
     end
-	if (self.configData.version or 0) < DATA_VERSION then 
-		self.configData = {}
-		self.configData.version = DATA_VERSION
-	end 
 end
 
 
 function widgetHandler:SaveConfigData()
-  resetWidgetDetailLevel = false
   for _,w in r_ipairs(self.widgets) do
     if (w.GetConfigData) then
       local ok, err = pcall(function() 
@@ -370,24 +350,44 @@ function widgetHandler:Initialize()
 
   self:LoadOrderList()
   self:LoadConfigData()
-
-  local autoModWidgets = Spring.GetConfigInt('LuaAutoModWidgets', 1)
-  self.autoModWidgets = (autoModWidgets ~= 0)
+  
+  if self.configData.allowUserWidgets~=nil then
+    self.allowUserWidgets = self.configData.allowUserWidgets 
+  end
+  
+  --local autoModWidgets = Spring.GetConfigInt('LuaAutoModWidgets', 1)
+  --self.autoModWidgets = (autoModWidgets ~= 0)
+  if self.allowUserWidgets then
+    Spring.Echo("LuaUI: Allowing User Widgets")
+  else
+    Spring.Echo("LuaUI: Disallowing User Widgets")
+  end
 
   -- create the "LuaUI/Config" directory
   Spring.CreateDir(LUAUI_DIRNAME .. 'Config')
 
   local unsortedWidgets = {}
 
-  -- stuff the widgets into unsortedWidgets
-  local widgetFiles = VFS.DirList(WIDGET_DIRNAME, "*.lua", VFSMODE)
+  -- stuff the raw widgets into unsortedWidgets
+  if self.allowUserWidgets then
+    local widgetFiles = VFS.DirList(WIDGET_DIRNAME, "*.lua", VFS.RAW_ONLY)
+    for k,wf in ipairs(widgetFiles) do
+      local widget = self:LoadWidget(wf, VFS.RAW_ONLY)
+      if (widget) then
+        table.insert(unsortedWidgets, widget)
+      end
+    end
+  end
+  
+  -- stuff the zip widgets into unsortedWidgets
+  local widgetFiles = VFS.DirList(WIDGET_DIRNAME, "*.lua", VFS.ZIP_ONLY)
   for k,wf in ipairs(widgetFiles) do
-    local widget = self:LoadWidget(wf)
+    local widget = self:LoadWidget(wf, VFS.ZIP_ONLY)
     if (widget) then
       table.insert(unsortedWidgets, widget)
     end
   end
-
+  
   -- sort the widgets
   table.sort(unsortedWidgets, function(w1, w2)
     local a1 = w1.whInfo.api
@@ -424,8 +424,6 @@ function widgetHandler:Initialize()
     widgetHandler:InsertWidget(w)
   end
 
-  -- save the order data
-  self:SaveOrderList()
 end
 
 
@@ -505,36 +503,23 @@ function widgetHandler:LoadWidget(filename, _VFSMODE)
     return nil
   end
 
+  -- Get widget information
   local info  = widget:GetInfo()
+
+  -- Enabling
   local order = self.orderList[name]
-  
-  local enabled = ((order ~= nil) and (order > 0)) or
-      ((order == nil) and  -- unknown widget
-       (info.enabled and ((not knownInfo.fromZip) or self.autoModWidgets))) or
-			 info.alwaysStart
-
-  -- experimental widget, disabled by default in stable
-  if info.experimental and isStable then
-    enabled = false
-  end
-
-  if resetWidgetDetailLevel and info.detailsDefault ~= nil then
-	if type(info.detailsDefault) == "table" then
-		enabled = info.detailsDefault[detailLevel] and true
-	elseif type(info.detailsDefault) == "number" then
-		enabled = detailLevel >= info.detailsDefault
-	elseif tonumber(info.detailsDefault) then
-		enabled = detailLevel >= tonumber(info.detailsDefault)
-	end
-  end
-			 
-  if (enabled) then
-	-- this will be an active widget
-    if (order == nil) then
-      self.orderList[name] = 12345  -- back of the pack
-    else
-      self.orderList[name] = order
+  if order then
+    if order <= 0 then
+       order = nil
     end
+  else
+    if info.enabled and (knownInfo.fromZip or self.allowUserWidgets) then
+        order = 12345
+    end
+  end
+
+  if order then
+    self.orderList[name] = order
   else
     self.orderList[name] = 0
     self.knownWidgets[name].active = false
@@ -655,14 +640,6 @@ function widgetHandler:FinalizeWidget(widget, filename, basename)
     wi.license  = wi.license or ""
     wi.enabled  = wi.enabled or false
     wi.api      = wi.api or false
-
-    -- exprimental widget
-    -- change name for separate settings and disable by default
-    if info.experimental and isStable then
-      wi.name = wi.name .. " (experimental)"
-      wi.enabled = false
-    end
-
   end
 
   widget.whInfo = {}  --  a proxy table
@@ -1181,13 +1158,21 @@ end
 --
 
 function widgetHandler:Shutdown()
-  if self.__reset_luaui then
-    table.save({}, CONFIG_FILENAME, '-- Widget Custom Data (reset)')
-    table.save({}, ORDER_FILENAME, '-- Widget Order Data (reset)')
-  else
-    self:SaveOrderList()
-    self:SaveConfigData()  
+  -- record if we will allow user widgets on next load
+  if self.__allowUserWidgets~=nil then 
+      self.allowUserWidgets = self.__allowUserWidgets
   end
+  self.configData.allowUserWidgets = self.allowUserWidgets
+  
+  -- save config
+  if self.__blankOutConfig then
+    table.save({["allowUserWidgets"]=self.allowUserWidgets}, CONFIG_FILENAME, '-- Widget Custom Data (reset)')  
+    table.save({}, ORDER_FILENAME, '-- Widget Order List (reset)')  
+  else
+    self:SaveConfigData()
+    self:SaveOrderList()
+  end
+
  
   for _,w in r_ipairs(self.ShutdownList) do
     w:Shutdown()

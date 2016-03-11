@@ -634,7 +634,7 @@ function SetupMenuOptions()
             Chili.Label:New{x='5%',width='95%',height=15, caption="Selected unit highlights:"},
             Chili.Control:New{x='10%',width='80%',autoSize=true,padding={0,0,0,0},
                 children = {
-                    Chili.TextBox:New{x='0%',width='50%',text="Colour mode:"},
+                    Chili.TextBox:New{x='0%',width='50%',text="Colour mode:",padding={0,3,0,0}},
                     Chili.ComboBox:New{x='50%',width='50%',
                         items    = {"green", "team"},
                         selected = (options.selected.colourMode=="green" and 1) or (options.selected.colourMode=="team" and 2),
@@ -661,7 +661,7 @@ function SetupMenuOptions()
                     checked=options.platter.showPlatters, OnChange={function() options.platter.showPlatters = not options.platter.showPlatters; UpdateEverything(); end}}, 
             Chili.Control:New{x='10%',width='80%',autoSize=true,padding={0,0,0,0},
                 children = {
-                    Chili.TextBox:New{x='0%',width='50%',text="Colour mode:"},
+                    Chili.TextBox:New{x='0%',width='50%',text="Colour mode:",padding={0,3,0,0}},
                     Chili.ComboBox:New{x='50%',width='50%',
                         items    = {"team", "auto", "ally team"},
                         selected = (options.platter.colourMode=="team" and 1) or (options.platter.colourMode=="auto" and 2) or (options.platter.colourMode=="ally team" and 3),
@@ -679,7 +679,7 @@ function SetupMenuOptions()
             },
             Chili.Control:New{x='10%',width='80%',autoSize=true,padding={0,0,0,0},
                 children = {
-                    Chili.TextBox:New{x='0%',width='50%',text="Ally platters:"},
+                    Chili.TextBox:New{x='0%',width='50%',text="Ally platters:",padding={0,3,0,0}},
                     Chili.ComboBox:New{x='50%',width='50%',
                         items    = {"on", "if spectating", "off"},
                         selected = (options.platter.colourMode=="on" and 1) or (options.platter.colourMode=="auto" and 2) or (options.platter.colourMode=="off" and 3),

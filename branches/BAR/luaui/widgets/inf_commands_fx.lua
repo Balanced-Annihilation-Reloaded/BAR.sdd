@@ -13,8 +13,8 @@ end
 -- future:          hotkey to show all current cmds? (like current shift+space)
 --                  handle set target
 
-local spGetUnitPosition    = Spring.GetUnitPosition
-local spGetUnitCommands    = Spring.GetUnitCommands
+local spGetUnitPosition = Spring.GetUnitPosition
+local spGetUnitCommands = Spring.GetUnitCommands
 local spIsUnitInView = Spring.IsUnitInView
 local spIsSphereInView = Spring.IsSphereInView
 local spIsUnitIcon = Spring.IsUnitIcon
@@ -23,6 +23,7 @@ local spValidFeatureID = Spring.ValidFeatureID
 local spGetFeaturePosition = Spring.GetFeaturePosition
 local spIsUnitSelected = Spring.IsUnitSelected
 local spIsGUIHidden = Spring.IsGUIHidden
+local spGetUnitRulesParam = Spring.GetUnitRulesParam
 
 local GL_SRC_ALPHA = GL.SRC_ALPHA
 local GL_ONE_MINUS_SRC_ALPHA = GL.ONE_MINUS_SRC_ALPHA
@@ -47,6 +48,7 @@ local CMD_RESURRECT = CMD.RESURRECT -- icon unit feature or area
 -- local CMD_SET_TARGET = 34923 -- custom command, doesn't go through UnitCommand
 local CMD_UNLOAD_UNIT = CMD.UNLOAD_UNIT -- icon map
 local CMD_UNLOAD_UNITS = CMD.UNLOAD_UNITS -- icon  unit or area
+local CMD_UNIT_SET_TARGET = CMD.UNIT_SET_TARGET
 local BUILD = -1
 
 --------------------------------------------------------------------------------
@@ -62,7 +64,7 @@ local osClock
 
 local opacity       = 0.75        
 local duration      = 1.25
-local lineWidth        = 6
+local lineWidth     = 6
 local dotRadius     = 28        
 
 local mapX = Game.mapSizeX
@@ -364,6 +366,17 @@ function widget:GameFrame()
             commands[i].draw = true
         end
         
+        -- record if it has a set target
+        local setTargetID spGetUnitRulesParam(unitID,"targetID")
+        local stX, stY, stZ = spGetUnitRulesParam(unitID,"targetCoordX"), spGetUnitRulesParam(unitID,"targetCoordY"), spGetUnitRulesParam(unitID,"targetCoordZ")
+        local setTargetParams 
+        if setTargetID then
+            setTargetParams = {setTargetID}
+        elseif stX then
+            setTargetParams = {stX,stY,stZ}
+        end        
+        commands[i].set_target = setTargetParams
+    
         -- get location of final command
         local lastCmd = our_q[#our_q]
         if lastCmd and lastCmd.params then
@@ -410,22 +423,23 @@ function widget:DrawWorldPreUnit()
             
         elseif commands[i].draw and (spIsUnitInView(unitID) or IsPointInView(commands[i].x,commands[i].y,commands[i].z)) then                 
             local prevX, prevY, prevZ = spGetUnitPosition(unitID)
-            -- draw set target command (TODO)
-            --[[
-            if prevX and commands[i].set_target and commands[i].set_target.params and commands[i].set_target.params[1] then
-                local lineColour = CONFIG[CMD_SET_TARGET]
+            
+            -- draw set target command
+            if prevX and commands[i].set_target then
+                local lineColour = CONFIG[CMD_UNIT_SET_TARGET]
                 local lineAlpha = opacity * lineColour[4] * (1-progress)
                 gl.Color(lineColour[1],lineColour[2],lineColour[3],lineAlpha)
-                if commands[i].set_target.params[3] then
-                    gl.BeginEnd(GL.QUADS, DrawLine, prevX,prevY,prevZ, commands[i].set_target.params[1], commands[i].set_target.params[2], commands[i].set_target.params[3], lineWidth) 
+                if commands[i].set_target[3] then
+                    local X,Y,Z = commands[i].set_target[1], commands[i].set_target[2], commands[i].set_target[3]
+                    gl.BeginEnd(GL.QUADS, DrawLine, prevX,prevY,prevZ, X,Y,Z, lineWidth) 
                 else
-                    local x,y,z = Spring.GetUnitPosition(commands[i].set_target.params[1])    
-                    if x then
-                        gl.BeginEnd(GL.QUADS, DrawLine, prevX,prevY,prevZ, x,y,z, lineWidth)                     
+                    local X,Y,Z = Spring.GetUnitPosition(commands[i].set_target[1])    
+                    if X then
+                        gl.BeginEnd(GL.QUADS, DrawLine, prevX,prevY,prevZ, X,Y,Z, lineWidth)                     
                     end
                 end                  
             end
-            ]]
+            
             -- draw command queue
             if commands[i].queueSize > 0 and prevX then
                 for j=1,commands[i].queueSize do

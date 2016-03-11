@@ -233,15 +233,16 @@ local function createUI()
     }
     
     playIcon = Chili.Image:New{
+        name   = 'playIcon',
         x      = 4,
         y      = 8, 
         right  = 4, 
         bottom = 0,
-        hidden = true,
         file   = 'luaUI/Images/playsong.png',
     }
     
     pauseIcon = Chili.Image:New{
+        name   = 'pauseIcon',
         x      = 4,
         y      = 8, 
         right  = 4, 
@@ -274,6 +275,7 @@ local function createUI()
             end
         },
     }
+    playIcon:Hide()
     
     skipButton = Chili.Button:New{
         right    = 0, 

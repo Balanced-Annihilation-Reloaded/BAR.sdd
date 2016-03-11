@@ -157,11 +157,12 @@ local turquoise = "\255\0\240\180"
 local red = "\255\255\20\20"
 local green = "\255\0\255\0"
 local white = "\255\255\255\255"
+local lightblue = "\255\150\255\255"
 local blue = "\255\170\170\255"
 local grey = "\255\190\190\190"
 
 function NewMissionObjective(objective)
-    local colour = blue
+    local colour = lightblue
     if string.find(string.lower(objective),"mission complete") then
         colour = green
     end
@@ -221,7 +222,7 @@ function CreateMissionGUI()
         parent = mission_objective,
         width = '100%',
         height = 1,
-        text = blue .. (WG.MissionObjective or "Test Mission Objective. Go forth and multiply! Type extra text so you get to see what happens with a linebreak."),  
+        text = lightblue .. (WG.MissionObjective or "Test Mission Objective. Go forth and multiply! Type extra text so you get to see what happens with a linebreak."),  
         font = {
             outline          = true,
             autoOutlineColor = true,

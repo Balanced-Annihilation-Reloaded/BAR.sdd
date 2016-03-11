@@ -1,8 +1,8 @@
 -- WIP
 function widget:GetInfo()
     return {
-        name    = 'Min Menu',
-        desc    = 'Small panel for main menu access and to show time and FPS',
+        name    = 'Clock and FPS',
+        desc    = 'Small panel to show clock, FPS indicator and button for main menu',
         author  = 'Funkencool, Bluestone',
         date    = '2013',
         license = 'GNU GPL v2',

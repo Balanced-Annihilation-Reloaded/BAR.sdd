@@ -108,7 +108,13 @@ function widget:Initialize()
     return
   end
 
-
+  -- flip and scale list (using x & y for gl.Rect())
+  xformList = gl.CreateList(function()
+    gl.LoadIdentity()
+    gl.Translate(0, 1, 0)
+    gl.Scale(1 / msx, -1 / msz, 1)
+  end)
+  
   -- get the gaia teamID and allyTeamID
   gaiaTeamID = Spring.GetGaiaTeamID()
   if (gaiaTeamID) then
@@ -297,7 +303,7 @@ function widget:DrawInMiniMap(sx, sz)
   if (Spring.GetGameFrame() > 1) then
     widgetHandler:RemoveWidget()
   end
-
+  
   gl.PushMatrix()
   gl.CallList(xformList)
 

@@ -1,5 +1,5 @@
 
-function widget:GetInfo()
+function gadget:GetInfo()
     return {
         name      = 'Highlight Geos',
         desc      = 'Highlights geothermal spots when in metal map view',
@@ -11,6 +11,11 @@ function widget:GetInfo()
         enabled   = true,  --  loaded by default?
     }
 end
+
+if  (gadgetHandler:IsSyncedCode()) then
+    return false
+end
+
 
 ----------------------------------------------------------------
 -- Globals
@@ -36,11 +41,6 @@ local cm_geo = UnitDefNames.cmgeo.id
 local corbhmth_geo = UnitDefNames.corbhmth.id
 local cor_geo = UnitDefNames.corgeo.id
 
-
-
-
-
-
 ----------------------------------------------------------------
 -- Functions
 ----------------------------------------------------------------
@@ -49,9 +49,9 @@ local num_segs = 20
 local function DrawGeo(x,y,z)
     
     glBeginEnd(GL_TRIANGLE_FAN, function()    
-        glColor(0.8, 0.8, 0.1, 0.9) -- colour of effect 
+        glColor(1,1,0,1) -- colour of effect 
         glVertex(x, y, z)
-        glColor(0,0,0,0)
+        glColor(1,1,0,0)
 
         local theta = 0
         for i=0,num_segs do 
@@ -75,13 +75,13 @@ end
 ----------------------------------------------------------------
 -- Callins
 ----------------------------------------------------------------
-function widget:Shutdown()
+function gadget:Shutdown()
     if geoDisplayList then
         gl.DeleteList(geoDisplayList)
     end
 end
 
-function widget:DrawWorld()
+function gadget:DrawWorld()
     local _, cmdID = Spring.GetActiveCommand()
     if spGetMapDrawMode() == 'metal' or cmdID == -am_geo or cmdID == -arm_geo or cmdID == -cm_geo
     or cmdID == -corbhmth_geo or cmdID == -cor_geo or cmdID == -arm_gmm then

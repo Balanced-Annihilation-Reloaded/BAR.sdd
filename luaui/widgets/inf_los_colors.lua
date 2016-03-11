@@ -124,7 +124,6 @@ end
 
 function widget:SetConfigData(data)
     for k,v in pairs(options) do
-        Spring.Echo(k, options[k], data[k])
         if data[k]~=nil then options[k] = data[k] end
     end
 end

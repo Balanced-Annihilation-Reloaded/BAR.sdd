@@ -25,16 +25,18 @@ end
 local materials = {
    normalMappedS3O = {
        shaderDefinitions = {
-         "#define use_perspective_correct_shadows",
+         -- "#define use_perspective_correct_shadows",
          "#define use_normalmapping",
          --"#define flip_normalmap",
          "#define deferred_mode 0",
+			"#define use_vertex_ao",
        },
        deferredDefinitions = {
-         "#define use_perspective_correct_shadows",
+         --"#define use_perspective_correct_shadows",
          "#define use_normalmapping",
          --"#define flip_normalmap",
          "#define deferred_mode 1",
+			"#define use_vertex_ao",
        },
 
        shader    = include("ModelMaterials/Shaders/default.lua"),

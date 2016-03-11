@@ -6,6 +6,7 @@ local etcLocID
 local function DrawFeature(featureID, material)
 	--Spring.Echo('Im drawing a feature!',featureID)
   if etcLocID == nil then
+	--Spring.Echo("4_feature_trees forgot its own etcloc", featureID)
     etcLocID = gl.GetUniformLocation(material.shader, "etcLoc")
   end
   gl.Uniform(etcLocID, Spring.GetGameFrame(),0.0,0.0 )
@@ -17,13 +18,13 @@ local materials = {
 		shader    = include("ModelMaterials/Shaders/default.lua"),
 		deferred  = include("ModelMaterials/Shaders/default.lua"),
 		shaderDefinitions = {
-			"#define use_perspective_correct_shadows",
+			-- "#define use_perspective_correct_shadows",
 			"#define use_normalmapping",
 			--"#define flip_normalmap",
 			"#define deferred_mode 0",
 		},
 		deferredDefinitions = {
-			"#define use_perspective_correct_shadows",
+			--"#define use_perspective_correct_shadows",
 			"#define use_normalmapping",
 			--"#define flip_normalmap",
 			"#define deferred_mode 1",
@@ -40,15 +41,15 @@ local materials = {
 				float unique_value = fract(1.234567*(gl_ModelViewMatrix[3][0]+gl_ModelViewMatrix[3][2]));
 				float timer = 0.05 * sin( unique_value + etcLoc.r * ((1+unique_value)*0.07));
 
-				float factor=sin((vertex.x+vertex.y+vertex.z)*0.1+timer*1.1);
-				float factor2=cos((vertex.x+vertex.y+vertex.z)*0.1+timer*1.1);
+				float factor=sin((vertex.x+vertex.y+vertex.z)*0.1+etcLoc.r*0.02)*0.4;
+				float factor2=cos((vertex.x+vertex.y+vertex.z)*0.1+etcLoc.r*0.03)*0.4;
 				float distancefromtrunk=(abs(vertex.x)+abs(vertex.z))/10;
 
 				vertex.x+=vertex.y*timer/20;
 				vertex.z+=vertex.y*timer/20;
 				
 				vertex.y+=distancefromtrunk*factor;
-				vertex.z+=distancefromtrunk*factor2;
+				vertex.z+=distancefromtrunk*factor;
 				vertex.x+=distancefromtrunk*factor2;
 			]],
 			FRAGMENT_POST_SHADING = [[
@@ -84,7 +85,7 @@ for id, featureDef in pairs(FeatureDefs) do
 	for _,stub in ipairs (featureNameStubs) do 
 		if featureDef.name:find(stub) and featureDef.name:find(stub) == 1 then --also starts with
 			--if featureDef.customParam.normaltex then
-				Spring.Echo('Feature',featureDef.name,'seems like a nice tree!')
+				Spring.Echo('Feature',featureDef.name,'seems like a nice tree, assigning the default normal texture to it.')
 				featureMaterials[featureDef.name] = {"feature_tree", NORMALTEX = "unittextures/default_tree_normal.tga"}
 			--else 
 				--if featureDef.model. 

@@ -23,7 +23,9 @@ return {
       uniform vec4 shadowParams;
     #endif
   #endif
-	varying float aoTerm;
+  #ifdef use_vertex_ao
+    varying float aoTerm;
+  #endif
     varying vec3 cameraDir;
     //varying vec3 teamColor;
     //varying float fogFactor;
@@ -70,7 +72,9 @@ return {
 			gl_TexCoord[0].s = gl_MultiTexCoord0.s + etcLoc.z;
 		}
 	#endif
+	#ifdef use_vertex_ao
 	 aoTerm= max(0.4,fract(gl_MultiTexCoord0.s*16384.0)*1.3); // great
+	#endif
 	  //aoTerm= max(0.5,min(1.0.fract(gl_MultiTexCoord0.s*16384.0)*1.3)); // pretty good, if a bit heavy
 	  //aoTerm=1.0; // pretty good, if a bit heavy
 	#ifndef use_treadoffset
@@ -112,7 +116,9 @@ return {
     uniform sampler2DShadow shadowTex;
     uniform float shadowDensity;
   #endif
+	#ifdef use_vertex_ao
 	varying float aoTerm;
+	#endif
     uniform vec4 teamColor;
     varying vec3 cameraDir;
     //varying float fogFactor;
@@ -179,9 +185,10 @@ return {
 
 	   //AO term test:
 	   //aoTerm=1.2*aoTerm-0.2;
+	  #ifdef use_vertex_ao
 	  outColor.rgb=outColor.rgb*aoTerm;
 	  // outColor.rgb=vec3(aoTerm,aoTerm,aoTerm);
-       
+	  #endif
 	   // other custom stuff
        // outColor.rgb = mix(gl_Fog.color.rgb, outColor.rgb, fogFactor); // fog
        // outColor.a   = teamColor.a; // far fading
@@ -194,7 +201,7 @@ return {
        #else
        gl_FragData[0] = vec4(normal, 1.0);
        gl_FragData[1] = outColor;
-       gl_FragData[2] = vec4(specular, 1.0);
+       gl_FragData[2] = vec4(specular, extraColor.a);
        gl_FragData[3] = vec4(extraColor.rrr, 1.0);
        #endif
 

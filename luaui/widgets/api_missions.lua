@@ -161,7 +161,11 @@ local blue = "\255\170\170\255"
 local grey = "\255\190\190\190"
 
 function NewMissionObjective(objective)
-    mission_objective_text:SetText(blue .. objective)
+    local colour = blue
+    if string.find(string.lower(objective),"mission complete") then
+        colour = green
+    end
+    mission_objective_text:SetText(colour .. objective)
     --Spring.PlaySoundStream('sounds/missions/NewObjective.wav') 
     if mission_objective.hidden then
         mission_objective:Show()
@@ -171,7 +175,7 @@ end
 
 function CreateMissionGUI()
 
-    window = Chili.Panel:New{
+    window = Chili.Window:New{
         parent = Chili.Screen0,
         right  = 450+50,
         y      = 0,

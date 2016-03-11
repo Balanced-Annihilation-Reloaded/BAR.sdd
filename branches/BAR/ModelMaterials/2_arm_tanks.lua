@@ -37,6 +37,7 @@ local materials = {
          "#define deferred_mode 0",
 		 "#define use_treadoffset",
 			"#define use_vertex_ao",
+			"#define SPECULARMULT 8.0",
        },
        deferredDefinitions = {
          -- "#define use_perspective_correct_shadows",
@@ -44,6 +45,7 @@ local materials = {
          --"#define flip_normalmap",
          "#define deferred_mode 1",
 			"#define use_vertex_ao",
+			"#define SPECULARMULT 8.0",
        },
 
        shader    = include("ModelMaterials/Shaders/default.lua"),

@@ -107,7 +107,9 @@ return {
     uniform vec3 sunAmbient;
 	uniform vec3 etcLoc;
 	uniform vec4 trimColor;
-
+  #ifndef SPECULARMULT
+	#define SPECULARMULT 2.0
+  #endif
   #ifdef use_shadows
     #ifdef use_perspective_correct_shadows
       uniform vec4 shadowParams;
@@ -153,7 +155,7 @@ return {
        vec4 outColor   = diffuseIn;
        vec4 extraColor = texture2D(textureS3o2, gl_TexCoord[0].st);
        vec3 reflectDir = reflect(cameraDir, normal);
-       vec3 specular   = textureCube(specularTex, reflectDir).rgb * extraColor.g * 8.0;
+       vec3 specular   = textureCube(specularTex, reflectDir).rgb * extraColor.g * SPECULARMULT;
        vec3 reflection = textureCube(reflectTex,  reflectDir).rgb;
 
     #ifdef use_shadows

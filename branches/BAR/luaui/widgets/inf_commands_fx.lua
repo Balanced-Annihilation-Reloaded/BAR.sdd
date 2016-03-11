@@ -444,7 +444,7 @@ function widget:DrawWorldPreUnit()
                             -- ghost of build queue
 							if shaderObj ~= nil then
 								gl.PushMatrix()
-								gl.DepthTest(GL.LEQUAL)
+								--gl.DepthTest(GL.LEQUAL)
 								gl.UseShader(shaderObj.shader)
 								gl.Uniform(shaderObj.teamColorID, commands[i].teamColor)
 

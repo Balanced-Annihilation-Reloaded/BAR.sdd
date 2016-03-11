@@ -3,8 +3,8 @@
 
 function widget:GetInfo()
   return {
-    name      = "Dont Move",
-    desc      = "Sets asensible set of pre-defined units on hold position.",
+    name      = "Don't Move",
+    desc      = "Sets sensible set of pre-defined units on hold position.",
     author    = "quantum",
     date      = "Jan 8, 2007",
     license   = "GNU GPL, v2 or later",

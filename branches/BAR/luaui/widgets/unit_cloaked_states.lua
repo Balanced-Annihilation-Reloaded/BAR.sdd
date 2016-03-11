@@ -67,14 +67,17 @@ end
 function widget:CommandsChanged()
     -- recheck onlySelectedCloakedUnits
     onlySelectedCloakedUnits = true
+    local foundCloakedUnit = false
     local selUnits 
     for unitID,_ in pairs(cloakedUnits) do
+        foundCloakedUnit = true
         selUnits = selUnits or Spring.GetSelectedUnits() -- its cheaper this way
         if not cloakedUnits[unitID] then
             onlySelectedCloakedUnits = false
             break
         end
     end
+    if not foundCloakedUnit then onlySelectedCloakedUnits = false end
 end
 
 function widget:DefaultCommand()

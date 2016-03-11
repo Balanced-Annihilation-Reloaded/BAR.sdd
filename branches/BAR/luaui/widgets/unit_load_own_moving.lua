@@ -2,7 +2,7 @@
 function widget:GetInfo()
     return {
         name      = "Load Own Moving",
-        desc      = "Enables loading of your own units when they're moving",
+        desc      = "Enables loading of your own units whilst they're moving",
         author    = "Niobium",
         version   = "1.0",
         date      = "June 18, 2010",

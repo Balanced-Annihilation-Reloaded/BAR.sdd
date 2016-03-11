@@ -1,7 +1,7 @@
 function widget:GetInfo()
     return {
         name = "Camera Flip",
-        desc = "Press ctrl+shift+o to flip the camera \n(with overhead or smooth cam)",
+        desc = "Press ctrl+shift+o to flip the camera (with overhead or smooth cam)",
         author = "Bluestone",
         date = "11/09/2013",
         license = "WTFPL",

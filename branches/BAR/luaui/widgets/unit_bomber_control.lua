@@ -1,7 +1,7 @@
 function widget:GetInfo()
     return {
         name    = "Bomber control",
-        desc    = "Makes bombers execute queue properly [v1.1]",
+        desc    = "Makes bombers execute their queue efficiently",
         author    = "dizekat",
         date    = "2010-02-04",
         license    = "GPL v2 or later",

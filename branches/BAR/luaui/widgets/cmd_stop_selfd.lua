@@ -1,7 +1,7 @@
 function widget:GetInfo()
   return {
-    name      = "Stop means Stop",
-    desc      = "Cancels Self D orders when unit is given a stop command",
+    name      = "Stop Self D",
+    desc      = "Cancels Self Destruct orders when unit is given a stop command",
     author    = "enotseulB",
     date      = "GPL v3 or later",
     license   = "Feb 2015",

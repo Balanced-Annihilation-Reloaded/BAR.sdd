@@ -2,7 +2,7 @@
 function widget:GetInfo()
   return {
     name      = "External Grid",
-    desc      = "Draws a VR grid around map",
+    desc      = "Draws a grid around map edge",
     author    = "knorke, tweaked by KR",
     date      = "Sep 2011",
     license   = "PD",

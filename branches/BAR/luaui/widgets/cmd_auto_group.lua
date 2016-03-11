@@ -6,7 +6,7 @@ local versionNum = '2.22'
 function widget:GetInfo()
   return {
     name      = "Auto group",
-    desc      = "Alt+0-9 sets autogroup# for selected unit type(s). Newly built units get added to group# equal to their autogroup#. Type '/luaui autogroup help' for help.",
+    desc      = "Adds auto-grouping commands:\n Alt+0-9 sets autogroup# for selected unit type(s)\n Newly built units get added to group# equal to their autogroup#",
     author    = "Licho",
     date      = "Mar 23, 2007",
     license   = "GNU GPL, v2 or later",

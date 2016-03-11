@@ -2,7 +2,7 @@
 function widget:GetInfo()
     return {
         name      = "Custom Formations",
-        desc      = "Allows you to draw your own formation line.",
+        desc      = "Allows you to draw your own formation line",
         author    = "Niobium", -- based on 'Custom Formations' by jK and gunblob
         version   = "v4.3",
         date      = "April, 2013",

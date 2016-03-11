@@ -1,7 +1,7 @@
 function widget:GetInfo()
     return {
         name = "Highlight Units",
-        desc = "Highlights units and selected units, also sets cmdcolors",
+        desc = "Highlights units and selected units, sets command colours", -- also sets cmdcolors.txt
         author = "Bluestone", 
         date = "Horse",
         license = "Tarquin Fin-tim-lin-bin-whin-bim-lim-bus-stop-F'tang-F'tang-Olé-Biscuitbarrel",

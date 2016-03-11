@@ -1,13 +1,13 @@
 function widget:GetInfo()
    return {
-      name      = "Mouse Buildspacing",
-      desc      = "Adds mousebuttons 4 and 5 for buildspacing",
+      name      = "Mouse Build Spacing",
+      desc      = "Allows use of  mouse buttons 4 and 5 to control build spacing",
       author    = "Auswaschbar",
       version   = "v1.0",
       date      = "Mar, 2010",
       license   = "GNU GPL, v3 or later",
       layer     = 200,
-      enabled   = true,
+      enabled   = false,
    }
 end
    

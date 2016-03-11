@@ -2,7 +2,7 @@ function widget:GetInfo()
   return { 
     name      = "Mex Upgrade Helper", 
     desc      = "Adds a command for T2 constructors to upgrade mexes", 
-    author    = "author: BigHead", 
+    author    = "BigHead", 
     date      = "September 13, 2007", 
     license   = "GNU GPL, v2 or later", 
     layer     = -100, 

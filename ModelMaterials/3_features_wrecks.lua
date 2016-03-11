@@ -12,14 +12,16 @@ local materials = {
 			"#define use_normalmapping",
 			--"#define flip_normalmap",
 			"#define deferred_mode 0",
-			"#define use_vertex_ao",
+			--"#define use_vertex_ao",
+			"#define SPECULARMULT 6.0",
 		},
 		deferredDefinitions = {
 			--"#define use_perspective_correct_shadows",
 			"#define use_normalmapping",
 			--"#define flip_normalmap",
 			"#define deferred_mode 1",
-			"#define use_vertex_ao",
+			--"#define use_vertex_ao",
+			"#define SPECULARMULT 6.0",
 		},
 		force     = false, --// always use the shader even when normalmapping is disabled
 		usecamera = false,
@@ -41,19 +43,54 @@ local materials = {
 --------------------------------------------------------------------------------
 -- affected featuredefs
 
+local function FindNormalmap(tex1, tex2)
+	local normaltex = nil
+	Spring.Echo("searching for normals for",tex1)
+	--// check if there is a corresponding _normals.dds file
+	unittexttures = 'unittextures/'
+	if (VFS.FileExists(unittexttures .. tex1)) and (VFS.FileExists(unittexttures .. tex2)) then
+		normaltex = unittexttures .. tex1:gsub("%.","_normals.")
+		Spring.Echo(normaltex)
+		if (VFS.FileExists(normaltex)) then
+			return normaltex
+		end
+		normaltex = unittexttures .. tex1:gsub("%.","_normal.")
+		Spring.Echo(normaltex)
+		if (VFS.FileExists(normaltex)) then
+			return normaltex
+		end
+	end 
+	return nil
+end
+
+
+
 local featureMaterials = {}
 
 for id, featureDef in pairs(FeatureDefs) do
+	local isTree=false
+	for _,stub in ipairs({"ad0_", "btree", "art"}) do
+		if featureDef.name:find(stub) == 1 then 
+			isTree=true
+			-- Spring.Echo(featureDef.name, 'is a tree')
+		end
+	end
 	Spring.PreloadFeatureDefModel(id)
 	-- how to check if its a wreck or a heap?
-	if featureDef.name:find("_dead") and featureDef.model.textures.tex1 then
-		if featureDef.model.textures.tex1:find("Arm_wreck") then
-			featureMaterials[featureDef.name] = {"feature_wreck", NORMALTEX = "unittextures/Arm_wreck_color_normal.dds"}
-			--Spring.Echo('Featuredef info for', featureDef.name, to_string(featureDef.model))
-		elseif featureDef.model.textures.tex1:find("Core_color_wreck") then 
-			featureMaterials[featureDef.name] = {"feature_wreck", NORMALTEX = "unittextures/Core_color_wreck_normal.dds"}
-		else
-			Spring.Echo("3_feature_wrecks: featureDef.name has _dead but doesnt have the correct tex1 defined!",featureDef.name, featureDef.model.tex1)
+	if (not isTree) and featureDef.model.textures and featureDef.model.textures.tex1 then --its likely a proper feature
+		if  featureDef.name:find("_dead") then 
+			if featureDef.model.textures.tex1:find("Arm_wreck") then
+				featureMaterials[featureDef.name] = {"feature_wreck", NORMALTEX = "unittextures/Arm_wreck_color_normal.dds"}
+				--Spring.Echo('Featuredef info for', featureDef.name, to_string(featureDef.model))
+			elseif featureDef.model.textures.tex1:find("Core_color_wreck") then 
+				featureMaterials[featureDef.name] = {"feature_wreck", NORMALTEX = "unittextures/Core_color_wreck_normal.dds"}
+			else
+				Spring.Echo("3_feature_wrecks: featureDef.name has _dead but doesnt have the correct tex1 defined!",featureDef.name, featureDef.model.tex1)
+			end
+		elseif featureDef.model.textures.tex1 and featureDef.model.textures.tex2 then
+			if FindNormalmap(featureDef.model.textures.tex1,featureDef.model.textures.tex2) then
+				featureMaterials[featureDef.name] = {"feature_wreck", NORMALTEX = FindNormalmap(featureDef.model.textures.tex1,featureDef.model.textures.tex2)}
+			end
 		end
 	end
 end

@@ -83,13 +83,15 @@ local tex1_to_normaltex = {}
 for id, featureDef in pairs(FeatureDefs) do
 	Spring.PreloadFeatureDefModel(id)
 	for _,stub in ipairs (featureNameStubs) do 
-		if featureDef.name:find(stub) and featureDef.name:find(stub) == 1 then --also starts with
+		if featureDef.model.textures and featureDef.model.textures.tex1 and featureDef.name:find(stub) and featureDef.name:find(stub) == 1 then --also starts with
 			--if featureDef.customParam.normaltex then
 				Spring.Echo('Feature',featureDef.name,'seems like a nice tree, assigning the default normal texture to it.')
-				featureMaterials[featureDef.name] = {"feature_tree", NORMALTEX = "unittextures/default_tree_normal.tga"}
-			--else 
-				--if featureDef.model. 
-			--end
+				if featureDef.name:find('btree') == 1 then --beherith's old trees suffer if they get shitty normals
+					featureMaterials[featureDef.name] = {"feature_tree", NORMALTEX = "unittextures/blank_normal.tga"}
+				else
+					featureMaterials[featureDef.name] = {"feature_tree", NORMALTEX = "unittextures/default_tree_normal.tga"}
+				end
+
 			--TODO: dont forget the feature normals!
 			--TODO: actually generate normals for all these old-ass features, and include them in BAR
 			--TODO: add a blank normal map to avoid major fuckups.

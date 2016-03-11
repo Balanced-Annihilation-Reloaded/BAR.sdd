@@ -37,6 +37,7 @@ return {
 		turninplace = 0,
 		turninplaceanglelimit = 140,
 		turninplacespeedlimit = 0.792,
+		turnrate = 520;
 		customparams = {
 			arm_tank = "1",
 			faction = "arm",

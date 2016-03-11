@@ -434,7 +434,7 @@ function widget:DrawWorld()
 		--Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA) --default
 		if #beamlightprojectiles>0 then DrawLightType(beamlightprojectiles, 1) end
 		if #pointlightprojectiles>0 then DrawLightType(pointlightprojectiles, 0) end
-		Blending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA) --default
+		glBlending(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA) --default
 		-- glBlending(false)
 	else
 		Spring.Echo('Removing deferred rendering widget: failed to use GLSL shader')

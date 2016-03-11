@@ -25,7 +25,8 @@ local DefaultSettings = {}
 
 local fullyLoaded = false -- set to true at the end of widget:Initialize 
 
-local white = '\255\255\255\255'
+local whiteStr = '\255\255\255\255'
+local greenStr = '\255\1\255\1'
 
 function LoadSpringSettings()
     -- Load relevant things from springsettings (overwrite our 'local' copy of these settings)
@@ -201,11 +202,12 @@ local function makeWidgetList()
                 stack:AddChild(Chili.Checkbox:New{
                     name      = list[b].name,
                     caption   = list[b].name .. fromZip,
-                    tooltip   = 'Author: '..author.. '\n'.. desc,
+                    tooltip   = greenStr .. desc .. '\n' .. whiteStr .. 'Author: '..author,
                     width     = '80%',
                     x         = '10%',
                     font      = (active and green) or (enabled and orange) or red,
                     checked   = enabled,
+                    padding   = {1,1,1,0},
                     OnChange  = {toggleWidget},
 
                 })

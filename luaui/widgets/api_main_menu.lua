@@ -519,16 +519,7 @@ local comboBox = function(obj)
         local value   = obj.options[listID] or ''
         local setting = obj.name or ''
 
-        if setting == 'Skin' then
-            --fixme, colourmode & alphamode
-        elseif setting == 'Cursor' then
-            setCursor(value)
-            Settings['CursorName'] = value
-        else 
-            spSendCommands(setting..' '..value)
-        end
-
-        -- Spring.Echo(setting.." set to "..value) --TODO: this is misleading
+        spSendCommands(setting..' '..value)
         Settings[setting] =  obj.items[obj.selected]
     end
 
@@ -749,8 +740,8 @@ local function createInterfaceTab()
 
             Chili.Line:New{width='50%',y=80},
 
-            Chili.TextBox:New{text='Skin',y=90, width='45%',},
-            Chili.Control:New{x='2%', y=100, width='40%',autoSize=true,padding={0,4,0,0},
+            Chili.Label:New{caption='-- Skin Settings --',x='2%',width='46%',align = 'center',y=90},
+            Chili.Control:New{x='2%', y=105, width='40%',autoSize=true,padding={0,4,0,0},
                 children = {
                     Chili.TextBox:New{x='0%',width='35%',text="Colour mode:"},
                     Chili.ComboBox:New{x='35%',width='65%',
@@ -782,13 +773,22 @@ local function createInterfaceTab()
                             end
                             }
                         },
-                    },                
+                    Chili.TextBox:New{y=34, x='0%',width='35%',text="Cursor:"},
+                    Chili.ComboBox:New{y=34, x='35%',width='65%',
+                        items    = {"Dynamic", "Static"},
+                        selected = (Settings["Cursor"]=="Dynamic" and 1) or (Settings["Cursor"]=="Static" and 2),
+                        OnSelect = {
+                            function(self,sel)
+                                if sel==1 then setCursor("bar") 
+                                elseif sel==2 then setCursor("static")
+                                end
+                            end
+                            }
+                        },
+                    }, 
+                            
             },
-            comboBox{name='Cursor',y=135, width='45%',
-                labels={'Dynamic','Static'},
-                options={'bar','static'}
-            },
-            Chili.Label:New{caption='-- Widget Settings --',x='2%',width='46%',align = 'center',y=175},
+            Chili.Label:New{caption='-- Widget Settings --',x='2%',width='46%',align = 'center',y=170},
             addScrollStack{y=190,x='2%',width='46%',name='widgetOptions'},
         }
     }

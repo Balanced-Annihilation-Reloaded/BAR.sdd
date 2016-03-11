@@ -72,18 +72,19 @@ local HotkeyInfo = include('configs/HotkeyInfo.lua')
 local amNewbie = (Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'isNewbie') == 1)
 
 local wCategories = {
-    ['unit']      = {label = 'Units',       list = {}, pos = 1,},
-    ['cmd']       = {label = 'Commands',    list = {}, pos = 2,},
-    ['gui']       = {label = 'GUI',         list = {}, pos = 3,},
-    ['snd']       = {label = 'Sound',       list = {}, pos = 4,},
-    ['camera']    = {label = 'Camera',      list = {}, pos = 5,},
-    ['map']       = {label = 'Map',         list = {}, pos = 6,},
-    ['bgu']       = {label = 'BAR GUI',     list = {}, pos = 7,},
-    ['gfx']       = {label = 'GFX',         list = {}, pos = 8,},
-    ['dbg']       = {label = 'Debugging',   list = {}, pos = 9,},
-    ['api']       = {label = 'API \255\255\200\200(Here be dragons!)',         list = {}, pos = 10,},
-    ['test']      = {label = 'Test Widgets',list = {}, pos = 11,},
-    ['ungrouped'] = {label = 'Ungrouped',   list = {}, pos = 12,},
+    ['unit']      = {label = 'Units',       list = {}, pos = 1,}, -- relates to individual units or unit types
+    ['cmd']       = {label = 'Commands',    list = {}, pos = 2,}, -- relates to (more general cases of) giving commands to units
+    ['gui']       = {label = 'GUI',         list = {}, pos = 3,}, -- relates to providing information interactively
+    ['inf']       = {label = 'Information', list = {}, pos = 4,}, -- relates to providing information passively
+    ['snd']       = {label = 'Sound',       list = {}, pos = 5,}, 
+    ['camera']    = {label = 'Camera',      list = {}, pos = 6,},
+    ['map']       = {label = 'Map',         list = {}, pos = 7,},
+    ['bgu']       = {label = 'BAR GUI',     list = {}, pos = 8,},
+    ['gfx']       = {label = 'GFX',         list = {}, pos = 9,},
+    ['dbg']       = {label = 'Debugging',   list = {}, pos = 10,},
+    ['api']       = {label = 'API \255\255\200\200(Here be dragons!)', list = {}, pos = 11,},
+    ['test']      = {label = 'Test Widgets',list = {}, pos = 12,},
+    ['ungrouped'] = {label = 'Ungrouped',   list = {}, pos = 13,},
 }
 ----------------------------
 --

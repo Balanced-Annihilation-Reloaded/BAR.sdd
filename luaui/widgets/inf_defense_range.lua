@@ -312,7 +312,7 @@ function widget:Initialize()
                         checked=buttonConfig["enabled"]["ally"]["ground"],setting=drawPlatter,OnChange={function() buttonConfig["enabled"]["ally"]["ground"] = not buttonConfig["enabled"]["ally"]["ground"]; end}}, 
                 Chili.Checkbox:New{caption='Ally air',x='10%',width='80%',
                         checked=buttonConfig["enabled"]["ally"]["air"],setting=drawPlatter,OnChange={function() buttonConfig["enabled"]["ally"]["air"] = not buttonConfig["enabled"]["ally"]["air"]; end}}, 
-                Chili.Checkbox:New{caption='Ally anti-uke',x='10%',width='80%',
+                Chili.Checkbox:New{caption='Ally anti-nuke',x='10%',width='80%',
                         checked=buttonConfig["enabled"]["ally"]["nuke"],setting=drawPlatter,OnChange={function() buttonConfig["enabled"]["ally"]["nuke"] = not buttonConfig["enabled"]["ally"]["nuke"]; end}}, 
                 Chili.Checkbox:New{caption='Enemy ground',x='10%',width='80%',
                         checked=buttonConfig["enabled"]["enemy"]["ground"],setting=drawPlatter,OnChange={function() buttonConfig["enabled"]["enemy"]["ground"] = not buttonConfig["enabled"]["enemy"]["ground"]; end}}, 

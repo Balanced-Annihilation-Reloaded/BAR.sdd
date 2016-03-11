@@ -13,8 +13,8 @@
 
 function widget:GetInfo()
   return {
-    name      = "Group Label",
-    desc      = "Displays a label on units in a group",
+    name      = "Group Labels",
+    desc      = "Displays a label on units that have been assigned to a group",
     author    = "gunblob",
     date      = "June 12, 2008",
     license   = "GNU GPL, v2 or later",

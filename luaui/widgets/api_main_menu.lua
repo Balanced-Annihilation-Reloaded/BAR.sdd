@@ -905,6 +905,10 @@ end
 function widget:GetConfigData()
     local widgetList = tabs['Interface']:GetChildByName('widgetList')
     Settings.widgetScrollPos = widgetList and widgetList.scrollPosY or 0 --guard against removing ourself
+    Settings.visibleAtShutdown = mainMenu.visible
+    if Settings.tabSelected == 'Beta Release' then
+        Settings.visibleAtShutdown = nil
+    end
     return Settings
 end
 
@@ -937,10 +941,15 @@ function widget:Initialize()
     createGraphicsTab()
     createCreditsTab()
         
-    if amNewbie then ShowHide('General') else menuTabs:Select('General') end
+        
+    if amNewbie then ShowHide('General') else menuTabs:Select(Settings.tabSelected or 'General') end
     globalize()
     makeWidgetList()
-
+    
+    if Settings.visibleAtShutdown then
+        ShowHide()
+    end
+    
     -----------------------
     ---     Hotkeys     ---
     local toggleMenu      = function() ShowHide('General') end

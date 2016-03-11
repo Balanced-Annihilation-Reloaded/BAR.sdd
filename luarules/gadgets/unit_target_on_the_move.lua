@@ -115,6 +115,7 @@ local unitSetTargetRectangleCmdDesc = { --currently not used
     name    = 'Set Target',
 	action	= 'settargetrectangle',
 	cursor	= 'settarget',
+    queueing = false,    
 	tooltip	= tooltipText,
 	hidden	= true,
 }
@@ -125,6 +126,7 @@ local unitSetTargetCircleCmdDesc = {
     name    = 'Set Target', 
 	action	= 'settarget',
 	cursor	= 'settarget',
+    queueing = false,    
 	tooltip	= tooltipText,
 	hidden	= false,
 }
@@ -474,14 +476,14 @@ end
 function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
 	if spGetCommandQueue(unitID, -1, false) == 0 or not cmdOptions.meta then
 		if processCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions) then
-			return false --command was used & fully processed, so block command
+			return true --command was used & fully processed
 		elseif cmdID == CMD_STOP then
 			if unitTargets[unitID] and not unitTargets[unitID].ignoreStop then
 				removeUnit(unitID)
 			end
 		end
 	end
-	return true  -- command was not used OR was used but not fully processed, so don't block command
+	return true  -- command was not used OR was used but not fully processed
 end
 
 --------------------------------------------------------------------------------

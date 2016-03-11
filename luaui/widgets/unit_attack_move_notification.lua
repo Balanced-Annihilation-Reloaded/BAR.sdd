@@ -1,7 +1,7 @@
 function widget:GetInfo()
     return {
         name = "Attack and Move Notification",
-        desc = "v0.31 Notifes when a unit is attacked or a move command failed",
+        desc = "Notifies when a unit is attacked or a move command failed",
         author = "knorke & very_bad_soldier",
         date = "Dec , 2011",
         license = "GPLv2",

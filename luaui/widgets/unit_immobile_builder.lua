@@ -13,7 +13,7 @@
 function widget:GetInfo()
   return {
     name        = "Immobile Builders",
-    desc        = "Sets nanotowers to manoeuvre, with a fight command",
+    desc        = "Makes idle nanotowers help with construction/repair",
     author        = "trepan",
     date        = "Jan 8, 2007",
     license        = "GNU GPL, v2 or later",

@@ -12,7 +12,7 @@
 
 function widget:GetInfo()
   return {
-    name        = "Immobile Builders",
+    name        = "Nano Helpers",
     desc        = "Makes idle nanotowers help with construction/repair",
     author        = "trepan",
     date        = "Jan 8, 2007",

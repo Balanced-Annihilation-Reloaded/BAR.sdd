@@ -17,6 +17,8 @@ local clockType = "ingame" -- or "system", meaning ingame time or system time
 local oTime,rTime
 local timeFormatStr = '%I:%M:%S'
 
+local options = {}
+
 local function round(num, idp)
   return string.format("%." .. (idp or 0) .. "f", num)
 end
@@ -40,8 +42,6 @@ local function setRealTime(rTime)
 end
 
 local function loadOptions()
-    clockType = Menu.Load('clockType') or clockType
-
     Menu.AddWidgetOption{
         title = 'Clock',
         name = widget:GetInfo().name,
@@ -50,7 +50,7 @@ local function loadOptions()
                 x        = '0%',
                 width    = '100%',
                 items    = {"Ingame time", "System clock"},
-                selected = (clockType=="ingame" and 1) or 2,
+                selected = (options.clockType=="system" and 2) or 1,
                 OnSelect = {
                     function(_,sel)
                         if sel == 1 then
@@ -60,7 +60,7 @@ local function loadOptions()
                             setRealTime(os.date(timeFormatStr))
                             clockType = 'system'
                         end
-                        Menu.Save{["clockType"]=clockType}
+                        options.clockType = clockType
                     end
                 }
             },
@@ -151,4 +151,14 @@ end
 function widget:ShutDown()
     Spring.SendCommands('fps 1')
     Spring.SendCommands('clock 1')
+end
+
+function widget:GetConfigData()
+    return options
+end
+
+function widget:SetConfigData(data)
+    if data then
+        options = data
+    end
 end

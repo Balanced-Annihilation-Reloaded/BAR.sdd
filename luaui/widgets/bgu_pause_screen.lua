@@ -5,7 +5,7 @@ function widget:GetInfo()
     return {
         name      = "Pause Screen",
         desc      = "Displays an overlay when the game is paused",
-        author    = "very_bad_soldier (enhanced by: Floris)",
+        author    = "very_bad_soldier, Floris",
         date      = "2009.08.16",
         license   = "GNU GPL v2",
         layer     = 0,

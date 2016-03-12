@@ -190,21 +190,8 @@ local function sortWidgetList()
     end
 end
 
-
---[[
-        -- Only adds widget to group if it matches an enabled filter
-        local wFilterString = string.lower(wFilterString or '')
-        if (Settings.searchWidgetName and string.lower(name or ''):find(wFilterString))
-        or (Settings.searchWidgetDesc and string.lower(wData.desc or ''):find(wFilterString))
-        or (Settings.searchWidgetAuth and string.lower(wData.author or ''):find(wFilterString)) then
-            groupWidget(name,wData)
-        end
-
-]]
-
-
 ----------------------------
--- Creates widget list for interface tab
+-- widget list vertical alignment on re-draws 
 
 function GetTopVisibleControlOfWidgetList()    
     -- get the name of the control which is topmost within the visible part of the widget selector scrollstack *and* is a widget checkbox
@@ -215,7 +202,6 @@ function GetTopVisibleControlOfWidgetList()
     local scrollY = widgetList.scrollPosY
     local name
     for _,child in ipairs(stack.children) do
-        --Spring.Echo("get", child.name,child.y,scrollY)
         if child.y>=scrollY and child.alignName then 
             name = child.alignName
             break
@@ -234,7 +220,6 @@ function SetTopVisibleControlOfWidgetList(name)
     local success
     for _,child in ipairs(stack.children) do
         success = success or (child.y>0)
-        --Spring.Echo("set", name,child.name,child.y,scrollY)
         if name==child.alignName then 
             scrollPosY = child.y
             alignName = child.alignName
@@ -251,9 +236,25 @@ function ToggleExpandWidgetOptions(name)
     makeWidgetList()
 end
 
+----------------------------
+-- widget list drawing
+
 local widgetControls = {}
 local widgetAuthorControls = {}
 local widgetDescsControls = {}
+
+local function WidgetFilter(name,desc,author)
+    -- implement searching for widgets
+    if wFilterString == "" then return true end
+
+    local wFilterString = string.lower(wFilterString or '')
+    if (Settings.searchWidgetName and string.lower(name or ''):find(wFilterString))
+    or (Settings.searchWidgetDesc and string.lower(desc or ''):find(wFilterString))
+    or (Settings.searchWidgetAuth and string.lower(author or ''):find(wFilterString)) then
+        return true
+    end
+    return false
+end
 
 function GetWidgetControl(name, fontColour, enabled, active, fromZip, showDescs, desc)   
     local controlName = name  .. "_control" .. "_" .. fontColour
@@ -289,17 +290,23 @@ function GetWidgetControl(name, fontColour, enabled, active, fromZip, showDescs,
             widgetControl:AddChild(Chili.Button:New{
                 name    = name .. "_button",
                 x       = '1%',
-                y       = 2,
+                y       = 3,
                 width   = '5%',
-                height  = 10,
-                caption = Settings['expandedWidgetOptions'][name] and "-" or "+",
+                height  = 12,
+                caption = '',
                 OnClick = {function() ToggleExpandWidgetOptions(name) end}
             })
         end
         widgetControls[controlName] = widgetControl
     end
     
+    local widgetOptions = widgetControls[controlName].children[2]
+    if widgetOptions then
+        widgetOptions:SetCaption(Settings['expandedWidgetOptions'][name] and "-" or "+")    
+    end
+    
     widgetControls[controlName].y = 0 -- we need to forget the *cached* y coord because the system for preserving v align needs the proper y coord and chili won't update immediately
+    
     return widgetControls[controlName]
 end
 
@@ -376,21 +383,23 @@ function makeWidgetList(layoutChange)
                 local desc = list[b].wData.desc or "No Description"
                 local fromZip = list[b].wData.fromZip and "" or greyStr .. " (user)"
                 
-                local widgetFontColour = (active and "green") or (enabled and "orange") or "red"
-                local widgetControl = GetWidgetControl(name, widgetFontColour, enabled, active, fromZip, showDescs, desc)           
-                stack:AddChild(widgetControl)
+                if WidgetFilter(name, desc, author) then 
+                    local widgetFontColour = (active and "green") or (enabled and "orange") or "red"
+                    local widgetControl = GetWidgetControl(name, widgetFontColour, enabled, active, fromZip, showDescs, desc)           
+                    stack:AddChild(widgetControl)
 
-                if showAuthors then
-                    local widgetAuthorControl = GetWidgetAuthorControl(name, author)
-                    stack:AddChild(widgetAuthorControl)
-                end
-                if showDescs then
-                    local widgetDescsControl = GetWidgetDescsControl(name, desc)
-                    stack:AddChild(widgetDescsControl)
-                end
-                
-                if Settings['expandedWidgetOptions'][name] and widgetOptions[name] then
-                    stack:AddChild(widgetOptions[name])
+                    if showAuthors then
+                        local widgetAuthorControl = GetWidgetAuthorControl(name, author)
+                        stack:AddChild(widgetAuthorControl)
+                    end
+                    if showDescs then
+                        local widgetDescsControl = GetWidgetDescsControl(name, desc)
+                        stack:AddChild(widgetDescsControl)
+                    end
+                    
+                    if Settings['expandedWidgetOptions'][name] and widgetOptions[name] then
+                        stack:AddChild(widgetOptions[name])
+                    end
                 end
             end
         end

@@ -1067,10 +1067,6 @@ local function globalize()
         }                
     ]]
     
-    -- allow access to our own Settings table (todo: remove this)
-    Menu.Load = Load
-    Menu.Save = Save
-
     WG.MainMenu = Menu
 end
 -----------------------------

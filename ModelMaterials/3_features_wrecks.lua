@@ -79,7 +79,7 @@ for id, featureDef in pairs(FeatureDefs) do
 	end
 	Spring.PreloadFeatureDefModel(id)
 	-- how to check if its a wreck or a heap?
-	if (not isTree) and featureDef.model.textures and featureDef.model.textures.tex1 then --its likely a proper feature
+	if (not isTree) and featureDef.model.textures and featureDef.model.textures.tex1 and featureDef.model.path:find("%.3ds") == nil then --its likely a proper feature
 		if  featureDef.name:find("_dead") then 
 			if featureDef.model.textures.tex1:find("Arm_wreck") then
 				featureMaterials[featureDef.name] = {"feature_wreck", NORMALTEX = "unittextures/Arm_wreck_color_normal.dds"}

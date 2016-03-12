@@ -33,6 +33,7 @@ local greenStr = '\255\1\255\1'
 local blueStr = '\255\1\1\255'
 local turqoiseStr = "\255\48\213\200"
 local lilacStr = "\255\200\162\200"
+local greyStr = '\255\150\150\150'
 
 function LoadSpringSettings()
     -- Load relevant things from springsettings (overwrite our 'local' copy of these settings)
@@ -184,47 +185,136 @@ end
 ----------------------------
 -- Creates widget list for interface tab
 
-function GetTopVisibleControlOfWidgetList()
-    if not widgetList then return nil end --guard against removing ourself
-    
+function GetTopVisibleControlOfWidgetList()    
     -- get the name of the control which is topmost within the visible part of the widget selector scrollstack *and* is a widget checkbox
+    -- BUT we need to forgoet about the font colour part of control name, because there is one cached object for each colour!
     local widgetList = tabs['Interface']:GetChildByName('widgetList')
+    if not widgetList then return nil end --guard against when we use the main menu to remove itself
     local stack = widgetList.children[1]
     local scrollY = widgetList.scrollPosY
     local name
     for _,child in ipairs(stack.children) do
         --Spring.Echo("get", child.name,child.y,scrollY)
-        if child.y>=scrollY and child.alwaysPresent then 
-            name = child.name
+        if child.y>=scrollY and child.alignName then 
+            name = child.alignName
             break
         end
     end
-    --Spring.Echo(name)
+    --Spring.Echo(name, scrollY)
     return name
 end
 
 function SetTopVisibleControlOfWidgetList(name)
     -- set the topmost control of the visible part of the widget selector scrollstack to be equal to the named control
+    -- we have to avoid the case where all ys are zero; chili doesn't update the ys immediately
     local widgetList = tabs['Interface']:GetChildByName('widgetList')
     local stack = widgetList.children[1]
-    local scrollPosY 
+    local scrollPosY, alignName 
     local success
     for _,child in ipairs(stack.children) do
         success = success or (child.y>0)
-        --Spring.Echo("set", child.name,child.y,scrollY)
-        if name==child.name then 
+        --Spring.Echo("set", name,child.name,child.y,scrollY)
+        if name==child.alignName then 
             scrollPosY = child.y
+            alignName = child.alignName
             break
         end
     end
     widgetList:SetScrollPos(0, scrollPosY or 0)
-    --Spring.Echo(success, scrollPosY)
+    --Spring.Echo(success, scrollPosY, name, alignName)
     return success
 end
 
 function ToggleExpandWidgetOptions(name)
     Settings['expandedWidgetOptions'][name] = not Settings['expandedWidgetOptions'][name]
     makeWidgetList()
+end
+
+local widgetControls = {}
+local widgetAuthorControls = {}
+local widgetDescsControls = {}
+
+function GetWidgetControl(name, fontColour, enabled, active, fromZip, showDescs, desc)
+    
+    local controlName = name  .. "_control" .. "_" .. fontColour
+    local alignName = name  .. "_control"
+    if not widgetControls[controlName] then
+        -- create if not in our cache
+        local greenFont  = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
+        local orangeFont = {color = {1,0.5,0,1}, outlineColor = {1,0.5,0,0.2}}
+        local redFont    = {color = {1,0,0,1}, outlineColor = {1,0,0,0.2}}
+        local widgetControl = Chili.Control:New{
+            name      = controlName,
+            alignName = alignName, -- used for preserving v pos (from users point of view) on redraws 
+            useForVAlign = true,
+            width = '100%',
+            x = '0%',
+            autoSize = true,
+            padding = {0,0,0,0},
+            children = {
+                Chili.Checkbox:New{
+                    name      = name,
+                    caption   = name .. fromZip,
+                    tooltip   = (not showDescs) and desc,
+                    width     = '87%',
+                    x         = '7%',
+                    font      = (fontColour=="green" and greenFont) or (fontColour=="orange" and orangeFont) or redFont,
+                    checked   = enabled,
+                    padding   = {1,1,1,0},
+                    OnChange  = {toggleWidget},
+                },
+            }
+        }
+        if widgetOptions[name] then
+            widgetControl:AddChild(Chili.Button:New{
+                name    = name .. "_button",
+                x       = '1%',
+                y       = 2,
+                width   = '5%',
+                height  = 10,
+                caption = Settings['expandedWidgetOptions'][name] and "-" or "+",
+                OnClick = {function() ToggleExpandWidgetOptions(name) end}
+            })
+        end
+        widgetControls[controlName] = widgetControl
+    end
+    
+    widgetControls[controlName].y = 0 -- we need to forget the *cached* y coord because the system for preserving v align needs the proper y coord and chili won't update immediately
+    return widgetControls[controlName]
+end
+
+function GetWidgetAuthorControl(name, author)
+    local controlName = name .. "_author"
+    if not widgetAuthorControls[controlName] then
+        -- create if its not in our cache
+        local widgetAuthorControl = Chili.TextBox:New{
+            name      = controlName,
+            width     = '85%',
+            x         = '9%',                
+            text      = lilacStr .. "Author: " .. author,
+            tooltip   = nil,
+            padding   = {0,0,0,3},
+        }
+        widgetAuthorControls[controlName] = widgetAuthorControl
+    end
+    return widgetAuthorControls[controlName]
+end
+
+function GetWidgetDescsControl(name, desc)
+    local controlName = name .. "_desc"
+    if not widgetDescsControls[controlName] then
+            -- create if its not in our cache        
+        local widgetDescsControl = Chili.TextBox:New{
+            name      = controlName,
+            width     = '85%',
+            x         = '9%',                
+            text      = desc,
+            tooltip   = nil,
+            padding   = {0,0,0,3},
+        }
+        widgetAuthorControls[controlName] = widgetDescsControl
+    end
+    return widgetAuthorControls[controlName]
 end
 
 function makeWidgetList(layoutChange)
@@ -260,78 +350,29 @@ function makeWidgetList(layoutChange)
         local cat = wCategories[inv_pos[i]]
         local list = cat.list
         if #list>0 and (showAdv or not cat.adv) then
-            stack:AddChild(Chili.Line:New{width="50%",name=cat.label.."_line1", alwaysPresent=true})
-            stack:AddChild(Chili.Label:New{caption = turqoiseStr..cat.label, x=0, font={shadow=false,size=18}, alwaysPresent=true})
-            stack:AddChild(Chili.Line:New{width="50%",name=cat.label.."_line2", alwaysPresent=true})
+            stack:AddChild(Chili.Line:New{width="50%",name=cat.label.."_line1", alignName = cat.label.."_line1"})
+            stack:AddChild(Chili.Label:New{caption = turqoiseStr..cat.label, x=0, font={shadow=false,size=18}, alignName = cat.label})
+            stack:AddChild(Chili.Line:New{width="50%",name=cat.label.."_line2", alignName = cat.label.."_line2"})
             -- Second loop adds each widget
             for b=1,#list do
-                
-                local green  = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
-                local orange = {color = {1,0.5,0,1}, outlineColor = {1,0.5,0,0.2}}
-                local red    = {color = {1,0,0,1}, outlineColor = {1,0,0,0.2}}
-
                 local enabled = (widgetHandler.orderList[list[b].name] or 0)>0
                 local name = list[b].name
                 local active  = list[b].wData.active
                 local author = list[b].wData.author or "Unknown"
                 local desc = list[b].wData.desc or "No Description"
-                local fromZip = list[b].wData.fromZip and "" or " (user)"
+                local fromZip = list[b].wData.fromZip and "" or greyStr .. " (user)"
                 
-                local widgetControl = Chili.Control:New{
-                        name      = name  .. "_control",
-                        alwaysPresent = true,
-                        width = '100%',
-                        x = '0%',
-                        autoSize = true,
-                        padding = {0,0,0,0},
-                        children = {
-                            Chili.Checkbox:New{
-                                name      = name,
-                                caption   = name .. fromZip,
-                                tooltip   = (not showDescs) and desc,
-                                width     = '87%',
-                                x         = '7%',
-                                font      = (active and green) or (enabled and orange) or red,
-                                checked   = enabled,
-                                padding   = {1,1,1,0},
-                                OnChange  = {toggleWidget},
-                            },
-                        }
-                }
-                if widgetOptions[name] then
-                    widgetControl:AddChild(Chili.Button:New{
-                        name = name .. "_button",
-                        x = '1%',
-                        y = 2,
-                        width = '5%',
-                        height = 10,
-                        caption = Settings['expandedWidgetOptions'][name] and "-" or "+",
-                        OnClick = {function() ToggleExpandWidgetOptions(name) end}
-                    })
-                end
-
-                
+                local widgetFontColour = (active and "green") or (enabled and "orange") or "red"
+                local widgetControl = GetWidgetControl(name, widgetFontColour, enabled, active, fromZip, showDescs, desc)           
                 stack:AddChild(widgetControl)
 
                 if showAuthors then
-                    stack:AddChild(Chili.TextBox:New{
-                        name      = name .. "_author",
-                        width     = '85%',
-                        x         = '9%',                
-                        text      = lilacStr .. "Author: " .. author,
-                        tooltip   = nil,
-                        padding   = {0,0,0,3},
-                    })
+                    local widgetAuthorControl = GetWidgetAuthorControl(name, author)
+                    stack:AddChild(widgetAuthorControl)
                 end
                 if showDescs then
-                    stack:AddChild(Chili.TextBox:New{
-                        name      = name .. "_desc",
-                        width     = '85%',
-                        x         = '9%',                
-                        text      = desc,
-                        tooltip   = nil,
-                        padding   = {0,0,0,3},
-                    })
+                    local widgetDescsControl = GetWidgetDescsControl(name, desc)
+                    stack:AddChild(widgetDescsControl)
                 end
                 
                 if Settings['expandedWidgetOptions'][name] and widgetOptions[name] then
@@ -413,6 +454,10 @@ end
 local function sTab(_,tabName)
     if not tabs[tabName] then return end
     if Settings.tabSelected then mainMenu:RemoveChild(tabs[Settings.tabSelected]) end
+    
+    if tabName=='Interface' then makeWidgetList() end
+    if tabName=='Graphics' then LoadSpringSettings() end
+    
     mainMenu:AddChild(tabs[tabName])
     Settings.tabSelected = tabName
 end
@@ -1007,7 +1052,7 @@ local function createGraphicsTab()
                     }
                 },
             },
-            Chili.Button:New{name="ResetDefaults",x='25%',y='85%',height='10%',width='50%',borderColor={1,0,0,0.5},caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},
+            Chili.Button:New{name="ResetDefaults",x='35%',y='85%',height='10%',width='30%',caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},
         }
     }
     
@@ -1151,11 +1196,15 @@ function widget:Update()
     end
     
     if updateWidgetListPos then
-        local success = SetTopVisibleControlOfWidgetList(Settings["widgetScroll"])
-        if success then -- we have to wait for chili to actually set up the y coords and it sometimes waits...
-            updateWidgetListPos = nil
-        end
-    end    
+        if Settings["widgetScroll"] then 
+            local success = SetTopVisibleControlOfWidgetList(Settings["widgetScroll"])
+            if success then -- we have to wait for chili to actually set up the y coords and it sometimes waits...
+                updateWidgetListPos = nil
+            end
+        else
+            updateWidgetListPos = nil        
+        end    
+    end
 end
 
 function widget:Shutdown()

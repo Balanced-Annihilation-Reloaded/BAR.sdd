@@ -477,9 +477,6 @@ local function sTab(_,tabName)
     if not tabs[tabName] then return end
     if Settings.tabSelected then mainMenu:RemoveChild(tabs[Settings.tabSelected]) end
     
-    if tabName=='Interface' then makeWidgetList() end
-    if tabName=='Graphics' then LoadSpringSettings() end
-    
     mainMenu:AddChild(tabs[tabName])
     Settings.tabSelected = tabName
 end

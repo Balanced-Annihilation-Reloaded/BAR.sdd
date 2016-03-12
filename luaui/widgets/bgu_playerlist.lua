@@ -948,8 +948,8 @@ function NewAIPlayer(tID)
     players[pID].colour = {r,g,b}
     players[pID].dark = IsDark(r,g,b)
 
-    players[pID].plainName = shortName 
-    players[pID].name = (InlineColour(players[pID].colour) or "") .. shortName --TODO use 'original' colours?
+    players[pID].plainName = name 
+    players[pID].name = (InlineColour(players[pID].colour) or "") .. name --TODO use 'original' colours?
     players[pID].deadname = (InlineColour(players[pID].colour) or "") .. deadPlayerName    
 
     -- rank, country and skill are nil

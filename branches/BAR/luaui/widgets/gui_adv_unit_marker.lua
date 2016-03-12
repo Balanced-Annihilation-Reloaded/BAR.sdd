@@ -2,7 +2,7 @@ function widget:GetInfo()
     return {
         name      = "Adv. Unit Marker",
         version   = "1.0",
-        desc      = "Marks spotted units of special interest (nukes, anti-nukes, etc)",
+        desc      = "Marks enemy units of interest (nukes, anti-nukes, etc)",
         author    = "LEDZ",
         date      = "2012.10.01",
         license   = "GNU GPL v2",

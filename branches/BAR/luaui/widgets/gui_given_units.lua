@@ -1,7 +1,7 @@
 function widget:GetInfo()
    return {
       name      = "Given Units",
-      desc      = "Tags given units with 'new' icon",
+      desc      = "Tags given units with shiny 'new' icon",
       author    = "Floris",
       date      = "24.04.2014",
       license   = "GNU GPL, v2 or later",

@@ -1,7 +1,7 @@
 function widget:GetInfo()
     return {
         name = "Hotkey Y-Z Swap",
-        desc = "Swaps Y and Z keys in BARs hotkeys (useful for AZERTY keyboards)" ,
+        desc = "Swaps Y and Z hotkeys (useful for AZERTY keyboards)" ,
         author = "Beherith, Bluestone",
         date = "",
         license = "GNU LGPL, v2.1 or later",

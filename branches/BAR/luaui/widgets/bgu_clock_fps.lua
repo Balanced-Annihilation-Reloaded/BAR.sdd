@@ -47,8 +47,8 @@ local function loadOptions()
         name = widget:GetInfo().name,
         children = {
             Chili.ComboBox:New{
-                x        = '10%',
-                width    = '80%',
+                x        = '0%',
+                width    = '100%',
                 items    = {"Ingame time", "System clock"},
                 selected = (clockType=="ingame" and 1) or 2,
                 OnSelect = {

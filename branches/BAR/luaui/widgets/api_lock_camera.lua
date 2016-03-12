@@ -3,7 +3,7 @@ local versionNumber = "v2.91"
 function widget:GetInfo()
     return {
         name = "Lock Camera",
-        desc = "Allows you to lock onto another player's camera\n",
+        desc = "Provides functionality to watch other players cameras",
         author = "Evil4Zerggin, BrainDamage",
         date = "16 January 2009",
         license = "GNU LGPL, v2.1 or later",

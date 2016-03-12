@@ -1,9 +1,9 @@
 function widget:GetInfo()
     return {
     name      = "Unit Statistics", 
-    desc      = "Receive unit damage stats for the game, write to file in /luaui/config \nIf your experiment needs statistics, you should have done a better experiment",
+    desc      = "Writes various unit stats to /luaui/config/",
     author    = "Bluestone",
-    date      = "", 
+    date      = "If your experiment needs statistics, you should have done a better experimen", 
     license   = "GNU GPL, v3 or later",
     layer     = 0,
     enabled   = true,

@@ -1,7 +1,7 @@
 function widget:GetInfo()
    return {
       name      = "Resurrection Halos",
-      desc      = "Draws halos on ressurected units",
+      desc      = "Draws halos on recently resurrected units",
       author    = "Floris",
       date      = "24.04.2014",
       license   = "GNU GPL, v2 or later",

@@ -17,7 +17,7 @@ function widget:GetInfo()
   return {
     name      = "Build ETA",
     desc      = "Displays estimated time of arrival for units under construction",
-    author    = "trepan (modified by jK)",
+    author    = "trepan, jK",
     date      = "Feb, 2008",
     license   = "GNU GPL, v2 or later",
     layer     = -1,

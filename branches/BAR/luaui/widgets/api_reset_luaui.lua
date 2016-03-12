@@ -38,16 +38,25 @@ function widget:TextCommand(s)
     end    
     
     if n==1 and token[1]=="disable_user_widgets" then
-        Spring.Echo("LuaUI Reset Requested")
+        Spring.Echo("LuaUI User Widget Disable Requested")
         widgetHandler.__allowUserWidgets = false        
         Spring.SendCommands("luaui reload")    
     end    
     
     if n==1 and token[1]=="enable_user_widgets" then
-        Spring.Echo("LuaUI Reset Requested")
+        Spring.Echo("LuaUI User Widget Enable Requested")
         widgetHandler.__allowUserWidgets = true
         Spring.SendCommands("luaui reload")    
     end    
+    
+    if n==1 and token[1]=="toggle_user_widgets" then
+        if widgetHandler.allowUserWidgets then
+            Spring.SendCommands("luaui disable_user_widgets")
+        else
+            Spring.SendCommands("luaui enable_user_widgets")        
+        end
+    end    
+
 end
 
 --------------------------------------------------------------------------------

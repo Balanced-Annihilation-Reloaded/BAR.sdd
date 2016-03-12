@@ -2,7 +2,7 @@ function widget:GetInfo()
   return {
     name      = "Camera Remember",
     desc      = "Remembers the camera mode",
-    author    = "Otto Von Lichtenstein",
+    author    = "Bluestone",
     date      = "April 1st",
     license   = "GNU GPL, v2 or later",
     layer     = 0,

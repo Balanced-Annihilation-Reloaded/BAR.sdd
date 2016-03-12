@@ -3,7 +3,7 @@ local versionNumber = "v2.3"
 function widget:GetInfo()
   return {
     name      = "Point Tracker",
-    desc      = "Tracks recently placed map points",
+    desc      = "Tracks recently placed map points, press f3 to cycle",
     author    = "Evil4Zerggin",
     date      = "29 December 2008",
     license   = "GNU LGPL, v2.1 or later",

@@ -14,7 +14,7 @@
 function widget:GetInfo()
   return {
     name      = "Factory Auto-Repeat",
-    desc      = "Sets (newly built) factories to automatically repeat their build queues",
+    desc      = "Sets factories to automatically repeat their build queues",
     author    = "TheFatController",
     date      = "Mar 20, 2007",
     license   = "GNU GPL, v2 or later",
@@ -32,6 +32,12 @@ function widget:Initialize()
   if spec then
     widgetHandler:RemoveWidget()
     return false
+  end
+  
+  local units = Spring.GetAllUnits()
+  for _,unitID in ipairs(units) do
+    local unitDefID = Spring.GetUnitDefID(unitID)
+    widget:UnitFinished(unitID, unitDefID)  
   end
 end
 

@@ -107,9 +107,9 @@ function widget:Initialize()
             title = 'LOS Colors',
             name = widget:GetInfo().name,
             children = {
-                Chili.Checkbox:New{caption='Show radar as spec',x='10%',width='80%',
+                Chili.Checkbox:New{caption='Show radar as spec',x='0%',width='100%',
                         checked=options.showRadarAsSpec,OnChange={function() ToggleRadarAsSpec() end}}, 
-                Chili.Checkbox:New{caption='Extra saturation',x='10%',width='80%',
+                Chili.Checkbox:New{caption='Extra saturation',x='0%',width='100%',
                         checked=options.extraSaturation,OnChange={function() ToggleExtraSaturation() end}},
         }
     }

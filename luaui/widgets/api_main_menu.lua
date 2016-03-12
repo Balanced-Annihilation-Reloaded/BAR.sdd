@@ -1059,10 +1059,10 @@ local function globalize()
     --[[
         -- Example usage for AddWidgetOption(obj)
         obj = {
-            title = 'My Title',
-            name = widget:GetInfo().name, -- required!
+            name = widget:GetInfo().name, -- **required**
             children = {
-                Chili.Checkbox:New{caption='An Option', x='10%', width='80%', checked=<initial value from widget>, OnChange={function() <effect of changing option in widget>; end}},
+                Chili.Checkbox:New{caption='An Option', x='0%', width='100%', checked=<initial value from widget>, OnChange={function() <effect of changing option in widget>; end}},
+                Chili.Checkbox:New{caption='Another Option', x='0%', width='100%', checked=<initial value from widget>, OnChange={function() <effect of changing option in widget>; end}},
             }
         }                
     ]]

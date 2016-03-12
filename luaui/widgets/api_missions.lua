@@ -1,7 +1,7 @@
 function widget:GetInfo()
   return {
     name      = "Mission Framework",
-    desc      = "Configures BAR appropriately when a mission is run\nDisplays the missions GUI",
+    desc      = "Configures BAR appropriately when a mission is run and displays the missions GUI",
     author    = "Bluestone",
     license   = "GPLv3",
     version   = "1.0",

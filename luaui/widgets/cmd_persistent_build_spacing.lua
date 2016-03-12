@@ -2,7 +2,7 @@ function widget:GetInfo()
   return {
     name      = "Persistent Build Spacing",
     desc      = "Recalls last build spacing set for each building",
-    author    = "Niobium & DrHash",
+    author    = "Niobium",
     date      = "Sep 6, 2011",
     license   = "GNU GPL, v3 or later",
     layer     = 0,

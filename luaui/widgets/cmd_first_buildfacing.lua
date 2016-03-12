@@ -3,7 +3,7 @@ function widget:GetInfo()
   return {
     name      = "First Build Facing",
     desc      = "Set initial build-facing to be towards the map center",
-    author    = "zwzsg with lotsa help from #lua channel",
+    author    = "zwzsg",
     date      = "October 26, 2008",
     license   = "Free",
     layer     = 0,

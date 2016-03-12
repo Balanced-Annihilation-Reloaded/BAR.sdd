@@ -631,8 +631,8 @@ function SetupMenuOptions()
         title = "Highlight Units",
         name = widget:GetInfo().name,
         children = {
-            Chili.Label:New{x='5%',width='95%',height=15, caption="Selected unit highlights:"},
-            Chili.Control:New{x='10%',width='80%',autoSize=true,padding={0,0,0,0},
+            Chili.Label:New{x='0%',width='100%',height=15, caption="Selected unit highlights:"},
+            Chili.Control:New{x='5%',width='95%',autoSize=true,padding={0,0,0,0},
                 children = {
                     Chili.TextBox:New{x='0%',width='50%',text="Colour mode:",padding={0,3,0,0}},
                     Chili.ComboBox:New{x='50%',width='50%',
@@ -649,17 +649,17 @@ function SetupMenuOptions()
                         }
                     }                
             },
-            Chili.Checkbox:New{caption='Show allies selected units',x='10%',width='80%',
+            Chili.Checkbox:New{caption='Show allies selected units',x='5%',width='95%',
                     checked=options.selected.showAllySelected, OnChange={function() options.selected.showAllySelected = not options.selected.showAllySelected; UpdateEverything(); end}},
-            Chili.Checkbox:New{caption='Thickened lines',x='10%',width='80%',
+            Chili.Checkbox:New{caption='Thickened lines',x='5%',width='95%',
                     checked=options.selected.useThickLines, OnChange={function() options.selected.useThickLines = not options.selected.useThickLines; UpdateEverything(); end}},
-            Chili.Checkbox:New{caption='Use XRay shader',x='10%',width='80%',
+            Chili.Checkbox:New{caption='Use XRay shader',x='5%',width='95%',
                     checked=options.selected.useXRayShader,OnChange={function() options.selected.useXRayShader = not options.selected.useXRayShader; UpdateEverything(); end}},
 
-            Chili.Label:New{x='5%',width='95%',height=15, caption="Unit platters:"},
-            Chili.Checkbox:New{caption='Show platters',x='10%',width='80%',
+            Chili.Label:New{x='0%',width='100%',height=15, caption="Unit platters:"},
+            Chili.Checkbox:New{caption='Show platters',x='5%',width='95%',
                     checked=options.platter.showPlatters, OnChange={function() options.platter.showPlatters = not options.platter.showPlatters; UpdateEverything(); end}}, 
-            Chili.Control:New{x='10%',width='80%',autoSize=true,padding={0,0,0,0},
+            Chili.Control:New{x='5%',width='95%',autoSize=true,padding={0,0,0,0},
                 children = {
                     Chili.TextBox:New{x='0%',width='50%',text="Colour mode:",padding={0,3,0,0}},
                     Chili.ComboBox:New{x='50%',width='50%',
@@ -677,7 +677,7 @@ function SetupMenuOptions()
                         }
                     }                
             },
-            Chili.Control:New{x='10%',width='80%',autoSize=true,padding={0,0,0,0},
+            Chili.Control:New{x='5%',width='95%',autoSize=true,padding={0,0,0,0},
                 children = {
                     Chili.TextBox:New{x='0%',width='50%',text="Ally platters:",padding={0,3,0,0}},
                     Chili.ComboBox:New{x='50%',width='50%',

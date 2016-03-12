@@ -4,8 +4,7 @@ include("keysym.h.lua")
 function widget:GetInfo()
   return {
     name      = "Transport AI",
-    desc      = "Automatically transports units going to factory waypoint.\n" ..
-                "Adds embark=call for transport and disembark=unload from transport command",
+    desc      = "Automatically transports newly built units to factory waypoints",
     author    = "Licho",
     date      = "1.11.2007",
     license   = "GNU GPL, v2 or later",

@@ -3,9 +3,9 @@
 
 function widget:GetInfo()
   return {
-    name      = "ChiliInspector",
-    desc      = "",
-    author    = "",
+    name      = "Chili Inspector",
+    desc      = "Inspects the Chili control hierarchy",
+    author    = "jK",
     date      = "2013",
     license   = "GPLv2",
     layer     = 3,

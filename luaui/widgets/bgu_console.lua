@@ -171,8 +171,8 @@ local function loadOptions()
         children = {
             Chili.Checkbox:New{
                 caption  = 'Auto-Hide Chat',
-                x        = '10%',
-                width    = '80%',
+                x        = '0%',
+                width    = '100%',
                 checked  = cfg.hideChat,
                 OnChange = {
                     function()
@@ -185,8 +185,8 @@ local function loadOptions()
             
             Chili.Label:New{caption='Delay (seconds)'},
             Chili.Trackbar:New{
-                x        = '10%',
-                width    = '80%',
+                x        = '0%',
+                width    = '100%',
                 min      = 1,
                 max      = 10,
                 step     = 1,

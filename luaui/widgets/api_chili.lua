@@ -13,7 +13,6 @@ function widget:GetInfo()
 		enabled   = true,  --  loaded by default?
 		handler   = true,
 		api       = true,
-		hidden    = true,
 	}
 end
 

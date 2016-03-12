@@ -14,13 +14,12 @@ local spec,_ = Spring.GetSpectatingState()
 function widget:PlayerChanged()
   spec,_ = Spring.GetSpectatingState()
   if spec then
-    Spring.Echo("MOOOO")
     widgetHandler:RemoveWidget()
   end
 end
 
 
-
+local options = {}
 local factoryHoldPos = false
 
 function widget:Initialize()
@@ -32,8 +31,8 @@ function widget:Initialize()
         name = widget:GetInfo().name,
         children = {
             Chili.ComboBox:New{
-                x        = '10%',
-                width    = '80%',
+                x        = '5%',
+                width    = '95%',
                 items    = {"Auto units (arty, aa, etc)", "All factories except air"},
                 selected = options.factoryHoldPos and 2 or 1,
                 OnSelect = {
@@ -107,7 +106,6 @@ function widget:UnitCreated(unitID, unitDefID, unitTeam)
   
   -- facs
   if factoryHoldPos and unitTeam == Spring.GetMyTeamID() and holdPosFacs[unitDefID] then
-    Spring.Echo("f",unitID)
     Spring.GiveOrderToUnit(unitID, CMD.MOVE_STATE, { 0 }, {})
   end
 end

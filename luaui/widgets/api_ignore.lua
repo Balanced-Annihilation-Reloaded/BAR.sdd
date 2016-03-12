@@ -1,7 +1,7 @@
 function widget:GetInfo()
     return {
     name      = "Ignore List", --version 4.1
-    desc      = "Adds /ignoreplayer <name>, /unignoreplayer <name>, /ignorelist\n(puts ignoredPlayers table into WG)",
+    desc      = "Adds /ignoreplayer <name>, /unignoreplayer <name>, /ignorelist, and puts ignoredPlayers table into WG",
     author    = "Bluestone",
     date      = "June 2014", --last change September 10,2009
     license   = "GNU GPL, v3 or later",

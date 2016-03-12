@@ -13,7 +13,7 @@ function widget:GetInfo()
   return {
     name      = "Health Bars",
     desc      = "Gives various informations about units in form of bars",
-    author    = "jK, (whistles and bells added by Floris)",
+    author    = "jK, Floris",
     date      = "2009",
     license   = "GNU GPL, v2 or later",
     layer     = -10,

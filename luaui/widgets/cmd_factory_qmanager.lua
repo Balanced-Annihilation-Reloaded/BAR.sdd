@@ -4,7 +4,7 @@ local versionNumber = 1.4
 function widget:GetInfo()
   return {
     name      = "Factory Q Manager",
-    desc      = "Saves and Loads Factory Queues. Load: Meta+[0-9], Save: Alt+Meta+[0-9]",
+    desc      = "Saves and Loads Factory Queues, use Meta+[0-9] to load and Alt+Meta+[0-9] to save",
     author    = "very_bad_soldier",
     date      = "Jul 6, 2008",
     license   = "GNU GPL, v2 or later",

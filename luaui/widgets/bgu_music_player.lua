@@ -48,7 +48,8 @@ local playNew = true
 local fadeOut = false
 local musicType = 'peace'
 local curTrack = {}
-local disabledTracks = {}
+local options = {}
+options.disabledTracks = {}
 
 local color = {
     war     = {1,0,0,1},
@@ -75,8 +76,6 @@ local music_credits = VFS.LoadFile('credits_music.txt')
 ----------------------------------------------------------------------------------------
 local function loadOptions()
     local typeTitle = {peace = "Peace", coldWar = "Cold War", war = "War"}    
-    disabledTracks = Menu.Load('disabledTracks') or {}
-    Menu.Save{["disabledTracks"]=disabledTracks}
 
     local control = Chili.Control:New{
         x        = 0,
@@ -100,8 +99,7 @@ local function loadOptions()
     
     local toggleTrack = function(self)
         if curTrack.title == self.caption then playNew = true end
-        disabledTracks[self.caption] = self.checked
-        Menu.Save{disabledTracks=disabledTracks}
+        options.disabledTracks[self.caption] = self.checked
         
         if self.checked then
             self.font.color        = {1,0,0,1}
@@ -127,8 +125,8 @@ local function loadOptions()
                 x         = '10%',
                 textalign = 'left',
                 boxalign  = 'right',
-                checked   = not disabledTracks[title],
-                font      = disabledTracks[title] and red or green,
+                checked   = not options.disabledTracks[title],
+                font      = options.disabledTracks[title] and red or green,
                 OnChange  = {toggleTrack}
             }
         end
@@ -328,7 +326,7 @@ local function playNewTrack()
     local track
     repeat
         track = trackList[math.random(1, #trackList)]
-    until not disabledTracks[track.title] and (track.filename ~= curTrack.filename)
+    until not options.disabledTracks[track.title] and (track.filename ~= curTrack.filename)
     
     curTrack = track
     
@@ -470,4 +468,14 @@ end
 
 function widget:Shutdown()
     spStopSoundStream()                                           
+end
+
+function widget:GetConfigData()
+    return options
+end
+
+function widget:SetConfigData(data)
+    if data then
+        options = data
+    end
 end

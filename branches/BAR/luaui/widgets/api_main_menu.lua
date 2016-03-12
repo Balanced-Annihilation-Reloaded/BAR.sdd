@@ -107,6 +107,8 @@ local wCategories = {
     ['test']      = {label = 'Test Widgets',list = {}, pos = 12, adv = true},
     ['ungrouped'] = {label = 'Ungrouped',   list = {}, pos = 13, adv = true},
 }
+local inv_widgetCat_pos = {}
+local num_widgetCat
 ----------------------------
 --
 local function setCursor(cursorSet)
@@ -160,26 +162,45 @@ end
 
 ----------------------------
 -- Decides which group each widget goes into
+local sortedWidgetList
 local function sortWidgetList()
-    local wFilterString = string.lower(wFilterString or '')
-    for name,wData in pairs(widgetHandler.knownWidgets) do
+    if not fullyLoaded then return end -- we have to wait until after initialize, because the widgetHandler hasn't loaded all the widgets at that point!
+    if sortedWidgetList then return end
+    sortedWidgetList = true
 
+    -- give each widget a cat, and put into its cat.list
+    for name,wData in pairs(widgetHandler.knownWidgets) do
+        groupWidget(name,wData)
+    end 
+    
+    -- sort each cat.list
+    local ascendingName = function(a,b) return a.name<b.name end
+    for _,cat in pairs(wCategories) do
+        table.sort(cat.list, ascendingName)
+    end
+    
+    -- get order of categories
+    inv_widgetCat_pos = {}
+    num_widgetCat = 0
+    for cat_name,cat in pairs(wCategories) do
+        if cat.pos then
+            inv_widgetCat_pos[cat.pos] = cat_name
+            num_widgetCat = num_widgetCat + 1
+        end
+    end
+end
+
+
+--[[
         -- Only adds widget to group if it matches an enabled filter
+        local wFilterString = string.lower(wFilterString or '')
         if (Settings.searchWidgetName and string.lower(name or ''):find(wFilterString))
         or (Settings.searchWidgetDesc and string.lower(wData.desc or ''):find(wFilterString))
         or (Settings.searchWidgetAuth and string.lower(wData.author or ''):find(wFilterString)) then
             groupWidget(name,wData)
         end
 
-        -- Alphabetizes widgets by name in ascending order
-        for _,cat in pairs(wCategories) do
-            local ascendingName = function(a,b) return a.name<b.name end
-            table.sort(cat.list,ascendingName)
-        end
-
-    end
-end
-
+]]
 
 
 ----------------------------
@@ -187,7 +208,7 @@ end
 
 function GetTopVisibleControlOfWidgetList()    
     -- get the name of the control which is topmost within the visible part of the widget selector scrollstack *and* is a widget checkbox
-    -- BUT we need to forgoet about the font colour part of control name, because there is one cached object for each colour!
+    -- BUT we need to alignNames instead of names, to forget about the font colour part of control name (there is one cached widgetControl for each font colour!)
     local widgetList = tabs['Interface']:GetChildByName('widgetList')
     if not widgetList then return nil end --guard against when we use the main menu to remove itself
     local stack = widgetList.children[1]
@@ -234,8 +255,7 @@ local widgetControls = {}
 local widgetAuthorControls = {}
 local widgetDescsControls = {}
 
-function GetWidgetControl(name, fontColour, enabled, active, fromZip, showDescs, desc)
-    
+function GetWidgetControl(name, fontColour, enabled, active, fromZip, showDescs, desc)   
     local controlName = name  .. "_control" .. "_" .. fontColour
     local alignName = name  .. "_control"
     if not widgetControls[controlName] then
@@ -317,43 +337,37 @@ function GetWidgetDescsControl(name, desc)
     return widgetAuthorControls[controlName]
 end
 
+
 function makeWidgetList(layoutChange)
     -- remake the widget list
     -- layoutChange should be set to true if the callee has changed something (e.g. show/hide descs) that will change the heights of the controls
-
-    sortWidgetList()
+    local showDescs = Settings.showWidgetDescs
+    local showAuthors = Settings.showWidgetAuthors
+    local showAdv = (Settings.widgetSelectorMode=="advanced")
     
+    -- construct and sort the widget list, if needed
+    sortWidgetList()
+    if not sortedWidgetList then return end
+
+    -- remove previous children
     local widgetList = tabs['Interface']:GetChildByName('widgetList') --scrollPanel 
     local stack = widgetList.children[1] --stackPanel
     if layoutChange and #stack.children>0 then
         Settings["widgetScroll"] = GetTopVisibleControlOfWidgetList()
     end
     stack:ClearChildren()
-
-    -- Get order of categories
-    local inv_pos = {}
-    local num_cats = 0
-    for cat_name,cat in pairs(wCategories) do
-        if cat.pos then
-            inv_pos[cat.pos] = cat_name
-            num_cats = num_cats + 1
-        end
-    end
-    
-    local showDescs = Settings.showWidgetDescs
-    local showAuthors = Settings.showWidgetAuthors
-    local showAdv = (Settings.widgetSelectorMode=="advanced")
-    
-    -- First loop adds group label
-    for i=1, num_cats do
+        
+    -- add new children
+    -- Outer loop adds cat labels
+    for i=1, num_widgetCat do
         -- Get group of pos i
-        local cat = wCategories[inv_pos[i]]
+        local cat = wCategories[inv_widgetCat_pos[i]]
         local list = cat.list
         if #list>0 and (showAdv or not cat.adv) then
             stack:AddChild(Chili.Line:New{width="50%",name=cat.label.."_line1", alignName = cat.label.."_line1"})
-            stack:AddChild(Chili.Label:New{caption = turqoiseStr..cat.label, x=0, font={shadow=false,size=18}, alignName = cat.label})
+            stack:AddChild(Chili.Label:New{caption = turqoiseStr..cat.label, x=0, font={shadow=false,size=18}, alignName = cat.label .. "_label"})
             stack:AddChild(Chili.Line:New{width="50%",name=cat.label.."_line2", alignName = cat.label.."_line2"})
-            -- Second loop adds each widget
+            -- Inner loop adds widgets in cat
             for b=1,#list do
                 local enabled = (widgetHandler.orderList[list[b].name] or 0)>0
                 local name = list[b].name
@@ -380,7 +394,6 @@ function makeWidgetList(layoutChange)
                 end
             end
         end
-        cat.list = {}
     end    
     stack:AddChild(Chili.Line:New{width="50%",name="cat_bottomline"})
     

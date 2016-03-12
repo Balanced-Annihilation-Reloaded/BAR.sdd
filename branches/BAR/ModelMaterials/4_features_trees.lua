@@ -22,12 +22,14 @@ local materials = {
 			"#define use_normalmapping",
 			--"#define flip_normalmap",
 			"#define deferred_mode 0",
+			"#define use_shadows",
 		},
 		deferredDefinitions = {
 			--"#define use_perspective_correct_shadows",
 			"#define use_normalmapping",
 			--"#define flip_normalmap",
 			"#define deferred_mode 1",
+			"#define use_shadows",
 		},
 		force     = false, --// always use the shader even when normalmapping is disabled
 		shaderPlugins = {

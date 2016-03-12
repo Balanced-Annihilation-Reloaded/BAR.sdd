@@ -21,12 +21,17 @@ local spGetDrawFrame = Spring.GetDrawFrame
 
 local Chili, mainMenu, menuTabs, menuBtn
 
+local tabs = {}
+local credits = VFS.LoadFile('credits_game.txt')
+local changelog = VFS.LoadFile('changelog.txt')
+local NewbieInfo = include('configs/NewbieInfo.lua')
+local HotkeyInfo = include('configs/HotkeyInfo.lua')
+local amNewbie = (Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'isNewbie') == 1)
+
 local Settings = {}
 local DefaultSettings = {}
 
-local widgetOptions = {} -- hold the chili controls for widgets custom options
- 
-local fullyLoaded = false -- set to true at the end of widget:Initialize 
+ local fullyLoaded = false -- set to true at the end of widget:Initialize 
 
 local whiteStr = '\255\255\255\255'
 local greenStr = '\255\1\255\1'
@@ -80,17 +85,12 @@ function SetDefaultsIfNil()
     end
 end
 
-local updateWidgetListPos = false -- we track the widget selector posn by the name of the first visible control -> if we want to position after a redraw, chili needs a frame to sort out its y coords 
 
 ------------------------------------
 local wFilterString = ""
 local widgetList = {}
-local tabs = {}
-local credits = VFS.LoadFile('credits_game.txt')
-local changelog = VFS.LoadFile('changelog.txt')
-local NewbieInfo = include('configs/NewbieInfo.lua')
-local HotkeyInfo = include('configs/HotkeyInfo.lua')
-local amNewbie = (Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'isNewbie') == 1)
+local updateWidgetListPos = false -- we track the widget selector posn by the name of the first visible control -> if we want to position after a redraw, chili needs a frame to sort out its y coords 
+local widgetOptions = {} -- hold the chili controls for widgets custom options
 
 local wCategories = {
     ['unit']      = {label = 'Units',       list = {}, pos = 1,}, -- relates to individual units or unit types

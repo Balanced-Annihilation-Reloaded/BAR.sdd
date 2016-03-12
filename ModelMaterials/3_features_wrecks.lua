@@ -14,6 +14,7 @@ local materials = {
 			"#define deferred_mode 0",
 			--"#define use_vertex_ao",
 			"#define SPECULARMULT 6.0",
+			"#define use_shadows",
 		},
 		deferredDefinitions = {
 			--"#define use_perspective_correct_shadows",
@@ -22,6 +23,7 @@ local materials = {
 			"#define deferred_mode 1",
 			--"#define use_vertex_ao",
 			"#define SPECULARMULT 6.0",
+			"#define use_shadows",
 		},
 		force     = false, --// always use the shader even when normalmapping is disabled
 		usecamera = false,

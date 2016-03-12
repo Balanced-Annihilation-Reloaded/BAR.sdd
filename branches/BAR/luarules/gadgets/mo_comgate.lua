@@ -23,17 +23,26 @@ end
 if (gadgetHandler:IsSyncedCode()) then
 
 local hiddenUnits = {}
+local teleportUnits = {}
 local initdone = false
 local gameStart = false
 local gaiaTeamID = Spring.GetGaiaTeamID()
 local armcomDefID = UnitDefNames.armcom.id
+local corcomDefID = UnitDefNames.corcom.id
+local teleportDefID = UnitDefNames.teleport.id
 
 function gadget:UnitCreated(unitID, unitDefID, teamID)
-    if (not gameStart) then
-        local x,y,z = Spring.GetUnitPosition(unitID)
-        hiddenUnits[unitID] = {x,y,z,teamID,unitDefID}
-        Spring.SetUnitNoDraw(unitID,true) 
+  if (not gameStart) then
+    local x,y,z = Spring.GetUnitPosition(unitID)
+    hiddenUnits[unitID] = {x,y,z,teamID}
+    Spring.SetUnitNoDraw(unitID,true) 
+  else
+    if unitDefID == teleportDefID then
+      Spring.SetUnitNoDraw(unitID,true)
+      Spring.SetUnitNoSelect(unitID,true)
+      teleportUnits[unitID] = true
     end
+  end
 end
 
 function gadget:GameFrame(n)
@@ -43,18 +52,15 @@ function gadget:GameFrame(n)
   end
   if (n == 6) then
     for unitID,data in pairs(hiddenUnits) do
-      if data[5] == armcomDefID then
-        local env = Spring.UnitScript.GetScriptEnv(unitID)
-        Spring.UnitScript.CallAsUnit(unitID,env.Teleport)
-      else
-        Spring.CallCOBScript(unitID, "TeleportControl", 0)
-      end
-      --SendToUnsynced("gatesound", data[4], data[1], data[2]+90, data[3])
+      Spring.CreateUnit(teleportDefID,data[1],data[2],data[3],90,data[4],nil)
     end
   end
   if (n == 140) then
     for unitID,_ in pairs(hiddenUnits) do
     Spring.SetUnitNoDraw(unitID,false)
+    end
+    for unitID,_ in pairs(teleportUnits) do
+      Spring.DestroyUnit(unitID,false,true)
     end
   end
   if (n == 170) then

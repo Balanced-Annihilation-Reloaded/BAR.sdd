@@ -485,17 +485,22 @@ local function sTab(_,tabName)
 end
 
 ----------------------------
--- Rebuilds widget list with new filter
-local function addFilter()
+-- widget filter (search) 
+local function SetWidgetFilter()
     local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
     wFilterString = editbox.text or ""
     makeWidgetList()
-    editbox:SetText('')
+end
+
+local function ClearWidgetFilter()
+    local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
+    wFilterString = ""
+    editbox:SetText("")
+    makeWidgetList()
 end
 
 ----------------------------
 -- Saves a variable in the settings array
--- todo: remove this
 local function Save(index, data)
 
     -- New behavior, Save{ key = value, key2 = value2 }
@@ -504,7 +509,7 @@ local function Save(index, data)
             Settings[key] = value
         end
 
-    -- Old behavior, Save('key', value)
+    -- Old behavior, Save('key', value) --remove
     else
         Spring.Echo("Use Save{key=value,key2=value2,etc..} instead of Save('key', value) [" .. (key or "") .. "]")
         local old = Settings[index]
@@ -920,9 +925,9 @@ local function createInterfaceTab()
         children = {
             addScrollStack{name='widgetList',x='40%',width='60%',smoothScrollTime=0.25,verticalSmartScroll=true},
             
-            Chili.Label:New{caption='-- Widget Search --',x='2%',width='35%',align = 'center',y=0},
+            Chili.Label:New{caption='-- Widget Filter --',x='2%',width='35%',align = 'center',y=0},
             Chili.EditBox:New{name='widgetFilter',x=0,y=23,width = '27%',text=' Enter search term...',OnMouseDown = {function(obj) obj:SetText('') end}},
-            Chili.Button:New{x='27%',y=22,height=22,width='13%',caption='Search',OnMouseUp={addFilter}},
+            Chili.Button:New{x='27%',y=22,height=22,width='13%',caption='Search',OnMouseUp={SetWidgetFilter}},
             Chili.Control:New{x='2%', y=46, width='35%',autoSize=true,padding={0,0,0,0},
                 children = {
                     Chili.Checkbox:New{caption='Search Name',x=0,y=0,width='100%',textalign='left',boxalign='right',checked=Settings.searchWidgetName,
@@ -934,13 +939,14 @@ local function createInterfaceTab()
                     Chili.Checkbox:New{caption='Search Author',x=0,y=34,width='100%',textalign='left',boxalign='right',checked=Settings.searchWidgetAuth,
                         OnChange = {function() Settings.searchWidgetAuth = not Settings.searchWidgetAuth end}
                     },
+                    Chili.Button:New{x='6%',y=52,height=22,width='90%',caption='Clear Search',OnMouseUp={ClearWidgetFilter}},
                 },
             },
             
-            Chili.Line:New{width='40%',y=98},
+            Chili.Line:New{width='40%',y=123},
 
-            Chili.Label:New{caption='-- Widget Display --',x='2%',width='35%',align = 'center',y=108},
-            Chili.Control:New{x='2%', y=131, width='35%',autoSize=true,padding={0,0,0,0},
+            Chili.Label:New{caption='-- Widget Display --',x='2%',width='35%',align = 'center',y=136},
+            Chili.Control:New{x='2%', y=160, width='35%',autoSize=true,padding={0,0,0,0},
                 children = {
                     Chili.Checkbox:New{caption='Show Descriptions',x=0,y=0,width='100%',textalign='left',boxalign='right',checked=Settings.showWidgetDescs ,
                         OnChange = {
@@ -976,10 +982,10 @@ local function createInterfaceTab()
             },
             --fixme: shortcuts to cats?
             
-            Chili.Line:New{width='40%',y=204},
+            Chili.Line:New{width='40%',y=233},
 
-            Chili.Label:New{caption='-- Skin Settings --',x='2%',width='35%',align = 'center',y=214},
-            Chili.Control:New{x='2%', y=237, width='35%',autoSize=true,padding={0,0,0,0},
+            Chili.Label:New{caption='-- Skin Settings --',x='2%',width='35%',align = 'center',y=247},
+            Chili.Control:New{x='2%', y=272, width='35%',autoSize=true,padding={0,0,0,0},
                 children = {
                     Chili.TextBox:New{x='0%',width='40%',text="Colour mode:"},
                     Chili.ComboBox:New{x='40%',width='60%',
@@ -1156,7 +1162,7 @@ end
 function widget:KeyPress(key,mod)
     local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
     if key==13 and editbox.state.focused then
-        addFilter()
+        SetWidgetFilter()
         return true
     end
 end

@@ -157,14 +157,6 @@ local function loadWindow()
 end
 
 local function loadOptions()
-    for key,_ in pairs(cfg) do
-        local value = Menu.Load(key)
-        if value or type(value)=='boolean' then 
-            cfg[key] = value 
-        end
-        Menu.Save(cfg)
-    end
-
     Menu.AddWidgetOption{
         title = 'Chat',
         name = widget:GetInfo().name,
@@ -177,7 +169,6 @@ local function loadOptions()
                 OnChange = {
                     function()
                         cfg.hideChat = not cfg.hideChat
-                        Menu.Save{hideChat=cfg.hideChat}
                         if not cfg.hideChat then showChat() end
                     end
                 }
@@ -191,7 +182,7 @@ local function loadOptions()
                 max      = 10,
                 step     = 1,
                 value    = cfg.msgTime,
-                OnChange = {function(_,value) cfg.msgTime=value; Menu.Save{msgTime=value} end}
+                OnChange = {function(_,value) cfg.msgTime=value end}
             },            
         }
     }
@@ -407,4 +398,14 @@ function widget:KeyPress(key, mods, isRepeat)
 end
 
 function widget:Shutdown()
+end
+
+function widget:GetConfigData()
+    return cfg
+end
+
+function widget:SetConfigData(data)
+    if data then
+        cfg = data
+    end
 end

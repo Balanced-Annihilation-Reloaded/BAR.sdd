@@ -367,6 +367,7 @@ end
 
 
 function makeWidgetList(layoutChange)
+    Spring.Echo("MWL")
     -- remake the widget list
     -- layoutChange should be set to true if the callee has changed something (e.g. show/hide descs) that will change the heights of the controls
     local showDescs = Settings.showWidgetDescs
@@ -392,6 +393,7 @@ function makeWidgetList(layoutChange)
         local cat = wCategories[inv_widgetCat_pos[i]]
         local list = cat.list
         if #list>0 and (showAdv or not cat.adv) then
+            stack:AddChild(Chili.Control:New{width="100%",height=1}) -- dummy to make sure none of the "real" controls have y=0
             stack:AddChild(Chili.Line:New{width="50%",name=cat.label.."_line1", alignName = cat.label.."_line1"})
             stack:AddChild(Chili.Label:New{caption = turqoiseStr..cat.label, x=0, font={shadow=false,size=18}, alignName = cat.label .. "_label"})
             stack:AddChild(Chili.Line:New{width="50%",name=cat.label.."_line2", alignName = cat.label.."_line2"})

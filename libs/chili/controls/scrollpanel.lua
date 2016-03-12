@@ -66,7 +66,7 @@ function ScrollPanel:SetScrollPos(x,y,inview,smoothscroll)
     end
     self.scrollPosY = y
     if (self.contentArea) then
-      self.scrollPosY = clamp(0, self.contentArea[4] - self.clientArea[4], self.scrollPosY)
+      self.scrollPosY = clamp(0, self.contentArea[4] - self.clientArea[4] - 1, self.scrollPosY) -- workaround https://github.com/jk3064/chiliui/issues/46
     end
   end
 

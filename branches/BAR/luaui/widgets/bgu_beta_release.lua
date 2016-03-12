@@ -457,7 +457,7 @@ local function AddToMenu()
         }    
     }
     
-    WG.MainMenu.AddControl('Beta Release', container, 100)
+    WG.MainMenu.AddTab('Beta Release', container, 100)
 end
 
 ------------

@@ -40,6 +40,14 @@ local turqoiseStr = "\255\48\213\200"
 local lilacStr = "\255\200\162\200"
 local greyStr = '\255\150\150\150'
 
+
+------------------------------------
+-- loading Spring settings
+
+local waterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- value -> listID (ugh)
+local shadowConvert_ID = {[0]=1,[1]=2,[2]=3}
+--local shadowMapSizeConvert_ID = {[32]=1,[1024]=2,[2048]=3,[4096]=4} 
+
 function LoadSpringSettings()
     -- Load relevant things from springsettings (overwrite our 'local' copy of these settings)
     -- Listed out because lua and Spring treat bool<->int conversion differently
@@ -85,8 +93,30 @@ function SetDefaultsIfNil()
     end
 end
 
+----------------------------
+-- load cursors 
+local function setCursor(cursorSet)
+    local cursorNames = {
+        'cursornormal','cursorareaattack','cursorattack','cursorattack',
+        'cursorbuildbad','cursorbuildgood','cursorcapture','cursorcentroid',
+        'cursorwait','cursortime','cursorwait','cursorunload','cursorwait',
+        'cursordwatch','cursorwait','cursordgun','cursorattack','cursorfight',
+        'cursorattack','cursorgather','cursorwait','cursordefend','cursorpickup',
+        'cursorrepair','cursorrevive','cursorrepair','cursorrestore','cursorrepair',
+        'cursormove','cursorpatrol','cursorreclamate','cursorselfd','cursornumber',
+        'cursorsettarget','cursorupgmex',
+    }
+
+    for i=1, #cursorNames do
+        local topLeft = (cursorNames[i] == 'cursornormal' and cursorSet ~= 'k_haos_girl')
+        if cursorSet == 'bar' then Spring.ReplaceMouseCursor(cursorNames[i], cursorNames[i], topLeft)
+        else Spring.ReplaceMouseCursor(cursorNames[i], cursorSet..'/'..cursorNames[i], topLeft) end
+    end
+end
 
 ------------------------------------
+-- widget list vars
+
 local wFilterString = ""
 local widgetList = {}
 local updateWidgetListPos = false -- we track the widget selector posn by the name of the first visible control -> if we want to position after a redraw, chili needs a frame to sort out its y coords 
@@ -109,44 +139,9 @@ local wCategories = {
 }
 local inv_widgetCat_pos = {}
 local num_widgetCat
-----------------------------
---
-local function setCursor(cursorSet)
-    local cursorNames = {
-        'cursornormal','cursorareaattack','cursorattack','cursorattack',
-        'cursorbuildbad','cursorbuildgood','cursorcapture','cursorcentroid',
-        'cursorwait','cursortime','cursorwait','cursorunload','cursorwait',
-        'cursordwatch','cursorwait','cursordgun','cursorattack','cursorfight',
-        'cursorattack','cursorgather','cursorwait','cursordefend','cursorpickup',
-        'cursorrepair','cursorrevive','cursorrepair','cursorrestore','cursorrepair',
-        'cursormove','cursorpatrol','cursorreclamate','cursorselfd','cursornumber',
-        'cursorsettarget','cursorupgmex',
-    }
-
-    for i=1, #cursorNames do
-        local topLeft = (cursorNames[i] == 'cursornormal' and cursorSet ~= 'k_haos_girl')
-        if cursorSet == 'bar' then Spring.ReplaceMouseCursor(cursorNames[i], cursorNames[i], topLeft)
-        else Spring.ReplaceMouseCursor(cursorNames[i], cursorSet..'/'..cursorNames[i], topLeft) end
-    end
-end
 
 ----------------------------
--- Toggles widgets, enabled/disabled when clicked
---  does not account for failed initialization of widgets yet
-local function toggleWidget(self)
-    widgetHandler:ToggleWidget(self.name)
-    if self.checked then
-        self.font.color        = {1,0,0,1}
-        self.font.outlineColor = {1,0,0,0.2}
-    else
-        self.font.color        = {0.5,1,0,1}
-        self.font.outlineColor = {0.5,1,0,0.2}
-    end
-    self:Invalidate()
-end
-
-----------------------------
--- Adds widget to the appropriate groups list of widgets
+-- sort & group the widgets
 local function groupWidget(name,wData)
 
     local _, _, category = string.find(wData.basename, '([^_]*)')
@@ -160,8 +155,6 @@ local function groupWidget(name,wData)
 
 end
 
-----------------------------
--- Decides which group each widget goes into
 local sortedWidgetList
 local function sortWidgetList()
     if not fullyLoaded then return end -- we have to wait until after initialize, because the widgetHandler hasn't loaded all the widgets at that point!
@@ -237,11 +230,39 @@ function ToggleExpandWidgetOptions(name)
 end
 
 ----------------------------
+-- widget filter (search) 
+local function SetWidgetFilter()
+    local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
+    wFilterString = editbox.text or ""
+    makeWidgetList()
+end
+
+local function ClearWidgetFilter()
+    local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
+    wFilterString = ""
+    editbox:SetText("")
+    makeWidgetList()
+end
+
+----------------------------
 -- widget list drawing
 
 local widgetControls = {}
 local widgetAuthorControls = {}
 local widgetDescsControls = {}
+
+local function toggleWidget(self)
+    -- Toggles widgets, enabled/disabled when clicked
+    widgetHandler:ToggleWidget(self.name)
+    if self.checked then
+        self.font.color        = {1,0,0,1}
+        self.font.outlineColor = {1,0,0,0.2}
+    else
+        self.font.color        = {0.5,1,0,1}
+        self.font.outlineColor = {0.5,1,0,0.2}
+    end
+    self:Invalidate()
+end
 
 local function WidgetFilter(name,desc,author)
     -- implement searching for widgets
@@ -436,7 +457,9 @@ local function AddWidgetOption(obj)
     end
     widgetOptions[obj.name] = panel
 end
+
 ----------------------------
+-- general visibility
 local function CheckSpec()
     -- hide the resign button if we are a spec
     local button = tabs.General:GetChildByName('ResignButton')
@@ -448,9 +471,8 @@ local function CheckSpec()
     end
 end
 
--- Toggles the menu visibility
---  also handles tab selection (e.g. f11 was pressed and menu opens to 'Interface')
 local function ShowHide(tab)
+    -- toggles the menu visibility and handles tab selection (e.g. f11 was pressed and menu opens to 'Interface')
     local oTab = Settings.tabSelected
 
     Chili.Screen0.currentTooltip = nil
@@ -471,9 +493,8 @@ local function ShowHide(tab)
     CheckSpec()
 end
 
-----------------------------
--- Handles the selection of the tabs
 local function sTab(_,tabName)
+    -- handles selection of tabs
     if not tabs[tabName] then return end
     if Settings.tabSelected then mainMenu:RemoveChild(tabs[Settings.tabSelected]) end
     
@@ -482,22 +503,7 @@ local function sTab(_,tabName)
 end
 
 ----------------------------
--- widget filter (search) 
-local function SetWidgetFilter()
-    local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
-    wFilterString = editbox.text or ""
-    makeWidgetList()
-end
-
-local function ClearWidgetFilter()
-    local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
-    wFilterString = ""
-    editbox:SetText("")
-    makeWidgetList()
-end
-
-----------------------------
--- Saves a variable in the settings array
+-- save/load to our own settings array
 local function Save(index, data)
 
     -- New behavior, Save{ key = value, key2 = value2 }
@@ -515,9 +521,6 @@ local function Save(index, data)
     end
 end
 
-----------------------------
--- Loads a variable from the settings array
--- todo: remove this
 local function Load(index)
     if Settings[index] ~= nil then
         return Settings[index]
@@ -526,9 +529,11 @@ local function Load(index)
         return nil
     end
 end
+
 ----------------------------
--- Creates a stack panel 
+-- control templates
 local function addStack(obj)
+    -- Creates a stack panel 
     local stack
         stack = Chili.StackPanel:New{
             name        = obj.name or 'Stack',
@@ -546,8 +551,9 @@ local function addStack(obj)
         }
     return stack
 end
--- Creates a stack panel inside a scroll panel
+
 local function addScrollStack(obj)
+    -- Creates a stack panel inside a scroll panel
     local stack = Chili.ScrollPanel:New{
         name     = obj.name or 'ScrollStack',
         x        = obj.x or 0,
@@ -576,111 +582,71 @@ local function addScrollStack(obj)
 end
 
 ----------------------------
--- Creates the original window in which all else is contained
-local function loadMainMenu()
-    local sizeData = Load('mainMenuSize') or {x=400,y=200,width=750,height=550}
+--
+local checkBox = function(obj)
+    local obj = obj
 
-    -- Detects and fixes menu being off-screen
-    local vsx,vsy = Spring.GetViewGeometry()
-    if vsx < sizeData.x+sizeData.width-100 or sizeData.x < 100 then sizeData.x = 400 end
-    if vsy < sizeData.y+sizeData.height-100 or sizeData.y < 100 then sizeData.height = 500 end
-
-    mainMenu = Chili.Window:New{
-        parent    = Chili.Screen0,
-        x         = sizeData.x,
-        y         = sizeData.y,
-        width     = sizeData.width,
-        height    = sizeData.height,
-        padding   = {5,8,5,5},
-        draggable = true,
-        resizable = true,
-        OnChange = {function() Chili.Screen0.currentTooltip=nil end},
-        OnResize  = {
-            function(self)
-                Save{mainMenuSize = {x=self.x,y=self.y,width=self.width,height=self.height}}
-            end
-        },
-        children  = {
-            Chili.Line:New{parent = mainMenu,y = 15,width = '100%'},
-            Chili.Line:New{parent = mainMenu,bottom = 15,width = '100%'},
-        }
-    }
-
-    menuTabs = Chili.TabBar:New{
-        parent       = mainMenu,
-        x            = 0,
-        y            = 0,
-        width        = '100%',
-        height       = 20,
-        minItemWidth = 70,
-        selected     = Settings.tabSelected or 'General',
-        tabs         = {'General','Interface', 'Graphics'},
-        itemPadding  = {1,0,1,0},
-        OnChange     = {sTab}
-    }
+    local toggle = function(self)
+        Settings[self.name] = not self.checked --self.checked hasn't changed yet!
+        spSendCommands(self.name)
+    end
     
-    mainMenu:Hide()
-
+    local checkBox = Chili.Checkbox:New{
+        name      = obj.name,
+        caption   = obj.title or obj.name,
+        checked   = Settings[obj.name] or false,
+        tooltip   = obj.tooltip or '',
+        y         = obj.y,
+        width     = obj.width or '80%',
+        height    = 20,
+        x         = '10%',
+        textalign = 'left',
+        boxalign  = 'right',
+        OnChange  = {toggle}
+    }
+    return checkBox
 end
 
-----------------------------
-local waterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- value -> listID (ugh)
-local shadowConvert_ID = {[0]=1,[1]=2,[2]=3}
---local shadowMapSizeConvert_ID = {[32]=1,[1024]=2,[2048]=3,[4096]=4} 
-----------------------------
+local slider = function(obj)
+    local obj = obj
 
-local function applyDefaultSettings()
-    local comboboxes = {
-        ['Water']            = 2,
-        ['Shadows']          = 2,
-    }
-    
-    local sliders = {
-        ['UnitIconDist']      = 280,
-        ['UnitLodDist']       = 280,
-        ['MaxParticles']      = 1000,
-        ['MaxNanoParticles']  = 1000,
-    }
-    
-    local checkboxes = {
-        ['AdvMapShading']    = 1,
-        ['AdvModelShading']  = 1,
-        ['luarules normalmapping']    = 1,
-        ['AllowDeferredMapRendering']   = 1,
-        ['AllowDeferredModelRendering'] = 1,
-        ['MapBorder']        = 1,
-        ['3DTrees']          = 1,
-        ['GroundDecals']     = 0,
-        ['MapMarks']         = 1,
-        ['DynamicSky']       = 0,
-        ['DynamicSun']       = 0,
+    local trackbar = Chili.Control:New{
+        y       = obj.y or 0,
+        width   = obj.width or '100%',
+        height  = 40,
+        x       = 0,
+        padding = {0,0,0,0}
     }
 
-    local EngineSettingsMulti = tabs['Graphics']:GetChildByName('Settings'):GetChildByName('EngineSettingsMulti')
-    local EngineSettingsCheckBoxes = tabs['Graphics']:GetChildByName('Settings'):GetObjectByName('EngineSettingsCheckBoxes')
-    
-    for setting,value in pairs(comboboxes) do
-        Settings[setting] = value
-        if setting=='Water' then
-            EngineSettingsMulti:GetObjectByName(setting):Select(waterConvert_ID[value])
-        elseif setting=='Shadows' then
-            EngineSettingsMulti:GetObjectByName(setting):Select(shadowConvert_ID[value])
-        --elseif setting=='ShadowMapSize' then
-            --engineStack:GetObjectByName(setting):Select(shadowMapSizeConvert_ID[value] or 2)
-        end
-    end
-    
-    for setting,value in pairs(sliders) do
-        Settings[setting] = value
-        EngineSettingsMulti:GetObjectByName(setting):SetValue(value)
-    end
-    
-    for setting,value in pairs(checkboxes) do
-        Settings[setting] = value
-        local checkbox = EngineSettingsCheckBoxes:GetObjectByName(setting)
-        if checkbox.checked ~= (value==1) then checkbox:Toggle() end
+    Spring.Echo(obj.name, Settings[obj.name])
+
+    local function applySetting(obj, value)
+        Settings[obj.name] = value
+        spSendCommands(obj.name..' '..value)
     end
 
+    trackbar:AddChild(
+        Chili.Label:New{
+            x       = 0,
+            y       = 0,
+            caption = obj.title or obj.name,
+        })
+
+    trackbar:AddChild(
+        Chili.Trackbar:New{
+            name     = obj.name,
+            height   = 25,
+            x        = '10%',
+            width    = '80%',
+            y        = 15,
+            min      = obj.min or 0,
+            max      = obj.max or 1000,
+            step     = obj.step or 100,
+            value    = Settings[obj.name] or 500,
+            OnChange = {applySetting},
+        })
+
+    return trackbar
 end
 
 ----------------------------
@@ -743,74 +709,112 @@ local comboBox = function(obj)
 end
 
 ----------------------------
---
-local checkBox = function(obj)
-    local obj = obj
+-- main load
+local function loadMainMenu()
+    local sizeData = Load('mainMenuSize') or {x=400,y=200,width=750,height=550}
 
-    local toggle = function(self)
-        Settings[self.name] = not self.checked --self.checked hasn't changed yet!
-        spSendCommands(self.name)
-    end
-    
-    local checkBox = Chili.Checkbox:New{
-        name      = obj.name,
-        caption   = obj.title or obj.name,
-        checked   = Settings[obj.name] or false,
-        tooltip   = obj.tooltip or '',
-        y         = obj.y,
-        width     = obj.width or '80%',
-        height    = 20,
-        x         = '10%',
-        textalign = 'left',
-        boxalign  = 'right',
-        OnChange  = {toggle}
+    -- Detects and fixes menu being off-screen
+    local vsx,vsy = Spring.GetViewGeometry()
+    if vsx < sizeData.x+sizeData.width-100 or sizeData.x < 100 then sizeData.x = 400 end
+    if vsy < sizeData.y+sizeData.height-100 or sizeData.y < 100 then sizeData.height = 500 end
+
+    mainMenu = Chili.Window:New{
+        parent    = Chili.Screen0,
+        x         = sizeData.x,
+        y         = sizeData.y,
+        width     = sizeData.width,
+        height    = sizeData.height,
+        padding   = {5,8,5,5},
+        draggable = true,
+        resizable = true,
+        OnChange = {function() Chili.Screen0.currentTooltip=nil end},
+        OnResize  = {
+            function(self)
+                Save{mainMenuSize = {x=self.x,y=self.y,width=self.width,height=self.height}}
+            end
+        },
+        children  = {
+            Chili.Line:New{parent = mainMenu,y = 15,width = '100%'},
+            Chili.Line:New{parent = mainMenu,bottom = 15,width = '100%'},
+        }
     }
-    return checkBox
+
+    menuTabs = Chili.TabBar:New{
+        parent       = mainMenu,
+        x            = 0,
+        y            = 0,
+        width        = '100%',
+        height       = 20,
+        minItemWidth = 70,
+        selected     = Settings.tabSelected or 'General',
+        tabs         = {'General','Interface', 'Graphics'},
+        itemPadding  = {1,0,1,0},
+        OnChange     = {sTab}
+    }
+    
+    mainMenu:Hide()
+
 end
 
 ----------------------------
---
-local slider = function(obj)
-    local obj = obj
+-- default settings 
 
-    local trackbar = Chili.Control:New{
-        y       = obj.y or 0,
-        width   = obj.width or '100%',
-        height  = 40,
-        x       = 0,
-        padding = {0,0,0,0}
+local function applyDefaultSettings()
+    local comboboxes = {
+        ['Water']            = 2,
+        ['Shadows']          = 2,
+    }
+    
+    local sliders = {
+        ['UnitIconDist']      = 280,
+        ['UnitLodDist']       = 280,
+        ['MaxParticles']      = 1000,
+        ['MaxNanoParticles']  = 1000,
+    }
+    
+    local checkboxes = {
+        ['AdvMapShading']    = 1,
+        ['AdvModelShading']  = 1,
+        ['luarules normalmapping']    = 1,
+        ['AllowDeferredMapRendering']   = 1,
+        ['AllowDeferredModelRendering'] = 1,
+        ['MapBorder']        = 1,
+        ['3DTrees']          = 1,
+        ['GroundDecals']     = 0,
+        ['MapMarks']         = 1,
+        ['DynamicSky']       = 0,
+        ['DynamicSun']       = 0,
     }
 
-    Spring.Echo(obj.name, Settings[obj.name])
-
-    local function applySetting(obj, value)
-        Settings[obj.name] = value
-        spSendCommands(obj.name..' '..value)
+    local EngineSettingsMulti = tabs['Graphics']:GetChildByName('Settings'):GetChildByName('EngineSettingsMulti')
+    local EngineSettingsCheckBoxes = tabs['Graphics']:GetChildByName('Settings'):GetObjectByName('EngineSettingsCheckBoxes')
+    
+    for setting,value in pairs(comboboxes) do
+        Settings[setting] = value
+        if setting=='Water' then
+            EngineSettingsMulti:GetObjectByName(setting):Select(waterConvert_ID[value])
+        elseif setting=='Shadows' then
+            EngineSettingsMulti:GetObjectByName(setting):Select(shadowConvert_ID[value])
+        --elseif setting=='ShadowMapSize' then
+            --engineStack:GetObjectByName(setting):Select(shadowMapSizeConvert_ID[value] or 2)
+        end
+    end
+    
+    for setting,value in pairs(sliders) do
+        Settings[setting] = value
+        EngineSettingsMulti:GetObjectByName(setting):SetValue(value)
+    end
+    
+    for setting,value in pairs(checkboxes) do
+        Settings[setting] = value
+        local checkbox = EngineSettingsCheckBoxes:GetObjectByName(setting)
+        if checkbox.checked ~= (value==1) then checkbox:Toggle() end
     end
 
-    trackbar:AddChild(
-        Chili.Label:New{
-            x       = 0,
-            y       = 0,
-            caption = obj.title or obj.name,
-        })
-
-    trackbar:AddChild(
-        Chili.Trackbar:New{
-            name     = obj.name,
-            height   = 25,
-            x        = '10%',
-            width    = '80%',
-            y        = 15,
-            min      = obj.min or 0,
-            max      = obj.max or 1000,
-            step     = obj.step or 100,
-            value    = Settings[obj.name] or 500,
-            OnChange = {applySetting},
-        })
-
-    return trackbar
 end
+
+
+
 
 
 -----------------------------
@@ -820,8 +824,6 @@ local function createTab(tab)
     menuTabs:AddChild(Chili.TabBarItem:New{caption = tab.name, width = tab.tabWidth})
 end
 
------OPTIONS-----------------
------------------------------
 
 function SetInfoChild(obj)
     if not tabs.General then return end
@@ -829,6 +831,9 @@ function SetInfoChild(obj)
     tabs.General:GetChildByName('info_layoutpanel'):ClearChildren()
     tabs.General:GetChildByName('info_layoutpanel'):AddChild(obj.iPanel)
 end
+
+-----------------------------
+-- native TABS
 
 local function createInfoTab()
     local armageddonTime = 60 * (tonumber((Spring.GetModOptions() or {}).mo_armageddontime) or 0)
@@ -1094,20 +1099,10 @@ local function createCreditsTab()
         }-- TODO: find a logo and a place for it!
     }
 end
------------------------------
---
-local function AddChildren(control, children)
-    for i=1, #children do control:AddChild(children[i]) end
-end
 
-
------------------------------
--- Adds a chili control to a tab
---  usage is Menu.AddControl('nameOfTab', controlToBeAdded)
---  if tab doesn't exist, one is created
---  this is useful if you want a widget to get it's own tab (endgraph is a good example)
---  this function probably won't change
-local function AddControl(tab,control,tabWidth)
+local function AddTab(tab,control,tabWidth)
+    -- Adds a chili control as a menu tab
+    --  if tab doesn't exist, it is created
     if not tabs[tab] then createTab{name = tab, tabWidth = tabWidth} end
     tabs[tab]:AddChild(control)
     tabs[tab]:Invalidate()
@@ -1120,10 +1115,10 @@ end
 --  look at relevant functions above for more info
 local function globalize()
     local Menu = {}
-   
-    Menu.AddControl = AddControl -- for adding new tabs e.g. the end-graph widget
-    Menu.ShowHide   = ShowHide -- show/hide menu tabs
+    Menu.ShowHide = ShowHide -- show/hide menu tabs
 
+    Menu.AddTab = AddTab -- for adding new tabs e.g. the end-graph widget
+    --  usage is Menu.AddControl('nameOfTab', controlToBeAdded)
     
     Menu.AddWidgetOption  = AddWidgetOption -- for registering options of widgets (note: ideally, widgets are responsible for save/load of their own options)
     --[[
@@ -1139,33 +1134,12 @@ local function globalize()
     
     WG.MainMenu = Menu
 end
------------------------------
 
-function widget:GetConfigData()
-    Settings.widgetListScroll = GetTopVisibleControlOfWidgetList()
-    Settings.visibleAtShutdown = mainMenu.visible
-    if Settings.tabSelected == 'Beta Release' then
-        Settings.visibleAtShutdown = nil
-    end
-    return Settings
-end
 
-function widget:SetConfigData(data)
-    if (data and type(data) == 'table') then
-        Settings = data
-    end
-end
-
-function widget:KeyPress(key,mod)
-    local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
-    if key==13 and editbox.state.focused then
-        SetWidgetFilter()
-        return true
-    end
-end
 
 --------------------------
--- Initial function called by widget handler
+-- main
+
 function widget:Initialize()
     Chili = WG.Chili
     setCursor(Settings['CursorName'] or 'bar')
@@ -1190,8 +1164,7 @@ function widget:Initialize()
         ShowHide()
     end
     
-    -----------------------
-    ---     Hotkeys     ---
+    -- our hotkeys
     local toggleMenu      = function() ShowHide('General') end
     local hideMenu        = function() if mainMenu.visible then mainMenu:Hide() end end
     local toggleInterface = function() ShowHide('Interface') end
@@ -1239,5 +1212,23 @@ function widget:Shutdown()
     spSendCommands('unbind esc hideMenu')
     spSendCommands('bind f11 luaui selector') -- if the default one is removed or crashes, then have the backup one take over.
     spSendCommands('bind Any+i gameinfo')
+end
+
+-----------------------------
+-- config data 
+
+function widget:GetConfigData()
+    Settings.widgetListScroll = GetTopVisibleControlOfWidgetList()
+    Settings.visibleAtShutdown = mainMenu.visible
+    if Settings.tabSelected == 'Beta Release' then -- hack
+        Settings.visibleAtShutdown = nil
+    end
+    return Settings
+end
+
+function widget:SetConfigData(data)
+    if (data and type(data) == 'table') then
+        Settings = data
+    end
 end
 

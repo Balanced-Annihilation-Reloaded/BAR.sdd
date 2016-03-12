@@ -145,7 +145,7 @@ local function loadOptions()
         backgroundColor = {0,0,0,0}
     }
     
-    Menu.AddControl('Music',control)
+    Menu.AddTab('Music',control)
         
 end
 

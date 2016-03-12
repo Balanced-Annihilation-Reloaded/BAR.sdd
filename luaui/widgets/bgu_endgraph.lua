@@ -500,36 +500,7 @@ function loadWindow()
     }
     
     -- Adds tab to Main Menu
-    if WG.MainMenu then
-        WG.MainMenu.AddControl('Graph', control0)
-        
-    -- For games without my Menu system (makes it stand alone)
-    else
-        Chili.Button:New{
-            parent    = control0,
-            caption   = 'Quit',
-            right     = 0,
-            y         = 0,
-            width     = 50,
-            height    = 25,
-            OnMouseUp = {
-                function()
-                    Spring.SendCommands{'quitforce'}
-                end
-            },
-        }
-        Chili.Window:New{
-            parent    = Chili.Screen0,
-            x         = '20%',
-            y         = '20%',
-            right     = '20%',
-            bottom    = '20%',
-            draggable = true,
-            resizable = true,
-            children  = {control0},
-        }
-    end
-    
+    WG.MainMenu.AddTab('Graph', control0)
     windowLoaded = true
 end
 

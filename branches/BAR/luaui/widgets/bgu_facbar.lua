@@ -20,8 +20,7 @@ WhiteStr   = "\255\255\255\255"
 GreyStr    = "\255\210\210\210"
 GreenStr   = "\255\092\255\092"
 
-local buttonColor = {0,0,0,1}
-local queueColor = {0.0,0.4,0.4,0.9}
+local buttonColour, queueColor 
 local progColor = {0,0.9,0.2,0.7}
 
 -------------------------------------------------------------------------------
@@ -52,8 +51,6 @@ local waypointFac = -1
 local waypointMode = 0   -- 0 = off; 1=lazy; 2=greedy (greedy means: you have to left click once before leaving waypoint mode and you can have units selected)
 
 local myTeamID = 0
-local cycle_half_s = 1
-local cycle_2_s = 1
 
 local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
@@ -70,13 +67,13 @@ end
 
 -------------------------------------------------------------------------------
 
-local GetUnitDefID      = Spring.GetUnitDefID
-local GetUnitHealth     = Spring.GetUnitHealth
-local GetUnitStates     = Spring.GetUnitStates
-local DrawUnitCommands  = Spring.DrawUnitCommands
-local GetSelectedUnits  = Spring.GetSelectedUnits
-local GetFullBuildQueue = Spring.GetFullBuildQueue
-local GetUnitIsBuilding = Spring.GetUnitIsBuilding
+local spGetUnitDefID      = Spring.GetUnitDefID
+local spGetUnitHealth     = Spring.GetUnitHealth
+local spGetUnitStates     = Spring.GetUnitStates
+local spDrawUnitCommands  = Spring.DrawUnitCommands
+local spGetSelectedUnits  = Spring.GetSelectedUnits
+local spGetFullBuildQueue = Spring.GetFullBuildQueue
+local spGetUnitIsBuilding = Spring.GetUnitIsBuilding
 
 local insert        = table.insert
 local remove        = table.remove
@@ -84,8 +81,9 @@ local remove        = table.remove
 -------------------------------------------------------------------------------
 
 local function GetBuildQueue(unitID)
+  -- return the build q as a hash table (i.e. stripped of its ordering)
   local result = {}
-  local queue = GetFullBuildQueue(unitID)
+  local queue = spGetFullBuildQueue(unitID)
   if (queue ~= nil) then
     for _,buildPair in ipairs(queue) do
       local udef, count = next(buildPair, nil)
@@ -101,71 +99,54 @@ end
 
 
 local function UpdateFac(i, facInfo)
-    --local unitDefID = facInfo.unitDefID
-    
-    local unitBuildDefID = -1
-    local unitBuildID    = -1
+    local unitBuildDefID
+    local unitBuildID 
 
     -- fac is still being built?
     local progress = 0
-    unitBuildID      = GetUnitIsBuilding(facInfo.unitID)
+    unitBuildID      = spGetUnitIsBuilding(facInfo.unitID)
     if unitBuildID then
-        unitBuildDefID = GetUnitDefID(unitBuildID)
-        _, _, _, _, progress = GetUnitHealth(unitBuildID)
+        unitBuildDefID = spGetUnitDefID(unitBuildID)
+        _, _, _, _, progress = spGetUnitHealth(unitBuildID)
     end
 
-    local buildList   = facInfo.buildList
-    local buildQueue  = GetBuildQueue(facInfo.unitID)
-    for j,unitDefIDb in ipairs(buildList) do
-        local unitDefIDb = unitDefIDb
+    local buildList  = facInfo.buildList
+    local buildQueue  = spGetFullBuildQueue(facInfo.unitID)
+    for j=1,#buildList do
+        local unitDefIDb = buildList[j] 
         
-        --DEBUG Spring.Echo("BUILDLISTLOOP",i,j,unitDefIDb,facs[i],facs[i].qStore)
-        local qButton = facs[i].qStore[i .. '|' .. unitDefIDb]
-        
+        --Spring.Echo("BUILDLISTLOOP",i,j,unitDefIDb,facs[i],facs[i].qStore)
+        local qButton = facs[i].qStore[i .. '|' .. unitDefIDb]        
         local qBar = qButton.childrenByName['prog']
+        local qCount = qButton.childrenByName['count']   
         
-        local amount = buildQueue[unitDefIDb] or 0
-        local qCount = qButton.childrenByName['count']            
-        
-        facs[i].qStack:RemoveChild(qButton)
-        
-        qBar:SetValue(0)
+        qBar:SetValue(0) -- consistency
         if unitDefIDb == unitBuildDefID then
             qBar:SetValue(progress)
         end
-        
-        qCount:SetCaption(amount > 0 and amount or '')
+        qCount.count = 0 -- we'll count them up in the next loop        
     end
-end
-
-local function UpdateFacQ(i, facInfo)
-    local unitBuildDefID = -1
-    local unitBuildID    = -1
-
-    -- building?
-    local progress = 0
-    unitBuildID      = GetUnitIsBuilding(facInfo.unitID)
-    if unitBuildID then
-        unitBuildDefID = GetUnitDefID(unitBuildID)
-        _, _, _, _, progress = GetUnitHealth(unitBuildID)
-    end
-    local buildQueue  = Spring.GetFullBuildQueue(facInfo.unitID, options.maxVisibleBuilds +1)
-                
-    if (buildQueue ~= nil) then
-        
+    
+    -- remove & re-add children to fac q
+    facs[i].qStack:ClearChildren()
+    if (buildQueue ~= nil) then        
         local n,j = 1,options.maxVisibleBuilds
-        
+      
         while (buildQueue[n]) do
             local unitDefIDb, count = next(buildQueue[n], nil)
             
             local qButton = facs[i].qStore[i .. '|' .. unitDefIDb]
+            local qCount = qButton.childrenByName['count']   
             
-            --DEBUG Spring.Echo("BUILDQLOOP",i,n,unitDefIDb,qButton)
-            if not facs[i].qStack:GetChildByName(qButton.name) then
+            --Spring.Echo("BUILDQLOOP",i,n,unitDefIDb,qButton)
+            if not facs[i].qStack:GetChildByName(qButton.name) then -- we are iterating the build *queue*, so we may see the same unitDefID in more than one position
                 facs[i].qStack:AddChild(qButton)
+                j = j-1
             end
+            
+            qCount.count = qCount.count + count
+            qCount:SetCaption(qCount.count)            
         
-            j = j-1
             if j==0 then break end
             n = n+1
         end
@@ -183,7 +164,7 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
                 .. WhiteStr ..     'Middle click - '     .. GreenStr .. 'Go to \n'
                 .. WhiteStr ..     'Right click - '     .. GreenStr .. 'Quick Rallypoint Mode' 
                 ,
-            backgroundColor = buttonColor,
+            backgroundColor = buttonColour,
             
             OnClick = {
                 unitID ~= 0 and
@@ -326,7 +307,7 @@ local function AddBuildButton(unitDefID, facID, facIndex)
                     max     = 1;
                     color           = progColor,
                     backgroundColor = {1,1,1,  0.01},
-                    x=2, y=2, height=3, right=2,
+                    x=2, bottom=2, height=3, right=2,
                 },
                         
                 Chili.Image:New {
@@ -435,7 +416,7 @@ local function UpdateFactoryList()
   
   for num = 1, totalUnits do
     local unitID = teamUnits[num]
-    local unitDefID = GetUnitDefID(unitID)
+    local unitDefID = spGetUnitDefID(unitID)
     if UnitDefs[unitDefID].isFactory then
         local bo =  UnitDefs[unitDefID] and UnitDefs[unitDefID].buildOptions or {}
         if bo and #bo > 0 then    
@@ -459,7 +440,7 @@ function widget:DrawWorld()
         if waypointMode>1 then 
             unitID = facs[waypointFac].unitID
         end
-        DrawUnitCommands(unitID)
+        spDrawUnitCommands(unitID)
     end
 end
 
@@ -512,22 +493,14 @@ function widget:Update()
         UpdateFactoryList()
     end
   
-    cycle_half_s = (cycle_half_s % 16) + 1
-    cycle_2_s = (cycle_2_s % (32*2)) + 1
-    
     if needsRecreate then
         RecreateFacbar()
         needsRecreate = false
     end
     
-    if cycle_half_s == 1 then 
-        for i,facInfo in ipairs(facs) do
-            if Spring.ValidUnitID( facInfo.unitID ) then
-                if cycle_2_s == 1 then  
-                    UpdateFac(i, facInfo)
-                end
-                UpdateFacQ(i, facInfo)
-            end
+    for i,facInfo in ipairs(facs) do
+        if Spring.ValidUnitID( facInfo.unitID ) then
+            UpdateFac(i, facInfo)
         end
     end
 
@@ -576,7 +549,7 @@ function widget:PlayerChanged()
     if specState then
         -- hide facbar if we are a spec
         HideFacBar()
-    elseif not specState and prevSpecState and Spring.GetSelectedUnitsCount()==0 then
+    elseif not specState and prevSpecState and Spring.spGetSelectedUnitsCount()==0 then
         -- activate facbar if we were previous and spec and now became a player
         ShowFacBar()
     end
@@ -589,6 +562,7 @@ function widget:Initialize()
         return
     end
     buttonColour = WG.buttonColour
+    queueColor = buttonColour -- button colour for queue buttons
     
     WG.FacBar = {}
     WG.FacBar.Show = ShowFacBar
@@ -637,7 +611,7 @@ function widget:Initialize()
     local viewSizeX, viewSizeY = widgetHandler:GetViewSizes()
     self:ViewResize(viewSizeX, viewSizeY)
     
-    if Spring.GetSpectatingState() or Spring.GetSelectedUnitsCount()>0 then
+    if Spring.GetSpectatingState() or Spring.spGetSelectedUnitsCount()>0 then
         HideFacBar()
     end
 end

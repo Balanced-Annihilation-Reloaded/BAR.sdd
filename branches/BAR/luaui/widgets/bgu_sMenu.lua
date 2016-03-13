@@ -200,6 +200,8 @@ local screen0, buildMenu, stateMenu, orderMenu, menuTabs
 local menuTab = {}
 local grid = {}
 
+local buttonColour
+
 local unitButtons = {} -- all cached
 local orderButtons = {} -- created on demand
 local stateButtons = {} -- created on demand

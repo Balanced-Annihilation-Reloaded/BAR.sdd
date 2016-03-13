@@ -183,8 +183,8 @@ local function _CompileMaterialShaders(rendering)
         mat_src.cameraPosLoc    = gl.GetUniformLocation(GLSLshader,"cameraPos")
         mat_src.shadowMatrixLoc = gl.GetUniformLocation(GLSLshader,"shadowMatrix")
         mat_src.shadowParamsLoc = gl.GetUniformLocation(GLSLshader,"shadowParams")
-        mat_src.sunLoc          = gl.GetUniformLocation(GLSLshader,"sunPos")
-        mat_src.etcLoc        = gl.GetUniformLocation(GLSLshader,"etcLoc")
+        mat_src.sunPosLoc       = gl.GetUniformLocation(GLSLshader,"sunPos")
+        mat_src.etcLoc          = gl.GetUniformLocation(GLSLshader,"etcLoc")
         end
     end
     
@@ -201,8 +201,8 @@ local function _CompileMaterialShaders(rendering)
         mat_src.cameraPosLoc    = gl.GetUniformLocation(GLSLshader,"cameraPos")
         mat_src.shadowMatrixLoc = gl.GetUniformLocation(GLSLshader,"shadowMatrix")
         mat_src.shadowParamsLoc = gl.GetUniformLocation(GLSLshader,"shadowParams")
-        mat_src.sunLoc          = gl.GetUniformLocation(GLSLshader,"sunPos")
-        mat_src.etcLoc        = gl.GetUniformLocation(GLSLshader,"etcLoc")
+        mat_src.sunPosLoc       = gl.GetUniformLocation(GLSLshader,"sunPos")
+        mat_src.etcLoc          = gl.GetUniformLocation(GLSLshader,"etcLoc")
       end
     end
   end
@@ -265,6 +265,7 @@ local function GetObjectMaterial(rendering, objectDefID)
     camerainvloc    = mat.cameraInvLoc,
     shadowloc       = mat.shadowMatrixLoc,
     shadowparamsloc = mat.shadowParamsLoc,
+    sunposloc       = mat.sunPosLoc,
     usecamera       = mat.usecamera,
     culling         = mat.culling,
     texunits        = texUnits,

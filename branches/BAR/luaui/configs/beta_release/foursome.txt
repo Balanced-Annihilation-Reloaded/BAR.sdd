@@ -1,15 +1,16 @@
 [GAME]
 {
-	MapName=Tropical-v2;
+	MapName=Grts_Cookedwell_008;
 	StartposType=2;
-	GameType=Tropical Archepelago;
+	GameType=Foursome;
 	IsHost=1;
 	OnlyLocal=1;
 	MyPlayerName=PLAYER_NAME;
 	[MODOPTIONS]
 	{
-		mo_beta_release=in use;		
-deathmode=killall;
+		mo_beta_release=in use;		    
+deathmode=killall;		
+;
 	}
 	[PLAYER0]
 	{
@@ -20,14 +21,14 @@ deathmode=killall;
 	}
 	[AI0]
 	{
-		Name=Enemy_1;
+		Name=Enemy;
 		ShortName=NullAI;
 		Team=1;
 		Host=0;
 	}
 	[AI1]
 	{
-		Name=Enemy_2;
+		Name=Ally;
 		ShortName=NullAI;
 		Team=2;
 		Host=0;
@@ -47,18 +48,14 @@ deathmode=killall;
 	[TEAM2]
 	{
 		TeamLeader=0;
-		AllyTeam=2;
-		RGBColor=0.08021982 0.6938717 0.04231141;
+		AllyTeam=0;
+		RGBColor=0.000910581 1 0;
 	}
 	[ALLYTEAM0]
 	{
 		NumAllies=0;
 		StartRectTop=0;		StartRectBottom=0;		StartRectLeft=1;		StartRectRight=1;	}
 	[ALLYTEAM1]
-	{
-		NumAllies=0;
-		StartRectTop=0;		StartRectBottom=0;		StartRectLeft=1;		StartRectRight=1;	}
-	[ALLYTEAM2]
 	{
 		NumAllies=0;
 		StartRectTop=0;		StartRectBottom=0;		StartRectLeft=1;		StartRectRight=1;	}

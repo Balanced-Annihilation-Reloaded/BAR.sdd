@@ -367,7 +367,6 @@ end
 
 
 function makeWidgetList(layoutChange)
-    Spring.Echo("MWL")
     -- remake the widget list
     -- layoutChange should be set to true if the callee has changed something (e.g. show/hide descs) that will change the heights of the controls
     local showDescs = Settings.showWidgetDescs

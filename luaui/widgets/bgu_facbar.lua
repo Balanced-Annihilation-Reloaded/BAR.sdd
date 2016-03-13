@@ -80,24 +80,6 @@ local remove        = table.remove
 
 -------------------------------------------------------------------------------
 
-local function GetBuildQueue(unitID)
-  -- return the build q as a hash table (i.e. stripped of its ordering)
-  local result = {}
-  local queue = spGetFullBuildQueue(unitID)
-  if (queue ~= nil) then
-    for _,buildPair in ipairs(queue) do
-      local udef, count = next(buildPair, nil)
-      if result[udef]~=nil then
-        result[udef] = result[udef] + count
-      else
-        result[udef] = count
-      end
-    end
-  end
-  return result
-end
-
-
 local function UpdateFac(i, facInfo)
     local unitBuildDefID
     local unitBuildID 
@@ -393,7 +375,6 @@ RecreateFacbar = function()
         facs[i].qStore         = qStore
         
         local buildList   = facInfo.buildList
-        local buildQueue  = GetBuildQueue(facInfo.unitID)
         for j,unitDefIDb in ipairs(buildList) do
             local unitDefIDb = unitDefIDb
             qStore[i .. '|' .. unitDefIDb] = AddBuildButton(unitDefIDb, facInfo.unitID, i)

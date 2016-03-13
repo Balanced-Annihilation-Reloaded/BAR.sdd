@@ -43,13 +43,15 @@ local myTeamID = 0
 local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
 
-local spGetUnitDefID      = Spring.GetUnitDefID
-local spGetUnitHealth     = Spring.GetUnitHealth
-local spGetUnitStates     = Spring.GetUnitStates
-local spDrawUnitCommands  = Spring.DrawUnitCommands
-local spGetSelectedUnits  = Spring.GetSelectedUnits
-local spGetFullBuildQueue = Spring.GetFullBuildQueue
-local spGetUnitIsBuilding = Spring.GetUnitIsBuilding
+local spGetUnitDefID       = Spring.GetUnitDefID
+local spGetUnitHealth      = Spring.GetUnitHealth
+local spGetUnitStates      = Spring.GetUnitStates
+local spDrawUnitCommands   = Spring.DrawUnitCommands
+local spGetSelectedUnits   = Spring.GetSelectedUnits
+local spGetFullBuildQueue  = Spring.GetFullBuildQueue
+local spGetUnitIsBuilding  = Spring.GetUnitIsBuilding
+local spValidUnitID        = Spring.ValidUnitID
+local spGetSpectatingState = Spring.GetSpectatingState
 
 -------------------------------------------------------------------------------           
 -- buttons
@@ -243,7 +245,7 @@ function AddFactory(unitID, unitDefID)
     end    
 
     local facInfo = {unitID=unitID, unitDefID=unitDefID}
-    facInfo.buildList = buildOptions
+    facInfo.buildOptions = buildOptions
     
     local facStack, qStack = AddFacButton(unitID, unitDefID)
     facInfo.facStack = facStack
@@ -261,7 +263,6 @@ end
 
 function RemoveFactory(unitID)
     for i,facInfo in ipairs(facs) do
-        Spring.Echo(i,unitID, facInfo.unitID)
         if unitID==facInfo.unitID then
             -- destroy its chili controls
             stack_main:RemoveChild(facInfo.facStack)        
@@ -292,60 +293,53 @@ function RecreateFacs()
     elseif label_main.visible then label_main:Hide() end
 end
 
-local function UpdateFac(i, facInfo) -- facs[i]=facInfo
-    local unitBuildDefID
-    local unitBuildID 
-
-    -- fac is still being built?
+function UpdateFacProgressBars(facInfo)
     local progress = 0
-    unitBuildID      = spGetUnitIsBuilding(facInfo.unitID)
+    local unitBuildID = spGetUnitIsBuilding(facInfo.unitID) -- unit being built by this factory
+    local unitBuildDefID
     if unitBuildID then
         unitBuildDefID = spGetUnitDefID(unitBuildID)
         _, _, _, _, progress = spGetUnitHealth(unitBuildID)
     end
 
-    local buildList = facInfo.buildList
-    local buildQueue = spGetFullBuildQueue(facInfo.unitID)
-    
-    -- set progress bars
-    for j=1,#buildList do
-        local unitDefIDb = buildList[j] 
-        
-        --Spring.Echo("BUILDLISTLOOP",i,j,unitDefIDb,facs[i],facs[i].qStore)
-        local qButton = facs[i].qStore[unitDefIDb]        
-        local qBar = qButton.childrenByName['prog']
-        local qCount = qButton.childrenByName['count']   
-        
-        qBar:SetValue(0) -- consistency
+    local buildOptions = facInfo.buildOptions   
+    for j=1,#buildOptions do
+        local unitDefIDb = buildOptions[j]
+        local qButton = facInfo.qStore[unitDefIDb]       
+        local qBar = qButton:GetChildByName('prog')        
         if unitDefIDb == unitBuildDefID then
             qBar:SetValue(progress)
+        else
+            qBar:SetValue(0)        
         end
-        qCount.count = 0 -- we'll count them up in the next loop        
+    end
+end
+
+function UpdateFacBuildCounts(facInfo)
+    -- update factory build counts, hide buildDefIDs with 0 in queue
+    local unitID = facInfo.unitID
+    local buildQueue = spGetFullBuildQueue(unitID)
+    
+    local buildCounts = {}
+    for i=1,#buildQueue do
+        local unitDefIDb, count = next(buildQueue[i], nil)
+        buildCounts[unitDefIDb] = (buildCounts[unitDefIDb] or 0) + count    
     end
     
-    -- remove & re-add children to fac q
-    -- set build counts
-    facs[i].qStack:ClearChildren()
-    if (buildQueue ~= nil) then        
-        local n,j = 1,options.maxVisibleBuilds
-      
-        while (buildQueue[n]) do
-            local unitDefIDb, count = next(buildQueue[n], nil)
-            
-            local qButton = facs[i].qStore[unitDefIDb]
-            local qCount = qButton.childrenByName['count']   
-            
-            --Spring.Echo("BUILDQLOOP",i,n,unitDefIDb,qButton)
-            if not facs[i].qStack:GetChildByName(qButton.name) then -- we are iterating the build *queue*, so we may see the same unitDefID in more than one position
-                facs[i].qStack:AddChild(qButton)
-                j = j-1
-            end
-            
-            qCount.count = qCount.count + count
-            qCount:SetCaption(qCount.count)            
-        
-            if j==0 then break end
-            n = n+1
+    local qStack = facInfo.qStack
+    local qStore = facInfo.qStore
+    local buildOptions = facInfo.buildOptions
+
+    for i=1,#buildOptions do
+        local unitDefIDb = buildOptions[i]
+        local count = buildCounts[unitDefIDb] or 0
+        local qButton = qStore[unitDefIDb]
+        local qCount = qButton:GetChildByName('count')
+        qCount:SetCaption(count)
+        if count>0 and not qStack:GetChildByName(qButton.name) then
+            qStack:AddChild(qButton)
+        elseif count==0 and qStack:GetChildByName(qButton.name) then
+            qStack:RemoveChild(qButton)
         end
     end
 end   
@@ -356,6 +350,11 @@ function widget:UnitCreated(unitID, unitDefID, unitTeam)
     end
 end
 
+function widget:UnitFromFactory(unitID, unitDefID, unitTeam)
+    if unitTeam== myTeamID then
+        widget:CommandsChanged() -- update factory build counts
+    end
+end
 
 function widget:UnitDestroyed(unitID, unitDefID, unitTeam)
     if (unitTeam == myTeamID) and UnitDefs[unitDefID].isFactory then
@@ -445,17 +444,27 @@ function HideFacBar()
     end
 end
 
-local prevSpecState = Spring.GetSpectatingState()
+local prevSpecState,_ = Spring.GetSpectatingState()
 function widget:PlayerChanged()
-    local specState = Spring.GetSpectatingState()
-    if specState then
+    local spec,_ = Spring.GetSpectatingState()
+    if spec then
         -- hide facbar if we are a spec
         HideFacBar()
-    elseif not specState and prevSpecState and Spring.spGetSelectedUnitsCount()==0 then
+    elseif not spec and prevSpecState and Spring.spGetSelectedUnitsCount()==0 then
         -- activate facbar if we were previous and spec and now became a player
         ShowFacBar()
+        RecreateFacs()
     end
-    prevSpecState = specState
+    prevSpecState = spec
+    
+    -- handle changing team
+    local teamID = spGetMyTeamID()
+    if myTeamID ~= teamID then
+        myTeamID = teamID
+        r,g,b = Spring.GetTeamColor(myTeamID)
+        teamColor = {r,g,b}
+        RecreateFacs()
+    end
 end
 
 -------------------------------------------------------------------------------
@@ -513,22 +522,25 @@ function widget:Initialize()
 
     RecreateFacs()
 
-    if Spring.GetSpectatingState() or Spring.GetSelectedUnitsCount()>0 then
+    if spGetSpectatingState() or Spring.GetSelectedUnitsCount()>0 then
         HideFacBar()
     end
 end
 
-function widget:Update()
-    if myTeamID~=Spring.GetMyTeamID() then
-        myTeamID = Spring.GetMyTeamID()
-        r,g,b = Spring.GetTeamColor(myTeamID)
-        teamColor = {r,g,b}
-        RecreateFacs()
+function widget:CommandsChanged()
+    for i=1,#facs do
+        local facInfo = facs[i]
+        if spValidUnitID(facInfo.unitID) then
+            UpdateFacBuildCounts(facInfo)
+        end
     end
+end
 
-    for i,facInfo in ipairs(facs) do
-        if Spring.ValidUnitID( facInfo.unitID ) then
-            UpdateFac(i, facInfo)
+function widget:GameFrame()
+    for i=1,#facs do
+        local facInfo = facs[i]
+        if spValidUnitID(facInfo.unitID) then
+            UpdateFacProgressBars(facInfo)
         end
     end
 end

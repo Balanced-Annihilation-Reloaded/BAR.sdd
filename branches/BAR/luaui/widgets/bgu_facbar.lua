@@ -54,10 +54,9 @@ local spGetUnitIsBuilding = Spring.GetUnitIsBuilding
 -------------------------------------------------------------------------------           
 -- buttons
 
-local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
+local function AddFacButton(unitID, unitDefID) --fixme, facsPos need to be uniq, but if facs are destroyed it won't be pos in facs anymore!
     -- add the button for this factory
-    tocontrol:AddChild(
-        Chili.Button:New{
+    local facButton = Chili.Button:New{
             caption = "",
             width = options.buttonSize*1.2,
             height = options.buttonSize*1.0,
@@ -68,23 +67,19 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
             backgroundColor = buttonColour,
             
             OnClick = {
-                unitID ~= 0 and
-                    function(_,_,_,button)
-                        if button == 2 then
-                            local x,y,z = Spring.GetUnitPosition(unitID)
-                            Spring.SetCameraTarget(x,y,z)
-                        elseif button == 3 then
-                            Spring.Echo("FactoryBar: Entered rallypoint mode")
-                            waypointMode = 2 -- greedy mode
-                            waypointFac  = stackname
-                        else
-                            Spring.SelectUnitArray({unitID})
-                            window_facbar:Hide()
-                        end
-                        
-
+                function(_,_,_,button)
+                    if button == 2 then
+                        local x,y,z = Spring.GetUnitPosition(unitID)
+                        Spring.SetCameraTarget(x,y,z)
+                    elseif button == 3 then
+                        Spring.Echo("FactoryBar: Entered rallypoint mode")
+                        waypointMode = 2 -- greedy mode
+                        waypointFac  = unitID
+                    else
+                        Spring.SelectUnitArray({unitID})
+                        window_facbar:Hide()
                     end
-                    or nil
+                end
             },
             OnMouseOver = {
                 function() WG.FacBar.mouseOverUnitDefID = unitDefID end
@@ -95,29 +90,26 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
             padding={3, 3, 3, 3},
             --margin={0, 0, 0, 0},
             children = {
-                unitID ~= 0 and
-                    Chili.Image:New {
-                        file = '#'..unitDefID,
-                        flip = false,
-                        keepAspect = false;
-                        width = '100%',
-                        height = '100%',
-                        children = {
-                            Chili.Image:New{
-                                color  = teamColor,
-                                keepAspect = false;
-                                height = '100%', width = '100%',
-                                file   = imageDir..'Overlays/'..UnitDefs[unitDefID].name..'.dds',
-                            },
+                Chili.Image:New {
+                    file = '#'..unitDefID,
+                    flip = false,
+                    keepAspect = false;
+                    width = '100%',
+                    height = '100%',
+                    children = {
+                        Chili.Image:New{
+                            color  = teamColor,
+                            keepAspect = false;
+                            height = '100%', width = '100%',
+                            file   = imageDir..'Overlays/'..UnitDefs[unitDefID].name..'.dds',
                         },
-                    }
-                or nil,
+                    },
+                }
             },
         }
-    )
 
     local qStack = Chili.StackPanel:New{
-        name = stackname .. '_q',
+        name = unitID .. '_q',
         itemMargin={0,0,0,0},
         itemPadding={0,0,0,0},
         padding={0,0,0,0},
@@ -129,26 +121,27 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
         orientation = 'horizontal',
         centerItems = false,
     }
-    local qStore = {}
     
     local facStack = Chili.StackPanel:New{
-        name = stackname,
+        name = unitID .. "_fac",
         itemMargin={0,0,0,0},
         itemPadding={0,0,0,0},
         padding={0,0,0,0},
         --margin={0, 0, 0, 0},
         width=800,
-        height = options.buttonSize*1.0,
+        height = options.buttonSize,
         resizeItems = false,
+        orientation = 'horizontal',
         centerItems = false,
     }
     
-    facStack:AddChild( qStack )
-    tocontrol:AddChild( facStack )
-    return facStack, qStack, qStore
+    facStack:AddChild(facButton)
+    facStack:AddChild(qStack)
+    stack_main:AddChild(facStack)
+    return facStack, qStack
 end
 
-local function AddBuildButton(unitDefID, facID, facIndex)
+local function AddBuildButton(unitDefID, facID)
 
     local ud = UnitDefs[unitDefID]
   
@@ -242,54 +235,61 @@ function CostComparator(i,j)
     return Cost(i) < Cost(j)
 end
 
-function RecreateFacbar()
-    -- recreate facs table from scratch (without touching chili)
+function AddFactory(unitID, unitDefID)
+    -- add factory to facs, set up its chili controls
+    local buildOptions =  UnitDefs[unitDefID] and UnitDefs[unitDefID].buildOptions or {}
+    if buildOptions and #buildOptions > 0 then    
+      table.sort(buildOptions, CostComparator)
+    end    
+
+    local facInfo = {unitID=unitID, unitDefID=unitDefID}
+    facInfo.buildList = buildOptions
+    
+    local facStack, qStack = AddFacButton(unitID, unitDefID)
+    facInfo.facStack = facStack
+    facInfo.qStack    = qStack
+    facInfo.qStore    = {}
+    
+    local buildOptions = UnitDefs[unitDefID].buildOptions
+    for j,buildDefID in ipairs(buildOptions) do
+        facInfo.qStore[buildDefID] = AddBuildButton(buildDefID, unitID)
+    end
+    
+    table.insert(facs, facInfo)    
+    if #facs>0 and not label_main.visible then label_main:Show() end
+end
+
+function RemoveFactory(unitID)
+    for i,facInfo in ipairs(facs) do
+        Spring.Echo(i,unitID, facInfo.unitID)
+        if unitID==facInfo.unitID then
+            -- destroy its chili controls
+            stack_main:RemoveChild(facInfo.facStack)        
+            -- and remove
+            table.remove(facs,i)
+            return
+        end
+    end
+    if #facs==0 and label_main.visible then label_main:Hide() end
+end
+
+function RecreateFacs()
+    -- recreate facs table from scratch
     facs = {}
 
     local teamUnits = Spring.GetTeamUnits(myTeamID)
     local totalUnits = #teamUnits
 
-    local t = 0
-  
     for num = 1, totalUnits do
         local unitID = teamUnits[num]
         local unitDefID = spGetUnitDefID(unitID)
         if UnitDefs[unitDefID].isFactory then
-            local bo =  UnitDefs[unitDefID] and UnitDefs[unitDefID].buildOptions or {}
-            if bo and #bo > 0 then    
-              table.sort(bo, CostComparator)
-              table.insert(facs,{ unitID=unitID, unitDefID=unitDefID, buildList=bo })
-            end
-            t = t + 1
-            if t>=options.maxFacs then break end
+            AddFactory(unitID, unitDefID)
         end
     end
 
-    -- now re-create chili controls
-    stack_main:ClearChildren()
-    
     if #facs>0 and not label_main.visible then label_main:Show() 
-    elseif label_main.visible==true then label_main:Hide() end
-    
-    for i,facInfo in ipairs(facs) do
-        local unitDefID = facInfo.unitDefID
-        local facStack, qStack, qStore = AddFacButton(facInfo.unitID, unitDefID, stack_main, i)
-        --DEBUG #780 Spring.Echo("ADDFACBUTTON", i, unitDefID, facStack, qStack, qStore)
-
-        facs[i].facStack = facStack
-        facs[i].qStack   = qStack
-        facs[i].qStore   = qStore
-        
-        local buildList = facInfo.buildList
-        for j,unitDefIDb in ipairs(buildList) do
-            local unitDefIDb = unitDefIDb
-            qStore[i .. '|' .. unitDefIDb] = AddBuildButton(unitDefIDb, facInfo.unitID, i)
-        end
-        
-    end
-
-    stack_main:Invalidate()
-    stack_main:UpdateLayout()
+    elseif label_main.visible then label_main:Hide() end
 end
 
 local function UpdateFac(i, facInfo) -- facs[i]=facInfo
@@ -304,13 +304,15 @@ local function UpdateFac(i, facInfo) -- facs[i]=facInfo
         _, _, _, _, progress = spGetUnitHealth(unitBuildID)
     end
 
-    local buildList  = facInfo.buildList
-    local buildQueue  = spGetFullBuildQueue(facInfo.unitID)
+    local buildList = facInfo.buildList
+    local buildQueue = spGetFullBuildQueue(facInfo.unitID)
+    
+    -- set progress bars
     for j=1,#buildList do
         local unitDefIDb = buildList[j] 
         
         --Spring.Echo("BUILDLISTLOOP",i,j,unitDefIDb,facs[i],facs[i].qStore)
-        local qButton = facs[i].qStore[i .. '|' .. unitDefIDb]        
+        local qButton = facs[i].qStore[unitDefIDb]        
         local qBar = qButton.childrenByName['prog']
         local qCount = qButton.childrenByName['count']   
         
@@ -322,6 +324,7 @@ local function UpdateFac(i, facInfo) -- facs[i]=facInfo
     end
     
     -- remove & re-add children to fac q
+    -- set build counts
     facs[i].qStack:ClearChildren()
     if (buildQueue ~= nil) then        
         local n,j = 1,options.maxVisibleBuilds
@@ -329,7 +332,7 @@ local function UpdateFac(i, facInfo) -- facs[i]=facInfo
         while (buildQueue[n]) do
             local unitDefIDb, count = next(buildQueue[n], nil)
             
-            local qButton = facs[i].qStore[i .. '|' .. unitDefIDb]
+            local qButton = facs[i].qStore[unitDefIDb]
             local qCount = qButton.childrenByName['count']   
             
             --Spring.Echo("BUILDQLOOP",i,n,unitDefIDb,qButton)
@@ -347,70 +350,25 @@ local function UpdateFac(i, facInfo) -- facs[i]=facInfo
     end
 end   
 
-------------------------------------------------------
--- unit created/destroyed/etc
-
 function widget:UnitCreated(unitID, unitDefID, unitTeam)
-    if (unitTeam ~= myTeamID) then
-      return
-    end
-
-    if UnitDefs[unitDefID].isFactory then
-        -- add a new fac
-        local bo =  UnitDefs[unitDefID] and UnitDefs[unitDefID].buildOptions
-        if #facs>=options.maxFacs then
-            table.remove(facs,1)
-        end
-        if bo and #bo > 0 then
-            table.insert(facs,{ unitID=unitID, unitDefID=unitDefID, buildList=UnitDefs[unitDefID].buildOptions })
-            needsRecreate = true
-        end
+    if unitTeam == myTeamID and UnitDefs[unitDefID].isFactory then
+        AddFactory(unitID, unitDefID)
     end
 end
 
-function widget:UnitGiven(unitID, unitDefID, unitTeam, oldTeam)
-    widget:UnitCreated(unitID, unitDefID, unitTeam)
-end
 
 function widget:UnitDestroyed(unitID, unitDefID, unitTeam)
-    if (unitTeam ~= myTeamID) then
-        return
+    if (unitTeam == myTeamID) and UnitDefs[unitDefID].isFactory then
+        RemoveFactory(unitID)
     end
-  
-    if UnitDefs[unitDefID].isFactory then
-        for i,facInfo in ipairs(facs) do
-            if unitID==facInfo.unitID then
-                table.remove(facs,i)
-                needsRecreate = true
-                return
-            end
-        end
+    if unit==waypointFac then
+        waypointFac = -1
     end
 end
 
 function widget:UnitTaken(unitID, unitDefID, unitTeam, newTeam)
     widget:UnitDestroyed(unitID, unitDefID, unitTeam)
     widget:UnitCreated(unitID, unitDefID, newTeam)
-end
-
-function widget:Update()
-    if myTeamID~=Spring.GetMyTeamID() then
-        myTeamID = Spring.GetMyTeamID()
-        r,g,b = Spring.GetTeamColor(myTeamID)
-        teamColor = {r,g,b}
-        needsRecreate = true
-    end
-  
-    if needsRecreate then
-        RecreateFacbar()
-        needsRecreate = false
-    end
-    
-    for i,facInfo in ipairs(facs) do
-        if Spring.ValidUnitID( facInfo.unitID ) then
-            UpdateFac(i, facInfo)
-        end
-    end
 end
 
 -------------------------------------------------------------------------------
@@ -433,12 +391,12 @@ function WaypointHandler(x,y,button)
 
     local type,param = Spring.TraceScreenRay(x,y)
     if type=='ground' then
-        Spring.GiveOrderToUnit(facs[waypointFac].unitID, CMD.MOVE,param,opt) 
+        Spring.GiveOrderToUnit(waypointFac, CMD.MOVE,param,opt) 
     elseif type=='unit' then
-        Spring.GiveOrderToUnit(facs[waypointFac].unitID, CMD.GUARD,{param},opt)     
+        Spring.GiveOrderToUnit(waypointFac, CMD.GUARD,{param},opt)     
     else --feature, etc
         type,param = Spring.TraceScreenRay(x,y,true)
-        Spring.GiveOrderToUnit(facs[waypointFac].unitID, CMD.MOVE,param,opt)
+        Spring.GiveOrderToUnit(waypointFac, CMD.MOVE,param,opt)
     end
 end  
 
@@ -447,9 +405,8 @@ function widget:DrawWorld()
     if waypointMode>1 then
         local unitID
         if waypointMode>1 then 
-            unitID = facs[waypointFac].unitID
+            spDrawUnitCommands(waypointFac)
         end
-        spDrawUnitCommands(unitID)
     end
 end
 
@@ -529,7 +486,7 @@ function widget:Initialize()
         resizeItems = false,
         orientation = 'horizontal',
         centerItems = false,
-        columns=2,
+        columns=1,
     }
     label_main =  Chili.Label:New{ 
         caption='Factories', 
@@ -554,10 +511,25 @@ function widget:Initialize()
     label_main:Hide()
     myTeamID = Spring.GetMyTeamID()
 
-    needsRecreate = true
+    RecreateFacs()
 
     if Spring.GetSpectatingState() or Spring.GetSelectedUnitsCount()>0 then
         HideFacBar()
+    end
+end
+
+function widget:Update()
+    if myTeamID~=Spring.GetMyTeamID() then
+        myTeamID = Spring.GetMyTeamID()
+        r,g,b = Spring.GetTeamColor(myTeamID)
+        teamColor = {r,g,b}
+        RecreateFacs()
+    end
+
+    for i,facInfo in ipairs(facs) do
+        if Spring.ValidUnitID( facInfo.unitID ) then
+            UpdateFac(i, facInfo)
+        end
     end
 end
 

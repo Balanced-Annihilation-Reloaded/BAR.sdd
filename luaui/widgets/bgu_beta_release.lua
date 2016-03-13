@@ -10,6 +10,7 @@ function widget:GetInfo()
     }
 end
 
+-- this code is untidy, written as a prototype
 
 ------------
 -- Vars
@@ -17,7 +18,7 @@ end
 local Chili, container, stackPanel
 local playerListByTeam = {}
 
-local initialText = "Welcome to the BAR Beta Release!\n\nPlease choose from the menu on the left, or press esc to close this menu.\n\nOr, if you are new to BAR, press 'h' for help."
+local initialText = "Welcome to the BAR Beta Release!\n\nPlease choose a game mode or mission from the menu on the left, or press esc to close this menu.\n\nOr, if you are new to BAR, press 'h' for help."
 
 local selectedBorderColor = {1,127/255,0,0.45}
 local normalBorderColor = {1,1,1,0.1}
@@ -199,23 +200,45 @@ script["Sandbox"] = ReadScript("sandbox.txt")
 images["Sandbox"] = ImagePath("sandbox.png")
 
 
-options["Mission 1: Glacier"] = {}
-info["Mission 1: Glacier"] = "\nIntelligence suggests that the enemy has a control tower to the east of the glacier. Fight your way across the ice and destroy it!\n\nETA: 10-15 minutes"
-script["Mission 1: Glacier"] = ReadScript("glacier.txt")
-images["Mission 1: Glacier"] = ImagePath("glacier.png")
+options["1 -- Glacier"] = {}
+info["1 -- Glacier"] = "\nIntelligence suggests that the enemy has a control tower to the east of the glacier. Fight your way across the ice and destroy it!\n\nETA: 10 minutes"
+script["1 -- Glacier"] = ReadScript("glacier.txt")
+images["1 -- Glacier"] = ImagePath("glacier.png")
 
-options["Mission 2: Magic Forest"] = {
-    
-}
-info["Mission 2: Magic Forest"] = "\nOur top spybot is in trouble! It's cloaking device failed and it was forced to hide deep inside a mountainous forest. We're relying on you to locate it and bring it back to our control tower.\n\nETA: 20 minutes"
-script["Mission 2: Magic Forest"] = ReadScript("magic_forest.txt")
-images["Mission 2: Magic Forest"] = ImagePath("magic_forest.png")
+options["2 -- Magic Forest"] = {}
+info["2 -- Magic Forest"] = "\nOur top spybot is in trouble! It's cloaking device failed and it was forced to hide deep inside a mountainous forest. We're relying on you to locate it and bring it back to our control tower.\n\nETA: 20 minutes"
+script["2 -- Magic Forest"] = ReadScript("magic_forest.txt")
+images["2 -- Magic Forest"] = ImagePath("magic_forest.png")
 
-options["Mission 3: Tropical"] = {}
-info["Mission 3: Tropical"] = "\nEnemy units are scattered across a tropical archipelago, in the midst of a battle between two rival factions. They will be preoccupied fighting each other, and we need you to cross the islands and destroy their aircraft plants.\n\nETA: 30-45 minutes"
-script["Mission 3: Tropical"] = ReadScript("tropical.txt")
-images["Mission 3: Tropical"] = ImagePath("tropical.png")
+options["3 -- Tropical"] = {}
+info["3 -- Tropical"] = "\nEnemy units are scattered across a tropical archipelago, in the midst of a battle between two rival factions. They will be preoccupied fighting each other, and we need you to cross the islands and destroy their aircraft plants.\n\nETA: 30 minutes"
+script["3 -- Tropical"] = ReadScript("tropical.txt")
+images["3 -- Tropical"] = ImagePath("tropical.png")
 
+options["4 -- River Crossing"] = {}
+info["4 -- River Crossing"] = "\n One of our allies has built resource production on the west of a wide river delta. Your mission is to build a flagship and use its long range guns to destroy the core control tower in the north east, but you must also patrol the waterways and protect our ally's control towers. In return, our ally will share you resources.\n\nETA: 25 minutes"
+script["4 -- River Crossing"] = ReadScript("downriver.txt")
+images["4 -- River Crossing"] = ImagePath("downriver.png")
+
+options["5 -- Evacuate!"] = {}
+info["5 -- Evacuate!"] = "\n Intelligence indicates your current base will be attacked by a strong enemy force in 6 minutes time. Evacuate into the central hills, where you must establish a base and destroy enemy powerplants.\n\nETA: 30 minutes"
+script["5 -- Evacuate!"] = ReadScript("evacuate.txt")
+images["5 -- Evacuate!"] = ImagePath("evacuate.png")
+
+options["6 -- Ambush"] = {}
+info["6 -- Ambush"] = "\n A prototype model of the new core battle mech is being transported under armed guard across the mountains. We've established a base near their path, you must set up an ambush and destroy them.\n\nETA: 15 minutes"
+script["6 -- Ambush"] = ReadScript("ambush.txt")
+images["6 -- Ambush"] = ImagePath("ambush.png")
+
+options["7 -- Foursome"] = {}
+info["7 -- Foursome"] = "\n Kill the enemy control tower in the south, but don't let your ally's control tower die. Your ally is overpowered and will need assistance.\n\nETA: 30 minutes"
+script["7 -- Foursome"] = ReadScript("foursome.txt")
+images["7 -- Foursome"] = ImagePath("foursome.png")
+
+options["8 -- Scrap Metal"] = {}
+info["8 -- Scrap Metal"] = "\n We've discovered abandoned wrecks of key enemy units, on an alien planet swarming with vicious chicken like creatures. Your mission is to resurrect all the enemy units and escort each one safely back to our control tower.\n\nETA: 20 minutes"
+script["8 -- Scrap Metal"] = ReadScript("scrap_metal.txt")
+images["8 -- Scrap Metal"] = ImagePath("scrap_metal.png")
 
 
 ------------
@@ -240,7 +263,7 @@ local function Load (self)
     local gameMode = self.caption
     local options = options[gameMode] or {} -- {} prevents crash for wip game modes
     
-    if string.find(gameMode, "Mission") then
+    if string.find(gameMode, '-') then -- hacky way to pick out missions
         if core_button.visible then core_button:Hide() end
         SetPlayerSide({name="ARM"})
     else
@@ -442,18 +465,20 @@ local function AddToMenu()
         orientation = "vertical",
         resizeItems = true,
         children = {
-            Chili.Line:New{width = '50%', height = 2},
             Chili.Button:New{height = 70, width = '95%', caption = "Sandbox", OnClick = {Load},},
-            Chili.Line:New{width = '50%', height = 2},
             Chili.Button:New{height = 70, width = '95%', caption = "AI Assist", OnClick = {Load},},
             Chili.Button:New{height = 70, width = '95%', caption = "AI Skirmish", OnClick = {Load},},
-            Chili.Line:New{width = '50%', height = 2},
             Chili.Button:New{height = 70, width = '95%', caption = "Chickens", OnClick = {Load},},
-            Chili.Line:New{width = '50%', height = 2},
-            Chili.Button:New{height = 70, width = '95%', caption = "Mission 1: Glacier", OnClick = {Load},},
-            Chili.Button:New{height = 70, width = '95%', caption = "Mission 2: Magic Forest", OnClick = {Load},},
-            Chili.Button:New{height = 70, width = '95%', caption = "Mission 3: Tropical", OnClick = {Load},},
-            Chili.Line:New{width = '50%', height = 2},
+            Chili.Line:New{x = '25%', width = '50%', height = 2},
+            --Chili.Label:New{caption="Missions",align="center",height=10},
+            Chili.Button:New{height = 70, width = '95%', caption = "1 -- Glacier", OnClick = {Load},},
+            Chili.Button:New{height = 70, width = '95%', caption = "2 -- Magic Forest", OnClick = {Load},},
+            Chili.Button:New{height = 70, width = '95%', caption = "3 -- Tropical", OnClick = {Load},},
+            Chili.Button:New{height = 70, width = '95%', caption = "4 -- River Crossing", OnClick = {Load},},
+            Chili.Button:New{height = 70, width = '95%', caption = "5 -- Evacuate!", OnClick = {Load},},
+            Chili.Button:New{height = 70, width = '95%', caption = "6 -- Ambush", OnClick = {Load},},
+            Chili.Button:New{height = 70, width = '95%', caption = "7 -- Foursome", OnClick = {Load},},
+            Chili.Button:New{height = 70, width = '95%', caption = "8 -- Scrap Metal", OnClick = {Load},},
         }    
     }
     

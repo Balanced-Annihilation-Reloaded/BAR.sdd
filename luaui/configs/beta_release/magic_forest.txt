@@ -21,7 +21,7 @@ deathmode=killall;
 	[AI0]
 	{
 		Name=Enemy;
-		ShortName=Enemy;
+		ShortName=NullAI;
 		Team=1;
 		Host=0;
 	}

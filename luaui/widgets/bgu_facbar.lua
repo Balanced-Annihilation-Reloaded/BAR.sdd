@@ -24,25 +24,10 @@ local buttonColor = {0,0,0,1}
 local queueColor = {0.0,0.4,0.4,0.9}
 local progColor = {0,0.9,0.2,0.7}
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
-local Chili
-local Button
-local Label
-local Window
-local StackPanel
-local Grid
-local TextBox
-local Image
-local Progressbar
-local screen0
-
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
 local window_facbar, stack_main, label_main
-local echo = Spring.Echo
 local imageDir = 'luaui/images/buildIcons/'
 
 -------------------------------------------------------------------------------
@@ -51,22 +36,11 @@ local imageDir = 'luaui/images/buildIcons/'
 local needsRecreate = true
 local function RecreateFacbar() end
 
-options_path = 'Settings/Interface/FactoryBar'
-options = {
-    maxVisibleBuilds = {
-        type = 'number',
-        name = 'Visible Units in Que',
-        desc = "The maximum units to show in the factory's queue",
-        min = 2, max = 14,
-        value = 5,
-    },    
+local options = {
+    maxVisibleBuilds = 6,    
+    maxFacs = 8,
     
-    buttonsize = {
-        type = 'number',
-        name = 'Button Size',
-        min = 40, max = 100, step=5,
-        value = 50,
-    },
+    buttonSize = 50,
 }
 
 -------------------------------------------------------------------------------
@@ -107,8 +81,6 @@ local GetUnitIsBuilding = Spring.GetUnitIsBuilding
 local insert        = table.insert
 local remove        = table.remove
 
-local MAX_FACS = 8
-
 -------------------------------------------------------------------------------
 
 local function GetBuildQueue(unitID)
@@ -134,7 +106,7 @@ local function UpdateFac(i, facInfo)
     local unitBuildDefID = -1
     local unitBuildID    = -1
 
-    -- building?
+    -- fac is still being built?
     local progress = 0
     unitBuildID      = GetUnitIsBuilding(facInfo.unitID)
     if unitBuildID then
@@ -177,11 +149,11 @@ local function UpdateFacQ(i, facInfo)
         unitBuildDefID = GetUnitDefID(unitBuildID)
         _, _, _, _, progress = GetUnitHealth(unitBuildID)
     end
-    local buildQueue  = Spring.GetFullBuildQueue(facInfo.unitID, options.maxVisibleBuilds.value +1)
+    local buildQueue  = Spring.GetFullBuildQueue(facInfo.unitID, options.maxVisibleBuilds +1)
                 
     if (buildQueue ~= nil) then
         
-        local n,j = 1,options.maxVisibleBuilds.value
+        local n,j = 1,options.maxVisibleBuilds
         
         while (buildQueue[n]) do
             local unitDefIDb, count = next(buildQueue[n], nil)
@@ -203,10 +175,10 @@ end
 local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
     -- add the button for this factory
     tocontrol:AddChild(
-        Button:New{
+        Chili.Button:New{
             caption = "",
-            width = options.buttonsize.value*1.2,
-            height = options.buttonsize.value*1.0,
+            width = options.buttonSize*1.2,
+            height = options.buttonSize*1.0,
             tooltip =             'Click - '             .. GreenStr .. 'Select factory / Build unit \n'                     
                 .. WhiteStr ..     'Middle click - '     .. GreenStr .. 'Go to \n'
                 .. WhiteStr ..     'Right click - '     .. GreenStr .. 'Quick Rallypoint Mode' 
@@ -233,16 +205,16 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
                     or nil
             },
             OnMouseOver = {
-                function() WG.FacBar.mouseOverDefID = unitDefID end
+                function() WG.FacBar.mouseOverUnitDefID = unitDefID end
             },
             OnMouseOut = {
-                function() WG.FacBar.mouseOverDefID = nil end            
+                function() WG.FacBar.mouseOverUnitDefID = nil end            
             },
             padding={3, 3, 3, 3},
             --margin={0, 0, 0, 0},
             children = {
                 unitID ~= 0 and
-                    Image:New {
+                    Chili.Image:New {
                         file = '#'..unitDefID,
                         flip = false,
                         keepAspect = false;
@@ -262,7 +234,7 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
         }
     )
 
-    local qStack = StackPanel:New{
+    local qStack = Chili.StackPanel:New{
         name = stackname .. '_q',
         itemMargin={0,0,0,0},
         itemPadding={0,0,0,0},
@@ -270,21 +242,21 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
         --margin={0, 0, 0, 0},
         x=0,
         width=700,
-        height = options.buttonsize.value,
+        height = options.buttonSize,
         resizeItems = false,
         orientation = 'horizontal',
         centerItems = false,
     }
     local qStore = {}
     
-    local facStack = StackPanel:New{
+    local facStack = Chili.StackPanel:New{
         name = stackname,
         itemMargin={0,0,0,0},
         itemPadding={0,0,0,0},
         padding={0,0,0,0},
         --margin={0, 0, 0, 0},
         width=800,
-        height = options.buttonsize.value*1.0,
+        height = options.buttonSize*1.0,
         resizeItems = false,
         centerItems = false,
     }
@@ -294,17 +266,17 @@ local function AddFacButton(unitID, unitDefID, tocontrol, stackname)
     return facStack, qStack, qStore
 end
 
-local function MakeButton(unitDefID, facID, facIndex)
+local function AddBuildButton(unitDefID, facID, facIndex)
 
     local ud = UnitDefs[unitDefID]
   
     return
-        Button:New{
+        Chili.Button:New{
             name = unitDefID,
             x=0,
             caption="",
-            width = options.buttonsize.value,
-            height = options.buttonsize.value,
+            width = options.buttonSize,
+            height = options.buttonSize,
             padding = {4, 4, 4, 4},
             --margin={0, 0, 0, 0},
             backgroundColor = queueColor,
@@ -330,13 +302,13 @@ local function MakeButton(unitDefID, facID, facIndex)
                 end
             },
             OnMouseOver = {
-                function() WG.FacBar.mouseOverDefID = unitDefID end
+                function() WG.FacBar.mouseOverUnitDefID = unitDefID end
             },
             OnMouseOut = {
-                function() WG.FacBar.mouseOverDefID = nil end            
+                function() WG.FacBar.mouseOverUnitDefID = nil end            
             },
             children = {
-                Label:New {
+                Chili.Label:New {
                     name='count',
                     autosize=false,
                     width="90%",
@@ -348,7 +320,7 @@ local function MakeButton(unitDefID, facID, facIndex)
                     fontShadow = true,
                 },
 
-                Progressbar:New{
+                Chili.Progressbar:New{
                     value = 0.0,
                     name    = 'prog';
                     max     = 1;
@@ -357,8 +329,7 @@ local function MakeButton(unitDefID, facID, facIndex)
                     x=2, y=2, height=3, right=2,
                 },
                         
-                Label:New{ caption = ud.metalCost .. ' m', fontSize = 11, x=2, bottom=2, fontShadow = true, },
-                Image:New {
+                Chili.Image:New {
                     name = 'bp',
                     --file = "#"..unitDefID,
                     file = '#'..unitDefID,
@@ -444,7 +415,7 @@ RecreateFacbar = function()
         local buildQueue  = GetBuildQueue(facInfo.unitID)
         for j,unitDefIDb in ipairs(buildList) do
             local unitDefIDb = unitDefIDb
-            qStore[i .. '|' .. unitDefIDb] = MakeButton(unitDefIDb, facInfo.unitID, i)
+            qStore[i .. '|' .. unitDefIDb] = AddBuildButton(unitDefIDb, facInfo.unitID, i)
         end
         
     end
@@ -472,7 +443,7 @@ local function UpdateFactoryList()
           insert(facs,{ unitID=unitID, unitDefID=unitDefID, buildList=bo })
         end
         t = t + 1
-        if t>=MAX_FACS then break end
+        if t>=options.maxFacs then break end
     end
   end
 
@@ -499,7 +470,7 @@ function widget:UnitCreated(unitID, unitDefID, unitTeam)
 
   if UnitDefs[unitDefID].isFactory then
     local bo =  UnitDefs[unitDefID] and UnitDefs[unitDefID].buildOptions
-    if #facs>=MAX_FACS then
+    if #facs>=options.maxFacs then
         remove(facs,1)
     end
     if bo and #bo > 0 then
@@ -625,17 +596,8 @@ function widget:Initialize()
     
     -- setup Chili
     Chili = WG.Chili
-    Button = Chili.Button
-    Label = Chili.Label
-    Window = Chili.Window
-    StackPanel = Chili.StackPanel
-    Grid = Chili.Grid
-    TextBox = Chili.TextBox
-    Image = Chili.Image
-    Progressbar = Chili.Progressbar
-    screen0 = Chili.Screen0
 
-    stack_main = Grid:New{
+    stack_main = Chili.Grid:New{
         y=20,
         padding = {0,0,0,0},
         itemPadding = {0, 0, 0, 0},
@@ -647,11 +609,11 @@ function widget:Initialize()
         centerItems = false,
         columns=2,
     }
-    label_main =  Label:New{ 
+    label_main =  Chili.Label:New{ 
         caption='Factories', 
         fontShadow = true, 
     }
-    window_facbar = Window:New{
+    window_facbar = Chili.Window:New{
         padding = {3,3,3,3,},
         name = "facbar",
         x = 0, y = "20%",
@@ -684,4 +646,14 @@ function widget:Shutdown()
     stack_main:Dispose()
     window_facbar:Dispose()
     WG.FacBar = nil
+end
+
+function widget:GetConfigData()
+    return options
+end
+
+function widget:SetConfigData(data)
+    if data then
+        options = data
+    end
 end

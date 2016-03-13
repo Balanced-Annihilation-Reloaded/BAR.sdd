@@ -164,11 +164,11 @@ vertex = [[
 
 		outColor.rgb = mix(outColor.rgb, teamColor.rgb, outColor.a);
 
-		#if (deferred_mode == 0)
+		//#if (deferred_mode == 0)
 			// diffuse + specular + envcube lighting
 			// (reflection contains the NdotL term!)
 			outColor.rgb = outColor.rgb * reflection + specular;
-		#endif
+		//#endif
 
 		outColor.a   = extraColor.a;
 		//outColor.rgb = outColor.rgb + outColor.rgb * (normaltex.a - 0.5) * etcLoc.g; // no more wreck color blending
@@ -200,13 +200,13 @@ vertex = [[
     --detailMap   = 6,
   },
   uniform = {
-    sunPos = {gl.GetSun("pos")},
+    -- sunPos = {gl.GetSun("pos")}, -- material has sunPosLoc
     sunAmbient = {gl.GetSun("ambient" ,"unit")},
     sunDiffuse = {gl.GetSun("diffuse" ,"unit")},
     shadowDensity = {gl.GetSun("shadowDensity" ,"unit")},
-    shadowParams  = {gl.GetShadowMapParams()},
+    -- shadowParams  = {gl.GetShadowMapParams()}, -- material has shadowParamsLoc
   },
   uniformMatrix = {
-    shadowMatrix = {gl.GetMatrixData("shadow")},
+    -- shadowMatrix = {gl.GetMatrixData("shadow")}, -- material has shadow{Matrix}Loc
   },
 }

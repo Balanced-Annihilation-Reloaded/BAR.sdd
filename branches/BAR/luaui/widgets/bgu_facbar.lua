@@ -92,6 +92,14 @@ local function AddFacButton(unitID, unitDefID) --fixme, facsPos need to be uniq,
             padding={3, 3, 3, 3},
             --margin={0, 0, 0, 0},
             children = {
+                Chili.Progressbar:New{
+                    value = 0.0,
+                    name    = 'prog';
+                    max     = 1;
+                    color           = progColor,
+                    backgroundColor = {1,1,1,  0.01},
+                    x=2, bottom=2, height=3, right=2,
+                },
                 Chili.Image:New {
                     file = '#'..unitDefID,
                     flip = false,
@@ -106,7 +114,7 @@ local function AddFacButton(unitID, unitDefID) --fixme, facsPos need to be uniq,
                             file   = imageDir..'Overlays/'..UnitDefs[unitDefID].name..'.dds',
                         },
                     },
-                }
+                }                
             },
         }
 
@@ -140,7 +148,7 @@ local function AddFacButton(unitID, unitDefID) --fixme, facsPos need to be uniq,
     facStack:AddChild(facButton)
     facStack:AddChild(qStack)
     stack_main:AddChild(facStack)
-    return facStack, qStack
+    return facStack, facButton, qStack
 end
 
 local function AddBuildButton(unitDefID, facID)
@@ -246,10 +254,14 @@ function AddFactory(unitID, unitDefID)
     local facInfo = {unitID=unitID, unitDefID=unitDefID}
     facInfo.buildOptions = buildOptions
     
-    local facStack, qStack = AddFacButton(unitID, unitDefID)
+    local _,_,_,_,progress = spGetUnitHealth(facInfo.unitID)
+    facInfo.built = (progress==1)
+    
+    local facStack, facButton, qStack = AddFacButton(unitID, unitDefID)
     facInfo.facStack = facStack
-    facInfo.qStack    = qStack
-    facInfo.qStore    = {}
+    facInfo.facButton = facButton -- the facs own button
+    facInfo.qStack    = qStack -- currently displayed build buttons
+    facInfo.qStore    = {} -- all build buttons, indexed by unitDefID
     
     local buildOptions = UnitDefs[unitDefID].buildOptions
     for j,buildDefID in ipairs(buildOptions) do
@@ -293,15 +305,23 @@ function RecreateFacs()
 end
 
 function UpdateFacProgressBars(facInfo)
+    -- update build progress of the factory, if its still being built
+    if not facInfo.built then
+        local _,_,_,_,progress = spGetUnitHealth(facInfo.unitID)
+        local fBar = facInfo.facButton:GetChildByName('prog')
+        fBar:SetValue(progress)
+    end
+    
+
+    -- update the build progress bars
     local progress = 0
     local unitBuildID = spGetUnitIsBuilding(facInfo.unitID) -- unit being built by this factory
     local unitBuildDefID
     if unitBuildID then
         unitBuildDefID = spGetUnitDefID(unitBuildID)
-        _, _, _, _, progress = spGetUnitHealth(unitBuildID)
+        _,_,_,_,progress = spGetUnitHealth(unitBuildID)
     end
-    if not unitBuildID or not unitBuildDefID then return end
-    
+    if not unitBuildID or not unitBuildDefID then return end    
     local qButton = facInfo.qStore[unitBuildDefID]
     local qBar = qButton:GetChildByName('prog')
     qBar:SetValue(progress)
@@ -339,6 +359,18 @@ end
 function widget:UnitCreated(unitID, unitDefID, unitTeam, facID, facDefID)
     if unitTeam == myTeamID and UnitDefs[unitDefID].isFactory then
         AddFactory(unitID, unitDefID)
+    end
+end
+
+function widget:UnitFinished(unitID, unitDefID, unitTeam)
+    if unitTeam == myTeamID and UnitDefs[unitDefID].isFactory then
+        for i=1,#facs do
+            if unitID==facs[i].unitID then
+                facs[i].built = true
+                local fBar = facs[i].facButton:GetChildByName('prog')
+                fBar:SetValue(0)
+            end
+        end
     end
 end
 

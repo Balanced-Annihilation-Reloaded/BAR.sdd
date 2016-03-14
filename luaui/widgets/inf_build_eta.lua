@@ -1,23 +1,9 @@
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
---
---  file:    gui_build_eta.lua
---  brief:   display estimated time of arrival for builds
---  author:  Dave Rodgers
---
---  >> modified by: jK <<
---
---  Copyright (C) 2007,2008.
---  Licensed under the terms of the GNU GPL, v2 or later.
---
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
 
 function widget:GetInfo()
   return {
     name      = "Build ETA",
     desc      = "Displays estimated time of arrival for units under construction",
-    author    = "trepan, jK",
+    author    = "trepan, jK, Bluestone",
     date      = "Feb, 2008",
     license   = "GNU GPL, v2 or later",
     layer     = -1,
@@ -39,6 +25,8 @@ local SpValidUnitID = Spring.ValidUnitID
 local SpGetCameraPosition = Spring.GetCameraPosition
 local SpGetSmoothMeshHeight = Spring.GetSmoothMeshHeight
 local SpIsGUIHidden = Spring.IsGUIHidden
+local SpGetGameSpeed = Spring.GetGameSpeed
+local SpGetUnitHealth = Spring.GetUnitHealth
 
 --------------------------------------------------------------------------------
 
@@ -50,9 +38,33 @@ function widget:ViewResize(viewSizeX, viewSizeY)
 end
 
 --------------------------------------------------------------------------------
--- bookkeeping
+-- bookkeeping add/remove/update
 
-local function AddETA(unitID,unitDefID)
+local unknownETA = '\255\255\255\1ETA\255\255\255\255:\255\1\1\255???'
+local ETA = "\255\255\255\1ETA\255\255\255\255:"
+local red = '\255\255\1\1'
+local green = '\255\1\255\1'
+local ETA_red = ETA .. red
+local ETA_green = ETA .. green
+
+function GetETAText(timeLeft)
+  local etaStr = ""
+  if (timeLeft == nil) then
+    etaStr = unknownETA
+  else
+    if (timeLeft > 60) then
+        etaStr = ETA_green .. string.format('%d', timeLeft / 60) .. "m, " .. string.format('%.1f', timeLeft % 60) .. "s"
+    elseif (timeLeft > 0) then
+      etaStr = ETA_green .. string.format('%.1f', timeLeft) .. "s"
+    else
+      etaStr = ETA_red .. string.format('%.1f', -timeLeft) .. "s"
+    end
+  end
+
+  return etaStr
+end 
+
+local function AddETA(unitID, unitDefID)
   if (unitDefID == nil) then return nil end
   local _,_,_,_,buildProgress = Spring.GetUnitHealth(unitID)
   if (buildProgress == nil) then return nil end
@@ -60,7 +72,7 @@ local function AddETA(unitID,unitDefID)
   local ud = UnitDefs[unitDefID]
   if (ud == nil) or (ud.height == nil) then return nil end
 
-  return {
+  local bi = {
     unitID = unitID,
     firstSet = true,
     lastTime = Spring.GetGameSeconds(),
@@ -69,6 +81,7 @@ local function AddETA(unitID,unitDefID)
     timeLeft = nil,
     yoffset  = ud.height+14 -- healthbar sits just below
   }
+  table.insert(etaTable, bi)
 end
 
 local function UpdateETA(bi, buildProgress, gs, userSpeed)
@@ -114,12 +127,26 @@ local function UpdateETA(bi, buildProgress, gs, userSpeed)
     end
     bi.lastTime = gs
     bi.lastProg = buildProgress
+    bi.ETAtext = GetETAText(bi.timeLeft)
   end
 end
 
-function widget:Update(dt)
+function RemoveETA(unitID)
+    -- it doesn't matter that this is expensive; what matters is that iteration in DrawWorld is fast
+    for i=1,#etaTable do
+        local bi = etaTable[i]
+        if bi.unitID==unitID then
+            table.remove(etaTable,i)
+            return
+        end
+    end
+end
 
-  local userSpeed,_,pause = Spring.GetGameSpeed()
+--------------------------------------------------------------------------------
+-- bookkeeping callins
+
+function widget:Update(dt)
+  local userSpeed,_,pause = SpGetGameSpeed()
   if (pause) then
     return
   end
@@ -133,7 +160,7 @@ function widget:Update(dt)
   local killTable = {}
   for _,bi in pairs(etaTable) do
     local unitID = bi.unitID
-    local _,_,_,_,buildProgress = Spring.GetUnitHealth(unitID)
+    local _,_,_,_,buildProgress = SpGetUnitHealth(unitID)
     if ((not buildProgress) or (buildProgress >= 1.0)) then
       table.insert(killTable, unitID)
     else
@@ -143,78 +170,51 @@ function widget:Update(dt)
   
   -- remove units in killTable
   for _,unitID in pairs(killTable) do
-    etaTable[unitID] = nil
+    RemoveETA(unitID)
   end
 end
 
-
---------------------------------------------------------------------------------
 
 function widget:Initialize()
   local myUnits = Spring.GetTeamUnits(Spring.GetMyTeamID())
   for _,unitID in ipairs(myUnits) do
     local _,_,_,_,buildProgress = Spring.GetUnitHealth(unitID)
     if (buildProgress < 1) then
-      etaTable[unitID] = AddETA(unitID,Spring.GetUnitDefID(unitID))
+       AddETA(unitID,Spring.GetUnitDefID(unitID))
     end
   end
 end
 
 function widget:UnitCreated(unitID, unitDefID, unitTeam)
-  local spect,spectFull = Spring.GetSpectatingState()
-  if Spring.AreTeamsAllied(unitTeam,Spring.GetMyTeamID()) or (spect and spectFull) then
-    etaTable[unitID] = AddETA(unitID,unitDefID)
+  local spect,_ = Spring.GetSpectatingState()
+  if Spring.AreTeamsAllied(unitTeam,Spring.GetMyTeamID()) or spec then
+    AddETA(unitID,unitDefID)
   end
 end
-
 
 function widget:UnitDestroyed(unitID, unitDefID, unitTeam)
-  etaTable[unitID] = nil
+  RemoveETA(unitID)
 end
-
-
-function widgetHandler:UnitTaken(unitID, unitDefID, unitTeam, newTeam)
-  etaTable[unitID] = nil
-end
-
 
 function widget:UnitFinished(unitID, unitDefID, unitTeam)
-  etaTable[unitID] = nil
+  RemoveETA(unitID)
 end
 
+function widgetHandler:UnitTaken(unitID, unitDefID, unitTeam, newTeam)
+  widget:UnitDestroyed(unitID, unitDefID, unitTeam)
+  widget:UnitCreated(unitID, unitDefID, newTeam)
+end
+
+
+
 --------------------------------------------------------------------------------
+-- draw
 
-local unknownETA = '\255\255\255\1ETA\255\255\255\255:\255\1\1\255???'
-local ETA = "\255\255\255\1ETA\255\255\255\255:"
-local red = '\255\255\1\1'
-local green = '\255\1\255\1'
-local ETA_red = ETA .. red
-local ETA_green = ETA .. green
-
-function GetETAText(timeLeft)
-  local etaStr = ""
-  if (timeLeft == nil) then
-    etaStr = unknownETA
-  else
-    if (timeLeft > 60) then
-        etaStr = ETA_green .. string.format('%d', timeLeft / 60) .. "m, " .. string.format('%.1f', timeLeft % 60) .. "s"
-    elseif (timeLeft > 0) then
-      etaStr = ETA_green .. string.format('%.1f', timeLeft) .. "s"
-    else
-      etaStr = ETA_red .. string.format('%.1f', -timeLeft) .. "s"
-    end
-  end
-
-  return etaStr
-end 
-
-local function DrawEtaText(timeLeft,yoffset)
-  local etaStr = GetETAText(timeLeft)
-
+local function DrawEtaText(etaText ,yoffset)
   gl.Translate(0, yoffset,0)
   gl.Billboard()
   gl.Translate(0, 5 ,0)
-  gl.Text(etaStr, 0, 0, 8, "c")
+  gl.Text(etaText, 0, 0, 8, "c")
 end
 
 function widget:DrawWorld()
@@ -228,9 +228,11 @@ function widget:DrawWorld()
   gl.DepthTest(true)
   gl.Color(1, 1, 1)
 
-  for unitID, bi in pairs(etaTable) do
-    if SpIsUnitInView(unitID) then
-      gl.DrawFuncAtUnit(unitID, false, DrawEtaText, bi.timeLeft, bi.yoffset)
+  local bi
+  for i=1,#etaTable do
+    bi = etaTable[i]
+    if SpIsUnitInView(bi.unitID) then
+      gl.DrawFuncAtUnit(bi.unitID, false, DrawEtaText, bi.ETAtext, bi.yoffset)
     end
   end
 

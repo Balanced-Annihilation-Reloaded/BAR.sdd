@@ -14,19 +14,9 @@ end
 local Chili
 local minimap
 
--- Localize
-local glGetViewSizes  = gl.GetViewSizes
 local glConfigMiniMap = gl.ConfigMiniMap
 local glDrawMiniMap   = gl.DrawMiniMap
-local glPushAttrib    = gl.PushAttrib
-local glPopAttrib     = gl.PopAttrib
-local glMatrixMode    = gl.MatrixMode
-local glPushMatrix    = gl.PushMatrix
-local glPopMatrix     = gl.PopMatrix
-local GL_ALL_ATTRIB_BITS = GL.ALL_ATTRIB_BITS
-local GL_PROJECTION      = GL.PROJECTION
-local GL_MODELVIEW       = GL.MODELVIEW
---
+local glGetViewSizes  = gl.GetViewSizes
 
 local buttonColour, panelColour, sliderColour 
 
@@ -105,20 +95,8 @@ function widget:DrawScreen()
     local vsx,vsy = glGetViewSizes()
     local cx,cy,cw,ch = Chili.unpack4(minimap.clientArea)
     cx,cy = minimap:LocalToScreen(cx,cy)
-    glConfigMiniMap(cx,vsy-ch-cy,cw+1,ch+1)        
-
-    --[[glPushAttrib(GL_ALL_ATTRIB_BITS)
-    glMatrixMode(GL_PROJECTION)
-    glPushMatrix()
-    glMatrixMode(GL_MODELVIEW)
-    glPushMatrix()]]
-
-    glDrawMiniMap()
     
-    --[[glMatrixMode(GL_PROJECTION)
-    glPopMatrix()
-    glMatrixMode(GL_MODELVIEW)
-    glPopMatrix()
-    glPopAttrib()]]
+    glConfigMiniMap(cx,vsy-ch-cy,cw+1,ch+1)        
+    glDrawMiniMap()
 end 
 

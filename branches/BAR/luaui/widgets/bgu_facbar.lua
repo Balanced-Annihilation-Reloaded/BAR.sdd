@@ -175,7 +175,6 @@ local function AddBuildButton(unitDefID, facID)
                     end
                     
                     Spring.GiveOrderToUnit(facID, -(unitDefID), {}, opt)
-                    
                 end
             },
             OnMouseOver = {
@@ -301,18 +300,11 @@ function UpdateFacProgressBars(facInfo)
         unitBuildDefID = spGetUnitDefID(unitBuildID)
         _, _, _, _, progress = spGetUnitHealth(unitBuildID)
     end
-
-    local buildOptions = facInfo.buildOptions   
-    for j=1,#buildOptions do
-        local unitDefIDb = buildOptions[j]
-        local qButton = facInfo.qStore[unitDefIDb]       
-        local qBar = qButton:GetChildByName('prog')        
-        if unitDefIDb == unitBuildDefID then
-            qBar:SetValue(progress)
-        else
-            qBar:SetValue(0)        
-        end
-    end
+    if not unitBuildID or not unitBuildDefID then return end
+    
+    local qButton = facInfo.qStore[unitBuildDefID]
+    local qBar = qButton:GetChildByName('prog')
+    qBar:SetValue(progress)
 end
 
 function UpdateFacBuildCounts(facInfo)
@@ -344,7 +336,7 @@ function UpdateFacBuildCounts(facInfo)
     end
 end   
 
-function widget:UnitCreated(unitID, unitDefID, unitTeam)
+function widget:UnitCreated(unitID, unitDefID, unitTeam, facID, facDefID)
     if unitTeam == myTeamID and UnitDefs[unitDefID].isFactory then
         AddFactory(unitID, unitDefID)
     end
@@ -352,7 +344,15 @@ end
 
 function widget:UnitFromFactory(unitID, unitDefID, unitTeam)
     if unitTeam== myTeamID then
-        widget:CommandsChanged() -- update factory build counts
+        updateCounts = 'UnitFromFactory'
+        for i=1,#facs do
+            if unitID==facs[i].unitID then
+                local qButton = fac[i].qStore[unitDefID]
+                local qBar = qButton:GetChildByName('prog')
+                qBar:SetValue(0)
+                return
+            end        
+        end        
     end
 end
 
@@ -368,6 +368,13 @@ end
 function widget:UnitTaken(unitID, unitDefID, unitTeam, newTeam)
     widget:UnitDestroyed(unitID, unitDefID, unitTeam)
     widget:UnitCreated(unitID, unitDefID, newTeam)
+end
+
+function widget:UnitCommand(unitID, unitDefID, unitTeam, cmdID, cmdParams, cmdOpts, cmdTag)
+    if (unitTeam == myTeamID) and UnitDefs[unitDefID].isFactory then
+        -- factory has been given a (probably build) order, update its build counts
+        updateCounts = 'UnitCommand' -- we can't call widget:CommandsChanged() and update the build counts just yet, because GetFullBuildQueue won't return the new counts yet
+    end
 end
 
 -------------------------------------------------------------------------------
@@ -533,6 +540,14 @@ function widget:CommandsChanged()
         if spValidUnitID(facInfo.unitID) then
             UpdateFacBuildCounts(facInfo)
         end
+    end
+end
+
+function widget:Update()
+    if updateCounts then
+        --Spring.Echo("fac bar update reason: " .. updateCounts)
+        widget:CommandsChanged()
+        updateCounts = nil
     end
 end
 

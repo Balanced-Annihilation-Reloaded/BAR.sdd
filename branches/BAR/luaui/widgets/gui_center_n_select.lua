@@ -6,7 +6,7 @@ function widget:GetInfo()
   return {
     name      = "Center n Select",
     desc      = "Selects and centers the Commander at the start of the game",
-    author    = "quantum and Evil4Zerggin and zwzsg",
+    author    = "quantum, Evil4Zerggin, zwzsg",
     date      = "19 April 2008",
     license   = "GNU GPL, v2 or later",
     layer     = 5,

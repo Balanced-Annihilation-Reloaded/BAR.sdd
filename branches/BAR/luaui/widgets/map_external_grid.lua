@@ -3,7 +3,7 @@ function widget:GetInfo()
   return {
     name      = "External Grid",
     desc      = "Draws a grid around map edge",
-    author    = "knorke, tweaked by KR",
+    author    = "knorke, KingRaptor",
     date      = "Sep 2011",
     license   = "PD",
     layer     = -101, --before option menu, since we set MapBorder

@@ -24,7 +24,7 @@ function widget:GetInfo()
   return {
     name      = "Autoquit",
     desc      = "Automatically quits "..delay.."s after the game ends",
-    author    = "Evil4Zerggin & zwzsg",
+    author    = "Evil4Zerggin, zwzsg",
     date      = "25 December 2008",
     license   = "GNU LGPL, v2.1 or later",
     layer     = 0,

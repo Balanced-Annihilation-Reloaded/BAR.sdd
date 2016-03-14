@@ -6,7 +6,7 @@ local versionNum = '2.22'
 function widget:GetInfo()
   return {
     name      = "Auto group",
-    desc      = "Alt+[0-9] sets autogroup # for selected unit type(s) \nNewly built units get added to group # equal to their autogroup#",
+    desc      = "Alt+[0-9] sets autogroup number for selected unit type(s) \nNewly built units get added to group # equal to their autogroup number",
     author    = "Licho",
     date      = "Mar 23, 2007",
     license   = "GNU GPL, v2 or later",

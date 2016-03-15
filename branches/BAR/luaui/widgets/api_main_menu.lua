@@ -638,7 +638,9 @@ local checkBox = function(obj)
 
     local OnChange = function(self)
         Settings[self.name] = not self.checked --self.checked hasn't changed yet!
-        spSendCommands(self.name .. " " .. (Settings[self.name] and 1 or 0))
+        local value = Settings[self.name] and 1 or 0
+        spSendCommands(self.name .. " " .. value)
+        Spring.SetConfigInt(self.name, value)
     end
     
     local checkBox = Chili.Checkbox:New{
@@ -670,7 +672,8 @@ local slider = function(obj)
 
     local function OnChange(self, value)
         Settings[self.name] = value
-        spSendCommands(obj.name..' '..value)
+        Spring.SetConfigInt(self.name, value)
+        spSendCommands(self.name..' '..value)
     end
 
     trackbar:AddChild(
@@ -721,11 +724,12 @@ local comboBox = function(obj)
     end
 
     local function OnSelect(self, listID)
-        local value   = self.options[listID] or ''
-        local setting = self.name or ''
+        local value   = self.options[listID]
+        local name = self.name
+        Settings[name] =  self.items[self.selected]
 
-        spSendCommands(setting..' '..value)
-        Settings[setting] =  self.items[self.selected]
+        spSendCommands(name..' '..value)
+        Spring.SetConfigInt(name, value)
     end
 
     comboBox:AddChild(

@@ -236,7 +236,7 @@ script["7 -- Foursome"] = ReadScript("foursome.txt")
 images["7 -- Foursome"] = ImagePath("foursome.png")
 
 options["8 -- Scrap Metal"] = {}
-info["8 -- Scrap Metal"] = "\n We've discovered abandoned wrecks of key enemy units, on an alien planet swarming with vicious chicken like creatures. Your mission is to resurrect all the enemy units and escort each one safely back to our control tower.\n\nETA: 20 minutes"
+info["8 -- Scrap Metal"] = "\n We've discovered abandoned wrecks of key enemy units, on an alien planet swarming with vicious creatures. Your mission is to resurrect all the enemy units and escort each one safely back to our control tower.\n\nETA: 30-45 minutes"
 script["8 -- Scrap Metal"] = ReadScript("scrap_metal.txt")
 images["8 -- Scrap Metal"] = ImagePath("scrap_metal.png")
 

@@ -1,13 +1,9 @@
--- $Id$
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-local versionNum = '2.22'
 
 function widget:GetInfo()
   return {
-    name      = "Auto group",
+    name      = "Auto Group",
     desc      = "Alt+[0-9] sets autogroup number for selected unit type(s) \nNewly built units get added to group equal to their autogroup number",
-    author    = "Licho",
+    author    = "Licho, CarRepairer, very_bad_solider",
     date      = "Mar 23, 2007",
     license   = "GNU GPL, v2 or later",
     layer     = 0,
@@ -16,17 +12,6 @@ function widget:GetInfo()
 end
 
 include("keysym.h.lua")
-
----- CHANGELOG -----
--- very_bad_solider, v2.22:
---        -- Ignores buildings and factories
---        -- Does not react when META (+ALT) is pressed
---    CarRepairer, v2:
---        -- Autogroups key is alt instead of alt+ctrl.
---        -- Added commands: help, loadgroups, cleargroups, verboseMode, addall
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
 
 local finiGroup = {}
 local unit2group = {}
@@ -233,7 +218,6 @@ function widget:GetConfigData()
   end 
   local ret = 
   {
-      version         = versionNum,
       groups         = groups,
       loadGroups     = loadGroups,
       verboseMode    = verboseMode,

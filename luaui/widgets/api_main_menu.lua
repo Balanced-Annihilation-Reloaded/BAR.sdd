@@ -61,7 +61,7 @@ local MinimalGraphicsSettings = {
     checkboxes = {
         ['AdvMapShading']    = false,
         ['AdvModelShading']  = false,
-        ['luarules normalmapping']    = false,
+        ['luarules normalmapping'] = false,
         ['AllowDeferredMapRendering']   = false,
         ['AllowDeferredModelRendering'] = false,
         ['3DTrees']          = false,
@@ -70,7 +70,7 @@ local MinimalGraphicsSettings = {
         ['DynamicSun']       = false,
         ['MapMarks']         = true,
         ['MapBorder']        = false,
-        ['VSync']            = false,
+        ['VSync']            = true,
     },
 }
 
@@ -90,7 +90,7 @@ local DefaultSettings = {
     checkboxes = {
         ['AdvMapShading']    = true,
         ['AdvModelShading']  = true,
-        ['luarules normalmapping']    = true,
+        ['luarules normalmapping'] = true,
         ['AllowDeferredMapRendering']   = true,
         ['AllowDeferredModelRendering'] = true,
         ['3DTrees']          = true,
@@ -132,7 +132,7 @@ local MaximalGraphicsSettings = {
     checkboxes = {
         ['AdvMapShading']    = true,
         ['AdvModelShading']  = true,
-        ['luarules normalmapping']    = true,
+        ['luarules normalmapping'] = true,
         ['AllowDeferredMapRendering']   = true,
         ['AllowDeferredModelRendering'] = true,
         ['3DTrees']          = true,
@@ -878,7 +878,7 @@ local function loadMainMenu()
         height       = 20,
         minItemWidth = 70,
         selected     = Settings.tabSelected or 'General',
-        tabs         = {'General','Interface', 'Graphics'},
+        tabs         = {'General','Graphics','Interface'},
         itemPadding  = {1,0,1,0},
         OnChange     = {sTab}
     }
@@ -1213,8 +1213,8 @@ function widget:Initialize()
 
     loadMainMenu()
     CreateGeneralTab()
-    CreateInterfaceTab()
     CreateGraphicsTab()
+    CreateInterfaceTab()
     CreateCreditsTab()
         
         
@@ -1228,11 +1228,10 @@ function widget:Initialize()
     end
     
     -- our hotkeys
-    local toggleMenu      = function() ShowHide('General') end
-    local hideMenu        = function() if mainMenu.visible then mainMenu:Hide() end end
+    local toggleMenu      = function() if mainMenu.visible then ShowHide() else ShowHide('General') end end
     local toggleInterface = function() ShowHide('Interface') end
     local toggleGraphics  = function() ShowHide('Graphics') end
-    local showHelp        = function() ShowHide('General'); SetInfoChild(tabs.General:GetChildByName("Introduction Button")) end --small hack
+    local toggleIntro     = function() ShowHide('General'); SetInfoChild(tabs.General:GetChildByName("Introduction Button")) end --small hack
 
     spSendCommands('unbindkeyset f11')
     spSendCommands('unbindkeyset Any+i gameinfo')
@@ -1241,13 +1240,11 @@ function widget:Initialize()
     widgetHandler.actionHandler:AddAction(widget,'toggleInterface', toggleInterface, nil, 't')
     widgetHandler.actionHandler:AddAction(widget,'hideMenu', hideMenu, nil, 't')
     widgetHandler.actionHandler:AddAction(widget,'toggleMenu', toggleMenu, nil, 't')
-    widgetHandler.actionHandler:AddAction(widget,'showHelp', showHelp, nil, 't')
-    spSendCommands('bind i toggleMenu')
-    spSendCommands('bind S+esc toggleMenu')
+    widgetHandler.actionHandler:AddAction(widget,'toggleIntro', toggleIntro, nil, 't')
+    spSendCommands('bind Any+esc toggleMenu')
     spSendCommands('bind f10 toggleGraphics')
     spSendCommands('bind f11 toggleInterface')
-    spSendCommands('bind esc hideMenu')
-    spSendCommands('bind h showHelp')
+    spSendCommands('bind i toggleIntro')
     
     fullyLoaded = true
 end
@@ -1272,11 +1269,10 @@ function widget:Update()
 end
 
 function widget:Shutdown()
-    spSendCommands('unbind i toggleMenu')
-    spSendCommands('unbind S+esc toggleMenu')
+    spSendCommands('unbind i toggleIntro')
+    spSendCommands('unbind Any+esc toggleMenu')
     spSendCommands('unbind f10 toggleGraphics')
     spSendCommands('unbind f11 toggleInterface')
-    spSendCommands('unbind esc hideMenu')
     spSendCommands('bind f11 luaui selector') -- if the default one is removed or crashes, then have the backup one take over
     spSendCommands('bind Any+i gameinfo')
 end

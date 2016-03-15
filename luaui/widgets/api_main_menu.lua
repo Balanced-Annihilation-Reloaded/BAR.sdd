@@ -56,7 +56,7 @@ local MinimalGraphicsSettings = {
         ['UnitIconDist']      = 280,
         ['UnitLodDist']       = 280,
         ['MaxParticles']      = 1000,
-        ['MaxNanoParticles']  = 1000,
+        ['MaxNanoParticles']  = 750,
     },
     checkboxes = {
         ['AdvMapShading']    = false,
@@ -68,7 +68,7 @@ local MinimalGraphicsSettings = {
         ['GroundDecals']     = false,
         ['DynamicSky']       = false,
         ['DynamicSun']       = false,
-        ['MapMarks']         = false,
+        ['MapMarks']         = true,
         ['MapBorder']        = false,
         ['VSync']            = false,
     },
@@ -77,14 +77,14 @@ local MinimalGraphicsSettings = {
 local DefaultSettings = { 
     -- springsettings, graphics tab
     comboboxes = {
-        ['Water']            = 4,
+        ['Water']            = 1,
         ['Shadows']          = 2,
         ['ShadowMapSize']    = 4096,
     },
     sliders = {
         ['UnitIconDist']      = 280,
         ['UnitLodDist']       = 280,
-        ['MaxParticles']      = 2000,
+        ['MaxParticles']      = 3000,
         ['MaxNanoParticles']  = 2000,
     },
     checkboxes = {
@@ -95,8 +95,8 @@ local DefaultSettings = {
         ['AllowDeferredModelRendering'] = true,
         ['3DTrees']          = true,
         ['GroundDecals']     = true,
-        ['DynamicSky']       = true,
-        ['DynamicSun']       = true,
+        ['DynamicSky']       = false,
+        ['DynamicSun']       = false,
         ['MapMarks']         = true,
         ['MapBorder']        = false,
         ['VSync']            = true,

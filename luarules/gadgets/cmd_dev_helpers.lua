@@ -181,15 +181,15 @@ function GiveCat(_,line)
     
     -- factions
     if string.find(line, "arm") then
-        local Condition = function (ud) return string.find(string.lower(ud.customParams.normaltex or ""), "arm") end
+        local Condition = function (ud) return ud.customParams.faction=="arm" end
         Accept[#Accept+1] = Condition
     end
     if string.find(line, "core") then
-        local Condition  = function (ud) return string.find(string.lower(ud.customParams.normaltex or ""), "core") end
+        local Condition  = function (ud) return ud.customParams.faction=="core" end
         Accept[#Accept+1] = Condition
     end
     if string.find(line, "chicken") then
-        local Condition = function (ud) return string.find(string.lower(ud.customParams.normaltex or ""), "chicken") end
+        local Condition = function (ud) return ud.customParams.faction=="chicken" end
         Accept[#Accept+1] = Condition
     end
     

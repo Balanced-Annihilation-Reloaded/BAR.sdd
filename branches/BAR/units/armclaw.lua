@@ -62,7 +62,7 @@ return {
 				height = 20,
 				hitdensity = 100,
 				metal = 205,
-				object = "ARMDRAG",
+				object = "ARMDRAG.s3o",
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",

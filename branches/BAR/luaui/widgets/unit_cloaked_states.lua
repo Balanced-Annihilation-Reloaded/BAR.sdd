@@ -54,7 +54,7 @@ function widget:Initialize()
     local units = Spring.GetAllUnits()
     for _,unitID in ipairs(units) do
         local state = Spring.GetUnitStates(unitID)
-        if state.cloak then
+        if state and state.cloak then
             widget:UnitCloaked(unitID)
         end
     end

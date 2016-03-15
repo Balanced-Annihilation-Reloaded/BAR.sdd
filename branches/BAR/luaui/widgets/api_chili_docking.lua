@@ -8,6 +8,7 @@ function widget:GetInfo()
     layer     = 50,
     experimental = false,
     enabled   = true  --  loaded by default?
+    api     = true,
   }
 end
 

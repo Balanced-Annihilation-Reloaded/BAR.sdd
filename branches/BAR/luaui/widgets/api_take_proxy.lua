@@ -8,6 +8,7 @@ function widget:GetInfo()
     license   = "WTFPL",
     layer     = 0,
     enabled   = true  -- loaded by default
+    api     = true,
   }
 end
 

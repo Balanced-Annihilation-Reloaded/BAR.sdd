@@ -8,7 +8,7 @@ function widget:GetInfo()
 		license   = "GPLv2",
 		layer     = -999,
 		enabled   = true, 
-      api       = true,
+        api       = true,
 	}
 end
 

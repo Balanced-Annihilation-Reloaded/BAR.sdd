@@ -1142,17 +1142,20 @@ function widget:Initialize()
     local toggleMenu      = function() ShowHide('General') end
     local hideMenu        = function() if mainMenu.visible then mainMenu:Hide() end end
     local toggleInterface = function() ShowHide('Interface') end
+    local toggleGraphics  = function() ShowHide('Graphics') end
     local showHelp        = function() ShowHide('General'); SetInfoChild(tabs.General:GetChildByName("Introduction Button")) end --small hack
 
     spSendCommands('unbindkeyset f11')
     spSendCommands('unbindkeyset Any+i gameinfo')
     spSendCommands('unbind S+esc quitmenu','unbind esc quitmessage')
+    widgetHandler.actionHandler:AddAction(widget,'toggleGraphics', toggleGraphics, nil, 't')
     widgetHandler.actionHandler:AddAction(widget,'toggleInterface', toggleInterface, nil, 't')
     widgetHandler.actionHandler:AddAction(widget,'hideMenu', hideMenu, nil, 't')
     widgetHandler.actionHandler:AddAction(widget,'toggleMenu', toggleMenu, nil, 't')
     widgetHandler.actionHandler:AddAction(widget,'showHelp', showHelp, nil, 't')
     spSendCommands('bind i toggleMenu')
     spSendCommands('bind S+esc toggleMenu')
+    spSendCommands('bind f10 toggleGraphics')
     spSendCommands('bind f11 toggleInterface')
     spSendCommands('bind esc hideMenu')
     spSendCommands('bind h showHelp')
@@ -1182,9 +1185,10 @@ end
 function widget:Shutdown()
     spSendCommands('unbind i toggleMenu')
     spSendCommands('unbind S+esc toggleMenu')
+    spSendCommands('unbind f10 toggleGraphics')
     spSendCommands('unbind f11 toggleInterface')
     spSendCommands('unbind esc hideMenu')
-    spSendCommands('bind f11 luaui selector') -- if the default one is removed or crashes, then have the backup one take over.
+    spSendCommands('bind f11 luaui selector') -- if the default one is removed or crashes, then have the backup one take over
     spSendCommands('bind Any+i gameinfo')
 end
 

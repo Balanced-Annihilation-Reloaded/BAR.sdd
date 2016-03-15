@@ -48,7 +48,7 @@ local greyStr = '\255\150\150\150'
 local DefaultSettings = { 
     -- springsettings, graphics tab
     comboboxes = {
-        ['Water']            = 2,
+        ['Water']            = 4,
         ['Shadows']          = 2,
     },
     sliders = {

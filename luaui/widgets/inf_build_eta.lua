@@ -79,7 +79,8 @@ local function AddETA(unitID, unitDefID)
     lastProg = buildProgress,
     rate     = nil,
     timeLeft = nil,
-    yoffset  = ud.height+14 -- healthbar sits just below
+    ETAtext = "",
+    yoffset  = ud.height+14, -- healthbar sits just below
   }
   table.insert(etaTable, bi)
 end
@@ -211,12 +212,10 @@ end
 -- draw
 
 local function DrawEtaText(etaText ,yoffset)
-  if etaText ~= nil then 
     gl.Translate(0, yoffset,0)
     gl.Billboard()
     gl.Translate(0, 5 ,0)
     gl.Text(etaText, 0, 0, 8, "c")
-  end
 end
 
 function widget:DrawWorld()

@@ -238,7 +238,6 @@ local activeSelUDID, activeSelCmdID
 local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b,0.8}
 local selectedColor = {1,1,1,1} -- colour overlay of unit icons for unit of selected build command
-local selectedBorderColor = {1,0,0,1} -- colour of outline of selected commands icon
 
 ----------------
 local function getInline(r,g,b)
@@ -414,6 +413,7 @@ local function addBuild(item)
     -- prepare the button
     local button = unitButtons[name]
     local label = button.children[1].children[1]
+    local image = button.children[1]
     local overlay = button.children[1].children[3]
     local caption = item.count or ''
     
@@ -421,15 +421,16 @@ local function addBuild(item)
         -- building this unit is disabled
         button.focusColor[4] = 0
         -- Grey out Unit pic
-        overlay.color = {0.4,0.4,0.4}
+        overlay.color = {0.4,0.4,0.4,0.7}
+        image.color = {0.4,0.4,0.4,0.7}
     else
         button.focusColor[4] = 0.5
         if uDID==activeSelUDID then
-            overlay.color = selectedColor
-            button.borderColor = selectedBorderColor
+            button.borderColor = button.focusColor
             selectTab(menuTab[category])
         else
             overlay.color = teamColor
+            image.color = {1,1,1,1}
             button.borderColor = {1,1,1,0.1}        
         end
     end
@@ -566,7 +567,7 @@ local function addOrderButton(cmd)
         end
         button.children[1]:GetChildByName("stockpile_label"):SetCaption(num.."/"..queued)
     end
-	button.borderColor = (cmd.id==activeSelCmdID) and selectedBorderColor or {1,1,1,0.1}
+	button.borderColor = (cmd.id==activeSelCmdID) and button.focusColor or {1,1,1,0.1}
     
 	orderMenu:AddChild(button)
 end
@@ -926,7 +927,7 @@ local airFacs = { --unitDefs can't tell us this
     [UnitDefNames.corplat.id] = true,
 }
 
-local function creatUnitButton(name, unitDef)  
+local function CreateUnitButton(name, unitDef)  
     -- make the button for this unit
     local hotkey = WG.buildingHotkeys and WG.buildingHotkeys[unitDef.id] or ''
     unitButtons[name] = Chili.Button:New{
@@ -1091,7 +1092,7 @@ function widget:Initialize()
 
     -- Create a cache of buttons stored in the unit array
     for name, unitDef in pairs(UnitDefNames) do
-        creatUnitButton(name,unitDef)
+        CreateUnitButton(name,unitDef)
     end
 
     -- offer the option to force select build menu buttons

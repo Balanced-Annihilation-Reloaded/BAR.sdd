@@ -94,8 +94,8 @@ activatescr()
 deactivatescr()
 {
 	set INBUILDSTANCE to 0;
-	turn turret to y-axis <0.000000> speed <160.000000>;
-	wait-for-turn turret around y-axis;
+	turn post to y-axis <0.000000> speed <160.000000>;
+	wait-for-turn post around y-axis;
 
 	move doorr to y-axis [-2.000000] now;
 	move doorl to y-axis [-2.000000] now;
@@ -220,8 +220,8 @@ StartBuilding(heading, pitch)
 	start-script RequestState(0);
 	while( notBuilding ) sleep 100;
 	signal SIG_BUILD;
-	turn turret to y-axis heading speed <160.000000>;
-	wait-for-turn turret around y-axis;
+	turn post to y-axis heading speed <160.000000>;
+	wait-for-turn post around y-axis;
 	set INBUILDSTANCE to 1;
 }
 

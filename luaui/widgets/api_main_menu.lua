@@ -53,8 +53,8 @@ local MinimalGraphicsSettings = {
         ['ShadowMapSize']    = 2048,
     },
     sliders = {
-        ['UnitIconDist']      = 280,
-        ['UnitLodDist']       = 280,
+        ['UnitIconDist']      = 100,
+        ['UnitLodDist']       = 100,
         ['MaxParticles']      = 1000,
         ['MaxNanoParticles']  = 750,
     },
@@ -82,8 +82,8 @@ local DefaultSettings = {
         ['ShadowMapSize']    = 4096,
     },
     sliders = {
-        ['UnitIconDist']      = 280,
-        ['UnitLodDist']       = 280,
+        ['UnitIconDist']      = 260,
+        ['UnitLodDist']       = 260,
         ['MaxParticles']      = 3000,
         ['MaxNanoParticles']  = 2000,
     },
@@ -124,7 +124,7 @@ local MaximalGraphicsSettings = {
         ['ShadowMapSize']    = 8192,
     },
     sliders = {
-        ['UnitIconDist']      = 600,
+        ['UnitIconDist']      = 700, -- never show icons
         ['UnitLodDist']       = 600,
         ['MaxParticles']      = 5000,
         ['MaxNanoParticles']  = 5000,
@@ -740,9 +740,16 @@ local slider = function(obj)
     }
 
     local function OnChange(self, value)
-        Settings[self.name] = value
-        Spring.SetConfigInt(self.name, value)
-        spSendCommands(self.name..' '..value)
+        local name = self.name        
+        Settings[name] = value
+        if name=="UnitLodDist" then
+            spSendCommands('distdraw ' .. value)
+        elseif name=="UnitIconDist" then
+            spSendCommands('disticon ' .. value)            
+        else
+            spSendCommands(name..' '..value)
+        end
+        Spring.SetConfigInt(name, value)
     end
 
     trackbar:AddChild(

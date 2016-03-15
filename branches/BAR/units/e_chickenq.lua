@@ -21,7 +21,7 @@ return {
 		collisionvolumescales = "60 130 140",
 		collisionvolumetype = "box",
 		corpse = "DEAD",
-		description = "Clucking Hell! (Easy)",
+		description = "Clucking Hell!",
 		explodeas = "QUEEN_DEATH",
 		footprintx = 3,
 		footprintz = 3,

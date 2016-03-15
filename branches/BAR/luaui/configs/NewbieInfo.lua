@@ -3,7 +3,7 @@
 local lines = {
     [1]  = "Welcome to BAR! Some useful info:",
     [2]  = "",
-    [3]  = "You can toggle this help screen by pressing \255\255\150\001h\255\255\255\255",
+    [3]  = "You can view this introduction by pressing \255\255\150\001i\255\255\255\255",
     [4]  = "",
     [5]  = "Click the left \255\50\200\20mouse\255\255\255\255 and drag to select units",
     [6]  = "Click the right mouse to move units",

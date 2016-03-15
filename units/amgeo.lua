@@ -17,7 +17,7 @@ return {
 		collisionvolumescales = "69 69 107",
 		collisionvolumetest = 1,
 		collisionvolumetype = "CylY",
-		description = "Hazardous Energy Source (1250E)",
+		description = "Hazardous Energy Source",
 		energymake = 1250,
 		energystorage = 12000,
 		explodeas = "NUCLEAR_MISSILE",

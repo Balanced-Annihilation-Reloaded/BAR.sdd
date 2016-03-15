@@ -946,7 +946,12 @@ local function CreateGeneralTab()
     local hotkeyInfo = Chili.Control:New{x = 0, y = 20, bottom = 0, width = '100%', 
         children = {
             Chili.TabBar:New{x = 0, y = 0,    width = '100%', height = 20, minItemWidth = 70, selected = 'General', itemPadding = {1,0,1,0}, OnChange = {SetHotkeyTab},
-                tabs = {'General', 'Units I', 'Units II', 'Units III'},
+                children = {
+                    Chili.TabBarItem:New{caption='General'},
+                    Chili.TabBarItem:New{caption='Selecting Units', width=120,},
+                    Chili.TabBarItem:New{caption='Giving Orders', width=110,},
+                    Chili.TabBarItem:New{caption='Build Orders', width=100,},                
+                }
             },
             Chili.ScrollPanel:New{y = 20, width = '100%', bottom = 0, children = {hotkeyInfoBox}}
         }
@@ -971,7 +976,7 @@ local function CreateGeneralTab()
             Chili.LayoutPanel:New{name  = 'info_layoutpanel', width = '70%', x=0, y=20, bottom=0},
 
             Chili.Button:New{caption = 'Introduction', iPanel = introText, height = '7%', width = '28%', right = '1%', y = '7%', OnMouseUp = {SetInfoChild}, name="Introduction Button"},
-            Chili.Button:New{caption = 'Hotkey Info', iPanel = hotkeyInfo, height = '7%', width = '28%', right = '1%', y = '16%', OnMouseUp = {SetInfoChild}},
+            Chili.Button:New{caption = 'Controls & Hotkeys', iPanel = hotkeyInfo, height = '7%', width = '28%', right = '1%', y = '16%', OnMouseUp = {SetInfoChild}},
 
             Chili.Button:New{caption = 'Changelog', iPanel = changeLog, height = '7%', width = '28%', right = '1%', y = '37%', OnMouseUp = {SetInfoChild}},
             
@@ -1222,10 +1227,6 @@ function widget:Initialize()
     globalize()
     
     makeWidgetList(true)
-
-    if Settings.visibleAtShutdown then
-        ShowHide()
-    end
     
     -- our hotkeys
     local toggleMenu      = function() if mainMenu.visible then ShowHide() else ShowHide('General') end end
@@ -1255,6 +1256,12 @@ function widget:Update()
         widgetHandler.knownChanged = false -- important note: widgetHandler.knownChanged=true was added by us to the widgetHandler, when a widget crashes (selector.lua polls each Drawframe)
         makeWidgetList()
     end
+    
+    if Settings.visibleAtShutdown then
+        ShowHide()
+        Settings.visibleAtShutdown = false
+    end
+
     
     if updateWidgetListPos then
         if Settings["widgetScroll"] then 

@@ -9,7 +9,8 @@ function widget:GetInfo()
         license = 'GNU GPL v2',
         layer   = -100, -- load after chili API stuff
         handler = true,
-        enabled = true
+        enabled = true,
+        api     = true,
     }
 end
 
@@ -42,60 +43,132 @@ local greyStr = '\255\150\150\150'
 
 
 ------------------------------------
--- loading Spring settings
+-- Settings
+
+local DefaultSettings = { 
+    -- springsettings, graphics tab
+    comboboxes = {
+        ['Water']            = 2,
+        ['Shadows']          = 2,
+    },
+    sliders = {
+        ['UnitIconDist']      = 280,
+        ['UnitLodDist']       = 280,
+        ['MaxParticles']      = 1000,
+        ['MaxNanoParticles']  = 1000,
+    },
+    checkboxes = {
+        ['AdvMapShading']    = true,
+        ['AdvModelShading']  = true,
+        ['luarules normalmapping']    = true,
+        ['AllowDeferredMapRendering']   = true,
+        ['AllowDeferredModelRendering'] = true,
+        ['3DTrees']          = true,
+        ['GroundDecals']     = true,
+        ['DynamicSky']       = true,
+        ['DynamicSun']       = true,
+        ['MapMarks']         = true,
+        ['MapBorder']        = false,
+        ['VSync']            = true,
+    },
+    
+    -- non-springsettings, interface tab
+    interface = {
+        ['cursorName']         = 'bar',
+        ['searchWidgetDesc']   = true,
+        ['searchWidgetAuth']   = true,
+        ['searchWidgetName']   = true,
+        ['showWidgetDescs'] = true,
+        ['showWidgetAuthors'] =  false,
+        ['widgetSelectorMode'] = "normal",
+        ['expandedWidgetOptions'] = {},
+    },
+}
+
+function FetchDefaultSetting(name)
+    for cat, settingsTable in pairs(DefaultSettings) do
+        if settingsTable[name] then return 
+            settingsTable[name], cat 
+        end 
+    end
+end
+
+function FetchSpringSetting(name, settingName)
+    -- prefer our local copy of settings to Springs one because Spring doesn't save many of the settings if they are changed ingame
+    -- todo: if this is even fixed in the engine, switch to preferring the engines copy!
+    local settingName = settingName or name -- toggle name differs from springsettings.cfg name
+    local default,cat = FetchDefaultSetting(name)
+    Spring.Echo(name, Settings[name])
+    if cat=='checkboxes' then
+        if Settings[name]==nil then 
+            -- bool, but springsettings contains an int
+            Settings[name] = (Spring.GetConfigInt(name, default and 1 or 0) > 0)
+        end
+    else
+        if Settings[name]==nil then
+            -- number
+            Settings[name] = Spring.GetConfigInt(name, default)
+        end
+    end    
+    Spring.Echo(name, Settings[name], default)
+end
+
+function FetchSetting(name)
+    local default = FetchDefaultSetting(name)
+    Settings[name] = Settings[name] or default 
+end
+
+function InitSettings()
+    -- set to default if nil
+    for cat,settingsTable in pairs(DefaultSettings) do
+        for name,_ in pairs(settingsTable) do
+            if cat~="interface" then
+                -- fetch relevant things from springsettings
+                FetchSpringSetting(name)
+            else
+                -- our interface settings
+                FetchSetting(name)
+            end
+        end
+    end
+end
+
 
 local waterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- value -> listID (ugh)
 local shadowConvert_ID = {[0]=1,[1]=2,[2]=3}
 --local shadowMapSizeConvert_ID = {[32]=1,[1024]=2,[2048]=3,[4096]=4} 
-
-function LoadSpringSettings()
-    -- Load relevant things from springsettings (overwrite our 'local' copy of these settings)
-    -- Listed out because lua and Spring treat bool<->int conversion differently
     
-    Settings['Water']                       = Spring.GetConfigInt('Water') 
-    --Settings['ShadowMapSize']               = Spring.GetConfigInt('ShadowMapSize')
-    Settings['Shadows']                     = Spring.GetConfigInt('Shadows')
-
-    Settings['AdvMapShading']               = Spring.GetConfigInt('AdvMapShading', 1) == 1
-    Settings['AdvModelShading']             = Spring.GetConfigInt('AdvModelShading', 1) == 1
-    Settings['AllowDeferredMapRendering']   = Spring.GetConfigInt('AllowDeferredMapRendering') == 1
-    Settings['AllowDeferredModelRendering'] = Spring.GetConfigInt('AllowDeferredModelRendering') == 1
-
-    Settings['UnitIconDist']                = Spring.GetConfigInt('UnitIconDist', 280) -- number is used if no config is set  
-    Settings['UnitLodDist']                 = Spring.GetConfigInt('UnitLodDist', 280)
-    Settings['MaxNanoParticles']            = Spring.GetConfigInt('MaxNanoParticles', 1000)
-    Settings['MaxParticles']                = Spring.GetConfigInt('MaxParticles', 1000)
-    Settings['MapBorder']                   = Spring.GetConfigInt('MapBorder') == 1 -- turn 0/1 to bool
-    Settings['3DTrees']                     = Spring.GetConfigInt('3DTrees') == 1
-    Settings['luarules normalmapping']      = (Spring.GetConfigInt("NormalMapping", 1) > 0) -- api_custom_unit_shaders.lua
-    Settings['GroundDecals']                = Spring.GetConfigInt('GroundDecals') == 1    
-    Settings['MapMarks']                    = Spring.GetConfigInt('MapMarks') == 1
-    Settings['DynamicSky']                  = Spring.GetConfigInt('DynamicSky') == 1
-    Settings['DynamicSun']                  = Spring.GetConfigInt('DynamicSun') == 1
-end
-
--- non-Spring setting defaults
-local Defaults = {}
-Defaults['searchWidgetDesc'] = true
-Defaults['searchWidgetAuth'] = true
-Defaults['searchWidgetName'] = true
-Defaults['Cursor']           = 'dynamic'
-Defaults['CursorName']       = 'bar'
-Defaults['widgetSelectorMode']    = "normal"
-Defaults['showWidgetDescs']       = true
-Defaults['showWidgetAuthors']     = false
-Defaults['expandedWidgetOptions'] = {} -- hash table, key is widget name
-function SetDefaultsIfNil()
-    for k,v in pairs(Defaults) do
-        if Settings[k]==nil then
-            Settings[k] = v
+local function ApplyDefaultGraphicsSettings()
+    -- apply our default springsettings (==graphics) and *only* those, via selecting them in our chili controls
+    local EngineSettingsMulti = tabs['Graphics']:GetChildByName('Settings'):GetChildByName('EngineSettingsMulti')
+    local EngineSettingsCheckBoxes = tabs['Graphics']:GetChildByName('Settings'):GetObjectByName('EngineSettingsCheckBoxes')
+    
+    for setting,value in pairs(DefaultSettings.comboboxes) do
+        Settings[setting] = value
+        if setting=='Water' then
+            EngineSettingsMulti:GetObjectByName(setting):Select(waterConvert_ID[value])
+        elseif setting=='Shadows' then
+            EngineSettingsMulti:GetObjectByName(setting):Select(shadowConvert_ID[value])
+        --elseif setting=='ShadowMapSize' then
+            --engineStack:GetObjectByName(setting):Select(shadowMapSizeConvert_ID[value] or 2)
         end
+    end
+    
+    for setting,value in pairs(DefaultSettings.sliders) do
+        Settings[setting] = value
+        EngineSettingsMulti:GetObjectByName(setting):SetValue(value)
+    end
+    
+    for setting,value in pairs(DefaultSettings.checkboxes) do
+        Settings[setting] = value
+        local checkbox = EngineSettingsCheckBoxes:GetObjectByName(setting)
+        if checkbox.checked ~= value then checkbox:Toggle() end
     end
 end
 
 ----------------------------
 -- load cursors 
-local function setCursor(cursorSet)
+local function SetCursor(cursorSet)
     local cursorNames = {
         'cursornormal','cursorareaattack','cursorattack','cursorattack',
         'cursorbuildbad','cursorbuildgood','cursorcapture','cursorcentroid',
@@ -106,11 +179,13 @@ local function setCursor(cursorSet)
         'cursormove','cursorpatrol','cursorreclamate','cursorselfd','cursornumber',
         'cursorsettarget','cursorupgmex',
     }
-
     for i=1, #cursorNames do
-        local topLeft = (cursorNames[i] == 'cursornormal' and cursorSet ~= 'k_haos_girl')
-        if cursorSet == 'bar' then Spring.ReplaceMouseCursor(cursorNames[i], cursorNames[i], topLeft)
-        else Spring.ReplaceMouseCursor(cursorNames[i], cursorSet..'/'..cursorNames[i], topLeft) end
+        local topLeft = (cursorNames[i] == 'cursornormal')
+        if cursorSet == 'bar' then 
+            Spring.ReplaceMouseCursor(cursorNames[i], cursorNames[i], topLeft)
+        else 
+            Spring.ReplaceMouseCursor(cursorNames[i], cursorSet..'/'..cursorNames[i], topLeft) 
+        end
     end
 end
 
@@ -583,19 +658,20 @@ local function addScrollStack(obj)
 end
 
 ----------------------------
---
+-- Settings controls
+
 local checkBox = function(obj)
     local obj = obj
 
-    local toggle = function(self)
+    local OnChange = function(self)
         Settings[self.name] = not self.checked --self.checked hasn't changed yet!
-        spSendCommands(self.name)
+        spSendCommands(self.name .. " " .. (Settings[self.name] and 1 or 0))
     end
     
     local checkBox = Chili.Checkbox:New{
         name      = obj.name,
         caption   = obj.title or obj.name,
-        checked   = Settings[obj.name] or false,
+        checked   = Settings[obj.name],
         tooltip   = obj.tooltip or '',
         y         = obj.y,
         width     = obj.width or '80%',
@@ -603,7 +679,7 @@ local checkBox = function(obj)
         x         = '10%',
         textalign = 'left',
         boxalign  = 'right',
-        OnChange  = {toggle}
+        OnChange  = {OnChange}
     }
     return checkBox
 end
@@ -621,8 +697,8 @@ local slider = function(obj)
 
     Spring.Echo(obj.name, Settings[obj.name])
 
-    local function applySetting(obj, value)
-        Settings[obj.name] = value
+    local function OnChange(self, value)
+        Settings[self.name] = value
         spSendCommands(obj.name..' '..value)
     end
 
@@ -644,14 +720,12 @@ local slider = function(obj)
             max      = obj.max or 1000,
             step     = obj.step or 100,
             value    = Settings[obj.name] or 500,
-            OnChange = {applySetting},
+            OnChange = {OnChange},
         })
 
     return trackbar
 end
 
-----------------------------
--- Creates a combobox style control
 local comboBox = function(obj)
     local obj = obj
     local options = obj.options or obj.labels
@@ -675,14 +749,12 @@ local comboBox = function(obj)
         end
     end
 
-    Spring.Echo(obj.name, Settings[obj.name])    
-
-    local function applySetting(obj, listID)
-        local value   = obj.options[listID] or ''
-        local setting = obj.name or ''
+    local function OnSelect(self, listID)
+        local value   = self.options[listID] or ''
+        local setting = self.name or ''
 
         spSendCommands(setting..' '..value)
-        Settings[setting] =  obj.items[obj.selected]
+        Settings[setting] =  self.items[self.selected]
     end
 
     comboBox:AddChild(
@@ -703,7 +775,7 @@ local comboBox = function(obj)
             text     = label,
             options  = options,
             items    = obj.labels,
-            OnSelect = {applySetting},
+            OnSelect = {OnSelect},
         })
 
     return comboBox
@@ -757,74 +829,12 @@ local function loadMainMenu()
 
 end
 
-----------------------------
--- default settings 
-
-local function applyDefaultSettings()
-    local comboboxes = {
-        ['Water']            = 2,
-        ['Shadows']          = 2,
-    }
-    
-    local sliders = {
-        ['UnitIconDist']      = 280,
-        ['UnitLodDist']       = 280,
-        ['MaxParticles']      = 1000,
-        ['MaxNanoParticles']  = 1000,
-    }
-    
-    local checkboxes = {
-        ['AdvMapShading']    = 1,
-        ['AdvModelShading']  = 1,
-        ['luarules normalmapping']    = 1,
-        ['AllowDeferredMapRendering']   = 1,
-        ['AllowDeferredModelRendering'] = 1,
-        ['MapBorder']        = 1,
-        ['3DTrees']          = 1,
-        ['GroundDecals']     = 0,
-        ['MapMarks']         = 1,
-        ['DynamicSky']       = 0,
-        ['DynamicSun']       = 0,
-    }
-
-    local EngineSettingsMulti = tabs['Graphics']:GetChildByName('Settings'):GetChildByName('EngineSettingsMulti')
-    local EngineSettingsCheckBoxes = tabs['Graphics']:GetChildByName('Settings'):GetObjectByName('EngineSettingsCheckBoxes')
-    
-    for setting,value in pairs(comboboxes) do
-        Settings[setting] = value
-        if setting=='Water' then
-            EngineSettingsMulti:GetObjectByName(setting):Select(waterConvert_ID[value])
-        elseif setting=='Shadows' then
-            EngineSettingsMulti:GetObjectByName(setting):Select(shadowConvert_ID[value])
-        --elseif setting=='ShadowMapSize' then
-            --engineStack:GetObjectByName(setting):Select(shadowMapSizeConvert_ID[value] or 2)
-        end
-    end
-    
-    for setting,value in pairs(sliders) do
-        Settings[setting] = value
-        EngineSettingsMulti:GetObjectByName(setting):SetValue(value)
-    end
-    
-    for setting,value in pairs(checkboxes) do
-        Settings[setting] = value
-        local checkbox = EngineSettingsCheckBoxes:GetObjectByName(setting)
-        if checkbox.checked ~= (value==1) then checkbox:Toggle() end
-    end
-
-end
-
-
-
-
-
 -----------------------------
 -- Creates a tab, mostly as an auxillary function for AddControl()
 local function createTab(tab)
     tabs[tab.name] = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', children = tab.children or {} }
     menuTabs:AddChild(Chili.TabBarItem:New{caption = tab.name, width = tab.tabWidth})
 end
-
 
 function SetInfoChild(obj)
     if not tabs.General then return end
@@ -836,7 +846,7 @@ end
 -----------------------------
 -- native TABS
 
-local function createInfoTab()
+local function CreateInfoTab()
     local armageddonTime = 60 * (tonumber((Spring.GetModOptions() or {}).mo_armageddontime) or 0)
 
     local endModes = { com = "Kill all enemy Commanders", killall = "Kill all enemy units", neverend = "Never end"}
@@ -922,7 +932,7 @@ local function createInfoTab()
     SetInfoChild{iPanel = introText, caption = 'Introduction'}
 end
 
-local function createInterfaceTab()
+local function CreateInterfaceTab()
     -- Interface --
     tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
         children = {
@@ -1026,8 +1036,8 @@ local function createInterfaceTab()
                         selected = (Settings["Cursor"]=="dynamic" and 1) or (Settings["Cursor"]=="static" and 2),
                         OnSelect = {
                             function(self,sel)
-                                if sel==1 then setCursor("bar") 
-                                elseif sel==2 then setCursor("static")
+                                if sel==1 then SetCursor("bar") 
+                                elseif sel==2 then SetCursor("static")
                                 end
                             end
                             }
@@ -1036,7 +1046,7 @@ local function createInterfaceTab()
                             
             },    
 
-            Chili.Button:New{x='5%',bottom='5%',width='30%',height=30,caption="Reset Widget Settings",
+            Chili.Button:New{x='5%',bottom='5%',width='30%',height=30,caption="Reset Settings",
                 OnClick ={function() Spring.SendCommands("luaui reset") end},            
             }
         }
@@ -1045,13 +1055,13 @@ local function createInterfaceTab()
     updateWidgetListPos = true
 end
 
-local function createGraphicsTab()
+local function CreateGraphicsTab()
     -- Graphics --
     tabs.Graphics = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', borderColor = {0,0,0,0}, backgroundColor = {0,0,0,0},
         children = {
             Chili.ScrollPanel:New{name='Settings', x=0, y=0, width='100%', height='80%', children = {
                     addStack{x = 0, y = '3%', name = 'EngineSettingsMulti', children = {
-                            comboBox{y=0,title='Water',name='Water', --not 'ReflectiveWater' because we use SendCommands instead of SetConfigInt to apply settings (some settings seem to only take effect immediately this way)
+                            comboBox{y=0,title='Water',name='Water', 
                                 labels={'Basic','Reflective','Dynamic','Refractive','Bump-Mapped'},
                                 options={0,1,2,3,4},},
                             comboBox{y=40,title='Shadows',name='Shadows',
@@ -1077,13 +1087,13 @@ local function createGraphicsTab()
                             checkBox{title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
                             checkBox{title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
                             checkBox{title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
-                            checkBox{title = 'Hide Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"}, --something is weird with parity here
+                            checkBox{title = 'Show Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"}, 
                             checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},      
                         }                    
                     }
                 },
             },
-            Chili.Button:New{name="ResetDefaults",x='35%',y='85%',height='10%',width='30%',caption='Reset Defaults',OnMouseUp={applyDefaultSettings}},
+            Chili.Button:New{name="ResetDefaults",x='35%',y='85%',height='10%',width='30%',caption='Reset Defaults',OnMouseUp={ApplyDefaultGraphicsSettings}},
         }
     }
     
@@ -1091,7 +1101,7 @@ local function createGraphicsTab()
 end
 
 
-local function createCreditsTab()
+local function CreateCreditsTab()
     createTab{name = 'Credits',
         children = {
             Chili.ScrollPanel:New{width = '70%', x=0, y=0, bottom=0,
@@ -1143,17 +1153,16 @@ end
 
 function widget:Initialize()
     Chili = WG.Chili
-    setCursor(Settings['CursorName'] or 'bar')
 
     loadMainMenu()
     
-    LoadSpringSettings()
-    SetDefaultsIfNil()    
+    InitSettings()
+    SetCursor(Settings['cursorName'])
 
-    createInfoTab()
-    createInterfaceTab()
-    createGraphicsTab()
-    createCreditsTab()
+    CreateInfoTab()
+    CreateInterfaceTab()
+    CreateGraphicsTab()
+    CreateCreditsTab()
         
         
     if amNewbie then ShowHide('General') else menuTabs:Select(Settings.tabSelected or 'General') end
@@ -1207,6 +1216,12 @@ function widget:Update()
 end
 
 function widget:Shutdown()
+    Settings.widgetScroll = GetTopVisibleControlOfWidgetList()
+    Settings.visibleAtShutdown = mainMenu.visible
+    if Settings.tabSelected == 'Beta Release' then -- hack
+        Settings.visibleAtShutdown = nil
+    end
+
     spSendCommands('unbind i toggleMenu')
     spSendCommands('unbind S+esc toggleMenu')
     spSendCommands('unbind f11 toggleInterface')
@@ -1219,11 +1234,6 @@ end
 -- config data 
 
 function widget:GetConfigData()
-    Settings.widgetScroll = GetTopVisibleControlOfWidgetList()
-    Settings.visibleAtShutdown = mainMenu.visible
-    if Settings.tabSelected == 'Beta Release' then -- hack
-        Settings.visibleAtShutdown = nil
-    end
     return Settings
 end
 

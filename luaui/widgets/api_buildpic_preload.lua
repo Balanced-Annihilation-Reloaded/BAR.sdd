@@ -10,6 +10,7 @@ function widget:GetInfo()
     license   = "GPLv2",
     layer     = 1000,
     enabled   = true,  --  loaded by default?
+    api     = true,
   }
 end
 

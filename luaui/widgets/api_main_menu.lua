@@ -1219,7 +1219,7 @@ end
 -- config data 
 
 function widget:GetConfigData()
-    Settings.widgetListScroll = GetTopVisibleControlOfWidgetList()
+    Settings.widgetScroll = GetTopVisibleControlOfWidgetList()
     Settings.visibleAtShutdown = mainMenu.visible
     if Settings.tabSelected == 'Beta Release' then -- hack
         Settings.visibleAtShutdown = nil

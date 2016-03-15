@@ -82,6 +82,7 @@ local DefaultSettings = {
         ['showWidgetAuthors'] =  false,
         ['widgetSelectorMode'] = "normal",
         ['expandedWidgetOptions'] = {},
+        ['mainMenuSize'] = {x=400,y=200,width=750,height=550},
     },
 }
 
@@ -579,35 +580,6 @@ local function sTab(_,tabName)
 end
 
 ----------------------------
--- save/load to our own settings array
--- todo: remove old behaviour
-local function Save(index, data)
-
-    -- New behavior, Save{ key = value, key2 = value2 }
-    if type(index)=='table' then
-        for key, value in pairs(index) do
-            Settings[key] = value
-        end
-
-    -- Old behavior, Save('key', value) --remove
-    else
-        Spring.Echo("Use Save{key=value,key2=value2,etc..} instead of Save('key', value) [" .. (key or "") .. "]")
-        local old = Settings[index]
-        Settings[index] = data
-        return old
-    end
-end
-
-local function Load(index)
-    if Settings[index] ~= nil then
-        return Settings[index]
-    else
-        Spring.Echo('[Main Menu]Could not find '..index)
-        return nil
-    end
-end
-
-----------------------------
 -- control templates
 local function addStack(obj)
     -- Creates a stack panel 
@@ -783,7 +755,7 @@ end
 ----------------------------
 -- main load
 local function loadMainMenu()
-    local sizeData = Load('mainMenuSize') or {x=400,y=200,width=750,height=550}
+    local sizeData = Settings['mainMenuSize']
 
     -- Detects and fixes menu being off-screen
     local vsx,vsy = Spring.GetViewGeometry()
@@ -802,7 +774,7 @@ local function loadMainMenu()
         OnChange = {function() Chili.Screen0.currentTooltip=nil end},
         OnResize  = {
             function(self)
-                Save{mainMenuSize = {x=self.x,y=self.y,width=self.width,height=self.height}}
+                Settings['mainMenuSize'] = {x=self.x,y=self.y,width=self.width,height=self.height}
             end
         },
         children  = {
@@ -1152,12 +1124,11 @@ end
 
 function widget:Initialize()
     Chili = WG.Chili
-
-    loadMainMenu()
     
     InitSettings()
     SetCursor(Settings['cursorName'])
 
+    loadMainMenu()
     CreateInfoTab()
     CreateInterfaceTab()
     CreateGraphicsTab()
@@ -1215,12 +1186,6 @@ function widget:Update()
 end
 
 function widget:Shutdown()
-    Settings.widgetScroll = GetTopVisibleControlOfWidgetList()
-    Settings.visibleAtShutdown = mainMenu.visible
-    if Settings.tabSelected == 'Beta Release' then -- hack
-        Settings.visibleAtShutdown = nil
-    end
-
     spSendCommands('unbind i toggleMenu')
     spSendCommands('unbind S+esc toggleMenu')
     spSendCommands('unbind f11 toggleInterface')
@@ -1233,6 +1198,14 @@ end
 -- config data 
 
 function widget:GetConfigData()
+    if fullyLoaded then
+        Settings.widgetScroll = GetTopVisibleControlOfWidgetList()
+        Settings.visibleAtShutdown = mainMenu.visible
+        if Settings.tabSelected == 'Beta Release' then -- hack
+            Settings.visibleAtShutdown = nil
+        end
+    end
+    
     return Settings
 end
 

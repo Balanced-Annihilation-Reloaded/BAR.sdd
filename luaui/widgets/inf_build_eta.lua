@@ -211,10 +211,12 @@ end
 -- draw
 
 local function DrawEtaText(etaText ,yoffset)
-  gl.Translate(0, yoffset,0)
-  gl.Billboard()
-  gl.Translate(0, 5 ,0)
-  gl.Text(etaText, 0, 0, 8, "c")
+  if etaText ~= nil then 
+    gl.Translate(0, yoffset,0)
+    gl.Billboard()
+    gl.Translate(0, 5 ,0)
+    gl.Text(etaText, 0, 0, 8, "c")
+  end
 end
 
 function widget:DrawWorld()

@@ -51,8 +51,8 @@ local waterLandPairsHuman = {
 
 local binds = {
     -- buildspacing
-    "bind any+b buildspacing inc",
-    "bind any+n buildspacing dec",
+    "bind Any+h buildspacing inc",
+    "bind Any+n buildspacing dec",
     
     -- numpad movement
     "bind numpad2 moveback",
@@ -106,6 +106,7 @@ local Z_KEY = KEYSYMS.Z
 local X_KEY = KEYSYMS.X
 local C_KEY = KEYSYMS.C
 local V_KEY = KEYSYMS.V
+local B_KEY = KEYSYMS.B
 
 local updateRate = 1/3 -- in seconds
 local timeCounter = 0
@@ -288,7 +289,7 @@ function widget:Initialize()
     --Spring.Echo("X TABLE")
     --PrintArrayTable(X_units)
     
-    -- setup C (defences)
+    -- setup C (static defence and radar/sonar)
     local function C_Score (uDID)
         if not UnitDefs[uDID].isBuilding then return end
         if UnitDefs[uDID].isFactory then return end
@@ -296,6 +297,16 @@ function widget:Initialize()
         if UnitDefs[uDID].energyMake>=20 then return end
         if #UnitDefs[uDID].weapons>0 and WeaponDefs[UnitDefs[uDID].weapons[1].weaponDef].type=="StarburstLauncher" then return end
         if #UnitDefs[uDID].weapons==0 and UnitDefs[uDID].radarRadius<200 and UnitDefs[uDID].sonarRadius<200 then return end        
+        local weapons = UnitDefs[uDID].weapons
+        local nonAAweapon = #UnitDefs[uDID].weapons==0 and true or false
+        for _,weapon in pairs(weapons) do
+            local onlyTargets = weapon.onlyTargets
+            if onlyTargets['vtol']==nil or onlyTargets['vtol']==false then 
+                nonAAweapon = true
+                break
+            end        
+        end
+        if not nonAAweapon then return end
         return Cost(uDID)    
     end
     C_units = ConstructUnitOrder(C_Score)
@@ -312,6 +323,25 @@ function widget:Initialize()
     --Spring.Echo("V TABLE")
     --PrintArrayTable(V_units)  
     
+    -- setup B (anti-air)
+    local function B_Score (uDID)
+        if not UnitDefs[uDID].isBuilding then return end
+        if UnitDefs[uDID].isFactory then return end
+        if UnitDefs[uDID].isExtractor then return end
+        if UnitDefs[uDID].energyMake>=20 then return end
+        if #UnitDefs[uDID].weapons>0 and WeaponDefs[UnitDefs[uDID].weapons[1].weaponDef].type=="StarburstLauncher" then return end
+        if #UnitDefs[uDID].weapons==0 then return end  
+        local weapons = UnitDefs[uDID].weapons
+        for _,weapon in pairs(weapons) do
+            local onlyTargets = weapon.onlyTargets
+            if onlyTargets['vtol']==nil or onlyTargets['vtol']==false then return end        
+        end
+        return Cost(uDID)    
+    end
+    B_units = ConstructUnitOrder(B_Score)
+    --Spring.Echo("B TABLE")
+    --PrintArrayTable(B_units)  
+    
     --expose inverse of _key tables to WG (they should be disjoint)
     local hotkeys = {}
     for _,v in pairs(Z_units) do
@@ -325,6 +355,9 @@ function widget:Initialize()
     end
     for _,v in pairs(V_units) do
         hotkeys[v] = "V"
+    end
+    for _,v in pairs(B_units) do
+        hotkeys[v] = "B"
     end
     WG.buildingHotkeys = hotkeys
 end
@@ -347,6 +380,8 @@ function widget:KeyPress(key, mods, isRepeat)
         advanced = AdvanceToNextBuildable(C_units, cmdID)
     elseif key==V_KEY then
         advanced = AdvanceToNextBuildable(V_units, cmdID)
+    elseif key==B_KEY then
+        advanced = AdvanceToNextBuildable(B_units, cmdID)
     end    
     return advanced
 end

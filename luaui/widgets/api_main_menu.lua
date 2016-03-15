@@ -53,8 +53,8 @@ local MinimalGraphicsSettings = {
         ['ShadowMapSize']    = 2048,
     },
     sliders = {
-        ['UnitIconDist']      = 100,
-        ['UnitLodDist']       = 100,
+        ['UnitIconDist']      = 150,
+        ['UnitLodDist']       = 150,
         ['MaxParticles']      = 1000,
         ['MaxNanoParticles']  = 750,
     },

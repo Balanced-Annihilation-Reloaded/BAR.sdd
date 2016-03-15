@@ -112,6 +112,7 @@ function widget:Initialize()
 	widgetHandler:RegisterGlobal('selectedUnitsAdd', SelectedUnitsAdd_Wrapper)
         
     SetupMenuOptions()    
+    lineWidth = options.selected.useThickLines and thickLineWidth or thinLineWidth    
         
     GetUnitScales()
     InitializeGL()
@@ -282,6 +283,10 @@ function UpdatePlatterUnit(unitID)
         if (not amISpec) and options.platter.showAllyPlatters=="auto" then return nil end
     end
 
+    if not unitScales[t.unitDefID] then
+        Spring.Echo("Error: Missing unitScale for uDID " .. (t.unitDefID or 'nil'))
+        Spring.Echo("Error: uDID " .. t.unitDefID .. " is " .. UnitDefs[t.unitDefID].name)
+    end
     t.unitScale = unitScales[t.unitDefID] * platterScaleFactor
     t.randomAngle = t.randomAngle or 360*math.random()   
 

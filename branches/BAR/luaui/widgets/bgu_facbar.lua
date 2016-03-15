@@ -359,7 +359,7 @@ function UpdateVisibleFacs()
         -- display all facs, keeping current order & adding newcomers onto bottom
         -- (note: we might need to add facs that weren't displayed but now should be because other facs died]
         for i=1,#facs do
-            if not stack_main:GetChildByName(facs[i].unitID) then
+            if not stack_main:GetChildByName(facs[i].unitID .. "_fac") then
                 stack_main:AddChild(facs[i].facStack)
             end
         end
@@ -574,6 +574,7 @@ function widget:Initialize()
     Chili = WG.Chili
 
     stack_main = Chili.Grid:New{
+        name = "stack_main",
         y=20,
         padding = {0,0,0,0},
         itemPadding = {0, 0, 0, 0},

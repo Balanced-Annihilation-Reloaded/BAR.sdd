@@ -333,14 +333,19 @@ function ToggleAdvShading()
 end
 
 
-function ToggleNormalmapping(_,_,_, playerID)
+function ToggleNormalmapping(_,newSetting,_, playerID)
   if (playerID ~= Spring.GetMyPlayerID()) then
     return
   end
 
-  normalmapping = not normalmapping
+  if newSetting and newSetting~="" then
+    normalmapping = (newSetting=="1")
+  elseif not newSetting or newSetting=="" then
+    normalmapping = not normalmapping  
+  end
+  
   Spring.SetConfigInt("NormalMapping", (normalmapping and 1) or 0)
-  Spring.Echo("Set NormalMapping to " .. tostring((normalmapping and 1) or 0))
+  Spring.Echo("normalmapping is " .. (normalmapping and "enabled" or "disabled"))
 
   if (not normalmapping) then
     --// unload normalmapped materials

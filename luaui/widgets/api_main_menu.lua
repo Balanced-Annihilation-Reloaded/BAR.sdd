@@ -98,7 +98,6 @@ function FetchSpringSetting(name, settingName)
     -- todo: if this is even fixed in the engine, switch to preferring the engines copy!
     local settingName = settingName or name -- toggle name differs from springsettings.cfg name
     local default,cat = FetchDefaultSetting(name)
-    Spring.Echo(name, Settings[name])
     if cat=='checkboxes' then
         if Settings[name]==nil then 
             -- bool, but springsettings contains an int
@@ -110,12 +109,13 @@ function FetchSpringSetting(name, settingName)
             Settings[name] = Spring.GetConfigInt(name, default)
         end
     end    
-    Spring.Echo(name, Settings[name], default)
 end
 
 function FetchSetting(name)
     local default = FetchDefaultSetting(name)
-    Settings[name] = Settings[name] or default 
+    if Settings[name]== nil then 
+        Settings[name] = default 
+    end
 end
 
 function InitSettings()
@@ -580,6 +580,7 @@ end
 
 ----------------------------
 -- save/load to our own settings array
+-- todo: remove old behaviour
 local function Save(index, data)
 
     -- New behavior, Save{ key = value, key2 = value2 }
@@ -694,8 +695,6 @@ local slider = function(obj)
         x       = 0,
         padding = {0,0,0,0}
     }
-
-    Spring.Echo(obj.name, Settings[obj.name])
 
     local function OnChange(self, value)
         Settings[self.name] = value

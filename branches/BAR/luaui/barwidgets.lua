@@ -16,6 +16,7 @@
 
 -- stable release?
 local isStable = false
+local CONFIG_VERSION = 1 -- increment to force a blank config/order on users
 
 function includeZIPFirst(filename, envTable)
   if (string.find(filename, '.h.lua', 1, true)) then
@@ -34,6 +35,7 @@ include("savetable.lua")
 
 local ORDER_FILENAME     = LUAUI_DIRNAME .. 'Config/' .. Game.modShortName:upper() .. '_order.lua'
 local CONFIG_FILENAME    = LUAUI_DIRNAME .. 'Config/' .. Game.modShortName:upper() .. '_data.lua'
+local VERSION_FILENAME     = LUAUI_DIRNAME .. 'Config/' .. Game.modShortName:upper() .. '_version.lua'
 local WIDGET_DIRNAME     = LUAUI_DIRNAME .. 'Widgets/'
 
 local HANDLER_BASENAME = "barwidgets.lua"
@@ -58,10 +60,10 @@ local localWidgets = true
 if VFS.FileExists(CONFIG_FILENAME) then
   local configData = VFS.Include(CONFIG_FILENAME)
   if configData then
-	if configData["Local Widgets Config"] then
+    if configData["Local Widgets Config"] then
       localWidgetsFirst = configData["Local Widgets Config"].localWidgetsFirst
       localWidgets = configData["Local Widgets Config"].localWidgets
-	end
+    end
   end
 end
 
@@ -262,21 +264,21 @@ end
 
 function widgetHandler:LoadOrderList()
   local chunk, err = loadfile(ORDER_FILENAME)
-	if (chunk == nil) or (err) then
-		if err then
-			Spring.Log("bawidgets.lua", LOG.INFO, err)
-		end
-		return {}
-	elseif (chunk() == nil) then
-		Spring.Log("bawidgets.lua", LOG.ERROR, 'Luaui order config file was blank')
-		return {}
-	end 
-	
+    if (chunk == nil) or (err) then
+        if err then
+            Spring.Log(HANDLER_BASENAME, LOG.INFO, err)
+        end
+        return {}
+    elseif (chunk() == nil) then
+        Spring.Log(HANDLER_BASENAME, LOG.ERROR, 'Luaui order config file was blank')
+        return {}
+    end 
+    
     local tmp = {}
     setfenv(chunk, tmp)
     self.orderList = chunk()
     if (not self.orderList) then
-		self.orderList = {} -- safety
+        self.orderList = {} -- safety
     end
 end
 
@@ -295,25 +297,26 @@ end
 
 function widgetHandler:LoadConfigData()
   local chunk, err = loadfile(CONFIG_FILENAME)
-	if (chunk == nil) or (err) then
-		if err then
-			Spring.Log("bawidgets.lua", LOG.INFO, err)
-		end
-		return {}
-	elseif (chunk() == nil) then
-		Spring.Log("bawidgets.lua", LOG.ERROR, 'Luaui data config file was blank')
-		return {}
-	end
-
-    local tmp = {}
-    setfenv(chunk, tmp)
-    self.configData = chunk()
-    if (not self.orderList) then
-		self.orderList = {} -- safety
+  if (chunk == nil) or (err) then
+    if err then
+      Spring.Log(HANDLER_BASENAME, LOG.INFO, err)
     end
-    if (not self.configData) then
-		self.configData = {} -- safety
-    end
+    return {}
+  elseif (chunk() == nil) then
+    Spring.Log(HANDLER_BASENAME, LOG.ERROR, 'Luaui data config file was blank')
+    return {}
+  end  
+  local tmp = {}
+  setfenv(chunk, tmp)
+  self.configData = chunk()
+  
+  -- safety
+  if (not self.orderList) then
+    self.orderList = {} 
+  end
+  if (not self.configData) then
+    self.configData = {} 
+  end
 end
 
 
@@ -321,9 +324,9 @@ function widgetHandler:SaveConfigData()
   for _,w in r_ipairs(self.widgets) do
     if (w.GetConfigData) then
       local ok, err = pcall(function() 
-		self.configData[w.whInfo.name] = w:GetConfigData()
-	  end)
-	  if not ok then Spring.Log(HANDLER_BASENAME, LOG.ERROR, "Failed to GetConfigData from: " .. w.whInfo.name.." ("..err..")") end 
+        self.configData[w.whInfo.name] = w:GetConfigData()
+      end)
+      if not ok then Spring.Log(HANDLER_BASENAME, LOG.ERROR, "Failed to GetConfigData from: " .. w.whInfo.name.." ("..err..")") end 
     end
   end
   table.save(self.configData, CONFIG_FILENAME, '-- Widget Custom Data')
@@ -340,6 +343,33 @@ function widgetHandler:SendConfigData()
   end
 end
 
+--------------------------------------------------------------------------------
+
+function widgetHandler:CheckConfigVersion()
+  local chunk, err = loadfile(VERSION_FILENAME)
+  local tmp = {}
+  if (chunk == nil) or (err) then
+    if err then
+        Spring.Log(HANDLER_BASENAME, LOG.INFO, err)
+        versionData = nil
+    end
+  elseif (chunk() == nil) then
+    Spring.Log(HANDLER_BASENAME, LOG.ERROR, 'Luaui version file was blank')
+    versionData = nil
+  else
+    setfenv(chunk, tmp)
+    versionData = chunk()  
+  end 
+
+  local prevVersion = versionData and versionData.version or nil
+  if prevVersion~=CONFIG_VERSION then
+    Spring.Echo("LuaUI: Applying new config version " .. CONFIG_VERSION .. " (previous was " .. (prevVersion or 'nil') .. ")")
+    self.configData = {}
+    self.orderData = {}
+  end
+  Spring.Echo("LuaUI: Config version is " .. CONFIG_VERSION)  
+  table.save({version=CONFIG_VERSION}, VERSION_FILENAME, '-- BAR luaui config version')
+end
 
 --------------------------------------------------------------------------------
 
@@ -350,6 +380,9 @@ function widgetHandler:Initialize()
 
   self:LoadOrderList()
   self:LoadConfigData()
+  self:CheckConfigVersion()
+  self:SaveOrderList()
+  self:SaveConfigData()
   
   if self.configData.allowUserWidgets~=nil then
     self.allowUserWidgets = self.configData.allowUserWidgets 
@@ -483,7 +516,7 @@ function widgetHandler:LoadWidget(filename, _VFSMODE)
     knownInfo.author   = widget.whInfo.author
     knownInfo.basename = widget.whInfo.basename
     knownInfo.filename = widget.whInfo.filename
-	knownInfo.alwaysStart = widget.whInfo.alwaysStart
+    knownInfo.alwaysStart = widget.whInfo.alwaysStart
     knownInfo.fromZip  = true
     if (_VFSMODE ~= VFS.ZIP) then
       if (_VFSMODE == VFS.RAW_FIRST) then
@@ -813,9 +846,9 @@ function widgetHandler:RemoveWidget(widget)
   local name = widget.whInfo.name
   if (widget.GetConfigData) then
     local ok, err = pcall(function() 
-	  self.configData[name] = widget:GetConfigData()
-	end)
-	if not ok then Spring.Log(HANDLER_BASENAME, LOG.ERROR, "Failed to GetConfigData: " .. name.." ("..err..")") end 
+      self.configData[name] = widget:GetConfigData()
+    end)
+    if not ok then Spring.Log(HANDLER_BASENAME, LOG.ERROR, "Failed to GetConfigData: " .. name.." ("..err..")") end 
   end
   self.knownWidgets[name].active = false
   if (widget.Shutdown) then
@@ -929,7 +962,7 @@ function widgetHandler:DisableWidget(name)
     self:RemoveWidget(w)     -- deactivate
     self.orderList[name] = 0 -- disable
     self:SaveOrderList()	
-	self:SaveConfigData()
+    self:SaveConfigData()
   end
   return true
 end
@@ -949,7 +982,7 @@ function widgetHandler:ToggleWidget(name)
     -- the widget is not active, but enabled; disable it
     self.orderList[name] = 0
     self:SaveOrderList()
-	self:SaveConfigData()
+    self:SaveConfigData()
   end
   return true
 end
@@ -1172,8 +1205,7 @@ function widgetHandler:Shutdown()
     self:SaveConfigData()
     self:SaveOrderList()
   end
-
- 
+  
   for _,w in r_ipairs(self.ShutdownList) do
     w:Shutdown()
   end

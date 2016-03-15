@@ -45,6 +45,35 @@ local greyStr = '\255\150\150\150'
 ------------------------------------
 -- Settings
 
+local MinimalGraphicsSettings = { 
+    -- springsettings, graphics tab
+    comboboxes = {
+        ['Water']            = 0,
+        ['Shadows']          = 0,
+        ['ShadowMapSize']    = 2048,
+    },
+    sliders = {
+        ['UnitIconDist']      = 280,
+        ['UnitLodDist']       = 280,
+        ['MaxParticles']      = 1000,
+        ['MaxNanoParticles']  = 1000,
+    },
+    checkboxes = {
+        ['AdvMapShading']    = false,
+        ['AdvModelShading']  = false,
+        ['luarules normalmapping']    = false,
+        ['AllowDeferredMapRendering']   = false,
+        ['AllowDeferredModelRendering'] = false,
+        ['3DTrees']          = false,
+        ['GroundDecals']     = false,
+        ['DynamicSky']       = false,
+        ['DynamicSun']       = false,
+        ['MapMarks']         = false,
+        ['MapBorder']        = false,
+        ['VSync']            = false,
+    },
+}
+
 local DefaultSettings = { 
     -- springsettings, graphics tab
     comboboxes = {
@@ -55,8 +84,8 @@ local DefaultSettings = {
     sliders = {
         ['UnitIconDist']      = 280,
         ['UnitLodDist']       = 280,
-        ['MaxParticles']      = 1000,
-        ['MaxNanoParticles']  = 1000,
+        ['MaxParticles']      = 2000,
+        ['MaxNanoParticles']  = 2000,
     },
     checkboxes = {
         ['AdvMapShading']    = true,
@@ -84,6 +113,35 @@ local DefaultSettings = {
         ['widgetSelectorMode'] = "normal",
         ['expandedWidgetOptions'] = {},
         ['mainMenuSize'] = {x=400,y=200,width=750,height=550},
+    },
+}
+
+local MaximalGraphicsSettings = {
+    -- springsettings, graphics tab
+    comboboxes = {
+        ['Water']            = 4,
+        ['Shadows']          = 1,
+        ['ShadowMapSize']    = 8192,
+    },
+    sliders = {
+        ['UnitIconDist']      = 600,
+        ['UnitLodDist']       = 600,
+        ['MaxParticles']      = 5000,
+        ['MaxNanoParticles']  = 5000,
+    },
+    checkboxes = {
+        ['AdvMapShading']    = true,
+        ['AdvModelShading']  = true,
+        ['luarules normalmapping']    = true,
+        ['AllowDeferredMapRendering']   = true,
+        ['AllowDeferredModelRendering'] = true,
+        ['3DTrees']          = true,
+        ['GroundDecals']     = true,
+        ['DynamicSky']       = true,
+        ['DynamicSun']       = true,
+        ['MapMarks']         = true,
+        ['MapBorder']        = true,
+        ['VSync']            = true,
     },
 }
 
@@ -139,13 +197,13 @@ end
 local waterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- setting value -> listID (ugh)
 local shadowConvert_ID = {[0]=1,[1]=2,[2]=3}
 local shadowMapSizeConvert_ID = {[2048]=1,[4096]=2,[8192]=3} 
-    
-local function ApplyDefaultGraphicsSettings()
+        
+function ApplyGraphicsSettings(WantedSettings)
     -- apply our default springsettings (==graphics) and *only* those, via selecting them in our chili controls
     local EngineSettingsMulti = tabs['Graphics']:GetChildByName('Settings'):GetChildByName('EngineSettingsMulti')
     local EngineSettingsCheckBoxes = tabs['Graphics']:GetChildByName('Settings'):GetObjectByName('EngineSettingsCheckBoxes')
     
-    for setting,value in pairs(DefaultSettings.comboboxes) do
+    for setting,value in pairs(WantedSettings.comboboxes) do
         Settings[setting] = value
         if setting=='Water' then
             EngineSettingsMulti:GetObjectByName(setting):Select(waterConvert_ID[value])
@@ -156,21 +214,31 @@ local function ApplyDefaultGraphicsSettings()
         end
     end
     
-    for setting,value in pairs(DefaultSettings.sliders) do
+    for setting,value in pairs(WantedSettings.sliders) do
         Settings[setting] = value
         EngineSettingsMulti:GetObjectByName(setting):SetValue(value)
     end
     
-    for setting,value in pairs(DefaultSettings.checkboxes) do
+    for setting,value in pairs(WantedSettings.checkboxes) do
         Settings[setting] = value
         local checkbox = EngineSettingsCheckBoxes:GetObjectByName(setting)
         if checkbox.checked ~= value then checkbox:Toggle() end
     end
 end
 
+function ApplyMinimalGraphicsSettings()
+    ApplyGraphicsSettings(MinimalGraphicsSettings)
+end
+function ApplyDefaultGraphicsSettings()
+    ApplyGraphicsSettings(DefaultSettings)
+end
+function ApplyMaximalGraphicsSettings()
+    ApplyGraphicsSettings(MaximalGraphicsSettings)
+end
+
 ----------------------------
 -- load cursors 
-local function SetCursor(cursorSet)
+function SetCursor(cursorSet)
     local cursorNames = {
         'cursornormal','cursorareaattack','cursorattack','cursorattack',
         'cursorbuildbad','cursorbuildgood','cursorcapture','cursorcentroid',
@@ -1070,7 +1138,9 @@ local function CreateGraphicsTab()
                     }
                 },
             },
-            Chili.Button:New{name="ResetDefaults",x='35%',y='85%',height='10%',width='30%',caption='Reset Defaults',OnMouseUp={ApplyDefaultGraphicsSettings}},
+            Chili.Button:New{name="Minimal",x='2.5%',width='30%',y='85%',height='10%',caption='Minimal Settings',OnMouseUp={ApplyMinimalGraphicsSettings}},
+            Chili.Button:New{name="Defaults",x='35%',width='30%',y='85%',height='10%',caption='Default Settings',OnMouseUp={ApplyDefaultGraphicsSettings}},
+            Chili.Button:New{name="Maximal",x='68.5%',width='30%',y='85%',height='10%',caption='Maximal Settings',OnMouseUp={ApplyMaximalGraphicsSettings}},
         }
     }
     

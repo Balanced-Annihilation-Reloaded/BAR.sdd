@@ -50,6 +50,7 @@ local DefaultSettings = {
     comboboxes = {
         ['Water']            = 4,
         ['Shadows']          = 2,
+        ['ShadowMapSize']    = 4096,
     },
     sliders = {
         ['UnitIconDist']      = 280,
@@ -135,9 +136,9 @@ function InitSettings()
 end
 
 
-local waterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- value -> listID (ugh)
+local waterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- setting value -> listID (ugh)
 local shadowConvert_ID = {[0]=1,[1]=2,[2]=3}
---local shadowMapSizeConvert_ID = {[32]=1,[1024]=2,[2048]=3,[4096]=4} 
+local shadowMapSizeConvert_ID = {[2048]=1,[4096]=2,[8192]=3} 
     
 local function ApplyDefaultGraphicsSettings()
     -- apply our default springsettings (==graphics) and *only* those, via selecting them in our chili controls
@@ -150,8 +151,8 @@ local function ApplyDefaultGraphicsSettings()
             EngineSettingsMulti:GetObjectByName(setting):Select(waterConvert_ID[value])
         elseif setting=='Shadows' then
             EngineSettingsMulti:GetObjectByName(setting):Select(shadowConvert_ID[value])
-        --elseif setting=='ShadowMapSize' then
-            --engineStack:GetObjectByName(setting):Select(shadowMapSizeConvert_ID[value] or 2)
+        elseif setting=='ShadowMapSize' then
+            EngineSettingsMulti:GetObjectByName(setting):Select(shadowMapSizeConvert_ID[value])
         end
     end
     
@@ -717,6 +718,8 @@ local comboBox = function(obj)
         selected = shadowConvert_ID[Settings['Shadows']] -- for shadows and water we store the value to match springsettings
     elseif obj.name=='Water' then
         selected = waterConvert_ID[Settings['Water']]
+    elseif obj.name=='ShadowMapSize' then
+        selected = shadowConvert_ID[Settings['ShadowMapSize']]
     else
         for i = 1, #obj.labels do
             if obj.labels[i] == Settings[obj.name] then selected = i end
@@ -726,9 +729,14 @@ local comboBox = function(obj)
     local function OnSelect(self, listID)
         local value   = self.options[listID]
         local name = self.name
-        Settings[name] =  self.items[self.selected]
-
-        spSendCommands(name..' '..value)
+        Settings[name] = value
+        
+        if name=="ShadowMapSize" then
+            spSendCommands('shadows ' .. Settings['Shadows'] .. ' ' .. value) -- special case :(
+        else
+            spSendCommands(name..' '..value)
+        end
+        
         Spring.SetConfigInt(name, value)
     end
 
@@ -1036,9 +1044,9 @@ local function CreateGraphicsTab()
                             comboBox{y=40,title='Shadows',name='Shadows',
                                 labels={'Off','On','Units Only'},
                                 options={'0','1','2'},},
-                            --[[comboBox{y=40,title='Shadow Resolution',name='ShadowMapSize', --disabled because it seems this can't be changed ingame
-                                labels={'Very Low','Low','Medium','High'},
-                                options={'32','1024','2048','4096'},},]]
+                            comboBox{y=40,title='Shadow Resolution',name='ShadowMapSize', 
+                                labels={'Low','Medium','High'},
+                                options={'2048','4096','8192'},},
                             slider{name='UnitLodDist',title='Unit Draw Distance', max = 600, step = 1},
                             slider{name='UnitIconDist',title='Unit Icon Distance', max = 600, step = 1},
                             slider{name='MaxParticles',title='Max Particles', max = 5000},

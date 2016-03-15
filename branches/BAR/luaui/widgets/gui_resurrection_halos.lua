@@ -6,17 +6,12 @@ function widget:GetInfo()
       date      = "24.04.2014",
       license   = "GNU GPL, v2 or later",
       layer     = 5,
-      enabled   = true
+      enabled   = false
    }
 end
 
---------------------------------------------------------------------------------
--- Console commands
---------------------------------------------------------------------------------
+-- todo: clean this up, avoid pairs in Draw*, etc etc
 
--- /resurrectionhalos_buildings            -- toggles halos for buildings (and non-movable units/factories)
--- /resurrectionhalos_comsonly            -- toggles halos for coms only
--- /resurrectionhalos_dontfade            -- toggles halos to stay visible forever, or to slowly fade away eventually (coms will stay visible forever if defined in config)
 
 --------------------------------------------------------------------------------
 -- Config
@@ -26,10 +21,10 @@ OPTIONS = {
     haloSize                = 0.5,
     haloDistance            = 4,
     skipBuildings            = true,
-    timeoutTime                = 90,
-    timeoutFadeTime            = 40,
-    dontTimeout                = true,
-    dontTimeoutComs            = true,
+    timeoutTime                = 15,
+    timeoutFadeTime            = 15,
+    dontTimeout                = false,
+    dontTimeoutComs            = false,
     onlyForComs                = false,
     sizeVariation            = 0.11,
     sizeSpeed                = 0.7,
@@ -119,8 +114,7 @@ end
 -- Engine Calls
 --------------------------------------------------------------------------------
 
-function widget:Initialize()
-    
+function widget:Initialize()    
     SetUnitConf()
 end
 
@@ -219,31 +213,3 @@ function widget:CommandsChanged()
 end
 ]]--
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
-function widget:GetConfigData(data)
-    savedTable = {}
-    savedTable.skipBuildings    = OPTIONS.skipBuildings
-    savedTable.onlyForComs        = OPTIONS.onlyForComs
-    savedTable.dontTimeout        = OPTIONS.dontTimeout
-    return savedTable
-end
-
-function widget:SetConfigData(data)
-    if data.skipBuildings ~= nil     then  OPTIONS.skipBuildings    = data.skipBuildings end
-    if data.onlyForComs ~= nil         then  OPTIONS.onlyForComs    = data.onlyForComs end
-    if data.dontTimeout ~= nil         then  OPTIONS.dontTimeout    = data.dontTimeout end
-end
-
-function widget:TextCommand(command)
-    if (string.find(command, "resurrectionhalos_buildings") == 1  and  string.len(command) == 27) then 
-        OPTIONS.skipBuildings = not OPTIONS.skipBuildings
-    end
-    if (string.find(command, "resurrectionhalos_comsonly") == 1  and  string.len(command) == 26) then 
-        OPTIONS.onlyForComs = not OPTIONS.onlyForComs
-    end
-    if (string.find(command, "resurrectionhalos_dontfade") == 1  and  string.len(command) == 26) then 
-        OPTIONS.dontTimeout = not OPTIONS.dontTimeout
-    end
-end

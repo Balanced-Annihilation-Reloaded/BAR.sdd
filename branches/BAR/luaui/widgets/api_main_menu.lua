@@ -817,18 +817,12 @@ end
 -----------------------------
 -- native TABS
 
-local function CreateInfoTab()
-    local armageddonTime = 60 * (tonumber((Spring.GetModOptions() or {}).mo_armageddontime) or 0)
-
-    local endModes = { com = "Kill all enemy Commanders", killall = "Kill all enemy units", neverend = "Never end"}
-    local gameEndMode = endModes[Spring.GetModOptions().deathmode]
-    
+local function CreateGeneralTab()    
     local changeLog, introText, hotkeyInfo
     
     local function ParseChangelog(changelog)
         -- parse the changelog and add a small amount of colour
-        -- TODO once we have a changelog!
-        
+        -- TODO once we have a changelog!        
         return changelog
     end
     
@@ -1068,7 +1062,7 @@ local function CreateGraphicsTab()
         }
     }
     
-    --TODO: OnSelect for this tab that reloads options from the springsettings values (in case they have been changed elswhere by e.g. other widgets whilst ingame)
+    --TODO: OnSelect for this tab that reloads options from the springsettings values (in case they have been changed elsewhere by e.g. other widgets whilst ingame)
 end
 
 
@@ -1129,7 +1123,7 @@ function widget:Initialize()
     SetCursor(Settings['cursorName'])
 
     loadMainMenu()
-    CreateInfoTab()
+    CreateGeneralTab()
     CreateInterfaceTab()
     CreateGraphicsTab()
     CreateCreditsTab()

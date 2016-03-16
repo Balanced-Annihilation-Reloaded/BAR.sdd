@@ -995,8 +995,6 @@ function UpdatePingCPU(pID, ping, cpu)
     
     players[pID].playerPanel:GetChildByName('cpu').color = colourConv[n_cpu]
     players[pID].playerPanel:GetChildByName('ping').color = colourConv[n_ping]
-    players[pID].playerPanel:GetChildByName('cpu'):Invalidate()
-    players[pID].playerPanel:GetChildByName('ping'):Invalidate()
 end
 
 function UpdateAIPlayer(pID)
@@ -1268,8 +1266,9 @@ end
 local prevTimer = Spring.GetTimer()
 function widget:Update()
     local timer = Spring.GetTimer()
-    if Spring.DiffTimers(timer,prevTimer)>1 then
+    if Spring.DiffTimers(timer,prevTimer)>0.33 then
         ScheduledUpdate()
+        prevTimer = timer
     end
     
     if needUpdate then

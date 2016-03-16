@@ -255,11 +255,17 @@ UnitSpeed()
 	{
 		if (moving)
 		{
-			currentSpeed = (moveSpeed * 80)/(get CURRENT_SPEED);
-			//if (currentSpeed>300) currentSpeed=300;
-			WALK_PERIOD=currentSpeed;
-			//get PRINT(1,WALK_PERIOD,moveSpeed);
-			WALK_PERIOD=60;
+			//currentSpeed = get CURRENT_SPEED;
+			//get PRINT(1,WALK_PERIOD,moveSpeed,currentSpeed);
+			//if (currentSpeed * 2 > moveSpeed){
+			//	currentSpeed = (moveSpeed * 60)/currentSpeed;
+			//	WALK_PERIOD = currentSpeed;
+			//}
+			//if (currentSpeed * 2 <= moveSpeed){
+			//	WALK_PERIOD = 120;
+			//}
+			WALK_PERIOD = 60;
+			
 		}
 		sleep 142;
 	}

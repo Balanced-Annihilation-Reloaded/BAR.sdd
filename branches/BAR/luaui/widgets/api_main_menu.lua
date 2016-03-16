@@ -882,9 +882,8 @@ local function loadMainMenu()
         itemPadding  = {1,0,1,0},
         OnChange     = {sTab}
     }
-    
+            
     mainMenu:Hide()
-
 end
 
 -----------------------------
@@ -1222,8 +1221,6 @@ function widget:Initialize()
     CreateInterfaceTab()
     CreateCreditsTab()
         
-        
-    if amNewbie then ShowHide('General') else menuTabs:Select(Settings.tabSelected or 'General') end
     globalize()
     
     makeWidgetList(true)
@@ -1250,23 +1247,36 @@ function widget:Initialize()
     fullyLoaded = true
 end
 
+local tabWait
 function widget:Update()
+    -- show if was present at shutdown 
+    -- note: we have to wait one update cycle, because we need tabs that come from external widgets to have been registered (before we can select/show them)
+    if tabWait then
+        if amNewbie then 
+            ShowHide('General') 
+        else 
+            menuTabs:Select(Settings.tabSelected or 'General') 
+        end
+        ShowHide()
+        
+        tabWait = nil
+        Settings.visibleAtShutdown = nil
+    end
+    if Settings.visibleAtShutdown then
+        tabWait = true
+    end
+
     -- check if any widgets changed enabled/active state
     if widgetHandler.knownChanged then
         widgetHandler.knownChanged = false -- important note: widgetHandler.knownChanged=true was added by us to the widgetHandler, when a widget crashes (selector.lua polls each Drawframe)
         makeWidgetList()
     end
     
-    if Settings.visibleAtShutdown then
-        ShowHide()
-        Settings.visibleAtShutdown = false
-    end
-
-    
+    -- update the widget list pos is we need to
     if updateWidgetListPos then
         if Settings["widgetScroll"] then 
             local success = SetTopVisibleControlOfWidgetList(Settings["widgetScroll"])
-            if success then -- we have to wait for chili to actually set up the y coords and it sometimes waits...
+            if success then -- we have to wait for chili to actually set up the y coords and it sometimes takes its time...
                 updateWidgetListPos = nil
             end
         else

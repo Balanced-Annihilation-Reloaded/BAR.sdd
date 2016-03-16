@@ -1,15 +1,17 @@
 -- $Id$
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-local etcLocID
+local etcLocIDs = {[0] = -2, [1] = -2}
 
-local function DrawFeature(featureID, material)
-	--Spring.Echo('Im drawing a feature!',featureID)
-  if etcLocID == nil then
-	--Spring.Echo("4_feature_trees forgot its own etcloc", featureID)
-    etcLocID = gl.GetUniformLocation(material.shader, "etcLoc")
+local function DrawFeature(featureID, material, drawMode)
+  local etcLocIdx = (drawMode == 5) and 1 or 0
+  local curShader = (drawMode == 5) and material.deferredShader or material.standardShader
+
+  if etcLocIDs[etcLocIdx] == -2 then
+    etcLocIDs[etcLocIdx] = gl.GetUniformLocation(curShader, "etcLoc")
   end
-  gl.Uniform(etcLocID, Spring.GetGameFrame(),0.0,0.0 )
+  
+  gl.Uniform(etcLocIDs[etcLocIdx], Spring.GetGameFrame(), 0.0, 0.0)
   return false
 end
 
@@ -31,7 +33,6 @@ local materials = {
 			"#define deferred_mode 1",
 			"#define use_shadows",
 		},
-		force     = false, --// always use the shader even when normalmapping is disabled
 		shaderPlugins = {
 			VERTEX_GLOBAL_NAMESPACE = [[
 				//uniform vec3 etcLoc;
@@ -46,18 +47,21 @@ local materials = {
 				float factor=sin((vertex.x+vertex.y+vertex.z)*0.1+etcLoc.r*0.02)*0.4;
 				float factor2=cos((vertex.x+vertex.y+vertex.z)*0.1+etcLoc.r*0.03)*0.4;
 				float distancefromtrunk=(abs(vertex.x)+abs(vertex.z))/10;
-
-				vertex.x+=vertex.y*timer/20;
-				vertex.z+=vertex.y*timer/20;
 				
-				vertex.y+=distancefromtrunk*factor;
-				vertex.z+=distancefromtrunk*factor;
-				vertex.x+=distancefromtrunk*factor2;
+				vertex.x+=vertex.y*timer/20;
+				vertex.z-=vertex.y*timer/20;
+				
+				//vertex.y+=distancefromtrunk*factor;
+				//vertex.z+=distancefromtrunk*factor;
+				//vertex.x+=distancefromtrunk*factor2;
+				
 			]],
 			FRAGMENT_POST_SHADING = [[
 				//gl_FragColor.r=1.0;
 			]]
 		},
+		force     = false, --// always use the shader even when normalmapping is disabled
+		feature = true, --// This is used to define that this is a feature shader
 		usecamera = false,
 		culling   = GL.BACK,
 		texunits  = {
@@ -69,8 +73,6 @@ local materials = {
 			[5] = '%NORMALTEX',
 		},
 		DrawFeature = DrawFeature,
-		DrawObject = DrawFeature,
-		feature = true, --// This is used to define that this is a feature shader
 	},
 }
 

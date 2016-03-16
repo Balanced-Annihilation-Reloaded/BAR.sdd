@@ -131,8 +131,18 @@ function widget:Initialize()
     Spring.SendCommands('clock 0')
 end
 
-function widget:Update()
-
+local nextUpdateTime = 0
+local updateInterval = 0.25 --seconds
+local curTime = 0
+function widget:Update(dt)
+    curTime = curTime + dt
+    if curTime<nextUpdateTime then
+        return 
+    end
+    nextUpdateTime = curTime + updateInterval
+        
+    
+    
     local fps = 'FPS: '..'\255\255\127\0'..spGetFPS()
     fpsLbl:SetCaption(fps)
     

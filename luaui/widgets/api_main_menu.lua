@@ -658,7 +658,7 @@ local function addStack(obj)
             x           = obj.x or 0,
             y           = obj.y or 0,
             width       = obj.width or '50%',
-            --height      = '70%',
+            height      = obj.height,
             resizeItems = false,
             autosize    = true,
             padding     = {0,0,0,0},
@@ -1024,7 +1024,7 @@ local function CreateInterfaceTab()
                                 makeWidgetList(true) 
                             end} 
                     },
-                    Chili.Checkbox:New{caption='Show Authors',x=0,y=17,width='100%',textalign='left',boxalign='right',checked=Settings.showWidgetAuthors,--todo
+                    Chili.Checkbox:New{caption='Show Authors',x=0,y=17,width='100%',textalign='left',boxalign='right',checked=Settings.showWidgetAuthors,
                         OnChange = {
                             function() 
                                 Settings.showWidgetAuthors = not Settings.showWidgetAuthors
@@ -1115,6 +1115,7 @@ local function CreateGraphicsTab()
     -- Graphics --
     tabs.Graphics = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%', borderColor = {0,0,0,0}, backgroundColor = {0,0,0,0},
         children = {
+            Chili.TextBox:New{x='65%',y='75%',width='25%',height='10%',text="(*) Requires restart."},
             Chili.ScrollPanel:New{name='Settings', x=0, y=0, width='100%', height='80%', children = {
                     addStack{x = 0, y = '3%', name = 'EngineSettingsMulti', children = {
                             comboBox{y=0,title='Water',name='Water', 
@@ -1136,8 +1137,8 @@ local function CreateGraphicsTab()
                             checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},                    
                             checkBox{title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
                             checkBox{title = 'Extra Model Shading', name = 'luarules normalmapping', tooltip = "Toggle BARs extra model shaders"}, 
-                            checkBox{title = 'Deferred Map Shading', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
-                            checkBox{title = 'Deferred Model Shading', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
+                            checkBox{title = 'Deferred Map Shading*', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
+                            checkBox{title = 'Deferred Model Shading*', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
                             checkBox{title = 'Draw Engine Trees', name = '3DTrees', tooltip = "Enable/Disable rendering of engine trees"},
                             checkBox{title = 'Ground Decals', name = 'GroundDecals', tooltip = "Enable/Disable rendering of ground decals"},
                             checkBox{title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
@@ -1149,6 +1150,7 @@ local function CreateGraphicsTab()
                     }
                 },
             },
+            
             Chili.Button:New{name="Minimal",x='2.5%',width='30%',y='85%',height='10%',caption='Minimal Settings',OnMouseUp={ApplyMinimalGraphicsSettings}},
             Chili.Button:New{name="Defaults",x='35%',width='30%',y='85%',height='10%',caption='Default Settings',OnMouseUp={ApplyDefaultGraphicsSettings}},
             Chili.Button:New{name="Maximal",x='68.5%',width='30%',y='85%',height='10%',caption='Maximal Settings',OnMouseUp={ApplyMaximalGraphicsSettings}},

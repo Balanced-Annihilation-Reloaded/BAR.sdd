@@ -1229,8 +1229,8 @@ function widget:Initialize()
     
     makeWidgetList(true)
     
-    if Settings.visibleAtShutdown then
-        makeVisibleAtStartup = true
+    if Settings.visibleAtShutdown or amNewbie then
+        makeVisibleAtStartup = true -- -> widget:Update
     end
     
     -- our hotkeys
@@ -1271,7 +1271,7 @@ function widget:Update()
         tabWait = nil
         makeVisibleAtStartup = nil
     end
-    if makeVisibleAtStartup or amNewbie then
+    if makeVisibleAtStartup then
         tabWait = tabWait and tabWait+1 or 0
     end
 

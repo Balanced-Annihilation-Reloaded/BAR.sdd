@@ -1146,6 +1146,7 @@ local function CreateGraphicsTab()
                             checkBox{title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
                             checkBox{title = 'Show Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"}, 
                             checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},      
+                            checkBox{title = 'Full Screen', name = 'FullScreen', tooltip = "Toggles full screen / windowed mode"},      
                         }                    
                     }
                 },

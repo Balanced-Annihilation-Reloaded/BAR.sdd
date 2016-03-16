@@ -1268,7 +1268,7 @@ end
 local prevTimer = Spring.GetTimer()
 function widget:Update()
     local timer = Spring.GetTimer()
-    if Spring.DiffTimers(timer,prevTimer)>0.2 then
+    if Spring.DiffTimers(timer,prevTimer)>1 then
         ScheduledUpdate()
     end
     

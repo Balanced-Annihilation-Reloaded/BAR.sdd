@@ -1252,8 +1252,9 @@ end
 local tabWait
 function widget:Update()
     -- show if was present at shutdown 
-    -- note: we have to wait one update cycle, because we need tabs that come from external widgets to have been registered (before we can select/show them)
-    if tabWait then
+    -- note: we have to wait two update cycles, because we need tabs that come from external widgets to have been registered (before we can select/show them)
+    -- and Chili sometimes takes its time...
+    if tabWait==2 then
         if amNewbie then 
             ShowHide('General') 
         elseif Settings['visibleAtShutdown'] then 
@@ -1265,7 +1266,7 @@ function widget:Update()
         Settings.visibleAtShutdown = nil
     end
     if Settings.visibleAtShutdown or amNewbie then
-        tabWait = true
+        tabWait = tabWait and tabWait+1 or 0
     end
 
     -- check if any widgets changed enabled/active state

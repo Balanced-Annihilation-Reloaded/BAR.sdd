@@ -233,9 +233,9 @@ UnitSpeed()
 	{
 		if (moving)
 		{
-			currentSpeed = (moveSpeed * 80)/(get CURRENT_SPEED);
+			//currentSpeed = (moveSpeed * 80)/(get CURRENT_SPEED);
 			//if (currentSpeed>300) currentSpeed=300;
-			WALK_PERIOD=currentSpeed;
+			//WALK_PERIOD=currentSpeed;
 			//get PRINT(1,WALK_PERIOD,moveSpeed);
 			WALK_PERIOD=98;
 		}

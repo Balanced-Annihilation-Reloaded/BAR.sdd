@@ -81,7 +81,7 @@ local options = {
 -- helpers
 ------------------------------------------------------
 
-function GetUnitScales() 
+function GetUnitScales()
     for uDID, unitDef in pairs(UnitDefs) do
         local xsize, zsize = unitDef.xsize, unitDef.zsize
         local scale = 4*( xsize^2 + zsize^2 )^0.5 -- approximately unit radius
@@ -111,10 +111,10 @@ function widget:Initialize()
 	widgetHandler:RegisterGlobal('selectedUnitsClear', SelectedUnitsClear_Wrapper)
 	widgetHandler:RegisterGlobal('selectedUnitsAdd', SelectedUnitsAdd_Wrapper)
         
-    SetupMenuOptions()    
     lineWidth = options.selected.useThickLines and thickLineWidth or thinLineWidth    
         
     GetUnitScales()
+    SetupMenuOptions()    
     InitializeGL()
     SetCmdColors() -- we do it in this widget because we remove the engines own selected unit gfx, but this also sets up the colours to match sMenu
 
@@ -283,10 +283,6 @@ function UpdatePlatterUnit(unitID)
         if (not amISpec) and options.platter.showAllyPlatters=="auto" then return nil end
     end
 
-    if not unitScales[t.unitDefID] then
-        Spring.Echo("Error: Missing unitScale for uDID " .. (t.unitDefID or 'nil'))
-        Spring.Echo("Error: uDID " .. t.unitDefID .. " is " .. UnitDefs[t.unitDefID].name)
-    end
     t.unitScale = unitScales[t.unitDefID] * platterScaleFactor
     t.randomAngle = t.randomAngle or 360*math.random()   
 

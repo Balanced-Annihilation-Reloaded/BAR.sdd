@@ -14,38 +14,52 @@ if (gadgetHandler:IsSyncedCode()) then
     return
 end
 
-local minEngineVersion = 101 -- major engine version as number
-local maxEngineVersion = 101 -- don't forget to update it!
+-- don't forget to update it!
+local minMajorEngineVersion = 101 
+local minMinorEngineVersion = 147
+local maxEngineVersion = 102 
+-- no real need for a max minor version
+
 local wantedEngineVersions = ""
-if minEngineVersion == maxEngineVersion then
-    wantedEngineVersions = tostring(minEngineVersion) .. " or equivalent."
+if minMajorEngineVersion == maxEngineVersion and not minMinorEngineVersion then
+    wantedEngineVersions = tostring(minMajorEngineVersion) .. " or equivalent."
 else
-    wantedEngineVersions = tostring(minEngineVersion) .. " - " .. tostring(maxEngineVersion) .. " or equivalent."
+    wantedEngineVersions = tostring(minMajorEngineVersion) .. (minMinorEngineVersion and ".0.1-"..tostring(minMinorEngineVersion) or "" ) .. "  --  " .. tostring(maxEngineVersion) .. " or equivalent."
 end
 
 local red = "\255\255\1\1"
 
 function Warning()
-    local reportedMajorVersion
+    local reportedMajorVersion, reportedMinorVersion
     local devEngine
     if string.find(Game.version,".",1,true) then 
         local n = string.find(Game.version,".",1,true)
-        reportedMajorVersion = string.sub(Game.version,1,n+1)    
+        reportedMajorVersion = string.sub(Game.version,1,n-1)   
+        local m = string.find(Game.version,"-",1,true)
+        local m2 = string.find(Game.version,"-",m+1,true)
+        reportedMinorVersion = string.sub(Game.version,m+1,m2-1)
         devEngine = true
     else 
         local n = string.len(Game.version)
-        reportedMajorVersion = string.sub(Game.version,1,n+1)  
+        reportedMajorVersion = string.sub(Game.version,1,n-1)  
         devEngine = false
     end
+    
     if not reportedMajorVersion then return end
+    if devEngine and not reportedMinorVersion then return end
     
     reportedMajorVersion = tonumber(reportedMajorVersion)
-    if (not devEngine and reportedMajorVersion<minEngineVersion) or (devEngine and reportedMajorVersion+1<minEngineVersion) then
+    reportedMinorVersion = tonumber(reportedMinorVersion)
+
+    if (not devEngine and reportedMajorVersion<minMajorEngineVersion) 
+        or (devEngine and reportedMajorVersion<minMajorEngineVersion) 
+        or (devEngine and reportedMajorVersion==minMajorEngineVersion and reportedMinorVersion<minMinorEngineVersion) 
+    then
         Spring.Echo(red .. "WARNING: You are using Spring " .. Game.version .. ", which is too old for this game.")
         Spring.Echo(red .. "Please update your engine to  " .. wantedEngineVersions)
     elseif reportedMajorVersion>maxEngineVersion then
         Spring.Echo(red .. "WARNING: You are using Spring " .. Game.version .. " which is too recent for this game.")
-        Spring.Echo(red .. "Please downgrade your engine to " .. wantedEngineVersions)
+        Spring.Echo(red .. "Please downgrade your engine to Spring " .. wantedEngineVersions)
     end           
 end
 

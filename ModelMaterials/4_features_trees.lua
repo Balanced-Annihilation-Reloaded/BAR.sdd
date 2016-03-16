@@ -24,14 +24,14 @@ local materials = {
 			"#define use_normalmapping",
 			--"#define flip_normalmap",
 			"#define deferred_mode 0",
-			"#define use_shadows",
+			--"#define use_shadows", --api_custom_unit_shaders supplies this
 		},
 		deferredDefinitions = {
 			--"#define use_perspective_correct_shadows",
 			"#define use_normalmapping",
 			--"#define flip_normalmap",
 			"#define deferred_mode 1",
-			"#define use_shadows",
+			--"#define use_shadows", --api_custom_unit_shaders supplies this
 		},
 		shaderPlugins = {
 			VERTEX_GLOBAL_NAMESPACE = [[

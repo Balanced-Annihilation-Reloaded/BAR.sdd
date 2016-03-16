@@ -1254,15 +1254,15 @@ function widget:Update()
     if tabWait then
         if amNewbie then 
             ShowHide('General') 
-        else 
+        elseif Settings['visibleAtShutdown'] then 
             menuTabs:Select(Settings.tabSelected or 'General') 
+            ShowHide()
         end
-        ShowHide()
         
         tabWait = nil
         Settings.visibleAtShutdown = nil
     end
-    if Settings.visibleAtShutdown then
+    if Settings.visibleAtShutdown or amNewbie then
         tabWait = true
     end
 

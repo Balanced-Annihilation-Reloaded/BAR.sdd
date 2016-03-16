@@ -6,7 +6,7 @@ function widget:GetInfo()
     author    = "knorke, KingRaptor",
     date      = "Sep 2011",
     license   = "PD",
-    layer     = -101, --before option menu, since we set MapBorder
+    layer     = 0, --before option menu, since we set MapBorder
     enabled   = false,
         detailsDefault = 3
   }

@@ -47,17 +47,17 @@ local materials = {
 
 local function FindNormalmap(tex1, tex2)
 	local normaltex = nil
-	Spring.Echo("searching for normals for",tex1)
+	-- Spring.Echo("searching for normals for",tex1)
 	--// check if there is a corresponding _normals.dds file
 	unittexttures = 'unittextures/'
 	if (VFS.FileExists(unittexttures .. tex1)) and (VFS.FileExists(unittexttures .. tex2)) then
 		normaltex = unittexttures .. tex1:gsub("%.","_normals.")
-		Spring.Echo(normaltex)
+		-- Spring.Echo(normaltex)
 		if (VFS.FileExists(normaltex)) then
 			return normaltex
 		end
 		normaltex = unittexttures .. tex1:gsub("%.","_normal.")
-		Spring.Echo(normaltex)
+		-- Spring.Echo(normaltex)
 		if (VFS.FileExists(normaltex)) then
 			return normaltex
 		end

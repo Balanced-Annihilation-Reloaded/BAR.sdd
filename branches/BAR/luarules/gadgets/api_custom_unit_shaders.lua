@@ -174,17 +174,18 @@ local function _CompileMaterialShaders(rendering)
       local GLSLshader = CompileShader(mat_src.shaderSource, mat_src.shaderDefinitions, mat_src.shaderPlugins)
 
       if (GLSLshader) then
-        if (mat_src.shader) then
-          gl.DeleteShader(mat_src.shader)
+        if (mat_src.standardShader) then
+          gl.DeleteShader(mat_src.standardShader)
         end
-        mat_src.shader          = GLSLshader
-        mat_src.cameraLoc       = gl.GetUniformLocation(GLSLshader,"camera")
-        mat_src.cameraInvLoc    = gl.GetUniformLocation(GLSLshader,"cameraInv")
-        mat_src.cameraPosLoc    = gl.GetUniformLocation(GLSLshader,"cameraPos")
-        mat_src.shadowMatrixLoc = gl.GetUniformLocation(GLSLshader,"shadowMatrix")
-        mat_src.shadowParamsLoc = gl.GetUniformLocation(GLSLshader,"shadowParams")
-        mat_src.sunPosLoc       = gl.GetUniformLocation(GLSLshader,"sunPos")
-        mat_src.etcLoc          = gl.GetUniformLocation(GLSLshader,"etcLoc")
+        mat_src.standardShader   = GLSLshader
+        mat_src.standardUniforms = {
+          cameraloc       = gl.GetUniformLocation(GLSLshader, "camera"),
+          camerainvloc    = gl.GetUniformLocation(GLSLshader, "cameraInv"),
+          cameraposloc    = gl.GetUniformLocation(GLSLshader, "cameraPos"),
+          shadowmatrixloc = gl.GetUniformLocation(GLSLshader, "shadowMatrix"),
+          shadowparamsloc = gl.GetUniformLocation(GLSLshader, "shadowParams"),
+          sunposloc       = gl.GetUniformLocation(GLSLshader, "sunPos"),
+        }
         end
     end
     
@@ -192,17 +193,18 @@ local function _CompileMaterialShaders(rendering)
       local GLSLshader = CompileShader(mat_src.deferredSource, mat_src.deferredDefinitions, mat_src.deferredPlugins)
 
       if (GLSLshader) then
-        if (mat_src.deferred) then
-          gl.DeleteShader(mat_src.deferred)
+        if (mat_src.deferredShader) then
+          gl.DeleteShader(mat_src.deferredShader)
         end
-        mat_src.deferred        = GLSLshader
-        mat_src.cameraLoc       = gl.GetUniformLocation(GLSLshader,"camera")
-        mat_src.cameraInvLoc    = gl.GetUniformLocation(GLSLshader,"cameraInv")
-        mat_src.cameraPosLoc    = gl.GetUniformLocation(GLSLshader,"cameraPos")
-        mat_src.shadowMatrixLoc = gl.GetUniformLocation(GLSLshader,"shadowMatrix")
-        mat_src.shadowParamsLoc = gl.GetUniformLocation(GLSLshader,"shadowParams")
-        mat_src.sunPosLoc       = gl.GetUniformLocation(GLSLshader,"sunPos")
-        mat_src.etcLoc          = gl.GetUniformLocation(GLSLshader,"etcLoc")
+        mat_src.deferredShader   = GLSLshader
+        mat_src.deferredUniforms = {
+          cameraloc       = gl.GetUniformLocation(GLSLshader, "camera"),
+          camerainvloc    = gl.GetUniformLocation(GLSLshader, "cameraInv"),
+          cameraposloc    = gl.GetUniformLocation(GLSLshader, "cameraPos"),
+          shadowmatrixloc = gl.GetUniformLocation(GLSLshader, "shadowMatrix"),
+          shadowparamsloc = gl.GetUniformLocation(GLSLshader, "shadowParams"),
+          sunposloc       = gl.GetUniformLocation(GLSLshader, "sunPos"),
+        }
       end
     end
   end
@@ -258,19 +260,17 @@ local function GetObjectMaterial(rendering, objectDefID)
   end
 
   local luaMat = rendering.spGetMaterial("opaque", {
-    shader          = mat.shader,
-    deferred		= mat.deferred,
-    cameraposloc    = mat.cameraPosLoc,
-    cameraloc       = mat.cameraLoc,
-    camerainvloc    = mat.cameraInvLoc,
-    shadowloc       = mat.shadowMatrixLoc,
-    shadowparamsloc = mat.shadowParamsLoc,
-    sunposloc       = mat.sunPosLoc,
-    usecamera       = mat.usecamera,
-    culling         = mat.culling,
-    texunits        = texUnits,
-    prelist         = mat.predl,
-    postlist        = mat.postdl,
+    standardshader = mat.standardShader,
+    deferredshader = mat.deferredShader,
+
+    standarduniforms = mat.standardUniforms,
+    deferreduniforms = mat.deferredUniforms,
+
+    usecamera   = mat.usecamera,
+    culling     = mat.culling,
+    texunits    = texUnits,
+    prelist     = mat.predl,
+    postlist    = mat.postdl,
   })
 
   rendering.bufMaterials[objectDefID] = luaMat
@@ -475,7 +475,8 @@ end
 -- normalDraw = 1,
 -- shadowDraw = 2,
 -- reflectionDraw = 3,
--- refractionDraw = 4
+-- refractionDraw = 4,
+-- luaMaterialDraw = 5,
 -- }; 
 -----------------
 
@@ -584,12 +585,14 @@ local function _LoadMaterialConfigFiles(path)
 end
 
 local function _ProcessMaterials(rendering, materialDefs)
+  local engineShaderTypes = {"3do", "s3o", "obj", "ass"}
   for _, mat_src in pairs(rendering.materialDefs) do
-    if mat_src.shader and mat_src.shader ~= "3do" and mat_src.shader ~= "s3o" then
+    mat_src = {shader = include(".../default.lua") or "s3o", ...}
+    if mat_src.shader ~= nil and engineShaderTypes[mat_src.shader] == nil then
       mat_src.shaderSource = mat_src.shader
       mat_src.shader = nil
     end
-    if (mat_src.deferred) and (mat_src.deferred ~= "3do") and (mat_src.deferred ~= "s3o") then
+    if mat_src.deferred ~= nil and engineShaderTypes[mat_src.deferred] == nil then
         mat_src.deferredSource = mat_src.deferred
         mat_src.deferred = nil
       end

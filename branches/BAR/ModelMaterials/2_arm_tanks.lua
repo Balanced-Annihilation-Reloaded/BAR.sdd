@@ -11,19 +11,26 @@ local GetUnitTeam = Spring.GetUnitTeam
 local trackpos=0
 
 local GADGET_DIR = "LuaRules/Configs/"
+local etcLocIDs = {[0] = -2, [1] = -2}
 
 local function DrawUnit(unitID, material,drawMode)
-	-- Spring.Echo('Arm Tanks drawmode',drawMode) 
-	if (drawMode ==1)then -- we can skip setting the uniforms as they only affect fragment color, not fragment alpha or vertex positions, so they dont have an effect on shadows, and drawmode 2 is shadows, 1 is normal mode.
-		--Spring.Echo('drawing',UnitDefs[Spring.GetUnitDefID(unitID)].name,GetGameFrame())
-		local  health,maxhealth=GetUnitHealth(unitID)
-		health= 2*maximum(0, (-2*health)/(maxhealth)+1) --inverse of health, 0 if health is 100%-50%, goes to 1 by 0 health
-		local _ , _ , _ , speed = Spring.GetUnitVelocity(unitID)
-		if speed >0.01 then speed =1 end
-		local offset= (((GetGameFrame())%9) * (2.0/4096.0))*speed 
-		glUniform(material.etcLoc, 2* maximum(0,sine((unitID%10)+GetGameFrame()/((unitID%7)+6))), health,offset) --etcloc.z is the track offset pos.
+	local etcLocIdx = (drawMode == 5) and 1 or 0
+	local curShader = (drawMode == 5) and material.deferredShader or material.standardShader
 
+	if etcLocIDs[etcLocIdx] == -2 then
+		etcLocIDs[etcLocIdx] = gl.GetUniformLocation(curShader, "etcLoc")
 	end
+	-- Spring.Echo('Arm Tanks drawmode',drawMode) 
+	--if (drawMode ==1)then -- we can skip setting the uniforms as they only affect fragment color, not fragment alpha or vertex positions, so they dont have an effect on shadows, and drawmode 2 is shadows, 1 is normal mode.
+		--Spring.Echo('drawing',UnitDefs[Spring.GetUnitDefID(unitID)].name,GetGameFrame())
+	local  health,maxhealth=GetUnitHealth(unitID)
+	health= 2*maximum(0, (-2*health)/(maxhealth)+1) --inverse of health, 0 if health is 100%-50%, goes to 1 by 0 health
+	local _ , _ , _ , speed = Spring.GetUnitVelocity(unitID)
+	if speed >0.01 then speed =1 end
+	local offset= (((GetGameFrame())%9) * (2.0/4096.0))*speed 
+	glUniform(etcLocIDs[etcLocIdx], Spring.GetGameFrame(), health,offset) --etcloc.z is the track offset pos.
+
+	--end
   --// engine should still draw it (we just set the uniforms for the shader)
   return false
 end

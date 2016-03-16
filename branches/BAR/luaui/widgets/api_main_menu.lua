@@ -534,7 +534,7 @@ function makeWidgetList(layoutChange)
     -- Outer loop adds cat labels
     for i=1, num_widgetCat do
         -- Get group of pos i
-        local cat = wCategories[inv_widgetCat_pos[i]]
+        local cat = wCategories[inv_widgetCat_pos[i] ]
         local list = cat.list
         if #list>0 and (showAdv or not cat.adv) then
             stack:AddChild(Chili.Control:New{width="100%",height=1}) -- dummy to make sure none of the "real" controls have y=0
@@ -1211,6 +1211,7 @@ end
 
 --------------------------
 -- main
+local makeVisibleAtStartup
 
 function widget:Initialize()
     Chili = WG.Chili
@@ -1227,6 +1228,10 @@ function widget:Initialize()
     globalize()
     
     makeWidgetList(true)
+    
+    if Settings.visibleAtShutdown then
+        makeVisibleAtStartup = true
+    end
     
     -- our hotkeys
     local toggleMenu      = function() if mainMenu.visible then ShowHide() else ShowHide('General') end end
@@ -1264,9 +1269,9 @@ function widget:Update()
         end
         
         tabWait = nil
-        Settings.visibleAtShutdown = nil
+        makeVisibleAtStartup = nil
     end
-    if Settings.visibleAtShutdown or amNewbie then
+    if makeVisibleAtStartup or amNewbie then
         tabWait = tabWait and tabWait+1 or 0
     end
 

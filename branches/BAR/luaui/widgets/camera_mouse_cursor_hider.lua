@@ -6,13 +6,18 @@ return {
      date      = "22 June 2007",
      license   = "GNU GPL, v2 or later",
      layer     = 5,
-     enabled   = false  -- loaded by default?
+     enabled   = true  -- loaded by default?
    }
 end
 -------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------
+
+local spIsGuiHidden = Spring.IsGUIHidden
+local spSetMouseCursor = Spring.SetMouseCursor
+local none = "none"
+
 function widget:Update()
-    if Spring.IsGUIHidden() then
-        Spring.SetMouseCursor("none") 
+    if spIsGuiHidden() then
+        spSetMouseCursor(none) 
     end
 end

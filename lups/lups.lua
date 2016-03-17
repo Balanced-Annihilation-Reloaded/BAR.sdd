@@ -30,7 +30,7 @@ end
 
 --// FIXME
 -- 1. add los handling (inRadar,alwaysVisible, etc.)
-if not Script.IsEngineMinVersion(101, 1, 1) then
+-- if not Script.IsEngineMinVersion(101, 1, 1) then
 	local origGetUnitLosState     = Spring.GetUnitLosState 
 	local origGetPositionLosState = Spring.GetPositionLosState 
 	local origIsPosInLos          = Spring.IsPosInLos 
@@ -61,7 +61,7 @@ if not Script.IsEngineMinVersion(101, 1, 1) then
 	Spring.IsPosInLos          = CreatePosWrapper(origIsPosInLos); 
 	Spring.IsPosInRadar        = CreatePosWrapper(origIsPosInRadar); 
 	Spring.IsPosInAirLos       = CreatePosWrapper(origIsPosInAirLos); 
-end
+-- end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

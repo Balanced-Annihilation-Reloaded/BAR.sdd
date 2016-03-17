@@ -58,10 +58,5 @@ function widget:Initialize()
 end
 
 function widget:Shutdown()
-    widgetHandler:RemoveAction('reset')
-    widgetHandler:RemoveAction('factoryreset')
-    widgetHandler:RemoveAction('disable_user_widgets')
-    widgetHandler:RemoveAction('enable_user_widgets')
-    widgetHandler:RemoveAction('toggle_user_widgets')
 end
 

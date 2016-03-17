@@ -52,7 +52,7 @@ commands = {
 				end
 				teamPart = cmdParts[4]
 			end
-			for id, uDef in pairs(UnitDefs) do
+			for id, uDef in ipairs(UnitDefs) do
 				if param == nil or param == "" or uDef.name:starts(param) then
 					local text = uDef.name
 					local desc = "Give " .. uDef.name
@@ -61,7 +61,7 @@ commands = {
 						desc = "Give " .. count .. " " .. uDef.name
 					end
 					if teamPart then
-						for _, teamID in pairs(Spring.GetTeamList()) do
+						for _, teamID in ipairs(Spring.GetTeamList()) do
 							if teamPart == "" or tostring(teamID):starts(teamPart) then
 								local teamText = text .. " " .. teamID
 								local teamDesc = desc .. " to team " .. teamID

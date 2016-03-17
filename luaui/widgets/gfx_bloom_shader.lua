@@ -189,7 +189,8 @@ function widget:Initialize()
         RemoveMe("[BloomShader::Initialize] removing widget, no shader support")
         return
     end
-
+    
+    AddChatActions()
     SetIllumThreshold()
 
 
@@ -356,6 +357,8 @@ function widget:Initialize()
 end
 
 function widget:Shutdown()
+    RemoveChatActions()
+
     glDeleteTexture(brightTexture1 or "")
     glDeleteTexture(brightTexture2 or "")
     glDeleteTexture(screenTexture or "")
@@ -506,39 +509,66 @@ end
 
 
 --function widget:DrawScreenEffects() Bloom() end --drawworld draws in world space, would need a diff draw matrix...
-function widget:DrawWorld() Bloom() end --drawworld draws in world space, would need a diff draw matrix...
+function widget:DrawWorld() Bloom() end 
 
 
 
-function widget:TextCommand(command)
-    --Spring.Echo(command)
-    local mycommand=false
-    if (string.find(command, "+illumthres") == 1) then illumThreshold = illumThreshold + 0.02 ; mycommand=true end
-    if (string.find(command, "-illumthres") == 1) then illumThreshold = illumThreshold - 0.02 ; mycommand=true end
-
-    if (string.find(command, "+glowamplif") == 1) then glowAmplifier = glowAmplifier + 0.05 ; mycommand=true end
-    if (string.find(command, "-glowamplif") == 1) then glowAmplifier = glowAmplifier - 0.05 ; mycommand=true end
-
-    if (string.find(command, "+bluramplif") == 1) then blurAmplifier = blurAmplifier + 0.05 ; mycommand=true end
-    if (string.find(command, "-bluramplif") == 1) then blurAmplifier = blurAmplifier - 0.05 ; mycommand=true end
-
-    if (string.find(command, "+blurpasses") == 1) then blurPasses = blurPasses + 1; mycommand=true  end
-    if (string.find(command, "-blurpasses") == 1) then blurPasses = blurPasses - 1 ; mycommand=true end
-
-
-    if (string.find(command, "+bloomdebug") == 1) then dbgDraw = 1; mycommand=true  end
-    if (string.find(command, "-bloomdebug") == 1) then dbgDraw = 0 ; mycommand=true end
-
-    illumThreshold = math.max(0.0, math.min(1.0, illumThreshold))
-    blurPasses = math.max(0, blurPasses)
-    if (mycommand) then 
+function AddChatActions()
+    local function EchoVars()
+        illumThreshold = math.max(0.0, math.min(1.0, illumThreshold))
+        blurPasses = math.max(0, blurPasses)
         Spring.Echo("[BloomShader::TextCommand]")
         Spring.Echo("   illumThreshold: " .. illumThreshold)
         Spring.Echo("   glowAmplifier:  " .. glowAmplifier)
         Spring.Echo("   blurAmplifier:  " .. blurAmplifier)
         Spring.Echo("   blurPasses:     " .. blurPasses)
-        return true
-    else
-        return false
     end
+
+    local function MoreIllum() illumThreshold = illumThreshold + 0.02 ; EchoVars() end
+    local function LessIllum() illumThreshold = illumThreshold - 0.02 ; EchoVars() end
+
+    local function MoreGlow() glowAmplifier = glowAmplifier + 0.05 ; EchoVars() end
+    local function LessGlow() glowAmplifier = glowAmplifier - 0.05 ; EchoVars() end
+
+    local function MoreBlur() blurAmplifier = blurAmplifier + 0.05 ; EchoVars() end
+    local function LessBlur() blurAmplifier = blurAmplifier - 0.05 ; EchoVars() end
+
+    local function MoreBlurPasses() blurPasses = blurPasses + 1; EchoVars() end
+    local function LessBlurPasses() blurPasses = blurPasses - 1; EchoVars() end
+
+    local function BloomDebugOn() dbgDraw = 1; EchoVars() end
+    local function BloomDebugOff() dbgDraw = 0; EchoVars() end
+
+    
+    widgetHandler:AddAction("+illumthres", MoreIllum, nil, 't')
+    widgetHandler:AddAction("-illumthres", LessIllum, nil, 't')
+
+    widgetHandler:AddAction("+glowamplif", MoreGlow, nil, 't')
+    widgetHandler:AddAction("-glowamplif", LessGlow, nil, 't')
+
+    widgetHandler:AddAction("+bluramplif", MoreBlur, nil, 't')
+    widgetHandler:AddAction("-bluramplif", LessBlur, nil, 't')
+
+    widgetHandler:AddAction("+blurpasses", MoreBlurPasses, nil, 't')
+    widgetHandler:AddAction("-blurpasses", LessBlurPasses, nil, 't')
+
+    widgetHandler:AddAction("+bloomdebug", BloomDebugOn, nil, 't')
+    widgetHandler:AddAction("-bloomdebug", BloomDebugOff, nil, 't')
+end
+
+function RemoveChatActions()
+    widgetHandler:RemoveAction("+illumthres", MoreIllum, nil, 't')
+    widgetHandler:RemoveAction("-illumthres", LessIllum, nil, 't')
+
+    widgetHandler:RemoveAction("+glowamplif", MoreGlow, nil, 't')
+    widgetHandler:RemoveAction("-glowamplif", LessGlow, nil, 't')
+
+    widgetHandler:RemoveAction("+bluramplif", MoreBlur, nil, 't')
+    widgetHandler:RemoveAction("-bluramplif", LessBlur, nil, 't')
+
+    widgetHandler:RemoveAction("+blurpasses", MoreBlurPasses, nil, 't')
+    widgetHandler:RemoveAction("-blurpasses", LessBlurPasses, nil, 't')
+
+    widgetHandler:RemoveAction("+bloomdebug", BloomDebugOn, nil, 't')
+    widgetHandler:RemoveAction("-bloomdebug", BloomDebugOff, nil, 't')
 end

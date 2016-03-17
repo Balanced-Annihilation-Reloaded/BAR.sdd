@@ -1410,15 +1410,3 @@ function widget:SetConfigData(data)
     if data.alwaysDrawBarPercentageForComs ~= nil   then  alwaysDrawBarPercentageForComs = data.alwaysDrawBarPercentageForComs end
     if data.currentOption ~= nil                    then  currentOption = data.currentOption end
 end
-
-function widget:TextCommand(command)
-    if (string.find(command, "healthbars_percentage") == 1  and  string.len(command) == 21) then 
-        drawBarPercentage =  (drawBarPercentage < 100 and 100 or 0)
-    end
-    if (string.find(command, "healthbars_compercentage") == 1  and  string.len(command) == 24) then 
-        alwaysDrawBarPercentageForComs = not alwaysDrawBarPercentageForComs
-    end
-    if (string.find(command, "healthbars_style") == 1  and  string.len(command) == 16) then 
-        toggleOption()
-    end
-end

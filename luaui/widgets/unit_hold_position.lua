@@ -33,7 +33,7 @@ function widget:Initialize()
             Chili.ComboBox:New{
                 x        = '5%',
                 width    = '95%',
-                items    = {"Auto units (arty, aa, etc)", "All factories except air"},
+                items    = {"Auto units (arty, aa, etc)", "All except air"},
                 selected = options.factoryHoldPos and 2 or 1,
                 OnSelect = {
                     function(_,sel)

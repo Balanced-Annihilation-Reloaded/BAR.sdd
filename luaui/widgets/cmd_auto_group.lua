@@ -2,7 +2,7 @@
 function widget:GetInfo()
   return {
     name      = "Auto Group",
-    desc      = "Alt+[0-9] sets autogroup number for selected unit type(s) \nNewly built units get added to group equal to their autogroup number",
+    desc      = "Alt+[0-9] sets autogroup for selected unit type(s)\nAlt+\~ deletes autogroup for selected unit type(s) \nNewly built units get added to group equal to their autogroup number",
     author    = "Licho, CarRepairer, very_bad_solider",
     date      = "Mar 23, 2007",
     license   = "GNU GPL, v2 or later",
@@ -17,21 +17,23 @@ local finiGroup = {}
 local unit2group = {}
 local myTeam
 local selUnitDefs = {}
-local loadGroups = false
-local verboseMode = true
-local addAll = false
 local createdFrame = {}
+local verboseMode = true
 
+-- options & defaults
+local options = {
+    loadGroups = false,
+    addAll = false,
+    groups = {},
+}
+
+--[[
 local helpText = {
     'Alt+0-9 sets autogroup# for selected unit type(s). Newly built units get added to group# equal to their autogroup#.',
     'Alt+\~ deletes autogrouping for selected unit type(s).',
     'Ctrl+~ removes nearest selected unit from its group and selects it. ',
-    '/luaui autogroup cleargroups -- Clears your autogroupings.',
-    '/luaui autogroup loadgroups -- Toggles whether your groups are re-loaded for all future games.',
-    '/luaui autogroup verbose -- Toggle whether a notification is made when adding/removing autogroups.',
-    '/luaui autogroup addall -- Toggle whether existing units are added to group# when setting autogroup#.',
     --'Extra function: Ctrl+q picks single nearest unit from current selection.',
-}
+}]]
         
 
 -- speedups
@@ -39,14 +41,14 @@ local SetUnitGroup         = Spring.SetUnitGroup
 local GetSelectedUnits     = Spring.GetSelectedUnits
 local GetUnitDefID         = Spring.GetUnitDefID
 local Echo                 = Spring.Echo
-local GetAllUnits        = Spring.GetAllUnits
+local GetAllUnits          = Spring.GetAllUnits
 local GetUnitHealth        = Spring.GetUnitHealth
 local GetMouseState        = Spring.GetMouseState
-local GetUnitTeam        = Spring.GetUnitTeam
-local SelectUnitArray    = Spring.SelectUnitArray
-local TraceScreenRay    = Spring.TraceScreenRay
-local GetUnitPosition    = Spring.GetUnitPosition
-local UDefTab            = UnitDefs
+local GetUnitTeam          = Spring.GetUnitTeam
+local SelectUnitArray      = Spring.SelectUnitArray
+local TraceScreenRay       = Spring.TraceScreenRay
+local GetUnitPosition      = Spring.GetUnitPosition
+local UDefTab              = UnitDefs
 
 
 function widget:Initialize() 
@@ -55,7 +57,28 @@ function widget:Initialize()
         widgetHandler:RemoveWidget()
         return false
     end
-  myTeam = team
+    myTeam = team
+  
+    local Chili = WG.Chili
+    local Menu = WG.MainMenu
+    Menu.AddWidgetOption{
+        name = widget:GetInfo().name,
+        children = {
+            Chili.Checkbox:New{caption='Save groups between games',x='0%',width='100%',checked=options.loadGroups,
+                OnChange={function() 
+                        loadGroups = not loadGroups
+                    end
+                }
+            }, 
+            Chili.Checkbox:New{caption='Auto-add pre-existing units',x='0%',width='100%',checked=options.addAll,
+                OnChange={function() 
+                        addAll = not addAll
+                    end
+                }
+            },
+        }        
+    }
+  
 end
 
 
@@ -154,7 +177,7 @@ function widget:KeyPress(key, modifier, isRepeat)
                     end
                 end
                     
-                if addAll then
+                if options.addAll then
                     local allUnits = GetAllUnits()
                     for _, unitID in pairs(allUnits) do
                         local unitTeam = GetUnitTeam(unitID)
@@ -216,23 +239,19 @@ function widget:GetConfigData()
   for id, gr in pairs(unit2group) do 
     table.insert(groups, {UnitDefs[id].name, gr})
   end 
-  local ret = 
-  {
-      groups         = groups,
-      loadGroups     = loadGroups,
-      verboseMode    = verboseMode,
-      addAll        = addAll,
-  }
-  return ret
+  options.groups = groups 
+  return options
 end
     
 function widget:SetConfigData(data)
-    if (data and type(data) == 'table' and data.version and (data.version+0) > 2.1) then
-    loadGroups     = data.loadGroups
-    verbose     = data.verboseMode
-    addAll         = data.addAll
+    if not (data and type(data) == 'table') then
+        return
+    end
+
+    options = data
+    
     local groupData = data.groups
-    if loadGroups and groupData and type(groupData) == 'table' then
+    if options.loadGroups and groupData and type(groupData) == 'table' then
         for _, nam in ipairs(groupData) do
           if type(nam) == 'table' then
               local gr = UnitDefNames[nam[1]]
@@ -241,49 +260,8 @@ function widget:SetConfigData(data)
               end
           end
         end
-    end
-    
-    
-  else --older ver
-    --[[
-    if (data ~= nil) then
-        for _, nam in ipairs(data) do
-          local gr = UnitDefNames[nam[1] ]
-          if (gr ~= nil) then
-            unit2group[gr.id] = nam[2]
-          end
-        end
-    end
-    --]]
-    
-  end
-
+    end    
 end
 
-function widget:TextCommand(command)
-    if command == "autogroup loadgroups" then
-        loadGroups = not loadGroups
-        Echo('Autogroup: your autogroups will '.. (loadGroups and '' or 'NOT') ..' be preserved for future games') 
-        return true
-    elseif command == "autogroup cleargroups" then
-        unit2group = {}
-        Echo('Autogroup: All autogroups cleared.')
-        return true
-    elseif command == "autogroup verbose" then
-        verboseMode = not verboseMode 
-        Echo('Autogroup: verbose mode '.. (verboseMode and 'ON' or 'OFF') ..'.')
-        return true
-    elseif command == "autogroup addall" then
-        addAll = not addAll
-        Echo('Autogroup: Existing units will '.. (addAll and '' or 'NOT') ..' be added to group# when setting autogroup#.')
-        return true
-    elseif command == "autogroup help" then
-        for i, text in ipairs(helpText) do
-            Echo('['.. i ..'] Autogroup: '.. text)
-        end
-        return true
-    end
-    return false
-end   
 
 --------------------------------------------------------------------------------

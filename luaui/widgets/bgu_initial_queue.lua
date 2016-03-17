@@ -331,6 +331,8 @@ function widget:Initialize()
         return
     end
     
+    AddChatActions() -- we need them for rotating buildings
+    
     -- expose our API to WG, its used by sMenu
     WG.InitialQueue = {}
     WG.InitialQueue.SetSelDefID = SetSelDefID
@@ -361,6 +363,7 @@ function widget:Initialize()
 end
 
 function widget:Shutdown()
+    RemoveChatActions()
     WG.InitialQueue = nil
 end
 
@@ -479,6 +482,7 @@ local comGate = tonumber(Spring.GetModOptions().mo_comgate) or 0 --if comgate is
 function widget:GameFrame(n)
     if not gameStarted then
         gameStarted = true
+        RemoveChatActions()
         WG.InitialQueue = nil
     end
 
@@ -633,12 +637,35 @@ end
 ------------------------------------------------------------
 -- Misc
 ------------------------------------------------------------
-function widget:TextCommand(cmd)
 
+function AddChatActions()
+    local function HandleBuildFacing(_,arg,_)
+        local oldFacing = Spring.GetBuildFacing()
+        local newFacing
+        if arg=="inc" then
+            newFacing = (oldFacing + 1) % 4
+        elseif arg=="dec" then
+            newFacing = (oldFacing + 3) % 4
+        else
+            return
+        end
+        Spring.SetBuildFacing(newFacing)
+        Spring.Echo("Buildings set to face " .. ({"South", "East", "North", "West"})[1 + newFacing])    
+    end
+    
+    widgetHandler:AddAction('buildfacing', HandleBuildFacing, nil, 't')
+end 
+
+function RemoveChatActions()
+    widgetHandler:RemoveAction('buldfacing')
+end
+
+--[[
+function widget:TextCommand(cmd)
+    Spring.Echo(cmd)
     -- Facing commands are only handled by spring if we have a building selected, which isn't possible pre-game
     local m = cmd:match("^buildfacing (.+)$")
     if m then
-
         local oldFacing = Spring.GetBuildFacing()
         local newFacing
         if (m == "inc") then
@@ -653,13 +680,5 @@ function widget:TextCommand(cmd)
         Spring.Echo("Buildings set to face " .. ({"South", "East", "North", "West"})[1 + newFacing])
         return true
     end
-
-    local buildName = cmd:match("^buildunit_([^%s]+)$")
-    if buildName then
-        local bDefID = buildNameToID[buildName]
-        if bDefID then
-            SetSelDefID(bDefID)
-            return true
-        end
-    end
 end
+]]

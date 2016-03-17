@@ -1254,7 +1254,7 @@ function widget:Initialize()
     local toggleInterface = function() ShowHide('Interface') end
     local toggleGraphics  = function() ShowHide('Graphics') end
     local toggleIntro     = function() ShowHide('General'); SetInfoChild(tabs.General:GetChildByName("Introduction Button")) end --small hack
-
+    
     spSendCommands('unbindkeyset f11')
     spSendCommands('unbindkeyset Any+i gameinfo')
     spSendCommands('unbind S+esc quitmenu','unbind esc quitmessage')
@@ -1268,7 +1268,19 @@ function widget:Initialize()
     spSendCommands('bind f11 toggleInterface')
     spSendCommands('bind i toggleIntro')
     
+    spSendCommands('unbindkeyset f7') -- pointless dynamic sky binding
+    
     fullyLoaded = true
+end
+
+function widget:Shutdown()
+    spSendCommands('unbind i toggleIntro')
+    spSendCommands('unbind Any+esc toggleMenu')
+    spSendCommands('unbind f10 toggleGraphics')
+    spSendCommands('unbind f11 toggleInterface')
+    spSendCommands('bind f11 luaui selector') -- if the default one is removed or crashes, then have the backup one take over
+    spSendCommands('bind Any+i gameinfo')
+    spSendCommands('bind f7 dyanmicsky') -- pointless dynamic sky binding
 end
 
 local tabWait
@@ -1321,14 +1333,6 @@ function widget:ViewResize(vsx,vsy)
     end
 end
 
-function widget:Shutdown()
-    spSendCommands('unbind i toggleIntro')
-    spSendCommands('unbind Any+esc toggleMenu')
-    spSendCommands('unbind f10 toggleGraphics')
-    spSendCommands('unbind f11 toggleInterface')
-    spSendCommands('bind f11 luaui selector') -- if the default one is removed or crashes, then have the backup one take over
-    spSendCommands('bind Any+i gameinfo')
-end
 
 -----------------------------
 -- config data 

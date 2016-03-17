@@ -67,7 +67,6 @@ local MinimalGraphicsSettings = {
         ['3DTrees']          = false,
         ['GroundDecals']     = false,
         ['DynamicSky']       = false,
-        ['DynamicSun']       = false,
         ['MapMarks']         = true,
         ['MapBorder']        = false,
         ['VSync']            = true,
@@ -96,7 +95,6 @@ local DefaultSettings = {
         ['3DTrees']          = true,
         ['GroundDecals']     = true,
         ['DynamicSky']       = false,
-        ['DynamicSun']       = false,
         ['MapMarks']         = true,
         ['MapBorder']        = false,
         ['VSync']            = true,
@@ -138,7 +136,6 @@ local MaximalGraphicsSettings = {
         ['3DTrees']          = true,
         ['GroundDecals']     = true,
         ['DynamicSky']       = true,
-        ['DynamicSun']       = false,
         ['MapMarks']         = true,
         ['MapBorder']        = true,
         ['VSync']            = true,
@@ -191,6 +188,9 @@ function InitSettings()
             end
         end
     end
+    
+    -- force if necessary
+    ApplyForcedSettings()
 end
 
 
@@ -234,6 +234,17 @@ function ApplyDefaultGraphicsSettings()
 end
 function ApplyMaximalGraphicsSettings()
     ApplyGraphicsSettings(MaximalGraphicsSettings)
+end
+
+local ForcedSettings = {
+    -- matching springsettings.cfg format
+    ['DynamicSun'] = 0, -- https://springrts.com/mantis/view.php?id=2855 et al
+}
+
+function ApplyForcedSettings()
+    for setting,value in pairs(ForcedSettings) do
+        spSendCommands(setting .. ' ' .. value)
+    end
 end
 
 ----------------------------
@@ -1159,7 +1170,7 @@ local function CreateGraphicsTab()
                             checkBox{title = 'Draw Engine Trees', name = '3DTrees', tooltip = "Enable/Disable rendering of engine trees"},
                             checkBox{title = 'Ground Decals', name = 'GroundDecals', tooltip = "Enable/Disable rendering of ground decals"},
                             checkBox{title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
-                            checkBox{title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"},
+                            --checkBox{title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"}, -- forced
                             checkBox{title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
                             checkBox{title = 'Show Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"}, 
                             checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},      

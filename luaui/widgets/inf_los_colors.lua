@@ -13,7 +13,7 @@ end
 local options = {
     -- with default values
     showRadarAsSpec = true,
-    extraSaturation = true,
+    extraSaturation = false,
 }
 
 local originalColors, colors

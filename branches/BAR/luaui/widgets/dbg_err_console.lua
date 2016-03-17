@@ -203,18 +203,11 @@ function CheatIfNeeded()
     end
 end
 
-function ToggleErrConsole()
-    window:ToggleVisibility()
-end
-
 function widget:Initialize()
     Chili  = WG.Chili
     screen = Chili.Screen0
     Menu   = WG.MainMenu
 
-    widgetHandler:AddAction('toggleErrConsole', ToggleErrConsole, nil, 't')
-    Spring.SendCommands('bind f8 toggleErrConsole')
-    
     loadWindow()
     ReloadAllMessages(true)
     hack = true

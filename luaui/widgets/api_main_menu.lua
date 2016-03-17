@@ -152,7 +152,7 @@ end
 
 function FetchSpringSetting(name, settingName)
     -- prefer our local copy of settings to Springs one because Spring doesn't save many of the settings if they are changed ingame
-    -- todo: if this is even fixed in the engine, switch to preferring the engines copy!
+    -- todo: if this is ever fixed in the engine, switch to preferring the engines copy!
     local settingName = settingName or name -- toggle name differs from springsettings.cfg name
     local default,cat = FetchDefaultSetting(name)
     if cat=='checkboxes' then
@@ -586,7 +586,7 @@ function makeWidgetList(layoutChange)
 end
 
 local function AddWidgetOption(obj)
-    if not obj.title or not obj.name or not obj.children then 
+    if obj.name or not obj.children then 
         return
     end
     

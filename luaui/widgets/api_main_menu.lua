@@ -790,7 +790,7 @@ local comboBox = function(obj)
     elseif obj.name=='Water' then
         selected = waterConvert_ID[Settings['Water']]
     elseif obj.name=='ShadowMapSize' then
-        selected = shadowConvert_ID[Settings['ShadowMapSize']]
+        selected = shadowMapSizeConvert_ID[Settings['ShadowMapSize']]
     else
         for i = 1, #obj.labels do
             if obj.labels[i] == Settings[obj.name] then selected = i end

@@ -565,7 +565,11 @@ function makeWidgetList(layoutChange)
                     end
                     
                     if Settings['expandedWidgetOptions'][name] and widgetOptions[name] then
-                        stack:AddChild(widgetOptions[name])
+                        if active and enabled then 
+                            stack:AddChild(widgetOptions[name])
+                        else
+                            stack:AddChild(Chili.TextBox:New{x='7%',width='93%',text=greyStr.."(options unavailable while inactive)"})
+                        end
                     end
                 end
             end

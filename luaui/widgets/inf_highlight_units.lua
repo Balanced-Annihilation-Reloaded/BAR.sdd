@@ -34,10 +34,10 @@ local platterScaleFactor = 2.9
 -- constants for selected units visuals
 local alphaExpWeight = 7 -- how fast we fade in/out 
 local rotSpeed = 5 -- how fast we rotate
-local alphaDrawOwnUnits = 0.55 -- alpha for own units
+local alphaDrawOwnUnits = 0.6 -- alpha for own units
 local alphaDrawOthersUnits = 0.35 -- alpha for other units
-local thinLineWidth = 1.7
-local thickLineWidth = 3
+local thinLineWidth = 1.45
+local thickLineWidth = 1.8
 local fadeTime = 1/4
 
 -- constants for platter visuals

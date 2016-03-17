@@ -101,7 +101,7 @@ widgetHandler = {
 
   knownWidgets = {},
   knownCount = 0,
-  knownChanged = true,
+  knownChanged = true, -- we must set to true *whenever* we see a widget change state; it is the widget selectors responsibility to set back to false once it has processed the event
   
   allowUserWidgets = true,
 
@@ -945,6 +945,7 @@ function widgetHandler:EnableWidget(name)
     self:InsertWidget(w)
     self:SaveOrderList()
   end
+  widgetHandler.knownChanged = true
   return true
 end
 
@@ -984,6 +985,7 @@ function widgetHandler:ToggleWidget(name)
     self:SaveOrderList()
     self:SaveConfigData()
   end
+  widgetHandler.knownChanged = true
   return true
 end
 

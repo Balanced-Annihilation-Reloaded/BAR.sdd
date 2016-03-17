@@ -399,14 +399,8 @@ local widgetDescsControls = {}
 local function toggleWidget(self)
     -- Toggles widgets, enabled/disabled when clicked
     widgetHandler:ToggleWidget(self.name)
-    if self.checked then
-        self.font.color        = {1,0,0,1}
-        self.font.outlineColor = {1,0,0,0.2}
-    else
-        self.font.color        = {0.5,1,0,1}
-        self.font.outlineColor = {0.5,1,0,0.2}
-    end
-    self:Invalidate()
+    -- we cache a separate checkbox for each colour -> don't allow the checkbox to change state!
+    self.checked = not self.checked
 end
 
 local function WidgetFilter(name,desc,author)
@@ -446,13 +440,13 @@ function GetWidgetControl(name, fontColour, enabled, active, fromZip, showDescs,
                     width     = '87%',
                     x         = '7%',
                     font      = (fontColour=="green" and greenFont) or (fontColour=="orange" and orangeFont) or redFont,
-                    checked   = enabled,
+                    checked   = active and enabled,
                     padding   = {1,1,1,0},
                     OnChange  = {toggleWidget},
                 },
             }
         }
-        if widgetOptions[name] then
+        if widgetOptions[name] and active and enabled then
             widgetControl:AddChild(Chili.Button:New{
                 name    = name .. "_button",
                 x       = '1%',
@@ -567,8 +561,6 @@ function makeWidgetList(layoutChange)
                     if Settings['expandedWidgetOptions'][name] and widgetOptions[name] then
                         if active and enabled then 
                             stack:AddChild(widgetOptions[name])
-                        else
-                            stack:AddChild(Chili.TextBox:New{x='7%',width='93%',text=greyStr.."(options unavailable while inactive)"})
                         end
                     end
                 end

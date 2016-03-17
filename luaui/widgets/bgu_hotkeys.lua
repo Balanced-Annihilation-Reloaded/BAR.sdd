@@ -223,7 +223,8 @@ function AdvanceToNextBuildable(t, cmdID)
 end
 
 function CheckContextBuild(uDID)
-    -- check if we can build uDID in current context, return uDID if it is, return its pairedID if that is, return nil otherwise
+    -- check if we can build uDID in current context, return uDID if it is, return its pairedID if that is, otherwise just return uDID
+    -- we could return nil (== advance to next uDID in sequence, but its confusing for the user, they need to be shown when a unit is not buildable because ground isn't flat)
     local mx, my = Spring.GetMouseState()
     local _, coords = Spring.TraceScreenRay(mx, my, true, true)
     if (not coords) then
@@ -241,7 +242,6 @@ function CheckContextBuild(uDID)
                 return pairedID
             end
         end
-        return nil
     end
     return uDID
 end

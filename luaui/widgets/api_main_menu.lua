@@ -20,7 +20,7 @@ local spgetFPS       = Spring.GetFPS
 local spGetTimer     = Spring.GetTimer
 local spGetDrawFrame = Spring.GetDrawFrame
 
-local Chili, mainMenu, menuTabs, menuBtn
+local Chili, mainMenu, menuTabs, menuBtn, screenResText, fullScreenCheckbox
 
 local tabs = {}
 local credits = VFS.LoadFile('credits_game.txt')
@@ -124,8 +124,8 @@ local MaximalGraphicsSettings = {
         ['ShadowMapSize']    = 8192,
     },
     sliders = {
-        ['UnitIconDist']      = 700, -- never show icons
-        ['UnitLodDist']       = 600,
+        ['UnitIconDist']      = 1000, -- never show icons
+        ['UnitLodDist']       = 1000,
         ['MaxParticles']      = 5000,
         ['MaxNanoParticles']  = 5000,
     },
@@ -990,6 +990,17 @@ end
 
 local function CreateInterfaceTab()
     -- Interface --
+    local vsx,vsy = Spring.GetViewGeometry()
+    screenResText = Chili.TextBox:New{x=0,y=19, text="Resolution: "..vsx ..' x '..vsy, width='100%'}
+    fullScreenCheckbox = Chili.Checkbox:New{caption='Fullscreen',x=0,y=0,width='100%',textalign='left',boxalign='right',checked=(Spring.GetConfigInt('Fullscreen')>0),
+        OnChange = {
+            function(self) 
+                local value = (self.checked==false and 1) or 0
+                spSendCommands('fullscreen ' .. value)
+                Spring.SetConfigInt('Fullscreen',value)
+            end} 
+    }
+                    
     tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
         children = {
             addScrollStack{name='widgetList',x='40%',width='60%',smoothScrollTime=0.25,verticalSmartScroll=true},
@@ -1102,6 +1113,16 @@ local function CreateInterfaceTab()
                             
             },    
 
+            Chili.Line:New{width='40%',y=329},
+            
+            Chili.Label:New{caption='-- Screen Settings --',x='2%',width='35%',align = 'center',y=343},
+            Chili.Control:New{x='2%', y=368, width='35%',autoSize=true,padding={0,0,0,0},
+                children = {
+                    fullScreenCheckbox,
+                    screenResText,
+                },  
+            },
+
             Chili.Button:New{x='5%',bottom='5%',width='30%',height=30,caption="Reset Settings",
                 OnClick ={function() Spring.SendCommands("luaui reset") end},            
             }
@@ -1127,8 +1148,8 @@ local function CreateGraphicsTab()
                             comboBox{y=40,title='Shadow Resolution',name='ShadowMapSize', 
                                 labels={'Low','Medium','High'},
                                 options={2048,4096,8192},},
-                            slider{name='UnitLodDist',title='Unit Draw Distance', max = 600, step = 1},
-                            slider{name='UnitIconDist',title='Unit Icon Distance', max = 600, step = 1},
+                            slider{name='UnitLodDist',title='Unit Draw Distance', max = 1000, step = 1},
+                            slider{name='UnitIconDist',title='Unit Icon Distance', max = 1000, step = 1},
                             slider{name='MaxParticles',title='Max Particles', max = 5000},
                             slider{name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
                         }
@@ -1146,7 +1167,6 @@ local function CreateGraphicsTab()
                             checkBox{title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
                             checkBox{title = 'Show Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"}, 
                             checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},      
-                            checkBox{title = 'Full Screen', name = 'FullScreen', tooltip = "Toggles full screen / windowed mode"},      
                         }                    
                     }
                 },
@@ -1291,6 +1311,17 @@ function widget:Update()
         else
             updateWidgetListPos = nil        
         end    
+    end
+end
+
+function widget:ViewResize(vsx,vsy)
+    local resText = "Resolution: "..vsx.." x "..vsy
+    local sx,sy = Spring.GetScreenGeometry()
+    local fullScreen = (vsx==sx) and (vsy==sy)
+
+    screenResText:SetText(resText)
+    if fullScreen ~= fullScreenCheckbox.checked then
+        fullScreenCheckbox:Toggle()
     end
 end
 

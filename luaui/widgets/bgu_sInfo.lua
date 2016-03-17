@@ -813,9 +813,7 @@ function updateFeatureInfo()
         featureHealth:SetMinMax(0, 1)
         featureHealth:SetValue(0) 
     end
-    if not curTip.selEnemy then
-        featureResText:SetText(FeatureToolTip(rMetal, mMetal, rEnergy, mEnergy, reclaimLeft, rezProg, rezDefName))
-    end
+    featureResText:SetText(FeatureToolTip(rMetal, mMetal, rEnergy, mEnergy, reclaimLeft, rezProg, rezDefName))
 
 end
     
@@ -950,14 +948,17 @@ local function ChooseCurTip()
         curTip.type = "ground"
     end
     
-    -- mark that we won't show resource stats if the selection contains a non-allies unit
+    -- mark that we won't show resource stats if the selection contains a non-allied unit
     if #curTip.selUnits==0 then return end
     local selEnemyUnit = false
-    for _,uID in ipairs(curTip.selUnits) do
-        local tID = Spring.GetUnitTeam(uID)
-        if ((tID == nil ) or (not Spring.AreTeamsAllied(tID, myTeamID))) then
-            selEnemyUnit = true
-            break
+    local spec,_ = Spring.GetSpectatingState()
+    if not spec then
+        for _,uID in ipairs(curTip.selUnits) do
+            local tID = Spring.GetUnitTeam(uID)
+            if ((tID == nil ) or (not Spring.AreTeamsAllied(tID, myTeamID))) then
+                selEnemyUnit = true
+                break
+            end
         end
     end
     curTip.selEnemy = selEnemyUnit    

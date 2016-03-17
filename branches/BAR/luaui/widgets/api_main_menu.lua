@@ -586,7 +586,7 @@ function makeWidgetList(layoutChange)
 end
 
 local function AddWidgetOption(obj)
-    if obj.name or not obj.children then 
+    if not obj.name or not obj.children then 
         return
     end
     
@@ -1292,6 +1292,12 @@ function widget:Shutdown()
     spSendCommands('bind f11 luaui selector') -- if the default one is removed or crashes, then have the backup one take over
     spSendCommands('bind Any+i gameinfo')
     spSendCommands('bind f7 dyanmicsky') -- pointless dynamic sky binding
+    
+    widgetHander.actionHandler:RemoveAction(widget,'toggleGraphics')
+    widgetHander.actionHandler:RemoveAction(widget,'toggleInterface')
+    widgetHander.actionHandler:RemoveAction(widget,'hideMenu')
+    widgetHander.actionHandler:RemoveAction(widget,'toggleIntro')
+    widgetHander.actionHandler:RemoveAction(widget,'toggleMenu')
 end
 
 local tabWait

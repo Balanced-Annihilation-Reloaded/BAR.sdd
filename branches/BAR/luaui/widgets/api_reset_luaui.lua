@@ -7,7 +7,7 @@ function widget:GetInfo()
     desc      = "Provides luaui reset, factoryreset, and disable/enable_user_widgets",
     author    = "Bluestone",
     date      = "",
-    license   = "GPLv2",
+    license   = "Meringue",
     layer     = 0,
     enabled   = true,  
     handler   = true,
@@ -15,50 +15,53 @@ function widget:GetInfo()
   }
 end
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-function widget:TextCommand(s)
-    local token = {}
-    local n = 0
-    for w in string.gmatch(s, "%S+") do
-        n = n + 1
-        token[n] = w        
-    end
-    
-    if n==1 and token[1]=="reset" then
+function widget:Initialize()
+
+    local function Reset()
         Spring.Echo("LuaUI Reset Requested")
         widgetHandler.__blankOutConfig = true
         Spring.SendCommands("luaui reload")    
     end    
     
-    if n==1 and token[1]=="factoryreset" then
+    local function FactoryReset()
         Spring.Echo("LuaUI Factory Reset Requested")
         widgetHandler.__blankOutConfig = true
         widgetHandler.__allowUserWidgets = false        
         Spring.SendCommands("luaui reload")    
     end    
     
-    if n==1 and token[1]=="disable_user_widgets" then
+    local function DisableUserWidgets()
         Spring.Echo("LuaUI User Widget Disable Requested")
         widgetHandler.__allowUserWidgets = false        
         Spring.SendCommands("luaui reload")    
     end    
     
-    if n==1 and token[1]=="enable_user_widgets" then
+    local function EnableUserWidgets()
         Spring.Echo("LuaUI User Widget Enable Requested")
         widgetHandler.__allowUserWidgets = true
         Spring.SendCommands("luaui reload")    
     end    
     
-    if n==1 and token[1]=="toggle_user_widgets" then
+    local function ToggleUserWidgets()
         if widgetHandler.allowUserWidgets then
             Spring.SendCommands("luaui disable_user_widgets")
         else
             Spring.SendCommands("luaui enable_user_widgets")        
         end
     end    
-
+    
+    widgetHandler.actionHandler:AddAction(widget,'reset', Reset, nil, 't')
+    widgetHandler.actionHandler:AddAction(widget,'factoryreset', FactoryReset, nil, 't')
+    widgetHandler.actionHandler:AddAction(widget,'disable_user_widgets', DisableUserWidgets, nil, 't')
+    widgetHandler.actionHandler:AddAction(widget,'enable_user_widgets', EnableUserWidgets, nil, 't')
+   widgetHandler.actionHandler:AddAction(widget,'toggle_user_widgets', ToggleUserWidgets, nil, 't')
 end
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
+function widget:Shutdown()
+    widgetHandler:RemoveAction('reset')
+    widgetHandler:RemoveAction('factoryreset')
+    widgetHandler:RemoveAction('disable_user_widgets')
+    widgetHandler:RemoveAction('enable_user_widgets')
+    widgetHandler:RemoveAction('toggle_user_widgets')
+end
+

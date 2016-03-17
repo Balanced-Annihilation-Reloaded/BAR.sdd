@@ -364,14 +364,3 @@ end
 function widget:SetConfigData(data)
     if data.autoFade ~= nil     then  autoFade    = data.autoFade end
 end
-
-function widget:TextCommand(command)
-    if (string.find(command, "pausescreen_autofade") == 1  and  string.len(command) == 20) then 
-        autoFade = not autoFade
-        if autoFade then
-            Spring.Echo("Pause screen:  Autofade on")
-        else
-            Spring.Echo("Pause screen:  Autofade off")
-        end
-    end
-end

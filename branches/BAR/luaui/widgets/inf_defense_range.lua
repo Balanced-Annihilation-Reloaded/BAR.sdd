@@ -251,35 +251,6 @@ local DrawRanges
 --------------------------------------------------------------------------------
 
 
-function widget:TextCommand(command)
-    --Spring.Echo("DEFRANGE", command, mycommand)
-    local mycommand=false --buttonConfig["enabled"]["enemy"][tag] 
-
-    if (string.find(command, "defrange")) then 
-        mycommand=true
-        local ally='ally'
-        local rangetype='ground'
-        local enabled=false        
-        if (string.find(command, "enemy")) then 
-            ally='enemy'
-        end
-        if (string.find(command, "air")) then 
-            rangetype='air'
-        elseif  (string.find(command, "nuke")) then 
-            rangetype='nuke'
-        end
-        if (string.find(command, "+")) then 
-            enabled=true
-        end
-        buttonConfig["enabled"][ally][rangetype]=enabled
-        Spring.Echo("Range visibility of "..ally.." "..rangetype.." defenses set to",enabled)
-        return true
-    end
-    
-    return false
-end
-
-
 function widget:Initialize()
     state["myPlayerID"] = spGetLocalTeamID()
 
@@ -297,15 +268,9 @@ function widget:Initialize()
     end
     
     Chili  = WG.Chili
-    if not Chili then 
-        --fubar, can't change settings
-    end
-    screen = Chili.Screen0
     Menu   = WG.MainMenu
-    if not Menu then return end
     
     Menu.AddWidgetOption{
-            title = 'Defense Range',
             name = widget:GetInfo().name,
             children = {
                 Chili.Checkbox:New{caption='Ally ground',x='0%',width='100%',

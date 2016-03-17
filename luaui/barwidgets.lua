@@ -189,7 +189,7 @@ local callInLists = {
   'GameStart',
   'Shutdown',
   'Update',
-  'TextCommand',
+  -- 'TextCommand', -- deprecated, use widgetHandler:AddAction 
   'CommandNotify',
   'AddConsoleLine',
   'ViewResize',
@@ -1258,11 +1258,6 @@ function widgetHandler:ConfigureLayout(command)
     return true
   end
 
-  for _,w in r_ipairs(self.TextCommandList) do
-    if (w:TextCommand(command)) then
-      return true
-    end
-  end
   return false
 end
 

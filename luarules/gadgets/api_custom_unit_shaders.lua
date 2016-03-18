@@ -495,7 +495,7 @@ gadget.UnitDecloaked = gadget.UnitFinished
 -- NOTE: No feature equivalent (features can't change team)
 function gadget:UnitGiven(unitID,...)
   if not select(3, Spring.GetUnitIsStunned(unitID)) then
-    gadget:UnitDestroyed(unitID, ...)
+    ObjectDestroyed(unitRendering,unitID, ...)
     gadget:UnitFinished(unitID, ...)
   end
 end

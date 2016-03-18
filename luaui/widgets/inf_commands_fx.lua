@@ -297,7 +297,7 @@ end
 function widget:UnitCommand(unitID, unitDefID, teamID, cmdID, _, _)
     -- record that a command was given (note: cmdID is not used, but useful to record for debugging)
     if unitID and (CONFIG[cmdID] or cmdID==CMD_INSERT or cmdID<0) then
-        local teamColor = Spring.GetTeamColor(teamID)
+        local teamColor = {Spring.GetTeamColor(teamID)}
         local el = {ID=cmdID,time=os.clock(),unitID=unitID,teamID=teamID,teamColor=teamColor,draw=false} -- command queue is not updated until next gameframe
         maxCommand = maxCommand + 1
         --Spring.Echo("Adding " .. maxCommand)
@@ -460,7 +460,7 @@ function widget:DrawWorldPreUnit()
 								gl.PushMatrix()
 								--gl.DepthTest(GL.LEQUAL)
 								gl.UseShader(shaderObj.shader)
-								gl.Uniform(shaderObj.teamColorID, commands[i].teamColor)
+								gl.Uniform(shaderObj.teamColorID, commands[i].teamColor[1], commands[i].teamColor[2], commands[i].teamColor[3], commands[i].teamColor[4] )
 
 								gl.Uniform(shaderObj.unitAlpha,  opacity * (1-progress)) --TODO, actually make this proper!
 

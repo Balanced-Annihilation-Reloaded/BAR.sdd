@@ -71,7 +71,7 @@ local options = {
         useXRayShader = false,
     },
     platter = {
-        showPlatters = true,
+        showPlatters = false,
         colourMode = "auto", -- also "team" and "ally team"; "auto" means only in mo_noowner
         showAllyPlatters = "auto", -- also "on" and "off"; "auto" means only if spectator
     }

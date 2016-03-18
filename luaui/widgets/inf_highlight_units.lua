@@ -458,7 +458,7 @@ function DeletePlatterLists()
 end
 
 function CreateXRayShader()
-    gl.DeleteShader(shader)
+    --gl.DeleteShader(shader)
     
     shader = gl.CreateShader({
 

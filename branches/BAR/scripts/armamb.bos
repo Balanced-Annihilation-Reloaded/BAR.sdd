@@ -6,7 +6,7 @@
 piece  base, flare, door1, door2, door3, door4, stand,
        turret, barrel;
 
-static-var  Static_Var_1, restore_delay, statechg_DesiredState, statechg_StateChanging, Static_Var_5;
+static-var  IsClosed, restore_delay, statechg_DesiredState, statechg_StateChanging, Static_Var_5;
 
 
 activatescr()
@@ -104,11 +104,11 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 Go()
 {
-	if( Static_Var_1 )
+	if( IsClosed )
 	{
 		call-script activatescr();
 	}
-	Static_Var_1 = 0;
+	IsClosed = 0;
 	set ARMORED to 0;
 	return (0);
 }
@@ -116,7 +116,7 @@ Go()
 Stop()
 {
 	set ARMORED to 1;
-	Static_Var_1 = 1;
+	IsClosed = 1;
 	call-script deactivatescr();
 
 	return (0);
@@ -170,7 +170,7 @@ Create()
 {
 
 	hide flare;
-	Static_Var_1 = 1;
+	IsClosed = 1;
 	Static_Var_5 = 0;
 	restore_delay = 3000;
 	start-script SmokeUnit();
@@ -214,7 +214,7 @@ AimWeapon1(Func_Var_1, Func_Var_2)
 	{
 		return (0);
 	}
-	while( Static_Var_1 )
+	while( IsClosed )
 	{
 		sleep 250;
 	}
@@ -259,7 +259,7 @@ AimWeapon2(Func_Var_1, Func_Var_2)
 	{
 		return (0);
 	}
-	while( !Static_Var_1 )
+	while( IsClosed )
 	{
 		sleep 250;
 	}

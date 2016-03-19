@@ -28,9 +28,7 @@ vertex = [[
 	varying vec3 cameraDir;
 	
 	#ifdef use_normalmapping
-		varying vec3 t;
-		varying vec3 b;
-		varying vec3 n;
+		varying mat3 tbnMatrix;
 	#else
 		varying vec3 normalv;
 	#endif
@@ -45,9 +43,7 @@ vertex = [[
 		#ifdef use_normalmapping
 			vec3 tangent   = gl_MultiTexCoord5.xyz;
 			vec3 bitangent = gl_MultiTexCoord6.xyz;
-			t = gl_NormalMatrix * tangent;
-			b = gl_NormalMatrix * bitangent;
-			n = gl_NormalMatrix * normal;
+			tbnMatrix = gl_NormalMatrix * mat3(tangent, bitangent, normal);
 		#else
 			normalv = gl_NormalMatrix * normal;
 		#endif
@@ -114,9 +110,7 @@ vertex = [[
 	//varying float fogFactor;
 
 	#ifdef use_normalmapping
-		varying vec3 t;
-		varying vec3 b;
-		varying vec3 n;
+		varying mat3 tbnMatrix;
 		uniform sampler2D normalMap;
 	#else
 		varying vec3 normalv;
@@ -141,8 +135,8 @@ vertex = [[
 				tc.t = 1.0 - tc.t;
 			#endif
 			vec4 normaltex=texture2D(normalMap, tc);
-			vec3 nvTS   = normalize(normaltex.xyz - 0.5);
-			vec3 normal = normalize(mat3(t,b,n)  * nvTS);
+			vec3 nvTS   = normalize((normaltex.xyz - 0.5) * 2.0);
+			vec3 normal = tbnMatrix * nvTS;
 		#else
 			vec3 normal = normalize(normalv);
 		#endif
@@ -180,7 +174,7 @@ vertex = [[
 		#if (deferred_mode == 0)
 			gl_FragColor = outColor;
 		#else
-			gl_FragData[0] = vec4(normal, 1.0);
+			gl_FragData[0] = vec4((normal + 1.0) * 0.5, 1.0);
 			gl_FragData[1] = outColor;
 			gl_FragData[2] = vec4(specular, extraColor.a);
 			gl_FragData[3] = vec4(extraColor.rrr, 1.0);

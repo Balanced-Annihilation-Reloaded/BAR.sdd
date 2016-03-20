@@ -27,9 +27,11 @@ local teleportUnits = {}
 local initdone = false
 local gameStart = false
 local gaiaTeamID = Spring.GetGaiaTeamID()
-local armcomDefID = UnitDefNames.armcom.id
-local corcomDefID = UnitDefNames.corcom.id
 local teleportDefID = UnitDefNames.teleport.id
+local commandersDefID = {
+  [UnitDefNames['armcom'].id] = true,
+  [UnitDefNames['corcom'].id] = true,
+}
 
 function gadget:UnitCreated(unitID, unitDefID, teamID)
   if (not gameStart) then
@@ -74,6 +76,16 @@ function gadget:AllowCommand(unitID, unitDefID, unitTeam, cmdID, cmdParams, cmdO
     if n < 140 then return false end
     return true
 end
+
+function gadget:UnitPreDamaged(unitID, unitDefID, unitTeam, damage, paralyzer, weaponID, projectileID, attackerID, attackerDefID, attackerTeam)
+  if commandersDefID[unitDefID] and teleportDefID == attackerDefID then
+    --Spring.Echo("Comgate damage blocked")
+    return 0, 1
+  else
+    return damage, 1
+  end
+end
+
 
 --unsynced
 else

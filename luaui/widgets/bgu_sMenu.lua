@@ -362,6 +362,21 @@ end
 ---------------------------------------------------------------
 ---------------------------------------------------------------
 
+function ForceUpdateHotkeys()
+    local hotkeys = WG.buildingHotkeys
+    for uDID,key in pairs(hotkeys) do
+        local button = unitButtons[uDID]
+        local image = button.children[1]
+        local hotkey = image.children[2]
+        hotkey:SetCaption(key)
+    end
+end
+
+
+---------------------------------------------------------------
+---------------------------------------------------------------
+
+
 -- Loads the build queue
 local function parseBuildQueue()
     local queue = {}
@@ -411,17 +426,22 @@ local function addBuild(item)
     end
     
     -- prepare the button
-    local button = unitButtons[name]
-    local label = button.children[1].children[1]
+    local button = unitButtons[uDID]
     local image = button.children[1]
-    local overlay = button.children[1].children[3]
+
+    local queue = image.children[1]
+    local hotkey = image.children[2]
+    local overlay = image.children[3]
+
     local caption = item.count or ''
-    
+    queue:SetCaption(caption)
+    local key = WG.buildingHotkeys[uDID] or ''
+    hotkey:SetCaption(key)    
+        
     if disabled then
         -- building this unit is disabled
         button.focusColor[4] = 0
-        -- Grey out Unit pic
-        overlay.color = {0.4,0.4,0.4,0.7}
+        overlay.color = {0.4,0.4,0.4,0.7} -- grey
         image.color = {0.4,0.4,0.4,0.7}
     else
         button.focusColor[4] = 0.5
@@ -436,10 +456,8 @@ local function addBuild(item)
     end
     button.disabled = disabled
         
-    -- add this button
-    label:SetCaption(caption)
+    -- add this button, no duplicates
     if not grid[category]:GetChildByName(button.name) then
-        -- No duplicates
         grid[category]:AddChild(button)
     end
 end
@@ -929,10 +947,10 @@ local airFacs = { --unitDefs can't tell us this
 
 local function CreateUnitButton(name, unitDef)  
     -- make the button for this unit
-    local hotkey = WG.buildingHotkeys and WG.buildingHotkeys[unitDef.id] or ''
-    unitButtons[name] = Chili.Button:New{
-        name      = name,
-        cmdId     = -unitDef.id,
+    local uDID = unitDef.id
+    unitButtons[uDID] = Chili.Button:New{
+        name      = "button_" .. name,
+        cmdId     = -uDID,
         tooltip   = nil,
         caption   = '',
         disabled  = false,
@@ -944,12 +962,13 @@ local function CreateUnitButton(name, unitDef)
         backgroundColor = buttonColour,
         children  = {
             Chili.Image:New{
+                name   = "image_" .. name,
                 height = '100%', width = '100%',
                 file   = '#'..unitDef.id,
                 flip   = false,
                 children = {
                     Chili.Label:New{ -- # in build queue
-                        caption = '',
+                        caption = 'queue_' .. name,
                         right   = 10,
                         y       = 10,
                         font = {
@@ -960,7 +979,8 @@ local function CreateUnitButton(name, unitDef)
                         }
                     },
                     Chili.Label:New{
-                        caption = hotkey,
+                        name = 'hotkey_' .. name,
+                        caption = '',
                         right   = 10,
                         bottom = 10,
                         font = {
@@ -971,6 +991,7 @@ local function CreateUnitButton(name, unitDef)
                         }
                     },
                     Chili.Image:New{
+                        name = 'overlay_' .. name,
                         color  = teamColor,
                         height = '100%', width = '100%',
                         file   = imageDir..'Overlays/'..name..'.dds',
@@ -991,7 +1012,7 @@ local function CreateUnitButton(name, unitDef)
     for _,icon in ipairs(extraIcons) do
         if icon.used then
             Chili.Image:New{
-                parent = unitButtons[name].children[1].children[3],
+                parent = unitButtons[uDID].children[1].children[3],
                 x = 10, bottom = y,
                 height = 15, width = 15,
                 file   = imageDir..icon.image,
@@ -1031,6 +1052,7 @@ function widget:Initialize()
 
     WG.sMenu = {}    
     WG.sMenu.ForceUpdate = function() updateRequired='ForceUpdate' end
+    WG.sMenu.ForceUpdateHotkeys = ForceUpdateHotkeys
     
     Chili = WG.Chili
     buttonColour = WG.buttonColour

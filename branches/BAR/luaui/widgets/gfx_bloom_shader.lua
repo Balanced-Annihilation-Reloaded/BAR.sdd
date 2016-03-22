@@ -135,51 +135,13 @@ local function RemoveMe(msg)
 end
 
 
-function widget:ViewResize(viewSizeX, viewSizeY)
-    vsx = viewSizeX; ivsx = 1.0 / vsx --we can do /n here!
-    vsy = viewSizeY; ivsy = 1.0 / vsy
-      qvsx,qvsy = math.floor(vsx/quality), math.floor(vsy/quality)
-    glDeleteTexture(brightTexture1 or "")
-    glDeleteTexture(brightTexture2 or "")
-    glDeleteTexture(screenTexture or "")
-
-    brightTexture1 = glCreateTexture(qvsx, qvsy, {
-        fbo = true, 
-        min_filter = GL.LINEAR, mag_filter = GL.LINEAR,
-        --format = GL_RGB16F_ARB,
-        wrap_s = GL.CLAMP, wrap_t = GL.CLAMP,
-    })
-    brightTexture2 = glCreateTexture(qvsx, qvsy, {
-        fbo = true, min_filter = GL.LINEAR, mag_filter = GL.LINEAR,
-        --format = GL_RGB16F_ARB,
-        wrap_s = GL.CLAMP, wrap_t = GL.CLAMP,
-    })
-
-    screenTexture = glCreateTexture(vsx, vsy, {
-        min_filter = GL.LINEAR, mag_filter = GL.LINEAR, --because we are gonna cheat a bit and use linear sampling gaussian blur
-    })
-
-    if (brightTexture1 == nil or brightTexture2 == nil or screenTexture == nil) then
-        if (brightTexture1 == nil ) then Spring.Echo('brightTexture1 == nil ') end
-        if (brightTexture2 == nil ) then Spring.Echo('brightTexture2 == nil ') end
-        if (screenTexture == nil ) then Spring.Echo('screenTexture == nil ') end
-        RemoveMe("[BloomShader::ViewResize] removing widget, bad texture target")
-        return
-    end
-	MakeBloomShaders() --we are gonna reinit the the widget, in order to recompile the shaders with the static IVSX and IVSY values in the blur shaders
-end
-
-widget:ViewResize(widgetHandler:GetViewSizes())
-
-SetIllumThreshold()
-
 local function MakeBloomShaders() 
 
 	if (glDeleteShader) then
-        glDeleteShader(brightShader or 0)
-        glDeleteShader(blurShaderH71 or 0)
-        glDeleteShader(blurShaderV71 or 0)
-        glDeleteShader(combineShader or 0)
+        if brightShader ~= nil then glDeleteShader(brightShader or 0) end
+        if blurShaderH71 ~= nil then glDeleteShader(blurShaderH71 or 0) end
+        if blurShaderV71 ~= nil then glDeleteShader(blurShaderV71 or 0) end
+        if combineShader ~= nil then glDeleteShader(combineShader or 0) end
     end
 	
     combineShader = glCreateShader({
@@ -221,7 +183,26 @@ local function MakeBloomShaders()
 	-- http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/ 
 	-- this allows us to get away with 5 texture fetches instead of 9 for our 9 sized kernel!
 	 -- TODO:  all this simplification may result in the accumulation of quantizing errors due to the small numbers that get pushed into the BrightTexture
-    blurShaderH71 = glCreateShader({
+    
+	frag1="#define inverseRX " .. tostring(ivsx) .. "\n" .. [[
+            uniform sampler2D texture0;
+            uniform float fragBlurAmplifier;
+            const float invKernelSum = 0.0084; // (1/119)
+
+            void main(void) {
+                vec2 texCoors = vec2(gl_TexCoord[0]);
+				vec3 newblur;
+				
+				newblur  = 10*  texture2D(texture0, texCoors + vec2(-3.3 * inverseRX, 0)).rgb;
+				newblur += 37*  texture2D(texture0, texCoors + vec2(-1.4 * inverseRX, 0)).rgb;
+				newblur += 25*  texture2D(texture0, texCoors + vec2(0               , 0)).rgb;
+				newblur += 37*  texture2D(texture0, texCoors + vec2( 1.4 * inverseRX, 0)).rgb;
+				newblur += 10*  texture2D(texture0, texCoors + vec2( 3.3 * inverseRX, 0)).rgb;
+				gl_FragColor = vec4(newblur * invKernelSum * fragBlurAmplifier, 1.0);
+            }
+        ]]
+	
+	blurShaderH71 = glCreateShader({
         fragment = "#define inverseRX " .. tostring(ivsx) .. "\n" .. [[
             uniform sampler2D texture0;
             uniform float fragBlurAmplifier;
@@ -239,7 +220,6 @@ local function MakeBloomShaders()
 				gl_FragColor = vec4(newblur * invKernelSum * fragBlurAmplifier, 1.0);
             }
         ]],
-
         uniformInt = {texture0 = 0},
         uniformFloat = {inverseRX, fragBlurAmplifier}
     })
@@ -258,11 +238,11 @@ local function MakeBloomShaders()
                 vec2 texCoors = vec2(gl_TexCoord[0]);
 				vec3 newblur;
 				
-				newblur  = 10*  texture2D(texture0, texCoors + vec2(0, -3.3 * inverseRX)).rgb;
-				newblur += 37*  texture2D(texture0, texCoors + vec2(0, -1.4 * inverseRX)).rgb;
+				newblur  = 10*  texture2D(texture0, texCoors + vec2(0, -3.3 * inverseRY)).rgb;
+				newblur += 37*  texture2D(texture0, texCoors + vec2(0, -1.4 * inverseRY)).rgb;
 				newblur += 25*  texture2D(texture0, texCoors + vec2(0,                0)).rgb;
-				newblur += 37*  texture2D(texture0, texCoors + vec2(0,  1.4 * inverseRX)).rgb;
-				newblur += 10*  texture2D(texture0, texCoors + vec2(0,  3.3 * inverseRX)).rgb;
+				newblur += 37*  texture2D(texture0, texCoors + vec2(0,  1.4 * inverseRY)).rgb;
+				newblur += 10*  texture2D(texture0, texCoors + vec2(0,  3.3 * inverseRY)).rgb;
 				gl_FragColor = vec4(newblur * invKernelSum * fragBlurAmplifier, 1.0);
             }
         ]],
@@ -309,6 +289,7 @@ local function MakeBloomShaders()
 
 
     brightShaderText0Loc = glGetUniformLocation(brightShader, "texture0")
+	
     brightShaderIllumLoc = glGetUniformLocation(brightShader, "illuminationThreshold")
     brightShaderFragLoc = glGetUniformLocation(brightShader, "fragGlowAmplifier")
 
@@ -322,6 +303,46 @@ local function MakeBloomShaders()
     combineShaderTexture1Loc = glGetUniformLocation(combineShader, "texture1")
 
 end
+
+
+function widget:ViewResize(viewSizeX, viewSizeY)
+    vsx = viewSizeX; ivsx = 1.0 / vsx --we can do /n here!
+    vsy = viewSizeY; ivsy = 1.0 / vsy
+      qvsx,qvsy = math.floor(vsx/quality), math.floor(vsy/quality)
+    glDeleteTexture(brightTexture1 or "")
+    glDeleteTexture(brightTexture2 or "")
+    glDeleteTexture(screenTexture or "")
+
+    brightTexture1 = glCreateTexture(qvsx, qvsy, {
+        fbo = true, 
+        min_filter = GL.LINEAR, mag_filter = GL.LINEAR,
+        --format = GL_RGB16F_ARB,
+        wrap_s = GL.CLAMP, wrap_t = GL.CLAMP,
+    })
+    brightTexture2 = glCreateTexture(qvsx, qvsy, {
+        fbo = true, min_filter = GL.LINEAR, mag_filter = GL.LINEAR,
+        --format = GL_RGB16F_ARB,
+        wrap_s = GL.CLAMP, wrap_t = GL.CLAMP,
+    })
+
+    screenTexture = glCreateTexture(vsx, vsy, {
+        min_filter = GL.LINEAR, mag_filter = GL.LINEAR, --because we are gonna cheat a bit and use linear sampling gaussian blur
+    })
+
+    if (brightTexture1 == nil or brightTexture2 == nil or screenTexture == nil) then
+        if (brightTexture1 == nil ) then Spring.Echo('brightTexture1 == nil ') end
+        if (brightTexture2 == nil ) then Spring.Echo('brightTexture2 == nil ') end
+        if (screenTexture == nil ) then Spring.Echo('screenTexture == nil ') end
+        RemoveMe("[BloomShader::ViewResize] removing widget, bad texture target")
+        return
+    end
+	MakeBloomShaders() --we are gonna reinit the the widget, in order to recompile the shaders with the static IVSX and IVSY values in the blur shaders
+end
+
+widget:ViewResize(widgetHandler:GetViewSizes())
+
+SetIllumThreshold()
+
 
 function widget:Initialize()
  
@@ -344,10 +365,10 @@ function widget:Shutdown()
     glDeleteTexture(screenTexture or "")
 
     if (glDeleteShader) then
-        glDeleteShader(brightShader or 0)
-        glDeleteShader(blurShaderH71 or 0)
-        glDeleteShader(blurShaderV71 or 0)
-        glDeleteShader(combineShader or 0)
+        if brightShader ~= nil then glDeleteShader(brightShader or 0) end
+        if blurShaderH71 ~= nil then glDeleteShader(blurShaderH71 or 0) end
+        if blurShaderV71 ~= nil then glDeleteShader(blurShaderV71 or 0) end
+        if combineShader ~= nil then glDeleteShader(combineShader or 0) end
     end
 end
 
@@ -427,7 +448,7 @@ local function Bloom()
         gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1)
 		
         glTexture(0, false)
-        glTexture(1, brightTexture1
+        glTexture(1, brightTexture1)
         
         gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1)
         glTexture(1, false)

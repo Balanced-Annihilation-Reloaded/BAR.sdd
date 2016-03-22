@@ -313,8 +313,9 @@ function widget:Initialize()
     --Spring.Echo("C TABLE")
     --PrintArrayTable(C_units)
     
-    -- setup V (labs)
+    -- setup V (nanos & labs)
     local function V_Score (uDID)
+        if UnitDefs[uDID].name=="cornanotc" or UnitDefs[uDID].name=="cornanotc" then return Cost(uDID) end
         if not UnitDefs[uDID].isFactory then return end
         if not UnitDefs[uDID].buildOptions or #UnitDefs[uDID].buildOptions==0 then return end
         return Cost(uDID)    

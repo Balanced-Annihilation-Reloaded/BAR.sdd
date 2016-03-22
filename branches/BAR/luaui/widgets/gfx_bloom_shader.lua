@@ -176,26 +176,22 @@ function widget:ViewResize(viewSizeX, viewSizeY)
         RemoveMe("[BloomShader::ViewResize] removing widget, bad texture target")
         return
     end
+	MakeBloomShaders() --we are gonna reinit the the widget, in order to recompile the shaders with the static IVSX and IVSY values in the blur shaders
 end
 
 widget:ViewResize(widgetHandler:GetViewSizes())
 
+SetIllumThreshold()
 
+local function MakeBloomShaders() 
 
-
-function widget:Initialize()
-    -- Spring.Echo('bloomshader allowdeferredmap',Spring.GetConfigString("AllowDeferredMapRendering")) 
-    -- Spring.Echo('bloomshader allowdeferredmodel',Spring.GetConfigString("AllowDeferredModelRendering")) 
-    if (glCreateShader == nil) then
-        RemoveMe("[BloomShader::Initialize] removing widget, no shader support")
-        return
+	if (glDeleteShader) then
+        glDeleteShader(brightShader or 0)
+        glDeleteShader(blurShaderH71 or 0)
+        glDeleteShader(blurShaderV71 or 0)
+        glDeleteShader(combineShader or 0)
     end
-    
-    AddChatActions()
-    SetIllumThreshold()
-
-
-
+	
     combineShader = glCreateShader({
         fragment = [[
             uniform sampler2D texture0;
@@ -233,9 +229,9 @@ function widget:Initialize()
 
 
     blurShaderH71 = glCreateShader({
-        fragment = [[
+        fragment = "#define inverseRX " .. tostring(ivsx) .. "\n" .. [[
             uniform sampler2D texture0;
-            uniform float inverseRX;
+            //uniform float inverseRX; //defined instead
             uniform float fragBlurAmplifier;
             const float invKernelSum = 0.01;
 
@@ -267,9 +263,9 @@ function widget:Initialize()
     end
 
     blurShaderV71 = glCreateShader({
-        fragment = [[
+        fragment = "#define inverseRY " .. tostring(ivsy) .. "\n" .. [[
             uniform sampler2D texture0;
-            uniform float inverseRY;
+            //uniform float inverseRY; //defined instead
             uniform float fragBlurAmplifier;
             const float invKernelSum = 0.01;
 
@@ -309,8 +305,8 @@ function widget:Initialize()
             uniform sampler2D texture0;
             uniform float illuminationThreshold;
             uniform float fragGlowAmplifier;
-            uniform float inverseRX;
-            uniform float inverseRY;
+            //uniform float inverseRX;//unused
+            //uniform float inverseRY;// unused
 
             void main(void) {
                 vec2 texCoors = vec2(gl_TexCoord[0]);
@@ -328,7 +324,7 @@ function widget:Initialize()
         ]],
 
         uniformInt = {texture0 = 0},
-        uniformFloat = {illuminationThreshold, fragGlowAmplifier, inverseRX, inverseRY}
+        uniformFloat = {illuminationThreshold, fragGlowAmplifier} --, inverseRX, inverseRY}
     })
 
     if (brightShader == nil) then
@@ -338,8 +334,8 @@ function widget:Initialize()
 
 
     brightShaderText0Loc = glGetUniformLocation(brightShader, "texture0")
-    brightShaderInvRXLoc = glGetUniformLocation(brightShader, "inverseRX")
-    brightShaderInvRYLoc = glGetUniformLocation(brightShader, "inverseRY")
+    -- brightShaderInvRXLoc = glGetUniformLocation(brightShader, "inverseRX")
+    -- brightShaderInvRYLoc = glGetUniformLocation(brightShader, "inverseRY")
     brightShaderIllumLoc = glGetUniformLocation(brightShader, "illuminationThreshold")
     brightShaderFragLoc = glGetUniformLocation(brightShader, "fragGlowAmplifier")
 
@@ -353,7 +349,19 @@ function widget:Initialize()
     combineShaderDebgDrawLoc = glGetUniformLocation(combineShader, "debugDraw")
     combineShaderTexture0Loc = glGetUniformLocation(combineShader, "texture0")
     combineShaderTexture1Loc = glGetUniformLocation(combineShader, "texture1")
+
+end
+
+function widget:Initialize()
+    -- Spring.Echo('bloomshader allowdeferredmap',Spring.GetConfigString("AllowDeferredMapRendering")) 
+    -- Spring.Echo('bloomshader allowdeferredmodel',Spring.GetConfigString("AllowDeferredModelRendering")) 
+    if (glCreateShader == nil) then
+        RemoveMe("[BloomShader::Initialize] removing widget, no shader support")
+        return
+    end
     
+    AddChatActions()
+	MakeBloomShaders()
 
 end
 
@@ -453,8 +461,8 @@ local function Bloom()
  
     glUseShader(brightShader)
         glUniformInt(brightShaderText0Loc, 0)
-        glUniform(   brightShaderInvRXLoc, ivsx)
-        glUniform(   brightShaderInvRYLoc, ivsy)
+        -- glUniform(   brightShaderInvRXLoc, ivsx)
+        -- glUniform(   brightShaderInvRYLoc, ivsy)
         glUniform(   brightShaderIllumLoc, illumThreshold)
         glUniform(   brightShaderFragLoc, glowAmplifier)
         --mglRenderToTexture(brightTexture1, screenTexture, k,l)
@@ -468,7 +476,7 @@ local function Bloom()
     for i = 1, blurPasses do
         glUseShader(blurShaderH71)
             glUniformInt(blurShaderH71Text0Loc, 0)
-            glUniform(   blurShaderH71InvRXLoc, ivsx)
+            -- glUniform(   blurShaderH71InvRXLoc, ivsx)
             glUniform(   blurShaderH71FragLoc, blurAmplifier)
             --mglRenderToTexture(brightTexture2, brightTexture1,k,l)
             glTexture(brightTexture1)
@@ -477,7 +485,7 @@ local function Bloom()
         glUseShader(0)
         glUseShader(blurShaderV71)
             glUniformInt(blurShaderV71Text0Loc, 0)
-            glUniform(   blurShaderV71InvRYLoc, ivsy)
+            -- glUniform(   blurShaderV71InvRYLoc, ivsy)
             glUniform(   blurShaderV71FragLoc, blurAmplifier)
             -- mglRenderToTexture(brightTexture1, brightTexture2,k,l)
             glTexture(brightTexture2)

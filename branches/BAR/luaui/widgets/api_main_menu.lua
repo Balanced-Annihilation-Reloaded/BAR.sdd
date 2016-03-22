@@ -57,6 +57,7 @@ local MinimalGraphicsSettings = {
         ['UnitLodDist']       = 140,
         ['MaxParticles']      = 1000,
         ['MaxNanoParticles']  = 750,
+        ['GroundDetail']      = 100,
     },
     checkboxes = {
         ['AdvMapShading']    = false,
@@ -85,6 +86,7 @@ local DefaultSettings = {
         ['UnitLodDist']       = 260,
         ['MaxParticles']      = 3000,
         ['MaxNanoParticles']  = 2000,
+        ['GroundDetail']      = 120,
     },
     checkboxes = {
         ['AdvMapShading']    = true,
@@ -126,6 +128,7 @@ local MaximalGraphicsSettings = {
         ['UnitLodDist']       = 1000,
         ['MaxParticles']      = 5000,
         ['MaxNanoParticles']  = 5000,
+        ['GroundDetail']      = 200,
     },
     checkboxes = {
         ['AdvMapShading']    = true,
@@ -1159,6 +1162,7 @@ local function CreateGraphicsTab()
                             slider{name='UnitIconDist',title='Unit Icon Distance', max = 1000, step = 1},
                             slider{name='MaxParticles',title='Max Particles', max = 5000},
                             slider{name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
+                            slider{name='GroundDetail',title='Ground Detail*', max = 200, step = 1},
                         }
                     },
                     addStack{x = '50%', y = '3%', name = 'EngineSettingsCheckBoxes', children = {

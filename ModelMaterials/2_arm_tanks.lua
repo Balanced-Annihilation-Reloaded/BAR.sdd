@@ -52,7 +52,7 @@ local materials = {
          "#define use_normalmapping",
          --"#define flip_normalmap",
          "#define deferred_mode 1",
-			"#define use_vertex_ao",
+		--"#define use_vertex_ao",
 			"#define SPECULARMULT 8.0",
 			--"#define use_shadows",  --api_custom_unit_shaders supplies this
        },

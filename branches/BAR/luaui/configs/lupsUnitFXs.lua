@@ -68,15 +68,15 @@ effectUnitDefs = {
     {class='AirJet',options={color={0.7,0.4,0.1}, width=7, length=30, piece="thrust", onActive=true}},
   },
   [UnitDefNames["armkam"].id] = {
-    {class='ThundAirJet',options={color={0.7,0.4,0.1}, width=4, length=47, piece="thrusta", onActive=true}},
-    {class='ThundAirJet',options={color={0.7,0.4,0.1}, width=4, length=47, piece="thrustb", onActive=true}},
+    {class='AirJet',options={color={0.7,0.4,0.1}, width=4, length=47, piece="thrusta", onActive=true}},
+    {class='AirJet',options={color={0.7,0.4,0.1}, width=4, length=47, piece="thrustb", onActive=true}},
   },
   [UnitDefNames["armthund"].id] = {
-    {class='ThundAirJet',options={color={0.7,0.4,0.1}, width=2, length=47, piece="thrust1", onActive=true}},
-    {class='ThundAirJet',options={color={0.7,0.4,0.1}, width=2, length=47, piece="thrust2", onActive=true}},
-    {class='ThundAirJet',options={color={0.7,0.4,0.1}, width=2, length=47, piece="thrust3", onActive=true}},
-    {class='ThundAirJet',options={color={0.7,0.4,0.1}, width=2, length=47, piece="thrust4", onActive=true}},
-    {class='ThundAirJet',options={color={0.7,0.4,0.1}, width=5, length=60, piece="thrustc", onActive=true}},
+    {class='AirJet',options={color={0.7,0.4,0.1}, width=2, length=47, piece="thrust1", onActive=true}},
+    {class='AirJet',options={color={0.7,0.4,0.1}, width=2, length=47, piece="thrust2", onActive=true}},
+    {class='AirJet',options={color={0.7,0.4,0.1}, width=2, length=47, piece="thrust3", onActive=true}},
+    {class='AirJet',options={color={0.7,0.4,0.1}, width=2, length=47, piece="thrust4", onActive=true}},
+    {class='AirJet',options={color={0.7,0.4,0.1}, width=5, length=60, piece="thrustc", onActive=true}},
   },
   [UnitDefNames["armpeep"].id] = {
     {class='AirJet',options={color={0.7,0.4,0.1}, width=5, length=30, piece="jet1", onActive=true}},

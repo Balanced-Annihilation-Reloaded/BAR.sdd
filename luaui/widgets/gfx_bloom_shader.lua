@@ -94,8 +94,8 @@ local GL_UNSIGNED_NORMALIZED_ARB    = 0x8C17
 
 -- shader uniform locations
 local brightShaderText0Loc = nil
-local brightShaderInvRXLoc = nil
-local brightShaderInvRYLoc = nil
+-- local brightShaderInvRXLoc = nil
+-- local brightShaderInvRYLoc = nil
 local brightShaderIllumLoc = nil
 local brightShaderFragLoc = nil
 
@@ -107,10 +107,10 @@ local blurShaderV51InvRYLoc = nil
 local blurShaderV51FragLoc = nil
 
 local blurShaderH71Text0Loc = nil
-local blurShaderH71InvRXLoc = nil
+-- local blurShaderH71InvRXLoc = nil
 local blurShaderH71FragLoc = nil
 local blurShaderV71Text0Loc = nil
-local blurShaderV71InvRYLoc = nil
+-- local blurShaderV71InvRYLoc = nil
 local blurShaderV71FragLoc = nil
 
 local combineShaderDebgDrawLoc = nil
@@ -331,10 +331,10 @@ local function MakeBloomShaders()
     brightShaderFragLoc = glGetUniformLocation(brightShader, "fragGlowAmplifier")
 
     blurShaderH71Text0Loc = glGetUniformLocation(blurShaderH71, "texture0")
-    blurShaderH71InvRXLoc = glGetUniformLocation(blurShaderH71, "inverseRX")
+    -- blurShaderH71InvRXLoc = glGetUniformLocation(blurShaderH71, "inverseRX")
     blurShaderH71FragLoc = glGetUniformLocation(blurShaderH71, "fragBlurAmplifier")
     blurShaderV71Text0Loc = glGetUniformLocation(blurShaderV71, "texture0")
-    blurShaderV71InvRYLoc = glGetUniformLocation(blurShaderV71, "inverseRY")
+    -- blurShaderV71InvRYLoc = glGetUniformLocation(blurShaderV71, "inverseRY")
     blurShaderV71FragLoc = glGetUniformLocation(blurShaderV71, "fragBlurAmplifier")
 
     combineShaderDebgDrawLoc = glGetUniformLocation(combineShader, "debugDraw")

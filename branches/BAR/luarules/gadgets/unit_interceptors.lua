@@ -24,12 +24,13 @@ local interceptors = {}
 
 function gadget:AllowWeaponInterceptTarget(interceptorUnitID, interceptorWeaponID, targetProjectileID)
     local ud = UnitDefs[Spring.GetUnitDefID(interceptorUnitID)]
-    local wd = WeaponDefs[ud.weapons[interceptorWeaponID + 1].weaponDef]
+    local wd = WeaponDefs[ud.weapons[interceptorWeaponID].weaponDef]
     local ox, _, oz = Spring.GetUnitPosition(interceptorUnitID)
+    --Spring.Echo(ud.name, wd.name)
 
-    --Spring.GetProjectileTarget( number projectileID ) -> nil | [number targetTypeInt, number targetID | table targetPos = {x, y, z}]
     local targetType, targetID = Spring.GetProjectileTarget(targetProjectileID)
-
+    --Spring.Echo(targetType, targetID)
+    
     if targetType then
         local tx, ty, tz;
 
@@ -43,7 +44,10 @@ function gadget:AllowWeaponInterceptTarget(interceptorUnitID, interceptorWeaponI
             tx, ty, tz = unpack(targetID)
         end
 
-        return (ox - tx) ^ 2 + (oz - tz) ^ 2 < wd.coverageRange ^ 2
+        local cover = ((ox-tx)^2+(oz-tz)^2 < wd.coverageRange^2)
+        --Spring.Echo(cover)
+        
+        return cover
     end
 end
 

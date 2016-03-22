@@ -918,9 +918,17 @@ local function ChooseCurTip()
         -- info about a unit we are thinking to build
         curTip.type = "focusDefID"
         curTip.focusDefID = focusDefID
+        if not UnitDefs[curTip.focusDefID] then --DEBUG
+            Spring.Echo("ERROR: invalid focusDefID") 
+            Spring.Echo(focusDefID)
+        end --
     elseif sortedSelUnits["n"] == 1 and preferFocus then
         curTip.type = "focusDefID"
         curTip.focusDefID = Spring.GetUnitDefID(selUnits[1])  
+        if not UnitDefs[curTip.focusDefID] then --DEBUG
+            Spring.Echo("ERROR: invalid Spring.GetUnitDefID(selUnits[1])") 
+            Spring.Echo(Spring.GetUnitDefID(selUnits[1]))
+        end --
     elseif sortedSelUnits["n"] == 1 then
         -- info about units of a single unitDefID )
         curTip.type = "unitDefID"
@@ -933,7 +941,11 @@ local function ChooseCurTip()
         curTip.type = "basicUnitInfo"
     elseif mouseOverUnitID and preferFocus then
         curTip.type = "focusDefID"
-        curTip.focusDefID = mouseOverUnitDefID      
+        curTip.focusDefID = mouseOverUnitDefID     
+        if not UnitDefs[curTip.focusDefID] then --DEBUG
+            Spring.Echo("ERROR: invalid mouseOverUnitDefID") 
+            Spring.Echo(mouseOverUnitDefID)
+        end --
         curTip.selUnits = {[1]=mouseOverUnitID}
     elseif mouseOverUnitID and mouseOverUnitDefID then
         curTip.type = "unitDefID"

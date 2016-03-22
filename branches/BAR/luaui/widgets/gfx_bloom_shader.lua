@@ -1,10 +1,10 @@
 function widget:GetInfo()
     return {
-        name      = "BloomShader", --(v0.5)
-        desc      = "Sets Spring In Bloom",
-        author    = "Kloot",
-        date      = "28-5-2008",
-        license   = "",
+        name      = "Bloom Shader", --(v0.5)
+        desc      = "Light Bloom Shader, simulates overbrightness",
+        author    = "Kloot, Beherith",
+        date      = "2016-03-22",
+        license   = "GPL V2",
         layer     = -10000,
         enabled   = false,
     }
@@ -129,7 +129,8 @@ local function SetIllumThreshold()
     local diffuseIntensity  = rd * 0.299 + gd * 0.587 + bd * 0.114
     local specularIntensity = rs * 0.299 + gs * 0.587 + bs * 0.114
 
-    illumThreshold = illumThreshold*(0.8 * ambientIntensity) + (0.5 * diffuseIntensity) + (0.1 * specularIntensity)
+    illumThreshold = illumThreshold*(0.8 * ambientIntensity) + (0.5 * diffuseIntensity) -- + (0.1 * specularIntensity)
+	illumThreshold = math.min(illumThreshold, 0.9)
 
     print("[BloomShader::SetIllumThreshold] sun ambient color:  ", ra .. ", " .. ga .. ", " .. ba .. " (intensity: " .. ambientIntensity .. ")")
     print("[BloomShader::SetIllumThreshold] sun diffuse color:  ", rd .. ", " .. gd .. ", " .. bd .. " (intensity: " .. diffuseIntensity .. ")")
@@ -183,8 +184,8 @@ widget:ViewResize(widgetHandler:GetViewSizes())
 
 
 function widget:Initialize()
-    Spring.Echo('bloomshader allowdeferredmap',Spring.GetConfigString("AllowDeferredMapRendering")) 
-    Spring.Echo('bloomshader allowdeferredmodel',Spring.GetConfigString("AllowDeferredModelRendering")) 
+    -- Spring.Echo('bloomshader allowdeferredmap',Spring.GetConfigString("AllowDeferredMapRendering")) 
+    -- Spring.Echo('bloomshader allowdeferredmodel',Spring.GetConfigString("AllowDeferredModelRendering")) 
     if (glCreateShader == nil) then
         RemoveMe("[BloomShader::Initialize] removing widget, no shader support")
         return
@@ -240,20 +241,20 @@ function widget:Initialize()
 
             void main(void) {
                 vec2 texCoors = vec2(gl_TexCoord[0]);
-                vec4 samples[9];
+                vec3 samples[9];
 
-                samples[0] = texture2D(texture0, texCoors + vec2(-4 * inverseRX, 0));
-                samples[1] = texture2D(texture0, texCoors + vec2(-3 * inverseRX, 0));
-                samples[2] = texture2D(texture0, texCoors + vec2(-2 * inverseRX, 0));
-                samples[3] = texture2D(texture0, texCoors + vec2(-1 * inverseRX, 0));
-                samples[4] = texture2D(texture0, texCoors + vec2( 0            , 0));
-                samples[5] = texture2D(texture0, texCoors + vec2( 1 * inverseRX, 0));
-                samples[6] = texture2D(texture0, texCoors + vec2( 2 * inverseRX, 0));
-                samples[7] = texture2D(texture0, texCoors + vec2( 3 * inverseRX, 0));
-                samples[8] = texture2D(texture0, texCoors + vec2( 4 * inverseRX, 0));
+                samples[0] = texture2D(texture0, texCoors + vec2(-4 * inverseRX, 0)).rgb;
+                samples[1] = texture2D(texture0, texCoors + vec2(-3 * inverseRX, 0)).rgb;
+                samples[2] = texture2D(texture0, texCoors + vec2(-2 * inverseRX, 0)).rgb;
+                samples[3] = texture2D(texture0, texCoors + vec2(-1 * inverseRX, 0)).rgb;
+                samples[4] = texture2D(texture0, texCoors + vec2( 0            , 0)).rgb;
+                samples[5] = texture2D(texture0, texCoors + vec2( 1 * inverseRX, 0)).rgb;
+                samples[6] = texture2D(texture0, texCoors + vec2( 2 * inverseRX, 0)).rgb;
+                samples[7] = texture2D(texture0, texCoors + vec2( 3 * inverseRX, 0)).rgb;
+                samples[8] = texture2D(texture0, texCoors + vec2( 4 * inverseRX, 0)).rgb;
 
                 samples[4] = (3*samples[0] + 7*samples[1] + 15*samples[2] + 20*samples[3] + 25*samples[4] + 20*samples[5] + 15*samples[6] + 7*samples[7]+ 3*samples[8]);
-                gl_FragColor = (samples[4] * invKernelSum) * fragBlurAmplifier;
+                gl_FragColor = vec4((samples[4] * invKernelSum) * fragBlurAmplifier,1.0);
             }
         ]],
 
@@ -274,20 +275,20 @@ function widget:Initialize()
 
             void main(void) {
                 vec2 texCoors = vec2(gl_TexCoord[0]);
-                vec4 samples[9];
+                vec3 samples[9];  //i hope we can just use vec3
 
-                samples[0] = texture2D(texture0, texCoors + vec2(0, -4 * inverseRY));
-                samples[1] = texture2D(texture0, texCoors + vec2(0, -3 * inverseRY));
-                samples[2] = texture2D(texture0, texCoors + vec2(0, -2 * inverseRY));
-                samples[3] = texture2D(texture0, texCoors + vec2(0, -1 * inverseRY));
-                samples[4] = texture2D(texture0, texCoors + vec2(0,  0            ));
-                samples[5] = texture2D(texture0, texCoors + vec2(0,  1 * inverseRY));
-                samples[6] = texture2D(texture0, texCoors + vec2(0,  2 * inverseRY));
-                samples[7] = texture2D(texture0, texCoors + vec2(0,  3 * inverseRY));
-                samples[8] = texture2D(texture0, texCoors + vec2(0,  4 * inverseRY));
+                samples[0] = texture2D(texture0, texCoors + vec2(0, -4 * inverseRY)).rgb;
+                samples[1] = texture2D(texture0, texCoors + vec2(0, -3 * inverseRY)).rgb;
+                samples[2] = texture2D(texture0, texCoors + vec2(0, -2 * inverseRY)).rgb;
+                samples[3] = texture2D(texture0, texCoors + vec2(0, -1 * inverseRY)).rgb;
+                samples[4] = texture2D(texture0, texCoors + vec2(0,  0            )).rgb;
+                samples[5] = texture2D(texture0, texCoors + vec2(0,  1 * inverseRY)).rgb;
+                samples[6] = texture2D(texture0, texCoors + vec2(0,  2 * inverseRY)).rgb;
+                samples[7] = texture2D(texture0, texCoors + vec2(0,  3 * inverseRY)).rgb;
+                samples[8] = texture2D(texture0, texCoors + vec2(0,  4 * inverseRY)).rgb;
 
                 samples[4] = (3*samples[0] + 7*samples[1] + 15*samples[2] + 20*samples[3] + 25*samples[4] + 20*samples[5] + 15*samples[6] + 7*samples[7]+ 3*samples[8]);
-                gl_FragColor = (samples[4] * invKernelSum) * fragBlurAmplifier;
+                gl_FragColor = vec4((samples[4] * invKernelSum) * fragBlurAmplifier, 1.0);
             }
         ]],
 

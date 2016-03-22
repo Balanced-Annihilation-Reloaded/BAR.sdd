@@ -20,7 +20,7 @@ end
 local dbgDraw = 0                    -- draw only the bloom-mask? [0 | 1]
 local glowAmplifier = 1.0            -- intensity multiplier when filtering a glow source fragment [1, n]
 local blurAmplifier = 1.0        -- intensity multiplier when applying a blur pass [1, n] (should be set close to 1)
-local illumThreshold = 1.3            -- how bright does a fragment need to be before being considered a glow source? [0, 1]
+local illumThreshold = 0.8            -- how bright does a fragment need to be before being considered a glow source? [0, 1]
 local blurPasses = 3                -- how many iterations of (7x7) Gaussian blur should be applied to the glow sources?
 
 -- non-editables
@@ -94,23 +94,13 @@ local GL_UNSIGNED_NORMALIZED_ARB    = 0x8C17
 
 -- shader uniform locations
 local brightShaderText0Loc = nil
--- local brightShaderInvRXLoc = nil
--- local brightShaderInvRYLoc = nil
 local brightShaderIllumLoc = nil
 local brightShaderFragLoc = nil
 
-local blurShaderH51Text0Loc = nil
-local blurShaderH51InvRXLoc = nil
-local blurShaderH51FragLoc = nil
-local blurShaderV51Text0Loc = nil
-local blurShaderV51InvRYLoc = nil
-local blurShaderV51FragLoc = nil
 
 local blurShaderH71Text0Loc = nil
--- local blurShaderH71InvRXLoc = nil
 local blurShaderH71FragLoc = nil
 local blurShaderV71Text0Loc = nil
--- local blurShaderV71InvRYLoc = nil
 local blurShaderV71FragLoc = nil
 
 local combineShaderDebgDrawLoc = nil
@@ -230,11 +220,10 @@ local function MakeBloomShaders()
 	-- How about we do linear sampling instead, using the GPU's built in texture fetching linear blur hardware :)
 	-- http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/ 
 	-- this allows us to get away with 5 texture fetches instead of 9 for our 9 sized kernel!
-	
+	 -- TODO:  all this simplification may result in the accumulation of quantizing errors due to the small numbers that get pushed into the BrightTexture
     blurShaderH71 = glCreateShader({
         fragment = "#define inverseRX " .. tostring(ivsx) .. "\n" .. [[
             uniform sampler2D texture0;
-            //uniform float inverseRX; //defined instead
             uniform float fragBlurAmplifier;
             const float invKernelSum = 0.0084; // (1/119)
 
@@ -262,7 +251,6 @@ local function MakeBloomShaders()
     blurShaderV71 = glCreateShader({
         fragment = "#define inverseRY " .. tostring(ivsy) .. "\n" .. [[
             uniform sampler2D texture0;
-            //uniform float inverseRY; //defined instead
             uniform float fragBlurAmplifier;
             const float invKernelSum = 0.0084; // (1/119)
 
@@ -296,17 +284,13 @@ local function MakeBloomShaders()
             uniform sampler2D texture0;
             uniform float illuminationThreshold;
             uniform float fragGlowAmplifier;
-            //uniform float inverseRX;//unused
-            //uniform float inverseRY;// unused
 
             void main(void) {
                 vec2 texCoors = vec2(gl_TexCoord[0]);
                 vec3 color = vec3(texture2D(texture0, texCoors));
                 float illum = dot(color, vec3(0.2990, 0.4870, 0.2140)); //adjusted from the real values of  vec3(0.2990, 0.5870, 0.1140)
-                float minlight=min(color.r,min(color.g,color.b));
-
+				
                 if (illum > illuminationThreshold) {
-                    //gl_FragColor = vec4(mix(color,color-vec3(minlight,minlight,minlight),0.5), 1.0) * fragGlowAmplifier;
                     gl_FragColor = vec4(color*(illum-illuminationThreshold), 1.0) * fragGlowAmplifier;
                 } else {
                     gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
@@ -325,16 +309,12 @@ local function MakeBloomShaders()
 
 
     brightShaderText0Loc = glGetUniformLocation(brightShader, "texture0")
-    -- brightShaderInvRXLoc = glGetUniformLocation(brightShader, "inverseRX")
-    -- brightShaderInvRYLoc = glGetUniformLocation(brightShader, "inverseRY")
     brightShaderIllumLoc = glGetUniformLocation(brightShader, "illuminationThreshold")
     brightShaderFragLoc = glGetUniformLocation(brightShader, "fragGlowAmplifier")
 
     blurShaderH71Text0Loc = glGetUniformLocation(blurShaderH71, "texture0")
-    -- blurShaderH71InvRXLoc = glGetUniformLocation(blurShaderH71, "inverseRX")
     blurShaderH71FragLoc = glGetUniformLocation(blurShaderH71, "fragBlurAmplifier")
     blurShaderV71Text0Loc = glGetUniformLocation(blurShaderV71, "texture0")
-    -- blurShaderV71InvRYLoc = glGetUniformLocation(blurShaderV71, "inverseRY")
     blurShaderV71FragLoc = glGetUniformLocation(blurShaderV71, "fragBlurAmplifier")
 
     combineShaderDebgDrawLoc = glGetUniformLocation(combineShader, "debugDraw")
@@ -344,18 +324,12 @@ local function MakeBloomShaders()
 end
 
 function widget:Initialize()
-    -- Spring.Echo('bloomshader allowdeferredmap',Spring.GetConfigString("AllowDeferredMapRendering")) 
-    -- Spring.Echo('bloomshader allowdeferredmodel',Spring.GetConfigString("AllowDeferredModelRendering")) 
+ 
     if (glCreateShader == nil) then
         RemoveMe("[BloomShader::Initialize] removing widget, no shader support")
         return
     end
-    
-	--Make the linear values for: http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
-	 -- (3*samples[0] + 7*samples[1] + 15*samples[2] + 20*samples[3] + 25*samples[4] + 20*samples[5] + 15*samples[6] + 7*samples[7]+ 3*samples[8]);
-	--1, 3, 7, 15, 20, 25, 20, 15, 7, 3, 1
-	--
-	-- sub these to:
+
 	
     AddChatActions()
 	MakeBloomShaders()
@@ -376,50 +350,6 @@ function widget:Shutdown()
         glDeleteShader(combineShader or 0)
     end
 end
-
-
-
-
-
-
-local function mglDrawTexture(texUnit, tex, w, h, flipS, flipT)
-    glTexture(texUnit, tex)
-    glTexRect(0, 0, w, h, flipS, flipT)
-    glTexture(texUnit, false)
-end
-
-local function mglDrawFBOTexture(tex)
-    glTexture(tex)
-    glTexRect(-1, -1, 1, 1)
-    glTexture(false)
-end
-
-
-local function activeTextureFunc(texUnit, tex, w, h, flipS, flipT)
-    glTexture(texUnit, tex)
-    glTexRect(0, 0, w, h, flipS, flipT)
-    glTexture(texUnit, false)
-end
-
-local function mglActiveTexture(texUnit, tex, w, h, flipS, flipT)
-    glActiveTexture(texUnit, activeTextureFunc, texUnit, tex, w, h, flipS, flipT)
-end
-
-
--- local function renderToTextureFunc(tex, s, t)
-    -- glTexture(tex)
-    -- glTexRect(-1 * s, -1 * t,1 * s, 1 * t) --the viewport coords are (-1,-1) to (1,1), and boy are they not linear!
-    -- glTexture(false)
--- end
-
--- local function mglRenderToTexture(FBOTex, tex, s, t)  --target, source, coords
-    -- glRenderToTexture(FBOTex, renderToTextureFunc, tex, s, t)
--- end
-
-
-
-
-
 
 local function Bloom()
     if minimapbrightness == nil then
@@ -452,17 +382,14 @@ local function Bloom()
         -- Spring.Echo('Blooming!!!',bloomin)
     -- end
     gl.Color(1, 1, 1, 1)
-    local k=1
-    local l=-1
+
     glCopyToTexture(screenTexture, 0, 0, 0, 0, vsx, vsy, nil,0)
  
     glUseShader(brightShader)
         glUniformInt(brightShaderText0Loc, 0)
-        -- glUniform(   brightShaderInvRXLoc, ivsx)
-        -- glUniform(   brightShaderInvRYLoc, ivsy)
         glUniform(   brightShaderIllumLoc, illumThreshold)
         glUniform(   brightShaderFragLoc, glowAmplifier)
-        --mglRenderToTexture(brightTexture1, screenTexture, k,l)
+		
         glTexture(screenTexture)
         glRenderToTexture(brightTexture1, gl.TexRect, -1,1,1,-1)
         glTexture(false)
@@ -473,18 +400,16 @@ local function Bloom()
     for i = 1, blurPasses do
         glUseShader(blurShaderH71)
             glUniformInt(blurShaderH71Text0Loc, 0)
-            -- glUniform(   blurShaderH71InvRXLoc, ivsx)
             glUniform(   blurShaderH71FragLoc, blurAmplifier)
-            --mglRenderToTexture(brightTexture2, brightTexture1,k,l)
+			
             glTexture(brightTexture1)
             glRenderToTexture(brightTexture2, gl.TexRect, -1,1,1,-1)
             glTexture(false)
         glUseShader(0)
         glUseShader(blurShaderV71)
             glUniformInt(blurShaderV71Text0Loc, 0)
-            -- glUniform(   blurShaderV71InvRYLoc, ivsy)
             glUniform(   blurShaderV71FragLoc, blurAmplifier)
-            -- mglRenderToTexture(brightTexture1, brightTexture2,k,l)
+			
             glTexture(brightTexture2)
             glRenderToTexture(brightTexture1, gl.TexRect, -1,1,1,-1)
             glTexture(false)
@@ -497,17 +422,14 @@ local function Bloom()
         glUniformInt(combineShaderDebgDrawLoc, dbgDraw)
         glUniformInt(combineShaderTexture0Loc, 0)
         glUniformInt(combineShaderTexture1Loc, 1)
-        --mglActiveTexture(0, screenTexture, vsx, vsy, false, true)
+		
         glTexture(0, screenTexture)
-        --glTexRect(0, 0, vsx, vsy, false, true)
-        
-            gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1)
+        gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1)
+		
         glTexture(0, false)
-        --mglActiveTexture(1, brightTexture1, vsx, vsy, false, true)
-        glTexture(1, brightTexture1)
-        --glTexRect(0, 0, vsx, vsy, false, true)
+        glTexture(1, brightTexture1
         
-            gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1)
+        gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1)
         glTexture(1, false)
     glUseShader(0)
     --gl.Finish()

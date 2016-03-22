@@ -1006,8 +1006,9 @@ local function CreateUnitButton(name, unitDef)
         [2] = {image="raindrop.png", used = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25) 
                                              or (unitDef.minWaterDepth and unitDef.minWaterDepth>0) 
                                              or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")},
-        [3] = {image="plane.png",    used = (unitDef.isAirUnit or unitDef.isAirBase or airFacs[unitDef.id] or (unitDef.weapons[1] and unitDef.weapons[1].onlyTargets.vtol or false))},
+        [3] = {image="plane.png",    used = (unitDef.isAirUnit or unitDef.isAirBase or airFacs[unitDef.id] or (unitDef.weapons[1] and unitDef.weapons[1].onlyTargets.vtol and not unitDef.weapons[1].onlyTargets.all))},
     }
+    
     local y = 10
     for _,icon in ipairs(extraIcons) do
         if icon.used then

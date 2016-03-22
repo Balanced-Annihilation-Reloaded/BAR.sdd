@@ -67,24 +67,18 @@ function widget:Initialize()
     end
 end
 
-function widget:PlayerChanged()
-    UnloadIfSpec()
-end
-
 function widget:CommandsChanged()
     -- recheck onlySelectedCloakedUnits
     onlySelectedCloakedUnits = true
-    local foundCloakedUnit = false
-    local selUnits 
-    for unitID,_ in pairs(cloakedUnits) do
+    local selUnits = Spring.GetSelectedUnits()
+    for i=1,#selUnits do
+        local unitID = selUnits[i]
         foundCloakedUnit = true
-        selUnits = selUnits or Spring.GetSelectedUnits() -- its cheaper this way
-        if not selUnits[unitID] then
+        if not cloakedUnits[unitID] then
             onlySelectedCloakedUnits = false
             break
         end
     end
-    if not foundCloakedUnit then onlySelectedCloakedUnits = false end
 end
 
 function widget:DefaultCommand()

@@ -166,7 +166,7 @@ function widget:ViewResize(viewSizeX, viewSizeY)
     })
 
     screenTexture = glCreateTexture(vsx, vsy, {
-        min_filter = GL.LINEAR, mag_filter = GL.NEAREST,
+        min_filter = GL.LINEAR, mag_filter = GL.LINEAR, --because we are gonna cheat a bit and use linear sampling gaussian blur
     })
 
     if (brightTexture1 == nil or brightTexture2 == nil or screenTexture == nil) then
@@ -227,30 +227,27 @@ local function MakeBloomShaders()
     end
 
 
-
+	-- How about we do linear sampling instead, using the GPU's built in texture fetching linear blur hardware :)
+	-- http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/ 
+	-- this allows us to get away with 5 texture fetches instead of 9 for our 9 sized kernel!
+	
     blurShaderH71 = glCreateShader({
         fragment = "#define inverseRX " .. tostring(ivsx) .. "\n" .. [[
             uniform sampler2D texture0;
             //uniform float inverseRX; //defined instead
             uniform float fragBlurAmplifier;
-            const float invKernelSum = 0.01;
+            const float invKernelSum = 0.0084; // (1/119)
 
             void main(void) {
                 vec2 texCoors = vec2(gl_TexCoord[0]);
-                vec3 samples[9];
-
-                samples[0] = texture2D(texture0, texCoors + vec2(-4 * inverseRX, 0)).rgb;
-                samples[1] = texture2D(texture0, texCoors + vec2(-3 * inverseRX, 0)).rgb;
-                samples[2] = texture2D(texture0, texCoors + vec2(-2 * inverseRX, 0)).rgb;
-                samples[3] = texture2D(texture0, texCoors + vec2(-1 * inverseRX, 0)).rgb;
-                samples[4] = texture2D(texture0, texCoors + vec2( 0            , 0)).rgb;
-                samples[5] = texture2D(texture0, texCoors + vec2( 1 * inverseRX, 0)).rgb;
-                samples[6] = texture2D(texture0, texCoors + vec2( 2 * inverseRX, 0)).rgb;
-                samples[7] = texture2D(texture0, texCoors + vec2( 3 * inverseRX, 0)).rgb;
-                samples[8] = texture2D(texture0, texCoors + vec2( 4 * inverseRX, 0)).rgb;
-
-                samples[4] = (3*samples[0] + 7*samples[1] + 15*samples[2] + 20*samples[3] + 25*samples[4] + 20*samples[5] + 15*samples[6] + 7*samples[7]+ 3*samples[8]);
-                gl_FragColor = vec4((samples[4] * invKernelSum) * fragBlurAmplifier,1.0);
+				vec3 newblur;
+				
+				newblur  = 10*  texture2D(texture0, texCoors + vec2(-3.3 * inverseRX, 0)).rgb;
+				newblur += 37*  texture2D(texture0, texCoors + vec2(-1.4 * inverseRX, 0)).rgb;
+				newblur += 25*  texture2D(texture0, texCoors + vec2(0               , 0)).rgb;
+				newblur += 37*  texture2D(texture0, texCoors + vec2( 1.4 * inverseRX, 0)).rgb;
+				newblur += 10*  texture2D(texture0, texCoors + vec2( 3.3 * inverseRX, 0)).rgb;
+				gl_FragColor = vec4(newblur * invKernelSum * fragBlurAmplifier, 1.0);
             }
         ]],
 
@@ -267,24 +264,18 @@ local function MakeBloomShaders()
             uniform sampler2D texture0;
             //uniform float inverseRY; //defined instead
             uniform float fragBlurAmplifier;
-            const float invKernelSum = 0.01;
+            const float invKernelSum = 0.0084; // (1/119)
 
             void main(void) {
                 vec2 texCoors = vec2(gl_TexCoord[0]);
-                vec3 samples[9];  //i hope we can just use vec3
-
-                samples[0] = texture2D(texture0, texCoors + vec2(0, -4 * inverseRY)).rgb;
-                samples[1] = texture2D(texture0, texCoors + vec2(0, -3 * inverseRY)).rgb;
-                samples[2] = texture2D(texture0, texCoors + vec2(0, -2 * inverseRY)).rgb;
-                samples[3] = texture2D(texture0, texCoors + vec2(0, -1 * inverseRY)).rgb;
-                samples[4] = texture2D(texture0, texCoors + vec2(0,  0            )).rgb;
-                samples[5] = texture2D(texture0, texCoors + vec2(0,  1 * inverseRY)).rgb;
-                samples[6] = texture2D(texture0, texCoors + vec2(0,  2 * inverseRY)).rgb;
-                samples[7] = texture2D(texture0, texCoors + vec2(0,  3 * inverseRY)).rgb;
-                samples[8] = texture2D(texture0, texCoors + vec2(0,  4 * inverseRY)).rgb;
-
-                samples[4] = (3*samples[0] + 7*samples[1] + 15*samples[2] + 20*samples[3] + 25*samples[4] + 20*samples[5] + 15*samples[6] + 7*samples[7]+ 3*samples[8]);
-                gl_FragColor = vec4((samples[4] * invKernelSum) * fragBlurAmplifier, 1.0);
+				vec3 newblur;
+				
+				newblur  = 10*  texture2D(texture0, texCoors + vec2(0, -3.3 * inverseRX)).rgb;
+				newblur += 37*  texture2D(texture0, texCoors + vec2(0, -1.4 * inverseRX)).rgb;
+				newblur += 25*  texture2D(texture0, texCoors + vec2(0,                0)).rgb;
+				newblur += 37*  texture2D(texture0, texCoors + vec2(0,  1.4 * inverseRX)).rgb;
+				newblur += 10*  texture2D(texture0, texCoors + vec2(0,  3.3 * inverseRX)).rgb;
+				gl_FragColor = vec4(newblur * invKernelSum * fragBlurAmplifier, 1.0);
             }
         ]],
 
@@ -360,6 +351,12 @@ function widget:Initialize()
         return
     end
     
+	--Make the linear values for: http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
+	 -- (3*samples[0] + 7*samples[1] + 15*samples[2] + 20*samples[3] + 25*samples[4] + 20*samples[5] + 15*samples[6] + 7*samples[7]+ 3*samples[8]);
+	--1, 3, 7, 15, 20, 25, 20, 15, 7, 3, 1
+	--
+	-- sub these to:
+	
     AddChatActions()
 	MakeBloomShaders()
 

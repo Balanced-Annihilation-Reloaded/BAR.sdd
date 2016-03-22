@@ -150,6 +150,11 @@ function Cost(uDID)
     return 60*UnitDefs[uDID].metalCost + UnitDefs[uDID].energyCost
 end
 
+function MustBeBuiltInWater(uDID)
+    -- must be built in water (we only care about immobile units)
+    return UnitDefs[uDID].maxWaterDepth>0
+end
+
 function ConstructUnitOrder(Score)
     -- construct a table of uDIDs with non-nil score, in increasing order of score
     local t = {}
@@ -222,28 +227,36 @@ function AdvanceToNextBuildable(t, cmdID)
     end
 end
 
-function CheckContextBuild(uDID)
-    -- check if we can build uDID in current context, return uDID if it is, return its pairedID if that is, otherwise just return uDID
-    -- we could return nil (== advance to next uDID in sequence, but its confusing for the user, they need to be shown when a unit is not buildable because ground isn't flat)
-    local mx, my = Spring.GetMouseState()
-    local _, coords = Spring.TraceScreenRay(mx, my, true, true)
-    if (not coords) then
-        return uDID
+function CheckContextBuildOrder(uDID, x,y,z)
+    -- check if the water depth at this location is suitable for building this unitDefID
+    -- don't check anything else, or we deprive the user of useful info
+    local requiresWater = (UnitDefs[uDID].minWaterDepth > 0)
+    if y>=0 then 
+        return (not requiresWater)
+    else 
+        return requiresWater
     end
-    if coords[1]<0 or coords[1]>Game.mapSizeX or coords[3]<0 or coords[3]>Game.mapSizeZ then
-        return uDID
-    end
+end
 
-    if Spring.TestBuildOrder(uDID, coords[1], coords[2], coords[3], 1) == 0 then
-        if waterLandPairs[uDID] then 
-            local pairedID = waterLandPairs[uDID]
-            if Spring.TestBuildOrder(pairedID, coords[1], coords[2], coords[3], 1) ~= 0 then
-                --Spring.Echo("paired", uDID, pairedID)
-                return pairedID
-            end
-        end
+function CheckContextBuild(uDID, x,y,z)
+    -- check if uDID is plausibly buildable in current context, return uDID if it is, else return its pairedID if that is, otherwise return nil
+
+    -- get the cursor pos on map
+    local mx, my = Spring.GetMouseState()
+    local _, coords = Spring.TraceScreenRay(mx, my, true, true, false, true)
+    if not coords then return uDID end
+    local x,y,z = coords[1],coords[2],coords[3]
+    if x<0 or x>Game.mapSizeX or z<0 or z>Game.mapSizeZ then return uDID end
+    
+    if CheckContextBuildOrder(uDID, x,y,z) then
+        return uDID
     end
-    return uDID
+    local pairedID = waterLandPairs[uDID]
+    if pairedID and CheckContextBuildOrder(pairedID, x,y,z) then
+        --Spring.Echo("paired", uDID, pairedID)
+        return pairedID
+    end
+    return nil
 end
 
 function SetActiveBuildUnit(uDID)
@@ -387,6 +400,7 @@ function widget:KeyPress(key, mods, isRepeat)
     return advanced
 end
 
+local prevY
 function widget:Update(deltaTime)
     -- swap water-land pairs due to context, if it helps
     timeCounter = timeCounter + deltaTime
@@ -396,6 +410,7 @@ function widget:Update(deltaTime)
         return
     end
 
+    -- get the active build order, if there is one
     local _,cmdID,_ = Spring.GetActiveCommand()
     if WG.InitialQueue and WG.InitialQueue.selDefID then
         cmdID = -WG.InitialQueue.selDefID
@@ -404,6 +419,10 @@ function widget:Update(deltaTime)
         return
     end
     
+    --if (y>=0 and prevY>0) or (y<0 and prevY<=0) then return end -- we only change context based on water, so no need to do anything here
+    --prevY = y
+
+    -- check if we want to change the active build order based on context 
     local unitDefID = -cmdID
     local pairedID = CheckContextBuild(unitDefID)
     if pairedID and unitDefID ~= pairedID then

@@ -11,43 +11,8 @@ function widget:GetInfo()
     }
 end
 
-local waterLandPairsHuman = {
--- human friendly, bidirectional 
-{'armmex','armuwmex'},
-{'cormex','coruwmex'},
-{'armmakr','armfmkr'},
-{'cormakr','corfmkr'},
-{'armdrag','armfdrag'},  
-{'cordrag','corfdrag'},  
-{'armmstor','armuwms'},
-{'armestor','armuwes'},
-{'cormstor','coruwms'},
-{'corestor','coruwes'},
-{'armrl','armfrt'},
-{'corrl','corfrt'},
-{'armhp','armfhp'},
-{'corhp','corfhp'},
-{'armrad','armfrad'},
-{'corrad','corfrad'},
-{'armhlt','armfhlt'},
-{'corhlt','corfhlt'},
-{'armtarg','armfatf'},
-{'cortarg','corfatf'},
-{'armmmkr','armfmmm'},
-{'cormmkr','corfmmm'},
-{'armfus','armuwfus'},
-{'corfus','coruwfus'},
-{'armflak','armfflak'},
-{'corflak','corenaa'},
-{'armmoho','armuwmme'},
-{'cormoho','coruwmme'},
-{'armsolar','armtide'},
-{'corsolar','cortide'},
-{'armlab','armsy'},
-{'corlab','corsy'},
-{'armllt','armtl'},
-{'corllt','cortl'},
-}
+---------------------------------------
+-- general keybinds
 
 local binds = {
     -- buildspacing
@@ -101,18 +66,6 @@ local unbinds={
     "bind backspace mousestate",
 }
 
-include('keysym.h.lua')
-local Z_KEY = KEYSYMS.Z
-local X_KEY = KEYSYMS.X
-local C_KEY = KEYSYMS.C
-local V_KEY = KEYSYMS.V
-local B_KEY = KEYSYMS.B
-
-local updateRate = 1/3 -- in seconds
-local timeCounter = 0
-
-local waterLandPairs = {}
-
 function SetBinds()
     for k,v in ipairs(unbinds) do
         Spring.SendCommands("un"..v)
@@ -145,6 +98,70 @@ function SetYZState()
         Z_KEY = KEYSYMS.Z    
     end
 end
+
+
+---------------------------------------
+-- z,x,c,v,b hotkeys and water/land based context build
+
+local waterLandPairsHuman = {
+-- human friendly, bidirectional 
+{'armmex','armuwmex'},
+{'cormex','coruwmex'},
+{'armmakr','armfmkr'},
+{'cormakr','corfmkr'},
+{'armdrag','armfdrag'},  
+{'cordrag','corfdrag'},  
+{'armmstor','armuwms'},
+{'armestor','armuwes'},
+{'cormstor','coruwms'},
+{'corestor','coruwes'},
+{'armrl','armfrt'},
+{'corrl','corfrt'},
+{'armhp','armfhp'},
+{'corhp','corfhp'},
+{'armrad','armfrad'},
+{'corrad','corfrad'},
+{'armhlt','armfhlt'},
+{'corhlt','corfhlt'},
+{'armtarg','armfatf'},
+{'cortarg','corfatf'},
+{'armmmkr','armfmmm'},
+{'cormmkr','corfmmm'},
+{'armfus','armuwfus'},
+{'corfus','coruwfus'},
+{'armflak','armfflak'},
+{'corflak','corenaa'},
+{'armmoho','armuwmme'},
+{'cormoho','coruwmme'},
+{'armsolar','armtide'},
+{'corsolar','cortide'},
+{'armlab','armsy'},
+{'corlab','corsy'},
+{'armllt','armtl'},
+{'corllt','cortl'},
+{'armaap','armplat'},
+{'coraap','corplat'},
+}
+
+include('keysym.h.lua')
+local Z_KEY = KEYSYMS.Z
+local X_KEY = KEYSYMS.X
+local C_KEY = KEYSYMS.C
+local V_KEY = KEYSYMS.V
+local B_KEY = KEYSYMS.B
+
+local updateRate = 1/2 -- in seconds, time interval that must elapse in between each change of context
+local timeCounter = -updateRate
+local lastUpdate = timeCounter
+
+local waterLandPairs = {}
+
+local hotkeys = {} -- all z,x,c,v,b hotkeys, hotkey[uDID]=key
+local waterHotkeys = {} -- only the water ones
+local landHotkeys = {} -- only the land ones
+local contextHotkeys = {} -- equal to waterHotkeys or landHotkeys, according to context
+local prevInWater
+
 
 function Cost(uDID)
     return 60*UnitDefs[uDID].metalCost + UnitDefs[uDID].energyCost
@@ -181,78 +198,23 @@ function PrintArrayTable(t)
     end
 end
 
-function AdvanceToNextBuildable(t, cmdID)
-    local pos = 0 -- current pos in table, or 0
-    if cmdID and cmdID < 0 then
-        local uDID = -cmdID
-        for k,v in ipairs(t) do
-            if v==uDID then
-                pos = k
-                break
-            end        
-        end
-    end
-    
-    -- make a list of all the units our current selection can build
-    local canBuild = {}
-    local units = Spring.GetSelectedUnits()
-    for _,unitID in ipairs(units) do
-        local cmdList = Spring.GetUnitCmdDescs(unitID)
-        for i = 1, #cmdList do
-            local cmd = cmdList[i]
-            if UnitDefNames[cmd.name] then
-                local uDID = UnitDefNames[cmd.name].id
-                canBuild[uDID] = true
-            end
-        end
-    end        
-    if WG.InitialQueue and WG.startUnit then
-        local buildOptions = UnitDefs[WG.startUnit].buildOptions
-        for _,uDID        in ipairs(buildOptions) do
-            canBuild[uDID] = true
-        end
-    end
-    
-    -- find the next unitDefID in the (circular) array that we can build, skipping over any units that cannot be built in current context, and set is as the active build command
-    local i = (pos>0) and pos+1 or 1
-    if i>#t then i=1 end
-    while (i~=pos) do
-        if pos==0 then pos=1 end
-        if canBuild[t[i]] and CheckContextBuild(t[i])==t[i] then
-            SetActiveBuildUnit(t[i])
-            return true
-        end
-        i = i + 1
-        if i>#t then i=1 end    
-    end
+function BuildsInWater(uDID)
+    return (UnitDefs[uDID].minWaterDepth > 0)
 end
 
-function CheckContextBuildOrder(uDID, x,y,z)
+function CheckContextBuildOrder(uDID, inWater)
     -- check if the water depth at this location is suitable for building this unitDefID
     -- don't check anything else, or we deprive the user of useful info
-    local requiresWater = (UnitDefs[uDID].minWaterDepth > 0)
-    if y>=0 then 
-        return (not requiresWater)
-    else 
-        return requiresWater
-    end
+    return (inWater == BuildsInWater(uDID))
 end
 
-function CheckContextBuild(uDID, x,y,z)
-    -- check if uDID is plausibly buildable in current context, return uDID if it is, else return its pairedID if that is, otherwise return nil
-
-    -- get the cursor pos on map
-    local mx, my = Spring.GetMouseState()
-    local _, coords = Spring.TraceScreenRay(mx, my, true, true, false, true)
-    if not coords then return uDID end
-    local x,y,z = coords[1],coords[2],coords[3]
-    if x<0 or x>Game.mapSizeX or z<0 or z>Game.mapSizeZ then return uDID end
-    
-    if CheckContextBuildOrder(uDID, x,y,z) then
+function CheckContextBuild(uDID, inWater)
+    -- check if uDID is buildable in current context, return uDID if it is, else return its pairedID if that is, otherwise return nil   
+    if CheckContextBuildOrder(uDID, inWater) then
         return uDID
     end
     local pairedID = waterLandPairs[uDID]
-    if pairedID and CheckContextBuildOrder(pairedID, x,y,z) then
+    if pairedID and CheckContextBuildOrder(pairedID, inWater) then
         --Spring.Echo("paired", uDID, pairedID)
         return pairedID
     end
@@ -265,6 +227,7 @@ function SetActiveBuildUnit(uDID)
         WG.sMenu.ForceSelect(uDID)
     end
 end
+
 
 function widget:Initialize()
     SetBinds()
@@ -356,24 +319,69 @@ function widget:Initialize()
     --Spring.Echo("B TABLE")
     --PrintArrayTable(B_units)  
     
-    --expose inverse of _key tables to WG (they should be disjoint)
+    -- put all these unitDefIDs together into one table
     local hotkeys = {}
-    for _,v in pairs(Z_units) do
-        hotkeys[v] = "Z"
+    for _,v in ipairs(Z_units) do hotkeys[v] = "Z" end
+    for _,v in ipairs(X_units) do hotkeys[v] = "X" end
+    for _,v in ipairs(C_units) do hotkeys[v] = "C" end
+    for _,v in ipairs(V_units) do hotkeys[v] = "V" end
+    for _,v in ipairs(B_units) do hotkeys[v] = "B" end
+    
+    -- construct waterHotkeys and landHotkeys
+    -- out of context keys get the empty string, which makes life easier for sMenu when it has to update
+    for uDID,key in pairs(hotkeys) do
+        waterHotkeys[uDID] = BuildsInWater(uDID) and key or ''
+        landHotkeys[uDID] = BuildsInWater(uDID) and '' or key
     end
-    for _,v in pairs(X_units) do
-        hotkeys[v] = "X"
+    
+    WG.buildingHotkeys = {}
+end
+
+function AdvanceToNextBuildable(t, cmdID)
+    local pos = 0 -- current pos in table, or 0
+    if cmdID and cmdID < 0 then
+        local uDID = -cmdID
+        for k,v in ipairs(t) do
+            if v==uDID then
+                pos = k
+                break
+            end        
+        end
     end
-    for _,v in pairs(C_units) do
-        hotkeys[v] = "C"
+    
+    -- make a list of all the units our current selection can build
+    local canBuild = {}
+    local units = Spring.GetSelectedUnits()
+    for _,unitID in ipairs(units) do
+        local cmdList = Spring.GetUnitCmdDescs(unitID)
+        for i = 1, #cmdList do
+            local cmd = cmdList[i]
+            if UnitDefNames[cmd.name] then
+                local uDID = UnitDefNames[cmd.name].id
+                canBuild[uDID] = true
+            end
+        end
+    end        
+    if WG.InitialQueue and WG.startUnit then
+        local buildOptions = UnitDefs[WG.startUnit].buildOptions
+        for _,uDID        in ipairs(buildOptions) do
+            canBuild[uDID] = true
+        end
     end
-    for _,v in pairs(V_units) do
-        hotkeys[v] = "V"
+    
+    -- find the next unitDefID in the (circular) array that we can build, skipping over any units that cannot be built in current context, and set is as the active build command
+    local i = (pos>0) and pos+1 or 1
+    if i>#t then i=1 end
+    while (i~=pos) do
+        if pos==0 then pos=1 end
+        local uDID = t[i]
+        if canBuild[uDID] and contextHotkeys[uDID] and contextHotkeys[uDID]~='' then -- we can build it, and it has a hotkey in the current context
+            SetActiveBuildUnit(uDID)
+            return true
+        end
+        i = i + 1
+        if i>#t then i=1 end    
     end
-    for _,v in pairs(B_units) do
-        hotkeys[v] = "B"
-    end
-    WG.buildingHotkeys = hotkeys
 end
 
 function widget:KeyPress(key, mods, isRepeat)
@@ -400,16 +408,32 @@ function widget:KeyPress(key, mods, isRepeat)
     return advanced
 end
 
-local prevY
-function widget:Update(deltaTime)
+function widget:Update(dt)
     -- swap water-land pairs due to context, if it helps
-    timeCounter = timeCounter + deltaTime
-    if timeCounter >= updateRate then -- update only x times per second
-        timeCounter = 0
-    else
-        return
-    end
+    -- also, keep WG.buildingHotkeys updated for the current context
+    timeCounter = timeCounter + dt
 
+    -- get the cursor pos on map
+    local mx, my = Spring.GetMouseState()
+    local _, coords = Spring.TraceScreenRay(mx, my, true, true, false, true)
+    if not coords then return uDID end
+    local x,y,z = coords[1],coords[2],coords[3]
+    if x<0 or x>Game.mapSizeX or z<0 or z>Game.mapSizeZ then return uDID end
+    
+    -- set the context i.e. is the mouse in the water or not
+    local inWater = (y<0)
+    if (inWater==prevInWater) or (timeCounter<lastUpdate+updateRate) then return end -- we only change context based on water, so no need to do anything here
+    prevInWater = inWater
+    lastUpdate = timeCounter
+    
+    -- set which units have hotkeys in the current context 
+    -- expose these to WG & make sMenu update accordingly   
+    contextHotkeys = inWater and waterHotkeys or landHotkeys
+    WG.buildingHotkeys = contextHotkeys 
+    if WG.sMenu then
+        WG.sMenu.ForceUpdateHotkeys()
+    end
+    
     -- get the active build order, if there is one
     local _,cmdID,_ = Spring.GetActiveCommand()
     if WG.InitialQueue and WG.InitialQueue.selDefID then
@@ -419,12 +443,9 @@ function widget:Update(deltaTime)
         return
     end
     
-    --if (y>=0 and prevY>0) or (y<0 and prevY<=0) then return end -- we only change context based on water, so no need to do anything here
-    --prevY = y
-
     -- check if we want to change the active build order based on context 
     local unitDefID = -cmdID
-    local pairedID = CheckContextBuild(unitDefID)
+    local pairedID = CheckContextBuild(unitDefID, inWater)
     if pairedID and unitDefID ~= pairedID then
         SetActiveBuildUnit(pairedID)
     end

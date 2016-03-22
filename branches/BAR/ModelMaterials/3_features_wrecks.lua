@@ -18,7 +18,7 @@ local materials = {
 		},
 		deferredDefinitions = {
 			--"#define use_perspective_correct_shadows",
-			"#define use_normalmapping",
+			--"#define use_normalmapping",
 			--"#define flip_normalmap",
 			"#define deferred_mode 1",
 			--"#define use_vertex_ao",

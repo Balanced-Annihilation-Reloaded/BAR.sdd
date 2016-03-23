@@ -16,6 +16,7 @@ local defaultCamName = 'ta'
 
 function widget:SetConfigData(data)
     camName = data and data.name or defaultCamName
+    if camName=='ov' then camName = defaultCamName end -- don't allow the user to start in overview camera mode
 end
 
 function widget:Initialize()

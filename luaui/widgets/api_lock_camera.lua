@@ -7,7 +7,7 @@ function widget:GetInfo()
         author = "Evil4Zerggin, BrainDamage",
         date = "16 January 2009",
         license = "GNU LGPL, v2.1 or later",
-        layer = -5,
+        layer = 0,
         enabled = true,
         api = true,
     }
@@ -15,6 +15,10 @@ end
 
 
 local transitionTime = 1.5 --how long it takes the camera to move
+
+local wantedCameraState
+local wantedCameraTime
+local wantedTransitionTime
 
 local GetCameraState = Spring.GetCameraState
 local SetCameraState = Spring.SetCameraState
@@ -29,6 +33,8 @@ local totalTime = 0
 
 local myLastCameraState
 
+local Camera -- provided by api_camera_transitions
+
 ------------------------------------------------
 
 function LockCamera(playerID)
@@ -37,11 +43,11 @@ function LockCamera(playerID)
         myLastCameraState = myLastCameraState or GetCameraState()
         local info = lastBroadcasts[lockPlayerID]
         if info then
-            SetCameraState(info[2], transitionTime)
+            Camera.SetWantedCameraState(info[2], transitionTime)
         end
     else
         if myLastCameraState then
-            SetCameraState(myLastCameraState, transitionTime)
+            Camera.SetWantedCameraState(myLastCameraState, transitionTime)
             myLastCameraState = nil
         end
         lockPlayerID = nil
@@ -51,7 +57,7 @@ end
 WG.LockCamera = LockCamera
 
 
-function CameraBroadcastEvent(playerID,cameraState)
+function CameraBroadcastEvent(playerID, cameraState)
     --if cameraState is empty then transmission has stopped
     if not cameraState then
         if lastBroadcasts[playerID] then
@@ -71,12 +77,16 @@ function CameraBroadcastEvent(playerID,cameraState)
     lastBroadcasts[playerID] = {totalTime, cameraState}
 
     if playerID == lockPlayerID then
-         SetCameraState(cameraState, transitionTime)
+        Camera.SetWantedCameraState(cameraState, transitionTime)
     end
 end
 
 function widget:Initialize()
     widgetHandler:RegisterGlobal('CameraBroadcastEvent', CameraBroadcastEvent)
+    Camera = WG.Camera
+    if not Camera then
+        Spring.Echo("Error: api_lock_camera could not find api_camera_transitions")
+    end
 end
 
 function widget:Shutdown()

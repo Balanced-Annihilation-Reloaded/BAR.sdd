@@ -16,7 +16,7 @@ end
 
 -- don't forget to update it!
 local minMajorEngineVersion = 101 
-local minMinorEngineVersion = 147
+local minMinorEngineVersion = 179
 local maxEngineVersion = 102 
 -- no real need for a max minor version
 

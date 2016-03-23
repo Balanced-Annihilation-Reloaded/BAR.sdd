@@ -94,6 +94,7 @@ local GL_UNSIGNED_NORMALIZED_ARB    = 0x8C17
 
 -- shader uniform locations
 local brightShaderText0Loc = nil
+local brightShaderText1Loc = nil
 local brightShaderIllumLoc = nil
 local brightShaderFragLoc = nil
 
@@ -109,6 +110,8 @@ local combineShaderTexture1Loc = nil
 
 local bloomin=0
 local minimapbrightness=nil
+
+local hasdeferredmodelrendering = nil
 
 local function SetIllumThreshold()
     local ra, ga, ba = glGetSun("ambient")
@@ -155,7 +158,7 @@ local function MakeBloomShaders()
                 vec4 b = texture2D(texture1, gl_TexCoord[0].st);
 
                 if (!debugDraw) {
-                    gl_FragColor = a + b;
+                    gl_FragColor = mix(a, a + b, clamp(2.0-(a.r+a.g+a.b),0.0,1.0) ); //todo: redo this blending function, to avoid a bit of overbrightness
                 } else {
                     gl_FragColor = b;
                 }
@@ -184,23 +187,6 @@ local function MakeBloomShaders()
 	-- this allows us to get away with 5 texture fetches instead of 9 for our 9 sized kernel!
 	 -- TODO:  all this simplification may result in the accumulation of quantizing errors due to the small numbers that get pushed into the BrightTexture
     
-	frag1="#define inverseRX " .. tostring(ivsx) .. "\n" .. [[
-            uniform sampler2D texture0;
-            uniform float fragBlurAmplifier;
-            const float invKernelSum = 0.0084; // (1/119)
-
-            void main(void) {
-                vec2 texCoors = vec2(gl_TexCoord[0]);
-				vec3 newblur;
-				
-				newblur  = 10*  texture2D(texture0, texCoors + vec2(-3.3 * inverseRX, 0)).rgb;
-				newblur += 37*  texture2D(texture0, texCoors + vec2(-1.4 * inverseRX, 0)).rgb;
-				newblur += 25*  texture2D(texture0, texCoors + vec2(0               , 0)).rgb;
-				newblur += 37*  texture2D(texture0, texCoors + vec2( 1.4 * inverseRX, 0)).rgb;
-				newblur += 10*  texture2D(texture0, texCoors + vec2( 3.3 * inverseRX, 0)).rgb;
-				gl_FragColor = vec4(newblur * invKernelSum * fragBlurAmplifier, 1.0);
-            }
-        ]]
 	
 	blurShaderH71 = glCreateShader({
         fragment = "#define inverseRX " .. tostring(ivsx) .. "\n" .. [[
@@ -257,17 +243,20 @@ local function MakeBloomShaders()
 
 
 
-
-
-    brightShader = glCreateShader({
-        fragment = [[
+	brightShaderFragment = [[
             uniform sampler2D texture0;
+			#ifdef deferredmodel
+				uniform sampler2D modelspectex;
+			#endif
             uniform float illuminationThreshold;
             uniform float fragGlowAmplifier;
 
             void main(void) {
                 vec2 texCoors = vec2(gl_TexCoord[0]);
                 vec3 color = vec3(texture2D(texture0, texCoors));
+				#ifdef deferredmodel
+					color += vec3(texture2D(modelspectex,texCoors));
+				#endif
                 float illum = dot(color, vec3(0.2990, 0.4870, 0.2140)); //adjusted from the real values of  vec3(0.2990, 0.5870, 0.1140)
 				
                 if (illum > illuminationThreshold) {
@@ -276,9 +265,15 @@ local function MakeBloomShaders()
                     gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
                 }
             }
-        ]],
+        ]]
 
-        uniformInt = {texture0 = 0},
+	if hasdeferredmodelrendering then
+		brightShaderFragment = '#define deferredmodel\n'..brightShaderFragment
+	end
+    brightShader = glCreateShader({
+        fragment =  brightShaderFragment,
+
+        uniformInt = {texture0 = 0, modelspectex = 1},
         uniformFloat = {illuminationThreshold, fragGlowAmplifier} --, inverseRX, inverseRY}
     })
 
@@ -289,7 +284,9 @@ local function MakeBloomShaders()
 
 
     brightShaderText0Loc = glGetUniformLocation(brightShader, "texture0")
-	
+    if hasdeferredmodelrendering then
+		brightShaderText1Loc = glGetUniformLocation(brightShader, "modelspectex")
+	end
     brightShaderIllumLoc = glGetUniformLocation(brightShader, "illuminationThreshold")
     brightShaderFragLoc = glGetUniformLocation(brightShader, "fragGlowAmplifier")
 
@@ -351,7 +348,7 @@ function widget:Initialize()
         return
     end
 
-	
+	hasdeferredmodelrendering = Spring.GetConfigString("AllowDeferredModelRendering")=='1')
     AddChatActions()
 	MakeBloomShaders()
 
@@ -408,12 +405,15 @@ local function Bloom()
  
     glUseShader(brightShader)
         glUniformInt(brightShaderText0Loc, 0)
+		if hasdeferredmodelrendering then  glUniformInt(brightShaderText1Loc, 1) end
         glUniform(   brightShaderIllumLoc, illumThreshold)
         glUniform(   brightShaderFragLoc, glowAmplifier)
 		
-        glTexture(screenTexture)
+        glTexture(0,screenTexture)
+		if hasdeferredmodelrendering then glTexture(1,"$model_gbuffer_spectex") end
         glRenderToTexture(brightTexture1, gl.TexRect, -1,1,1,-1)
-        glTexture(false)
+        glTexture(0, false)
+        if hasdeferredmodelrendering then glTexture(0, false) end
     glUseShader(0)
 
 

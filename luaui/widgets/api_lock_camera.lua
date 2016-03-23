@@ -86,6 +86,8 @@ function widget:Initialize()
     Camera = WG.Camera
     if not Camera then
         Spring.Echo("Error: api_lock_camera could not find api_camera_transitions")
+        widgetHandler:RemoveWidget()
+        return
     end
 end
 

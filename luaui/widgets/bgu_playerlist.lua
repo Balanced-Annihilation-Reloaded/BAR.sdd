@@ -129,7 +129,7 @@ function WatchCamera()
     if WG.LockCamera then
         WG.LockCamera(iPanelpID)
     else
-        Spring.Echo("Lock Camera widget is not enabled!")
+        Spring.Echo("Warning: Lock Camera widget not found!")
     end
 
     iPanel:Hide()

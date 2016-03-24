@@ -185,6 +185,7 @@ local function _CompileMaterialShaders(rendering)
           shadowmatrixloc = gl.GetUniformLocation(GLSLshader, "shadowMatrix"),
           shadowparamsloc = gl.GetUniformLocation(GLSLshader, "shadowParams"),
           sunposloc       = gl.GetUniformLocation(GLSLshader, "sunPos"),
+		  simframeloc     = gl.GetUniformLocation(GLSLshader, "simFrame"),
         }
         end
     end
@@ -204,6 +205,7 @@ local function _CompileMaterialShaders(rendering)
           shadowmatrixloc = gl.GetUniformLocation(GLSLshader, "shadowMatrix"),
           shadowparamsloc = gl.GetUniformLocation(GLSLshader, "shadowParams"),
           sunposloc       = gl.GetUniformLocation(GLSLshader, "sunPos"),
+		  simframeloc     = gl.GetUniformLocation(GLSLshader, "simFrame"),
         }
       end
     end

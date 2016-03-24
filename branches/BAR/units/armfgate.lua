@@ -40,6 +40,8 @@ return {
 		workertime = 0,
 		customparams = {
 			faction = "arm",
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

@@ -42,7 +42,9 @@ return {
 		waterline = 0,
 		workertime = 0,
 		customparams = {
-			faction = "core",
+			faction = "core",			
+			normalmaps = "yes",
+			normaltex = "unittextures/Arm_normals.dds",
 		},
 		featuredefs = {
 			dead = {

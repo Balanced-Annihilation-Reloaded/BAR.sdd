@@ -45,7 +45,8 @@ local spGetFeatureDefID         = Spring.GetFeatureDefID
 local spGetFeatureResources     = Spring.GetFeatureResources
 local spGetFeatureHealth        = Spring.GetFeatureHealth
 local spGetFeatureTeam          = Spring.GetFeatureTeam
-local spGetFeatureResurrect      = Spring.GetFeatureResurrect
+local spGetFeatureResurrect     = Spring.GetFeatureResurrect
+local spValidFeatureID          = Spring.ValidFeatureID
 
 local floor = math.floor
 local max = math.max
@@ -799,6 +800,8 @@ end
 
 function updateFeatureInfo()
     local fID = curTip.featureID
+    if not spValidFeatureID(fID) then return end
+    
     local rMetal, mMetal, rEnergy, mEnergy, reclaimLeft = spGetFeatureResources(fID) -- remaining, max
     local fDID = spGetFeatureDefID(fID)
     local curHealth, maxHealth, rezProg = spGetFeatureHealth(fID)
@@ -915,7 +918,7 @@ local function ChooseCurTip()
     
     -- choose tip type
     if focusDefID then
-        -- info about a unit we are thinking to build
+        -- focus info about a unit we are thinking to build
         curTip.type = "focusDefID"
         curTip.focusDefID = focusDefID
         if not UnitDefs[curTip.focusDefID] then --DEBUG
@@ -923,6 +926,7 @@ local function ChooseCurTip()
             Spring.Echo(focusDefID)
         end --
     elseif sortedSelUnits["n"] == 1 and preferFocus then
+        -- focus info about units of a single unitDefID 
         curTip.type = "focusDefID"
         curTip.focusDefID = Spring.GetUnitDefID(selUnits[1])  
         if not UnitDefs[curTip.focusDefID] then --DEBUG
@@ -930,16 +934,17 @@ local function ChooseCurTip()
             Spring.Echo(Spring.GetUnitDefID(selUnits[1]))
         end --
     elseif sortedSelUnits["n"] == 1 then
-        -- info about units of a single unitDefID )
+        -- info about selected units of a single unitDefID 
         curTip.type = "unitDefID"
         curTip.selDefID = Spring.GetUnitDefID(selUnits[1])  
     elseif sortedSelUnits["n"] <= 6 and sortedSelUnits["n"] > 1 then 
-        -- info about multiple unitDefIDs, but few enough that we can display a small pic for each
+        -- info about selected units of multiple unitDefIDs, but few enough that we can display a small pic for each
         curTip.type = "unitDefPics"
     elseif sortedSelUnits["n"] > 6 then
-        -- so many units that we just give basic info
+        -- info about so many selected units that we just give basic info
         curTip.type = "basicUnitInfo"
     elseif mouseOverUnitID and preferFocus then
+        -- focus info about a single mouse over unit
         curTip.type = "focusDefID"
         curTip.focusDefID = mouseOverUnitDefID     
         if not UnitDefs[curTip.focusDefID] then --DEBUG
@@ -948,10 +953,12 @@ local function ChooseCurTip()
         end --
         curTip.selUnits = {[1]=mouseOverUnitID}
     elseif mouseOverUnitID and mouseOverUnitDefID then
+        -- info about a single mouse over unit
         curTip.type = "unitDefID"
         curTip.selDefID = mouseOverUnitDefID
         curTip.selUnits = {[1]=mouseOverUnitID}
     elseif mouseOverFeatureID and mouseOverFeatureDefID then
+        -- info about a single mouse over feature
         curTip.type = "feature"
         curTip.featureID = mouseOverFeatureID
         curTip.featureDefID = mouseOverFeatureDefID    
@@ -1113,7 +1120,7 @@ function widget:CommandsChanged()
 end
 
 function widget:Update()
-    -- check if focus unit for build command has changed
+    -- check if focus unitDefID provided by widget has changed
     local _,cmdID,_ = spGetActiveCommand()
     local newFocusDefID
     if cmdID and cmdID<0 then

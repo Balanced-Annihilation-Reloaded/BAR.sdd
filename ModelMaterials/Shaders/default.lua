@@ -76,7 +76,8 @@ vertex = [[
 		#endif
 		
 		#ifdef flashlights
-			selfIllumMod = max(0.0,sin(simFrame *0.063));
+			//float unique_value = sin((gl_ModelViewMatrix[3][0]+gl_ModelViewMatrix[3][2])));
+			selfIllumMod = max(-0.2,sin(simFrame *0.063 + (gl_ModelViewMatrix[3][0]+gl_ModelViewMatrix[3][2])*0.1))+0.2;
 		#endif
 		//float fogCoord = length(gl_Position.xyz); // maybe fog should be readded?
 		//fogFactor = (gl_Fog.end - fogCoord) * gl_Fog.scale; //gl_Fog.scale := 1.0 / (gl_Fog.end - gl_Fog.start)

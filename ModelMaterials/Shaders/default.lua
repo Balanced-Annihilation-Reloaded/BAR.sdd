@@ -42,7 +42,7 @@ vertex = [[
 	{
 		vec4 vertex = gl_Vertex;
 		vec3 normal = gl_Normal;
-		vertex.y += 10*sin(simFrame*0.05);
+		
 		%%VERTEX_PRE_TRANSFORM%%
 
 		#ifdef use_normalmapping
@@ -76,7 +76,7 @@ vertex = [[
 		#endif
 		
 		#ifdef flashlights
-			selfIllumMod = max(0.0,sin(simFrame *0.033));
+			selfIllumMod = max(0.0,sin(simFrame *0.063));
 		#endif
 		//float fogCoord = length(gl_Position.xyz); // maybe fog should be readded?
 		//fogFactor = (gl_Fog.end - fogCoord) * gl_Fog.scale; //gl_Fog.scale := 1.0 / (gl_Fog.end - gl_Fog.start)

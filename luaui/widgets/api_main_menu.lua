@@ -239,15 +239,10 @@ function ApplyMaximalGraphicsSettings()
     ApplyGraphicsSettings(MaximalGraphicsSettings)
 end
 
-local ForcedSettings = {
-    -- matching springsettings.cfg format
-    ['DynamicSun'] = 0, -- https://springrts.com/mantis/view.php?id=2855 et al
-}
-
 function ApplyForcedSettings()
-    for setting,value in pairs(ForcedSettings) do
-        spSendCommands(setting .. ' ' .. value)
-    end
+    -- it would be better if we didn't have to do any of this
+    spSendCommands('dynamicsun 0') -- doesn't match baked shadows, or CUS shadows, etc etc
+    Spring.SetConfigString('MaxLuaGarbageCollectionTime', '1.5') -- Havin' all that room, seein' as how they took out all the pews, they decided that they didn't have to take out their garbage for a long time.
 end
 
 ----------------------------
@@ -998,6 +993,7 @@ local function CreateGeneralTab()
     SetInfoChild{iPanel = introText, caption = 'Introduction'}
 end
 
+
 local function CreateInterfaceTab()
     -- Interface --
     local vsx,vsy = Spring.GetViewGeometry()
@@ -1010,6 +1006,23 @@ local function CreateInterfaceTab()
                 Spring.SetConfigInt('Fullscreen',value)
             end} 
     }
+    
+    --[[
+    local function GetCameraMode()
+        local cs = Spring.GetCameraState()
+        return cs.mode
+    end
+    local camModeToSelected = {[1]=1, [2]=2, [0]=3, [3]=4, [4]=5}
+    local selToCamShortName = {[1]='ta',[2]='spring',[3]='fps',[4]='rot',[5]='free'}
+    cameraStateComboBox = Chili.ComboBox:New{x='40%',y=32,width='60%',
+        items    = {"overhead", "spring", "fps", "rotatable", "free"},
+        selected = camModeToSelected[GetCameraMode()], 
+        OnSelect = {
+            function(self,sel)
+                Spring.SendCommands('view'..selToCamShortName[sel])
+            end
+        }
+    }]]
                     
     tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
         children = {
@@ -1160,9 +1173,9 @@ local function CreateGraphicsTab()
                                 options={2048,4096,8192},},
                             slider{name='UnitLodDist',title='Unit Draw Distance', max = 1000, step = 1},
                             slider{name='UnitIconDist',title='Unit Icon Distance', max = 1000, step = 1},
-                            slider{name='MaxParticles',title='Max Particles', max = 5000},
-                            slider{name='MaxNanoParticles',title='Max Nano Particles', max = 5000},
-                            slider{name='GroundDetail',title='Ground Detail*', max = 200, step = 1},
+                            slider{name='MaxParticles',title='Max Particles', max = 5000, step = 1},
+                            slider{name='MaxNanoParticles',title='Max Nano Particles', max = 5000, step = 1},
+                            slider{name='GroundDetail',title='Ground Detail*', max = 200, min = 50, step = 1},
                         }
                     },
                     addStack{x = '50%', y = '3%', name = 'EngineSettingsCheckBoxes', children = {

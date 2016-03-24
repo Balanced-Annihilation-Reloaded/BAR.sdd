@@ -947,17 +947,18 @@ local airFacs = { --unitDefs can't tell us this
 
 local function CreateUnitButton(name, unitDef)  
     -- make the button for this unit
-    local uDID = unitDef.id
-    unitButtons[uDID] = Chili.Button:New{
+    local unitDefID = unitDef.id
+    unitButtons[unitDefID] = Chili.Button:New{
         name      = "button_" .. name,
-        cmdId     = -uDID,
+        cmdId     = -unitDefID,
+        unitDefID = unitDefID,
         tooltip   = nil,
         caption   = '',
         disabled  = false,
         padding   = {0,0,0,0},
         margin    = {0,0,0,0},
         OnMouseUp = {cmdAction},
-        OnMouseOver = {function() WG.sMenu.mouseOverUnitDefID = unitDef.id end},
+        OnMouseOver = {function(self) WG.sMenu.mouseOverUnitDefID = self.unitDefID end},
         OnMouseOut   = {function() WG.sMenu.mouseOverUnitDefID = nil end}, 
         backgroundColor = buttonColour,
         children  = {
@@ -1013,7 +1014,7 @@ local function CreateUnitButton(name, unitDef)
     for _,icon in ipairs(extraIcons) do
         if icon.used then
             Chili.Image:New{
-                parent = unitButtons[uDID].children[1].children[3],
+                parent = unitButtons[unitDefID].children[1].children[3],
                 x = 10, bottom = y,
                 height = 15, width = 15,
                 file   = imageDir..icon.image,

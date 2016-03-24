@@ -540,7 +540,7 @@ function UpdateSelectedUnitAlpha(t, unitID)
     local dt = curTime-t.selectedChangeTime
     if t.selected and dt < fadeTime then
         -- fade in
-        return max(t.alpha, dt/fadeTime)
+        return max(t.alpha, dt/(fadeTime/3))
     elseif t.selected then
         -- on
         return 1.0

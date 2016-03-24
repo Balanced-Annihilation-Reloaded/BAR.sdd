@@ -1,17 +1,17 @@
 -- $Id$
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-local etcLocIDs = {[0] = -2, [1] = -2}
+local windLocIDs = {[0] = -2, [1] = -2}
 
 local function DrawFeature(featureID, material, drawMode) -- UNUSED!
   local etcLocIdx = (drawMode == 5) and 1 or 0
   local curShader = (drawMode == 5) and material.deferredShader or material.standardShader
 
-  if etcLocIDs[etcLocIdx] == -2 then
-    etcLocIDs[etcLocIdx] = gl.GetUniformLocation(curShader, "etcLoc")
+  if windLocIDs[etcLocIdx] == -2 then
+    windLocIDs[etcLocIdx] = gl.GetUniformLocation(curShader, "wind")
   end
-  
-  gl.Uniform(etcLocIDs[etcLocIdx], Spring.GetGameFrame(), 0.0, 0.0)
+  local wx, wy, wz = Spring.GetWind()
+  gl.Uniform(windLocIDs[etcLocIdx], wx, wy, wz)
   return false
 end
 
@@ -29,26 +29,52 @@ local materials = {
 		},
 		shaderPlugins = {
 			VERTEX_GLOBAL_NAMESPACE = [[
-				
+				vec2 getWind(int period) {
+					vec2 wind;
+					wind.x = sin(period * 5.0);
+					wind.y = cos(period * 5.0);
+					return wind * 5.0f;
+				}
 			]],
 			VERTEX_PRE_TRANSFORM = [[
-				//The unique value is generated from the object's X and Z pos in the world.
-				//For static objects, like map features, they are usually placed on grids divisible by 8
-				// unique_value range is [0,1)
-				float unique_value = fract(1.234567*(gl_ModelViewMatrix[3][0]+gl_ModelViewMatrix[3][2]));
-				float timer = 0.05 * sin( unique_value + simFrame * ((1+unique_value)*0.07));
+				// adapted from 0ad's model_common.vs
 
-				float factor=sin((vertex.x+vertex.y+vertex.z)*0.1+simFrame*0.02)*0.4;
-				float factor2=cos((vertex.x+vertex.y+vertex.z)*0.1+simFrame*0.03)*0.4;
-				float distancefromtrunk=(abs(vertex.x)+abs(vertex.z))/10;
-				
-				vertex.x+=vertex.y*timer/20;
-				vertex.z-=vertex.y*timer/20;
-				
-				//vertex.y+=distancefromtrunk*factor;
-				//vertex.z+=distancefromtrunk*factor;
-				//vertex.x+=distancefromtrunk*factor2;
-				
+				vec2 curWind = getWind(simFrame / 750);
+				vec2 nextWind = getWind(simFrame / 750 + 1);
+				float tweenFactor = smoothstep(0.0f, 1.0f, max(simFrame % 750 - 600, 0) / 150.0f);
+				vec2 wind = mix(curWind, nextWind, tweenFactor);
+
+
+
+
+				// fractional part of model position, clamped to >.4
+				vec4 modelPos = gl_ModelViewMatrix[3];
+				modelPos = fract(modelPos);
+				modelPos = clamp(modelPos, 0.4, 1.0);
+
+				// crude measure of wind intensity
+				float abswind = abs(wind.x) + abs(wind.y);
+
+				vec4 cosVec;
+				float simTime = 0.01 * simFrame;
+				// these determine the speed of the wind's "cosine" waves.
+				cosVec.w = 0.0;
+				cosVec.x = simTime * modelPos[0] + vertex.x;
+				cosVec.y = simTime * modelPos[2] / 3.0 + modelPos.x;
+				cosVec.z = simTime * 1.0 + vertex.z;
+
+				// calculate "cosines" in parallel, using a smoothed triangle wave
+				vec4 tri = abs(fract(cosVec + 0.5) * 2.0 - 1.0);
+				cosVec = tri * tri *(3.0 - 2.0 * tri);
+
+				float limit = clamp((vertex.x * vertex.z * vertex.y) / 3000.0, 0.0, 0.2);
+
+				float diff = cosVec.x * limit;
+				float diff2 = cosVec.y * clamp(vertex.y / 30.0, 0.05, 0.2);
+
+				vertex.xyz += cosVec.z * limit * clamp(abswind, 1.2, 1.7);
+
+				vertex.xz += diff + diff2 * wind;
 			]],
 			FRAGMENT_POST_SHADING = [[
 				//gl_FragColor.r=1.0;
@@ -80,7 +106,7 @@ local tex1_to_normaltex = {}
 -- All feature defs that contain the string "aleppo" will be affected by it
 for id, featureDef in pairs(FeatureDefs) do
 	Spring.PreloadFeatureDefModel(id)
-	for _,stub in ipairs (featureNameStubs) do 
+	for _,stub in ipairs (featureNameStubs) do
 		if featureDef.model.textures and featureDef.model.textures.tex1 and featureDef.name:find(stub) and featureDef.name:find(stub) == 1 then --also starts with
 			--if featureDef.customParam.normaltex then
 				Spring.Echo('Feature',featureDef.name,'seems like a nice tree, assigning the default normal texture to it.')
@@ -93,9 +119,9 @@ for id, featureDef in pairs(FeatureDefs) do
 			--TODO: dont forget the feature normals!
 			--TODO: actually generate normals for all these old-ass features, and include them in BAR
 			--TODO: add a blank normal map to avoid major fuckups.
-			--Todo, grab the texture1 names for features in tex1_to_normaltex assignments, 
+			--Todo, grab the texture1 names for features in tex1_to_normaltex assignments,
 			--and hope that I dont have to actually load the models to do so
-			
+
 		end
 	end
 end

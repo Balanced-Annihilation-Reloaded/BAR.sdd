@@ -8,22 +8,16 @@ local materials = {
 		shader    = include("ModelMaterials/Shaders/default.lua"),
 		deferred  = include("ModelMaterials/Shaders/default.lua"),
 		shaderDefinitions = {
-			-- "#define use_perspective_correct_shadows",
 			"#define use_normalmapping",
-			--"#define flip_normalmap",
 			"#define deferred_mode 0",
 			--"#define use_vertex_ao",
 			"#define SPECULARMULT 6.0",
-			-- "#define use_shadows", --api_custom_unit_shaders supplies this
 		},
 		deferredDefinitions = {
-			--"#define use_perspective_correct_shadows",
-			--"#define use_normalmapping",
-			--"#define flip_normalmap",
+			--"#define use_normalmapping", --actively disable normalmapping, it can be pricey, and is only shown for deferred lights...
 			"#define deferred_mode 1",
 			--"#define use_vertex_ao",
 			"#define SPECULARMULT 6.0",
-			-- "#define use_shadows", --api_custom_unit_shaders supplies this
 		},
 		force     = false, --// always use the shader even when normalmapping is disabled
 		usecamera = false,

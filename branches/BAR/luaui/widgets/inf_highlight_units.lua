@@ -59,6 +59,7 @@ local lineWidth
 local guiHidden 
 local visibleUnits = {}
 local n_visibleUnits
+local shader = nil
 
 
 -- option & defaults
@@ -458,7 +459,9 @@ function DeletePlatterLists()
 end
 
 function CreateXRayShader()
-    --gl.DeleteShader(shader)
+    if shader ~= nil then 
+		--gl.DeleteShader(shader)
+	end
     
     shader = gl.CreateShader({
 

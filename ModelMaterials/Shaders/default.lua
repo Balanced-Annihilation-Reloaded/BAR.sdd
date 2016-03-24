@@ -11,13 +11,18 @@ vertex = [[
 	uniform vec3 sunDiffuse;
 	uniform vec3 sunAmbient;
 	uniform vec3 etcLoc;
+	uniform int simFrame;
+	#ifdef flashlights
+		varying float selfIllumMod;
+	#endif
 	//uniform float frameLoc;
 	
 	#ifdef use_treadoffset
 		uniform float treadOffset;
 	#endif
 	
-	#ifdef use_shadows
+	//The api_custom_unit_shaders supplies this definition:
+	#ifdef use_shadows  
 		uniform mat4 shadowMatrix;
 		uniform vec4 shadowParams;
 	#endif
@@ -37,7 +42,7 @@ vertex = [[
 	{
 		vec4 vertex = gl_Vertex;
 		vec3 normal = gl_Normal;
-
+		vertex.y += 10*sin(simFrame*0.05);
 		%%VERTEX_PRE_TRANSFORM%%
 
 		#ifdef use_normalmapping
@@ -69,7 +74,10 @@ vertex = [[
 		#ifndef use_treadoffset
 			gl_TexCoord[0].st = gl_MultiTexCoord0.st;
 		#endif
-
+		
+		#ifdef flashlights
+			selfIllumMod = max(0.0,sin(simFrame *0.033));
+		#endif
 		//float fogCoord = length(gl_Position.xyz); // maybe fog should be readded?
 		//fogFactor = (gl_Fog.end - fogCoord) * gl_Fog.scale; //gl_Fog.scale := 1.0 / (gl_Fog.end - gl_Fog.start)
 		//fogFactor = clamp(fogFactor, 0.0, 1.0);
@@ -108,7 +116,11 @@ vertex = [[
 	uniform vec4 teamColor;
 	varying vec3 cameraDir;
 	//varying float fogFactor;
-
+	
+	#ifdef flashlights
+		varying float selfIllumMod;
+	#endif
+	
 	#ifdef use_normalmapping
 		varying mat3 tbnMatrix;
 		uniform sampler2D normalMap;
@@ -160,6 +172,9 @@ vertex = [[
 		specular *= shadow;
 
 		reflection  = mix(light, reflection, extraColor.g); // reflection
+		#ifdef flashlights
+			extraColor.r =extraColor.r * selfIllumMod;
+		#endif
 		reflection += (extraColor.rrr); // self-illum
 
 		outColor.rgb = mix(outColor.rgb, teamColor.rgb, outColor.a);

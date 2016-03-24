@@ -3,7 +3,7 @@
 --------------------------------------------------------------------------------
 local etcLocIDs = {[0] = -2, [1] = -2}
 
-local function DrawFeature(featureID, material, drawMode)
+local function DrawFeature(featureID, material, drawMode) -- UNUSED!
   local etcLocIdx = (drawMode == 5) and 1 or 0
   local curShader = (drawMode == 5) and material.deferredShader or material.standardShader
 
@@ -20,32 +20,26 @@ local materials = {
 		shader    = include("ModelMaterials/Shaders/default.lua"),
 		deferred  = include("ModelMaterials/Shaders/default.lua"),
 		shaderDefinitions = {
-			-- "#define use_perspective_correct_shadows",
 			"#define use_normalmapping",
-			--"#define flip_normalmap",
 			"#define deferred_mode 0",
-			--"#define use_shadows", --api_custom_unit_shaders supplies this
 		},
 		deferredDefinitions = {
-			--"#define use_perspective_correct_shadows",
-			--"#define use_normalmapping",
-			--"#define flip_normalmap",
+			--"#define use_normalmapping", --very expensive for trees (too much overdraw)
 			"#define deferred_mode 1",
-			--"#define use_shadows", --api_custom_unit_shaders supplies this
 		},
 		shaderPlugins = {
 			VERTEX_GLOBAL_NAMESPACE = [[
-				//uniform vec3 etcLoc;
+				
 			]],
 			VERTEX_PRE_TRANSFORM = [[
 				//The unique value is generated from the object's X and Z pos in the world.
 				//For static objects, like map features, they are usually placed on grids divisible by 8
 				// unique_value range is [0,1)
 				float unique_value = fract(1.234567*(gl_ModelViewMatrix[3][0]+gl_ModelViewMatrix[3][2]));
-				float timer = 0.05 * sin( unique_value + etcLoc.r * ((1+unique_value)*0.07));
+				float timer = 0.05 * sin( unique_value + simFrame * ((1+unique_value)*0.07));
 
-				float factor=sin((vertex.x+vertex.y+vertex.z)*0.1+etcLoc.r*0.02)*0.4;
-				float factor2=cos((vertex.x+vertex.y+vertex.z)*0.1+etcLoc.r*0.03)*0.4;
+				float factor=sin((vertex.x+vertex.y+vertex.z)*0.1+simFrame*0.02)*0.4;
+				float factor2=cos((vertex.x+vertex.y+vertex.z)*0.1+simFrame*0.03)*0.4;
 				float distancefromtrunk=(abs(vertex.x)+abs(vertex.z))/10;
 				
 				vertex.x+=vertex.y*timer/20;
@@ -72,7 +66,7 @@ local materials = {
 			[4] = '$reflection',
 			[5] = '%NORMALTEX',
 		},
-		DrawFeature = DrawFeature,
+		--DrawFeature = DrawFeature,
 	},
 }
 

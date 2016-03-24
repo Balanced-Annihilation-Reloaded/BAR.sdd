@@ -461,6 +461,7 @@ end
 function CreateXRayShader()
     if shader then 
         gl.DeleteShader(shader)
+        shader = nil
     end
     
     shader = gl.CreateShader({

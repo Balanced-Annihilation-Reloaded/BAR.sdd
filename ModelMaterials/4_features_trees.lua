@@ -33,7 +33,7 @@ local materials = {
 					vec2 wind;
 					wind.x = sin(period * 5.0);
 					wind.y = cos(period * 5.0);
-					return wind * 5.0f;
+					return wind * 10.0f;
 				}
 			]],
 			VERTEX_PRE_TRANSFORM = [[
@@ -56,7 +56,7 @@ local materials = {
 				float abswind = abs(wind.x) + abs(wind.y);
 
 				vec4 cosVec;
-				float simTime = 0.01 * simFrame;
+				float simTime = 0.02 * simFrame;
 				// these determine the speed of the wind's "cosine" waves.
 				cosVec.w = 0.0;
 				cosVec.x = simTime * modelPos[0] + vertex.x;

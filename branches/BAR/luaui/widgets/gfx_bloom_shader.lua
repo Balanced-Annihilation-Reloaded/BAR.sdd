@@ -158,6 +158,7 @@ local function MakeBloomShaders()
                 vec4 b = texture2D(texture1, gl_TexCoord[0].st);
 
                 if (!debugDraw) {
+                    //gl_FragColor = a+b;
                     gl_FragColor = mix(a, a + b, clamp(2.0-(a.r+a.g+a.b),0.0,1.0) ); //todo: redo this blending function, to avoid a bit of overbrightness
                 } else {
                     gl_FragColor = b;
@@ -308,7 +309,7 @@ function widget:ViewResize(viewSizeX, viewSizeY)
       qvsx,qvsy = math.floor(vsx/quality), math.floor(vsy/quality)
     glDeleteTexture(brightTexture1 or "")
     glDeleteTexture(brightTexture2 or "")
-    glDeleteTexture(screenTexture or "")
+    -- glDeleteTexture(screenTexture or "")
 
     brightTexture1 = glCreateTexture(qvsx, qvsy, {
         fbo = true, 
@@ -322,14 +323,14 @@ function widget:ViewResize(viewSizeX, viewSizeY)
         wrap_s = GL.CLAMP, wrap_t = GL.CLAMP,
     })
 
-    screenTexture = glCreateTexture(vsx, vsy, {
-        min_filter = GL.LINEAR, mag_filter = GL.LINEAR, --because we are gonna cheat a bit and use linear sampling gaussian blur
-    })
+    -- screenTexture = glCreateTexture(vsx, vsy, {
+        -- min_filter = GL.LINEAR, mag_filter = GL.LINEAR, --because we are gonna cheat a bit and use linear sampling gaussian blur
+    -- })
 
-    if (brightTexture1 == nil or brightTexture2 == nil or screenTexture == nil) then
+    if (brightTexture1 == nil or brightTexture2 == nil ) then
         if (brightTexture1 == nil ) then Spring.Echo('brightTexture1 == nil ') end
         if (brightTexture2 == nil ) then Spring.Echo('brightTexture2 == nil ') end
-        if (screenTexture == nil ) then Spring.Echo('screenTexture == nil ') end
+        -- if (screenTexture == nil ) then Spring.Echo('screenTexture == nil ') end
         RemoveMe("[BloomShader::ViewResize] removing widget, bad texture target")
         return
     end
@@ -348,7 +349,7 @@ function widget:Initialize()
         return
     end
 
-	hasdeferredmodelrendering = Spring.GetConfigString("AllowDeferredModelRendering")=='1')
+	hasdeferredmodelrendering = (Spring.GetConfigString("AllowDeferredModelRendering")=='1')
     AddChatActions()
 	MakeBloomShaders()
 
@@ -359,7 +360,7 @@ function widget:Shutdown()
 
     glDeleteTexture(brightTexture1 or "")
     glDeleteTexture(brightTexture2 or "")
-    glDeleteTexture(screenTexture or "")
+    -- glDeleteTexture(screenTexture or "")
 
     if (glDeleteShader) then
         if brightShader ~= nil then glDeleteShader(brightShader or 0) end
@@ -401,16 +402,16 @@ local function Bloom()
     -- end
     gl.Color(1, 1, 1, 1)
 
-    glCopyToTexture(screenTexture, 0, 0, 0, 0, vsx, vsy, nil,0)
+    --glCopyToTexture(screenTexture, 0, 0, 0, 0, vsx, vsy, nil,0)
  
     glUseShader(brightShader)
         glUniformInt(brightShaderText0Loc, 0)
 		if hasdeferredmodelrendering then  glUniformInt(brightShaderText1Loc, 1) end
         glUniform(   brightShaderIllumLoc, illumThreshold)
         glUniform(   brightShaderFragLoc, glowAmplifier)
-		
-        glTexture(0,screenTexture)
-		if hasdeferredmodelrendering then glTexture(1,"$model_gbuffer_spectex") end
+		api_screenTexture = WG['screencopy_manager'].GetScreenCopy('bloom')
+        glTexture(0,api_screenTexture)
+		if hasdeferredmodelrendering then glTexture(1,"$model_gbuffer_emittex") end
         glRenderToTexture(brightTexture1, gl.TexRect, -1,1,1,-1)
         glTexture(0, false)
         if hasdeferredmodelrendering then glTexture(0, false) end
@@ -444,7 +445,7 @@ local function Bloom()
         glUniformInt(combineShaderTexture0Loc, 0)
         glUniformInt(combineShaderTexture1Loc, 1)
 		
-        glTexture(0, screenTexture)
+        glTexture(0, api_screenTexture)
         gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1)
 		
         glTexture(0, false)

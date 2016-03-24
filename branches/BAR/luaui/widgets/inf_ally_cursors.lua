@@ -1,12 +1,3 @@
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
---
---	Copyright (C) 2007.
---	Licensed under the terms of the GNU GPL, v2 or later.
---
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
 function widget:GetInfo()
     return {
         name	= "Ally Cursors",
@@ -232,7 +223,6 @@ end
 function createCursorDrawList(playerID, opacityMultiplier)
     local name,_,spec,teamID = spGetPlayerInfo(playerID)
     local r, g, b = spGetTeamColor(teamID)
-    local wx,gy,wz = 0,0,0
     local quadSize = usedCursorSize
     if spec then
         quadSize = usedCursorSize * 0.77
@@ -243,19 +233,17 @@ function createCursorDrawList(playerID, opacityMultiplier)
     if not spec  and not showPlayerName    or    spec  and  not showSpectatorName  then
         --draw a cursor
         gl.Texture(allyCursor)
-        gl.BeginEnd(GL.QUADS,DrawGroundquad,wx,gy,wz,quadSize)
+        gl.BeginEnd(GL.QUADS,DrawGroundquad,0,0,0,quadSize)
         gl.Texture(false)
     else
         if not spec then
             --draw a cursor
             gl.Texture(allyCursor)
-            gl.BeginEnd(GL.QUADS,DrawGroundquad,wx,gy,wz,quadSize)
+            gl.BeginEnd(GL.QUADS,DrawGroundquad,0,0,0,quadSize)
             gl.Texture(false)
         end
         
         --draw the nickname
-        gl.PushMatrix()
-        gl.Translate(wx, gy, wz)
         gl.Billboard()
         
         if spec then
@@ -272,7 +260,6 @@ function createCursorDrawList(playerID, opacityMultiplier)
             gl.Color(r,g,b,fontOpacityPlayer*opacityMultiplier)
             gl.Text(name, horizontalOffset, verticalOffset, fontSizePlayer, "n")
         end
-        gl.PopMatrix()
     end
                 
 end

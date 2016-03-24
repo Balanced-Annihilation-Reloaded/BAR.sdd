@@ -57,6 +57,7 @@ local function CreateFacButton(unitID, unitDefID) --fixme, facsPos need to be un
     -- add the button for this factory
     local facButton = Chili.Button:New{
             caption = "",
+            unitDefID = unitDefID,
             width = options.buttonSize*1.2,
             height = options.buttonSize*1.0,
             tooltip =             'Click - '             .. GreenStr .. 'Select factory / Build unit \n'                     
@@ -81,7 +82,7 @@ local function CreateFacButton(unitID, unitDefID) --fixme, facsPos need to be un
                 end
             },
             OnMouseOver = {
-                function() WG.FacBar.mouseOverUnitDefID = unitDefID end
+                function(self) WG.FacBar.mouseOverUnitDefID = self.unitDefID end
             },
             OnMouseOut = {
                 function() WG.FacBar.mouseOverUnitDefID = nil end            
@@ -153,7 +154,8 @@ local function CreateBuildButton(unitDefID, facID)
   
     return
         Chili.Button:New{
-            name = unitDefID,
+            name = "unitbutton_"..facID.."_"..unitDefID,
+            unitDefID = unitDefID,
             x=0,
             caption="",
             width = options.buttonSize,
@@ -182,7 +184,7 @@ local function CreateBuildButton(unitDefID, facID)
                 end
             },
             OnMouseOver = {
-                function() WG.FacBar.mouseOverUnitDefID = unitDefID end
+                function(self) WG.FacBar.mouseOverUnitDefID = self.unitDefID end
             },
             OnMouseOut = {
                 function() WG.FacBar.mouseOverUnitDefID = nil end            

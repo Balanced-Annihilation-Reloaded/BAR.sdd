@@ -61,7 +61,7 @@ Stop()
 	move barrel to z-axis [-3.198242] speed [19.989014];
 	wait-for-move barrel along x-axis;
 	wait-for-move bore along y-axis;
-	move top to y-axis [-4.797363] speed [19.989014];
+	move top to y-axis [-4.67363] speed [19.989014];
 	wait-for-move top along y-axis;
 }
 

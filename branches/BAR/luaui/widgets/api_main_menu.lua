@@ -108,8 +108,8 @@ local DefaultSettings = {
         ['searchWidgetDesc']   = true,
         ['searchWidgetAuth']   = true,
         ['searchWidgetName']   = true,
-        ['showWidgetDescs'] = true,
-        ['showWidgetAuthors'] =  false,
+        ['showWidgetDescs']    = true,
+        ['showWidgetAuthors']  = false,
         ['widgetSelectorMode'] = "normal",
         ['expandedWidgetOptions'] = {},
         ['mainMenuSize'] = {x=400,y=200,width=750,height=550},
@@ -147,7 +147,7 @@ local MaximalGraphicsSettings = {
 
 function FetchDefaultSetting(name)
     for cat, settingsTable in pairs(DefaultSettings) do
-        if settingsTable[name] then return 
+        if settingsTable[name]~=nil then return 
             settingsTable[name], cat 
         end 
     end

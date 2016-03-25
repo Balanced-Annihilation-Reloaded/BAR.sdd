@@ -1141,7 +1141,9 @@ function widget:Update()
     elseif WG.FacBar and WG.FacBar.mouseOverUnitDefID then
         newFocusDefID = WG.FacBar.mouseOverUnitDefID 
     elseif cmdID and cmdID<0 then
-        newFocusDefID = -cmdID        newFocusDefID = nil
+        newFocusDefID = -cmdID  
+    else
+        newFocusDefID = nil
     end    
     if newFocusDefID~= focusDefID then
         focusDefID = newFocusDefID

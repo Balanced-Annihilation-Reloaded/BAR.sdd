@@ -5,7 +5,7 @@ function widget:GetInfo()
     author    = "Bluestone", -- based on the original widget of the same name, by TheFatController
     date      = "",
     license   = "GPL v2 or later",
-    layer     = 0, 
+    layer     = 1, 
     enabled   = true
   }
 end
@@ -18,6 +18,7 @@ local sformat = string.format
 local amISpec
 local amIFullView
 local myAllyTeamID
+local myTeamID
 
 local panels = {}
 local teamPanels = {}
@@ -89,13 +90,7 @@ function UpdateTeamPanel(tID, res)
     a.expense  = a.expense + expense
 end
 
-function widget:GameFrame()
-    needUpdate = needUpdate or CheckMyState()
-    if needUpdate then
-        SetupPanels()
-        needUpdate = false
-    end
-    
+function UpdatePanels(updateText)
     --update stats
     for _,res in ipairs(resources) do
         for _,a in pairs(allyTeamStats) do
@@ -109,12 +104,35 @@ function widget:GameFrame()
             UpdateTeamPanel(tID, res) 
         end    
 
-        for aID,_ in pairs(allyTeamPanels) do
-            UpdateAllyTeamPanel(aID, res)
+        if (updateText) then -- only needed after a slow update
+            for aID,_ in pairs(allyTeamPanels) do
+                UpdateAllyTeamPanel(aID, res)
+            end
         end
     end    
 end
 
+function widget:GameFrame(n)    
+    if needUpdate then return end -- wait until its happened
+
+    local updateText = (n%30==1) 
+    UpdatePanels(updateText)
+end
+
+function widget:Update()
+    local teamID = Spring.GetMyTeamID()
+    if teamID~= myTeamID then
+        myTeamID = teamID
+        needUpdate = true
+    end
+
+    needUpdate = needUpdate or CheckMyState()
+    if needUpdate then
+        SetupPanels()
+        UpdatePanels(true)
+        needUpdate = false
+    end
+end
 -----------------------
 
 function ShareResource(self)
@@ -147,7 +165,7 @@ function ConstructAllyTeamPanel(aID)
         parent = panel,
         x = 0,
         width   = '100%',
-        maxheight = 3,
+        maxheight = 2,
     }    
     end
 
@@ -249,11 +267,11 @@ function ConstructPanels()
     local myAllyTeamID = Spring.GetMyAllyTeamID()    
     local gaiaTeamID = Spring.GetGaiaTeamID()
     
-    local aList = Spring.GetAllyTeamList()
+    local aList = WG.PlayerList and WG.PlayerList.allyTeamList or Spring.GetAllyTeamList() -- use the same order as bgu_player_list, if present
     for _,aID in ipairs(aList) do
         if aID==myAllyTeamID or amISpec then
 
-            local tList = Spring.GetTeamList(aID)
+            local tList = WG.PlayerList and WG.PlayerList.teamLists[aID] or Spring.GetTeamList(aID)
             for _,tID in ipairs(tList) do
                 if tID~=gaiaTeamID then
                     local notMe = amISpec or (tID~=myTeamID)

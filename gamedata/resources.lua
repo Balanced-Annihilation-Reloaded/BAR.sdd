@@ -137,6 +137,7 @@ local resources = {
 			beamrifletip='beamrifletip.tga',
 			smallflare='GPL/smallflare.tga',			
 			dirt='CC/dirt.png',
+			smoke_puff = 'smoke_puff.png',
 			smoke='smoke/smoke00.tga',
 			diamondstar='diamondstar.tga',
 			diamondstar1='diamondstar1.tga',

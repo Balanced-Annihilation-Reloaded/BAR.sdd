@@ -1134,16 +1134,14 @@ function widget:Update()
     -- check if focus unitDefID provided by widget has changed
     local _,cmdID,_ = spGetActiveCommand()
     local newFocusDefID
-    if cmdID and cmdID<0 then
-        newFocusDefID = -cmdID
-    elseif WG.InitialQueue and WG.InitialQueue.selDefID then
+    if WG.InitialQueue and WG.InitialQueue.selDefID then
         newFocusDefID = WG.InitialQueue.selDefID
     elseif WG.sMenu and WG.sMenu.mouseOverUnitDefID then
         newFocusDefID = WG.sMenu.mouseOverUnitDefID 
     elseif WG.FacBar and WG.FacBar.mouseOverUnitDefID then
         newFocusDefID = WG.FacBar.mouseOverUnitDefID 
-    else
-        newFocusDefID = nil
+    elseif cmdID and cmdID<0 then
+        newFocusDefID = -cmdID        newFocusDefID = nil
     end    
     if newFocusDefID~= focusDefID then
         focusDefID = newFocusDefID

@@ -47,6 +47,7 @@ local spGetFeatureHealth        = Spring.GetFeatureHealth
 local spGetFeatureTeam          = Spring.GetFeatureTeam
 local spGetFeatureResurrect     = Spring.GetFeatureResurrect
 local spValidFeatureID          = Spring.ValidFeatureID
+local spGetGameFrame            = Spring.GetGameFrame
 
 local floor = math.floor
 local max = math.max
@@ -265,7 +266,10 @@ function updateUnitGrid()
         healthBars[a]:SetValue(health)
     end
     
-    unitGridWindow:GetChildByName('unitResText'):SetText("Resources:\n" .. ResToolTip(Mmake, Muse, Emake, Euse))
+    local n = spGetGameFrame()
+    if n%30==1 or unitResText.text=='' then
+        unitResText:SetText("Resources:\n" .. ResToolTip(Mmake, Muse, Emake, Euse))
+    end
 end
 
 ----------------------------------
@@ -398,7 +402,9 @@ function updateUnitInfo()
         unitHealth:SetMinMax(0, 1)
         unitHealth:SetValue(0) 
     end
-    if not curTip.selEnemy then
+    
+    local n = spGetGameFrame()
+    if (n%30==1 or unitResText.text=='') and not curTip.selEnemy then --don't do this unless we have too; concats are not free
         unitResText:SetText(ResToolTip(Mmake, Muse, Emake, Euse))
     end
 end
@@ -488,7 +494,9 @@ function updateBasicUnitInfo()
         basicHealth:SetMinMax(0, 1)
         basicHealth:SetValue(0) 
     end
-    if not curTip.selEnemy then
+    
+    local n = spGetGameFrame()
+    if (n%30==1 or basicResText.text=='') and not curTip.selEnemy then --don't do this unless we have too; concats are not free
         basicResText:SetText('Resources:\n' .. ResToolTip(Mmake, Muse, Emake, Euse))
     end
 end
@@ -816,8 +824,11 @@ function updateFeatureInfo()
         featureHealth:SetMinMax(0, 1)
         featureHealth:SetValue(0) 
     end
-    featureResText:SetText(FeatureToolTip(rMetal, mMetal, rEnergy, mEnergy, reclaimLeft, rezProg, rezDefName))
 
+    local n = spGetGameFrame()
+    if n%4==0 or featureResText.text=='' then
+        featureResText:SetText(FeatureToolTip(rMetal, mMetal, rEnergy, mEnergy, reclaimLeft, rezProg, rezDefName))
+    end
 end
     
 ----------------------------------

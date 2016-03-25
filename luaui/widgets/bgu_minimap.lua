@@ -20,19 +20,22 @@ local glGetViewSizes  = gl.GetViewSizes
 
 local buttonColour, panelColour, sliderColour 
 
-local function MakeMinimapWindow(screenH)
+local function MakeMinimapWindow(screenW, screenH)
     
     if (minimap) then
         minimap:Dispose()
     end
 
     local aspect = Game.mapX/Game.mapY
-    local h = screenH * 0.3
-    local w = h * aspect
-    
-    if aspect > 1 then
-        w = h * aspect^0.5
-        h = w / aspect
+    local h,w
+    if aspect <= 1 then
+        -- height limited
+        h = screenH * 0.3
+        w = math.max(h * aspect, screenW * 0.1)
+    else
+        -- width limited
+        w = screenW * 0.3
+        h = math.max(w / aspect, screenH * 0.12)
     end
     
     WG.MiniMap = {}
@@ -54,8 +57,8 @@ local function MakeMinimapWindow(screenH)
     
 end
 
-function widget:ViewResize(_, vsy)
-    MakeMinimapWindow(vsy)
+function widget:ViewResize(vsx, vsy)
+    MakeMinimapWindow(vsx, vsy)
 end
 
 function widget:Initialize()
@@ -71,7 +74,8 @@ function widget:Initialize()
     
     Chili = WG.Chili
     
-    MakeMinimapWindow(Chili.Screen0.height)
+    local vsx,vsy = Spring.GetViewGeometry()
+    MakeMinimapWindow(vsx, vsy)
     
     gl.SlaveMiniMap(true)
 end

@@ -10,15 +10,6 @@ function widget:GetInfo()
   }
 end
 
-local spec,_ = Spring.GetSpectatingState()
-function widget:PlayerChanged()
-  spec,_ = Spring.GetSpectatingState()
-  if spec then
-    widgetHandler:RemoveWidget()
-  end
-end
-
-
 local options = {}
 local factoryHoldPos = false
 

@@ -31,22 +31,13 @@ local buildID = 0
 local buildLocs = {}
 local buildCount = 0
 
-function widget:Initialize()
-    if spGetGameFrame() > 0 then
-        widget:GameStart()
-    end
-end
-
-function widget:GameStart()
-    
-    local areSpec = spGetSpecState()
-    if areSpec then
-        widgetHandler:RemoveWidget(self)
-    end
+local spec,_ = Spring.GetSpectatingState()
+function widget:PlayerChanged()
+    spec,_ = Spring.GetSpectatingState()
 end
 
 function widget:CommandNotify(cmdID, cmdParams, cmdOpts) -- 3 of 3 parameters
-    
+    if spec then return end   
     if not (cmdID < 0 and cmdOpts.shift and cmdOpts.meta) then return false end -- Note: All multibuilds require shift
     
     if spGetSelUnitCount() < 2 then return false end
@@ -54,12 +45,6 @@ function widget:CommandNotify(cmdID, cmdParams, cmdOpts) -- 3 of 3 parameters
     --if #cmdParams < 4 then return false end -- Probably not possible, commented for now
     
     if spTestBuildOrder(-cmdID, cmdParams[1], cmdParams[2], cmdParams[3], cmdParams[4]) == 0 then return false end
-    
-    local areSpec = spGetSpecState()
-    if areSpec then
-        widgetHandler:RemoveWidget(self)
-        return false
-    end
     
     buildID = -cmdID
     buildOpts = cmdOpts
@@ -70,7 +55,7 @@ function widget:CommandNotify(cmdID, cmdParams, cmdOpts) -- 3 of 3 parameters
 end
 
 function widget:Update() -- 0 of 0 parameters
-    
+    if spec then return end       
     if buildCount == 0 then return end
     
     local selUnits = spGetSelUnitsSorted()

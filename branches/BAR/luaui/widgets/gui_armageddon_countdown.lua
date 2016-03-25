@@ -23,7 +23,7 @@ end
 -- Callins
 ----------------------------------------------------------------
 
-local gameStarterd = false
+local gameStarterd = Spring.GetGameFrame()>0
 function widget:GameStart()
     gameStarted = true
 end
@@ -42,6 +42,3 @@ function widget:DrawScreen()
     end
 end
 
-function widget:GameOver()
-    widgetHandler:RemoveWidget()
-end

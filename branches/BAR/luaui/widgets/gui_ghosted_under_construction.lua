@@ -1,5 +1,3 @@
-local versionNumber = "1.3"
-
 function widget:GetInfo()
     return {
         name      = "Ghosted Under Construction",
@@ -122,8 +120,4 @@ end
 
 function widget:PlayerChanged()
     spec,_,_ = Spring.GetSpectatingState()
-end
-
-function widget:GameOver()
-    widgetHandler:RemoveWidget(self)
 end

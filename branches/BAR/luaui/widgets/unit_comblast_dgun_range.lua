@@ -130,7 +130,6 @@ end
 
 function widget:GameOver()
     widgetHandler:DeregisterGlobal('SetOpacity_Comblast_DGun_Range', SetOpacity)
-    widgetHandler:RemoveWidget()
 end
 
 function checkSpecView()

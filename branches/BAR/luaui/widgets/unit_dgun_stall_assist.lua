@@ -41,16 +41,15 @@ local spGetSpectatingState = Spring.GetSpectatingState
 local CMD_DGUN = CMD.DGUN
 local CMD_WAIT = CMD.WAIT
 
+local spec,_ = spGetSpectatingState()
+function widget:PlayerChanged()
+    spec,_ = spGetSpectatingState()
+end
+
 ----------------------------------------------------------------
 -- Callins
 ----------------------------------------------------------------
 function widget:Initialize()
-    
-    if spGetSpectatingState() then
-        widgetHandler:RemoveWidget(self)
-        return
-    end
-    
     for uDefID, uDef in pairs(UnitDefs) do
         if (uDef.buildSpeed > 0) and uDef.canAssist and (not uDef.canManualFire) then
             shouldWait[uDefID] = true
@@ -61,7 +60,9 @@ function widget:Initialize()
     end
 end
 
+
 function widget:Update(dt)
+    if spec then return end
     
     local _, activeCmdID = spGetActiveCommand()
     if activeCmdID == CMD_DGUN then
@@ -87,11 +88,6 @@ function widget:Update(dt)
     end
     
     if (watchTime > 0) and (not waitedUnits) then
-        
-        if spGetSpectatingState() then
-            widgetHandler:RemoveWidget(self)
-            return
-        end
         
         local myTeamID = spGetMyTeamID()
         local currentEnergy, energyStorage = spGetTeamResources(myTeamID, "energy")

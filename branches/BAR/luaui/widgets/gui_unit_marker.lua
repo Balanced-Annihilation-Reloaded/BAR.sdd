@@ -1,8 +1,7 @@
 function widget:GetInfo()
     return {
-        name      = "Adv. Unit Marker",
-        version   = "1.0",
-        desc      = "Marks enemy units of interest (nukes, anti-nukes, etc)",
+        name      = "Unit Marker",
+        desc      = "Marks enemy units of interest (nukes, anti-nukes, etc) when they enter LOS",
         author    = "LEDZ",
         date      = "2012.10.01",
         license   = "GNU GPL v2",
@@ -22,7 +21,7 @@ end
 
 local unitList = {}
 --MARKER LIST ------------------------------------
-unitList["BARC"] = {
+unitList = {
 --[UnitDefNames["armcom"].id] = true,
 --[UnitDefNames["corcom"].id] = true,
 
@@ -76,7 +75,6 @@ unitList["BARC"] = {
 
 local myLang = "en" -- --set this if you want to bypass lobby country
 local myPlayerID
-local curModID
 local spEcho = Spring.Echo
 local spMarkerAddPoint = Spring.MarkerAddPoint--(x,y,z,"text",local? (1 or 0))
 local spMarkerErasePosition = Spring.MarkerErasePosition
@@ -132,14 +130,6 @@ function widget:Initialize()
 
     myColour = colourNames(Spring.GetMyTeamID())
     markerLocal = nil --note: this name of this here and on the lua wiki is a misnomer
-    curModID = string.upper(Game.modShortName or "")
-    if ( unitList[curModID] == nil ) then
-        spEcho("<Unit Marker> Unsupported Game, shutting down...")
-        widgetHandler:RemoveWidget()
-        return
-    else    
-        curUnitList = unitList[curModID] or {}
-    end
     myLang = myLang or string.lower(select(8,Spring.GetPlayerInfo(Spring.GetMyPlayerID())))
 end
 
@@ -167,7 +157,7 @@ function widget:UnitEnteredLos(unitID, allyTeam)
     local x, y, z = spGetUnitPosition(unitID)  --x and z on map floor, y is height
     
     if udefID and x then
-      if curUnitList[udefID] then
+      if unitList[udefID] then
             prevX, prevY, prevZ = prevMarkX[unitID],prevMarkY[unitID],prevMarkZ[unitID]
             if prevX == nil then
                 prevX, prevY, prevZ = 0,0,0
@@ -179,7 +169,7 @@ function widget:UnitEnteredLos(unitID, allyTeam)
                     markName = GetTeamName(spGetUnitTeam(unitID))
                     colouredMarkName = markColour..markName
                 else
-                    markName = curUnitList[udefID]
+                    markName = unitList[udefID]
                     markName = markName[myLang] or markName["en"]
                     colouredMarkName = markColour..markName
                 end

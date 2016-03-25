@@ -28,12 +28,6 @@ end
 
 
 function widget:Initialize()
-  local _, _, spec = Spring.GetPlayerInfo(Spring.GetMyPlayerID())
-  if spec then
-    widgetHandler:RemoveWidget()
-    return false
-  end
-  
   local units = Spring.GetAllUnits()
   for _,unitID in ipairs(units) do
     local unitDefID = Spring.GetUnitDefID(unitID)

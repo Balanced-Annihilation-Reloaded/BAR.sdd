@@ -26,14 +26,19 @@ local GetTeamColor               = Spring.GetTeamColor
 local GetVisibleUnits            = Spring.GetVisibleUnits
 local GetUnitDefID               = Spring.GetUnitDefID
 local GetAllUnits                = Spring.GetAllUnits
-local IsUnitInView                  = Spring.IsUnitInView
+local IsUnitInView               = Spring.IsUnitInView
 local GetCameraPosition          = Spring.GetCameraPosition
 local GetUnitPosition            = Spring.GetUnitPosition
+local IsUnitIcon                 = Spring.IsUnitIcon
+local IsGUIHidden                = Spring.IsGUIHidden
+
 
 local glDepthTest                = gl.DepthTest
 local glAlphaTest                = gl.AlphaTest
 local glColor                    = gl.Color
 local glText                     = gl.Text
+local glPushMatrix               = gl.PushMatrix
+local glPopMatrix                = gl.PopMatrix
 local glTranslate                = gl.Translate
 local glBillboard                = gl.Billboard
 local glDrawFuncAtUnit           = gl.DrawFuncAtUnit
@@ -46,115 +51,129 @@ local glBlending                  = gl.Blending
 
 local comms = {}
 
---------------------------------------------------------------------------------
-
---gets the name, color, and height of the commander
-local function GetCommAttributes(unitID, unitDefID)
-  local team = GetUnitTeam(unitID)
-  if team == nil then
+function CheckCommInfo(unitID, unitDefID)
+  local teamID = GetUnitTeam(unitID)
+  if teamID == nil then
     return nil
   end
-  local _, player = GetTeamInfo(team)
+  local _, player = GetTeamInfo(teamID)
   local name,_,_,_,_,_,_,country,rank = GetPlayerInfo(player)
-  local r, g, b, a = GetTeamColor(team)
+  name = name or 'Commander'
+  local r, g, b, a = GetTeamColor(teamID)
   local bgColor = {0,0,0,1}
-  if (r + g*1.35 + b*0.5) < 0.75 then  -- font:SetAutoOutlineColor(true) is broken (same for gl)
+  if (r + g*1.35 + b*0.5) < 0.75 then  
     bgColor = {1,1,1,1}
   end
   local height = UnitDefs[unitDefID].height + 36
-  return {name = name or 'Commander', colour = {r, g, b, a}, height = height, bgColour = bgColor}
+  local x,y,z = GetUnitPosition(unitID)
+  return {unitID=unitID, name=name, colour={r,g,b,a}, height=height, bgColour=bgColor, x=x,y=y,z=z}
 end
 
-
-local function DrawName(unitID, attributes)
-  glTranslate(0, attributes.height, 0 )
-  glBillboard()
-   
-  font:Begin()
-  font:SetTextColor(attributes.colour)
-  font:SetOutlineColor(attributes.bgColour)
-  font:Print(attributes.name, 0, 0, fontSize, "vcon")
-  font:End()
-end
-
-
-local vsx, vsy = Spring.GetViewGeometry()
-function widget:ViewResize()
-  vsx,vsy = Spring.GetViewGeometry()
-end
-
-
-function widget:DrawWorld()
-  if Spring.IsGUIHidden() then return end
-
-  glDepthTest(true)
-  glAlphaTest(GL_GREATER, 0)
-  glBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-   
-  for unitID, attributes in pairs(comms) do
-    glDrawFuncAtUnit(unitID, false, DrawName, unitID, attributes)
+function CheckCom(unitID)
+  local unitDefID = Spring.GetUnitDefID(unitID)
+  if not (unitDefID and UnitDefs[unitDefID].customParams.iscommander) then
+    return 
   end
   
-  glAlphaTest(false)
-  glColor(1,1,1,1)
-  glDepthTest(false)
-end
-
---------------------------------------------------------------------------------
-
-local function CreateName(unitID, unitDefID)
-  local team = GetUnitTeam(unitID)
-  if team == nil then
-    return {name="",colour={0,0,0,0},height=0}
+  for i=1,#comms do
+    if unitID==comms[i].unitID then
+      -- existing com
+      comms[i] = CheckCommInfo(unitID, unitDefID)
+      return
+    end
   end
-  local _, player = GetTeamInfo(team)
-  local name = GetPlayerInfo(player) or 'Robert Paulson'
-  local r, g, b = GetTeamColor(team)
-  local a = 1
-  local height = UnitDefs[unitDefID].height + 22
-  return {name=name, colour={r,g,b,a}, height=height}
+  -- new com  
+  local info = CheckCommInfo(unitID, unitDefID)
+  table.insert(comms, info)    
 end
 
-function CheckCom(unitID, unitDefID, unitTeam)
-  if (unitDefID and UnitDefs[unitDefID] and UnitDefs[unitDefID].customParams.iscommander) then
-      comms[unitID] = GetCommAttributes(unitID, unitDefID)
-  end
-end
-
-function CheckAllComs()
-  local units = GetAllUnits()
-  for _, unitID in ipairs(units) do
-    local unitDefID = GetUnitDefID(unitID)
-    if (unitDefID and UnitDefs[unitDefID].customParams.iscommander) then
-      comms[unitID] = GetCommAttributes(unitID, unitDefID)
+function RemoveCom(unitID)
+  for i=1,#comms do
+    if unitID==comms[i].unitID then
+      table.remove(comms,i)
+      break
     end
   end
 end
 
+function CheckAll()
+  comms = {}
+  local units = GetAllUnits()
+  for _, unitID in ipairs(units) do
+    CheckCom(unitID)
+  end
+end
+
 function widget:Initialize()
-  CheckAllComs()
+  CheckAll()
 end
 
 function PlayerChanged()
-  CheckAllComs()
+  CheckAll()
 end
     
 function widget:UnitCreated(unitID, unitDefID, unitTeam)
-  CheckCom(unitID, unitDefID, unitTeam)
+  CheckCom(unitID)
 end
 
 function widget:UnitDestroyed(unitID, unitDefID, unitTeam)
-  comms[unitID] = nil
+  RemoveCom(unitID)
 end
 
 function widget:UnitGiven(unitID, unitDefID, unitTeam, oldTeam)
-  CheckCom(unitID, unitDefID, unitTeam)
+  CheckCom(unitID)
 end
 
 function widget:UnitTaken(unitID, unitDefID, unitTeam, newTeam)
-  CheckCom(unitID, unitDefID, unitTeam)
+  CheckCom(unitID)
 end
 
-function widget:UnitEnteredLos(unitID, unitDefID, unitTeam)
-  CheckCom(unitID, unitDefID, unitTeam)
+function widget:UnitEnteredLos(unitID, unitTeam, allyTeam, unitDefID)
+  CheckCom(unitID)
+end
+
+function widget:UnitLeftLos(unitID, unitTeam, allyTeam, unitDefID)
+  RemoveCom(unitID)
+end
+
+--------------------------------------------------------------------------------
+
+function UpdateComPositions()
+    for i=1,#comms do
+        local info = comms[i]
+        info.x,info.y,info.z = GetUnitPosition(info.unitID)
+    end
+end
+
+function widget:GameFrame()
+    UpdateComPositions()
+end
+
+function DrawName(info)   
+  glBillboard()
+
+  font:Begin()
+  font:SetTextColor(info.colour)
+  font:SetOutlineColor(info.bgColour)
+  font:Print(info.name, 0, 0, fontSize, "vcon")
+  font:End()
+end
+
+function widget:DrawWorld()
+  if IsGUIHidden() then return end
+
+  glDepthTest(true)
+
+  local info
+  for i=1,#comms do
+    info = comms[i]
+    if info.x then
+        glPushMatrix()
+        glTranslate(info.x, info.height+info.y, info.z)
+        DrawName(info)
+        glPopMatrix()
+    end
+  end
+  
+  glDepthTest(false)
 end

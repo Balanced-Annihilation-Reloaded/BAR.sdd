@@ -53,6 +53,8 @@ return {
 		workertime = 0,
 		customparams = {
 			faction = "chicken",
+			normalmaps = "yes",
+			normaltex = "unittextures/chicken_normal.tga",
 		},
 		featuredefs = {
 			dead = {},

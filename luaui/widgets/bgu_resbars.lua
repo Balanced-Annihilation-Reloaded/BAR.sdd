@@ -285,7 +285,7 @@ local function makeconversionWindow()
 end
 
 -- Updates 
-local function setBar(res)
+local function setBar(res,n)
     local currentLevel, storage, pull, income, expense, share = spGetTeamResources(myTeamID, res)
     
     -- set everything to 0 if nil (eg. we are a spec and not watching anyone)
@@ -307,16 +307,18 @@ local function setBar(res)
         netLabel[res].font.color = red
     end
     
+    meter[res]:SetValue(currentLevel/storage*100)
+    meter[res]:SetCaption(math.floor(currentLevel)..'/'..storage)
+
+    if n%30~=1 then return end -- we only need to update res text just after a slow update occurs
+
     local netText = readable(net)
     local incomeText = readable(income)
-    local pullText = readable(-pull) 
-    
+    local pullText = readable(-pull)     
+
     netLabel[res]:SetCaption(netText)
     incomeLabel[res]:SetCaption(incomeText)
     expenseLabel[res]:SetCaption(pullText)
-    
-    meter[res]:SetValue(currentLevel/storage*100)
-    meter[res]:SetCaption(math.floor(currentLevel)..'/'..storage)
 end
 function SetBarColors()
     meter['metal']:SetColor(0.6,0.6,0.8,.8)
@@ -325,12 +327,10 @@ end
 -------------------------------------------
 -- Callins
 -------------------------------------------
-function widget:GameFrame(n)
-    if n%30~=1 then return end -- we only need to update res just after a slow update occurs
-    
+function widget:GameFrame(n)    
     myTeamID = spGetMyTeamID()
-    setBar('metal')
-    setBar('energy')
+    setBar('metal',n)
+    setBar('energy',n)
 end
 
 function SetValues()

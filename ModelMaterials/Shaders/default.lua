@@ -130,7 +130,7 @@ vertex = [[
 	#endif
 	float GetShadowCoeff(vec4 shadowCoors){
 		#ifdef use_shadows
-			float coeff = shadow2DProj(shadowTex, shadowCoors).r;
+			float coeff = shadow2DProj(shadowTex, shadowCoors+vec4(0.0, 0.0, -0.00005, 0.0)).r;
 			coeff  = (1.0 - coeff);
 			coeff *= shadowDensity;
 			return (1.0 - coeff);
@@ -195,6 +195,7 @@ vertex = [[
 
 		#if (deferred_mode == 0)
 			gl_FragColor = outColor;
+			gl_FragColor = vec4(shadow,shadow,shadow,1.0);
 		#else
 			gl_FragData[0] = vec4((normal + 1.0) * 0.5, 1.0);
 			gl_FragData[1] = outColor;

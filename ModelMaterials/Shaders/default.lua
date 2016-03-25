@@ -58,7 +58,7 @@ vertex = [[
 		cameraDir     = worldPos.xyz - cameraPos;
 
 		#ifdef use_shadows
-			gl_TexCoord[1] =shadowMatrix * worldPos;
+			gl_TexCoord[1] =shadowMatrix *gl_ModelViewMatrix*gl_Vertex;
 			gl_TexCoord[1].st = gl_TexCoord[1].st * (inversesqrt( abs(gl_TexCoord[1].st) + shadowParams.z) + shadowParams.w) + shadowParams.xy;
 		#endif
 		#ifdef use_treadoffset

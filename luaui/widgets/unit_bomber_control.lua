@@ -1,6 +1,6 @@
 function widget:GetInfo()
     return {
-        name    = "Bomber control",
+        name    = "Bomber Control",
         desc    = "Makes bombers execute their queue efficiently",
         author    = "dizekat",
         date    = "2010-02-04",

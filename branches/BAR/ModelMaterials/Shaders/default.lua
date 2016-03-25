@@ -195,7 +195,6 @@ vertex = [[
 
 		#if (deferred_mode == 0)
 			gl_FragColor = outColor;
-			gl_FragColor = vec4(shadow,shadow,shadow,1.0);
 		#else
 			gl_FragData[0] = vec4((normal + 1.0) * 0.5, 1.0);
 			gl_FragData[1] = outColor;

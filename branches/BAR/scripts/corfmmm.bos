@@ -7,15 +7,25 @@ piece  base, fan;
 
 static-var  Static_Var_1, mmState, Active;
 
-activatescr()
+RockOnWaves()
 {
-	spin fan around y-axis speed <300.000000> accelerate <10>;
-}
-
-deactivatescr()
-{
-	stop-spin fan around y-axis decelerate <5>;
-	sleep 30;
+	var rockDir, rockAng, rockSpeed;
+	rockDir = <-0.1>;
+	rockAng = <-0.1>;
+	while( TRUE )
+	{
+		while( get ABS(rockAng) < <1.31> )
+		{
+			rockSpeed = <1.45> - get ABS(rockAng);
+			turn base to x-axis rockAng speed rockSpeed*5;
+			turn base to z-axis rockAng speed rockSpeed*5;
+			wait-for-turn base around x-axis;
+			wait-for-turn base around z-axis;
+			rockAng = rockAng + rockDir;
+		}
+		rockDir = 0 - rockDir;
+		rockAng = rockAng + rockDir + rockDir;
+	}
 }
 
 SmokeUnit(healthpercent, sleeptime, smoketype)
@@ -24,6 +34,7 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	{
 		sleep 400;
 	}
+	start-script RockOnWaves();
 	while( TRUE )
 	{
 		healthpercent = get HEALTH;
@@ -47,21 +58,13 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 Go()
 {
-	if( Static_Var_1 )
-	{
-		set ACTIVATION to 0;
-		return (0);
-	}
-	//signal SIG_ANIM;
-	call-script activatescr();
-	set ARMORED to 0;
+	spin fan around y-axis speed <300.000000> accelerate <10>;
 }
 
 Stop()
 {
-	set ARMORED to 1;
-	//signal SIG_ANIM;
-	call-script deactivatescr();
+	stop-spin fan around y-axis decelerate <5>;
+	sleep 30;
 }
 
 MMStatus(State)
@@ -96,34 +99,11 @@ ImAMetalMaker()
 	}
 }
 
-
-RockOnWaves()
-{
-	var rockDir, rockAng, rockSpeed;
-	rockDir = <-0.1>;
-	rockAng = <-0.1>;
-	while( TRUE )
-	{
-		while( get ABS(rockAng) < <1.31> )
-		{
-			rockSpeed = <1.45> - get ABS(rockAng);
-			turn base to x-axis rockAng speed rockSpeed*5;
-			turn base to z-axis rockAng speed rockSpeed*5;
-			wait-for-turn base around x-axis;
-			wait-for-turn base around z-axis;
-			rockAng = rockAng + rockDir;
-		}
-		rockDir = 0 - rockDir;
-		rockAng = rockAng + rockDir + rockDir;
-	}
-}
-
-
 Create()
 {	
+	start-script SmokeUnit();
 	call-script ImAMetalMaker();
 	Static_Var_1 = 0;
-	start-script SmokeUnit();
 }
 
 SweetSpot(piecenum)

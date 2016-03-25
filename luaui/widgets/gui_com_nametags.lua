@@ -167,7 +167,7 @@ function widget:DrawWorld()
   local info
   for i=1,#comms do
     info = comms[i]
-    if info.x then
+    if info.x and not IsUnitIcon(info.unitID) then
         glPushMatrix()
         glTranslate(info.x, info.height+info.y, info.z)
         DrawName(info)

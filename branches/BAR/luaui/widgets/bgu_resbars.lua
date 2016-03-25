@@ -307,9 +307,13 @@ local function setBar(res)
         netLabel[res].font.color = red
     end
     
-    netLabel[res]:SetCaption(readable(net))
-    incomeLabel[res]:SetCaption(readable(income))
-    expenseLabel[res]:SetCaption(readable(-pull))
+    local netText = readable(net)
+    local incomeText = readable(income)
+    local pullText = readable(-pull) 
+    
+    netLabel[res]:SetCaption(netText)
+    incomeLabel[res]:SetCaption(incomeText)
+    expenseLabel[res]:SetCaption(pullText)
     
     meter[res]:SetValue(currentLevel/storage*100)
     meter[res]:SetCaption(math.floor(currentLevel)..'/'..storage)
@@ -322,6 +326,8 @@ end
 -- Callins
 -------------------------------------------
 function widget:GameFrame(n)
+    if n%30~=1 then return end -- we only need to update res just after a slow update occurs
+    
     myTeamID = spGetMyTeamID()
     setBar('metal')
     setBar('energy')

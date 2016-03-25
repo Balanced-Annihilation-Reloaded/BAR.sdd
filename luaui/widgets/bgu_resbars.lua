@@ -3,7 +3,7 @@ function widget:GetInfo()
     return {
         name    = 'Resource Bars',
         desc    = 'Displays resource and resource sharing bars',
-        author  = 'Funkencool',
+        author  = 'Funkencool, Bluestone',
         date    = '2013',
         license = 'GNU GPL v2',
         layer = 0,
@@ -19,6 +19,7 @@ local Chili, resourceWindow
 -------------------------------------------
 local spGetTeamResources = Spring.GetTeamResources
 local spGetMyTeamID      = Spring.GetMyTeamID
+local spGetSpectatingState = Spring.GetSpectatingState
 
 local image = {
     metal  = 'luaui/images/resourcebars/Ibeam.png',
@@ -31,7 +32,8 @@ local incomeLabel  = {}
 local expenseLabel = {}
 local netLabel     = {}
 local shareLevel   = {}
-local myTeamID = spGetMyTeamID()
+local myTeamID -- don't set yet, it forces an update when changed
+local spec = spGetSpectatingState()
 local settings = {}
 -- Colors
 local green        = {0.2, 1.0, 0.2, 1.0}
@@ -41,7 +43,7 @@ local red          = {1.0, 0.2, 0.2, 1.0}
 local fullyLoaded = false -- to stop making "set X to Y" remarks when we are just reloading the config on init
 --
 
-local buttonColour, panelColour, sliderColour 
+local buttonColour, panelColour, sliderColour, teamColourPic
 
 -------------------------------------------
 -- Auxiliary functions
@@ -72,12 +74,12 @@ end
 -- Main
 -------------------------------------------
 local function ToggleconversionWindow()
-    if conversionWindow.hidden then
-        conversionWindow:Show()
-        resourceWindow:Hide()
-    else
+    if resourceWindow.hidden then
         conversionWindow:Hide()    
         resourceWindow:Show()
+    elseif not spec then
+        conversionWindow:Show()
+        resourceWindow:Hide()
     end
     return true
 end
@@ -95,6 +97,7 @@ local function initWindow()
         padding   = {0,0,0,0},
         borderColor = buttonColour,
         backgroundColor = buttonColour,
+        focusColor = spec and buttonColour or focusColor,
         caption = "",
         OnClick = {ToggleconversionWindow},
     }
@@ -330,6 +333,23 @@ end
 function widget:GameFrame(n)    
     local newTeamID = spGetMyTeamID()
     local updateText = (myTeamID ~= newTeamID) or (n%30==1) -- team change or slow update
+    
+    if myTeamID~= newTeamID then    
+        if teamColourPic then
+            resourceWindow:RemoveChild(teamColourPic)
+        end
+        local r,g,b = Spring.GetTeamColor(newTeamID)
+        teamColourPic = Chili.Image:New{
+            parent = resourceWindow,
+            name = 'teamColourPic',
+            height = 10,
+            width = 10,
+            x=10,
+            y=10,
+            file = "LuaUI/Images/playerlist/default.png", --TODO
+            color = {r,g,b},
+        }    
+    end
     myTeamID = newTeamID
     
     setBar('metal',updateText)
@@ -361,6 +381,15 @@ function widget:Initialize()
     SetValues()
     
     fullyLoaded = true
+end
+
+function widget:PlayerChanged()
+    spec,_ = spGetSpectatingState()
+    if spec then
+        resourceWindow.focusColor = buttonColour
+    else
+        resourceWindow.focusColor = {1.0, 0.7, 0.1, 0.8} -- todo, get from skin
+    end
 end
 
 function widget:KeyPress()

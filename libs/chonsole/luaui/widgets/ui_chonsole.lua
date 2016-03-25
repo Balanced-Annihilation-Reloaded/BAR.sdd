@@ -635,20 +635,77 @@ function CreateSuggestion(suggestion)
 	return PopulateSuggestion(MakeSuggestion(suggestion), suggestion)
 end
 
+function InsertSuggestion(rawSuggestion, reSort)
+    local suggestion = {}
+    suggestion.id = #suggestions + 1
+    suggestions[suggestion.id] = suggestion
+    
+    suggestion.command     = rawSuggestion.command
+    suggestion.description = rawSuggestion.description
+    suggestion.cheat       = rawSuggestion.cheat
+    suggestion.synced      = rawSuggestion.synced
+    suggestion.suggestions = rawSuggestion.suggestions
+    
+    suggestion.text = "/" .. suggestion.command:lower()
+    suggestion.visible = false
+    suggestionNameMapping[suggestion.command:lower()] = suggestion.id
+
+    suggestion.ctrl = CreateSuggestion(suggestion)
+    spSuggestions.ctrls[suggestion.id] = suggestion.ctrl
+    spSuggestions:AddChild(suggestion.ctrl)
+    
+    if reSort==nil or reSort then 
+        -- if we avoid this (e.g. add multiple suggestions at once without repeatedly sorting) we should do it immediately after!
+        SortSuggestions()
+    end
+end
+
+function RemoveSuggestion(command, reSort)
+    local suggestion = suggestions[suggestionNameMapping[command] ]
+    if not suggestion then return end    
+    
+    spSuggestions:RemoveChild(spSuggestions.ctrls[suggestion.id])
+    spSuggestions.ctrls[suggestion.id] = nil
+    suggestions[suggestion.id] = nil
+
+    if reSort==nil or reSort then
+        SortSuggestions()
+    end
+end
+
+function SortSuggestions()
+    -- resort suggestions into an array table (without assuming suggestions is an array table)
+    -- redo spSuggestions and suggestionNameMapping to match
+    suggestionNameMapping = {}
+    spSuggestions.ctrls = {}
+    
+    local sortedSuggestions = {}
+    for _,suggestion in pairs(suggestions) do
+        sortedSuggestions[#sortedSuggestions+1] = suggestion
+    end
+    local function Comparator(a,b)
+        return a.command < b.command
+    end
+    table.sort(sortedSuggestions, Comparator)
+    for i,suggestion in pairs(sortedSuggestions) do
+        suggestion.id = i
+        suggestionNameMapping[suggestion.command:lower()] = suggestion.id
+        spSuggestions.ctrls[suggestion.id] = suggestion.ctrl
+    end
+    
+    suggestions = sortedSuggestions
+end
+
 function GenerateSuggestions()
-	suggestions = GetCommandList()
-	for i, suggestion in pairs(suggestions) do
-		suggestion.text = "/" .. suggestion.command:lower()
-		suggestion.visible = false
-		suggestion.id = i
-		suggestionNameMapping[suggestion.command:lower()] = i
-	end
+	local rawSuggestions = GetCommandList()
 	spSuggestions.ctrls = {}
-	for _, suggestion in pairs(suggestions) do
-		local ctrlSuggestion = CreateSuggestion(suggestion)
-		spSuggestions.ctrls[suggestion.id] = ctrlSuggestion
-		spSuggestions:AddChild(ctrlSuggestion)
-	end
+    suggestions = {}
+    
+	for _,suggestion in pairs(rawSuggestions) do
+        InsertSuggestion(suggestion, false)
+    end
+    SortSuggestions()
+    
 	local fakeCtrl = Chili.Button:New {
 		x = 0,
 		y = (#suggestions - 1) * (config.suggestions.fontSize + config.suggestions.padding),
@@ -750,7 +807,7 @@ function ShowSuggestions()
 	if not scrollSuggestions.visible then
 		scrollSuggestions:Show()
 	end
-	
+    
 	FilterSuggestions(ebConsole.text)
 	UpdateSuggestions()	
 end

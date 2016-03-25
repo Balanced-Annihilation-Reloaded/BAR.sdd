@@ -36,9 +36,10 @@ local alphaExpWeight = 7 -- how fast we fade in/out
 local rotSpeed = 5 -- how fast we rotate
 local alphaDrawOwnUnits = 0.6 -- alpha for own units
 local alphaDrawOthersUnits = 0.35 -- alpha for other units
-local thinLineWidth = 1.45
+local thinLineWidth = 1.45 -- pixels
 local thickLineWidth = 1.8
-local fadeTime = 1/4
+local fadeInTime = 1/12 -- seconds
+local fadeOutTime = 1/4
 
 -- constants for platter visuals
 local platterSize = 1.3 -- fade size compared to circle scale (1 = not rendered)
@@ -538,15 +539,15 @@ local max = math.max
 
 function UpdateSelectedUnitAlpha(t, unitID)
     local dt = curTime-t.selectedChangeTime
-    if t.selected and dt < fadeTime then
+    if t.selected and dt < fadeInTime then
         -- fade in
-        return max(t.alpha, dt/(fadeTime/3))
+        return max(t.alpha, dt/fadeInTime)
     elseif t.selected then
         -- on
         return 1.0
-    elseif dt < fadeTime then 
+    elseif dt < fadeOutTime then 
         -- fade out
-        return 1.0 - dt/fadeTime
+        return 1.0 - dt/fadeOutTime
     else
         -- off
         toRemove[#toRemove+1] = unitID -- can't delete here without adding an extra conditional, so better to just wait

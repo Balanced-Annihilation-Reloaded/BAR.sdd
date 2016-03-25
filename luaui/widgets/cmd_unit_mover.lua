@@ -41,14 +41,7 @@ local engineers = {}
 local engineerDefs = {}
 local moveUnitsDefs = {}
 
-function widget:PlayerChanged()
-    if GetSpectatingState() then
-        widgetHandler:RemoveWidget()
-    end
-end
-
 function widget:Initialize()
-    widget:PlayerChanged()
     for unitDefID,unitDef in pairs(UnitDefs) do
         if unitDef.canMove and unitDef.speed > 0 then --mobile builder
             for _,buildeeDefID in pairs(unitDef.buildOptions) do

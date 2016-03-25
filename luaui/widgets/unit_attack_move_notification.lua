@@ -10,6 +10,7 @@ function widget:GetInfo()
     }
 end
 ----------------------------------------------------------------------------
+-- todo: add widget options
 local alarmInterval                 = 15        --seconds
 local commanderAlarmInterval        = 10
 ----------------------------------------------------------------------------                
@@ -31,15 +32,23 @@ local localTeamID                   = nil
 local armcomID=UnitDefNames["armcom"].id
 local corcomID=UnitDefNames["corcom"].id
 
+local spec,_ = Spring.GetSpectatingState()
+local teamID = Spring.GetMyTeamID()
+
+function widget:PlayerChanged(playerID)
+    teamID = Spring.GetMyTeamID()
+    spec,_ = Spring.GetSpectatingState()
+end
 
 function widget:Initialize()
-    setTeamId()    
     lastAlarmTime = spGetTimer()
     lastCommanderAlarmTime =  spGetTimer()
     math.randomseed( os.time() )
 end
 
 function widget:UnitDamaged (unitID, unitDefID, unitTeam, damage, paralyzer)
+    if spec then return end
+
     if ( localTeamID ~= unitTeam )then
         return
     end
@@ -81,26 +90,7 @@ function widget:UnitDamaged (unitID, unitDefID, unitTeam, damage, paralyzer)
 end
 
 function widget:UnitMoveFailed(unitID, unitDefID, unitTeam)
+    if spec then return end
     local udef = UnitDefs[unitDefID]
     spEcho( udef.humanName  .. ": Can't reach destination!" )
 end 
-
-function setTeamId()
-    localTeamID = spGetLocalTeamID()    
-end
-
---changing teams, rejoin, becoming spec etc
-function widget:PlayerChanged(playerID)
-    setTeamId()
-    CheckSpecState()
-end
-
-
-function CheckSpecState()
-    if ( spGetSpectatingState() == true ) then
-        widgetHandler:RemoveWidget()
-        return false
-    end
-    
-    return true    
-end

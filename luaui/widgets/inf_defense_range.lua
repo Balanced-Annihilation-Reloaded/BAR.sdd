@@ -170,6 +170,9 @@ lineConfig["lineWidth"] = 1.0 -- calcs dynamic now
 lineConfig["alphaValue"] = 0.0 --> dynamic behavior can be found in the function "widget:Update"
 lineConfig["circleDivs"] = 40.0 
 
+local spec,_ = Spring.GetSpectatingState()
+local hideAsSpec = true --default value
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 local GL_LINE_LOOP          = GL.LINE_LOOP
@@ -285,6 +288,8 @@ function widget:Initialize()
                         checked=buttonConfig["enabled"]["enemy"]["air"],setting=drawPlatter,OnChange={function() buttonConfig["enabled"]["enemy"]["air"] = not buttonConfig["enabled"]["enemy"]["air"]; end}}, 
                 Chili.Checkbox:New{caption='Enemy anti-nuke',x='0%',width='100%',
                         checked=buttonConfig["enabled"]["enemy"]["nuke"],setting=drawPlatter,OnChange={function() buttonConfig["enabled"]["enemy"]["nuke"] = not buttonConfig["enabled"]["enemy"]["nuke"]; end}}, 
+                Chili.Checkbox:New{caption='Hide while spectating',x='0%',width='100%',
+                        checked=hideAsSpec,OnChange={function() hideAsSpec = not hideAsSpec; end}}, 
         }
     }
 end
@@ -465,51 +470,8 @@ function ResetGl()
     glLineWidth( 1.0 )
 end
 
---[[
-function ButtonAllyPressed(tag)
-    buttonConfig["enabled"]["ally"][tag] = not buttonConfig["enabled"]["ally"][tag]
-    UpdateButtonList()
-end
-
-function ButtonEnemyPressed(tag)
-    buttonConfig["enabled"]["enemy"][tag] = not buttonConfig["enabled"]["enemy"][tag]
-    UpdateButtonList()
-end
-
-function widget:MouseRelease(x, y, button)
-  local buttondata = GetButton(x, y)
-  if (not buttondata) then
-    return false
-  end
-  
-  if (button > 1) then
-    return -1
-  end
-
-
-  local buttonIndex = buttondata[1]
-  if (buttonIndex == 1) then ButtonAllyPressed("ground") end
-  if (buttonIndex == 2) then ButtonEnemyPressed("ground") end
-  if (buttonIndex == 3) then ButtonAllyPressed("air") end
-  if (buttonIndex == 4) then ButtonEnemyPressed("air") end
-  if (buttonIndex == 5) then ButtonAllyPressed("nuke") end
-  if (buttonIndex == 6) then ButtonEnemyPressed("nuke") end
- 
-  UpdateButtons()
-  return -1
-end
-]]
-
-function CheckSpecState()
-    local playerID = spGetMyPlayerID()
-    local _, _, spec, _, _, _, _, _ = spGetPlayerInfo(playerID)
-        
-    if ( spec == true ) then
-        widgetHandler:RemoveWidget()
-        return false
-    end
-    
-    return true
+function widget:PlayerChanged()
+    spec,_ = Spring.GetSpectatingState()
 end
 
 local darkOpacity = 0
@@ -558,8 +520,8 @@ function widget:Update()
         updateTimes["remove"] = time
         --do update stuff:
         
-        if ( CheckSpecState() == false ) then
-            return false
+        if spec and hideAsSpec then
+            return 
         end
     
         --remove dead units
@@ -828,12 +790,14 @@ function UpdateCircleList()
 end
 
 function widget:DrawWorld()
-    if not spIsGUIHidden() then
-        if rangeCircleList then
-            glCallList(rangeCircleList)
-        else
-            UpdateCircleList()
-        end
+    if spIsGUIHidden() or (spec and hideAsSpec) then
+        return 
+    end
+    
+    if rangeCircleList then
+        glCallList(rangeCircleList)
+    else
+        UpdateCircleList()
     end
 end
 
@@ -856,18 +820,19 @@ end
 --SAVE / LOAD CONFIG FILE
 function widget:GetConfigData()
     local data = {}
-    data["buttons"] = buttonConfig["enabled"]  
+    data["buttons"] = buttonConfig["enabled"] -- todo: clean up that we no longer have gl drawn buttons!
+    data.hideAsSpec = hideAsSpec
     return data
 end
 
 function widget:SetConfigData(data) 
     printDebug("Loading config...")
     if (data ~= nil) then
+        hideAsSpec = data.hideAsSpec
         if ( data["buttons"] ~= nil ) then
             buttonConfig["enabled"] = data["buttons"]
             printDebug("enabled config found...")
         end
-
     end
 end
 --END OF SAVE / LOAD CONFIG FILE

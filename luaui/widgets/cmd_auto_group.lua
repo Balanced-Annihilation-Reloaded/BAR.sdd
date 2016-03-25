@@ -15,9 +15,11 @@ include("keysym.h.lua")
 
 local finiGroup = {}
 local unit2group = {}
-local myTeam
 local selUnitDefs = {}
 local createdFrame = {}
+
+local myTeam = Spring.GetMyTeamID()
+
 local verboseMode = true
 
 -- options & defaults
@@ -52,13 +54,6 @@ local UDefTab              = UnitDefs
 
 
 function widget:Initialize() 
-    local _, _, spec, team = Spring.GetPlayerInfo(Spring.GetMyPlayerID())
-    if spec then
-        widgetHandler:RemoveWidget()
-        return false
-    end
-    myTeam = team
-  
     local Chili = WG.Chili
     local Menu = WG.MainMenu
     Menu.AddWidgetOption{
@@ -81,6 +76,9 @@ function widget:Initialize()
   
 end
 
+function widget:PlayerChanged()
+    myTeam = Spring.GetMyTeamID()
+end
 
 function widget:UnitFinished(unitID, unitDefID, unitTeam)
   if (unitTeam == myTeam and unitID ~= nil) then

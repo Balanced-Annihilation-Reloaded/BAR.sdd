@@ -38,7 +38,7 @@ local ST_STOPPED = 3 -- unit is enroute from factory but stopped
 
 
 local timer = 0
-local myTeamID 
+local myTeamID = Spring.GetMyTeamID()
 
 
 local GetUnitPosition = Spring.GetUnitPosition
@@ -166,19 +166,15 @@ function AddToPick(transportID, unitID, stopped, fact)
   toPickRev[unitID] = transportID
 end
 
+function widget:PlayerChanged()
+  myTeamID = Spring.GetMyTeamID()
+end
 
 
 function widget:Initialize()
-    local _, _, spec, teamID = GetPlayerInfo(Spring.GetMyPlayerID())
-    if spec then
-        widgetHandler:RemoveWidget()
-        return false
-    end
-  myTeamID = teamID
   widgetHandler:RegisterGlobal('taiEmbark', taiEmbark)
 
-
-  for _, unitID in ipairs(GetTeamUnits(teamID)) do  -- init existing transports
+  for _, unitID in ipairs(GetTeamUnits(myTeamID)) do  -- init existing transports
     if AddTransport(unitID, GetUnitDefID(unitID)) then
        AssignTransports(unitID, 0)
     end
@@ -324,15 +320,17 @@ end
 
 
 function widget:Update(deltaTime)
-    timer = timer + deltaTime
-    if (timer < 1) then return end
+  timer = timer + deltaTime
+  if (timer < 1) then return end
+  timer = 0
+
   StopCloseUnits()
 
   local todel = {}
   for i, d in pairs(priorityUnits) do
---    Echo ("checking prio " ..i)
+--  Echo ("checking prio " ..i)
     if (IsEmbarkCommand(i)) then
---      Echo ("prio called " ..i)
+--    Echo ("prio called " ..i)
       waitingUnits[i] = {ST_PRIORITY, d}
       AssignTransports(0, i)
       table.insert(todel, i)
@@ -341,8 +339,6 @@ function widget:Update(deltaTime)
   for _, x in ipairs(todel) do
     priorityUnits[x] = nil
   end
-
-  timer = 0
 end
 
 

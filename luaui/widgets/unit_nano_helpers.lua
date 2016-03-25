@@ -55,7 +55,6 @@ local function IsImmobileBuilder(ud)
     return ud and ud.isBuilder and not ud.canMove and not ud.isFactory
 end
 
-
 local function SetupUnit(unitID)
     local x, y, z = spGetUnitPosition(unitID)
     if x and y and z then
@@ -74,16 +73,7 @@ local function SetupUnit(unitID)
     end
 end
 
-function widget:PlayerChanged()
-    if spGetSpectatingState() then
-        widgetHandler:RemoveWidget()
-    end
-end
-
 function widget:Initialize()
-    if spGetSpectatingState() then
-        widgetHandler:RemoveWidget()
-    end
     for _,unitID in ipairs(spGetTeamUnits(spGetMyTeamID())) do
         local unitDefID = spGetUnitDefID(unitID)
         if IsImmobileBuilder(UnitDefs[unitDefID]) then

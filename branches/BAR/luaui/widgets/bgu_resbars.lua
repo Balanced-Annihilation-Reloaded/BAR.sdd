@@ -285,7 +285,7 @@ local function makeconversionWindow()
 end
 
 -- Updates 
-local function setBar(res,n)
+local function setBar(res, updateText)
     local currentLevel, storage, pull, income, expense, share = spGetTeamResources(myTeamID, res)
     
     -- set everything to 0 if nil (eg. we are a spec and not watching anyone)
@@ -310,7 +310,7 @@ local function setBar(res,n)
     meter[res]:SetValue(currentLevel/storage*100)
     meter[res]:SetCaption(math.floor(currentLevel)..'/'..storage)
 
-    if n%30~=1 then return end -- we only need to update res text just after a slow update occurs
+    if not updateText then return end -- we only need to update res text just after a slow update occurs
 
     local netText = readable(net)
     local incomeText = readable(income)
@@ -328,9 +328,12 @@ end
 -- Callins
 -------------------------------------------
 function widget:GameFrame(n)    
-    myTeamID = spGetMyTeamID()
-    setBar('metal',n)
-    setBar('energy',n)
+    local newTeamID = spGetMyTeamID()
+    local updateText = (myTeamID ~= newTeamID) or (n%30==1) -- team change or slow update
+    myTeamID = newTeamID
+    
+    setBar('metal',updateText)
+    setBar('energy',updateText)
 end
 
 function SetValues()

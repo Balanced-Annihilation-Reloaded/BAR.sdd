@@ -58,10 +58,10 @@ function Slap(cmd,line,words,playerID)
     lastSlap = thisSlap    
     local slapText = myName .. " slaps " .. theirName .. " around with "
     
-    if math.random() < 0.95 then
+    if math.random() < 0.90 then
         slapText = slapText .. "large peewee"
     else
-        if math.random() < 0.80 then
+        if math.random() < 0.70 then
             local n = math.random(1,#slappingObjects_uncommon)
             slapText = slapText .. slappingObjects_uncommon[n]
         else

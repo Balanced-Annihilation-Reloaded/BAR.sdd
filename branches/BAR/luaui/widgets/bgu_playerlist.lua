@@ -38,6 +38,8 @@ local needUpdate = true
 
 -- local player info
 local myPlayerID = Spring.GetMyPlayerID()
+local myTeamID = Spring.GetMyTeamID()
+local myAllyTeamID = Spring.GetMyAllyTeamID()
 
 --General players/spectator count and tables
 local deadPlayerName = " --- "
@@ -1146,6 +1148,7 @@ end
 
 function widget:Initialize()
     Spring.SendCommands('unbind Any+h sharedialog')
+    WG.PlayerList = {}
 
     Chili = WG.Chili
     buttonColour = WG.buttonColour
@@ -1195,6 +1198,8 @@ function widget:GamePreload()
 end
 
 function widget:Shutdown()
+    WG.PlayerList = nil
+
     window:Dispose()
     iPanel:Dispose()
     for pID,_ in pairs(players) do
@@ -1265,6 +1270,14 @@ end
 
 local prevTimer = Spring.GetTimer()
 function widget:Update()
+    local teamID = Spring.GetMyTeamID()
+    if teamID~= myTeamID then
+        myTeamID = teamID
+        local _,_,_,_,_,allyTeamID = Spring.GetTeamInfo(teamID)
+        myAllyTeamID = allyTeamID
+        needUpdate = true -- if we are spectator changing team, this is where it gets noticed
+    end
+
     local timer = Spring.GetTimer()
     if Spring.DiffTimers(timer,prevTimer)>0.33 then
         ScheduledUpdate()
@@ -1302,8 +1315,6 @@ end
 
 function SetupAllyTeams()
     -- create allyteams tables
-    local myAllyTeamID = Spring.GetMyAllyTeamID()
-    
     myAllyTeam = {}
     allyTeams = {}
     
@@ -1454,7 +1465,7 @@ function HalfSeparator()
     local separator = Chili.Line:New{
         width   = 100,
         x       = offset.max - offset.name - width.name + 100,
-        maxheight = 2,
+        maxheight = 4,
     }
     return separator
 end
@@ -1513,8 +1524,6 @@ end
 
 function SetupStack()
 
-    SetupAllyTeams()
-
     window = Chili.Window:New{
         parent    = Chili.Screen0,
         right     = 0,
@@ -1549,9 +1558,11 @@ function UpdateStack()
     stack:ClearChildren()
 
     -- re-sort players into teams/allyteams
+    SetupAllyTeams()
     AssignPlayersToTeams()
     SortTeams()
     SortAllyTeams()
+    ExposeSortedOrders()
     
     -- now re-associate children
     stack:AddChild(Header("ALLIES"))
@@ -1597,6 +1608,28 @@ function UpdateStack()
             stack:AddChild(players[pID].specPanel)
         end 
     end    
+end
+
+function ExposeSortedOrders()
+    local allyTeamList = {}
+    local teamLists = {}
+
+    allyTeamList[1] = myAllyTeamID
+    teamLists[myAllyTeamID] = {}
+    for _,tID in ipairs(myAllyTeam) do
+        teamLists[myAllyTeamID][#teamLists[myAllyTeamID]+1] = tID
+    end
+
+    for aID,_ in pairs(allyTeams) do
+        allyTeamList[#allyTeamList+1] = aID
+        teamLists[aID] = {}
+        for _,tID in ipairs(allyTeams[aID]) do
+            teamLists[aID][#teamLists[aID]+1] = tID
+        end
+    end
+
+    WG.PlayerList.allyTeamList = allyTeamList
+    WG.PlayerList.teamLists = teamLists
 end
 
 function OptionChange()

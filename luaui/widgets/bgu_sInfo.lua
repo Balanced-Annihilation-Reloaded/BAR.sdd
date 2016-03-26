@@ -123,7 +123,7 @@ function GetFactionPicInfo(teamID, faction)
     
     -- code from player list
     local dark = (r*1.2 + g*1.1 + b*0.8 < 0.9)
-    if faction then
+    if faction and (faction=='arm' or faction=='core') then
         if dark then
             factionPic = "LuaUI/Images/playerlist/"..faction.."WO_default.png"
         else

@@ -384,7 +384,7 @@ function loadWindow()
         width     = selW,
         x         = 0,
         y         = 0,
-        bottom    = '50%',
+        bottom    = '40%',
         children  = {graphSelect},
     }
     
@@ -417,7 +417,7 @@ function loadWindow()
         parent    = control0,
         width     = selW,
         x         = 0,
-        y         = '50%',
+        y         = '60%',
         bottom    = 0,
         children  = {playerList},
     }

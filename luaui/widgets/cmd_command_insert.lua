@@ -3,7 +3,7 @@
 
 function widget:GetInfo()
   return {
-    name = "CommandInsert",
+    name = "Command Insert",
     desc = "Hold spacebar while giving a command to insert it at the start of the queue\nAdditionally press shift to control the insert position",
     author = "dizekat", -- Based on FrontInsert by jK
     date = "Jan,2008",

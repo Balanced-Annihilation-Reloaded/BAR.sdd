@@ -80,6 +80,7 @@ end
 function UpdateTeamPanel(tID, res)
     local aID = allyTeamOfTeam[tID]
     local currentLevel, storage, pull, income, expense, share, sent, received = spGetTeamResources(tID, res.name)
+    if not currentLevel then return end
     
     teamPanels[tID]:GetChildByName(res.name).children[1]:SetValue(currentLevel/storage)
     

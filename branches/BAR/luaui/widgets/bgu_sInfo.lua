@@ -130,11 +130,7 @@ function GetFactionPicInfo(teamID, faction)
             factionPic = "LuaUI/Images/playerlist/"..faction.."_default.png"
         end
     else
-        if dark then
-            factionPic = "LuaUI/Images/playerlist/defaultWO.png"
-        else
-            factionPic = "LuaUI/Images/playerlist/default.png"
-        end
+        factionPic = "LuaUI/Images/playerlist/default.png"
     end
     
     return factionPic, factionPicColour

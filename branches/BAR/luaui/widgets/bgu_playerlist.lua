@@ -758,11 +758,7 @@ function SetFaction(pID)
             players[pID].factionPic = "LuaUI/Images/playerlist/"..faction.."_default.png"
         end
     else
-        if players[pID].dark then
-            players[pID].factionPic = "LuaUI/Images/playerlist/defaultWO.png"
-        else
-            players[pID].factionPic = "LuaUI/Images/playerlist/default.png"
-        end
+        players[pID].factionPic = "LuaUI/Images/playerlist/default.png"
     end
 end
 

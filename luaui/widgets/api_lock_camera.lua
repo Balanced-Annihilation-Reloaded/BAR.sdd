@@ -28,6 +28,7 @@ local newBroadcaster = false
 local totalTime = 0
 
 local myLastCameraState
+local myPlayerID = Spring.GetMyPlayerID()
 
 ------------------------------------------------
 

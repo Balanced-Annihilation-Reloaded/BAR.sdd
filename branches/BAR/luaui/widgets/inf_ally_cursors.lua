@@ -299,6 +299,7 @@ local function DrawCursor(playerID,wx,wy,camX,camY,camZ)
             allycursorDrawList[playerID][opacityMultiplier] = glCreateList(createCursorDrawList, playerID, opacityMultiplier)
         end
                     
+        gl.PushMatrix()                    
         gl.Translate(wx, gy, wz)
         if drawNamesScaling then
             --gl.Scale(glScale,0,glScale)
@@ -307,7 +308,7 @@ local function DrawCursor(playerID,wx,wy,camX,camY,camZ)
         if drawNamesScaling then
             --gl.Scale(-glScale,0,-glScale)
         end
-        gl.Translate(-wx, -gy, -wz)
+        gl.PopMatrix()                    
     end
 end
 

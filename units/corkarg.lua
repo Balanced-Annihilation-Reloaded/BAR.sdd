@@ -58,6 +58,9 @@ return {
 				object = "CORKARG_DEAD.s3o",
 				reclaimable = true,
 				world = "All Worlds",
+				customparams = {
+					faction = "core",
+				},
 			},
 		},
 		sounds = {

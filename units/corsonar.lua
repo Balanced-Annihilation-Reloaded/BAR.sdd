@@ -58,6 +58,9 @@ return {
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
+				customparams = {
+					faction = "core",
+				},
 			},
 		},
 		sounds = {

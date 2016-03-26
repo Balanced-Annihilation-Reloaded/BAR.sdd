@@ -53,8 +53,16 @@ return {
 			normaltex = "unittextures/chicken_normal.tga",
 		},
 		featuredefs = {
-			dead = {},
-			heap = {},
+			dead = {
+				customparams = {
+					faction = "chicken",
+				},
+			},
+			heap = {
+				customparams = {
+					faction = "chicken",
+				},
+			},
 		},
 		sfxtypes = {
 			explosiongenerators = {

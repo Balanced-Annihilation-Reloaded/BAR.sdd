@@ -61,6 +61,9 @@ return {
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
+				customparams = {
+					faction = "core",
+				},
 			},
 			heap = {
 				blocking = false,
@@ -77,6 +80,9 @@ return {
 				reclaimable = true,
 				resurrectable = 0,
 				world = "All Worlds",
+				customparams = {
+					faction = "core",
+				},
 			},
 		},
 		sounds = {

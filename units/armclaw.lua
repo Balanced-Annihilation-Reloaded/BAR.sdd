@@ -66,6 +66,9 @@ return {
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
+				customparams = {
+					faction = "arm",
+				},
 			},
 			rockteeth = {
 				animating = 0,
@@ -84,6 +87,9 @@ return {
 				resurrectable = 0,
 				shadtrans = 1,
 				world = "greenworld",
+				customparams = {
+					faction = "arm",
+				},
 			},
 		},
 		sfxtypes = {

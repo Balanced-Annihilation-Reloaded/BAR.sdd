@@ -358,6 +358,7 @@ local function showUnitInfo()
         parent = unitPictureOverlay,
         x      = 5,
         y      = 5,
+        right  = 22,
         text   = humanName .. description .. numText,
     }
 
@@ -736,6 +737,7 @@ local function showFocusInfo()
         parent = focusPictureOverlay,
         x      = 5,
         y      = 5,
+        right  = 22,
         text   = humanName .. "\n" .. description,
     }
     
@@ -807,6 +809,7 @@ function showFeatureInfo()
         parent = unitWindow,
         x      = 5,
         y      = 5,
+        right  = 22,
         width  = '100%',
         text   = description,
     }

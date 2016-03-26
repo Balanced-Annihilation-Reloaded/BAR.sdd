@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, flare, turret, spindle;
+piece  base, flare, turret, spindle, aimpoint;
 
 static-var  gun_1;
 
@@ -101,7 +101,7 @@ SweetSpot(piecenum)
 
 AimFromPrimary(piecenum)
 {
-	piecenum = turret;
+	piecenum = aimpoint;
 }
 
 Killed(severity, corpsetype)

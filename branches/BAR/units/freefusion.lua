@@ -9,7 +9,6 @@ return {
 		buildpic = "FREEFUSION.DDS",
 		buildtime = 800,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
-
 		corpse = "FREE_FUSION_DEAD",
 		description = "Produces plenty of energy",
 		energymake = 850,
@@ -29,11 +28,9 @@ return {
 		selfdestructas = "FUSIONX_BLAST",
 		sightdistance = 250,
 		yardmap = "ooooooooooooooooooooooooo",
-        
-        customparams = {
-            faction = "none",
-        },
-
+		customparams = {
+			faction = "none",
+		},
 		featuredefs = {
 			free_fusion_dead = {
 				blocking = true,
@@ -48,6 +45,9 @@ return {
 				metal = 3300,
 				object = "freefusion_dead.s3o",
 				reclaimable = true,
+				customparams = {
+					faction = "none",
+				},
 			},
 		},
 	},

@@ -37,7 +37,7 @@ return {
 		turninplace = 0,
 		turninplaceanglelimit = 140,
 		turninplacespeedlimit = 0.792,
-		turnrate = 520;
+		turnrate = 520,
 		customparams = {
 			arm_tank = "1",
 			faction = "arm",
@@ -65,6 +65,9 @@ return {
 				reclaimable = true,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
+				customparams = {
+					faction = "arm",
+				},
 			},
 			heap = {
 				blocking = false,
@@ -83,6 +86,9 @@ return {
 				resurrectable = 0,
 				seqnamereclamate = "TREE1RECLAMATE",
 				world = "All Worlds",
+				customparams = {
+					faction = "arm",
+				},
 			},
 		},
 		sounds = {

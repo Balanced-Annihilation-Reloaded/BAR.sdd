@@ -53,6 +53,9 @@ return {
 				reclaimtime = 800,
 				seqnamereclamate = "tree1reclamate",
 				world = "allworld",
+				customparams = {
+					faction = "arm",
+				},
 			},
 			rockteethx = {
 				animating = 0,
@@ -71,6 +74,9 @@ return {
 				resurrectable = 0,
 				shadtrans = 1,
 				world = "greenworld",
+				customparams = {
+					faction = "arm",
+				},
 			},
 		},
 	},

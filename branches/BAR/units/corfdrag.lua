@@ -52,6 +52,9 @@ return {
 				object = "corfdrag.s3o",
 				reclaimable = true,
 				world = "allworld",
+				customparams = {
+					faction = "core",
+				},
 			},
 		},
 	},

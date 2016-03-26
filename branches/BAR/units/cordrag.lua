@@ -51,6 +51,9 @@ return {
 				resurrectable = 0,
 				shadtrans = 1,
 				world = "greenworld",
+				customparams = {
+					faction = "core",
+				},
 			},
 		},
 	},

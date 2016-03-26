@@ -262,6 +262,7 @@ local function processLine(line)
     
     local name = ''
     local dedup = 1
+    local addedPoint = false
     
     if (names[ssub(line,2,(sfind(line,"> ") or 1)-1)] ~= nil) then
         -- Player Message
@@ -283,6 +284,7 @@ local function processLine(line)
         name = ssub(line,1,sfind(line," added point: ")-1)
         text = ssub(line,slen(name.." added point: ")+1)
         dedup = 5
+        addedPoint = true
     elseif (ssub(line,1,1) == ">") then
         -- Game Message
         text = ssub(line,3)
@@ -320,14 +322,22 @@ local function processLine(line)
                     textColor = color.oAlly
                 end
             elseif text:find('Spectators: ') then
-                textColor = color.spec            
+                textColor = color.spec                          
             end
         end
         -- Get rid of any (now) unneeded info in the text
         text = text:gsub('Allies: ','')
         text = text:gsub('Spectators: ','')
+        if addedPoint then
+            name = name .. " added point"
+            if player.spec then 
+                textColor = color.spec
+            end
+        end
+        
         line = nameColor .. name .. ': ' .. textColor .. text
     end
+    
 
     return color.misc .. line, false, dedup
 end

@@ -83,9 +83,11 @@ end
 
 
 function DrawIcon(posY, posX, haloSize)
+    gl.PushMatrix()
     gl.Translate(0,posY,-(haloSize/2))
     gl.Rotate(90,1,0,0)
     gl.TexRect(-(haloSize/2), 0, (haloSize/2), haloSize)
+    gl.PopMatrix()
 end
 
 

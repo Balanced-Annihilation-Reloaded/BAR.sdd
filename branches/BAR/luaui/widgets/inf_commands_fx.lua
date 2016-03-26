@@ -478,8 +478,6 @@ function widget:DrawWorldPreUnit()
 								gl.Color(1.0,1.0,1.0, lineAlpha)
 								--gl.Blending("alpha")
 								gl.UnitShape(commands[i].queue[j].buildingID, commands[i].teamID, false, true, false)
-								gl.Rotate(-90 * commands[i].queue[j].params[4], 0, 1, 0)
-								gl.Translate(-X,-Y-1,-Z)
 								gl.PopMatrix()
 							end
                         end

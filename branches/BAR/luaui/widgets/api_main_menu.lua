@@ -112,7 +112,7 @@ local DefaultSettings = {
         ['showWidgetAuthors']  = false,
         ['widgetSelectorMode'] = "normal",
         ['expandedWidgetOptions'] = {},
-        ['mainMenuSize'] = {x=400,y=200,width=750,height=550},
+        ['mainMenuSize'] = {x=350,y=200,width=800,height=550},
     },
 }
 

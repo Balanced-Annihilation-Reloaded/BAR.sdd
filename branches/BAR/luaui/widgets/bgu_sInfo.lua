@@ -14,9 +14,9 @@ end
 local imageDir = 'luaui/images/buildIcons/'
 
 local Chili, screen, unitWindow, groundWindow, groundText
-local unitWindow, unitName, unitPicture, unitPictureOverlay, unitHealthText, unitHealth, unitCostTextTitle, unitResText
+local unitWindow, unitName, unitPicture, unitPictureOverlay, unitHealthText, unitHealth, unitCostTextTitle, unitResText, unitFactionPic
 local featureName, featureHealthText, featureHealth, featureResText
-local focusName, focusPicture, focusPictureOverlay, focusCost, focusBuildTime
+local focusName, focusPicture, focusPictureOverlay, focusCost, focusBuildTime, focusFactionPic
 local basicHealth, basicHealthText, basicResText, basicUnitInfo
 local unitGrid 
 local healthBars = {}
@@ -58,6 +58,9 @@ local myTeamID  = Spring.GetMyTeamID()
 local groundTimer = spGetTimer()
 
 local buttonColour, panelColour, sliderColour 
+
+----------------------------------
+-- helpers
 
 local mColour = '\255\153\153\204'
 local eColour = '\255\255\255\76'
@@ -112,7 +115,43 @@ end
 local function CostToolTip(Mcost, Ecost)
     return mColour .. readable(Mcost) .. '\n' .. eColour .. readable(Ecost)
 end
-  
+
+function GetFactionPicInfo(teamID, faction)
+    if not teamID or not faction then return end
+    local r,g,b = Spring.GetTeamColor(teamID)
+    local factionPicColour = {r,g,b,1}
+    
+    -- code from player list
+    local dark = (r*1.2 + g*1.1 + b*0.8 < 0.9)
+    if faction then
+        if dark then
+            factionPic = "LuaUI/Images/playerlist/"..faction.."WO_default.png"
+        else
+            factionPic = "LuaUI/Images/playerlist/"..faction.."_default.png"
+        end
+    else
+        if dark then
+            factionPic = "LuaUI/Images/playerlist/defaultWO.png"
+        else
+            factionPic = "LuaUI/Images/playerlist/default.png"
+        end
+    end
+    
+    return factionPic, factionPicColour
+end
+
+function GetOverlayColor(teamID)
+    local r,g,b = Spring.GetTeamColor(teamID)
+    local color = {r,g,b}
+    local overlayColor = {} -- desaturate and aim for 0.3 brightness, else unit properties are hard to read
+    overlayColor[4] = 1.00
+    local average = 1/6 * (color[1] + color[2] + color[3] + 0.9) 
+    local bias = 0.3
+    for i=1,3 do
+        overlayColor[i] = (1-bias)*average + bias*color[i]
+    end
+    return overlayColor
+end  
  
 ----------------------------------
 -- multi-unitdef info
@@ -275,19 +314,6 @@ end
 ----------------------------------
 -- single unitdef info
 
-function GetOverlayColor(teamID)
-    local r,g,b = Spring.GetTeamColor(teamID)
-    local color = {r,g,b}
-    local overlayColor = {} -- desaturate and aim for 0.3 brightness, else unit properties are hard to read
-    overlayColor[4] = 1.00
-    local average = 1/6 * (color[1] + color[2] + color[3] + 0.9) 
-    local bias = 0.3
-    for i=1,3 do
-        overlayColor[i] = (1-bias)*average + bias*color[i]
-    end
-    return overlayColor
-end
-
 local function showUnitInfo()
     local defID = curTip.selDefID
     local selUnits = curTip.selUnits 
@@ -301,24 +327,15 @@ local function showUnitInfo()
     local overlay     = imageDir..'Overlays/' .. name .. '.dds'
     local overlayColor = GetOverlayColor(unitTeamID)
     local humanName   = UnitDefs[defID].humanName
+    
+    local faction = UnitDefs[defID].customParams.faction
+    local factionPic, factionPicColour = GetFactionPicInfo(unitTeamID, faction)
 
-    local Ecost = 0
-    local Mcost = 0
-    local curHealth = 0
-    local maxHealth = 0
-    local Mmake, Muse, Emake, Euse = 0,0,0,0
     for _, uID in ipairs(selUnits) do
-        Ecost = Ecost + UnitDefs[defID].energyCost
-        Mcost = Mcost + UnitDefs[defID].metalCost 
-        local c, m = spGetUnitHealth(uID)
-        local mm, mu, em, eu = spGetUnitResources(uID)
-        curHealth = curHealth + (c or 0)
-        maxHealth = maxHealth + (m or 0)
-        Mmake = Mmake + (mm or 0)
-        Muse = Muse + (mu or 0)
-        Emake = Emake + (em or 0)
-        Euse = Euse + (eu or 0)
-        if (Spring.GetUnitTeam(uID)~=unitTeam) then multipleTeams = ", multiple teams" end
+        if (Spring.GetUnitTeam(uID)~=unitTeamID) then 
+            multipleTeams = ", multiple teams" 
+            break
+        end
     end
 
     local numText = ""
@@ -347,6 +364,19 @@ local function showUnitInfo()
         y      = 5,
         text   = humanName .. description .. numText,
     }
+
+    if factionPic then
+        unitFactionPic = Chili.Image:New{
+            parent = unitPictureOverlay,
+            name   = 'unitFaction',
+            height = 17,
+            width  = 17,
+            y      = 5,
+            right  = 5,
+            file   = factionPic,
+            color  = factionPicColour,
+        }
+    end
     
     unitHealthText = Chili.TextBox:New{
         parent = unitPictureOverlay,
@@ -681,6 +711,9 @@ local function showFocusInfo()
     local overlayColor = GetOverlayColor(unitTeamID)
     local humanName   = UnitDefs[defID].humanName
 
+    local faction = UnitDefs[defID].customParams.faction
+    local factionPic, factionPicColour = GetFactionPicInfo(unitTeamID, faction)
+
     local Ecost = UnitDefs[defID].energyCost
     local Mcost = UnitDefs[defID].metalCost 
     local maxHealth = UnitDefs[defID].health
@@ -710,6 +743,19 @@ local function showFocusInfo()
         text   = humanName .. "\n" .. description,
     }
     
+    if factionPic then
+        focusFactionPic = Chili.Image:New{
+            parent = focusPictureOverlay,
+            name   = 'focusFaction',
+            height = 17,
+            width  = 17,
+            y      = 5,
+            right  = 5,
+            file   = factionPic,
+            color  = factionPicColour,
+        }
+    end
+
     -- costs + buildtime
     if unitDef.customParams.iscommander~="1" then  
         focusCost = Chili.TextBox:New{
@@ -756,6 +802,8 @@ function showFeatureInfo()
     local fID = curTip.featureID
     local defID = curTip.featureDefID
     local fTeamID = Spring.GetFeatureTeam(fID)
+    local faction = FeatureDefs[defID].customParams.faction
+    local factionPic, factionPicColour = GetFactionPicInfo(fTeamID, faction)
         
     local description = FeatureDefs[defID].tooltip or ''
     -- there is no buildpic for features
@@ -767,6 +815,19 @@ function showFeatureInfo()
         text   = description,
     }
     
+    if factionPic then
+        featureFactionPic = Chili.Image:New{
+            parent = unitWindow,
+            name   = 'featureFaction',
+            height = 17,
+            width  = 17,
+            y      = 5,
+            right  = 5,
+            file   = factionPic,
+            color  = factionPicColour,
+        }
+    end
+
     featureHealthText = Chili.TextBox:New{
         parent = unitWindow,
         x      = 5,

@@ -60,7 +60,7 @@ end
 
 function ChooseAllowedSpeeds()
     minSpeed = tonumber(Spring.GetModOptions().minspeed) or 0
-    maxSpeed = tonumber(Spring.GetModOptions().maxspeed) or math.huge
+    maxSpeed = tonumber(Spring.GetModOptions().maxspeed) or 20
     allowedSpeeds[1] = "pause"
     local usedSpeeds = {}
     for _,speed in pairs(wantedAllowedSpeeds) do

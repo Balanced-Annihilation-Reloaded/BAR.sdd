@@ -150,18 +150,17 @@ local function MakeBloomShaders()
     combineShader = glCreateShader({
         fragment = [[
             uniform sampler2D texture0;
-            uniform sampler2D texture1;
             uniform int debugDraw;
 
             void main(void) {
                 vec4 a = texture2D(texture0, gl_TexCoord[0].st);
-                vec4 b = texture2D(texture1, gl_TexCoord[0].st);
 
                 if (!debugDraw) {
                     //gl_FragColor = a+b;
-                    gl_FragColor = mix(a, a + b, clamp(2.0-(a.r+a.g+a.b),0.0,1.0) ); //todo: redo this blending function, to avoid a bit of overbrightness
+                    gl_FragColor = a;
                 } else {
-                    gl_FragColor = b;
+					a.a= 1.0;
+                    gl_FragColor = a;
                 }
             }
         ]],
@@ -175,7 +174,7 @@ local function MakeBloomShaders()
                 gl_Position    = gl_Vertex;
             }
         ]],
-        uniformInt = { texture0 = 0, texture1 = 1, debugDraw = 0}
+        uniformInt = { texture0 = 0, debugDraw = 0}
     })
 
     if (combineShader == nil) then
@@ -242,22 +241,17 @@ local function MakeBloomShaders()
         RemoveMe("[BloomShader::Initialize] blurShaderV71 compilation failed"); Spring.Echo(glGetShaderLog()); return
     end
 
-
-
-	brightShaderFragment = [[
-            uniform sampler2D texture0;
-			#ifdef deferredmodel
-				uniform sampler2D modelspectex;
-			#endif
+    brightShader = glCreateShader({
+        fragment =   [[
+            uniform sampler2D modeldiffusetex;
+			uniform sampler2D modelspectex;
             uniform float illuminationThreshold;
             uniform float fragGlowAmplifier;
 
             void main(void) {
                 vec2 texCoors = vec2(gl_TexCoord[0]);
-                vec3 color = vec3(texture2D(texture0, texCoors));
-				#ifdef deferredmodel
-					color += vec3(texture2D(modelspectex,texCoors));
-				#endif
+                vec3 color = vec3(texture2D(modeldiffusetex, texCoors));
+				color += color*texture2D(modelspectex,texCoors).r;
                 float illum = dot(color, vec3(0.2990, 0.4870, 0.2140)); //adjusted from the real values of  vec3(0.2990, 0.5870, 0.1140)
 				
                 if (illum > illuminationThreshold) {
@@ -266,15 +260,9 @@ local function MakeBloomShaders()
                     gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
                 }
             }
-        ]]
+        ]], 
 
-	if hasdeferredmodelrendering then
-		brightShaderFragment = '#define deferredmodel\n'..brightShaderFragment
-	end
-    brightShader = glCreateShader({
-        fragment =  brightShaderFragment,
-
-        uniformInt = {texture0 = 0, modelspectex = 1},
+        uniformInt = {modeldiffusetex = 0, modelspectex = 1},
         uniformFloat = {illuminationThreshold, fragGlowAmplifier} --, inverseRX, inverseRY}
     })
 
@@ -284,7 +272,7 @@ local function MakeBloomShaders()
 
 
 
-    brightShaderText0Loc = glGetUniformLocation(brightShader, "texture0")
+    brightShaderText0Loc = glGetUniformLocation(brightShader, "modeldiffusetex")
     if hasdeferredmodelrendering then
 		brightShaderText1Loc = glGetUniformLocation(brightShader, "modelspectex")
 	end
@@ -350,6 +338,9 @@ function widget:Initialize()
     end
 
 	hasdeferredmodelrendering = (Spring.GetConfigString("AllowDeferredModelRendering")=='1')
+	if hasdeferredmodelrendering == false then
+		RemoveMe("[BloomShader::Initialize] removing widget, AllowDeferredModelRendering is required")
+	end
     AddChatActions()
 	MakeBloomShaders()
 
@@ -402,7 +393,7 @@ local function Bloom()
     -- end
     gl.Color(1, 1, 1, 1)
 
-    glCopyToTexture(screenTexture, 0, 0, 0, 0, vsx, vsy, nil,0)
+    --glCopyToTexture(screenTexture, 0, 0, 0, 0, vsx, vsy, nil,0)
  
     glUseShader(brightShader)
         glUniformInt(brightShaderText0Loc, 0)
@@ -410,11 +401,11 @@ local function Bloom()
         glUniform(   brightShaderIllumLoc, illumThreshold)
         glUniform(   brightShaderFragLoc, glowAmplifier)
 		-- api_screenTexture = WG['screencopy_manager'].GetScreenCopy('bloom')
-        glTexture(0,screenTexture)
-		if hasdeferredmodelrendering then glTexture(1,"$model_gbuffer_emittex") end
+        glTexture(0, "$model_gbuffer_difftex")
+		glTexture(1,"$model_gbuffer_emittex") 
         glRenderToTexture(brightTexture1, gl.TexRect, -1,1,1,-1)
         glTexture(0, false)
-        if hasdeferredmodelrendering then glTexture(0, false) end
+        glTexture(1, false)
     glUseShader(0)
 
 
@@ -438,22 +429,26 @@ local function Bloom()
         glUseShader(0)
     end
 
-
-
+	if dbgDraw == 0 then
+		gl.Blending("alpha_add")
+	else
+		gl.Blending(GL.ONE, GL.ZERO)
+	end
     glUseShader(combineShader)
         glUniformInt(combineShaderDebgDrawLoc, dbgDraw)
         glUniformInt(combineShaderTexture0Loc, 0)
         glUniformInt(combineShaderTexture1Loc, 1)
 		
-        glTexture(0, screenTexture)
-        gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1)
+       -- glTexture(0, screenTexture)
+        -- gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1)
 		
-        glTexture(0, false)
-        glTexture(1, brightTexture1)
+        glTexture(0, brightTexture1)
+        -- glTexture(1, brightTexture1)
         
         gl.TexRect(-1, -1, 1, 1, 0, 0, 1, 1)
         glTexture(1, false)
     glUseShader(0)
+	gl.Blending("reset")
     --gl.Finish()
 end
 

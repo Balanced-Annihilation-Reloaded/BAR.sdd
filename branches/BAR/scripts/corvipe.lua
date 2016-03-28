@@ -17,8 +17,10 @@ local function close()
 
 	is_open = false;
 	
+	UnitScript.Turn(turret, y_axis, 0, math.rad(200));
 	UnitScript.Move(turret, y_axis, -44, 100);
 	UnitScript.WaitForMove(turret, y_axis);
+	UnitScript.WaitForTurn(turret, y_axis);
 	
 	UnitScript.Move(door1, x_axis, -8.54, 30);
 	UnitScript.Move(door2, x_axis, 8.54, 30);
@@ -32,8 +34,6 @@ local function open()
 	
 	UnitScript.SetUnitValue(COB.ARMORED, 0);
 	
-	UnitScript.Move(door1, x_axis, -8.54);
-	UnitScript.Move(door2, x_axis, 8.54);
 	UnitScript.Move(door1, x_axis, 0, 30);
 	UnitScript.Move(door2, x_axis, 0, 30);
 	UnitScript.WaitForMove(door1, x_axis);

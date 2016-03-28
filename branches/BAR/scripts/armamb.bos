@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, flare, door1, door2, door3, door4, stand,
+piece  base, flare, door1, door2, door3, door4, stand ,aimpoint,
        turret, barrel;
 
 static-var  IsClosed, restore_delay, statechg_DesiredState, statechg_StateChanging, Static_Var_5;
@@ -13,24 +13,26 @@ activatescr()
 {
 	if( TRUE )
 	{
-		turn door1 to x-axis <90.000000> speed <227.093407>;
-		turn door2 to z-axis <90.000000> speed <227.093407>;
-		turn door3 to x-axis <-90.000000> speed <227.093407>;
-		turn door4 to z-axis <-90.000000> speed <227.093407>;
-		move stand to y-axis [6] speed [34];
-		sleep 500;
+		turn door1 to x-axis <0.000000> speed <227.093407>;
+		turn door2 to z-axis <0.000000> speed <227.093407>;
+		turn door3 to x-axis <0.000000> speed <227.093407>;
+		turn door4 to z-axis <0.000000> speed <227.093407>;
+		wait-for-turn door1 around x-axis;
 	}
 	if( TRUE )
 	{
-		move door1 to y-axis [-15] speed [45.000000];
-		move door2 to y-axis [-15] speed [45.000000];
-		move door3 to y-axis [-15] speed [45.000000];
-		move door4 to y-axis [-15] speed [45.000000];
+		move door1 to y-axis [0] speed [45.000000];
+		move door2 to y-axis [0] speed [45.000000];
+		move door3 to y-axis [0] speed [45.000000];
+		move door4 to y-axis [0] speed [45.000000];
+		move stand to y-axis [0] speed [34];
+		wait-for-move door1 along y-axis;
+		wait-for-move stand along y-axis;
 		sleep 250;
 	}
 	if( TRUE )
 	{
-		move barrel to z-axis [7] speed [51];
+		move barrel to z-axis [0] speed [51];
 		sleep 300;
 	
 	}
@@ -44,31 +46,28 @@ deactivatescr()
 	{
 		turn stand to y-axis <0> speed <100>;
 		turn turret to x-axis <0> speed <50>;
+		move barrel to z-axis [-16] speed [51];
+		sleep 300;
 		wait-for-turn stand around y-axis;
 		wait-for-turn turret around x-axis;
 	}
 	if( TRUE )
 	{
-		move barrel to z-axis [0] speed [51];
-		sleep 300;
-	
-	}
-	if( TRUE )
-	{
-		move door1 to y-axis [0] speed [45.000000];
-		move door2 to y-axis [0] speed [45.000000];
-		move door3 to y-axis [0] speed [45.000000];
-		move door4 to y-axis [0] speed [45.000000];
-		sleep 250;
+		move door1 to y-axis [15] speed [45.000000];
+		move door2 to y-axis [15] speed [45.000000];
+		move door3 to y-axis [15] speed [45.000000];
+		move door4 to y-axis [15] speed [45.000000];
+		move stand to y-axis [-16] speed [34];
+		wait-for-move door1 along y-axis;
+		wait-for-move stand along y-axis;
 	}
 		if( TRUE )
 	{
-		turn door1 to x-axis <0.000000> speed <227.093407>;
-		turn door2 to z-axis <0.000000> speed <227.093407>;
-		turn door3 to x-axis <0.000000> speed <227.093407>;
-		turn door4 to z-axis <0.000000> speed <227.093407>;
-		move stand to y-axis [0] speed [34];
-		sleep 500;
+		turn door1 to x-axis <-90.000000> speed <227.093407>;
+		turn door2 to z-axis <-90.000000> speed <227.093407>;
+		turn door3 to x-axis <90.000000> speed <227.093407>;
+		turn door4 to z-axis <90.000000> speed <227.093407>;
+		wait-for-turn door1 around x-axis;
 	}
 	sleep 17;
 	return (0);
@@ -230,11 +229,11 @@ FireWeapon1()
 {
 	Static_Var_5 = 1;
 	start-script Reload1();
-	move barrel to z-axis [2.500000] speed [1250.000000];
+	move barrel to z-axis [-4.500000] speed [1250.000000];
 	show flare;
 	sleep 250;
 	hide flare;
-	move barrel to z-axis [7.000000] speed [7.500000];
+	move barrel to z-axis [0.000000] speed [7.500000];
 	return (0);
 }
 
@@ -275,18 +274,17 @@ FireWeapon2()
 {
 	Static_Var_5 = 1;
 	start-script Reload2();
-	move barrel to z-axis [2.500000] speed [1250.000000];
+	move barrel to z-axis [-4.500000] speed [1250.000000];
 	show flare;
 	sleep 250;
 	hide flare;
-	move barrel to z-axis [7.000000] speed [7.500000];
+	move barrel to z-axis [0.000000] speed [7.500000];
 	return (0);
 }
 
-AimFromWeapon2(Func_Var_1)
+AimFromWeapon2(piecenum)
 {
-	Func_Var_1 = 2;
-	return (0);
+	piecenum = aimpoint;
 }
 
 QueryWeapon2(Func_Var_1)

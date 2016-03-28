@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turret, dome, gun, barrel, flare;
+piece  base, turret, dome, gun, barrel, flare, aimpoint;
 
 static-var  OpenClosed, restore_delay, statechg_DesiredState, statechg_StateChanging;
 
@@ -14,10 +14,10 @@ static-var  OpenClosed, restore_delay, statechg_DesiredState, statechg_StateChan
 Go()
 {
 	set ARMORED to 0;
-	turn dome to x-axis <-135.032967> speed <550.000000>;
+	turn dome to x-axis <0> speed <550.000000>;
 	wait-for-turn dome around x-axis;
-	move turret to y-axis [32] speed [25.000000];
-	move barrel to z-axis [6] speed [15.000000];
+	move turret to y-axis [0] speed [50.000000];
+	move barrel to z-axis [0] speed [15.000000];
 	wait-for-move turret along y-axis;
 	wait-for-move barrel along z-axis;
 	OpenClosed = 1;
@@ -27,13 +27,13 @@ Stop()
 {
 	OpenClosed = 0;
 	turn gun to x-axis <0.000000> speed <90.000000>;
-	move barrel to z-axis [0] speed [15.000000];
+	move barrel to z-axis [-7] speed [15.000000];
 
 	wait-for-turn gun around x-axis;
 	wait-for-move barrel along z-axis;
-	move turret to y-axis [00000] speed [25.000000];
+	move turret to y-axis [-32] speed [50.000000];
 	wait-for-move turret along y-axis;
-	turn dome to x-axis <0.000000> speed <550.000000>;
+	turn dome to x-axis <135.000000> speed <550.000000>;
 	wait-for-turn dome around x-axis;
 	set ARMORED to 1;
 }
@@ -109,11 +109,15 @@ Create()
 	statechg_DesiredState = FALSE;
 	statechg_StateChanging = FALSE;
 	start-script SmokeUnit();
+	
+	
+	start-script RequestState(0);
+	
 //	turn dome to x-axis <-135.032967> now;
 //	move gun to x-axis [1.500000] now;
 }
 
-/*
+
 Activate()
 {
 	start-script RequestState(0);
@@ -123,7 +127,7 @@ Deactivate()
 {
 	start-script RequestState(1);
 }
-*/
+
 
 SetMaxReloadTime(Func_Var_1)
 {

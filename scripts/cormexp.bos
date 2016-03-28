@@ -5,7 +5,7 @@
 
 //piece  base, stands, shell, rotary, dingle1, dingle2, turret1, patch,       sleeve1, barrel1, flare1, barrel2, flare2, post, turret2, rocketbox,       rocket1, rocket2, rocket3, rocket4, smoke1, smoke2, smoke3, smoke4,       armor1, armor2, armor3, armor4, armor5, armor6, armor7, armor8,       fakeshell;
 
-piece base, column, top, turret1, turret2, barrel, flare1, flare2, flare3;
+piece base, column, top, turret1, turret2, barrel, flare1, flare2, flare3, aimpoint;
 
 static-var  Static_Var_1, Static_Var_2, Static_Var_3, Static_Var_4, restore_delay,
             gun_1, gun_2, Static_Var_8, Static_Var_9, Static_Var_10,
@@ -45,16 +45,16 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 
 RaiseArmor()
 {
-	move top to y-axis [0] speed [28];
-	move barrel to z-axis [0] speed [28];
+	move top to y-axis [-14] speed [28];
+	move barrel to z-axis [-5] speed [28];
 	sleep 300;
 	set ARMORED to 0;
 }
 
 LowerArmor()
 {
-	move top to y-axis [14] speed [28];
-	move barrel to z-axis [5] speed [28];
+	move top to y-axis [0] speed [28];
+	move barrel to z-axis [0] speed [28];
 	set ARMORED to 1;
 
 	sleep 300;
@@ -148,6 +148,10 @@ Create()
 	restore_delay = 5000;
 	bAiming = FALSE;
 	call-script InitState();
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 250;
+	}
 	start-script SmokeUnit();
 	start-script triplepenetration();
 	set ARMORED to 0;
@@ -222,7 +226,7 @@ FirePrimary()
 
 AimFromPrimary(piecenum)
 {
-	piecenum = turret1;
+	piecenum = aimpoint;
 }
 
 QueryPrimary(piecenum)
@@ -293,7 +297,7 @@ FireSecondary()
 
 AimFromSecondary(piecenum)
 {
-	piecenum = turret2;
+	piecenum = aimpoint;
 }
 
 QuerySecondary(piecenum)

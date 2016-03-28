@@ -3,7 +3,7 @@
 #include "sfxtype.h"
 #include "exptype.h"
 
-piece  base, turret, sleeve, barrel1, barrel2, flare1, flare2;
+piece  base, turret, sleeve, barrel1, barrel2, flare1, flare2, aimpoint;
 
 static-var  Static_Var_1, Static_Var_2, restore_delay, Static_Var_4, statechg_DesiredState,
             statechg_StateChanging;
@@ -14,19 +14,19 @@ static-var  Static_Var_1, Static_Var_2, restore_delay, Static_Var_4, statechg_De
 
 Activatescr()
 {
-	move turret to y-axis [10] speed [40];
+	move turret to y-axis [0] speed [40];
 	wait-for-move turret along y-axis;
-	move barrel2 to z-axis [7] speed [28];
-	move barrel1 to z-axis [7] speed [28];
+	move barrel2 to z-axis [0] speed [28];
+	move barrel1 to z-axis [0] speed [28];
 	sleep 200;
 }
 
 Deactivatescr()
 {
-	move turret to y-axis [0] speed [40];
+	move turret to y-axis [-7] speed [40];
 	wait-for-move turret along y-axis;
-	move barrel2 to z-axis [0] speed [28];
-	move barrel1 to z-axis [0] speed [28];
+	move barrel2 to z-axis [-7] speed [28];
+	move barrel1 to z-axis [-7] speed [28];
 	sleep 200;
 }
 
@@ -154,7 +154,7 @@ QueryPrimary(piecenum)
 
 AimFromPrimary(piecenum)
 {
-	piecenum = sleeve;
+	piecenum = aimpoint;
 }
 
 SweetSpot(piecenum)

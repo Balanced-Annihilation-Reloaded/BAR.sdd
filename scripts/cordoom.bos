@@ -4,7 +4,7 @@
 #include "exptype.h"
 
 piece  base, flarer1, flarer2, body1, body2, turretg, boreg, barrelg, flareg, neck,
- turretb, boreb, barrelb, flareb, turretr, borer, barrelr;
+ turretb, boreb, barrelb, flareb, turretr, borer, barrelr, aimpoint;
 
 static-var  gun_3, restore_delay, Static_Var_3, statechg_DesiredState, statechg_StateChanging;
 
@@ -18,47 +18,32 @@ activatescr()
 {
 	if( TRUE )
 	{
-		move body1 to y-axis [0] now;
-		move body1 to y-axis [17] speed [90];
-		move body2 to y-axis [0] now;
-		move body2 to y-axis [17] speed [90];
+		move body1 to y-axis [0] speed [90];
+		move body2 to y-axis [0] speed [90];
 		wait-for-move body1 along y-axis;
 	}
 	if( TRUE )
 	{
-		move body2 to y-axis [17] now;
-		move body2 to y-axis [24] speed [90];
+		move body2 to y-axis [0] speed [90];
 		wait-for-move body2 along y-axis;
 	}
 	if( TRUE )
 	{
-		move borer to z-axis [-15] now;
 		move borer to z-axis [0] speed [30];
-		move barrelr to z-axis [-10] now;
 		move barrelr to z-axis [0] speed [20];
-		wait-for-move borer along y-axis;
-	}
-	if( TRUE )
-	{
-		turn turretg to x-axis <180> now;
+
 		turn turretg to x-axis <0> speed <180>;
 		
-		move boreg to z-axis [-12] now;
 		move boreg to z-axis [0] speed [24];
-		move barrelg to z-axis [-4] now;
 		move barrelg to z-axis [0] speed [10];
-		wait-for-turn turretg around x-axis;
-	}
-	if( TRUE )
-	{
-		turn turretb to x-axis <180> now;
+
 		turn turretb to x-axis <0> speed <180>;
-		
-		move boreb to z-axis [-9] now;
+
 		move boreb to z-axis [0] speed [14];
-		move barrelb to z-axis [-10] now;
 		move barrelb to z-axis [0] speed [10];
 		wait-for-turn turretb around x-axis;
+		wait-for-move borer along y-axis;
+		wait-for-turn turretg around x-axis;
 	}
 	sleep 22;
 }
@@ -75,8 +60,6 @@ deactivatescr()
 		wait-for-turn turretb around x-axis;
 		wait-for-turn turretg around x-axis;
 		wait-for-turn turretr around x-axis;
-		wait-for-turn body1 around x-axis;
-		wait-for-turn body2 around x-axis;
 	}
 	if( TRUE )
 	{
@@ -84,34 +67,32 @@ deactivatescr()
 		
 		move boreb to z-axis [-9] speed [14];
 		move barrelb to z-axis [-10] speed [10];
-		wait-for-turn turretb around x-axis;
-	}	
-	if( TRUE )
-	{
+
 		turn turretg to x-axis <180> speed <180>;
 		
 		move boreg to z-axis [-12] speed [24];
 		move barrelg to z-axis [-4] speed [10];
+
+		move borer to z-axis [-15] speed [30];
+		move barrelr to z-axis [-10] speed [20];
+		wait-for-turn turretb around x-axis;
+		wait-for-move borer along y-axis;
 		wait-for-turn turretg around x-axis;
 	}
 	if( TRUE )
 	{
-		move borer to z-axis [-15] speed [30];
-		move barrelr to z-axis [-10] speed [20];
-		wait-for-move borer along y-axis;
-	}
-	if( TRUE )
-	{
-		move body2 to y-axis [17] speed [90];
+		move body2 to y-axis [-7] speed [90];
 		wait-for-move body2 along y-axis;
 	}
 	if( TRUE )
 	{
-		move body1 to y-axis [0] speed [90];
-		move body2 to y-axis [0] speed [90];
+		move body1 to y-axis [-14] speed [90];
+		move body2 to y-axis [-24] speed [90];
 		wait-for-move body1 along y-axis;
 	}
 
+	wait-for-turn body1 around x-axis;
+	wait-for-turn body2 around x-axis;
 	sleep 22;
 }
 
@@ -205,6 +186,7 @@ Create()
 		sleep 250;
 	}
 	start-script SmokeUnit();
+	start-script RequestState(0);
 }
 
 Activate()
@@ -296,7 +278,7 @@ FireTertiary()
 
 AimFromPrimary(piecenum)
 {
-	piecenum = body2;
+	piecenum = aimpoint;
 }
 
 AimFromSecondary(piecenum)

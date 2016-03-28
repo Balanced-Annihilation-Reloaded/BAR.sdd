@@ -109,7 +109,7 @@ widgetHandler = {
   customCommands = {},
   inCommandsChanged = false,
 
-  actionHandler = include("actions.lua"),
+  actionHandler = includeZIPFirst("actions.lua"),
 
   WG = {}, -- shared table for widgets
 

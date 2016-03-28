@@ -14,7 +14,7 @@ local materials = {
 			"#define use_normalmapping",
 			"#define deferred_mode 1",
 			"#define flashlights",
-			--"#define use_vertex_ao",
+			"#define use_vertex_ao",
 			"#define SPECULARMULT 8.0",
 		},
 

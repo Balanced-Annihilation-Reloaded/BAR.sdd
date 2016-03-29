@@ -1,128 +1,274 @@
-#define TA			// This is a TA script
+piece body,head,tail,lthigh,lknee,lshin,lfoot,rthigh,rknee,rshin,rfoot,lforearm,lupperarm,lblade,rforearm,rupperarm,rblade;
 
-#include "sfxtype.h"
-#include "exptype.h"
-
-piece  body, head, tail, lthigh, lknee, lshin, lfoot, rthigh,
-       rknee, rshin, rfoot, lforearm, lupperarm, lblade, rforearm, rupperarm,
-       rblade;
-
-static-var  bMoving, Static_Var_2, Static_Var_3;
+static-var aMoving, bMoving, lasthit, currentSpeed, moveSpeed;
 
 // Signal definitions
 #define SIG_AIM				2
+#define SIG_AIM_2			4
+#define SIG_MOVE			16
+
+#include "sfxtype.h"
+#include "exptype.h"
+#define BODYSCALE 10
+#define MIN_SPEED 33
+#define SPEED_MULT 150
+//decrease SPEED_MULT for slower movement
+//Animation helper info: each 'stride' moves about 60 elmos, or 2 elmos per 
+//GET_CURRENT SPEED returns current speed in elmos/frame
 
 
 walk()
 {
-	while( bMoving )
-	{
-		Static_Var_2 = 1;
-		if( bMoving )
-		{
-			turn lthigh to x-axis <70.00000> speed <230.00000>;
-			turn lknee to x-axis <-40.00000> speed <270.00000>;
-			turn lshin to x-axis <20.00000> speed <270.00000>;
-			turn lfoot to x-axis <-50.00000> speed <420.00000>;
-			turn rthigh to x-axis <-20.00000> speed <420.00000>;
-			turn rknee to x-axis <-60.00000> speed <420.00000>;
-			turn rshin to x-axis <50.00000> speed <420.00000>;
-			turn rfoot to x-axis <30.00000> speed <420.00000>;
-			turn body to z-axis <5.00000> speed <40.00000>;
-			turn lthigh to z-axis <-5.00000> speed <40.00000>;
-			turn rthigh to z-axis <-5.00000> speed <40.00000>;
-			move body to y-axis [1.75000] speed [22.21680];
-			turn tail to y-axis <10.00000> speed <80.00000>;
-			turn head to x-axis <-10.00000> speed <40.00000>;
-			turn tail to x-axis <10.00000> speed <40.00000>;
-			wait-for-turn lthigh around x-axis;
+	while (aMoving){
+		bMoving = TRUE;
+	if (aMoving) { // step 1, ankle dist = 17
+			turn lthigh to x-axis <40> speed <404.081633> *  currentSpeed / 100;
+			turn lknee to x-axis <-15> speed <151.530612> *  currentSpeed / 100;
+			turn lshin to x-axis <-1> speed <10.102041> *  currentSpeed / 100;
+			turn lfoot to x-axis <-26> speed <262.653061> *  currentSpeed / 100;
+			
+			turn lthigh to z-axis <-3> speed <30.306122> *  currentSpeed / 100;
+			turn lupperarm to z-axis <-1> speed <10.102041> *  currentSpeed / 100;
+			
+			turn rthigh to x-axis <-10> speed <252.551020> *  currentSpeed / 100;
+			turn rknee to x-axis <-30> speed <474.795918> *  currentSpeed / 100;
+			turn rshin to x-axis <-26> speed <343.469388> *  currentSpeed / 100;
+			turn rfoot to x-axis <60> speed <303.061224> *  currentSpeed / 100;
+			
+			turn rthigh to z-axis <3> speed <30.306122> *  currentSpeed / 100;
+			turn rupperarm to z-axis <-1> speed <20.204082> *  currentSpeed / 100;
+			
+			turn body to z-axis <3> speed <30.306122> *  currentSpeed / 100;
+		
+			move body to y-axis [0.7] speed [7.071429] *  currentSpeed / 100;
+			turn head to x-axis <-5> speed <50.510204> *  currentSpeed / 100;
+			turn head to y-axis <-3> speed <30.306122> *  currentSpeed / 100;
+			turn tail to y-axis <7> speed <70.714286> *  currentSpeed / 100;
+			turn tail to x-axis <7> speed <70.714286> *  currentSpeed / 100;
+			sleep 9800 / currentSpeed;
 		}
-		if( bMoving )
-		{
-			turn lthigh to x-axis <-10.00000> speed <320.00000>;
-			turn lknee to x-axis <15.00000> speed <270.00000>;
-			turn lshin to x-axis <-60.00000> speed <500.00000>;
-			turn lfoot to x-axis <30.00000> speed <270.00000>;
-			turn rthigh to x-axis <40.00000> speed <270.00000>;
-			turn rknee to x-axis <-35.00000> speed <270.00000>;
-			turn rshin to x-axis <-40.00000> speed <270.00000>;
-			turn rfoot to x-axis <35.00000> speed <270.00000>;
-			move body to y-axis [0.00000] speed [22.21680];
-			turn head to x-axis <10.00000> speed <40.00000>;
-			turn tail to x-axis <-10.00000> speed <40.00000>;
-			wait-for-turn lshin around x-axis;
+	if (aMoving) { // step 2, ankle dist = 14.5
+			turn lthigh to x-axis <75> speed <353.571429> *  currentSpeed / 100;
+			turn lknee to x-axis <-40> speed <252.551020> *  currentSpeed / 100;
+			turn lshin to x-axis <20> speed <212.142857> *  currentSpeed / 100;
+			turn lfoot to x-axis <-35> speed <90.918367> *  currentSpeed / 100;
+			
+			turn lthigh to z-axis <-5> speed <20.204082> *  currentSpeed / 100;
+			turn lupperarm to z-axis <0> speed <10.102041> *  currentSpeed / 100;
+			
+			turn rthigh to x-axis <-20> speed <101.020408> *  currentSpeed / 100;
+			turn rknee to x-axis <-68> speed <383.877551> *  currentSpeed / 100;
+			turn rshin to x-axis <34> speed <606.122449> *  currentSpeed / 100;
+			turn rfoot to x-axis <30> speed <303.061224> *  currentSpeed / 100;
+			
+			turn rthigh to z-axis <5> speed <20.204082> *  currentSpeed / 100;
+			turn rupperarm to z-axis <0> speed <10.102041> *  currentSpeed / 100;
+			
+			
+			turn body to z-axis <5> speed <20.204082> *  currentSpeed / 100;
+		
+			move body to y-axis [1.0] speed [3.030612] *  currentSpeed / 100;
+			turn head to x-axis <-10> speed <50.510204> *  currentSpeed / 100;
+			turn head to y-axis <-5> speed <20.204082> *  currentSpeed / 100;
+			turn tail to y-axis <12> speed <50.510204> *  currentSpeed / 100;
+			turn tail to x-axis <0> speed <70.714286> *  currentSpeed / 100;
+			sleep 9800 / currentSpeed;
 		}
-		if( bMoving )
-		{
-			turn rthigh to x-axis <70.00000> speed <230.00000>;
-			turn rknee to x-axis <-40.00000> speed <270.00000>;
-			turn rshin to x-axis <20.00000> speed <270.00000>;
-			turn rfoot to x-axis <-50.00000> speed <420.00000>;
-			turn lthigh to x-axis <-20.00000> speed <420.00000>;
-			turn lknee to x-axis <-60.00000> speed <420.00000>;
-			turn lshin to x-axis <50.00000> speed <420.00000>;
-			turn lfoot to x-axis <30.00000> speed <420.00000>;
-			turn tail to y-axis <-10.00000> speed <80.00000>;
-			turn body to z-axis <-5.00000> speed <40.00000>;
-			turn lthigh to z-axis <5.00000> speed <40.00000>;
-			turn rthigh to z-axis <5.00000> speed <40.00000>;
-			move body to y-axis [1.75000] speed [22.21680];
-			turn head to x-axis <-10.00000> speed <40.00000>;
-			turn tail to x-axis <10.00000> speed <40.00000>;
-			wait-for-turn rthigh around x-axis;
+	if (aMoving) { // step 3, ankle dist = 10
+			turn lthigh to x-axis <40> speed <353.571429> *  currentSpeed / 100;
+			turn lknee to x-axis <11> speed <515.204082> *  currentSpeed / 100;
+			turn lshin to x-axis <13> speed <70.714286> *  currentSpeed / 100;
+			turn lfoot to x-axis <-61> speed <262.653061> *  currentSpeed / 100;
+			
+			turn lthigh to z-axis <-3> speed <20.204082> *  currentSpeed / 100;
+			turn lupperarm to z-axis <-1> speed <10.102041> *  currentSpeed / 100;
+			
+			turn rthigh to x-axis <-13> speed <70.714286> *  currentSpeed / 100;
+			turn rknee to x-axis <-52> speed <161.632653> *  currentSpeed / 100;
+			turn rshin to x-axis <7> speed <272.755102> *  currentSpeed / 100;
+			turn rfoot to x-axis <58> speed <282.857143> *  currentSpeed / 100;
+			
+			turn rthigh to z-axis <3> speed <20.204082> *  currentSpeed / 100;
+			turn rupperarm to z-axis <-2> speed <20.204082> *  currentSpeed / 100;
+			
+			
+			turn body to z-axis <3> speed <20.204082> *  currentSpeed / 100;
+		
+			move body to y-axis [0.7] speed [3.030612] *  currentSpeed / 100;
+			turn head to x-axis <-5> speed <50.510204> *  currentSpeed / 100;
+			turn head to y-axis <-3> speed <20.204082> *  currentSpeed / 100;
+			turn tail to y-axis <7> speed <50.510204> *  currentSpeed / 100;
+			turn tail to x-axis <-7> speed <70.714286> *  currentSpeed / 100;
+			sleep 9800 / currentSpeed;
 		}
-		if( bMoving )
-		{
-			turn rthigh to x-axis <-10.00000> speed <320.00000>;
-			turn rknee to x-axis <15.00000> speed <270.00000>;
-			turn rshin to x-axis <-60.00000> speed <500.00000>;
-			turn rfoot to x-axis <30.00000> speed <270.00000>;
-			turn lthigh to x-axis <40.00000> speed <270.00000>;
-			turn lknee to x-axis <-35.00000> speed <270.00000>;
-			turn lshin to x-axis <-40.00000> speed <270.00000>;
-			turn lfoot to x-axis <35.00000> speed <270.00000>;
-			move body to y-axis [0.00000] speed [22.21680];
-			turn head to x-axis <10.00000> speed <40.00000>;
-			turn tail to x-axis <-10.00000> speed <40.00000>;
-			wait-for-turn rshin around x-axis;
+	if (aMoving) { // step 4, ankle dist = 0
+			turn lthigh to x-axis <15> speed <252.551020> *  currentSpeed / 100;
+			turn lknee to x-axis <17> speed <60.612245> *  currentSpeed / 100;
+			turn lshin to x-axis <-60> speed <737.448980> *  currentSpeed / 100;
+			turn lfoot to x-axis <30> speed <919.285714> *  currentSpeed / 100;
+			
+			turn lthigh to z-axis <0> speed <30.306122> *  currentSpeed / 100;
+			turn lupperarm to z-axis <-3> speed <20.204082> *  currentSpeed / 100;
+			
+			turn rthigh to x-axis <0> speed <131.326531> *  currentSpeed / 100;
+			turn rknee to x-axis <0> speed <525.306122> *  currentSpeed / 100;
+			turn rshin to x-axis <0> speed <70.714286> *  currentSpeed / 100;
+			turn rfoot to x-axis <0> speed <585.918367> *  currentSpeed / 100;
+			
+			turn rthigh to z-axis <0> speed <30.306122> *  currentSpeed / 100;
+			turn rupperarm to z-axis <-5> speed <30.306122> *  currentSpeed / 100;
+			
+			
+			turn body to z-axis <0> speed <30.306122> *  currentSpeed / 100;
+		
+			move body to y-axis [0] speed [7.071429] *  currentSpeed / 100;
+			turn head to x-axis <0> speed <50.510204> *  currentSpeed / 100;
+			turn head to y-axis <0> speed <30.306122> *  currentSpeed / 100;
+			turn tail to y-axis <0> speed <70.714286> *  currentSpeed / 100;
+			turn tail to x-axis <0> speed <70.714286> *  currentSpeed / 100;
+			sleep 9800 / currentSpeed;
+		}
+	if (aMoving) { // step 5, ankle dist = 8
+			turn lthigh to x-axis <-10> speed <252.551020> *  currentSpeed / 100;
+			turn lknee to x-axis <-30> speed <474.795918> *  currentSpeed / 100;
+			turn lshin to x-axis <-26> speed <343.469388> *  currentSpeed / 100;
+			turn lfoot to x-axis <60> speed <303.061224> *  currentSpeed / 100;
+			
+			turn lthigh to z-axis <3> speed <30.306122> *  currentSpeed / 100;
+			turn lupperarm to z-axis <-1> speed <20.204082> *  currentSpeed / 100;
+			
+			turn rthigh to x-axis <40> speed <404.081633> *  currentSpeed / 100;
+			turn rknee to x-axis <-15> speed <151.530612> *  currentSpeed / 100;
+			turn rshin to x-axis <-1> speed <10.102041> *  currentSpeed / 100;
+			turn rfoot to x-axis <-26> speed <262.653061> *  currentSpeed / 100;
+			
+			turn rthigh to z-axis <-3> speed <30.306122> *  currentSpeed / 100;
+			turn rupperarm to z-axis <-1> speed <10.102041> *  currentSpeed / 100;
+			
+			
+			turn body to z-axis <-3> speed <30.306122> *  currentSpeed / 100;
+		
+			move body to y-axis [0.7] speed [7.071429] *  currentSpeed / 100;
+			turn head to x-axis <-5> speed <50.510204> *  currentSpeed / 100;
+			turn head to y-axis <3> speed <30.306122> *  currentSpeed / 100;
+			turn tail to y-axis <-7> speed <70.714286> *  currentSpeed / 100;
+			turn tail to x-axis <7> speed <70.714286> *  currentSpeed / 100;
+			sleep 9800 / currentSpeed;
+		}
+	if (aMoving) { // step 6, ankle dist = 13
+			turn lthigh to x-axis <-20> speed <101.020408> *  currentSpeed / 100;
+			turn lknee to x-axis <-68> speed <383.877551> *  currentSpeed / 100;
+			turn lshin to x-axis <34> speed <606.122449> *  currentSpeed / 100;
+			turn lfoot to x-axis <30> speed <303.061224> *  currentSpeed / 100;
+			
+			turn lthigh to z-axis <5> speed <20.204082> *  currentSpeed / 100;
+			turn lupperarm to z-axis <0> speed <10.102041> *  currentSpeed / 100;
+			
+			turn rthigh to x-axis <75> speed <353.571429> *  currentSpeed / 100;
+			turn rknee to x-axis <-40> speed <252.551020> *  currentSpeed / 100;
+			turn rshin to x-axis <20> speed <212.142857> *  currentSpeed / 100;
+			turn rfoot to x-axis <-35> speed <90.918367> *  currentSpeed / 100;
+			
+			turn rthigh to z-axis <-5> speed <20.204082> *  currentSpeed / 100;
+			turn rupperarm to z-axis <0> speed <10.102041> *  currentSpeed / 100;
+			
+			
+			turn body to z-axis <-5> speed <20.204082> *  currentSpeed / 100;
+		
+			move body to y-axis [1.0] speed [3.030612] *  currentSpeed / 100;
+			turn head to x-axis <-10> speed <50.510204> *  currentSpeed / 100;
+			turn head to y-axis <6> speed <30.306122> *  currentSpeed / 100;
+			turn tail to y-axis <-12> speed <50.510204> *  currentSpeed / 100;
+			turn tail to x-axis <0> speed <70.714286> *  currentSpeed / 100;
+			sleep 9800 / currentSpeed;
+		}
+	if (aMoving) { // step 7, ankle dist = 8
+			turn lthigh to x-axis <-13> speed <70.714286> *  currentSpeed / 100;
+			turn lknee to x-axis <-52> speed <161.632653> *  currentSpeed / 100;
+			turn lshin to x-axis <7> speed <272.755102> *  currentSpeed / 100;
+			turn lfoot to x-axis <58> speed <282.857143> *  currentSpeed / 100;
+			
+			turn lthigh to z-axis <3> speed <20.204082> *  currentSpeed / 100;
+			turn lupperarm to z-axis <-2> speed <20.204082> *  currentSpeed / 100;
+			
+			turn rthigh to x-axis <40> speed <353.571429> *  currentSpeed / 100;
+			turn rknee to x-axis <11> speed <515.204082> *  currentSpeed / 100;
+			turn rshin to x-axis <13> speed <70.714286> *  currentSpeed / 100;
+			turn rfoot to x-axis <-61> speed <262.653061> *  currentSpeed / 100;
+			
+			turn rthigh to z-axis <-3> speed <20.204082> *  currentSpeed / 100;
+			turn rupperarm to z-axis <-1> speed <10.102041> *  currentSpeed / 100;
+			
+			turn body to z-axis <3> speed <80.816327> *  currentSpeed / 100;
+		
+			move body to y-axis [0.7] speed [3.030612] *  currentSpeed / 100;			
+			turn head to x-axis <-10> now;
+			turn head to y-axis <3> speed <30.306122> *  currentSpeed / 100;
+			turn tail to y-axis <-12> now;
+			turn tail to x-axis <0> now;
+			sleep 9800 / currentSpeed;
+		}
+	if (aMoving) { // step 8, ankle dist = 0
+			turn lthigh to x-axis <0> speed <131.326531> *  currentSpeed / 100;
+			turn lknee to x-axis <0> speed <525.306122> *  currentSpeed / 100;
+			turn lshin to x-axis <0> speed <70.714286> *  currentSpeed / 100;
+			turn lfoot to x-axis <0> speed <585.918367> *  currentSpeed / 100;
+			
+			turn lthigh to z-axis <0> speed <30.306122> *  currentSpeed / 100;
+			turn lupperarm to z-axis <-5> speed <30.306122> *  currentSpeed / 100;
+			
+			turn rthigh to x-axis <15> speed <252.551020> *  currentSpeed / 100;
+			turn rknee to x-axis <17> speed <60.612245> *  currentSpeed / 100;
+			turn rshin to x-axis <-60> speed <737.448980> *  currentSpeed / 100;
+			turn rfoot to x-axis <30> speed <919.285714> *  currentSpeed / 100;
+			
+			turn rthigh to z-axis <0> speed <30.306122> *  currentSpeed / 100;
+			turn rupperarm to z-axis <-3> speed <20.204082> *  currentSpeed / 100;
+			
+			
+			turn body to z-axis <0> speed <30.306122> *  currentSpeed / 100;
+		
+			move body to y-axis [0] speed [7.071429] *  currentSpeed / 100;			
+			turn head to x-axis <0> speed <101.020408> *  currentSpeed / 100;
+			turn head to y-axis <0> speed <30.306122> *  currentSpeed / 100;
+			turn tail to y-axis <0> speed <121.224490> *  currentSpeed / 100;
+			turn tail to x-axis <0> now;
+			sleep 9800 / currentSpeed;
 		}
 	}
-	return (0);
 }
 
+
 Halt()
-{
-	sleep 150;
-	if( !bMoving )
+{	
+	//sleep 150;
+	if(!aMoving)
 	{
-		Static_Var_2 = 0;
-		turn lfoot to x-axis <0.00000> speed <200.00000>;
-		turn rfoot to x-axis <0.00000> speed <200.00000>;
-		turn rthigh to x-axis <0.00000> speed <200.00000>;
-		turn lthigh to x-axis <0.00000> speed <200.00000>;
-		turn lshin to x-axis <0.00000> speed <200.00000>;
-		turn rshin to x-axis <0.00000> speed <200.00000>;
-		turn lknee to x-axis <0.00000> speed <200.00000>;
-		turn rknee to x-axis <0.00000> speed <200.00000>;
+		bMoving = FALSE;
+		turn lfoot		to x-axis <0> 		speed <200>;
+		turn rfoot		to x-axis <0> 		speed <200>;
+		turn rthigh 	to x-axis <0> 		speed <200>;
+		turn lthigh 	to x-axis <0> 		speed <200>;
+		turn lshin  	to x-axis <0> 		speed <200>;
+		turn rshin 		to x-axis <0> 		speed <200>;
+		turn lknee  	to x-axis <0> 		speed <200>;
+		turn rknee 		to x-axis <0> 		speed <200>;
 	}
-	return (0);
 }
 
 StartMoving()
 {
-	bMoving = TRUE;
-	if( !Static_Var_2 )
+	aMoving = TRUE;
+	if (!bMoving)
 	{
-		start-script walk();
+		start-script Walk();
 	}
-	return (0);
 }
 
 StopMoving()
 {
-	bMoving = FALSE;
+	aMoving = FALSE;
 	start-script Halt();
-	return (0);
 }
 
 HitByWeapon(anglex, anglez)
@@ -135,68 +281,77 @@ HitByWeapon(anglex, anglez)
 	turn body to x-axis <0.000000> speed <30.000000>;
 }
 
+UnitSpeed()
+{
+	while(TRUE)
+	{
+		//currentSpeed = ((get (CURRENT_SPEED))*100)/moveSpeed;
+		currentSpeed = (get CURRENT_SPEED)*SPEED_MULT / moveSpeed;
+		if (currentSpeed<MIN_SPEED) currentSpeed=MIN_SPEED;
+		sleep 142;
+	}
+}
+
+
 Create()
 {
-	emit-sfx 1024 + 2 from body;
-	return (0);
+	moveSpeed = get MAX_SPEED;
+	currentSpeed = 100;
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 500;
+	}
+	start-script UnitSpeed();
+	emit-sfx 1024+2 from body;
 }
 
 SweetSpot(piecenum)
-{
-	piecenum = body;
-	return (0);
-}
-
+	{	piecenum=body;	}	
+	
 AimFromPrimary(piecenum)
-{
-	piecenum = head;
-	return (0);
-}
+	{	piecenum=head;	}
 
 QueryPrimary(piecenum)
-{
-	piecenum = head;
-	return (0);
-}
+	{	piecenum=head; }
 
 RestoreAfterDelay()
-{
+	{
 	sleep 1000;
-	return (0);
-}
+	}
 
-AimPrimary(heading, pitch)
-{
+AimPrimary(heading,pitch)
+	{
 	signal SIG_AIM;
 	set-signal-mask SIG_AIM;
-	turn head to y-axis heading speed <250.00000>;
-	turn head to x-axis <0.00000> - pitch speed <200.00000>;
+	turn head to y-axis heading speed <250>;
+	turn head to x-axis 0 -pitch speed <200>;
+		
 	wait-for-turn head around y-axis;
 	start-script RestoreAfterDelay();
-	return (1);
-}
-
+	
+	return(TRUE);
+	}
+	
 Shot1()
-{
-	turn lforearm to y-axis <-140.00000> speed <600.00000>;
-	turn rforearm to y-axis <140.00000> speed <600.00000>;
-	turn lblade to y-axis <140.00000> speed <600.00000>;
-	turn rblade to y-axis <-140.00000> speed <600.00000>;
+	{
+	turn lforearm to y-axis <-140> speed <600>;
+	turn rforearm to y-axis <140> speed <600>;
+	turn lblade to y-axis <140> speed <600>;
+	turn rblade to y-axis <-140> speed <600>;
 	wait-for-turn rblade around y-axis;
-	turn lforearm to y-axis <0.00000> speed <120.00000>;
-	turn rforearm to y-axis <0.00000> speed <120.00000>;
-	turn lblade to y-axis <0.00000> speed <120.00000>;
-	turn rblade to y-axis <0.00000> speed <120.00000>;
-	return (0);
-}
+	turn lforearm to y-axis <0> speed <120>;
+	turn rforearm to y-axis <0> speed <120>;
+	turn lblade to y-axis <0> speed <120>;
+	turn rblade to y-axis <0> speed <120>;
+	}
 
-Killed(severity, corpsetype)
-{
+Killed( severity, corpsetype ) 
+	{
 	corpsetype = 1;
 	emit-sfx 1025 from body;
-	explode head type FALL | 128;
-	explode tail type FALL | 128;
-	explode lblade type FALL | 128;
-	explode rblade type FALL | 128;
-	return (corpsetype);
-}
+	explode head type FALL | NOHEATCLOUD;
+	explode tail type FALL | NOHEATCLOUD;
+	explode lblade type FALL | NOHEATCLOUD;
+	explode rblade type FALL | NOHEATCLOUD;
+	return(corpsetype);
+	}

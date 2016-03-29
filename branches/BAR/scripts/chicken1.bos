@@ -9,88 +9,163 @@ static-var aMoving, bMoving, lasthit;
 
 #include "sfxtype.h"
 #include "exptype.h"
+#define BODYSCALE 10
+//Animation helper info: each 'stride' moves about 60 elmos, or 2 elmos per 
+//GET_CURRENT SPEED returns current speed in elmos/frame
+
 
 walk()
 {
- while (aMoving)
- {
-    bMoving = TRUE;
-	if (aMoving) {
-			turn lthigh to x-axis <70> speed<230>;
-			turn lknee to x-axis <-40> speed<270>;
-			turn lshin to x-axis <20> speed<270>;
-			turn lfoot to x-axis <-50> speed<420>;
+	while (aMoving){
+		bMoving = TRUE;
+	if (aMoving) { // step 1, ankle dist = 17
+			turn lthigh to x-axis <40> now;
+			turn lknee to x-axis <-15> now;
+			turn lshin to x-axis <-1> now;
+			turn lfoot to x-axis <-26> now;
 			
-			turn rthigh to x-axis <-20> speed<420>;
-			turn rknee to x-axis <-60> speed<420>;
-			turn rshin to x-axis <50> speed<420>;
-			turn rfoot to x-axis <30> speed<420>;
+			turn lthigh to z-axis <-3> now;
+			turn lupperarm to z-axis <-1> now;
 			
-			turn body to z-axis <5> speed <40>;
-			turn lthigh to z-axis <-5> speed <40>;
-			turn rthigh to z-axis <-5> speed <40>;
-			move body to y-axis [0.7] speed <8000>;			
-			turn tail to y-axis <10> speed <80>;
-			turn head to x-axis <-10> speed <40>;
-			turn tail to x-axis <10> speed <40>;
-			wait-for-turn lthigh around x-axis;
+			turn body to z-axis <3> now;
+		
+			move body to y-axis [7] now;
+			turn head to x-axis <-5> now;
+			turn head to y-axis <-3> now;
+			turn tail to y-axis <7> now;
+			turn tail to x-axis <7> now;
+			sleep 95;
 		}
-	if (aMoving) {		
-			turn lthigh to x-axis <-10> speed<320>;
-			turn lknee to x-axis <15> speed<270>;
-			turn lshin to x-axis <-60> speed<500>;
-			turn lfoot to x-axis <30> speed<270>;
+	if (aMoving) { // step 2, ankle dist = 14.5
+			turn lthigh to x-axis <75> now;
+			turn lknee to x-axis <-40> now;
+			turn lshin to x-axis <20> now;
+			turn lfoot to x-axis <-35> now;
 			
-			turn rthigh to x-axis <40> speed<270>;
-			turn rknee to x-axis <-35> speed<270>;
-			turn rshin to x-axis <-40> speed<270>;
-			turn rfoot to x-axis <35> speed<270>;
+			turn lthigh to z-axis <-5> now;
+			turn lupperarm to z-axis <0> now;
 			
-			move body to y-axis <0> speed <8000>;
-			turn head to x-axis <10> speed <40>;
-			turn tail to x-axis <-10> speed <40>;
-			wait-for-turn lshin around x-axis;
+			turn body to z-axis <5> now;
+		
+			move body to y-axis [10] now;
+			turn head to x-axis <-10> now;
+			turn head to y-axis <-5> now;
+			turn tail to y-axis <12> now;
+			turn tail to x-axis <0> now;
+			sleep 95;
 		}
-	if (aMoving) {	
-			turn rthigh to x-axis <70> speed<230>;
-			turn rknee to x-axis <-40> speed<270>;
-			turn rshin to x-axis <20> speed<270>;
-			turn rfoot to x-axis <-50> speed<420>;
+	if (aMoving) { // step 3, ankle dist = 10
+			turn lthigh to x-axis <40> now;
+			turn lknee to x-axis <-11> now;
+			turn lshin to x-axis <13> now;
+			turn lfoot to x-axis <-61> now;
 			
-			turn lthigh to x-axis <-20> speed<420>;
-			turn lknee to x-axis <-60> speed<420>;
-			turn lshin to x-axis <50> speed<420>;
-			turn lfoot to x-axis <30> speed<420>;
+			turn lthigh to z-axis <-3> now;
+			turn lupperarm to z-axis <-1> now;
 			
-			turn tail to y-axis <-10> speed <80>;
-			turn body to z-axis <-5> speed <40>;
-			turn lthigh to z-axis <5> speed <40>;
-			turn rthigh to z-axis <5> speed <40>;
-			move body to y-axis [0.7] speed <8000>;
-			turn head to x-axis <-10> speed <40>;
-			turn tail to x-axis <10> speed <40>;
-			wait-for-turn rthigh around x-axis;
+			turn body to z-axis <3> now;
+		
+			move body to y-axis [7] now;
+			turn head to x-axis <-5> now;
+			turn head to y-axis <-3> now;
+			turn tail to y-axis <7> now;
+			turn tail to x-axis <-7> now;
+			sleep 95;
 		}
-	if (aMoving) {
-			turn rthigh to x-axis <-10> speed<320>;
-			turn rknee to x-axis <15> speed<270>;
-			turn rshin to x-axis <-60> speed<500>;
-			turn rfoot to x-axis <30> speed<270>;
+	if (aMoving) { // step 4, ankle dist = 0
+			turn lthigh to x-axis <15> now;
+			turn lknee to x-axis <17> now;
+			turn lshin to x-axis <-60> now;
+			turn lfoot to x-axis <30> now;
 			
-			turn lthigh to x-axis <40> speed<270>;
-			turn lknee to x-axis <-35> speed<270>;
-			turn lshin to x-axis <-40> speed<270>;
-			turn lfoot to x-axis <35> speed<270>;
+			turn lthigh to z-axis <0> now;
+			turn lupperarm to z-axis <-3> now;
 			
+			turn body to z-axis <0> now;
+		
+			move body to y-axis [0] now;
+			turn head to x-axis <0> now;
+			turn head to y-axis <0> now;
+			turn tail to y-axis <0> now;
+			turn tail to x-axis <0> now;
+			sleep 95;
+		}
+	if (aMoving) { // step 5, ankle dist = 8
+			turn lthigh to x-axis <-10> now;
+			turn lknee to x-axis <-30> now;
+			turn lshin to x-axis <-26> now;
+			turn lfoot to x-axis <-60> now;
 			
-			move body to y-axis <0> speed <8000>;
-			turn head to x-axis <10> speed <40>;
-			turn tail to x-axis <-10> speed <40>;
-			wait-for-turn rshin around x-axis;
+			turn lthigh to z-axis <3> now;
+			turn lupperarm to z-axis <-1> now;
+			
+			turn body to z-axis <-3> now;
+		
+			move body to y-axis [7] now;
+			turn head to x-axis <-5> now;
+			turn head to y-axis <3> now;
+			turn tail to y-axis <-7> now;
+			turn tail to x-axis <7> now;
+			sleep 95;
+		}
+	if (aMoving) { // step 6, ankle dist = 13
+			turn lthigh to x-axis <-20> now;
+			turn lknee to x-axis <-68> now;
+			turn lshin to x-axis <34> now;
+			turn lfoot to x-axis <30> now;
+			
+			turn lthigh to z-axis <5> now;
+			turn lupperarm to z-axis <0> now;
+			
+			turn body to z-axis <-5> now;
+		
+			move body to y-axis [10] now;
+			turn head to x-axis <-10> now;
+			turn head to y-axis <6> now;
+			turn tail to y-axis <-12> now;
+			turn tail to x-axis <0> now;
+			sleep 95;
+		}
+	if (aMoving) { // step 7, ankle dist = 8
+			turn lthigh to x-axis <-13> now;
+			turn lknee to x-axis <-52> now;
+			turn lshin to x-axis <7> now;
+			turn lfoot to x-axis <58> now;
+			
+			turn lthigh to z-axis <3> now;
+			turn lupperarm to z-axis <-2> now;
+			
+			turn body to z-axis <3> now;
+		
+			move body to y-axis [7] now;			
+			turn head to x-axis <-10> now;
+			turn head to y-axis <3> now;
+			turn tail to y-axis <-12> now;
+			turn tail to x-axis <0> now;
+			sleep 95;
+		}
+	if (aMoving) { // step 8, ankle dist = 0
+			turn lthigh to x-axis <0> now;
+			turn lknee to x-axis <0> now;
+			turn lshin to x-axis <0> now;
+			turn lfoot to x-axis <0> now;
+			
+			turn lthigh to z-axis <0> now;
+			turn lupperarm to z-axis <-5> now;
+			
+			turn body to z-axis <0> now;
+		
+			move body to y-axis [0] now;			
+			turn head to x-axis <0> now;
+			turn head to y-axis <0> now;
+			turn tail to y-axis <0> now;
+			turn tail to x-axis <0> now;
+			sleep 95;
 		}
 	}
-	return 0;
 }
+
+
 
 Halt()
 {	

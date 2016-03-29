@@ -960,6 +960,7 @@ local function CreateUnitButton(name, unitDef)
         OnMouseUp = {cmdAction},
         OnMouseOver = {function(self) WG.sMenu.mouseOverUnitDefID = self.unitDefID end},
         OnMouseOut   = {function() WG.sMenu.mouseOverUnitDefID = nil end}, 
+        OnMouseWheel = {scrollMenus},
         backgroundColor = buttonColour,
         children  = {
             Chili.Image:New{
@@ -1065,7 +1066,6 @@ function widget:Initialize()
         name         = 'buildMenu',
         active       = false,
         padding      = {0,0,0,0},
-        OnMouseWheel = {scrollMenus},
     }
 
     menuTabs = Chili.Control:New{

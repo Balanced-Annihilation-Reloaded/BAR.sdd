@@ -5,7 +5,7 @@ return {
         startunit = 'corcom',
     },
     {
-        name = 'Arm',
+        name = 'ARM',
         startunit = 'armcom',
     },
 }

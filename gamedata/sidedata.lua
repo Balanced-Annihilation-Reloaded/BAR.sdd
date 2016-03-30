@@ -1,11 +1,11 @@
 
 return {
     {
-        name = 'CORE',
+        name = 'Core',
         startunit = 'corcom',
     },
     {
-        name = 'ARM',
+        name = 'Arm',
         startunit = 'armcom',
     },
 }

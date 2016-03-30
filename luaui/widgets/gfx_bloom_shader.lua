@@ -5,7 +5,7 @@ function widget:GetInfo()
         author    = "Kloot, Beherith",
         date      = "2016-03-22",
         license   = "GPL V2",
-        layer     = -10000,
+        layer     = 10000,
         enabled   = true,
     }
 end
@@ -391,6 +391,7 @@ local function Bloom()
     -- if (bloomin%100==0) then
         -- Spring.Echo('Blooming!!!',bloomin)
     -- end
+	gl.DepthMask(false)
     gl.Color(1, 1, 1, 1)
 
     --glCopyToTexture(screenTexture, 0, 0, 0, 0, vsx, vsy, nil,0)
@@ -449,6 +450,7 @@ local function Bloom()
         glTexture(1, false)
     glUseShader(0)
 	gl.Blending("reset")
+	gl.DepthMask(true)
     --gl.Finish()
 end
 

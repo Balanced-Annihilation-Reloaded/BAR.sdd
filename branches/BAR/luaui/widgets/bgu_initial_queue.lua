@@ -206,12 +206,23 @@ local function GetBuildingDimensions(uDefID, facing)
     end
 end
 
+local function SetupWorldUnitShape()
+   gl.MatrixMode(GL.MODELVIEW)
+   gl.PushMatrix()
+   gl.LoadIdentity()
+end
+
+local function ResetWorldUnitShape()
+   gl.MatrixMode(GL.MODELVIEW)
+   gl.PopMatrix()
+end
+
 local function DrawBuilding(buildData, borderColor, buildingAlpha, drawRanges)
 
     local bDefID, bx, by, bz, facing = buildData[1], buildData[2], buildData[3], buildData[4], buildData[5]
     local bw, bh = GetBuildingDimensions(bDefID, facing)
 
-    gl.DepthTest(false)
+    --gl.DepthTest(false)
     gl.Color(borderColor)
 
     gl.Shape(GL.LINE_LOOP, {{v={bx - bw, by, bz - bh}},
@@ -239,7 +250,12 @@ local function DrawBuilding(buildData, borderColor, buildingAlpha, drawRanges)
     gl.PushMatrix()
         gl.Translate(bx, by, bz)
         gl.Rotate(90 * facing, 0, 1, 0)
-        gl.UnitShape(bDefID, Spring.GetMyTeamID(), false, true, false)
+		
+   gl.UnitShapeTextures(bDefID, true)
+        gl.UnitShape(bDefID, Spring.GetMyTeamID(), false, true, true)
+        -- gl.UnitShape(bDefID, Spring.GetMyTeamID(), true)
+		
+   gl.UnitShapeTextures(bDefID, false)
     gl.PopMatrix()
 
     gl.Color(1.0, 1.0, 1.0, 1.0)
@@ -247,10 +263,14 @@ end
 
 local function DrawUnitDef(uDefID, uTeam, ux, uy, uz)
     gl.Color(1.0, 1.0, 1.0, 1.0)
-    gl.PushMatrix()
+	gl.DepthTest(true)
+    --gl.PushMatrix()
+		-- gl.LoadIdentity()
+		SetupWorldUnitShape()
         gl.Translate(ux, uy, uz)
         gl.UnitShape(uDefID, uTeam, false, true, true)
-    gl.PopMatrix()
+		ResetWorldUnitShape()
+    --gl.PopMatrix()
 end
 
 local function DoBuildingsClash(buildData1, buildData2)

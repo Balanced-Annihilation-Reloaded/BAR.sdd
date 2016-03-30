@@ -85,6 +85,11 @@ return {
 				},
 			},
 		},
+		sfxtypes = {
+			explosiongenerators = {
+				[1] = "custom:bar_muzzleflash_cannon_1",
+			},
+		},
 		sounds = {
 			canceldestruct = "cancel2",
 			underattack = "warning1",

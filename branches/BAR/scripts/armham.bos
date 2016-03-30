@@ -585,18 +585,16 @@ FirePrimary()
 {
 	if( gun_1 )
 	{
-		show rflare;
+		emit-sfx 1024 + 0 from rflare;
 		move rbarrel to z-axis [-1.500000] speed [25.000000];
 		sleep 100;
-		hide rflare;
 		move rbarrel to z-axis [0.000000] speed [4.000000];
 	}
 	else
 	{
-		show lflare;
+		emit-sfx 1024 + 0 from lflare;
 		move lbarrel to z-axis [-1.500000] speed [25.000000];
 		sleep 100;
-		hide lflare;
 		move lbarrel to z-axis [0.000000] speed [1.600000];
 	}
 	gun_1 = !gun_1;

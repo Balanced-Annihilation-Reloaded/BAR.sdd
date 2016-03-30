@@ -310,7 +310,6 @@ local function resizeUI(scrH,i)
     buildMenu:SetPos(0, winY, winW, winH) -- better to keep consistent layout & not use small buttons when possible
     menuTabs:SetPos(winW,winY+20)
     orderMenu:SetPos(minMapW,ordY,ordH*21,ordH)
-    -- orderBG:SetPos(minMapW,ordY,ordH*#orderMenu.children,ordH) --background for order menu, if it had one!
     stateMenu:SetPos(winY*1.05,0,200,winY)    
 end
 

@@ -270,6 +270,9 @@ local function createUI()
                     playIcon:Show()
                 end
                 self.paused = not self.paused
+                if not self.paused then
+                    checkStatus(true)
+                end
             end
         },
     }
@@ -320,7 +323,7 @@ local function createUI()
     }
 end
 
-local function playNewTrack()
+function playNewTrack()
     
     local trackList = tracks[musicType]
     local track
@@ -343,10 +346,21 @@ local function playNewTrack()
     spPlaySoundStream('music/'..musicType..'/'..curTrack.filename)
 end    
 
-local function checkStatus()
+function checkStatus(unPause)
+    -- cool down destruction
+    local hitPeak = false
+    if destruction > totalHealth * peakThreshold then
+        destruction = totalHealth * peakThreshold
+        hitPeak = true
+    end        
+    destruction = destruction - (totalHealth * cooldownRate)
+    if destruction < 0 then
+        destruction = 0
+    end
 
-    local teamUnits
-    
+    if playButton.paused then return end
+
+    -- change music if needed
     local playedTime, totalTime = spGetSoundStreamTime()
     playedTime = playedTime or 0
     totalTime  = totalTime or 0
@@ -355,11 +369,13 @@ local function checkStatus()
         playNew = true
     end
     
-    
     if destruction > totalHealth * highThreshold then
-        if destruction > totalHealth * peakThreshold and musicType ~= 'war' then
-            destruction = totalHealth * highThreshold
-            fadeOut = Spring.GetGameFrame()
+        if hitPeak and musicType ~= 'war' then
+            if not unPause then
+                fadeOut = Spring.GetGameFrame()
+            else
+                playNew = true
+            end
         end    
         musicType = 'war'
     elseif destruction > totalHealth * lowThreshold then
@@ -374,16 +390,6 @@ local function checkStatus()
         playNewTrack()
         labelVar = 0
         playNew = false
-    end
-    
-    if destruction > totalHealth * peakThreshold then
-        destruction = totalHealth * peakThreshold
-    end    
-    
-    destruction = destruction - (totalHealth * cooldownRate)
-    
-    if destruction < 0 then
-        destruction = 0
     end
 end
 
@@ -444,26 +450,42 @@ function widget:Initialize()
         loadOptions()
     end
 
+    local units = Spring.GetAllUnits()
+    for _,unitID in ipairs(units) do
+        local teamID = Spring.GetUnitTeam(unitID)
+        local unitDefID = Spring.GetUnitDefID(unitID)
+        widget:UnitCreated(unitID, unitDefID, teamID)
+    end
+    
     extra_sliders:Hide()
     spSetSoundStreamVolume(1)
 end
 
-function widget:UnitCreated(_, unitDefID, teamID)
+local healthUnitID = {}
+function widget:UnitCreated(unitID, unitDefID, teamID)
     if isSpec or teamID == myTeamID then
         totalHealth = totalHealth + UnitDefs[unitDefID].health
+        healthUnitID[unitID] = true
     end
 end
 
-function widget:UnitDestroyed(_, unitDefID, teamID)
-    if isSpec or teamID == myTeamID then
+function widget:UnitDestroyed(unitID, unitDefID, teamID)
+    if healthUnitID[unitID] then
         totalHealth  = totalHealth - UnitDefs[unitDefID].health
+        healthUnitID[unitID] = nil
     end
 end
 
-function widget:UnitDamaged(_, _, teamID, damage)
-    if isSpec or teamID == myTeamID then
-        destruction = destruction + damage
+function widget:UnitDamaged(unitID, unitDefID, teamID, damage)
+    if healthUnitID[unitID] then
+        local _,mh = Spring.GetUnitHealth(unitID)
+        destruction = destruction + math.max(mh,damage)
     end
+end
+
+function widget:PlayerChanged()
+    isSpec = Spring.GetSpectatingState()
+    myTeamID = Spring.GetMyTeamID()
 end
 
 function widget:Shutdown()

@@ -419,6 +419,8 @@ function widget:GameFrame(n)
             fadeOut = false
             playNew = true
         end    
+    else
+        spSetSoundStreamVolume(1)
     end
 
     -- Check battle status

@@ -139,12 +139,9 @@ end
 function GetOverlayColor(teamID)
     local r,g,b = Spring.GetTeamColor(teamID)
     local color = {r,g,b}
-    local overlayColor = {} -- desaturate and aim for 0.3 brightness, else unit properties are hard to read
+    local overlayColor = {} 
     overlayColor[4] = 1.0
-    --local average = 1/6 * (math.max(color[1] + color[2] + color[3],1.0) + 0.9) 
-    --local bias = 0.3
     for i=1,3 do
-        --overlayColor[i] = (1-bias)*average + bias*color[i]
         overlayColor[i] = color[i]*0.5
     end
     return overlayColor
@@ -209,24 +206,26 @@ local function showUnitGrid()
     local sortedSelUnits = curTip.sortedSelUnits 
     local teamColor = {r,g,b} 
 
-    -- choose colour by majority vote
-    local unitTeams = {}
-    for _,unitID in ipairs(selUnits) do
-        local teamID = Spring.GetUnitTeam(unitID)
-        unitTeams[teamID] = (unitTeams[teamID] or 0) + 1
-    end
-    local mostTeam, mostCount = nil,0
-    for teamID,n in pairs(unitTeams) do
-        if n>mostCount then
-            mostTeam = teamID
-            mostCount = n        
-        end
-    end
-    local r,g,b = Spring.GetTeamColor(mostTeam)
-    local teamColor = {r,g,b}
-    
+    -- choose colour by majority vote per unitdef 
     for unitDefID, unitIDs in pairs(sortedSelUnits) do
+        local unitTeams = {}
+        for _,unitID in ipairs(selUnits) do
+            if spGetUnitDefID(unitID) == unitDefID then
+                local teamID = spGetUnitTeam(unitID)
+                unitTeams[teamID] = (unitTeams[teamID] or 0) + 1
+            end
+        end
+        local mostTeam, mostCount = nil,0
+        for teamID,n in pairs(unitTeams) do
+            if n>mostCount then
+                mostTeam = teamID
+                mostCount = n        
+            end
+        end
         if unitDefID ~= 'n' then 
+            local r,g,b = Spring.GetTeamColor(mostTeam)
+            local teamColor = {r,g,b}
+    
             local name    = UnitDefs[unitDefID].name
             local texture = '#'..unitDefID
             local overlay = imageDir..'Overlays/' .. name .. '.dds'

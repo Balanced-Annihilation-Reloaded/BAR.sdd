@@ -62,7 +62,7 @@ return {
 				craterareaofeffect = 0,
 				craterboost = 0,
 				cratermult = 0,
-				explosiongenerator = "custom:FLASH2",
+				explosiongenerator = "custom:FLASH2ND",
 				firestarter = 0,
 				impulseboost = 0,
 				impulsefactor = 0,

@@ -91,7 +91,7 @@ return {
 				craterboost = 0,
 				cratermult = 0,
 				edgeeffectiveness = 0.6,
-				explosiongenerator = "custom:FLASH2",
+				explosiongenerator = "custom:FLASH2ND",
 				firestarter = 70,
 				flighttime = 3,
 				impulseboost = 0.123,

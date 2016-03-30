@@ -13,6 +13,10 @@ end
 
 local Chili
 local minimap
+local maxH = 0.3
+local minH = 0.12
+local maxW = 0.3
+local minW = 0.12
 
 local glConfigMiniMap = gl.ConfigMiniMap
 local glDrawMiniMap   = gl.DrawMiniMap
@@ -27,15 +31,17 @@ local function MakeMinimapWindow(screenW, screenH)
     end
 
     local aspect = Game.mapX/Game.mapY
+    local relAspect = (screenW*maxW)/(screenH*maxH)
     local h,w
-    if aspect <= 1 then
+    if aspect <= relAspect then
         -- height limited
-        h = screenH * 0.3
-        w = math.max(h * aspect, screenW * 0.1)
+        h = screenH * maxH
+        w = math.min(math.max(h*aspect, screenW*minW), screenW*maxW)
     else
         -- width limited
-        w = screenW * 0.3
-        h = math.max(w / aspect, screenH * 0.12)
+        w = screenW * maxW
+        h = math.min(math.max(w/aspect, screenH*minH), screenH*maxH)
+        Spring.Echo(screenH*minH, w/aspect, screenH*maxH)
     end
     
     WG.MiniMap = {}

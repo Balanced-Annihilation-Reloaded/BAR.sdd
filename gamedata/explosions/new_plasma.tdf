@@ -1,5 +1,6 @@
 [KARGMISSILE_EXPLOSION]
 {
+	useDefaultExplosions = 1;
 	[groundflash]
    	{
       	ttl = 15;
@@ -33,6 +34,7 @@
 
 [LIGHT_PLASMA]
 {
+	useDefaultExplosions = 1;
     [groundflash]
 	{
 		flashsize=12;

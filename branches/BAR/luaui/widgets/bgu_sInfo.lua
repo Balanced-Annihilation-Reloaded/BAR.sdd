@@ -141,10 +141,11 @@ function GetOverlayColor(teamID)
     local color = {r,g,b}
     local overlayColor = {} -- desaturate and aim for 0.3 brightness, else unit properties are hard to read
     overlayColor[4] = 1.0
-    local average = 1/6 * (math.max(color[1] + color[2] + color[3],1.0) + 0.9) 
-    local bias = 0.3
+    --local average = 1/6 * (math.max(color[1] + color[2] + color[3],1.0) + 0.9) 
+    --local bias = 0.3
     for i=1,3 do
-        overlayColor[i] = (1-bias)*average + bias*color[i]
+        --overlayColor[i] = (1-bias)*average + bias*color[i]
+        overlayColor[i] = color[i]*0.5
     end
     return overlayColor
 end  
@@ -156,10 +157,9 @@ local function refineSelection(obj)
     Spring.SelectUnitArray(obj.unitIDs)
 end
 
-local function addUnitGroup(name,texture,overlay,unitIDs, teamColour)
+local function addUnitGroup(name,texture,overlay,unitIDs, teamColor)
     local count = #unitIDs
     if count == 1 then count = '' end
-    
     local unitCount = Chili.Label:New{
         caption = count,
         y       = 0,
@@ -230,7 +230,7 @@ local function showUnitGrid()
             local name    = UnitDefs[unitDefID].name
             local texture = '#'..unitDefID
             local overlay = imageDir..'Overlays/' .. name .. '.dds'
-            addUnitGroup(name, texture, overlay, unitIDs, unitDefID, teamColor)
+            addUnitGroup(name, texture, overlay, unitIDs, teamColor)
         end
     end
 
@@ -341,14 +341,14 @@ local function showUnitInfo()
     unitPicture = Chili.Image:New{
         parent   = unitWindow,
         file     = texture,
-        color    = overlayColor,
+        color    = {0.5,0.5,0.5,1.0},--overlayColor,
         flip     = false,
         height   = '100%',
         width    = '100%',
     }
     unitPictureOverlay = Chili.Image:New{
         parent   = unitPicture,
-        color    = overlayColor,
+        color    = overlayColor, 
         height   = '100%',
         width    = '100%',
         file     = overlay,
@@ -719,7 +719,7 @@ local function showFocusInfo()
     focusPicture = Chili.Image:New{
         parent   = unitWindow,
         file     = texture,
-        color    = overlayColor,
+        color    = {0.5,0.5,0.5,1.0},
         flip     = false,
         height   = '100%',
         width    = '100%',

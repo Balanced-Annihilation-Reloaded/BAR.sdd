@@ -199,7 +199,7 @@ vertex = [[
 			gl_FragData[0] = vec4((normal + 1.0) * 0.5, 1.0);
 			gl_FragData[1] = outColor;
 			gl_FragData[2] = vec4(specular, extraColor.a);
-			gl_FragData[3] = vec4(extraColor.rrr, 1.0);
+			gl_FragData[3] = vec4(extraColor.r, 1.0 - extraColor.a, diffuseIn.a, 1.0); // G channel is a stencil mask for bloom.
 		#endif
 
 		%%FRAGMENT_POST_SHADING%%

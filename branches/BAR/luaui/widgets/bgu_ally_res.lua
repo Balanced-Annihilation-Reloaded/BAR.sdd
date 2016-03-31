@@ -20,7 +20,6 @@ local amIFullView
 local myAllyTeamID
 local myTeamID
 
-local panels = {}
 local teamPanels = {}
 local allyTeamPanels = {}
 local allyTeamStats = {}
@@ -38,8 +37,7 @@ local Chili, window, stack
 local height, width
 local settings = {}
 
-local allyTeamPanelHeight = 18
-local teamPanelHeight = 20
+local panelHeight = 20
 local panelWidth = 110
 
 local buttonColour = {0,0,0,1}
@@ -70,19 +68,19 @@ local function readable(num)
     return s
 end
 
-function UpdateAllyTeamPanel(aID,res)
+function UpdateAllyTeamPanel(t,res)
+    local aID = t.aID
     local text = readable(allyTeamStats[aID][res.name].income)
-    allyTeamPanels[aID]:GetChildByName(res.name):SetText(text)
-    
-    -- TODO: make image size on team panels depend on contribution % ?
+    t.panel:GetChildByName(res.name):SetText(text)
 end
 
-function UpdateTeamPanel(tID, res)
+function UpdateTeamPanel(t, res)
+    local tID = t.tID
     local aID = allyTeamOfTeam[tID]
     local currentLevel, storage, pull, income, expense, share, sent, received = spGetTeamResources(tID, res.name)
     if not currentLevel then return end
     
-    teamPanels[tID]:GetChildByName(res.name).children[1]:SetValue(currentLevel/storage)
+    t.panel:GetChildByName(res.name).children[1]:SetValue(currentLevel/storage)
     
     local a = allyTeamStats[aID][res.name]
     a.lev      = a.lev + currentLevel
@@ -101,13 +99,13 @@ function UpdatePanels(updateText)
             a[res.name].expense = 0
         end
         
-        for tID,_ in pairs(teamPanels) do
-            UpdateTeamPanel(tID, res) 
-        end    
-
-        if (updateText) then -- only needed after a slow update
-            for aID,_ in pairs(allyTeamPanels) do
-                UpdateAllyTeamPanel(aID, res)
+        for _,t in ipairs(allyTeamPanels) do
+            local aID = t.aID
+            for _,s in ipairs(teamPanels[aID]) do
+                UpdateTeamPanel(s, res) 
+            end    
+            if (updateText) then -- only needed after a slow update
+                UpdateAllyTeamPanel(t, res)
             end
         end
     end    
@@ -152,7 +150,6 @@ end
 -----------------------
 
 function ConstructAllyTeamPanel(aID)
-    local panelHeight = allyTeamPanelHeight
     local panel = Chili.Control:New{
         bordercolor = {0,0,0,0},
         width     = panelWidth,
@@ -161,16 +158,7 @@ function ConstructAllyTeamPanel(aID)
         margin    = {0,0,0,0},
     }
     
-    if aID~=0 then
-    local separator = Chili.Line:New{
-        parent = panel,
-        x = 0,
-        width   = '100%',
-        maxheight = 2,
-    }    
-    end
-
-    local wPos = 13
+    local wPos = 15
     for _,res in pairs(resources) do
         Chili.TextBox:New{
             parent = panel,
@@ -189,7 +177,7 @@ function ConstructAllyTeamPanel(aID)
                 outlineWeight    = 3,
             }
         }    
-        wPos = wPos + (panelWidth-2*wPos)/2 + 2
+        wPos = wPos + (panelWidth-2*wPos)/2 + 6
     end
 
 
@@ -197,7 +185,6 @@ function ConstructAllyTeamPanel(aID)
 end
 
 function ConstructTeamPanel(tID)
-    local panelHeight = teamPanelHeight
     local panel = Chili.Control:New{
         bordercolor = {0,0,0,0},
         width     = panelWidth,
@@ -255,11 +242,10 @@ function ConstructTeamPanel(tID)
 end
 
 function ConstructPanels()
-    panels = {}
-    teamPanels = {}
-    allyTeamPanels = {}
-    allyTeamStats = {}
-    allyTeamOfTeam = {}    
+    teamPanels = {} -- array table
+    allyTeamPanels = {} -- array table
+    allyTeamStats = {} -- allyTeamState[aID][res] = {...}
+    allyTeamOfTeam = {} -- allTeamOfTeam[tID] = aID   
     nAllyTeams = 0
     nTeams = 0
     
@@ -279,10 +265,9 @@ function ConstructPanels()
                     local canView = notMe and not (amIFullView and aID~=myAllyTeamID)
                     notAlone = notAlone or notMe
                 
-                    if canView and not allyTeamPanels[aID] then
+                    if canView and not allyTeamStats[aID] then
                         -- insert ally team
-                        allyTeamPanels[aID] = ConstructAllyTeamPanel(aID)
-                        panels[#panels+1] = allyTeamPanels[aID]
+                        table.insert(allyTeamPanels, {aID=aID, panel=ConstructAllyTeamPanel(aID)})
                         allyTeamStats[aID] = {}
                         for _,res in pairs(resources) do
                             allyTeamStats[aID][res.name] = {}
@@ -292,8 +277,8 @@ function ConstructPanels()
                     
                     -- insert team         
                     if canView then
-                        teamPanels[tID] = ConstructTeamPanel(tID)
-                        panels[#panels+1] = teamPanels[tID]
+                        teamPanels[aID] = teamPanels[aID] or {}
+                        table.insert(teamPanels[aID], {tID=tID, panel=ConstructTeamPanel(tID)})
                         allyTeamOfTeam[tID] = aID
                         nTeams = nTeams + 1
                     end
@@ -302,7 +287,7 @@ function ConstructPanels()
         end
     end
     
-    if not notAlone then -- don't run if we are alone!
+    if not notAlone then -- don't show if we are alone!
         if window.visible then window:Hide() end
     else
         if window.hidden then window:Show() end 
@@ -311,12 +296,71 @@ end
 
 -----------------------
 
+function PaddingPanel()
+    return Chili.Control:New{height=panelHeight, width=panelWidth}
+end
+
 function SetupPanels()
-    stack:ClearChildren()
+    grid:ClearChildren()
     ConstructPanels()
-    for _,panel in ipairs(panels) do
-        stack:AddChild(panel)
+    
+    -- get the max number of teams in any ally team
+    local maxTeamsPerAllyTeam = 0
+    for _,t in pairs(allyTeamPanels) do
+        maxTeamsPerAllyTeam = math.max(maxTeamsPerAllyTeam, #teamPanels[t.aID])
+    end
+    
+    -- choose number of cols
+    local nPanels = nTeams + nAllyTeams -- not including padding
+    local maxRowsPerCol = 14
+    if nPanels <= maxRowsPerCol then
+        cols = 1
+    else
+        cols = math.min(math.ceil(nPanels/maxRowsPerCol), maxTeamsPerAllyTeam+1)
+    end        
+    
+    -- add the panels, with padding where appropriate
+    for _,t in ipairs(allyTeamPanels) do
+        local m = 0 -- # of panels & team panels & padding panels for this ally team
+        local aID = t.aID
+        -- ally team panel
+        grid:AddChild(t.panel)
+        m = m + 1
+        -- padding if needed, to make the team panels start on a new line if the team panels wouldn't fit on this line
+        if #teamPanels[aID]>cols-1 and cols>1 then
+            for i=1,cols-1 do
+                grid:AddChild(PaddingPanel())            
+                m = m + 1
+            end
+        end        
+        
+        -- team panels
+        for _,s in ipairs(teamPanels[aID]) do
+            local tID = s.tID
+            grid:AddChild(s.panel)
+            m = m + 1
+        end
+        -- padding if needed, to make the next ally team start on a new line
+        while (m%cols~=0) do
+            grid:AddChild(PaddingPanel())            
+            m = m + 1
+        end        
     end    
+    
+    rows = math.ceil(#grid.children/cols)
+    
+    -- set grid & window dimensions
+    grid.columns = cols
+    grid.rows = rows
+    local vsx,vsy = Spring.GetViewGeometry()
+    local w = cols*panelWidth
+    local h = rows*panelHeight + 14
+    window.right = w
+    window.width = w
+    window.height = h
+    window:Invalidate() -- SetPos can't align to right
+    window:Resize(window.width+1,_) -- hack
+    window:Resize(window.width-1,_)
 end
 
 function CheckMyState()
@@ -346,27 +390,25 @@ function widget:Initialize()
         right     = 0,
         y         = 175,
         width     = panelWidth,
-        resizeable = false,
-        autosize = true,
-        padding   = {0,0,0,6},
-        color = buttonColour,
-        caption = "",
-     }
-    stack = Chili.StackPanel:New{
-        parent      = window,
-        name        = 'ally res stack',
-        width       = '100%',
-        autosize = true,
-        resizeItems = false,
-        padding     = {0,2,0,0},
-        itemPadding = {0,0,0,0},
-        itemMargin  = {0,0,0,0},
-        children    = {},
-        preserveChildrenOrder = true,
+        resizeable= false,
+        padding   = {0,6,0,8},
+        color     = buttonColour,
+    }
+    grid = Chili.Grid:New{
+        parent   = window,
+        name     = 'ally res grid',
+        x        = 0,
+        y        = 0,
+        right    = 0,
+        bottom   = 0,
+        columns  = 1,
+        rows     = 1,
+        padding  = {0,0,0,0},
+        orientation = 'horizontal',
     }
     
     CheckMyState()
-    SetupPanels()
+    needUpdate = true
 
     if settings.x and settings.y then
         --window:SetPos(settings.x,settings.y) -- disabled, currently not moveable

@@ -68,7 +68,7 @@ local unitRendering = {
 
   spGetAllObjects      = Spring.GetAllUnits,
   spGetObjectPieceList = Spring.GetUnitPieceList,
-  
+
   spGetMaterial        = Spring.UnitRendering.GetMaterial,
   spSetMaterial        = Spring.UnitRendering.SetMaterial,
   spActivateMaterial   = Spring.UnitRendering.ActivateMaterial,
@@ -189,7 +189,7 @@ local function _CompileMaterialShaders(rendering)
         }
         end
     end
-    
+
     if (mat_src.deferredSource) then
       local GLSLshader = CompileShader(mat_src.deferredSource, mat_src.deferredDefinitions, mat_src.deferredPlugins)
 
@@ -248,7 +248,7 @@ local function GetObjectMaterial(rendering, objectDefID)
     local texdl = gl.CreateList(function()
     for _,tex in pairs(texUnits) do
       local prefix = tex.tex:sub(1,1)
-      if   (prefix~="%") 
+      if   (prefix~="%")
         and(prefix~="#")
         and(prefix~="!")
         and(prefix~="$")
@@ -343,9 +343,9 @@ function ToggleNormalmapping(_,newSetting,_, playerID)
   if newSetting and newSetting~="" then
     normalmapping = (newSetting=="1")
   elseif not newSetting or newSetting=="" then
-    normalmapping = not normalmapping  
+    normalmapping = not normalmapping
   end
-  
+
   Spring.SetConfigInt("NormalMapping", (normalmapping and 1) or 0)
   Spring.Echo("normalmapping is " .. (normalmapping and "enabled" or "disabled"))
 
@@ -359,7 +359,7 @@ function ToggleNormalmapping(_,newSetting,_, playerID)
         local mat = unitRendering.materialDefs[unitMat[1]]
         if (not mat.force) then
 		ObjectDestroyed(unitRendering, unitID, unitDefID)
-         
+
         end
       end
     end
@@ -386,7 +386,7 @@ local n = -1
 function gadget:Update()
   if (n<Spring.GetDrawFrame()) then
     n = Spring.GetDrawFrame() + Spring.GetFPS()
-    
+
     if (advShading ~= Spring.HaveAdvShading()) then
       ToggleAdvShading()
     elseif (advShading)and(normalmapping)and(shadows ~= Spring.HaveShadows()) then
@@ -479,7 +479,7 @@ end
 -- reflectionDraw = 3,
 -- refractionDraw = 4,
 -- luaMaterialDraw = 5,
--- }; 
+-- };
 -----------------
 
 function gadget:DrawUnit(unitID, drawMode)
@@ -489,7 +489,7 @@ end
 function gadget:DrawFeature(featureID, drawMode)
   return DrawObject(featureRendering, featureID, drawMode)
 end
-gadget.UnitReverseBuild = gadget.UnitDestroyed
+gadget.UnitReverseBuilt = gadget.UnitDestroyed
 gadget.UnitCloaked   = gadget.UnitDestroyed
 gadget.UnitDecloaked = gadget.UnitFinished
 
@@ -551,13 +551,13 @@ end
 local function _LoadMaterialConfigFiles(path)
   local unitMaterialDefs = {}
   local featureMaterialDefs = {}
-  
+
   local files = VFS.DirList(path)
   table.sort(files)
-  
+
   for i = 1, #files do
     local mats, unitMats = VFS.Include(files[i])
-	
+
     for k, v in pairs(mats) do
 		-- Spring.Echo(files[i],'is a feature?',v.feature)
       local rendering
@@ -627,7 +627,7 @@ function gadget:Initialize()
 
   --// insert synced actions
 
-  gadgetHandler:AddSyncAction("unitshaders_reverse", UnitReverseBuild)
+  gadgetHandler:AddSyncAction("unitshaders_reverse", UnitReverseBuilt)
   gadgetHandler:AddChatAction("normalmapping", ToggleNormalmapping)
 end
 

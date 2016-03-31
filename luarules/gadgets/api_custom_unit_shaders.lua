@@ -489,8 +489,8 @@ end
 function gadget:DrawFeature(featureID, drawMode)
   return DrawObject(featureRendering, featureID, drawMode)
 end
-gadget.UnitReverseBuilt = gadget.UnitDestroyed
-gadget.UnitCloaked   = gadget.UnitDestroyed
+gadget.UnitReverseBuilt = gadget.RenderUnitDestroyed
+gadget.UnitCloaked   = gadget.RenderUnitDestroyed
 gadget.UnitDecloaked = gadget.UnitFinished
 
 

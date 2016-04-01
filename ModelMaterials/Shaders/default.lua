@@ -199,13 +199,13 @@ vertex = [[
 			gl_FragData[0] = vec4((normal + 1.0) * 0.5, 1.0);
 			gl_FragData[1] = outColor;
 			gl_FragData[2] = vec4(specular, extraColor.a);
-			gl_FragData[3] = vec4(extraColor.r, dot(teamColor.rgb, vec3(0.2990, 0.4870, 0.2140)) * extraColor.a *diffuseIn.a , 0.0 , 1.0); // G channel is a stencil mask for bloom. high values mean NO bloom
+			gl_FragData[3] = vec4(extraColor.r, clamp ((1.0 - extraColor.a ) + dot(teamColor.rgb, vec3(0.2990, 0.4870, 0.2140)) *diffuseIn.a ,0.0,1.0), 0.0 , 1.0); // G channel is a stencil mask for bloom. high values mean NO bloom
 		#endif
 
 		%%FRAGMENT_POST_SHADING%%
 	}
 ]],
-
+ 
   uniformInt = {
     textureS3o1 = 0,
     textureS3o2 = 1,

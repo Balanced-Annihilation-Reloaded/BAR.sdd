@@ -18,7 +18,7 @@ return {
 		collisionvolumetype = "CylY",
 		description = "",
 		explodeas = "ARMESTOR_BUILDINGEX",
-		footprintx = 4,
+		footprintx = 3,
 		footprintz = 3,
 		icontype = "building",
 		idleautoheal = 5,

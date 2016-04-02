@@ -445,6 +445,8 @@ local function addBuild(item)
             caption = "(full)",
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
+            borderColor = {1,1,1,0.1},
+            backgroundColor = buttonColour,
             font = {
                 size = 16
             }
@@ -510,8 +512,8 @@ local function addState(cmd)
             margin    = {0,0,0,0},
             minheight = 22,
             OnMouseUp = {},
-            --borderColor = {1,1,1,0.1},
-            --backgroundColor = buttonColour,
+            borderColor = {1,1,1,0.1},
+            backgroundColor = buttonColour,
             font      = {
                 color = grey,
                 size  = 16,
@@ -566,7 +568,6 @@ local function addDummyState(cmd)
             borderColor = {1,1,1,0.1},
             backgroundColor = buttonColour,
             font      = {
-                color = grey,
                 size  = 16,
             },
         }

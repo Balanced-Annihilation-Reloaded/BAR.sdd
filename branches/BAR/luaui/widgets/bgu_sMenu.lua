@@ -108,18 +108,28 @@ local ignoreCMDs = {
     gatherwait     = '',
 }
 
--- orders that are always displayed
-local topOrders = {
-    [1] = "move",
-    [2] = "fight",
-    [3] = "attack",
-    [4] = "patrol",
-    [5] = "stop",
-    [6] = "settarget",
-    [7] = "canceltarget",
-    [8] = "repair",
-    [9] = "guard",
-    [10] = "wait",
+-- orders menu layout, left->right with bottom line first 
+local orderMenuLayout = {
+    [1] = {
+        [1] = "move",
+        [2] = "fight",
+        [3] = "attack",
+        [4] = "patrol",
+        [5] = "stop",
+        [6] = "settarget",
+        [7] = "canceltarget",
+        [8] = "wait",
+    },
+    [2] = {
+        [1] = "guard",
+        [2] = "repair",
+        [3] = "reclaim",
+        [4] = "resurrect",
+        [5] = "restore",
+    },
+    [3] = {
+        -- other (not shown if not present)    
+    },
 }
 
 -- states that are always displayed
@@ -199,6 +209,7 @@ local panH, panW, winW, winH, winX, winB, tabH, minMapH, minMapW
 local screen0, buildMenu, stateMenu, orderMenu, menuTabs 
 local menuTab = {}
 local grid = {}
+local orderGrid = {}
 
 local buttonColour
 
@@ -296,21 +307,25 @@ local function resizeUI(scrH,i)
     local nCols = (i) and math.max(wantedCols+wantedPaddingCols, math.min(maxCols, grid[i].columns)) or wantedCols
     local nRows = (i) and math.max(wantedRows+wantedPaddingRows, math.min(maxRows, grid[i].rows)) or wantedRows
     
-    local ordH = scrH * 0.05
-    local ordY = scrH - ordH
+    local ordB = scrH * 0.05 -- single button 
+    local ordY = scrH - ordB * #orderMenuLayout
+    
     local winY = scrH * 0.2
     local winH = scrH * 0.5
     local winW = winH * nCols / nRows
-    local aspect = Game.mapX/Game.mapY
     
     -- find out where minimap is
+    local aspect = Game.mapX/Game.mapY
     local minMapH = WG.MiniMap and WG.MiniMap.height or scrH * 0.3
     local minMapW = WG.MiniMap and WG.MiniMap.width or minMapH * aspect
     
+    stateMenu:SetPos(winY*1.05,0,200,winY)    
     buildMenu:SetPos(0, winY, winW, winH) -- better to keep consistent layout & not use small buttons when possible
     menuTabs:SetPos(winW,winY+20)
-    orderMenu:SetPos(minMapW,ordY,ordH*21,ordH)
-    stateMenu:SetPos(winY*1.05,0,200,winY)    
+    orderMenu:SetPos(minMapW,ordY,ordB*8,ordB*#orderMenuLayout)
+    for i=#orderMenuLayout,1,-1 do 
+        orderGrid[i]:SetPos(0, ordB*i, ordB*8, ordB)
+    end
 end
 
 local function selectTab(self)
@@ -521,9 +536,11 @@ local function addDummyState(cmd)
     stateMenu:AddChild(button)
 end
 
-local function addOrderButton(cmd)  
+local function addOrderButton(item)  
     -- create the button if it does not already exist
 	local button 
+    local cmd = item.cmd
+    local cat = item.category
     local name = cmd.action
 	if orderButtons[name] == nil then 
 		button = Chili.Button:New{
@@ -586,12 +603,14 @@ local function addOrderButton(cmd)
     end
 	button.borderColor = (cmd.id==activeSelCmdID) and button.focusColor or {1,1,1,0.1}
     
-	orderMenu:AddChild(button)
+	orderGrid[cat]:AddChild(button)
 end
 
-local function addDummyOrder(cmd)
+local function addDummyOrder(item)
     local button 
-    local name = cmd.action .. "_dummy"
+    local action = item.action
+    local cat = getOrderCat(action)
+    local name = action .. "_dummy"
     if orderButtons[name] == nil then
         button = Chili.Button:New{
             name      = name,
@@ -609,7 +628,7 @@ local function addDummyOrder(cmd)
                     y       = 5,
                     right   = 5,
                     color   = grey,
-                    file    = imageDir..'Commands/'..cmd.action..'.png',
+                    file    = imageDir..'Commands/'..action..'.png',
                 }
             }
         }
@@ -618,10 +637,10 @@ local function addDummyOrder(cmd)
         button = orderButtons[name]
     end
     
-    orderMenu:AddChild(button) 
+    orderGrid[cat]:AddChild(button) 
 end
 
-local function getMenuCat(ud)
+function getMenuCat(ud)
     if ud.isFactory or (ud.isBuilder and ud.speed==0) then
         menuCat = 4
     elseif (ud.speed > 0 and ud.canMove) then
@@ -642,6 +661,17 @@ local function getMenuCat(ud)
     end
 
     return menuCat
+end
+
+function getOrderCat(action)
+    for i=1,#orderMenuLayout do
+        for j=1,#orderMenuLayout[i] do
+            if orderMenuLayout[i][j]==action then
+                return i
+            end
+        end
+    end
+    return #orderMenuLayout
 end
 
 local function AddInSequence(items, t, Add, dummyAdd)
@@ -710,23 +740,34 @@ local function parseCmds()
                 units[#units+1] = {name=cmd.name, uDID=-cmd.id, disabled=cmd.disabled, category=menuCat, count=(queue[-cmd.id] or cmd.params[1])} -- cmd.params[1] helps only in godmode
             elseif #cmd.params > 1 then
                 states[cmd.action] = cmd
-            elseif cmd.id > 0 and not WG.OpenHostsList then -- hide the order menu if the open host list is showing (it shows to specs who have it enabled)
+            elseif cmd.id > 0 then 
+                local cat = getOrderCat(cmd.action)
                 orderMenu.active = true
-                orders[cmd.action] = cmd
+                orderGrid[cat].active = true
+                orders[cat] = orders[cat] or {}
+                orders[cat][cmd.action] = {action=cmd.action, cmd=cmd, category=cat}
             end
         end
     end
     
     -- Include stop command, if needed
     if orderMenu.active then
-        local stop_cmd = {name="Stop", action='stop', id=CMD.STOP, tooltip="Stop: Clears the command queue"}
-        orders[stop_cmd.action] = stop_cmd
+        local cmd = {action='stop', id=CMD.STOP, tooltip="Stop: Clears the command queue"}
+        local cat = getOrderCat("stop")
+        orders[cat] = orders[cat] or {}
+        orders[cat][cmd.action] = {action=cmd.action, cmd=cmd, category=cat}
     end
     
-    -- Add the orders/states in the wanted order, from L->R
+    -- Add the states in the wanted order, from L->R
     if #cmdList>0 then
-        AddInSequence(orders, topOrders, addOrderButton, addDummyOrder)
         AddInSequence(states, topStates, addState, addDummyState)
+    end
+
+    -- Add the orders, for each order category
+    for i=1,#orderMenuLayout do
+        if orders[i] then
+            AddInSequence(orders[i], orderMenuLayout[i], addOrderButton, addDummyOrder)
+        end
     end
     
     -- Add the units, in order of lowest cost
@@ -888,7 +929,10 @@ local function loadPanels()
     -- states and order buttons are removed and re-added on each refresh
     -- this is needed for state buttons (e.g. changing cloak state also changes fire state, because of a widget), and a different is used for *each* possible fire state
     -- it isn't needed for order buttons but wth
-    orderMenu:ClearChildren()
+    for i=1,#orderMenuLayout do
+        orderGrid[i]:ClearChildren()
+        orderGrid[i].active = false
+    end
     stateMenu:ClearChildren()
 
     -- unit buttons are only removed and re-added if the unit selection changes
@@ -917,7 +961,11 @@ end
 local function loadDummyPanels(unitDefID)
     -- load the build menu panels as though this unitDefID were selected, even though it is not
 
-    orderMenu:ClearChildren()
+    for i=1,#orderMenuLayout do
+        orderGrid[i]:ClearChildren()
+        orderGrid[i].active = false
+    end
+    
     stateMenu:ClearChildren()
 
     menuTabs.choice = 1
@@ -1062,7 +1110,7 @@ function widget:Initialize()
     
     buildMenu = Chili.Control:New{
         parent       = screen0,
-        name         = 'buildMenu',
+        name         = 'build menu',
         active       = false,
         padding      = {0,0,0,0},
     }
@@ -1077,16 +1125,25 @@ function widget:Initialize()
         margin  = {0,0,0,0},
     }
     
-    orderMenu = Chili.Grid:New{
-        name    = "order grid",
-        parent  = screen0,
-        active  = false,
-        columns = 21,
-        rows    = 1,
+    orderMenu = Chili.StackPanel:New{
+        name = "order menu",
+        parent = screen0,
         padding = {0,0,0,0},
+        margin  = {0,0,0,0},
     }
-
-
+    
+    for i=#orderMenuLayout,1,-1 do 
+        orderGrid[i]  = Chili.Grid:New{
+            name    = "order grid " .. i,
+            parent  = orderMenu,
+            active  = false,
+            columns = 8,
+            rows    = 1,
+            padding = {0,0,0,0},
+            margin  = {0,0,0,0},
+        }
+    end
+    
     stateMenu = Chili.Grid:New{
         name    = "state grid",
         parent  = screen0,

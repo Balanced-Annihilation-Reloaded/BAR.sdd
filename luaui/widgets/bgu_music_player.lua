@@ -324,14 +324,16 @@ local function createUI()
 end
 
 function playNewTrack()
-    
-    local trackList = tracks[musicType]
+
+    local moodChoices = tracks[musicType]
     local track
     repeat
-        track = trackList[math.random(1, #trackList)]
+        track = moodChoices[math.random(1, #moodChoices)]
     until not options.disabledTracks[track.title] and (track.filename ~= curTrack.filename)
-    
+
     curTrack = track
+    curTrack.mood = musicType
+    trackName = curTrack.title..'       '
     
     trackName = curTrack.title..'       '
     songLabel.font.color = color[musicType]
@@ -370,7 +372,7 @@ function checkStatus(unPause)
     end
     
     if destruction > totalHealth * highThreshold then
-        if hitPeak and musicType ~= 'war' then
+        if hitPeak and curTrack.mood ~= 'war' then
             if not unPause then
                 fadeOut = Spring.GetGameFrame()
             else

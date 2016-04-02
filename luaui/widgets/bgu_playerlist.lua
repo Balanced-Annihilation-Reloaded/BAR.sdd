@@ -482,7 +482,7 @@ function iPanelPress(obj,value)
     end
     
     -- watch res
-    if iPaneltID and players[myPlayerID].spec then 
+    if iPaneltID and players[myPlayerID].spec and not iPanelDeadPlayer then 
         iPanelLayout:AddChild(watchres)
         h = h + iPanelItemHeight
     end

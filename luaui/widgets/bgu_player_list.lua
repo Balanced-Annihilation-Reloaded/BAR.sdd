@@ -1681,11 +1681,19 @@ function Separator()
     return separator
 end
 
-function HalfSeparator()
+function HalfSeparatorThin()
     local separator = Chili.Line:New{
         width   = 250,
         x       = offset.max - offset.name - width.name + 100,
         maxheight = 4,
+    }
+    return separator
+end
+
+function HalfSeparatorThick()
+    local separator = Chili.Line:New{
+        width   = 250,
+        x       = offset.max - offset.name - width.name + 100,
     }
     return separator
 end
@@ -1793,9 +1801,13 @@ function UpdateStack()
     SortTeams()
     SortAllyTeams()
     
-    -- now re-associate children
+    -- choose if we'll show a header for enemy each ally team or just one for them all
+    local nAllyTeams = #Spring.GetAllyTeamList() - 1 -- -1 for gaia
+    headerMode = (nAllyTeams<=8) and "individual" or "compound"
+    
+    -- re-make stack
     local allyHeader = Header(" ALLIES")
-    headers.ally = allyHeader
+    headers[myAllyTeamID] = allyHeader
     stack:AddChild(allyHeader)
     for _,tID in ipairs(myAllyTeam) do
         for _,pID in ipairs(teams[tID]) do
@@ -1808,13 +1820,20 @@ function UpdateStack()
     end
     stack:AddChild(Separator())
 
-    local enemyHeader = Header(" ENEMIES")
-    headers.enemy = enemyHeader
-    stack:AddChild(enemyHeader)
-    enemyAllyTeamPanels = {}
+    if headerMode=="compound" then
+        local enemyHeader = Header(" ENEMIES")
+        headers[-1] = enemyHeader
+        stack:AddChild(enemyHeader)
+    end    
     local n_allies = CountTable(allyTeams)
     local n = 0
     for aID,_ in pairs(allyTeams) do
+        if headerMode=="individual" then
+            local enemyHeader = Header(" ENEMIES ")
+            headers[aID] = enemyHeader
+            stack:AddChild(enemyHeader)        
+        end
+    
         for _,tID in ipairs(allyTeams[aID]) do
             for _,pID in ipairs(teams[tID]) do
                 if players[pID].spec or not players[pID].active then
@@ -1827,7 +1846,11 @@ function UpdateStack()
         
         n = n + 1
         if n < n_allies then
-            stack:AddChild(HalfSeparator())
+            if headMode=="compound" then
+                stack:AddChild(HalfSeparatorThin())
+            else
+                stack:AddChild(HalfSeparatorThick())            
+            end
         end
     end
 
@@ -1850,15 +1873,21 @@ function UpdateHeaders()
     if not options.headerRes then return end
     UpdateMyStates() 
 
+    local allyTeamList = Spring.GetAllyTeamList()
+
+    -- prepare tables
     local allyRes = {}
     local enemyRes = {}
     for _,res in ipairs(resources) do
         local resName = res.name
-        allyRes[resName] = {}
-        allyRes[resName].lev      = 0
-        allyRes[resName].storage  = 0
-        allyRes[resName].income   = 0
-        allyRes[resName].expense  = 0
+        for _,aID in pairs(allyTeamList) do
+            allyRes[aID] = allyRes[aID] or {}
+            allyRes[aID][resName] = {}
+            allyRes[aID][resName].lev      = 0
+            allyRes[aID][resName].storage  = 0
+            allyRes[aID][resName].income   = 0
+            allyRes[aID][resName].expense  = 0
+        end
         enemyRes[resName] = {}
         enemyRes[resName].lev      = 0
         enemyRes[resName].storage  = 0
@@ -1866,35 +1895,47 @@ function UpdateHeaders()
         enemyRes[resName].expense  = 0
     end
     
-    local allyTeamList = Spring.GetAllyTeamList()
+    -- count up the income etc of ally teams
     for _,aID in ipairs(allyTeamList) do
         local teamList = Spring.GetTeamList(aID)
         for _,tID in ipairs(teamList) do
             for _,res in ipairs(resources) do
                 local resName = res.name
                 local currentLevel, storage, pull, income, expense, share, sent, received = Spring.GetTeamResources(tID, resName)   
-                if aID==myAllyTeamID then
-                    allyRes[resName].lev      = allyRes[resName].lev + currentLevel
-                    allyRes[resName].storage  = allyRes[resName].storage + storage
-                    allyRes[resName].income   = allyRes[resName].income + income
-                    allyRes[resName].expense  = allyRes[resName].expense + expense
-                elseif amISpec and not amIFullView then
-                    enemyRes[resName].lev     = enemyRes[resName].lev + currentLevel
-                    enemyRes[resName].storage = enemyRes[resName].storage + storage
-                    enemyRes[resName].income  = enemyRes[resName].income + income
-                    enemyRes[resName].expense = enemyRes[resName].expense + expense            
+                if currentLevel then
+                    allyRes[aID][resName].lev      = allyRes[aID][resName].lev + currentLevel
+                    allyRes[aID][resName].storage  = allyRes[aID][resName].storage + storage
+                    allyRes[aID][resName].income   = allyRes[aID][resName].income + income
+                    allyRes[aID][resName].expense  = allyRes[aID][resName].expense + expense                 
+                    if aID~=myAllyTeamID and amISpec and not amIFullView then
+                        enemyRes[resName].lev     = enemyRes[resName].lev + currentLevel
+                        enemyRes[resName].storage = enemyRes[resName].storage + storage
+                        enemyRes[resName].income  = enemyRes[resName].income + income
+                        enemyRes[resName].expense = enemyRes[resName].expense + expense            
+                    end
                 end
             end
         end    
     end    
     
+    -- write headers
     for _,res in ipairs(resources) do
-        local resName = res.name
-        local allyResText = res.textColor .. readable(allyRes[resName].income)
-        headers.ally:GetChildByName(resName):SetText(allyResText)
+        local resName = res.name        
+        local allyResText = res.textColor .. readable(allyRes[myAllyTeamID][resName].income)        
+        headers[myAllyTeamID]:GetChildByName(resName):SetText(allyResText)        
+
         if amISpec and not amIFullView then
-            local enemyResText = res.textColor .. readable(enemyRes[resName].income)             
-            headers.enemy:GetChildByName(resName):SetText(enemyResText)
+            if headerMode=="compound" then 
+                local enemyResText = res.textColor .. readable(enemyRes[resName].income)             
+                headers[-1]:GetChildByName(resName):SetText(enemyResText)
+            else -- "individual"
+                for _,aID in pairs(allyTeamList) do
+                    if headers[aID] then 
+                        local enemyResText = res.textColor .. readable(allyRes[aID][resName].income)
+                        headers[aID]:GetChildByName(resName):SetText(enemyResText)
+                    end
+                end
+            end        
         end
     end
 end

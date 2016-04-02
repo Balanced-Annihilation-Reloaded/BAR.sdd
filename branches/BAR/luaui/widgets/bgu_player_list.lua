@@ -48,6 +48,7 @@ local deadPlayerName = " --- "
 local players = {} -- list of all players
 local myAllyTeam = {}
 local allyTeams = {}
+local allyTeamOrder = {}
 local deadPlayers = {}
 local specs = {}
 local headers = {}
@@ -1510,6 +1511,7 @@ function SetupAllyTeams()
     -- create allyteams tables
     myAllyTeam = {}
     allyTeams = {}
+    allyTeamOrder = {} -- because ally team idxs start at 0 and lua idxs starts at 1
     
     allyTeamList = Spring.GetAllyTeamList()
     local gaiaTeamID = Spring.GetGaiaTeamID()
@@ -1521,6 +1523,7 @@ function SetupAllyTeams()
                 if aID~=myAllyTeamID then
                     if not allyTeams[aID] then
                         allyTeams[aID] = {}
+                        table.insert(allyTeamOrder, aID)
                     end
                     table.insert(allyTeams[aID],tID)
                 else
@@ -1580,11 +1583,15 @@ function GetMaxTS(tID)
     return maxTS
 end
 
-function tID_compare(tID_1,t_ID2)
+function tID_compare(tID_1, t_ID2)
     local ts_1 = GetMaxTS(tID_1)
     local ts_2 = GetMaxTS(tID_2)
     if ts_1 and ts_2 then return (ts_1>ts_2) end
     return (tID_1<tID_2)
+end
+
+function aID_compare(aID_1, aID_2)
+    return aID_1<aID_2
 end
     
 function SortTeams()
@@ -1602,6 +1609,7 @@ end
 function SortAllyTeams()
     -- sort teams within my allyTeam
     table.sort(myAllyTeam,tID_compare)
+    table.sort(allyTeamOrder,aID_compare)
 
     -- sort teams with other allyTeams
     for aID,_ in pairs(allyTeams) do
@@ -1827,9 +1835,9 @@ function UpdateStack()
     end    
     local n_allies = CountTable(allyTeams)
     local n = 0
-    for aID,_ in pairs(allyTeams) do
+    for i,aID in pairs(allyTeamOrder) do        
         if headerMode=="individual" then
-            local enemyHeader = Header(" ENEMIES ")
+            local enemyHeader = Header(" ENEMIES " .. tostring(i)) --aIDs start at 0 :(
             headers[aID] = enemyHeader
             stack:AddChild(enemyHeader)        
         end

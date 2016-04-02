@@ -1,4 +1,3 @@
--- WIP
 function widget:GetInfo()
     return {
         name    = 'Resource Bars',
@@ -84,16 +83,33 @@ local function ToggleconversionWindow()
     return true
 end
 
-local function initWindow()
-    local screen0 = Chili.Screen0
+local resources = {"metal", "energy"}
+local function ResizeUI()
+    local x = WG.UIcoords.resBars.x
+    local y = WG.UIcoords.resBars.y
+    local w = WG.UIcoords.resBars.w
+    local h = WG.UIcoords.resBars.h
+    resourceWindow:SetPos(x,y,w,h)
+    conversionWindow:SetPos(x,y,w,h)
     
+    local largeFont = math.floor(h/5.5)
+    for _,resName in pairs(resources) do
+        netLabel[resName].font.size = largeFont,
+        netLabel[resName]:Invalidate()
+    end
+    
+    local smallFont = math.floor(h/6)
+    for _,resName in pairs(resources) do
+        incomeLabel[resName].font.size = smallFont,
+        incomeLabel[resName]:Invalidate()
+        expenseLabel[resName].font.size = smallFont,
+        expenseLabel[resName]:Invalidate()
+    end
+end
+
+local function initWindow()
     resourceWindow = Chili.Button:New{
-        parent    = screen0,
-        right     = 0, 
-        y         = 0, 
-        width     = 450, 
-        height    = 80, 
-        minHeight = 20, 
+        parent    = Chili.Screen0,
         padding   = {0,0,0,0},
         borderColor = buttonColour,
         backgroundColor = buttonColour,
@@ -101,45 +117,46 @@ local function initWindow()
         caption = "",
         OnClick = {ToggleconversionWindow},
     }
-
 end
 
-local function makeBar(res, barX, barY)
+local function makeBar(res, barY, top)
     
     local control = Chili.Control:New{
         parent    = resourceWindow,
         name      = res,
-        x         = barX,
+        x         = '0%',
         y         = barY,
-        height    = 32,
-        minHeight = 20, 
-        width     = 430,
+        height    = '50%',
+        width     = '100%',
         padding   = {0,0,0,0},
+        margin    = {0,0,0,0},
     }
     
     meter[res] = Chili.Progressbar:New{
         parent = control, 
-        x      = 122, 
-        height = 20, 
-        bottom = 5, 
-        right  = 3,
+        x = '30%', 
+        y = top and '40%' or '10%',
+        height = '50%', 
+        width = '68%'
     }
     
     Chili.Image:New{
         file   = image[res],
-        height = 24,
-        width  = 24,
-        right  = 308, 
-        y      = 3, 
+        x      = '24%',
+        y      = top and '20%' or '0%',
+        height = '80%',
+        width  = '5%',
         parent = control
     }
     
+    
     netLabel[res] = Chili.Label:New{
         caption = "",
-        right   = 373,
-        bottom  = 7,
+        x = '4%',
+        y = top and '40%' or '22%',
+        width = '10%',
         parent  = control,
-        height  = 16,
+        align    = 'right',
         font    = {
             size = 15,
             outline          = true,
@@ -151,8 +168,9 @@ local function makeBar(res, barX, barY)
     
     incomeLabel[res] = Chili.Label:New{
         caption  = '+0.0',
-        right    = 332, 
-        y        = 0,
+        x = '14%',
+        y = top and '60%' or '40%',
+        width = '10%',
         parent   = control,
         align    = 'right',
         --height   = 13,
@@ -168,8 +186,9 @@ local function makeBar(res, barX, barY)
 
     expenseLabel[res] = Chili.Label:New{
         caption  = '-0.0',
-        right    = 332,
-        bottom   = 0,
+        x = '14%',
+        y = top and '20%' or '2%',
+        width = '10%',
         parent   = control,
         align    = 'right',
         --height   = 13,
@@ -188,11 +207,7 @@ end
 local function makeconversionWindow()
     conversionWindow = Chili.Button:New{
         parent = Chili.Screen0,
-        height = 80,
-        width = 450,
-        right = 0,
-        y = 0,
-        padding = {10,10,10,10},
+        padding = {0,0,0,0},
         borderColor = buttonColour,
         backgroundColor = buttonColour,
         caption = "",
@@ -223,11 +238,10 @@ local function makeconversionWindow()
     
     conversionText = Chili.TextBox:New{
         parent = conversionWindow,
-        x = 10,
-        y = 10,
-        height = 18,
-        width = 212,
-        text = " E to M conversion above this %",
+        x = '4%',
+        y = '30%',
+        width = '47%',
+        text = " E to M conversion threshold",
         font = {
             size = 12,
         }    
@@ -235,10 +249,10 @@ local function makeconversionWindow()
 
     conversionSlider = Chili.Trackbar:New{
         parent = conversionWindow,
-        height = 25,
-        width = 207,
-        x = 5,
-        y = 27,
+        height = '30%',
+        width = '46%',
+        x = '4%',
+        y = '42%',
         min = 0,
         max = 100,
         step = 5,
@@ -248,11 +262,10 @@ local function makeconversionWindow()
     
     shareText = Chili.TextBox:New{
         parent = conversionWindow,
-        x = 228,
-        y = 10,
-        height = 18,
-        width = 190,
-        text = "share (E,M) to allies above this %",
+        x = '52%',
+        y = '30%',
+        width = '50%',
+        text = "share (E,M) to allies thresholds",
         font = {
             size = 12,
         }    
@@ -260,10 +273,10 @@ local function makeconversionWindow()
 
     EshareSlider = Chili.Trackbar:New{
         parent = conversionWindow,
-        height = 25,
-        width = 97,
-        x = 222,
-        y = 27,
+        height = '30%',
+        width = '21%',
+        x = '75%',
+        y = '42%',
         min = 0,
         max = 100,
         step = 5,
@@ -273,10 +286,10 @@ local function makeconversionWindow()
 
     MshareSlider = Chili.Trackbar:New{
         parent = conversionWindow,
-        height = 25,
-        width = 97,
-        x = 222+97+5,
-        y = 27,
+        height = '30%',
+        width = '21%',
+        x = '52%',
+        y = '42%',
         min = 0,
         max = 100,
         step = 5,
@@ -369,9 +382,12 @@ function widget:Initialize()
     buttonColour = WG.buttonColour
 
     initWindow()
-    makeBar('metal',10,9)
-    makeBar('energy',10,39)
+    makeBar('metal','0%', true)
+    makeBar('energy','50%', false)
     makeconversionWindow()
+    
+    ResizeUI()
+    
     if Spring.GetGameFrame()>0 then
         SetBarColors()
     else
@@ -381,6 +397,10 @@ function widget:Initialize()
     SetValues()
     
     fullyLoaded = true
+end
+
+function widget:ViewResize()
+    ResizeUI()
 end
 
 function widget:PlayerChanged()

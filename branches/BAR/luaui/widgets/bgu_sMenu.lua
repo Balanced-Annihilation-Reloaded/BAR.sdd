@@ -115,20 +115,21 @@ local orderMenuLayout = {
         [2] = "fight",
         [3] = "attack",
         [4] = "patrol",
-        [5] = "stop",
-        [6] = "settarget",
-        [7] = "canceltarget",
-        [8] = "wait",
+        [5] = "guard",
+        [6] = "wait",
+        [7] = "stop",
     },
     [2] = {
-        [1] = "guard",
-        [2] = "repair",
-        [3] = "reclaim",
-        [4] = "resurrect",
-        [5] = "restore",
+        [1] = "repair",
+        [2] = "reclaim",
+        [3] = "resurrect",
+        [4] = "restore",
+        [5] = "settarget",
+        [6] = "canceltarget",
     },
     [3] = {
-        -- other (not shown if not present)    
+        [1] = "loadunits",
+        [2] = "unloadunits",
     },
 }
 
@@ -259,6 +260,14 @@ local function getInline(r,g,b)
     end
 end
 
+function CountTable(t)
+    local n = 0
+    for _,_ in pairs(t) do
+        n = n + 1
+    end
+    return n
+end
+
 ---------------------------------------------------------------
 local function cmdAction(obj, x, y, button, mods)
     if obj.disabled then return end
@@ -307,24 +316,28 @@ local function resizeUI(scrH,i)
     local nCols = (i) and math.max(wantedCols+wantedPaddingCols, math.min(maxCols, grid[i].columns)) or wantedCols
     local nRows = (i) and math.max(wantedRows+wantedPaddingRows, math.min(maxRows, grid[i].rows)) or wantedRows
     
-    local ordB = scrH * 0.05 -- single button 
-    local ordY = scrH - ordB * #orderMenuLayout
+    local bx = WG.UIcoords.buildMenu.x
+    local by = WG.UIcoords.buildMenu.y
+    local bh = WG.UIcoords.buildMenu.h
+    local bw = bh * nCols / nRows -- better to keep consistent layout & not use small buttons when possible
+    buildMenu:SetPos(bx,by,bw,bh) 
     
-    local winY = scrH * 0.2
-    local winH = scrH * 0.5
-    local winW = winH * nCols / nRows
+    local sx = WG.UIcoords.stateMenu.x
+    local sy = WG.UIcoords.stateMenu.y
+    local sw = WG.UIcoords.stateMenu.w
+    local sh = WG.UIcoords.stateMenu.h
+    stateMenu:SetPos(sx,sy,sw,sh)    
     
-    -- find out where minimap is
-    local aspect = Game.mapX/Game.mapY
-    local minMapH = WG.MiniMap and WG.MiniMap.height or scrH * 0.3
-    local minMapW = WG.MiniMap and WG.MiniMap.width or minMapH * aspect
-    
-    stateMenu:SetPos(winY*1.05,0,200,winY)    
-    buildMenu:SetPos(0, winY, winW, winH) -- better to keep consistent layout & not use small buttons when possible
-    menuTabs:SetPos(winW,winY+20)
-    orderMenu:SetPos(minMapW,ordY,ordB*8,ordB*#orderMenuLayout)
+    local ox = WG.UIcoords.orderMenu.x
+    local oy = WG.UIcoords.orderMenu.y
+    local ow = WG.UIcoords.orderMenu.w
+    local oh = WG.UIcoords.orderMenu.h
+    local oButton = WG.UIcoords.orderMenuButton.w
+    orderMenu:SetPos(ox,oy,ow,oh)    
+
+    menuTabs:SetPos(bx+bw,by+20)
     for i=#orderMenuLayout,1,-1 do 
-        orderGrid[i]:SetPos(0, ordB*i, ordB*8, ordB)
+        orderGrid[i]:SetPos(0, oButton*i, oButton*8, oButton)
     end
 end
 
@@ -479,6 +492,29 @@ end
 local function addState(cmd)
     local caption = cmd.params[cmd.params[1] + 2]
     local name = cmd.action .. " " .. caption
+    
+    -- avoid adding too many
+    if #stateMenu.children>stateMenu.rows*stateMenu.columns-1 then return end
+    if #stateMenu.children==stateMenu.rows*stateMenu.columns-1 then
+        button = Chili.Button:New{
+            parent = stateMenu,
+            caption   = "(full)",
+            --tooltip   = cmd.tooltip, 
+            padding   = {0,0,0,0},
+            margin    = {0,0,0,0},
+            minheight = 22,
+            OnMouseUp = {},
+            --borderColor = {1,1,1,0.1},
+            --backgroundColor = buttonColour,
+            font      = {
+                color = grey,
+                size  = 16,
+            },
+        }
+        return
+    end
+
+    
     -- create the button if it does not already exist
 	local button
 	if stateButtons[name]==nil then 
@@ -491,7 +527,7 @@ local function addState(cmd)
 			cmdAName  = cmd.action,
 			padding   = {0,0,0,0},
 			margin    = {0,0,0,0},
-            minheight = 25,
+            minheight = 22,
 			OnMouseUp = {cmdAction},
 			borderColor = {1,1,1,0.1},
 			backgroundColor = buttonColour,
@@ -519,7 +555,7 @@ local function addDummyState(cmd)
             --tooltip   = cmd.tooltip, 
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
-            minheight = 25,
+            minheight = 22,
             OnMouseUp = {},
             borderColor = {1,1,1,0.1},
             backgroundColor = buttonColour,
@@ -534,6 +570,15 @@ local function addDummyState(cmd)
     end
     
     stateMenu:AddChild(button)
+end
+
+local function paddingState()
+    return Chili.Control:New{
+        padding   = {0,0,0,0},
+        margin    = {0,0,0,0},
+        minheight = 22,
+        OnMouseUp = {},
+    }
 end
 
 local function addOrderButton(item)  
@@ -750,7 +795,7 @@ local function parseCmds()
         end
     end
     
-    -- Include stop command, if needed
+    -- Include stop command
     if orderMenu.active then
         local cmd = {action='stop', id=CMD.STOP, tooltip="Stop: Clears the command queue"}
         local cat = getOrderCat("stop")
@@ -758,14 +803,21 @@ local function parseCmds()
         orders[cat][cmd.action] = {action=cmd.action, cmd=cmd, category=cat}
     end
     
-    -- Add the states in the wanted order, from L->R
+    if orderGrid[1].active or orderGrid[2].active or orderGrid[3].active then
+        orderGrid[1].active = true
+        orderGrid[2].active = true
+        orderGrid[3].active = true
+    end
+    
+    -- Add the states in the wanted order
     if #cmdList>0 then
         AddInSequence(states, topStates, addState, addDummyState)
     end
 
     -- Add the orders, for each order category
     for i=1,#orderMenuLayout do
-        if orders[i] then
+        if orderGrid[i].active then
+            if not orders[i] then orders[i] = {} end
             AddInSequence(orders[i], orderMenuLayout[i], addOrderButton, addDummyOrder)
         end
     end
@@ -1147,8 +1199,8 @@ function widget:Initialize()
     stateMenu = Chili.Grid:New{
         name    = "state grid",
         parent  = screen0,
-        columns = 2,
-        rows    = 8,
+        columns = 1,
+        rows    = 9,
         orientation = 'vertical',
         padding = {0,0,0,0},
     }
@@ -1296,7 +1348,7 @@ function widget:Update()
     if updateRequired then
 		--Spring.Echo("sMenu updateRequired reason:", updateRequired)
         local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
-        teamColor = {r,g,b,0.8}
+        teamColor = {r,g,b,0.9}
         updateRequired = nil
         
         orderMenu.active = false -- if order cmd is found during parse this will become true

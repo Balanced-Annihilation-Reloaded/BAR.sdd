@@ -30,37 +30,21 @@ local function MakeMinimapWindow(screenW, screenH)
         minimap:Dispose()
     end
 
-    local aspect = Game.mapX/Game.mapY
-    local relAspect = (screenW*maxW)/(screenH*maxH)
-    local h,w
-    if aspect <= relAspect then
-        -- height limited
-        h = screenH * maxH
-        w = math.min(math.max(h*aspect, screenW*minW), screenW*maxW)
-    else
-        -- width limited
-        w = screenW * maxW
-        h = math.min(math.max(w/aspect, screenH*minH), screenH*maxH)
-        Spring.Echo(screenH*minH, w/aspect, screenH*maxH)
-    end
-    
-    WG.MiniMap = {}
-    WG.MiniMap.width = w
-    WG.MiniMap.height = h
+    local x = WG.UIcoords.minimap.x
+    local y = WG.UIcoords.minimap.y
+    local w = WG.UIcoords.minimap.w
+    local h = WG.UIcoords.minimap.h
     
     minimap = Chili.Panel:New{
         name      = "minimap", 
         parent    = Chili.Screen0,
         draggable = false,
-        width     = w, 
-        height    = h,
-        x         = 0,
-        bottom    = 0,
         borderColor = {0,0,0,0},
         backgroundColor = panelColour,
         padding   = {6,6,6,6},
     }
     
+    minimap:SetPos(x,y,w,h)    
 end
 
 function widget:ViewResize(vsx, vsy)

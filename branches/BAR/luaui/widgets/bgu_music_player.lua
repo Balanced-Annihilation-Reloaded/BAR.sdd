@@ -321,6 +321,15 @@ local function createUI()
         color = buttonColour,
         children  = {songLabel},
     }
+    
+    ResizeUI()
+end
+
+function ResizeUI()
+    local y = WG.UIcoords.resBars.h + 3 + 25
+    window0:SetPos(_,y,_,_)
+    musicControl:SetPos(_,y+15,_,_)
+    extra_sliders:SetPos(_,y+25,_,_)
 end
 
 function playNewTrack()
@@ -483,6 +492,10 @@ function widget:UnitDamaged(unitID, unitDefID, teamID, damage)
         local _,mh = Spring.GetUnitHealth(unitID)
         destruction = destruction + math.max(mh,damage)
     end
+end
+
+function widget:ViewResize()
+    ResizeUI()
 end
 
 function widget:PlayerChanged()

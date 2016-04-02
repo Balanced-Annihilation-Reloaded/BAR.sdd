@@ -203,7 +203,8 @@ function SetLayout(layout)
         for name,wData in pairs(widgetHandler.knownWidgets) do
             local _, _, category = string.find(wData.basename, '([^_]*)')
             if category=='bgu' and wData.active then
-                widgetHandler.widget.ResizeUI()
+                widgetHandler:ToggleWidget(name)
+                widgetHandler:ToggleWidget(name)
             end        
         end 
     end

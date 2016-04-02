@@ -540,7 +540,7 @@ function widget:PlayerChanged()
     if spec then
         -- hide facbar if we are a spec
         HideFacBar()
-    elseif not spec and prevSpecState and Spring.spGetSelectedUnitsCount()==0 then
+    elseif not spec and prevSpecState and Spring.GetSelectedUnitsCount()==0 then
         -- activate facbar if we were previous and spec and now became a player
         ShowFacBar()
         RecreateFacs()

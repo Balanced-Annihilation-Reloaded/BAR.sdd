@@ -9,11 +9,13 @@ function widget:GetInfo()
 		layer     = -999,
 		enabled   = true, 
         api       = true,
+        handler   = true,
 	}
 end
 
 local tr,tg,tb = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColour = {tr,tg,tb,1}
+local initialized
 
 
 local options = { --defaults
@@ -110,7 +112,19 @@ function ExposeColours() --internal
 end
 
 function ExposeNewSkinColours()
-    Spring.SendCommands("luarules reloadluaui") -- force reload *all* widgets, which can then redraw their controls with the new colours, which will be saved, loaded and then exposed!
+    if initialized then
+        SetSkinColourMode(options.mode)
+        SetSkinAlphaMode(options.alpha)
+        ExposeColours()
+        
+        for name,wData in pairs(widgetHandler.knownWidgets) do
+            local _, _, category = string.find(wData.basename, '([^_]*)')
+            if category=='bgu' and wData.active then
+                widgetHandler:ToggleWidget(name)
+                widgetHandler:ToggleWidget(name)
+            end        
+        end 
+    end
 end
 
 function GetSkinColourMode()
@@ -137,6 +151,8 @@ function widget:Initialize()
     WG.SetSkinColourMode = SetSkinColourMode
     WG.SetSkinAlphaMode = SetSkinAlphaMode 
     WG.ExposeNewSkinColours = ExposeNewSkinColours
+    
+    initialized = true
 end
 
 function widget:Shutdown()

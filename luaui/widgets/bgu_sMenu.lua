@@ -494,9 +494,15 @@ local function addState(cmd)
     local name = cmd.action .. " " .. caption
     
     -- avoid adding too many
-    if #stateMenu.children>stateMenu.rows*stateMenu.columns-1 then return end
-    if #stateMenu.children==stateMenu.rows*stateMenu.columns-1 then
+    if #stateMenu.children==stateMenu.rows*stateMenu.columns then
+        local lastChild = stateMenu.children[#stateMenu.children]
+        if lastChild.name == "full_state" then
+            return
+        end
+        
+        stateMenu:RemoveChild(lastChild)
         button = Chili.Button:New{
+            name   = "full_state",
             parent = stateMenu,
             caption   = "(full)",
             --tooltip   = cmd.tooltip, 
@@ -811,7 +817,25 @@ local function parseCmds()
     
     -- Add the states in the wanted order
     if #cmdList>0 then
-        AddInSequence(states, topStates, addState, addDummyState)
+        if WG.UIcoords.layout=="classic" then
+            -- pad out to make it as though we added bottom-up
+            local nPadding = 6
+            for action,smd in pairs(states) do
+                local alwaysPresent = false
+                for _,a in ipairs(topStates) do
+                    if a==action then
+                        alwaysPresent = true
+                        break
+                    end
+                end
+                if not alwaysPresent then nPadding = nPadding - 1 end           
+            end
+            for i=1,nPadding do
+                stateMenu:AddChild(paddingState())
+            end
+        end
+        
+        AddInSequence(states, topStates, addState, addDummyState)        
     end
 
     -- Add the orders, for each order category

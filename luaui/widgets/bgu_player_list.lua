@@ -1814,6 +1814,7 @@ function UpdateStack()
     headerMode = (nAllyTeams<=8) and "individual" or "compound"
     
     -- re-make stack
+    -- allies first
     local allyHeader = Header(" ALLIES")
     headers[myAllyTeamID] = allyHeader
     stack:AddChild(allyHeader)
@@ -1828,6 +1829,7 @@ function UpdateStack()
     end
     stack:AddChild(Separator())
 
+    -- enemies seconds
     if headerMode=="compound" then
         local enemyHeader = Header(" ENEMIES")
         headers[-1] = enemyHeader
@@ -1837,7 +1839,7 @@ function UpdateStack()
     local n = 0
     for i,aID in pairs(allyTeamOrder) do        
         if headerMode=="individual" then
-            local enemyHeader = Header(" ENEMIES " .. tostring(i)) --aIDs start at 0 :(
+            local enemyHeader = Header(" ENEMIES " .. (#allyTeamOrder>1 and tostring(i) or "")) --aIDs start at 0 :(
             headers[aID] = enemyHeader
             stack:AddChild(enemyHeader)        
         end
@@ -1862,6 +1864,7 @@ function UpdateStack()
         end
     end
 
+    -- specs third
     if #deadPlayers + #specs >= 1 then
         stack:AddChild(Separator())
         stack:AddChild(Header("SPECTATORS")) --already filtered for being active

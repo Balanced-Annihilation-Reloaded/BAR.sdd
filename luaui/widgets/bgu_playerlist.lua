@@ -83,7 +83,7 @@ local options = {
     flags = true,
     ts = true,
     resBars = true,
-    resText = false,
+    resText = true,
     headerRes = true,
 }
 local width = {
@@ -91,7 +91,7 @@ local width = {
     rank = 15,
     faction = 15,
     name = 130,
-    resText = 100,
+    resText = 94,
     resBars = 75,
     ts = 22,
     cpu = 15,
@@ -612,14 +612,14 @@ function ResTextPanel(pID)
         margin    = {0,0,0,0},
     }
     
-    local x = 0
+    local x = 1
     for _,res in ipairs(resources) do
         Chili.TextBox:New{
             parent = panel,
             name = res.name,
             text = '',
             x = x,
-            y = 3,
+            y = 4,
             width = width.resText/2,
             autoHeight  = false,
             height      = '100%',
@@ -631,7 +631,7 @@ function ResTextPanel(pID)
                 autoOutlineColor = false,
                 outlineWidth     = 4,
                 outlineWeight    = 5,
-                size             = 14,
+                size             = 13,
             },
         }
         x = x + width.resText/2

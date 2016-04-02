@@ -164,7 +164,7 @@ function WatchCamera()
     if WG.LockCamera then
         WG.LockCamera(iPanelpID)
     else
-        Spring.Echo("Warning: Lock Camera widget not found!")
+        Spring.Echo("Warning: Lock Camera API not found!")
     end
 
     iPanel:Hide()
@@ -1451,13 +1451,18 @@ function widget:GameFrame(n)
     end
     
     -- update resbars and restext in player panels
+    -- this has to be done every frame, and we also need to check every frame that we have access to the relevent info & show/hide as appropriate
+    UpdateMyStates()
     for pID,_ in pairs(players) do
-        players[pID].canShowResInfo = CanShowResInfo(pID)
-        if players[pID].canShowResInfo then
-            UpdateResBars(pID)
-            if n%15==1 then
-                UpdateResText(pID)
-            end
+        local canShowResInfo = CanShowResInfo(pID)
+        local forceUpdate = (canShowResInfo~=players[pID].canShowResInfo)
+        if forceUpdate then
+            players[pID].canShowResInfo = canShowResInfo
+        end
+        
+        UpdateResBars(pID)
+        if n%15==1 or forceUpdate then
+            UpdateResText(pID)
         end
     end
 end
@@ -1843,6 +1848,7 @@ end
 function UpdateHeaders()
     -- update the m/e res text shown in headers
     if not options.headerRes then return end
+    UpdateMyStates() 
 
     local allyRes = {}
     local enemyRes = {}

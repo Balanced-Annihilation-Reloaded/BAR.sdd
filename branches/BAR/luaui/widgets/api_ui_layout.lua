@@ -186,6 +186,7 @@ end
 -- callins etc
 
 function SetLayout(layout)
+    local oldLayout = layout
     layout = layout or options.layout
     options.layout = layout
     
@@ -197,16 +198,6 @@ function SetLayout(layout)
     WG.UIcoords = ApplyViewGeometry(UIcoords)
     WG.UIcoords.layout = layout
     WG.UIcoords.SetLayout = SetLayout
-    
-    if initialized then
-        for name,wData in pairs(widgetHandler.knownWidgets) do
-            local _, _, category = string.find(wData.basename, '([^_]*)')
-            if category=='bgu' and wData.active then
-                widgetHandler:ToggleWidget(name)
-                widgetHandler:ToggleWidget(name)
-            end        
-        end 
-    end
 end
 
 function widget:Initialize()

@@ -11,15 +11,7 @@ function widget:GetInfo()
     }
 end
 
---------------------------------------------------------------------------------
--- Var
---------------------------------------------------------------------------------
-local wWidth, wHeight = Spring.GetWindowGeometry()
-local px, py = 300, 0.35*wHeight
 
---------------------------------------------------------------------------------
--- Speedups
---------------------------------------------------------------------------------
 local teamList = Spring.GetTeamList()
 local myTeamID = Spring.GetMyTeamID()
 
@@ -62,15 +54,17 @@ end
 --------------------------------------------------------------------------------
 local Chili, control, arm_button, core_button
 
-function widget:ViewResize(vsx,vsy)
-    if not vsx then
-        vsx,vsy = Spring.GetViewGeometry()
-    end
-    local minMapW = WG.MiniMap and WG.MiniMap.width or 300
+function ResizeUI()
+    local vsx,vsy = Spring.GetViewGeometry()
+    local w = vsx*0.2
+    local h = vsx*0.06
+    local x = WG.UIcoords.orderMenu.x
+    local y = vsy-h    
+    control:SetPos(x,y,w,h)
+end
 
-    control:SetPos(minMapW, vsy*0.9, vsy*0.25, vsy*0.1)
-    arm_button:SetPos(0,0,vsy*0.12)
-    core_button:SetPos(vsy*0.13,0,vsy*0.12)
+function widget:ViewResize(vsx,vsy)
+    ResizeUI()
 end
 
 function widget:Initialize()
@@ -90,8 +84,6 @@ function widget:Initialize()
     
     control = Chili.Control:New{
         parent = Chili.Screen0,
-        height = '100%',
-        width = '100%',
         padding     = {0,0,0,0},
         itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},
@@ -100,6 +92,7 @@ function widget:Initialize()
     arm_button = Chili.Button:New{
         parent = control,
         height = '100%',
+        width  = '50%',
         onclick = {SetArm},
         caption = "",
         backgroundColor = buttonColour,
@@ -108,14 +101,16 @@ function widget:Initialize()
 
     core_button = Chili.Button:New{
         parent = control,
+        x      = '50%',
         height = '100%',
+        width  = '50%',
         onclick = {SetCore},
         caption = "",
         backgroundColor = buttonColour,
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/CORE.png'} }
     }
     
-    ViewResize()
+    ResizeUI()
 end
 
 function widget:DrawWorld()
@@ -160,7 +155,6 @@ end
 
 function widget:GameFrame(n)
     if n>0 then
-        control:Dispose()
         widgetHandler:RemoveWidget(self)
     end
 end

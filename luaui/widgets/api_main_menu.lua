@@ -110,7 +110,7 @@ local DefaultSettings = {
         ['searchWidgetName']   = true,
         ['showWidgetDescs']    = true,
         ['showWidgetAuthors']  = false,
-        ['widgetSelectorMode'] = "normal",
+        ['advSelectorMode']    = false,
         ['expandedWidgetOptions'] = {},
         ['mainMenuSize'] = {x=350,y=200,width=800,height=550},
     },
@@ -519,7 +519,7 @@ function makeWidgetList(layoutChange)
     -- layoutChange should be set to true if the callee has changed something (e.g. show/hide descs) that will change the heights of the controls
     local showDescs = Settings.showWidgetDescs
     local showAuthors = Settings.showWidgetAuthors
-    local showAdv = (Settings.widgetSelectorMode=="advanced")
+    local showAdv = Settings.advSelectorMode
     
     -- construct and sort the widget list, if needed
     sortWidgetList()
@@ -1068,60 +1068,70 @@ local function CreateInterfaceTab()
                     Chili.Checkbox:New{caption='Allow User Widgets',x=0,y=34,width='100%',textalign='left',boxalign='right',checked=widgetHandler.allowUserWidgets,
                         OnChange = {function() Spring.SendCommands("luaui toggle_user_widgets") end}
                     },
-                    Chili.TextBox:New{x='0%',y=51,width='40%',text="Selector mode:",padding={0,3,0,0}},
-                    Chili.ComboBox:New{x='40%',y=51,width='60%',
-                        items    = {"normal", "advanced"},
-                        selected = (Settings.widgetSelectorMode=="advanced" and 2) or 1, 
-                        OnSelect = {
-                            function(self,sel)
-                                Settings.widgetSelectorMode = self.items[sel]
+                    Chili.Checkbox:New{caption='Advanced Mode',x=0,y=51,width='100%',textalign='left',boxalign='right',checked=Settings.advSelectorMode,
+                        OnChange = {
+                            function() 
+                                Settings.advSelectorMode = not Settings.advSelectorMode
                                 if fullyLoaded then 
                                     makeWidgetList(true) 
-                                 end 
+                                end 
                             end
-                            }
-                        },
+                        }
+                    }
                 }            
             },
-            --fixme: shortcuts to cats?
             
             Chili.Line:New{width='40%',y=233},
 
             Chili.Label:New{caption='-- Skin Settings --',x='2%',width='35%',align = 'center',y=247},
             Chili.Control:New{x='2%', y=272, width='35%',autoSize=true,padding={0,0,0,0},
                 children = {
-                    Chili.TextBox:New{x='0%',width='40%',text="Colour mode:"},
+                    Chili.TextBox:New{x='0%',width='40%',text="Layout:"},
                     Chili.ComboBox:New{x='40%',width='60%',
+                        items    = {"inverted", "classic", "classic2"},
+                        selected = (WG.UIcoords.layout=="inverted" and 1) or (WG.UIcoords.layout=="classic" and 2) or (WG.UIcoords.layout=="classic2" and 3),
+                        OnSelect = {
+                            function(self,sel)
+                                local layout = self.items[sel]
+                                if fullyLoaded then
+                                    WG.UIcoords.SetLayout(layout)
+                                end
+                                Spring.Echo("Set GUI layout to " .. layout)
+                            end
+                            }
+                        },
+                    Chili.TextBox:New{y=17, x='0%',width='40%',text="Colour mode:"},
+                    Chili.ComboBox:New{y=17, x='40%',width='60%',
                         items    = {"black", "white", "team"},
                         selected = (WG.GetSkinColourMode()=="black" and 1) or (WG.GetSkinColourMode()=="white" and 2) or (WG.GetSkinColourMode()=="team" and 3),
                         OnSelect = {
                             function(self,sel)
                                 local mode = self.items[sel]
                                 WG.SetSkinColourMode(mode)
-                                Spring.Echo("Setting skin colour to " .. WG.GetSkinColourMode())
                                 if fullyLoaded then
                                     WG.ExposeNewSkinColours() -- causes luaui reload -> don't do this in initialise
                                 end
+                                Spring.Echo("Set skin colour to " .. WG.GetSkinColourMode())
                             end
                             }
                         },
-                    Chili.TextBox:New{y=17, x='0%',width='40%',text="Alpha:"},
-                    Chili.ComboBox:New{y=17, x='40%',width='60%',
+                    Chili.TextBox:New{y=34, x='0%',width='40%',text="Alpha:"},
+                    Chili.ComboBox:New{y=34, x='40%',width='60%',
                         items    = {"low", "med", "high", "max"},
                         selected = (WG.GetSkinAlphaMode()=="low" and 1) or (WG.GetSkinAlphaMode()=="med" and 2) or (WG.GetSkinAlphaMode()=="high" and 3) or (WG.GetSkinAlphaMode()=="max" and 4),
                         OnSelect = {
                             function(self,sel)
                                 local alpha = self.items[sel]
                                 WG.SetSkinAlphaMode(self.items[sel])  
-                                Spring.Echo("Setting skin alpha to " .. WG.GetSkinAlphaMode(), sel)
                                 if fullyLoaded then
                                     WG.ExposeNewSkinColours() -- causes luaui reload -> don't do this in initialise
                                 end
+                                Spring.Echo("Set skin alpha to " .. WG.GetSkinAlphaMode())
                             end
                             }
                         },
-                    Chili.TextBox:New{y=34, x='0%',width='40%',text="Cursor:"},
-                    Chili.ComboBox:New{y=34, x='40%',width='60%',
+                    Chili.TextBox:New{y=51, x='0%',width='40%',text="Cursor:"},
+                    Chili.ComboBox:New{y=51, x='40%',width='60%',
                         items    = {"dynamic", "static"},
                         selected = (Settings["Cursor"]=="dynamic" and 1) or (Settings["Cursor"]=="static" and 2),
                         OnSelect = {
@@ -1136,10 +1146,10 @@ local function CreateInterfaceTab()
                             
             },    
 
-            Chili.Line:New{width='40%',y=329},
+            Chili.Line:New{width='40%',y=346},
             
-            Chili.Label:New{caption='-- Screen Settings --',x='2%',width='35%',align = 'center',y=343},
-            Chili.Control:New{x='2%', y=368, width='35%',autoSize=true,padding={0,0,0,0},
+            Chili.Label:New{caption='-- Screen Settings --',x='2%',width='35%',align = 'center',y=360},
+            Chili.Control:New{x='2%', y=385, width='35%',autoSize=true,padding={0,0,0,0},
                 children = {
                     fullScreenCheckbox,
                     screenResText,

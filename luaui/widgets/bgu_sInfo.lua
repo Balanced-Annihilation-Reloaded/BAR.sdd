@@ -13,7 +13,10 @@ end
 
 local imageDir = 'luaui/images/buildIcons/'
 
-local Chili, screen, unitWindow, groundWindow, groundText
+local Chili
+local buttonColour, panelColour, sliderColour 
+
+local screen, unitWindow, groundWindow, groundText
 local unitWindow, unitName, unitPicture, unitPictureOverlay, unitHealthText, unitHealth, unitCostTextTitle, unitResText, unitFactionPic
 local featureName, featureHealthText, featureHealth, featureResText
 local focusName, focusPicture, focusPictureOverlay, focusCost, focusBuildTime, focusFactionPic
@@ -57,7 +60,6 @@ local schar = string.char
 local myTeamID  = Spring.GetMyTeamID()
 local groundTimer = spGetTimer()
 
-local buttonColour, panelColour, sliderColour 
 
 ----------------------------------
 -- helpers
@@ -146,6 +148,16 @@ function GetOverlayColor(teamID)
     end
     return overlayColor
 end  
+
+function resizeUI()
+    local x = WG.UIcoords.sInfo.x
+    local y = WG.UIcoords.sInfo.y
+    local w = WG.UIcoords.sInfo.w
+    local h = WG.UIcoords.sInfo.h
+    unitWindow:SetPos(x,y,w,h)
+    unitGridWindow:SetPos(x,y,w,h)
+    groundWindow:SetPos(x,y,w,h)
+end
  
 ----------------------------------
 -- multi-unitdef info
@@ -1101,7 +1113,6 @@ function widget:Initialize()
     buttonColour = WG.buttonColour
 
     screen = Chili.Screen0
-    local winSize = screen.height * 0.2
     
     unitWindow = Chili.Button:New{ -- parent for all the single unit info stuffs (including focus)
         parent  = screen,
@@ -1110,10 +1121,6 @@ function widget:Initialize()
         borderColor = buttonColour,
         backgroundColor = buttonColour,
         caption = "",
-        x       = 0,
-        y       = 0,
-        width   = winSize,
-        height  = winSize,
         OnClick = {TogglePreferredUnitInfo},
     }
     
@@ -1124,12 +1131,7 @@ function widget:Initialize()
         backgroundColor = buttonColour,
         focusColor = buttonColour,
         caption = "",
-        parent  = screen,
-        x       = 0,
-        y       = 0,
-        width   = winSize,
-        height  = winSize,
-        OnClick = {}, -- this has to exist as a seperate case to unitWindow, because it can't act when clicked (or its child buttons won't work)
+        OnClick = {}, -- this has to exist as a separate case to unitWindow, because it can't act when clicked (or its child buttons won't work)
     }
     
     unitGrid = Chili.Grid:New{ 
@@ -1151,11 +1153,6 @@ function widget:Initialize()
         backgroundColor = buttonColour,
         focusColor = buttonColour,
         caption = "",
-        parent  = screen,
-        x       = 0,
-        y       = 0,
-        width   = winSize,
-        height  = winSize,
     }    
     groundText = Chili.TextBox:New{
         parent = groundWindow,
@@ -1175,8 +1172,13 @@ function widget:Initialize()
     }
     
     Spring.SetDrawSelectionInfo(false)
+    resizeUI()
     
     widget:CommandsChanged()
+end
+
+function widget:ViewResize()
+    resizeUI()
 end
 
 ----------------------------------
@@ -1269,12 +1271,6 @@ function widget:MousePress(mx,my,button)
         end
     end
     return nil
-end
-
-function widget:ViewResize(_,scrH)
-    unitWindow:Resize(scrH*0.2,scrH*0.2)
-    unitGridWindow:Resize(scrH*0.2,scrH*0.2)
-    groundWindow:Resize(scrH*0.2,scrH*0.2)
 end
 
 function widget:Shutdown()

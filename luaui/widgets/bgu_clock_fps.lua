@@ -103,9 +103,9 @@ local function loadMinMenu()
     
     minMenu = Chili.Window:New{
         parent    = Chili.Screen0,
-        right     = 210, 
-        y         = 80, 
-        width     = 180,
+        right     = 5, 
+        y         = nil, 
+        width     = 200,
         minheight = 20, 
         height    = 20,
         padding   = {5,0,0,0},
@@ -113,6 +113,8 @@ local function loadMinMenu()
         caption = "",
         children  = {timeLbl,fpsLbl,menuBtn}
     }
+    
+    ResizeUI()
 end
 
 function widget:Initialize()
@@ -150,7 +152,15 @@ function widget:Update(dt)
         local rTime = os.date(timeFormatStr)
         if oTime ~= rTime then setRealTime(rTime) end
     end
+end
 
+function widget:ViewResize()
+    ResizeUI()
+end
+
+function ResizeUI()
+    local y = WG.UIcoords.resBars.h + 3
+    minMenu:SetPos(_,y,_,_)
 end
 
 function widget:GameFrame(n)

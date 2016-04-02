@@ -53,59 +53,52 @@ function widget:Initialize()
     buttonColour = WG.buttonColour
 
     yellowOverlay = Chili.Image:New{
-                        color  = {1,0.95,0.4, 0.2},
-                        height = '100%', 
-                        width  = '100%',
-                        file   = 'LuaUI/Images/comIcon.png',
-                    }
+        color  = {1,0.95,0.4, 0.2},
+        height = '100%', 
+        width  = '100%',
+        file   = 'LuaUI/Images/comIcon.png',
+    }
                     
     enemyComText = Chili.Label:New{ 
-                        height = 40.6,
-                        width = 43,
-                        caption  = makeText(enemyComs),
-                        align = "right",
-                        valign = "bottom", 
-                        margin = {0,0,0,0},
-                        font = {
-                            size = 16,
-                            color = red,
-                            outline          = true,
-                            autoOutlineColor = true,
-                            outlineWidth     = 5,
-                            outlineWeight    = 3,
-                        },
-                    } 
+        height = 40.6,
+        width = 43,
+        caption  = makeText(enemyComs),
+        align = "right",
+        valign = "bottom", 
+        margin = {0,0,0,0},
+        font = {
+            size = 16,
+            color = red,
+            outline          = true,
+            autoOutlineColor = true,
+            outlineWidth     = 5,
+            outlineWeight    = 3,
+        },
+    } 
 
     allyComText = Chili.Label:New{
-                        height = 45,
-                        width = 32.0,
-                        caption  = makeText(allyComs),
-                        align = "right", --hack because label center alignment don't take account of text length
-                        valign = "center",
-                        margin = {0,0,0,0},
-                        font = {
-                            size = 25,
-                            color = green,
-                            outline          = true,
-                            autoOutlineColor = true,
-                            outlineWidth     = 5,
-                            outlineWeight    = 3,
-                        },
-                    }
-
-
-
-    window = Chili.Button:New{
-        parent    = Chili.Screen0,
-        right     = 395, 
-        y         = 80,
-        width     = 60,
-        height    = 60,
+        height = 45,
+        width = 32.0,
+        caption  = makeText(allyComs),
+        align = "right", --hack because label center alignment don't take account of text length
+        valign = "center",
+        margin = {0,0,0,0},
+        font = {
+            size = 25,
+            color = green,
+            outline          = true,
+            autoOutlineColor = true,
+            outlineWidth     = 5,
+            outlineWeight    = 3,
+        },
+    }
+    
+    button = Chili.Button:New{
+        x = 0,
+        y = 0,
+        width = '100%',
+        height = '100%',        
         padding   = {10,10,10,10}, 
-        draggable = false,
-        tweakDraggable = true,
-        resizable = false,
-        tweakResizable = false,
         onClick   = {MarkComs},
         borderColor = {0,0,0,0},
         borderColor2 = {0,0,0,0},
@@ -126,6 +119,23 @@ function widget:Initialize()
         }
     }
 
+    window = Chili.Window:New{
+        parent    = Chili.Screen0,
+        right     = 210, 
+        y         = nil,
+        width     = 60,
+        height    = 60,
+        padding   = {0,0,0,0}, 
+        color     = {0,0,0,0},
+        draggable = false,
+        tweakdraggable = true,
+        resizable = false,
+        tweakResizable = false,
+        children = {button}    
+    }
+    
+    ResizeUI()
+
     enemyComText:Hide()
     allyComText:Hide()    
     
@@ -133,6 +143,11 @@ function widget:Initialize()
         widget:GameStart()
     end
     
+end
+
+function ResizeUI()
+    local y = WG.UIcoords.resBars.h - 3
+    window:SetPos(_,y,_,_)
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -315,6 +330,10 @@ function widget:Update()
         end        
         flickerLastState = flickerState
     end    
+end
+
+function widget:ViewResize()
+    ResizeUI()
 end
 
 function widget:Shutdown()

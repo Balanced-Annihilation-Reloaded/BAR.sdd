@@ -594,10 +594,7 @@ function widget:Initialize()
     }
     window_facbar = Chili.Window:New{
         padding = {3,3,3,3,},
-        name = "facbar",
-        x = 0, y = "20%",
-        width  = "40%",
-        height = "50%", 
+        width  = '50%',
         parent = Chili.Screen0,
         draggable = false,
         resizable = false,
@@ -610,11 +607,23 @@ function widget:Initialize()
     }
     myTeamID = Spring.GetMyTeamID()
 
+    ResizeUI()
     RecreateFacs()
 
     if spGetSpectatingState() or Spring.GetSelectedUnitsCount()>0 then
         HideFacBar()
     end
+end
+
+function ResizeUI()
+    local x = WG.UIcoords.buildMenu.x
+    local y = WG.UIcoords.buildMenu.y
+    local h = WG.UIcoords.buildMenu.h
+    window_facbar:SetPos(x,y,_,h)
+end
+
+function widget:ViewResize()
+    ResizeUI()
 end
 
 function widget:Shutdown()

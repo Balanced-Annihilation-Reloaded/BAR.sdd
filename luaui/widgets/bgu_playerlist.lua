@@ -40,6 +40,8 @@ local needUpdate = true
 local myPlayerID = Spring.GetMyPlayerID()
 local myTeamID = Spring.GetMyTeamID()
 local myAllyTeamID = Spring.GetMyAllyTeamID()
+local amISpec, notFullView, _= Spring.GetSpectatingState()
+local amIFullView = not notFullView
 
 --General players/spectator count and tables
 local deadPlayerName = " --- "
@@ -48,6 +50,7 @@ local myAllyTeam = {}
 local allyTeams = {}
 local deadPlayers = {}
 local specs = {}
+local headers = {}
 
 -- permanent panels
 local window, stack
@@ -63,27 +66,39 @@ local absentName = " --- "
 --Did the game start yet?
 local gameStarted = false
 
+-- Colours
+local mColor = '\255\153\153\204'
+local eColor = '\255\255\255\76'
+
+-- res panels
+local resources = { 
+    [1] = {name="metal", color={0.6, 0.6, 0.8, 0.8}, textColor=mColor},
+    [2] = {name="energy", color={1.0, 1.0, 0.3, 0.6}, textColor=eColor},
+}    
+
 -- Options
 local options = {
     ready_faction = true,
     ranks = true,
     flags = true,
     ts = true,
+    resBars = true,
+    resText = false,
+    headerRes = true,
 }
 local width = {
     flag = 15,
     rank = 15,
     faction = 15,
-    name = 165,
+    name = 130,
+    resText = 100,
+    resBars = 75,
     ts = 22,
     cpu = 15,
     ping = 10,
 }
 local offset = {}
 
--- Colours
-local mColour = '\255\153\153\204'
-local eColour = '\255\255\255\76'
 
 
 --------------------------------------------------------------------------------
@@ -95,7 +110,7 @@ function round(num, idp)
   return math.floor(num * mult + 0.5) / mult
 end
 
-function InlineColour(R,G,B)
+function InlineColor(R,G,B)
     local r,g,b
     if type(R) == 'table' then
         r,g,b = math.max(1,R[1]*255),math.max(1,R[2]*255),math.max(1,R[3]*255)
@@ -117,6 +132,24 @@ function IsDark(red,green,blue)
     -- Determines if the player color is dark (i.e. if a white outline for the sidePic is needed)
     if red*1.2 + green*1.1 + blue*0.8 < 0.9 then return true end
     return false
+end
+
+function UpdateMyStates()
+    teamID = Spring.GetMyTeamID()
+    if teamID~= myTeamID then
+        myTeamID = teamID
+        myAllyTeamID = Spring.GetMyAllyTeamID
+        local _,_,_,_,_,allyTeamID = Spring.GetTeamInfo(teamID)
+        myAllyTeamID = allyTeamID
+        needUpdate = true -- if we are spectator changing team, this is where it gets noticed
+    end
+
+    local spec, notFullView, fullSelect = Spring.GetSpectatingState()
+    if spec~=amISpec or (not notFullView)~=amIFullView then
+        needUpdate = true
+        amIFullView = not notFullView 
+        amISpec = spec
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -255,7 +288,7 @@ function iPanel()
     shareE_text = Chili.TextBox:New{
         height = '100%',
         x = 6,
-        text = eColour .. "E",   
+        text = eColor .. "E",   
         font = {
             outline          = true,
             outlineColor     = {1,1,1,1},
@@ -293,7 +326,7 @@ function iPanel()
     shareM_text = Chili.TextBox:New{
         height = '100%',
         x = 4,
-        text = mColour .. "M",    
+        text = mColor .. "M",    
         font = {
             outline          = true,
             outlineColor     = {0.6,0.6,0.8,1},
@@ -518,7 +551,7 @@ end
 -- player/spec panels
 --------------------------------------------------------------------------------
 
-local colourConv = {
+local colorConv = {
     -- green -> yellow -> red, in 6 steps
     -- for cpu/ping icons
     [1] = {0.0, 1.0, 0.0, 1.0},
@@ -528,6 +561,84 @@ local colourConv = {
     [5] = {1.0, 0.0, 0.0, 1.0},
     [6] = {0.7, 0.0, 0.0, 1.0},
 }
+
+function ResBarPanel(pID)
+    local tID = players[pID].tID
+    local panelWidth = width.resBars
+    local panelHeight = 20
+    local panel = Chili.Control:New{
+        name      = 'resBarPanel',
+        right     = offset.resBars,
+        height    = panelHeight, 
+        width     = width.resBars,
+        bordercolor = {0,0,0,0},
+        padding   = {0,1,0,0},
+        margin    = {0,0,0,0},
+    }
+
+    local hPadding = 1
+
+    local hPos = hPadding/2
+    for _,res in pairs(resources) do
+        Chili.Progressbar:New{
+            name   = res.name,
+            parent = panel,
+            x      = 0, 
+            y      = hPos, 
+            width  = '100%',        
+            height = 8,
+            color  = res.color,
+            padding   = {0,0,0,0},
+            margin    = {0,0,0,0},
+            max = 1,
+        }    
+        hPos = hPos + (panelHeight-hPadding)/2
+    end
+    
+    return panel
+end
+
+function ResTextPanel(pID)
+    local tID = players[pID].tID
+    local panelWidth = width.resText
+    local panelHeight = 20
+    local panel = Chili.Control:New{
+        name      = 'resTextPanel',
+        right     = offset.resText,
+        height    = panelHeight, 
+        width     = width.resText,
+        bordercolor = {0,0,0,0},
+        padding   = {0,1,0,0},
+        margin    = {0,0,0,0},
+    }
+    
+    local x = 0
+    for _,res in ipairs(resources) do
+        Chili.TextBox:New{
+            parent = panel,
+            name = res.name,
+            text = '',
+            x = x,
+            y = 3,
+            width = width.resText/2,
+            autoHeight  = false,
+            height      = '100%',
+            padding     = {0,2,0,0},
+            lineSpacing = 0,
+            font        = {
+                outline          = true,
+                outlineColor     = {0,0,0,1},
+                autoOutlineColor = false,
+                outlineWidth     = 4,
+                outlineWeight    = 5,
+                size             = 14,
+            },
+        }
+        x = x + width.resText/2
+    end
+
+    return panel
+end
 
 function PlayerPanel(pID)
 
@@ -552,11 +663,12 @@ function PlayerPanel(pID)
     }
    
     --children in order from R to L
-    
+
     local ping = Chili.Image:New{
         parent = panel,
         name = "ping",
         height = 17,
+        y = 3,
         width = width.ping,
         right = offset.ping,
         file = pingPic, 
@@ -566,6 +678,7 @@ function PlayerPanel(pID)
         parent = panel,
         name = "cpu",
         height = 17,
+        y = 3,
         width = width.cpu,
         right = offset.cpu,
         file = cpuPic, 
@@ -592,6 +705,22 @@ function PlayerPanel(pID)
         }
     end
 
+    if options.resBars then
+        local resBars = ResBarPanel(pID)
+        panel:AddChild(resBars)
+        if not players[pID].canShowResInfo then
+            resBars:Hide()
+        end
+    end
+    
+    if options.resText then
+        local resText = ResTextPanel(pID)
+        panel:AddChild(resText)
+        if not players[pID].canShowResInfo then
+            resText:Hide()
+        end
+    end
+
     local name = Chili.TextBox:New{
         parent      = panel,
         name        = "name",
@@ -599,7 +728,8 @@ function PlayerPanel(pID)
         right       = offset.name,
         width       = width.name,
         autoHeight  = false,
-        height      = '100%',
+        height      = 20,
+        y           = 4,
         padding     = {0,2,0,0},
         lineSpacing = 0,
         font        = {
@@ -616,9 +746,10 @@ function PlayerPanel(pID)
             parent = panel,
             name = "readystate",
             height = 17,
+            y      = 3,
             width = width.faction,
             right = offset.faction,
-            file = readyPic, 
+            file  = readyPic, 
             color = ReadyColour(players[pID].readyState)
         }
         -- faction image is created when game starts, readystate image is then hidden
@@ -629,6 +760,7 @@ function PlayerPanel(pID)
             parent = panel,
             name = "rank",
             height = 17,
+            y = 3,
             width = width.rank,
             right = offset.rank,
             file = players[pID].rankPic,
@@ -640,6 +772,7 @@ function PlayerPanel(pID)
             parent = panel,
             name = "flag",
             height = 17,
+            y = 3,
             width = width.flag,
             right = offset.flag,
             file = players[pID].flagPic,
@@ -737,6 +870,29 @@ end
 --------------------------------------------------------------------------------
 -- Player info helper functions
 --------------------------------------------------------------------------------
+
+function format(num, idp)
+  return string.format("%." .. (idp or 0) .. "f", num)
+end
+local function readable(num)
+    local s = ""
+    if num < 0 then
+        s = '-'
+    else
+        s = '+'
+    end
+    num = math.abs(num)
+    if num < 1000 then
+        s = s .. format(num,1)
+    elseif num >= 10000 then
+        s = s .. format(num/1000,0)..'k'
+    elseif num >= 1000 then
+        s = s .. format(num/1000,1)..'k'
+    else
+        s = s .. format(num,0)
+    end
+    return s
+end
 
 function SetFaction(pID) 
     --set faction, from TeamRulesParam when possible and from initial info if not    
@@ -874,6 +1030,11 @@ function cpuLevel(cpu)
     return n_cpu
 end
 
+function CanShowResInfo(pID)
+    local aID = players[pID].aID
+    return (aID==myAllyTeamID) or (amISpec and not amIFullView) or (amISpec and amIFullView and aID==myAllyTeamID)
+end
+
 --------------------------------------------------------------------------------
 -- Player info 
 --------------------------------------------------------------------------------
@@ -888,12 +1049,12 @@ function NewPlayer(pID)
     players[pID].isAI = false
 
     local r,g,b = Spring.GetTeamColor(tID)
-    players[pID].colour = {r,g,b}
+    players[pID].color = {r,g,b}
     players[pID].dark = IsDark(r,g,b)
     
     players[pID].plainName = name
-    players[pID].name = ((not spec) and InlineColour(players[pID].colour) or "") .. name --TODO use 'original' colours?
-    players[pID].deadname = ((not spec) and InlineColour(players[pID].colour) or "") .. deadPlayerName    
+    players[pID].name = ((not spec) and InlineColor(players[pID].color) or "") .. name --TODO use 'original' colors?
+    players[pID].deadname = ((not spec) and InlineColor(players[pID].color) or "") .. deadPlayerName    
     
     players[pID].rank = rank 
     players[pID].rankPic = GetRankPic(rank)
@@ -917,6 +1078,9 @@ function NewPlayer(pID)
     players[pID].faction = nil
     players[pID].factionPic = nil 
     
+    -- decide if we show res bars
+    players[pID].canShowResInfo = CanShowResInfo(pID)
+
     -- panels
     players[pID].playerPanel = PlayerPanel(pID)
     players[pID].deadPanel = DeadPanel(pID)
@@ -925,7 +1089,7 @@ function NewPlayer(pID)
     needUpdate = true
 end
 
-local AIID = 1000 --dummy pID for AI "players", starts counting at 1000
+local AIID = 1000 -- dummy pID for AI "players", starts counting at 1000
 
 function NewAIPlayer(tID)    
     local skirmishAIID, name, hostPlayerID, shortName, version = Spring.GetAIInfo(tID)
@@ -937,22 +1101,23 @@ function NewAIPlayer(tID)
     local _, active, _, _, _, ping, cpu, _, _ = Spring.GetPlayerInfo(hostPlayerID)  
     
     players[pID].pID = AIID 
+    
     players[pID].hostID = hostPlayerID
     players[pID].tID = tID
     players[pID].aID = aID
     players[pID].isAI = true
 
     local r,g,b = Spring.GetTeamColor(tID)
-    players[pID].colour = {r,g,b}
+    players[pID].color = {r,g,b}
     players[pID].dark = IsDark(r,g,b)
 
     players[pID].plainName = name 
-    players[pID].name = (InlineColour(players[pID].colour) or "") .. name --TODO use 'original' colours?
-    players[pID].deadname = (InlineColour(players[pID].colour) or "") .. deadPlayerName    
+    players[pID].name = (InlineColor(players[pID].color) or "") .. name --TODO use 'original' colors?
+    players[pID].deadname = (InlineColor(players[pID].color) or "") .. deadPlayerName    
 
     -- rank, country and skill are nil
     players[pID].skill = ""
-    players[pID].tsMu = -100
+    players[pID].tsMu = -1
 
     players[pID].active = active
     players[pID].spec = false or isDead
@@ -966,6 +1131,9 @@ function NewAIPlayer(tID)
     -- set at gamestart
     players[pID].faction = nil
     players[pID].factionPic = nil 
+
+    -- decide if we show res bars
+    players[pID].canShowResInfo = CanShowResInfo(pID)
 
     -- panels
     players[pID].playerPanel = PlayerPanel(pID)
@@ -983,6 +1151,50 @@ function CheckChange(oldValue, value, update)
     end
 end
 
+function UpdateResText(pID)
+    if not options.resText then return end
+    local panel = players[pID].playerPanel:GetChildByName('resTextPanel')
+    
+    -- should we show the res text?
+    local canShowResInfo = players[pID].canShowResInfo 
+    if canShowResInfo and panel.hidden then
+        panel:Show()
+    elseif not canShowResInfo and panel.visible then
+        panel:Hide()
+    end
+
+    if not players[pID].canShowResInfo then return end
+    local tID = players[pID].tID
+
+    -- update values
+    for _,res in ipairs(resources) do
+        local currentLevel, storage, pull, income, expense, share, sent, received = Spring.GetTeamResources(tID, res.name)
+        panel:GetChildByName(res.name):SetText(res.textColor .. readable(income))
+    end    
+end
+
+function UpdateResBars(pID)
+    if not options.resBars then return end
+    local panel = players[pID].playerPanel:GetChildByName('resBarPanel')
+    
+    -- should  we show these resbars?
+    local canShowResInfo = players[pID].canShowResInfo
+    if canShowResInfo and panel.hidden then
+        panel:Show()
+    elseif not canShowResInfo and panel.visible then
+        panel:Hide()
+    end
+    
+    if not players[pID].canShowResInfo then return end
+    local tID = players[pID].tID
+    
+    -- update values
+    for _,res in ipairs(resources) do
+        local currentLevel, storage, pull, income, expense, share, sent, received = Spring.GetTeamResources(tID, res.name)
+        panel:GetChildByName(res.name):SetValue(currentLevel/storage)
+    end
+end
+
 function UpdatePingCPU(pID, ping, cpu)
     -- update ping/cpu
     players[pID].ping = ping -- in ms
@@ -991,8 +1203,8 @@ function UpdatePingCPU(pID, ping, cpu)
     local n_cpu = cpuLevel(cpu)
     local n_ping = math.min(6, 1 + math.floor(ping*1000/300))
     
-    players[pID].playerPanel:GetChildByName('cpu').color = colourConv[n_cpu]
-    players[pID].playerPanel:GetChildByName('ping').color = colourConv[n_ping]
+    players[pID].playerPanel:GetChildByName('cpu').color = colorConv[n_cpu]
+    players[pID].playerPanel:GetChildByName('ping').color = colorConv[n_ping]
 end
 
 function UpdateAIPlayer(pID)
@@ -1017,21 +1229,21 @@ function UpdatePlayer(pID)
         return
     end
 
-    local name, active, spec, tID, aID, ping, cpu, country, rank = Spring.GetPlayerInfo(pID)  
+    local name, active, spec, tID, aID, ping, cpu, country, rank = Spring.GetPlayerInfo(pID)
     local update = false --does the player mean we need a global update?
 
     -- check change of tID
     update, players[pID].tID = CheckChange(players[pID].tID, tID, update)
     update, players[pID].aID = CheckChange(players[pID].aID, aID, update)
     if update then
-        -- if the tID/aID changed, we need to update the name colour & the team associated to the players DeadPanel
+        -- if the tID/aID changed, we need to update the name color & the team associated to the players DeadPanel
         if not spec then
             local r,g,b = Spring.GetTeamColor(tID)
-            players[pID].colour = {r,g,b}
+            players[pID].color = {r,g,b}
         end
         
-        players[pID].name = ((not spec) and InlineColour(players[pID].colour) or "") .. name 
-        players[pID].deadname = ((not spec) and InlineColour(players[pID].colour) or "") .. deadPlayerName    
+        players[pID].name = ((not spec) and InlineColor(players[pID].color) or "") .. name 
+        players[pID].deadname = ((not spec) and InlineColor(players[pID].color) or "") .. deadPlayerName    
         
         players[pID].playerPanel:GetChildByName('name'):SetText(players[pID].name)
         players[pID].deadPanel:GetChildByName('name'):SetText(players[pID].deadname)
@@ -1040,7 +1252,7 @@ function UpdatePlayer(pID)
         players[pID].specPanel:GetChildByName('name'):SetText(players[pID].name)        
 
         if players[pID].playerPanel:GetChildByName('faction') then
-            players[pID].playerPanel:GetChildByName('faction').color = players[pID].colour
+            players[pID].playerPanel:GetChildByName('faction').color = players[pID].color
         end
     end
     
@@ -1104,53 +1316,20 @@ end
 
 
 --------------------------------------------------------------------------------
--- Options
---------------------------------------------------------------------------------
-
-function SetupOptions()
-    if not WG.MainMenu then return end
-
-    -- add options into main menu, to show/hide flags, ranks and ts values (and not ready/faction)
-    local function FlagState(_,show)
-        options.flags = show
-        OptionChange()
-    end
-    local function RankState(_,show)
-        options.ranks = show
-        OptionChange()
-    end
-    local function TSState(_,show)
-        options.ts = show
-        OptionChange()
-    end
-    
-    WG.MainMenu.AddWidgetOption{
-        title = 'Player List',
-        name = widget:GetInfo().name,
-        children = {
-            Chili.Checkbox:New{caption='Show Flags',x='10%',width='80%',
-                    checked=options.flags,OnChange={FlagState}}, --toggle doesn't work
-            Chili.Checkbox:New{caption='Show Ranks',x='10%',width='80%',
-                    checked=options.ranks,OnChange={RankState}},
-            Chili.Checkbox:New{caption='Show TrueSkill',x='10%',width='80%',
-                    checked=options.ts,OnChange={TSState}},
-        }
-    }   
-end
-
---------------------------------------------------------------------------------
 -- Callins
 --------------------------------------------------------------------------------
 
 function widget:Initialize()
     Spring.SendCommands('unbind Any+h sharedialog')
-    WG.PlayerList = {}
 
     Chili = WG.Chili
     buttonColour = WG.buttonColour
     panelColour = WG.panelColour
     sliderColour = WG.sliderColour
     
+    -- add player list options to main menu
+    SetupOptions()  
+
     CalculateOffsets()
 
     -- disable engine player info 
@@ -1187,9 +1366,6 @@ function widget:GamePreload()
         options.flags = false
         options.ts = false
         OptionChange()
-    else
-        -- add player list options to main menu
-        SetupOptions()  
     end
 end
 
@@ -1213,6 +1389,7 @@ function widget:Shutdown()
 end
 
 function widget:PlayerChanged(pID)
+    UpdateMyStates()
     ScheduledUpdate()
 end
 
@@ -1232,10 +1409,11 @@ function widget:GameFrame(n)
                     parent = players[pID].playerPanel,
                     name = 'faction',
                     height = 17,
+                    y = 3,
                     width = width.faction,
                     right = offset.faction,
                     file = players[pID].factionPic,
-                    color = players[pID].colour,
+                    color = players[pID].color,
                 }
             end
         end
@@ -1245,46 +1423,57 @@ function widget:GameFrame(n)
     
     -- make buttons for takeable players flash
     if n%20==0 and not players[myPlayerID].spec then
-        local colour
+        local color
         if n%40==0 then
-            colour = {1,1,1,1}
+            color = {1,1,1,1}
         else
-            colour = {1,0.8,0,1}
+            color = {1,0.8,0,1}
         end
         for pID,_ in pairs(players) do
             if IsTakeable(players[pID].tID) then
-                players[pID].playerPanel.backgroundColor = colour
+                players[pID].playerPanel.backgroundColor = color
             end
         end
     
     end
     
+    -- handle take
     if takeInfo and n >= takeInfo.onFrame+32 then --taking can take a while, not sure why
         ProcessTake()
+    end
+    
+    -- update res text in header
+    if n%15==1 then
+        UpdateHeaders()
+    end
+    
+    -- update resbars and restext in player panels
+    for pID,_ in pairs(players) do
+        players[pID].canShowResInfo = CanShowResInfo(pID)
+        if players[pID].canShowResInfo then
+            UpdateResBars(pID)
+            if n%15==1 then
+                UpdateResText(pID)
+            end
+        end
     end
 end
 
 local prevTimer = Spring.GetTimer()
 function widget:Update()
-    local teamID = Spring.GetMyTeamID()
-    if teamID~= myTeamID then
-        myTeamID = teamID
-        local _,_,_,_,_,allyTeamID = Spring.GetTeamInfo(teamID)
-        myAllyTeamID = allyTeamID
-        needUpdate = true -- if we are spectator changing team, this is where it gets noticed
+    UpdateMyStates()
+
+    if needUpdate then
+        UpdateStack()
+        HideIPanel()
+        needUpdate = false
     end
 
     local timer = Spring.GetTimer()
     if Spring.DiffTimers(timer,prevTimer)>0.33 then
         ScheduledUpdate()
         prevTimer = timer
-    end
-    
-    if needUpdate then
-        UpdateStack()
-        HideIPanel()
-        needUpdate = false
-    end
+    end    
 end
 
 function widget:KeyPress()
@@ -1306,7 +1495,7 @@ end
 
 
 --------------------------------------------------------------------------------
--- Team/AllyTeam tables
+-- Team/AllyTeam tables & sorting
 --------------------------------------------------------------------------------
 
 function SetupAllyTeams()
@@ -1350,7 +1539,7 @@ function AssignPlayersToTeams()
         local tID = players[pID].tID
         local wasPlayer = players[pID].wasPlayer
         local isAI = players[pID].isAI
-        
+                
         if wasPlayer then 
             -- live or dead player (panel assignment will act appropriately)
             table.insert(teams[tID],pID) 
@@ -1414,11 +1603,11 @@ end
 
 
 --------------------------------------------------------------------------------
--- GUI helper controls
+-- Stack helper controls
 --------------------------------------------------------------------------------
 
 function Header(text)
-    local panel = Chili.LayoutPanel:New{
+    local panel = Chili.Control:New{
         width       = '100%',
         minHeight   = 18,
         resizeItems = false,
@@ -1428,10 +1617,12 @@ function Header(text)
         itemMargin  = {0,0,0,0},
         children    = {},
     }
+
+    local resWidth = 50
     
     local name = Chili.TextBox:New{
         parent      = panel,
-        text        = " " .. text,
+        text        = text,
         right       = offset.name,
         width       = width.name,
         autoHeight  = false,
@@ -1447,6 +1638,31 @@ function Header(text)
             size             = 14,
         },
     }
+    
+    local r = (offset.ts or offset.ping) + resWidth 
+    for _,res in ipairs(resources) do
+        Chili.TextBox:New{
+            parent = panel,
+            name = res.name,
+            text = '',
+            right = r,
+            width = resWidth,
+            autoHeight  = false,
+            height      = '100%',
+            padding     = {0,2,0,0},
+            lineSpacing = 0,
+            font        = {
+                outline          = true,
+                outlineColor     = {0,0,0,1},
+                autoOutlineColor = false,
+                outlineWidth     = 4,
+                outlineWeight    = 5,
+                size             = 14,
+            },
+        }
+        r = r - resWidth
+    end
+
     return panel
 end
 
@@ -1459,7 +1675,7 @@ end
 
 function HalfSeparator()
     local separator = Chili.Line:New{
-        width   = 100,
+        width   = 250,
         x       = offset.max - offset.name - width.name + 100,
         maxheight = 4,
     }
@@ -1467,14 +1683,14 @@ function HalfSeparator()
 end
 
 --------------------------------------------------------------------------------
--- GUI construction
+-- Stack construction
 --------------------------------------------------------------------------------
 
 function CalculateOffsets()
     local o = 0 --offset from RHS of stack
     o = o + 22 -- right margin
     offset = {}
-    
+     
     offset.ping = o
     o = o + width.ping
     
@@ -1485,7 +1701,17 @@ function CalculateOffsets()
         offset.ts = o
         o = o + width.ts
     end
-            
+
+    if options.resBars then
+        offset.resBars = o
+        o = o + width.resBars
+    end
+    
+    if options.resText then
+        offset.resText = o
+        o = o + width.resText
+    end
+
     offset.name = o
     o = o + width.name
     
@@ -1495,14 +1721,14 @@ function CalculateOffsets()
         offset.faction = o 
         o = o + width.faction
     else
-        offset.faction = 500
+        offset.faction = 500 --out of the way, it will be hidden anyway
     end
     
     if options.ranks then
         offset.rank = o
         o = o + width.rank 
     else
-        offset.rank = 500 --out of the way, it will be hidden anyway
+        offset.rank = 500 
     end
     
     o = o + 1
@@ -1511,7 +1737,7 @@ function CalculateOffsets()
         offset.flag = o
         o = o + width.flag
     else
-        offset.flag = 500 --out of the way, it will be hidden anyway
+        offset.flag = 500 
     end
     
     o = o + 16 --left margin
@@ -1558,10 +1784,11 @@ function UpdateStack()
     AssignPlayersToTeams()
     SortTeams()
     SortAllyTeams()
-    ExposeSortedOrders()
     
     -- now re-associate children
-    stack:AddChild(Header("ALLIES"))
+    local allyHeader = Header(" ALLIES")
+    headers.ally = allyHeader
+    stack:AddChild(allyHeader)
     for _,tID in ipairs(myAllyTeam) do
         for _,pID in ipairs(teams[tID]) do
             if players[pID].spec or not players[pID].active then
@@ -1573,7 +1800,9 @@ function UpdateStack()
     end
     stack:AddChild(Separator())
 
-    stack:AddChild(Header("ENEMIES"))    
+    local enemyHeader = Header(" ENEMIES")
+    headers.enemy = enemyHeader
+    stack:AddChild(enemyHeader)
     enemyAllyTeamPanels = {}
     local n_allies = CountTable(allyTeams)
     local n = 0
@@ -1604,32 +1833,118 @@ function UpdateStack()
             stack:AddChild(players[pID].specPanel)
         end 
     end    
+    
+    UpdateHeaders()
 end
 
-function ExposeSortedOrders()
-    local allyTeamList = {}
-    local teamLists = {}
+function UpdateHeaders()
+    -- update the m/e res text shown in headers
+    if not options.headerRes then return end
 
-    allyTeamList[1] = myAllyTeamID
-    teamLists[myAllyTeamID] = {}
-    for _,tID in ipairs(myAllyTeam) do
-        teamLists[myAllyTeamID][#teamLists[myAllyTeamID]+1] = tID
+    local allyRes = {}
+    local enemyRes = {}
+    for _,res in ipairs(resources) do
+        local resName = res.name
+        allyRes[resName] = {}
+        allyRes[resName].lev      = 0
+        allyRes[resName].storage  = 0
+        allyRes[resName].income   = 0
+        allyRes[resName].expense  = 0
+        enemyRes[resName] = {}
+        enemyRes[resName].lev      = 0
+        enemyRes[resName].storage  = 0
+        enemyRes[resName].income   = 0
+        enemyRes[resName].expense  = 0
     end
-
-    for aID,_ in pairs(allyTeams) do
-        allyTeamList[#allyTeamList+1] = aID
-        teamLists[aID] = {}
-        for _,tID in ipairs(allyTeams[aID]) do
-            teamLists[aID][#teamLists[aID]+1] = tID
+    
+    local allyTeamList = Spring.GetAllyTeamList()
+    for _,aID in ipairs(allyTeamList) do
+        local teamList = Spring.GetTeamList(aID)
+        for _,tID in ipairs(teamList) do
+            for _,res in ipairs(resources) do
+                local resName = res.name
+                local currentLevel, storage, pull, income, expense, share, sent, received = Spring.GetTeamResources(tID, resName)   
+                if aID==myAllyTeamID then
+                    allyRes[resName].lev      = allyRes[resName].lev + currentLevel
+                    allyRes[resName].storage  = allyRes[resName].storage + storage
+                    allyRes[resName].income   = allyRes[resName].income + income
+                    allyRes[resName].expense  = allyRes[resName].expense + expense
+                elseif amISpec and not amIFullView then
+                    enemyRes[resName].lev     = enemyRes[resName].lev + currentLevel
+                    enemyRes[resName].storage = enemyRes[resName].storage + storage
+                    enemyRes[resName].income  = enemyRes[resName].income + income
+                    enemyRes[resName].expense = enemyRes[resName].expense + expense            
+                end
+            end
+        end    
+    end    
+    
+    for _,res in ipairs(resources) do
+        local resName = res.name
+        local allyResText = res.textColor .. readable(allyRes[resName].income)
+        headers.ally:GetChildByName(resName):SetText(allyResText)
+        if amISpec and not amIFullView then
+            local enemyResText = res.textColor .. readable(enemyRes[resName].income)             
+            headers.enemy:GetChildByName(resName):SetText(enemyResText)
         end
     end
+end
 
-    WG.PlayerList.allyTeamList = allyTeamList
-    WG.PlayerList.teamLists = teamLists
+
+--------------------------------------------------------------------------------
+-- Options
+--------------------------------------------------------------------------------
+
+function SetupOptions()
+    if not WG.MainMenu then return end
+
+    -- add options into main menu, to show/hide flags, ranks and ts values (and not ready/faction)
+    local function FlagState(_,show)
+        options.flags = show
+        OptionChange()
+    end
+    local function RankState(_,show)
+        options.ranks = show
+        OptionChange()
+    end
+    local function TSState(_,show)
+        options.ts = show
+        OptionChange()
+    end
+    local function ResBarState(_,show)
+        options.resBars = show
+        OptionChange()
+    end
+    local function ResTextState(_,show)
+        options.resText = show --fixme: implement
+        OptionChange()
+    end
+    local function HeaderResState(_,show)
+        options.headerRes = show --fixme: implement
+        OptionChange()
+    end
+    
+    WG.MainMenu.AddWidgetOption{
+        name = widget:GetInfo().name,
+        children = {
+            Chili.Checkbox:New{caption='Show Flags',x='10%',width='80%',
+                    checked=options.flags,OnChange={FlagState}}, --toggle doesn't work
+            Chili.Checkbox:New{caption='Show Ranks',x='10%',width='80%',
+                    checked=options.ranks,OnChange={RankState}},
+            Chili.Checkbox:New{caption='Show TrueSkill',x='10%',width='80%',
+                    checked=options.ts,OnChange={TSState}},
+            Chili.Checkbox:New{caption='Show Resource Bars',x='10%',width='80%',
+                    checked=options.resBars,OnChange={ResBarState}},
+            Chili.Checkbox:New{caption='Show Incomes',x='10%',width='80%',
+                    checked=options.resText,OnChange={ResTextState}},
+            Chili.Checkbox:New{caption='Show Summed Incomes',x='10%',width='80%',
+                    checked=options.headerRes,OnChange={HeaderResState}},
+        }
+    }   
 end
 
 function OptionChange()
-    -- change the width of stack
+    -- recalc the offsets 
     CalculateOffsets()
     window:Resize(offset.max,0)
     
@@ -1637,8 +1952,22 @@ function OptionChange()
     for pID,_ in pairs(players) do
         players[pID].playerPanel:Dispose()
         players[pID].playerPanel = PlayerPanel(pID)
+        players[pID].specPanel:Dispose()
+        players[pID].specPanel = SpecPanel(pID)
+        players[pID].deadPanel:Dispose()
+        players[pID].deadPanel = DeadPanel(pID)
     end
+    ScheduledUpdate()
     
     UpdateStack()
 end
 
+function widget:GetConfigData()
+    return options
+end
+
+function widget:SetConfigData(data)
+    if data then
+        options = data
+    end
+end

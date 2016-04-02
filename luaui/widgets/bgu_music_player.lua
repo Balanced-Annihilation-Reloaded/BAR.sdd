@@ -46,7 +46,7 @@ local isSpec = false
 
 local playNew = true
 local fadeOut = false
-local musicType = 'peace'
+local mood = 'peace'
 local curTrack = {}
 local options = {}
 options.disabledTracks = {}
@@ -65,7 +65,7 @@ local outlineColor = {
 
 
 local labelVar         = 0
-local trackName        = ''
+local trackLabel        = ''
 local labelScrollSpeed = 10
 
 local music_credits = VFS.LoadFile('credits_music.txt')
@@ -325,27 +325,25 @@ end
 
 function playNewTrack()
 
-    local moodChoices = tracks[musicType]
+    local moodChoices = tracks[mood]
     local track
     repeat
         track = moodChoices[math.random(1, #moodChoices)]
     until not options.disabledTracks[track.title] and (track.filename ~= curTrack.filename)
 
     curTrack = track
-    curTrack.mood = musicType
-    trackName = curTrack.title..'       '
-    
-    trackName = curTrack.title..'       '
-    songLabel.font.color = color[musicType]
-    songLabel.font.outlineColor = outlineColor[musicType]
-    songLabel:SetCaption(trackName)
+    curTrack.mood = mood
+    trackLabel = curTrack.title..'       '
+    songLabel.font.color = color[mood]
+    songLabel.font.outlineColor = outlineColor[mood]
+    songLabel:SetCaption(trackLabel)
     
     -- hack fix, needs to be set multiple times to work
     -- I set it 3 times in case two are the same ( and it goes full volume :/ )
     Spring.SendCommands('set snd_volmusic 0')
     Spring.SendCommands('set snd_volmusic 1')
     Spring.SendCommands('set snd_volmusic ' .. master_volume.value)
-    spPlaySoundStream('music/'..musicType..'/'..curTrack.filename)
+    spPlaySoundStream('music/'..mood..'/'..curTrack.filename)
 end    
 
 function checkStatus(unPause)
@@ -379,11 +377,11 @@ function checkStatus(unPause)
                 playNew = true
             end
         end    
-        musicType = 'war'
+        mood = 'war'
     elseif destruction > totalHealth * lowThreshold then
-        musicType = 'coldWar'
+        mood = 'coldWar'
     else
-        musicType = 'peace'
+        mood = 'peace'
     end    
     
     
@@ -396,10 +394,10 @@ function checkStatus(unPause)
 end
 
 local function scrollName()
-    local length = string.len(trackName)
+    local length = string.len(trackLabel)
     if length > 35 then
         if labelVar > length then labelVar = 0 end
-        songLabel:SetCaption(string.sub(trackName, labelVar)..string.sub(trackName,0, labelVar-1))
+        songLabel:SetCaption(string.sub(trackLabel, labelVar)..string.sub(trackLabel,0, labelVar-1))
         labelVar = labelVar + 1
     end
 end

@@ -1,7 +1,7 @@
 function gadget:GetInfo()
     return {
         name      = "Was Player",
-        desc      = "Sets gamerulesparams to record if a playerID was ever actually a player",
+        desc      = "Sets gamerulesparams to record if a playerID was ever a player",
         author    = "Bluestone", 
         date      = "July 2014",
         license   = "GNU GPL, v3 or later",
@@ -10,22 +10,21 @@ function gadget:GetInfo()
     }
 end
 
-if not gadgetHandler:IsSyncedCode() then return false end
+--------------------------------------
+if gadgetHandler:IsSyncedCode() then 
+--------------------------------------
 
 local players = {}
 
 function Broadcast()
     local playerList = Spring.GetPlayerList()
     for _,pID in ipairs(playerList) do
-        local _,_,spec,_ = Spring.GetPlayerInfo(pID)  
+        local _,_,spec,tID = Spring.GetPlayerInfo(pID)  
 
-        if not spec then
-            players[pID] = true
+        if (not players[pID] and not spec) or (players[pID] and players[pID]~=tID) then
+            players[pID] = tID
+            Spring.SetGameRulesParam("player_" .. tostring(pID) .. "_wasPlayer", tID)
         end
-    end
-
-    for pID,_ in pairs(players) do
-        Spring.SetGameRulesParam("player_" .. tostring(pID) .. "_wasPlayer", 1)
     end    
 end
 
@@ -33,6 +32,10 @@ function gadget:Initialize()
     Broadcast()
 end
 
-function gadget:PlayerChanged()
+function gadget:GameFrame() -- no better way to do this in synced and unsynced can't set rules params :(
     Broadcast()
 end
+
+--------------------------------------
+end
+--------------------------------------

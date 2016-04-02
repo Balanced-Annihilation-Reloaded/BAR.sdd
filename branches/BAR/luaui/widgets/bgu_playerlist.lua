@@ -1048,7 +1048,9 @@ function NewPlayer(pID)
     players[pID].aID = aID
     players[pID].isAI = false
 
-    local r,g,b = Spring.GetTeamColor(tID)
+    players[pID].wasPlayer = Spring.GetGameRulesParam("player_" .. tostring(pID) .. "_wasPlayer") -- teamID of the most recent team for which this pID was a player
+
+    local r,g,b = Spring.GetTeamColor(players[pID].wasPlayer or tID)
     players[pID].color = {r,g,b}
     players[pID].dark = IsDark(r,g,b)
     
@@ -1072,7 +1074,7 @@ function NewPlayer(pID)
     
     players[pID].readyState = Spring.GetGameRulesParam("player_" .. tostring(pID) .. "_readyState") or 0   
     players[pID].readyColour = ReadyColour(players[pID].readyState)
-    players[pID].wasPlayer = (Spring.GetGameRulesParam("player_" .. tostring(pID) .. "_wasPlayer")==1)      
+    
 
     -- set at gamestart
     players[pID].faction = nil
@@ -1107,6 +1109,8 @@ function NewAIPlayer(tID)
     players[pID].aID = aID
     players[pID].isAI = true
 
+    players[pID].wasPlayer = true      
+
     local r,g,b = Spring.GetTeamColor(tID)
     players[pID].color = {r,g,b}
     players[pID].dark = IsDark(r,g,b)
@@ -1126,7 +1130,6 @@ function NewAIPlayer(tID)
     
     players[pID].readyState = 0
     players[pID].readyColour = {0.1,0.1,0.97,1}
-    players[pID].wasPlayer = true      
     
     -- set at gamestart
     players[pID].faction = nil
@@ -1235,10 +1238,11 @@ function UpdatePlayer(pID)
     -- check change of tID
     update, players[pID].tID = CheckChange(players[pID].tID, tID, update)
     update, players[pID].aID = CheckChange(players[pID].aID, aID, update)
+    update, players[pID].wasPlayer = CheckChange(players[pID].wasPlayer, Spring.GetGameRulesParam("player_" .. tostring(pID) .. "_wasPlayer"), update)
     if update then
         -- if the tID/aID changed, we need to update the name color & the team associated to the players DeadPanel
         if not spec then
-            local r,g,b = Spring.GetTeamColor(tID)
+            local r,g,b = Spring.GetTeamColor(players[pID].wasPlayer or tID)
             players[pID].color = {r,g,b}
         end
         
@@ -1257,7 +1261,6 @@ function UpdatePlayer(pID)
     end
     
     -- check if a player leaves/resigns/appears
-    update, players[pID].wasPlayer = CheckChange(players[pID].wasPlayer, (Spring.GetGameRulesParam("player_" .. tostring(pID) .. "_wasPlayer")==1), update)   
     update, players[pID].active = CheckChange(players[pID].active, active, update)
     update, players[pID].spec = CheckChange(players[pID].spec, spec, update)
     

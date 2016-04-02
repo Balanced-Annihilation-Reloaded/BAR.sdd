@@ -1,7 +1,7 @@
 
 function widget:GetInfo()
 	return {
-		name      = "Sets BGU positions in WG.UIcoords", 
+		name      = "BGU layout", 
 		desc      = "Controls the positioning of the main BGU elements",
 		author    = "Bluestone",
 		date      = "socks",
@@ -186,7 +186,7 @@ end
 -- callins etc
 
 function SetLayout(layout)
-    local oldLayout = layout
+    local oldLayout = options.layout
     layout = layout or options.layout
     options.layout = layout
     
@@ -198,6 +198,15 @@ function SetLayout(layout)
     WG.UIcoords = ApplyViewGeometry(UIcoords)
     WG.UIcoords.layout = layout
     WG.UIcoords.SetLayout = SetLayout
+    
+    if initialized and oldLayout~=layout then
+        for name,wData in pairs(widgetHandler.knownWidgets) do
+            local _, _, category = string.find(wData.basename, '([^_]*)')
+            if category=='bgu' and wData.active then
+                widgetHandler.widget.ResizeUI()
+            end        
+        end 
+    end
 end
 
 function widget:Initialize()
@@ -206,7 +215,9 @@ function widget:Initialize()
     
     vsx,vsy = Spring.GetViewGeometry()
     screenAspect = vsx/vsy
+
     SetLayout()       
+    
     initialized = true
 end
 

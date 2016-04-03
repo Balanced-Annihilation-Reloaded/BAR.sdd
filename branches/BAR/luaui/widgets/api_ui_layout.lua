@@ -17,6 +17,7 @@ end
 
 local min = math.min
 local max = math.max
+local floor = math.floor
 local vsx, vsy, screenAspect
 local initialized 
 local screenAspect
@@ -365,15 +366,24 @@ function SetLayout(layout)
 end
 
 function widget:Initialize()
-    WG.UIcoords = {}
-    WG.UIcoords.SetLayout = SetLayout
-    
     vsx,vsy = Spring.GetViewGeometry()
     screenAspect = vsx/vsy
 
-    SetLayout()       
+    WG.UIcoords = {}
+    WG.UIcoords.SetLayout = SetLayout
+    
+    WG.RelativeFontSize = RelativeFontSize
+    
+    SetLayout()
     
     initialized = true
+end
+
+function RelativeFontSize(i)
+    -- set font sizes relative to vsy=1000
+    local size = i*vsy/1000
+    size = floor(size+0.5)
+    return size
 end
 
 function widget:ViewResize(x, y)

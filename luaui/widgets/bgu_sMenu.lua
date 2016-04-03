@@ -122,8 +122,9 @@ local defaultOrderMenuLayout = {
         [3] = "repair",
         [4] = "reclaim",
         [5] = "resurrect",
-        [6] = "settarget",
-        [7] = "canceltarget",
+        [6] = "restore",
+        [7] = "settarget",
+        [8] = "canceltarget",
     },
     [3] = {
         [1] = "move",
@@ -131,8 +132,9 @@ local defaultOrderMenuLayout = {
         [3] = "attack",
         [4] = "patrol",
         [5] = "guard",
-        [6] = "wait",
-        [7] = "stop",
+        [6] = "areaattack",
+        [7] = "wait",
+        [8] = "stop",
     },
 }
 local orderMenuLayout = {}

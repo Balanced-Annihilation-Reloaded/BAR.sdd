@@ -43,6 +43,8 @@ local fullyLoaded = false -- to stop making "set X to Y" remarks when we are jus
 --
 
 local buttonColour, panelColour, sliderColour, teamColourPic
+local smallFontSize, largeFontSize
+local smallRelFontSize, largeRelFontSize = 14, 16
 
 -------------------------------------------
 -- Auxiliary functions
@@ -92,17 +94,18 @@ local function ResizeUI()
     resourceWindow:SetPos(x,y,w,h)
     conversionWindow:SetPos(x,y,w,h)
     
-    local largeFont = math.floor(h/5.5)
+    smallFontSize = WG.RelativeFontSize(smallRelFontSize)
+    largeFontSize = WG.RelativeFontSize(largeRelFontSize)
+
     for _,resName in pairs(resources) do
-        netLabel[resName].font.size = largeFont,
+        netLabel[resName].font.size = largeFontSize,
         netLabel[resName]:Invalidate()
     end
     
-    local smallFont = math.floor(h/6)
     for _,resName in pairs(resources) do
-        incomeLabel[resName].font.size = smallFont,
+        incomeLabel[resName].font.size = smallFontSize,
         incomeLabel[resName]:Invalidate()
-        expenseLabel[resName].font.size = smallFont,
+        expenseLabel[resName].font.size = smallFontSize,
         expenseLabel[resName]:Invalidate()
     end
 end
@@ -158,7 +161,7 @@ local function makeBar(res, barY, top)
         parent  = control,
         align    = 'right',
         font    = {
-            size = 15,
+            size = smallFontSize,
             outline          = true,
             autoOutlineColor = true,
             outlineWidth     = 5,
@@ -175,7 +178,7 @@ local function makeBar(res, barY, top)
         align    = 'right',
         --height   = 13,
         font     = {
-            size         = 14,
+            size         = smallFontSize,
             color        = green,
             outline          = true,
             autoOutlineColor = true,
@@ -193,7 +196,7 @@ local function makeBar(res, barY, top)
         align    = 'right',
         --height   = 13,
         font     = {
-            size         = 14,
+            size         = largeFontSize,
             color        = red,
             outline          = true,
             autoOutlineColor = true,
@@ -380,6 +383,8 @@ function widget:Initialize()
     Spring.SendCommands('resbar 0')
     Chili = WG.Chili
     buttonColour = WG.buttonColour
+    smallFontSize = WG.RelativeFontSize(smallRelFontSize)
+    largeFontSize = WG.RelativeFontSize(largeRelFontSize)
 
     initWindow()
     makeBar('metal','0%', true)

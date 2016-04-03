@@ -1,10 +1,9 @@
--- WIP heavily based on LEDs music player and music players before that
 function widget:GetInfo()
     return {
         name    = 'Skirmish Setup',
-        desc    = 'Plays music according to the in-game action',
+        desc    = 'Allows selection of skirmish AI and map',
         author  = 'Funkencool',
-        date    = 'Sep 2013',
+        date    = '2016',
         license = 'GNU GPL v2',
         layer   = 0,
         enabled = true

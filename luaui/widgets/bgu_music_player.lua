@@ -379,7 +379,7 @@ function checkStatus(unPause)
     end
     
     if destruction > totalHealth * highThreshold then
-        if hitPeak and curTrack.mood ~= 'war' then
+        if hitPeak and mood ~= 'war' and curTrack.mood ~= 'war' then
             if not unPause then
                 fadeOut = Spring.GetGameFrame()
             else

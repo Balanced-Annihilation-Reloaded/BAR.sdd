@@ -16,11 +16,14 @@ local imageDir = 'luaui/images/buildIcons/'
 local Chili
 local buttonColour, panelColour, sliderColour 
 
+local relFontSize = 15
+local fontSize
+
 local screen, unitWindow, groundWindow, groundText
 local unitWindow, unitName, unitPicture, unitPictureOverlay, unitHealthText, unitHealth, unitCostTextTitle, unitResText, unitFactionPic
 local featureName, featureHealthText, featureHealth, featureResText
-local focusName, focusPicture, focusPictureOverlay, focusCost, focusBuildTime, focusFactionPic
-local basicHealth, basicHealthText, basicResText, basicUnitInfo
+local focusName, focusPicture, focusPictureOverlay, focusCostText, focusBuildTimeText, focusFactionPic, focusKeyText
+local basicHealth, basicHealthText, basicUnitText, basicResText, basicCostText
 local unitGrid 
 local healthBars = {}
 
@@ -157,6 +160,37 @@ function resizeUI()
     unitWindow:SetPos(x,y,w,h)
     unitGridWindow:SetPos(x,y,w,h)
     groundWindow:SetPos(x,y,w,h)
+    
+    fontSize = WG.RelativeFontSize(relFontSize)
+    local function SetRelFont(control)
+        if control then
+            control.font.size = fontSize
+            control:Invalidate()
+        end
+    end
+    
+    SetRelFont(groundText)
+    
+    SetRelFont(unitName)
+    SetRelFont(unitResText)
+    SetRelFont(unitHealthText)
+
+    SetRelFont(unitCostText)
+    SetRelFont(unitResText)
+    
+    SetRelFont(basicUnitText)
+    SetRelFont(basicCostText)
+    SetRelFont(basicHealthText)
+    SetRelFont(basicResText)
+    
+    SetRelFont(featureHealthText)
+    SetRelFont(featureResText)
+    SetRelFont(featureName)
+    
+    SetRelFont(focusName)
+    SetRelFont(focusCostText)
+    SetRelFont(focusKeyText)
+    SetRelFont(focusBuildTimeText)
 end
  
 ----------------------------------
@@ -179,10 +213,10 @@ local function addUnitGroup(name,texture,overlay,unitIDs, teamColor)
         name    = "healthbar " .. #healthBars,
         unitIDs = unitIDs,
         value   = 0,
-        bottom  = 1,
+        bottom  = '5%',
         x       = 0,
         width   = '100%',
-        height  = 6,
+        height  = '10%',
         color   = {0.5,1,0,1},
     }
     local unitIcon = Chili.Image:New{
@@ -266,18 +300,16 @@ local function showUnitGrid()
         name     = "unitCostText",
         x        = '67%',
         y        = '70%',
-        height   = 28,
         text     = "Cost:\n" .. CostToolTip(Mcost, Ecost),
-        fontsize = 14
+        font     = {size=fontSize},
     }
         
     unitResText = Chili.TextBox:New{
         name     = "unitResText",
-        x        = 5,
+        x        = '5%',
         y        = '70%',
-        height   = 24,
         text     =  "", 
-        fontsize = 14,
+        font     = {size=fontSize},
     }
 
     unitGridWindow:AddChild(unitCostText)
@@ -367,20 +399,21 @@ local function showUnitInfo()
     
     unitName = Chili.TextBox:New{
         parent = unitPictureOverlay,
-        x      = 5,
-        y      = 5,
-        right  = 22,
+        x      = '5%',
+        y      = '5%',
+        width  = '80%',
         text   = humanName .. description .. numText,
+        font   = {size=fontSize},
     }
 
     if factionPic then
         unitFactionPic = Chili.Image:New{
             parent = unitPictureOverlay,
             name   = 'unitFaction',
-            height = 17,
-            width  = 17,
-            y      = 5,
-            right  = 5,
+            height = '10%',
+            width  = '10%',
+            y      = '5%',
+            right  = '5%',
             file   = factionPic,
             color  = factionPicColour,
         }
@@ -388,28 +421,30 @@ local function showUnitInfo()
     
     unitHealthText = Chili.TextBox:New{
         parent = unitPictureOverlay,
-        x      = 5,
-        bottom = 21,
+        x      = '5%',
+        bottom = '13%',
         text   = '',
+        font   = {size=fontSize},
     }
     
     unitHealth = Chili.Progressbar:New{
         name   = "unitHealth",
         parent = unitPictureOverlay,
         value   = 0,
-        bottom  = 5,
-        x       = 5,
-        width   = '95%',
-        height  = 10,
+        bottom  = '5%',
+        x       = '5%',
+        width   = '90%',
+        height  = '5%',
         color   = {0.5,1,0,1},
     }
     
     unitResText = Chili.TextBox:New{
         parent = unitPictureOverlay,
-        x        = 5,
-        bottom   = 55,
+        x        = '5%',
+        y        = '65%',
         text     =  '',
         autoHeight = false,
+        font     = {size=fontSize},
     }
     
     updateUnitInfo()
@@ -452,13 +487,13 @@ end
 
 local function showBasicUnitInfo()
 
-    basicUnitInfo = Chili.TextBox:New{
+    basicUnitText = Chili.TextBox:New{
         parent = unitGridWindow,
-        x      = 5,
-        y      = 5,
-        right  = 0,
-        bottom = 0,
+        x      = '5%',
+        y      = '5%',
+        right  = '10%',
         text   = "Units selected: " .. curTip.n .. "\nUnit types: " .. curTip.nType,
+        font   = {size=fontSize},
     }
     
     local mCost = 0
@@ -470,39 +505,42 @@ local function showBasicUnitInfo()
         end    
     end
 
-    basicUnitInfo = Chili.TextBox:New{
+    basicCostText = Chili.TextBox:New{
         parent = unitGridWindow,
-        x      = 5,
+        x      = '5%',
         y      = '23%',
         right  = 0,
         bottom = 0,
         text   = "Cost:\n" .. CostToolTip(mCost, eCost),       
+        font   = {size=fontSize},
     }
 
     basicResText = Chili.TextBox:New{
         parent = unitGridWindow,
-        x      = 5,
+        x      = '5%',
         y      = '52%',
-        right  = 0,
-        bottom = 0,
+        right  = '5%',
+        bottom = '5%',
         text   = '',       
+        font   = {size=fontSize},
     }
     
     basicHealthText = Chili.TextBox:New{
         parent = unitGridWindow,
-        x      = 5,
-        bottom = 21,
+        x      = '5%',
+        bottom = '13%',
         text   = 'Health:',
+        font   = {size=fontSize},
     }
     
     basicHealth = Chili.Progressbar:New{
         name   = "basicHealth",
         parent = unitGridWindow,
         value   = 0,
-        bottom  = 5,
-        x       = 5,
+        bottom  = '5%',
+        x       = '5%',
         width   = '95%',
-        height  = 10,
+        height  = '5%',
         color   = {0.5,1,0,1},
     }    
     
@@ -746,20 +784,21 @@ local function showFocusInfo()
     -- name
     focusName = Chili.TextBox:New{
         parent = focusPictureOverlay,
-        x      = 5,
-        y      = 5,
-        right  = 22,
+        x      = '5%',
+        y      = '5%',
+        width  = '80%',
         text   = humanName .. "\n" .. description,
+        font   = {size=fontSize},
     }
     
     if factionPic then
         focusFactionPic = Chili.Image:New{
             parent = focusPictureOverlay,
             name   = 'focusFaction',
-            height = 17,
-            width  = 17,
-            y      = 5,
-            right  = 5,
+            height = '10%',
+            width  = '10%',
+            y      = '5%',
+            right  = '5%',
             file   = factionPic,
             color  = factionPicColour,
         }
@@ -767,38 +806,42 @@ local function showFocusInfo()
 
     -- costs + buildtime
     if unitDef.customParams.iscommander~="1" then  
-        focusCost = Chili.TextBox:New{
+        focusCostText = Chili.TextBox:New{
             parent = focusPictureOverlay,
-            x        = 5,
-            bottom   = 22,
+            x        = '5%',
+            bottom   = '12%',
             text     =  "Cost: " .. mColour .. unitDef.metalCost .. " " .. eColour .. unitDef.energyCost,
-            autoHeight = false,
+            font   = {size=fontSize},
         }
-        focusBuildTime = Chili.TextBox:New{
+        focusBuildTimeText = Chili.TextBox:New{
             parent = focusPictureOverlay,
-            x        = 5,
-            bottom   = 7,
+            x        = '5%',
+            bottom   = '5%',
             text     =  "Build Time: " .. lilac .. unitDef.buildTime, -- this isn't very intuitive
-            autoHeight = false,
+            font   = {size=fontSize},
         }
     end
     
     -- key properties
     local keyProperties = GetUnitDefKeyProperties(defID)
-    local bottom = 27+16*(#keyProperties)
+    local keyPropertiesText = ""
+    local n = 0
     for _,v in pairs(keyProperties) do
         local text = tostring(v[1]) .. ": " .. tostring(v[2])
-        local property = Chili.TextBox:New{
-            parent = focusPictureOverlay,
-            x        = 5,
-            bottom   = bottom,
-            autoHeight = false,
-            text     = text,
-        }
-        bottom = bottom - 16
+        keyPropertiesText = keyPropertiesText .. text .. "\n" .. white
+        n = n + 1
     end
+    local keyY = tostring(100-n*8-23) .. '%'
+    
+    focusKeyText = Chili.TextBox:New{
+        parent = focusPictureOverlay,
+        x        = '5%',
+        y        = keyY,
+        width    = '90%',
+        text     = keyPropertiesText,
+        font   = {size=fontSize},
+    }
         
-
     unitWindow:Show()        
 end
 
@@ -818,21 +861,21 @@ function showFeatureInfo()
     -- there is no buildpic for features
     featureName = Chili.TextBox:New{
         parent = unitWindow,
-        x      = 5,
-        y      = 5,
-        right  = 22,
-        width  = '100%',
+        x      = '5%',
+        y      = '5%',
+        width  = '80%',
         text   = description,
+        font   = {size=fontSize},
     }
     
     if factionPic then
         featureFactionPic = Chili.Image:New{
             parent = unitWindow,
             name   = 'featureFaction',
-            height = 17,
-            width  = 17,
-            y      = 5,
-            right  = 5,
+            height = '10%',
+            width  = '10%',
+            y      = '5%',
+            right  = '5%',
             file   = factionPic,
             color  = factionPicColour,
         }
@@ -840,28 +883,29 @@ function showFeatureInfo()
 
     featureHealthText = Chili.TextBox:New{
         parent = unitWindow,
-        x      = 5,
-        bottom = 21,
+        x      = '5%',
+        bottom = '13%',
         text   = '',
+        font   = {size=fontSize},
     }
     
     featureHealth = Chili.Progressbar:New{
         name   = "featureHealth",
         parent = unitWindow,
         value   = 0,
-        bottom  = 5,
-        x       = 5,
+        bottom  = '5%',
+        x       = '5%',
         width   = '95%',
-        height  = 10,
+        height  = '5%',
         color   = {0.5,1,0,1},
     }
     
     featureResText = Chili.TextBox:New{
         parent = unitWindow,
-        x        = 5,
-        bottom   = 85,
-        text     =  '',
-        autoHeight = false,
+        x      = '5%',
+        y      = '35%',
+        text   =  '',
+        font   = {size=fontSize},
     }    
     
     unitWindow:Show()    
@@ -947,19 +991,12 @@ local function updateGroundInfo()
     local focus,map = spTraceScreenRay(mx,my,true)
     if focus~="ground" then         
         groundText:SetText(generalInfo)
-        groundText2:SetText("")
         return
     end 
     
     x,y,z = map[1],map[2],map[3]    
     local px,pz = math.floor(x),math.floor(z)
     local py = math.floor(spGetGroundHeight(px,pz))
-    groundText:SetText(
-        "Map Coordinates"..
-        "\n Height: " .. lilac .. py ..
-        white .. "\n X: ".. blue .. px ..
-        white .. "\n Z: ".. blue .. pz .. "\n\n"
-    )
 
     local _,_,_,veh,bot,hvr,ship,_ = spGetGroundInfo(px,pz)
     vehCol = speedModCol(veh)
@@ -968,14 +1005,21 @@ local function updateGroundInfo()
     shipCol = speedModCol(ship)
     local acidityText = ""
     if (py<0) then acidityText = "Acidity: " .. Game.waterDamage end
-    groundText2:SetText(
+    
+    groundText:SetText(
+        "Map Coordinates"..
+        "\n Height: " .. lilac .. py ..
+        white .. "\n X: ".. blue .. px ..
+        white .. "\n Z: ".. blue .. pz .. "\n\n" .. white ..
         "Speeds" ..
         "\n  Veh: " .. vehCol .. round(veh,2) .. white .. 
         "  Bot: " .. botCol .. round(bot,2) .. white ..
         "\n  Hvr: " .. hvrCol .. round(hvr,2) .. white ..
         "  Ship: " .. shipCol .. round(ship,2) .. white  ..
-        "\n" .. acidityText
+        "\n" .. acidityText        
     )
+
+
 end
 
 
@@ -1024,7 +1068,7 @@ local function ChooseCurTip()
         curTip.type = "unitDefPics"
     elseif sortedSelUnits["n"] > 6 then
         -- info about so many selected units that we just give basic info
-        curTip.type = "basicUnitInfo"
+        curTip.type = "basicCostText"
     elseif mouseOverUnitID and preferFocus then
         -- focus info about a single mouse over unit
         curTip.type = "focusDefID"
@@ -1085,7 +1129,7 @@ local function ResetTip()
         showUnitInfo()
     elseif curTip.type=="unitDefPics" then
         showUnitGrid()
-    elseif curTip.type=="basicUnitInfo" then
+    elseif curTip.type=="basicCostText" then
         showBasicUnitInfo() 
     elseif curTip.type=="feature" then
         showFeatureInfo()
@@ -1111,6 +1155,7 @@ function widget:Initialize()
     
     Chili = WG.Chili
     buttonColour = WG.buttonColour
+    fontSize = WG.RelativeFontSize(relFontSize)
 
     screen = Chili.Screen0
     
@@ -1156,19 +1201,11 @@ function widget:Initialize()
     }    
     groundText = Chili.TextBox:New{
         parent = groundWindow,
-        x = 6,
-        y = 6,
+        x = '5%',
+        y = '5%',
+        width = '90%',
         text   = '',
         
-    }
-    groundText2 = Chili.TextBox:New{
-        parent = groundWindow,
-        x      = 6,
-        y      = 66,
-        right  = 0,
-        bottom = 0,
-        text   = '',
-        font   = {size=12},
     }
     
     Spring.SetDrawSelectionInfo(false)
@@ -1253,7 +1290,7 @@ function widget:GameFrame(n)
         updateUnitInfo()    
     elseif curTip.type=="unitDefPics" then
         updateUnitGrid()
-    elseif curTip.type=="basicUnitInfo" and n%15==0 then
+    elseif curTip.type=="basicCostText" and n%15==0 then
         -- delayed update, we might have many units to process
         updateBasicUnitInfo()
     elseif curTip.type=="feature" then

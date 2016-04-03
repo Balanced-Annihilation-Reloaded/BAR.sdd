@@ -22,9 +22,10 @@ local initialized
 local screenAspect
 
 local layouts = {
-    "classic", 
-    "classic2", 
-    "inverted", 
+    "classic",
+    "classic2",
+    "inverted",
+    "inverted2",
     -- "bottom" 
 }
 local options = {
@@ -183,6 +184,37 @@ end
 
 
 -------------------------------------
+-- inverted2 WIP -- needs some unfinished additions to sMenu to look right
+
+function Inverted2()
+    local minimapW,minimapH = GetMinimapDimensions(0.12, 0.28, 0.12, 0.28)
+    local minimap = {x=0, y=1-minimapH, w=minimapW, h=minimapH}
+    local sInfo = {x=0, y=0, w=0.2/screenAspect, h=0.2}
+    local buildMenu = {x=minimapW, y=1-minimapH, w=nil, h=minimapH} 
+    
+    local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
+    local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
+    local stateMenu = {x=sInfo.w, y=0, w=stateMenuButton.w, h=sInfo.h}
+    local orderMenu = {x=0, y=minimap.y-3*orderMenuButton.h, w=8*orderMenuButton.w, h=3*orderMenuButton.h}    
+    
+    local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
+
+    local consoleLeft = stateMenu.x+stateMenu.w+0.05
+    local consoleRight = resBars.x
+    local console = {x=consoleLeft, y=0, w=max(0,consoleRight-consoleLeft), h=0.15}
+    local chonsole = {x=consoleLeft, y=console.h, w=console.w, h=nil}
+    
+    UIcoords = {
+        minimap=minimap, sInfo=sInfo, buildMenu=buildMenu, 
+        stateMenuButton=stateMenuButton, orderMenuButton=orderMenuButton, 
+        stateMenu=stateMenu, orderMenu=orderMenu,
+        resBars=resBars,
+        console=console, chonsole=chonsole,
+    }
+end
+
+
+-------------------------------------
 -- callins etc
 
 function SetLayout(layout)
@@ -193,6 +225,7 @@ function SetLayout(layout)
     if layout=="classic" then Classic()
     elseif layout=="classic2" then Classic2()
     elseif layout=="inverted" then Inverted()
+    elseif layout=="inverted2" then Inverted2()
     end
 
     WG.UIcoords = ApplyViewGeometry(UIcoords)

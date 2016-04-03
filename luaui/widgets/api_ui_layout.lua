@@ -70,7 +70,7 @@ function ApplyViewGeometry(t)
             elseif k2=='y' or k2=='h' then
                 converted[k][k2] = v2*vsy
             else
-                Spring.Echo("ERROR: Unknown geometry type")
+                converted[k][k2] = v2
             end         
         end    
     end
@@ -101,14 +101,22 @@ end
 function Classic()
     local minimapW,minimapH = GetMinimapDimensions(0.12, 0.27, 0.12, 0.27)
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
+    
     local sInfoH = 0.23
     local sInfo = {x=0, y=1-sInfoH, w=sInfoH/screenAspect, h=sInfoH}
+    
     local buildMenu = {x=0, y=max(minimapH,0.2), w=nil, h=1-max(minimapH,0.2)-sInfo.h} 
+    local buildGrid = {wantedRows=4, wantedCols=3, paddingRows=3, paddingCols=1, maxRows=6, maxCols=5}
+    
+    local facBarButton = {h=0.05}
     
     local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
-    local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local stateMenu = {x=sInfo.w, y=1-sInfo.h, w=stateMenuButton.w, h=sInfo.h}
-    local orderMenu = {x=stateMenu.x+stateMenu.w, y=1-3*orderMenuButton.h, w=8*orderMenuButton.w, h=3*orderMenuButton.h}    
+    local stateGrid = {orientation="bottom"}
+    
+    local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
+    local orderMenu = {x=stateMenu.x+stateMenu.w, y=1-3*orderMenuButton.h, w=nil, h=nil}    
+    local orderGrid = {rows=3, cols=8} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
     
@@ -118,9 +126,11 @@ function Classic()
     local chonsole = {x=consoleLeft, y=console.h, w=console.w, h=nil}
 
     UIcoords = {
-        minimap=minimap, sInfo=sInfo, buildMenu=buildMenu, 
-        stateMenuButton=stateMenuButton, orderMenuButton=orderMenuButton, 
-        stateMenu=stateMenu, orderMenu=orderMenu,
+        minimap=minimap, sInfo=sInfo, 
+        buildMenu=buildMenu, buildGrid=buildGrid,
+        facBarButton=facBarButton,
+        stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
+        orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
         resBars=resBars,
         console=console, chonsole=chonsole,
     }
@@ -131,12 +141,19 @@ function Classic2()
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
     local sInfoH = 0.23
     local sInfo = {x=0, y=max(minimapH,0.2), w=sInfoH/screenAspect, h=sInfoH}
-    local buildMenu = {x=0, y=sInfo.y+sInfo.h, w=nil, h=1-max(minimapH,0.2)-sInfo.h} 
     
+    local buildMenu = {x=0, y=sInfo.y+sInfo.h, w=nil, h=1-max(minimapH,0.2)-sInfo.h} 
+    local buildGrid = {wantedRows=4, wantedCols=3, paddingRows=3, paddingCols=1, maxRows=6, maxCols=5}
+    
+    local facBarButton = {h=0.05}
+
     local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
-    local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local stateMenu = {x=sInfo.w, y=sInfo.y, w=stateMenuButton.w, h=sInfo.h}
-    local orderMenu = {x=0.26, y=1-3*orderMenuButton.h, w=8*orderMenuButton.w, h=3*orderMenuButton.h}    
+    local stateGrid = {orientation="bottom"}
+    
+    local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
+    local orderMenu = {x=0.25, y=1-3*orderMenuButton.h, w=nil, h=nil}    
+    local orderGrid = {rows=1, cols=21} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
     
@@ -146,12 +163,15 @@ function Classic2()
     local chonsole = {x=consoleLeft, y=console.h, w=console.w, h=nil}
 
     UIcoords = {
-        minimap=minimap, sInfo=sInfo, buildMenu=buildMenu, 
-        stateMenuButton=stateMenuButton, orderMenuButton=orderMenuButton, 
-        stateMenu=stateMenu, orderMenu=orderMenu,
+        minimap=minimap, sInfo=sInfo, 
+        buildMenu=buildMenu, buildGrid=buildGrid,
+        facBarButton=facBarButton,
+        stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
+        orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
         resBars=resBars,
         console=console, chonsole=chonsole,
     }
+
 end
 
 -------------------------------------
@@ -161,12 +181,19 @@ function Inverted()
     local minimapW,minimapH = GetMinimapDimensions(0.12, 0.28, 0.12, 0.28)
     local minimap = {x=0, y=1-minimapH, w=minimapW, h=minimapH}
     local sInfo = {x=0, y=0, w=0.2/screenAspect, h=0.2}
-    local buildMenu = {x=0, y=0.2, w=nil, h=0.5} 
     
+    local buildMenu = {x=0, y=0.2, w=nil, h=0.5} 
+    local buildGrid = {wantedRows=4, wantedCols=3, paddingRows=3, paddingCols=1, maxRows=6, maxCols=5}
+    
+    local facBarButton = {h=0.05}
+
     local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
-    local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local stateMenu = {x=sInfo.w, y=0, w=stateMenuButton.w, h=sInfo.h}
-    local orderMenu = {x=minimapW, y=1-3*orderMenuButton.h, w=8*orderMenuButton.w, h=3*orderMenuButton.h}    
+    local stateGrid = {orientation="top"}
+
+    local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
+    local orderMenu = {x=minimapW, y=1-3*orderMenuButton.h, w=nil, h=nil} 
+    local orderGrid = {rows=1, cols=21} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
 
@@ -176,12 +203,15 @@ function Inverted()
     local chonsole = {x=consoleLeft, y=console.h, w=console.w, h=nil}
     
     UIcoords = {
-        minimap=minimap, sInfo=sInfo, buildMenu=buildMenu, 
-        stateMenuButton=stateMenuButton, orderMenuButton=orderMenuButton, 
-        stateMenu=stateMenu, orderMenu=orderMenu,
+        minimap=minimap, sInfo=sInfo, 
+        buildMenu=buildMenu, buildGrid=buildGrid,
+        facBarButton=facBarButton,
+        stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
+        orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
         resBars=resBars,
         console=console, chonsole=chonsole,
     }
+
 end
 
 
@@ -191,12 +221,19 @@ function Inverted2()
     local minimapW,minimapH = GetMinimapDimensions(0.12, 0.28, 0.12, 0.28)
     local minimap = {x=0, y=1-minimapH, w=minimapW, h=minimapH}
     local sInfo = {x=0, y=0, w=0.2/screenAspect, h=0.2}
-    local buildMenu = {x=minimapW, y=1-minimapH, w=nil, h=minimapH} 
     
+    local buildMenu = {x=minimapW, y=1-minimapH, w=nil, h=minimapH} 
+    local buildGrid = {wantedRows=4, wantedCols=4, paddingRows=0, paddingCols=0, maxRows=4, maxCols=6}
+    
+    local facBarButton = {h=0.06}
+
     local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
-    local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local stateMenu = {x=sInfo.w, y=0, w=stateMenuButton.w, h=sInfo.h}
-    local orderMenu = {x=0, y=minimap.y-3*orderMenuButton.h, w=8*orderMenuButton.w, h=3*orderMenuButton.h}    
+    local stateGrid = {orientation="top"}
+
+    local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
+    local orderMenu = {x=0, y=minimap.y-3*orderMenuButton.h, w=nil, h=nil}
+    local orderGrid = {rows=3, cols=8} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
 
@@ -206,9 +243,11 @@ function Inverted2()
     local chonsole = {x=consoleLeft, y=console.h, w=console.w, h=nil}
     
     UIcoords = {
-        minimap=minimap, sInfo=sInfo, buildMenu=buildMenu, 
-        stateMenuButton=stateMenuButton, orderMenuButton=orderMenuButton, 
-        stateMenu=stateMenu, orderMenu=orderMenu,
+        minimap=minimap, sInfo=sInfo, 
+        buildMenu=buildMenu, buildGrid=buildGrid,
+        facBarButton=facBarButton,
+        stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
+        orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
         resBars=resBars,
         console=console, chonsole=chonsole,
     }
@@ -221,12 +260,19 @@ function New1()
     local minimapW,minimapH = GetMinimapDimensions(0.12, 0.27, 0.12, 0.27)
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
     local sInfo = {x=0, y=1-minimapH, w=minimapH/screenAspect, h=minimapH}
-    local buildMenu = {x=sInfo.w, y=1-minimapH, w=nil, h=minimapH} 
     
+    local buildMenu = {x=sInfo.w, y=1-minimapH, w=nil, h=minimapH} 
+    local buildGrid = {wantedRows=4, wantedCols=4, paddingRows=0, paddingCols=0, maxRows=4, maxCols=6}
+    
+    local facBarButton = {h=0.06}
+
     local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
+    local stateMenu = {x=0, y=minimapH, w=stateMenuButton.w, h=minimapH}
+    local stateGrid = {orientation="bottom"}
+
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
-    local orderMenu = {x=0, y=1-sInfo.h-3*orderMenuButton.h, w=8*orderMenuButton.w, h=3*orderMenuButton.h}
-    local stateMenu = {x=0, y=minimapH, w=stateMenuButton.w, h=minimapH}    
+    local orderMenu = {x=0, y=1-sInfo.h-3*orderMenuButton.h, w=nil, h=nil}
+    local orderGrid = {rows=3, cols=8} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
 
@@ -236,9 +282,11 @@ function New1()
     local chonsole = {x=consoleLeft, y=console.h, w=console.w, h=nil}
     
     UIcoords = {
-        minimap=minimap, sInfo=sInfo, buildMenu=buildMenu, 
-        stateMenuButton=stateMenuButton, orderMenuButton=orderMenuButton, 
-        stateMenu=stateMenu, orderMenu=orderMenu,
+        minimap=minimap, sInfo=sInfo, 
+        buildMenu=buildMenu, buildGrid=buildGrid,
+        facBarButton=facBarButton,
+        stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
+        orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
         resBars=resBars,
         console=console, chonsole=chonsole,
     }
@@ -249,14 +297,22 @@ end
 function New2()    
     local minimapW,minimapH = GetMinimapDimensions(0.12, 0.27, 0.12, 0.27)
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
+
     local sInfoH = 0.23
     local sInfo = {x=0, y=max(minimapH,0.2), w=sInfoH/screenAspect, h=sInfoH}
+
     local buildMenu = {x=0, y=1-minimapH, w=nil, h=minimapH} 
+    local buildGrid = {wantedRows=4, wantedCols=4, paddingRows=0, paddingCols=0, maxRows=4, maxCols=6}
     
+    local facBarButton = {h=0.06}
+
     local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
-    local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local stateMenu = {x=sInfo.w, y=sInfo.y, w=stateMenuButton.w, h=sInfo.h}
-    local orderMenu = {x=0, y=buildMenu.y-3*orderMenuButton.h, w=8*orderMenuButton.w, h=3*orderMenuButton.h}    
+    local stateGrid = {orientation="top"}
+    
+    local orderMenuButton = {w=0.055/screenAspect, h=0.055}        
+    local orderMenu = {x=0, y=buildMenu.y-3*orderMenuButton.h, w=nil, h=nil}
+    local orderGrid = {rows=3, cols=8} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
 
@@ -266,9 +322,11 @@ function New2()
     local chonsole = {x=consoleLeft, y=console.h, w=console.w, h=nil}
     
     UIcoords = {
-        minimap=minimap, sInfo=sInfo, buildMenu=buildMenu, 
-        stateMenuButton=stateMenuButton, orderMenuButton=orderMenuButton, 
-        stateMenu=stateMenu, orderMenu=orderMenu,
+        minimap=minimap, sInfo=sInfo, 
+        buildMenu=buildMenu, buildGrid=buildGrid,
+        facBarButton=facBarButton,
+        stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
+        orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
         resBars=resBars,
         console=console, chonsole=chonsole,
     }
@@ -290,7 +348,7 @@ function SetLayout(layout)
     elseif layout=="new1" then New1()
     elseif layout=="new2" then New2()
     end
-
+    
     WG.UIcoords = ApplyViewGeometry(UIcoords)
     WG.UIcoords.layout = layout
     WG.UIcoords.SetLayout = SetLayout

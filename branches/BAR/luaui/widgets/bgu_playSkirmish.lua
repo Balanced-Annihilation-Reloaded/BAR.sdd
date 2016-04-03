@@ -17,6 +17,34 @@ local Settings = {}
 ----------------------------------------------------------------------------------------
 -- Intialize --
 ----------------------------------------------------------------------------------------
+
+function ScriptTXT(script)
+  local string = '[Game]\n{\n\n'
+
+  -- First write Tables
+  for key, value in pairs(script) do
+    if type(value) == 'table' then
+      string = string..'\t['..key..']\n\t{\n'
+      for key, value in pairs(value) do
+        string = string..'\t\t'..key..' = '..value..';\n'
+      end
+      string = string..'\t}\n\n'
+    end
+  end
+
+  -- Then the rest (purely for aesthetics)
+  for key, value in pairs(script) do
+    if type(value) ~= 'table' then
+      string = string..'\t'..key..' = '..value..';\n'
+    end
+  end
+  string = string..'}'
+
+  local txt = io.open('script.txt', 'w+')
+  txt:write(string)
+	txt:close()
+  return string
+end
     
 local sideImage = function(side, color)
 	local image = Chili.Image:New{

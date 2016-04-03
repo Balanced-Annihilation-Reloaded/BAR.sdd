@@ -22,10 +22,9 @@ local buttonColour, queueColor
 local progColor = {0,0.9,0.2,0.7}
 
 local options = {
-    maxVisibleBuilds = 6, --fixme
-    maxFacs = 8, --fixme
-    
-    buttonSize = 50,
+    --maxVisibleBuilds 
+    --maxFacs 
+    --buttonSize 
 }
 
 local myTeamID = 0
@@ -87,8 +86,8 @@ local function CreateFacButton(unitID, unitDefID) --fixme, facsPos need to be un
             OnMouseOut = {
                 function() WG.FacBar.mouseOverUnitDefID = nil end            
             },
-            padding={3, 3, 3, 3},
-            --margin={0, 0, 0, 0},
+            padding={0, 0, 0, 0},
+            margin={0, 0, 0, 0},
             children = {
                 Chili.Progressbar:New{
                     value = 0.0,
@@ -620,6 +619,14 @@ function ResizeUI()
     local y = WG.UIcoords.buildMenu.y
     local h = WG.UIcoords.buildMenu.h
     window_facbar:SetPos(x,y,_,h)
+    
+    local vsx,_ = Spring.GetViewGeometry()
+    local w = 0.4*vsx
+    options.buttonSize = WG.UIcoords.facBarButton.h
+    options.maxFacs = math.floor(h/options.buttonSize)
+    options.maxVisibleBuilds = math.floor((w-options.buttonSize*1.2)/options.buttonSize) -- fixme: unimplemented!
+    
+    RecreateFacs() -- because the button size might have changed (lazy!)
 end
 
 function widget:ViewResize()

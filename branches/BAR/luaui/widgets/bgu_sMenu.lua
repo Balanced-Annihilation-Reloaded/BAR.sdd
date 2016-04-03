@@ -15,17 +15,21 @@ end
 
 local imageDir = 'luaui/images/buildIcons/'
 
--- menu categories --
+-- menu categories & dimensions --
 local catNames = {'ECONOMY', 'BATTLE', 'UNITS', 'FACTORY', 'LOADED'} -- order matters
-local loadedMenuCat = 5
 local buildMenuCat = 4
+local loadedMenuCat = 5
+local selectedTab
 
-local wantedCols = 3 --min
-local wantedRows = 4
-local maxCols = 5
-local maxRows = 6
-local wantedPaddingCols = 1 -- determines how the shape of the unit buttons vary as their number/grid changes, see resizeUI
-local wantedPaddingRows = 3
+local wantedBuildCols --min
+local wantedBuildRows 
+local maxBuildCols 
+local maxBuildRows 
+local wantedPaddingCols  -- determines how the shape of the unit buttons vary as their number/grid changes, see resizeUI
+local wantedPaddingRows 
+
+local orderRows 
+local orderCols 
 
 -- custom command IDs for LuaUIs CMD table
 local CMD_UNIT_SET_TARGET = 34923
@@ -108,9 +112,20 @@ local ignoreCMDs = {
     gatherwait     = '',
 }
 
--- orders menu layout, left->right with bottom line first 
-local orderMenuLayout = {
+-- orders menu layout, left->right with top line first 
+local defaultOrderMenuLayout = {
     [1] = {
+    },
+    [2] = {
+        [1] = "loadunits",
+        [2] = "unloadunits",
+        [3] = "repair",
+        [4] = "reclaim",
+        [5] = "resurrect",
+        [6] = "settarget",
+        [7] = "canceltarget",
+    },
+    [3] = {
         [1] = "move",
         [2] = "fight",
         [3] = "attack",
@@ -119,19 +134,8 @@ local orderMenuLayout = {
         [6] = "wait",
         [7] = "stop",
     },
-    [2] = {
-        [1] = "repair",
-        [2] = "reclaim",
-        [3] = "resurrect",
-        [4] = "restore",
-        [5] = "settarget",
-        [6] = "canceltarget",
-    },
-    [3] = {
-        [1] = "loadunits",
-        [2] = "unloadunits",
-    },
 }
+local orderMenuLayout = {}
 
 -- states that are always displayed
 local topStates = {
@@ -312,32 +316,83 @@ local function showGrid(num)
     end
 end
 
-local function resizeUI(scrH,i)
-    local nCols = (i) and math.max(wantedCols+wantedPaddingCols, math.min(maxCols, grid[i].columns)) or wantedCols
-    local nRows = (i) and math.max(wantedRows+wantedPaddingRows, math.min(maxRows, grid[i].rows)) or wantedRows
+local function FinalizeOrderGrid()
+    -- use more order rows if the order buttons won't fit into the screen width
+    -- we allow for up to 21 order buttons in up to 3 rows, with all non-fixed buttons going into the top row
+    -- the (max) number of buttons per row is always a multiple of 7
+    if WG.PlayerList and WG.PlayerList.width then
+        local vsx,_ = Spring.GetViewGeometry()
+        local availableWidth = vsx - WG.PlayerList.width - WG.UIcoords.orderMenu.x -- player list is in BR corner
+        local availableButtonsPerRow = math.floor(availableWidth / WG.UIcoords.orderMenuButton.w)
+        availableButtonsPerRow = math.floor(availableButtonsPerRow/8)*8 -- round down to the nearest 8
+        availableButtonsPerRow = math.max(availableButtonsPerRow, 1) -- in case user has the worlds smallest screen
+        local neededRows = math.ceil(24 / availableButtonsPerRow)
+        
+        orderRows = math.max(orderRows, neededRows)
+        orderCols = availableButtonsPerRow
+    end
+
+    -- now set the order menu layout to match the number of rows we actually use
+    -- merge downwards, collect in bottom row
+    orderMenuLayout = {}
+    local rowOffset = #defaultOrderMenuLayout - orderRows
+    for i=1,#defaultOrderMenuLayout do        
+        orderMenuLayout[i] = {}
+    end
+    for i=1,#defaultOrderMenuLayout do        
+        for j=1,#defaultOrderMenuLayout[i] do
+            local row = math.min(#orderMenuLayout, i+rowOffset)
+            table.insert(orderMenuLayout[row], defaultOrderMenuLayout[i][j])
+        end
+    end
+end
+
+local function resizeUI()
+    -- build grid dimensions
+    wantedBuildRows = WG.UIcoords.buildGrid.wantedRows 
+    wantedBuildCols = WG.UIcoords.buildGrid.wantedCols 
+    paddingRows     = WG.UIcoords.buildGrid.paddingRows 
+    paddingCols     = WG.UIcoords.buildGrid.paddingCols
+    maxBuildRows    = WG.UIcoords.buildGrid.maxRows 
+    maxBuildCols    = WG.UIcoords.buildGrid.maxCols
+
+    local i = selectedTab
+    local buildCols = (i) and math.max(wantedBuildCols+paddingCols, math.min(maxBuildCols, grid[i].columns)) or 1
+    local buildRows = (i) and math.max(wantedBuildRows+paddingRows, math.min(maxBuildRows, grid[i].rows)) or 1
     
+    -- build grid position
     local bx = WG.UIcoords.buildMenu.x
     local by = WG.UIcoords.buildMenu.y
     local bh = WG.UIcoords.buildMenu.h
-    local bw = bh * nCols / nRows -- better to keep consistent layout & not use small buttons when possible
+    local bw = bh * buildCols / buildRows -- better to keep consistent layout & not use small buttons when possible
     buildMenu:SetPos(bx,by,bw,bh) 
+    menuTabs:SetPos(bx+bw,by+20)
     
+    -- state menu position
     local sx = WG.UIcoords.stateMenu.x
     local sy = WG.UIcoords.stateMenu.y
     local sw = WG.UIcoords.stateMenu.w
     local sh = WG.UIcoords.stateMenu.h
     stateMenu:SetPos(sx,sy,sw,sh)    
     
+    -- order grid dimensions
+    orderRows = WG.UIcoords.orderGrid.rows 
+    orderCols = WG.UIcoords.orderGrid.cols   
+    FinalizeOrderGrid()
+    if orderRows>#orderMenuLayout then
+        Spring.Echo("ERROR: max order rows is " .. #orderMenuLayout)
+    end
+
+    -- order menu position
     local ox = WG.UIcoords.orderMenu.x
     local oy = WG.UIcoords.orderMenu.y
-    local ow = WG.UIcoords.orderMenu.w
-    local oh = WG.UIcoords.orderMenu.h
-    local oButton = WG.UIcoords.orderMenuButton.w
-    orderMenu:SetPos(ox,oy,ow,oh)    
-
-    menuTabs:SetPos(bx+bw,by+20)
-    for i=#orderMenuLayout,1,-1 do 
-        orderGrid[i]:SetPos(0, oButton*i, oButton*8, oButton)
+    local ow = WG.UIcoords.orderMenuButton.w * orderCols
+    local oh = WG.UIcoords.orderMenuButton.h * #orderMenuLayout
+    orderMenu:SetPos(ox,oy,ow,oh)        
+    
+    for i=1,#orderMenuLayout do 
+        orderGrid[i].columns = orderCols
+        orderGrid[i]:SetPos(0, (i-1)*oh/#orderMenuLayout, ow, oh/#orderMenuLayout)
     end
 end
 
@@ -367,7 +422,9 @@ local function selectTab(self)
         menuTabs.prevChoice = choice 
     end
 
-    resizeUI(Chili.Screen0.height, choice)    
+    selectedTab = choice
+    
+    resizeUI()    
 end
 
 local function scrollMenus(_,_,_,_,value)
@@ -437,8 +494,8 @@ local function addBuild(item)
     local disabled = item.disabled
     
     -- avoid adding too many
-    if #grid[category].children>maxCols*maxRows-1 then return end
-    if #grid[category].children==maxCols*maxRows-1 then
+    if #grid[category].children>maxBuildCols*maxBuildRows-1 then return end
+    if #grid[category].children==maxBuildCols*maxBuildRows-1 then
         Chili.Button:New{
             x = 5,
             parent = grid[category],
@@ -515,7 +572,6 @@ local function addState(cmd)
             borderColor = {1,1,1,0.1},
             backgroundColor = buttonColour,
             font      = {
-                color = grey,
                 size  = 16,
             },
         }
@@ -568,6 +624,7 @@ local function addDummyState(cmd)
             borderColor = {1,1,1,0.1},
             backgroundColor = buttonColour,
             font      = {
+                color = grey,
                 size  = 16,
             },
         }
@@ -692,7 +749,7 @@ local function addDummyOrder(item)
     orderGrid[cat]:AddChild(button) 
 end
 
-function getMenuCat(ud)
+function getBuildCat(ud)
     if ud.isFactory or (ud.isBuilder and ud.speed==0) then
         menuCat = 4
     elseif (ud.speed > 0 and ud.canMove) then
@@ -723,7 +780,7 @@ function getOrderCat(action)
             end
         end
     end
-    return #orderMenuLayout
+    return 1 + #orderMenuLayout - orderRows -- top non-empty row
 end
 
 local function AddInSequence(items, t, Add, dummyAdd)
@@ -783,10 +840,10 @@ local function parseCmds()
             local menuCat
             if UnitDefNames[cmd.name] then
                 local ud = UnitDefNames[cmd.name]
-                menuCat = getMenuCat(ud)    
+                menuCat = getBuildCat(ud)    
             end
 
-            if menuCat and #grid[menuCat].children<=maxRows*maxCols then
+            if menuCat and #grid[menuCat].children<=maxBuildRows*maxBuildCols then
                 buildMenu.active     = true
                 grid[menuCat].active = true
                 units[#units+1] = {name=cmd.name, uDID=-cmd.id, disabled=cmd.disabled, category=menuCat, count=(queue[-cmd.id] or cmd.params[1])} -- cmd.params[1] helps only in godmode
@@ -818,7 +875,7 @@ local function parseCmds()
     
     -- Add the states in the wanted order
     if #cmdList>0 then
-        if WG.UIcoords.layout=="classic" then
+        if WG.UIcoords.stateGrid.orientation=="bottom" then
             -- pad out to make it as though we added bottom-up
             local nPadding = 6
             for action,smd in pairs(states) do
@@ -893,7 +950,7 @@ local function parseUnitDefCmds(uDID)
     
     for _,bDID in pairs(buildDefIDs) do
         local ud = UnitDefs[bDID]
-        local menuCat = getMenuCat(ud)
+        local menuCat = getBuildCat(ud)
         grid[menuCat].active = true
         units[#units+1] = {name=ud.name, uDID=bDID, disabled=false, category=menuCat, count=queue[bDID]} 
     end
@@ -908,22 +965,23 @@ function SetGridDimensions()
         -- work out what size grid to use for build menu
         -- start from wanted; then add a new row, then new col, in turn, if needed
         local n = #grid[i].children 
-        local nCols = wantedCols
-        local nRows = wantedRows
-        local included = nRows * nCols
-        if (n>maxRows*maxCols) then
-            Spring.Echo("sMenu error: can't fit icons into build menu")
+        local buildCols = wantedBuildCols
+        local buildRows = wantedBuildRows
+        local included = buildRows * buildCols
+        if (n>maxBuildRows*maxBuildCols) then
+            Spring.Echo("sMenu error: can't fit icons into build menu") -- should never happen; addBuild prevents it
         end
         while (true) do
-            nRows =  math.min(nRows + 1, maxRows)
-            included = nRows * nCols
+            buildRows =  math.min(buildRows + 1, maxBuildRows)
+            included = buildRows * buildCols
             if included >= n then break end
-            nCols = math.min(nCols + 1, maxCols)
-            included = nRows * nCols
+            
+            buildCols = math.min(buildCols + 1, maxBuildCols)
+            included = buildRows * buildCols
             if included >= n then break end            
         end
-        grid[i].columns = nCols
-        grid[i].rows = nRows
+        grid[i].columns = buildCols
+        grid[i].rows = buildRows
     end
 end
 
@@ -1209,12 +1267,12 @@ function widget:Initialize()
         margin  = {0,0,0,0},
     }
     
-    for i=#orderMenuLayout,1,-1 do 
+    for i=1,#defaultOrderMenuLayout do 
         orderGrid[i]  = Chili.Grid:New{
             name    = "order grid " .. i,
             parent  = orderMenu,
             active  = false,
-            columns = 8,
+            columns = 1,
             rows    = 1,
             padding = {0,0,0,0},
             margin  = {0,0,0,0},
@@ -1244,8 +1302,7 @@ function widget:Initialize()
         }
     end
 
-    resizeUI(Chili.Screen0.height)
-
+    resizeUI()
 
     -- Create a cache of buttons stored in the unit array
     for name, unitDef in pairs(UnitDefNames) do
@@ -1257,8 +1314,8 @@ function widget:Initialize()
 end
 
 --------------------------- 
-function widget:ViewResize(_,scrH)
-    resizeUI(scrH)
+function widget:ViewResize()
+    resizeUI()
     updateRequired = 'ViewResize'
 end
 --------------------------- 
@@ -1319,7 +1376,7 @@ function GameFrame()
             updateRequired = 'GameFrame: looking to build a unit of this uDID'
             activeSelUDID = uDID
             activeSelCmdID = nil
-            selectTab(menuTab[getMenuCat(UnitDefs[uDID])])
+            selectTab(menuTab[getBuildCat(UnitDefs[uDID])])
         end
     elseif cmdID then
         -- looking to give this cmdID

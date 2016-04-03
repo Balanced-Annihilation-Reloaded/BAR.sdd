@@ -1325,6 +1325,7 @@ end
 
 function widget:Initialize()
     Spring.SendCommands('unbind Any+h sharedialog')
+    WG.PlayerList = {}
 
     Chili = WG.Chili
     buttonColour = WG.buttonColour
@@ -1766,6 +1767,8 @@ function CalculateOffsets()
     
     o = o + 16 --left margin
     offset.max = o
+    
+    WG.PlayerList.width = offset.max
 end
 
 function SetupStack()

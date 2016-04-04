@@ -120,6 +120,9 @@ function Classic()
     local orderGrid = {rows=3, cols=8} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
+    local clockFPS = {x=1-0.16, y=resBars.h+0.005, w=0.155, h=0.02}
+    local musicPlayer = {x=1-0.16, y=clockFPS.y+clockFPS.h+0.005, w=0.155, h=0.09}
+    local comCounter = {x=clockFPS.x-0.06/screenAspect-0.005, y=resBars.h, w=0.06/screenAspect, h=0.06}
     
     local consoleLeft = minimapW+0.05
     local consoleRight = resBars.x
@@ -132,7 +135,7 @@ function Classic()
         facBarButton=facBarButton,
         stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
         orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
-        resBars=resBars,
+        resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
         console=console, chonsole=chonsole,
     }
 end
@@ -157,6 +160,9 @@ function Classic2()
     local orderGrid = {rows=1, cols=21} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
+    local clockFPS = {x=1-0.16, y=resBars.h+0.005, w=0.155, h=0.02}
+    local musicPlayer = {x=1-0.16, y=clockFPS.y+clockFPS.h+0.005, w=0.155, h=0.09}
+    local comCounter = {x=clockFPS.x-0.06/screenAspect-0.005, y=resBars.h, w=0.06/screenAspect, h=0.06}
     
     local consoleLeft = minimapW+0.05
     local consoleRight = resBars.x
@@ -169,10 +175,9 @@ function Classic2()
         facBarButton=facBarButton,
         stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
         orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
-        resBars=resBars,
+        resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
         console=console, chonsole=chonsole,
     }
-
 end
 
 -------------------------------------
@@ -197,6 +202,9 @@ function Inverted()
     local orderGrid = {rows=1, cols=21} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
+    local clockFPS = {x=1-0.16, y=resBars.h+0.005, w=0.155, h=0.02}
+    local musicPlayer = {x=1-0.16, y=clockFPS.y+clockFPS.h+0.005, w=0.155, h=0.09}
+    local comCounter = {x=clockFPS.x-0.06/screenAspect-0.005, y=resBars.h, w=0.06/screenAspect, h=0.06}
 
     local consoleLeft = stateMenu.x+stateMenu.w+0.05
     local consoleRight = resBars.x
@@ -209,10 +217,9 @@ function Inverted()
         facBarButton=facBarButton,
         stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
         orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
-        resBars=resBars,
+        resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
         console=console, chonsole=chonsole,
     }
-
 end
 
 
@@ -237,6 +244,9 @@ function Inverted2()
     local orderGrid = {rows=3, cols=8} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
+    local clockFPS = {x=1-0.16, y=resBars.h+0.005, w=0.155, h=0.02}
+    local musicPlayer = {x=1-0.16, y=clockFPS.y+clockFPS.h+0.005, w=0.155, h=0.09}
+    local comCounter = {x=clockFPS.x-0.06/screenAspect-0.005, y=resBars.h, w=0.06/screenAspect, h=0.06}
 
     local consoleLeft = stateMenu.x+stateMenu.w+0.05
     local consoleRight = resBars.x
@@ -249,7 +259,7 @@ function Inverted2()
         facBarButton=facBarButton,
         stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
         orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
-        resBars=resBars,
+        resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
         console=console, chonsole=chonsole,
     }
 end
@@ -276,6 +286,9 @@ function New1()
     local orderGrid = {rows=3, cols=8} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
+    local clockFPS = {x=1-0.16, y=resBars.h+0.005, w=0.155, h=0.02}
+    local musicPlayer = {x=1-0.16, y=clockFPS.y+clockFPS.h+0.005, w=0.155, h=0.09}
+    local comCounter = {x=clockFPS.x-0.06/screenAspect-0.005, y=resBars.h, w=0.06/screenAspect, h=0.06}
 
     local consoleLeft = minimapW+0.05
     local consoleRight = resBars.x
@@ -288,7 +301,7 @@ function New1()
         facBarButton=facBarButton,
         stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
         orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
-        resBars=resBars,
+        resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
         console=console, chonsole=chonsole,
     }
 end
@@ -316,6 +329,9 @@ function New2()
     local orderGrid = {rows=3, cols=8} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
+    local clockFPS = {x=1-0.16, y=resBars.h+0.005, w=0.155, h=0.02}
+    local musicPlayer = {x=1-0.16, y=clockFPS.y+clockFPS.h+0.005, w=0.155, h=0.09}
+    local comCounter = {x=clockFPS.x-0.06/screenAspect-0.005, y=resBars.h, w=0.06/screenAspect, h=0.06}
 
     local consoleLeft = minimapW+0.05
     local consoleRight = resBars.x
@@ -328,7 +344,7 @@ function New2()
         facBarButton=facBarButton,
         stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
         orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
-        resBars=resBars,
+        resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
         console=console, chonsole=chonsole,
     }
 end

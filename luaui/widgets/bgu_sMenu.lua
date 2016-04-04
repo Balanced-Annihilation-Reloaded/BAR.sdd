@@ -973,7 +973,7 @@ function SetGridDimensions()
         if (n>maxBuildRows*maxBuildCols) then
             Spring.Echo("sMenu error: can't fit icons into build menu") -- should never happen; addBuild prevents it
         end
-        while (true) do
+        while (included < n) do
             buildRows =  math.min(buildRows + 1, maxBuildRows)
             included = buildRows * buildCols
             if included >= n then break end

@@ -124,7 +124,6 @@ local function CreateFacButton(unitID, unitDefID) --fixme, facsPos need to be un
         itemPadding={0,0,0,0},
         padding={0,0,0,0},
         --margin={0, 0, 0, 0},
-        x=0,
         width=700,
         height = options.buttonSize,
         resizeItems = false,
@@ -137,7 +136,7 @@ local function CreateFacButton(unitID, unitDefID) --fixme, facsPos need to be un
         itemMargin={0,0,0,0},
         itemPadding={0,0,0,0},
         padding={0,0,0,0},
-        --margin={0, 0, 0, 0},
+        margin={0, 0, 0, 0},
         width=800,
         height = options.buttonSize,
         resizeItems = false,
@@ -162,8 +161,8 @@ local function CreateBuildButton(unitDefID, facID)
             caption="",
             width = options.buttonSize,
             height = options.buttonSize,
-            padding = {4, 4, 4, 4},
-            --margin={0, 0, 0, 0},
+            padding = {0, 0, 0, 0},
+            margin={0, 0, 0, 0},
             backgroundColor = queueColor,
             OnClick = {
                 function(_,_,_,button)
@@ -196,11 +195,11 @@ local function CreateBuildButton(unitDefID, facID)
                     name='count',
                     autosize=false,
                     width="90%",
-                    height="100%",
                     align="right",
-                    valign="top",
+                    y='2%',
+                    x='0%',
                     caption = "",
-                    fontSize = 14,
+                    fontSize = fontSize,
                     fontShadow = true,
                 },
 
@@ -209,8 +208,9 @@ local function CreateBuildButton(unitDefID, facID)
                     name    = 'prog';
                     max     = 1;
                     color           = progColor,
+                    width = '95%',
                     backgroundColor = {1,1,1,  0.01},
-                    x=2, bottom=2, height=3, right=2,
+                    x='10%', bottom='15%', height='10%', right='10%',
                 },
                         
                 Chili.Image:New {
@@ -285,19 +285,31 @@ function RemoveFactory(unitID)
     end
 end
 
-function RecreateFacs()
-    -- recreate facs table from scratch
-    facs = {}
-    stack_main:ClearChildren()
+function RecreateFacs(preserveOrder)
+    -- save the old order
+    local oldFacs 
+    if preserveOrder then
+        oldFacs  = {}
+        for _,facInfo in ipairs(facs) do
+            table.insert(oldFacs, facInfo.unitID)
+        end
+    end
 
-    local teamUnits = Spring.GetTeamUnits(myTeamID)
-    local totalUnits = #teamUnits
-    for num = 1, totalUnits do
-        local unitID = teamUnits[num]
+    -- recreate facs table from scratch
+    stack_main:ClearChildren()
+    facs = {}
+
+    local units = oldFacs or Spring.GetTeamUnits(myTeamID)
+    for n = 1, #units do
+        local unitID = units[n]
         local unitDefID = spGetUnitDefID(unitID)
         if UnitDefs[unitDefID].isFactory then
             AddFactory(unitID, unitDefID)
             UpdateVisibleFacs()
+            
+            local facInfo = facs[#facs]
+            UpdateFacProgressBars(facInfo)
+            UpdateFacBuildCounts(facInfo)
         end
     end
 end
@@ -308,8 +320,7 @@ function UpdateFacProgressBars(facInfo)
         local _,_,_,_,progress = spGetUnitHealth(facInfo.unitID)
         local fBar = facInfo.facButton:GetChildByName('prog')
         fBar:SetValue(progress)
-    end
-    
+    end    
 
     -- update the build progress bars
     local progress = 0
@@ -585,10 +596,10 @@ function widget:Initialize()
         itemPadding = {0, 0, 0, 0},
         itemMargin = {0, 0, 0, 0},
         width='100%',
-        height = '100%',
-        resizeItems = false,
+        height = '95%',
         orientation = 'horizontal',
         centerItems = false,
+        resizeItems = false,
         columns=1,
     }
     label_main =  Chili.Label:New{ 
@@ -631,11 +642,20 @@ function ResizeUI()
     local vsx,_ = Spring.GetViewGeometry()
     local w = 0.4*vsx
     options.buttonSize = WG.UIcoords.facBarButton.h
-    options.maxFacs = math.floor((h-fontSize-3)/options.buttonSize)
-    options.maxVisibleBuilds = math.floor((w-options.buttonSize*1.2)/options.buttonSize) -- fixme: unimplemented!
+    options.maxFacs = math.floor((h*0.95-3)/options.buttonSize) -- padding + label + fac buttons
+    options.maxVisibleBuilds = math.floor((w-options.buttonSize*1.2)/options.buttonSize) -- fac button + q -- fixme: unimplemented!
     
+    for _,facInfo in ipairs(facs) do
+        facInfo.facButton:Resize(1.2*options.buttonSize, options.buttonSize)
+        for _,buildButton in pairs(facInfo.qStore) do
+            buildButton:Resize(options.buttonSize, options.buttonSize)
+            local count = buildButton:GetChildByName('count')
+            count.font.size = fontSize
+            count:Invalidate()
+        end    
+    end
     
-    RecreateFacs() -- because the button size might have changed (lazy!)
+    RecreateFacs(true)
 end
 
 function widget:ViewResize()

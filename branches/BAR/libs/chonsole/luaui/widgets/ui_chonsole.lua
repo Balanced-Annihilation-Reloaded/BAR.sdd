@@ -286,7 +286,11 @@ function AreSuggestionsInverted()
 end
 
 function ResizeUI(_vsx, _vsy)
-	vsx, vsy = _vsx, _vsy
+    vsx, vsy = _vsx, _vsy
+	config.console.x = WG.UIcoords.chonsole.x / vsx
+	config.console.y = WG.UIcoords.chonsole.y / vsy
+	config.console.w = WG.UIcoords.chonsole.w / vsx
+    
 	ebConsole:SetPos(config.console.x * vsx, config.console.y * vsy, config.console.w * vsx)
 	if not AreSuggestionsInverted() then
 		scrollSuggestions:SetPos(config.console.x * vsx, config.console.y * vsy + ebConsole.height, config.console.w * vsx, config.suggestions.h * vsy)
@@ -316,7 +320,7 @@ function widget:KeyPress(key, ...)
             if alt then
                 currentContext = { display = i18n("allies_context", {default="Allies:"}), name = "allies", persist = true }
             elseif shift then
-                currentContext = { display = i18n("spectators_context", {default="Spectators:"}), name = "spectators", persist = true }
+                currentContext = { display = i18n("spectators_context", {default="Specs:"}), name = "spectators", persist = true }
             elseif ctrl then
                 currentContext = { display = i18n("say_context", {default="Say:"}), name = "say", persist = true }
             end
@@ -373,7 +377,7 @@ function ParseKey(ebConsole, key, mods, ...)
         	currentContext = { display = i18n("allies_context", {default="Allies:"}), name = "allies", persist = true }
             ShowContext()
         elseif mods.shift and currentContext.name~="spec" then
-            currentContext = { display = i18n("spectators_context", {default="Spectators:"}), name = "spectators", persist = true }
+            currentContext = { display = i18n("spectators_context", {default="Specs:"}), name = "spectators", persist = true }
             ShowContext()
         elseif mods.ctrl and currentContext.name~="" then
             currentContext = { display = i18n("say_context", {default="Say:"}), name = "say", persist = true }
@@ -493,7 +497,7 @@ function PostParseKey(...)
 		currentContext = { display = i18n("say_context", {default="Say:"}), name = "say", persist = true }
 	elseif txt:lower() == "/spec " or txt:lower() == "s:" then
 		ebConsole:SetText("")
-		currentContext = { display = i18n("spectators_context", {default="Spectators:"}), name = "spectators", persist = true }
+		currentContext = { display = i18n("spectators_context", {default="Specs:"}), name = "spectators", persist = true }
 -- 	elseif txt:trim():starts("/") and #txt:trim() > 1 then
 -- 		currentContext = { display = "Command:", name = "command", persist = false }
 	else

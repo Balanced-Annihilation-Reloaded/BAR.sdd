@@ -31,6 +31,9 @@ local myTeamID = 0
 local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
 local teamColor = {r,g,b}
 
+local Chili
+local fontSize
+
 -------------------------------------------------------------------------------           
 
 local WhiteStr   = "\255\255\255\255"
@@ -573,10 +576,11 @@ function widget:Initialize()
     
     -- setup Chili
     Chili = WG.Chili
+    fontSize = WG.RelativeFontSize(15)
 
     stack_main = Chili.Grid:New{
         name = "stack_main",
-        y=20,
+        y='5%',
         padding = {0,0,0,0},
         itemPadding = {0, 0, 0, 0},
         itemMargin = {0, 0, 0, 0},
@@ -590,15 +594,15 @@ function widget:Initialize()
     label_main =  Chili.Label:New{ 
         caption='Factories', 
         fontShadow = true, 
+        font = {size=fontSize},
+        height = '5%',
     }
     window_facbar = Chili.Window:New{
-        padding = {3,3,3,3,},
+        padding = {3,3,0,0,},
         width  = '50%',
         parent = Chili.Screen0,
         draggable = false,
         resizable = false,
-        minWidth = 200,
-        minHeight = 450,
         color = {0,0,0,0},
         children = {
             label_main, stack_main,
@@ -619,12 +623,17 @@ function ResizeUI()
     local y = WG.UIcoords.buildMenu.y
     local h = WG.UIcoords.buildMenu.h
     window_facbar:SetPos(x,y,_,h)
+
+    fontSize = WG.RelativeFontSize(15)
+    label_main.font.size = fontSize
+    label_main:Invalidate()
     
     local vsx,_ = Spring.GetViewGeometry()
     local w = 0.4*vsx
     options.buttonSize = WG.UIcoords.facBarButton.h
-    options.maxFacs = math.floor(h/options.buttonSize)
+    options.maxFacs = math.floor((h-fontSize-3)/options.buttonSize)
     options.maxVisibleBuilds = math.floor((w-options.buttonSize*1.2)/options.buttonSize) -- fixme: unimplemented!
+    
     
     RecreateFacs() -- because the button size might have changed (lazy!)
 end

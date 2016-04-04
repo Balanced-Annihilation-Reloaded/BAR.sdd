@@ -589,24 +589,24 @@ function widget:Initialize()
     Chili = WG.Chili
     fontSize = WG.RelativeFontSize(15)
 
-    stack_main = Chili.Grid:New{
-        name = "stack_main",
-        y='5%',
-        padding = {0,0,0,0},
-        itemPadding = {0, 0, 0, 0},
-        itemMargin = {0, 0, 0, 0},
-        width='100%',
-        height = '96%',
-        orientation = 'horizontal',
-        centerItems = false,
-        resizeItems = false,
-        columns=1,
-    }
     label_main =  Chili.Label:New{ 
         caption='Factories', 
         fontShadow = true, 
         font = {size=fontSize},
-        height = '4%',
+        height = '3%',
+    }
+    stack_main = Chili.Grid:New{
+        name = "stack_main",
+        y='3%',
+        padding = {0,0,0,0},
+        itemPadding = {0, 0, 0, 0},
+        itemMargin = {0, 0, 0, 0},
+        width='100%',
+        height = '97%',
+        orientation = 'horizontal',
+        centerItems = false,
+        resizeItems = false,
+        columns=1,
     }
     window_facbar = Chili.Window:New{
         padding = {3,3,0,0,},
@@ -645,17 +645,7 @@ function ResizeUI()
     options.maxFacs = math.floor((h*0.96-3)/options.buttonSize) -- padding + label + fac buttons
     options.maxVisibleBuilds = math.floor((w-options.buttonSize*1.2)/options.buttonSize) -- fac button + q -- fixme: unimplemented!
     
-    for _,facInfo in ipairs(facs) do
-        facInfo.facButton:Resize(1.2*options.buttonSize, options.buttonSize)
-        for _,buildButton in pairs(facInfo.qStore) do
-            buildButton:Resize(options.buttonSize, options.buttonSize)
-            local count = buildButton:GetChildByName('count')
-            count.font.size = fontSize
-            count:Invalidate()
-        end    
-    end
-    
-    RecreateFacs(true)
+    RecreateFacs(true) -- we have to recreate since stack panels don't handle their children changing size
 end
 
 function widget:ViewResize()

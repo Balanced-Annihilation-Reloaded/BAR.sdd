@@ -271,18 +271,18 @@ function New1()
     local minimapW,minimapH = GetMinimapDimensions(0.12, 0.27, 0.12, 0.27)
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
     local sInfo = {x=0, y=1-minimapH, w=minimapH/screenAspect, h=minimapH}
-    
+        
     local buildMenu = {x=sInfo.w, y=1-minimapH, w=nil, h=minimapH} 
-    local buildGrid = {wantedRows=4, wantedCols=4, paddingRows=0, paddingCols=0, maxRows=4, maxCols=6}
-    
+    local buildGrid = {wantedRows=3, wantedCols=3, paddingRows=0, paddingCols=0, maxRows=3, maxCols=7}
+
     local facBarButton = {h=0.06}
 
     local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
-    local stateMenu = {x=0, y=minimapH, w=stateMenuButton.w, h=minimapH}
+    local stateMenu = {x=0, y=1-2*sInfo.h, w=stateMenuButton.w, h=sInfo.h}
     local stateGrid = {orientation="bottom"}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
-    local orderMenu = {x=0, y=1-sInfo.h-3*orderMenuButton.h, w=nil, h=nil}
+    local orderMenu = {x=stateMenu.w, y=1-sInfo.h-3*orderMenuButton.h, w=nil, h=nil}
     local orderGrid = {rows=3, cols=8} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}

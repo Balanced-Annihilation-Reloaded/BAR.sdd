@@ -117,7 +117,7 @@ function Classic()
     
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local orderMenu = {x=stateMenu.x+stateMenu.w, y=1-3*orderMenuButton.h, w=nil, h=nil}    
-    local orderGrid = {rows=3, cols=8} -- it might override 
+    local orderGrid = {rows=1, cols=24} -- it might override 
     
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
     local clockFPS = {x=1-0.16, y=resBars.h+0.005, w=0.155, h=0.02}

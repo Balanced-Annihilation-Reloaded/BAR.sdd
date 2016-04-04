@@ -109,7 +109,7 @@ function Classic()
     local buildMenu = {x=0, y=max(minimapH,0.2), w=nil, h=1-max(minimapH,0.2)-sInfo.h} 
     local buildGrid = {wantedRows=4, wantedCols=3, paddingRows=3, paddingCols=1, maxRows=6, maxCols=5}
     
-    local facBarButton = {h=0.05}
+    local facBarButton = {h=0.06}
     
     local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
     local stateMenu = {x=sInfo.w, y=1-sInfo.h, w=stateMenuButton.w, h=sInfo.h}
@@ -146,7 +146,7 @@ function Classic2()
     local buildMenu = {x=0, y=sInfo.y+sInfo.h, w=nil, h=1-max(minimapH,0.2)-sInfo.h} 
     local buildGrid = {wantedRows=4, wantedCols=3, paddingRows=3, paddingCols=1, maxRows=6, maxCols=5}
     
-    local facBarButton = {h=0.05}
+    local facBarButton = {h=0.06}
 
     local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
     local stateMenu = {x=sInfo.w, y=sInfo.y, w=stateMenuButton.w, h=sInfo.h}
@@ -186,7 +186,7 @@ function Inverted()
     local buildMenu = {x=0, y=0.2, w=nil, h=0.5} 
     local buildGrid = {wantedRows=4, wantedCols=3, paddingRows=3, paddingCols=1, maxRows=6, maxCols=5}
     
-    local facBarButton = {h=0.05}
+    local facBarButton = {h=0.06}
 
     local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
     local stateMenu = {x=sInfo.w, y=0, w=stateMenuButton.w, h=sInfo.h}

@@ -596,7 +596,7 @@ function widget:Initialize()
         itemPadding = {0, 0, 0, 0},
         itemMargin = {0, 0, 0, 0},
         width='100%',
-        height = '95%',
+        height = '96%',
         orientation = 'horizontal',
         centerItems = false,
         resizeItems = false,
@@ -606,7 +606,7 @@ function widget:Initialize()
         caption='Factories', 
         fontShadow = true, 
         font = {size=fontSize},
-        height = '5%',
+        height = '4%',
     }
     window_facbar = Chili.Window:New{
         padding = {3,3,0,0,},
@@ -642,7 +642,7 @@ function ResizeUI()
     local vsx,_ = Spring.GetViewGeometry()
     local w = 0.4*vsx
     options.buttonSize = WG.UIcoords.facBarButton.h
-    options.maxFacs = math.floor((h*0.95-3)/options.buttonSize) -- padding + label + fac buttons
+    options.maxFacs = math.floor((h*0.96-3)/options.buttonSize) -- padding + label + fac buttons
     options.maxVisibleBuilds = math.floor((w-options.buttonSize*1.2)/options.buttonSize) -- fac button + q -- fixme: unimplemented!
     
     for _,facInfo in ipairs(facs) do

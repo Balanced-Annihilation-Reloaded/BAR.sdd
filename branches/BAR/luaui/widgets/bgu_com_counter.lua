@@ -36,6 +36,10 @@ local comMarkers            = {}
 local removeMarkerFrame     = -1
 local lastMarkerFrame       = -1
 
+local largeRelFontSize = 24
+local smallRelFontSize = 15
+local largeFontSize, smallFontSize
+
 
 ---------------------------------------------------------------------------------------------------
 --  GUI
@@ -60,14 +64,13 @@ function widget:Initialize()
     }
                     
     enemyComText = Chili.Label:New{ 
-        height = 40.6,
-        width = 43,
+        bottom = '5%',
+        right = '5%',
         caption  = makeText(enemyComs),
         align = "right",
         valign = "bottom", 
         margin = {0,0,0,0},
         font = {
-            size = 16,
             color = red,
             outline          = true,
             autoOutlineColor = true,
@@ -77,14 +80,14 @@ function widget:Initialize()
     } 
 
     allyComText = Chili.Label:New{
-        height = 45,
-        width = 32.0,
+        x = '18%', --hack because label center alignment don't take account of text length
+        width = '80%',
+        y = '25%',
         caption  = makeText(allyComs),
-        align = "right", --hack because label center alignment don't take account of text length
+        align = "center", 
         valign = "center",
         margin = {0,0,0,0},
         font = {
-            size = 25,
             color = green,
             outline          = true,
             autoOutlineColor = true,
@@ -98,7 +101,7 @@ function widget:Initialize()
         y = 0,
         width = '100%',
         height = '100%',        
-        padding   = {10,10,10,10}, 
+        padding   = {0,0,0,0}, 
         onClick   = {MarkComs},
         borderColor = {0,0,0,0},
         borderColor2 = {0,0,0,0},
@@ -108,9 +111,10 @@ function widget:Initialize()
             Chili.Image:New {
                 color       = {1,1,1,0.3},
                 file        = 'LuaUI/Images/comIcon.png',
-                keepAspect  = true;
-                width       = '100%',
-                height      = '100%',
+                x = '12%',
+                y = '12%',
+                width       = '76%',
+                height      = '76%',
                 children = {
                     yellowOverlay, enemyComText, allyComText
                 },
@@ -121,14 +125,10 @@ function widget:Initialize()
 
     window = Chili.Window:New{
         parent    = Chili.Screen0,
-        right     = 210, 
-        y         = nil,
-        width     = 60,
-        height    = 60,
         padding   = {0,0,0,0}, 
         color     = {0,0,0,0},
         draggable = false,
-        tweakdraggable = true,
+        tweakdraggable = false,
         resizable = false,
         tweakResizable = false,
         children = {button}    
@@ -146,8 +146,19 @@ function widget:Initialize()
 end
 
 function ResizeUI()
-    local y = WG.UIcoords.resBars.h - 3
-    window:SetPos(_,y,_,_)
+    smallFontSize = WG.RelativeFontSize(smallRelFontSize)
+    largeFontSize = WG.RelativeFontSize(largeRelFontSize)
+    
+    allyComText.font.size = largeFontSize
+    allyComText:Invalidate()
+    enemyComText.font.size = smallFontSize
+    enemyComText:Invalidate()
+    
+    local x = WG.UIcoords.comCounter.x
+    local y = WG.UIcoords.comCounter.y
+    local w = WG.UIcoords.comCounter.w
+    local h = WG.UIcoords.comCounter.h
+    window:SetPos(x,y,w,h)
 end
 
 ---------------------------------------------------------------------------------------------------

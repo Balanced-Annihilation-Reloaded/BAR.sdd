@@ -12,10 +12,11 @@ function widget:GetInfo()
 end
 
 local spGetFPS = Spring.GetFPS
-local Chili, Menu
+local Chili, Menu, fontSize
 local clockType = "ingame" -- or "system", meaning ingame time or system time
 local oTime,rTime
 local timeFormatStr = '%I:%M:%S'
+local relFontSize = 14
 
 local options = {}
 
@@ -77,23 +78,27 @@ local function loadMinMenu()
     
     timeLbl = Chili.Label:New{
         caption = os.date('%I:%M %p'),
-        x = 0,
-        y = 1,
+        x = '2%',
+        y = '10%',
+        font = {size=fontSize},
     }
     
     fpsLbl = Chili.Label:New{
         caption = 'FPS:   ',
-        x = 59,
-        y = 1,
+        x = '33%',
+        y = '10%',
+        font = {size=fontSize},
     }
     
     menuBtn = Chili.Button:New{
         caption = 'Menu', 
-        right   = 0,
-        height  = '100%', 
-        width   = 50,
-        borderColor = {0,0,0,0},
+        right   = '2%',
+        y = '0%',
+        width   = '30%',
+        height = '100%',
+        --borderColor = {0,0,0,0},
         backgroundColor = sliderColour,
+        font = {size=fontSize},
         Onclick = {
             function() 
                 WG.MainMenu.ShowHide() 
@@ -103,14 +108,10 @@ local function loadMinMenu()
     
     minMenu = Chili.Window:New{
         parent    = Chili.Screen0,
-        right     = 5, 
-        y         = nil, 
-        width     = 200,
-        minheight = 20, 
-        height    = 20,
-        padding   = {5,0,0,0},
+        padding   = {0,0,0,0},
         color = buttonColour,
         caption = "",
+        minheight = 0,
         children  = {timeLbl,fpsLbl,menuBtn}
     }
     
@@ -122,6 +123,7 @@ function widget:Initialize()
     buttonColour = WG.buttonColour
     panelColour = WG.panelColour
     sliderColour = WG.sliderColour
+    fontSize = WG.RelativeFontSize(relFontSize)
     
     Menu = WG.MainMenu
     loadMinMenu()
@@ -159,8 +161,19 @@ function widget:ViewResize()
 end
 
 function ResizeUI()
-    local y = WG.UIcoords.resBars.h + 3
-    minMenu:SetPos(_,y,_,_)
+    local x = WG.UIcoords.clockFPS.x
+    local y = WG.UIcoords.clockFPS.y
+    local w = WG.UIcoords.clockFPS.w
+    local h = WG.UIcoords.clockFPS.h
+    minMenu:SetPos(x,y,w,h)
+    
+    fontSize = WG.RelativeFontSize(relFontSize)
+    timeLbl.font.size = fontSize
+    timeLbl:Invalidate()
+    fpsLbl.font.size = fontSize
+    fpsLbl:Invalidate()
+    menuBtn.font.size = fontSize
+    menuBtn:Invalidate()
 end
 
 function widget:GameFrame(n)

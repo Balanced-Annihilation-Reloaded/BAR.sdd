@@ -67,6 +67,8 @@ local outlineColor = {
 local labelVar         = 0
 local trackLabel        = ''
 local labelScrollSpeed = 10
+local relFontSize = 15
+local fontSize
 
 local music_credits = VFS.LoadFile('credits_music.txt')
 
@@ -156,10 +158,10 @@ local function createUI()
     -- extra sliders for individual battle/music volumes
 
     battle_volume = Chili.Trackbar:New{
-        right    = 45,
-        height   = 15, 
-        bottom   = 0, 
-        width    = 100, 
+        x        = '21%',
+        height   = '22%', 
+        y        = '36%', 
+        width    = '48%', 
         value    = battleVolume,
         borderColor = sliderColour,
         backgroundColor = sliderColour,
@@ -167,18 +169,18 @@ local function createUI()
     }
 
     battle_pic = Chili.Image:New{
-        bottom = 1, 
-        right  = 150,
-        width  = 15,
-        height = 15,
+        x = '8%',
+        y = '30%',
+        width = '8%',
+        height = '25%',
         file   = tankPic,
     }
 
     music_volume = Chili.Trackbar:New{
-        right    = 45,
-        height   = 15, 
-        bottom   = 20, 
-        width    = 100, 
+        x        = '21%',
+        height   = '22%', 
+        y        = '6%', 
+        width    = '48%', 
         value    = musicVolume,
         borderColor = sliderColour,
         backgroundColor = sliderColour,
@@ -186,19 +188,17 @@ local function createUI()
     }
 
     music_pic = Chili.Image:New{
-        bottom = 22, 
-        right = 150,
-        width = 15,
-        height = 15,
+        x = '8%',
+        y = 0,
+        width = '8%',
+        height = '25%',
         file = notePic,
     }
 
     extra_sliders = Chili.Control:New{
         parent   = screen0,
-        right    = 0, 
-        y        = 105, 
-        height   = 65, 
-        width    = 200, 
+        padding  = {0,0,0,0},
+        margin  = {0,0,0,0},
         children = {battle_pic, battle_volume, music_pic, music_volume},
     }
 
@@ -208,53 +208,55 @@ local function createUI()
     
     vol_button = Chili.Button:New{
         caption = 'Vol',
-        bottom  = 8, 
-        right   = 150,
-        width   = 35,
-        height  = 22,
+        x       = 0,
+        width   = '18%',
+        height  = '40%',
+        bottom  = '58%',
+        padding     = {0,0,0,0},
         borderColor = buttonColour,
         backgroundColor = buttonColour,
         onclick = {ToggleSepSliders},
+        font = {size=fontSize},
     }
 
     -- normally displayed gui
 
     master_volume = Chili.Trackbar:New{
-        right    = 85,
-        height   = 15, 
-        bottom   = 10, 
-        width    = 60, 
+        right    = '31%',
+        height   = '35%', 
+        bottom   = '60%', 
+        width    = '50%', 
         value    = masterVolume,
         borderColor = sliderColour,
         backgroundColor = sliderColour,
-          OnChange = {function(self)    Spring.SendCommands('set snd_volmaster ' .. self.value) end},
+        OnChange = {function(self)    Spring.SendCommands('set snd_volmaster ' .. self.value) end},
     }
     
     playIcon = Chili.Image:New{
         name   = 'playIcon',
-        x      = 4,
-        y      = 8, 
-        right  = 4, 
-        bottom = 0,
+        x      = '30%',
+        y      = '40%', 
+        right  = '30%', 
+        bottom = '20%',
         file   = 'luaUI/Images/playsong.png',
     }
     
     pauseIcon = Chili.Image:New{
         name   = 'pauseIcon',
-        x      = 4,
-        y      = 8, 
-        right  = 4, 
-        bottom = 0, 
+        x      = '30%',
+        y      = '40%', 
+        right  = '30%', 
+        bottom = '20%',
         file   = 'luaUI/Images/pausesong.png'
     }
     
     playButton = Chili.Button:New{
         paused   = false,
-        right    = 42,
-        bottom   = 0,
-        width    = 40,
-        height   = 40,
-        padding     = {8,8,8,8},
+        right    = '15%', 
+        bottom   = '47%',
+        width    = '15%', 
+        height   = '80%', 
+        padding     = {0,0,0,0},
         borderColor = buttonColour,
         backgroundColor = buttonColour,
         caption  = '', 
@@ -280,20 +282,21 @@ local function createUI()
     
     skipButton = Chili.Button:New{
         right    = 0, 
-        bottom   = 0, 
-        width    = 40, 
-        height   = 40, 
-        padding     = {8,8,8,8}, 
+        bottom   = '47%',
+        width    = '15%', 
+        height   = '80%', 
+        padding     = {0,0,0,0}, 
+        margin     = {0,0,0,0}, 
         borderColor = buttonColour,
         backgroundColor = buttonColour,
         caption  = '',
         OnClick  = {function() playNew = true end},
         children = {
             Chili.Image:New{
-                x      = 4,
-                y      = 8, 
-                right  = 4, 
-                bottom = 0,
+                x      = '30%',
+                y      = '40%', 
+                right  = '30%', 
+                bottom = '20%',
                 file   = 'luaUI/Images/nextsong.png',
             }
         },
@@ -301,35 +304,55 @@ local function createUI()
     
     musicControl = Chili.Control:New{
         parent   = screen0,
-        right    = 0, 
-        y        = 95, 
-        height   = 40, 
-        width    = 300, 
+        x        = 0,
+        y        = '19%', 
+        height   = '75%', 
+        width    = '100%', 
         children = {skipButton, playButton, master_volume, vol_button},
+    }    
+
+    
+    songLabel = Chili.Label:New{
+        x = '1%', 
+        y = '10%',
+        width = '99%',
+        caption = 'No Song',
+        font = {size=fontSize},
     }
-    
-    songLabel = Chili.Label:New{x = 0, caption = 'No Song'}
-    
+
     window0    = Chili.Window:New{
-        parent    = screen0,
-        minHeight = 0, 
-        right     = 5, 
-        y         = 80, 
-        height    = 20,
-        width     = 200,
-        padding   = {5,2,5,0},
+        minheight = 0,
+        x         = 0, 
+        y         = 0, 
+        height    = '25%',
+        width     = '100%',
+        padding   = {0,0,0,0},
         color = buttonColour,
         children  = {songLabel},
     }
+    
+    control = Chili.Control:New{
+        parent = screen0,
+        padding   = {0,0,0,0},
+        children = {musicControl, window0}
+    }    
     
     ResizeUI()
 end
 
 function ResizeUI()
-    local y = WG.UIcoords.resBars.h + 3 + 25
-    window0:SetPos(_,y,_,_)
-    musicControl:SetPos(_,y+15,_,_)
-    extra_sliders:SetPos(_,y+25,_,_)
+    local x = WG.UIcoords.musicPlayer.x
+    local y = WG.UIcoords.musicPlayer.y
+    local w = WG.UIcoords.musicPlayer.w
+    local h = WG.UIcoords.musicPlayer.h
+    control:SetPos(x,y,w,h)
+    extra_sliders:SetPos(x,y+h/1.85,w,h)
+    
+    fontSize = WG.RelativeFontSize(relFontSize)
+    songLabel.font.size = fontSize
+    songLabel:Invalidate()
+    vol_button.font.size = fontSize
+    vol_button:Invalidate()
 end
 
 function playNewTrack()
@@ -454,6 +477,8 @@ function widget:Initialize()
     buttonColour = WG.buttonColour
     panelColour = WG.panelColour
     sliderColour = WG.sliderColour
+    fontSize = WG.RelativeFontSize(relFontSize)
+    
     createUI()
     
     Menu = WG.MainMenu

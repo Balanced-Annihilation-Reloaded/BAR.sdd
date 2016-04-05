@@ -16,7 +16,7 @@
 
 -- stable release?
 local isStable = false
-local CONFIG_VERSION = 2 -- increment to force a blank config/order on users
+local CONFIG_VERSION = 3 -- increment to force a blank config/order on users
 
 function includeZIPFirst(filename, envTable)
   if (string.find(filename, '.h.lua', 1, true)) then

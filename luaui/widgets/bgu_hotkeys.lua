@@ -48,6 +48,9 @@ local binds = {
     "bind ,    buildfacing inc", --because some keyboards don't have [ and ] keys
     "bind .    buildfacing dec",
     "bind o buildfacing inc", --apparently some keyboards don't have , and . either...
+    
+    -- png screenshots
+    "bind f12 screenshot png",
 }
     
 local unbinds={
@@ -64,6 +67,7 @@ local unbinds={
     "bind . nextmenu",
     "bind Alt+enter fullscreen",
     "bind backspace mousestate",
+    "bind f12 screenshot",
 }
 
 function SetBinds()

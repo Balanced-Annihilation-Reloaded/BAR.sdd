@@ -398,7 +398,7 @@ end
 function RelativeFontSize(i)
     -- set font sizes relative to vsy=1000
     local size = i*vsy/1000
-    size = floor(size+0.5)
+    size = floor(size/2+0.5)*2
     return size
 end
 

@@ -1088,8 +1088,8 @@ local function CreateInterfaceTab()
                 children = {
                     Chili.TextBox:New{x='0%',width='40%',text="Layout:"},
                     Chili.ComboBox:New{x='40%',width='60%',
-                        items    = {"inverted", "classic", "classic2","inverted2","new1","new2"},
-                        selected = (WG.UIcoords.layout=="inverted" and 1) or (WG.UIcoords.layout=="classic" and 2) or (WG.UIcoords.layout=="classic2" and 3),
+                        items    = {"inverted", "classic", "hybrid","corner"},
+                        selected = (WG.UIcoords.layout=="inverted" and 1) or (WG.UIcoords.layout=="classic" and 2) or (WG.UIcoords.layout=="hybrid" and 3) or (WG.UIcoords.layout=="corner" and 4),
                         OnSelect = {
                             function(self,sel)
                                 local layout = self.items[sel]

@@ -139,7 +139,7 @@ function Classic()
     }
 end
 
-function Classic2()
+function Hybrid()
     local minimapW,minimapH = GetMinimapDimensions(0.12, 0.27, 0.12, 0.27)
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
     local sInfoH = 0.23
@@ -219,51 +219,10 @@ function Inverted()
     }
 end
 
-
--------------------------------------
--- inverted2 WIP -- needs (WIP) horizontal build menu
-function Inverted2()
-    local minimapW,minimapH = GetMinimapDimensions(0.12, 0.28, 0.12, 0.28)
-    local minimap = {x=0, y=1-minimapH, w=minimapW, h=minimapH}
-    local sInfo = {x=0, y=0, w=0.2/screenAspect, h=0.2}
-    
-    local buildMenu = {x=minimapW, y=1-minimapH, w=nil, h=minimapH} 
-    local buildGrid = {wantedRows=4, wantedCols=4, paddingRows=0, paddingCols=0, maxRows=4, maxCols=6}
-    
-    local facBarButton = {h=0.06}
-
-    local stateMenu = {x=sInfo.w, y=0, w=0.06, h=sInfo.h}
-    local stateGrid = {rows=9, cols=1, orientation="top"}
-
-    local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
-    local orderMenu = {x=0, y=minimap.y-3*orderMenuButton.h, w=nil, h=nil}
-    local orderGrid = {rows=3, cols=8} -- it might override 
-    
-    local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
-    local clockFPS = {x=1-0.16, y=resBars.h+0.005, w=0.155, h=0.02}
-    local musicPlayer = {x=1-0.16, y=clockFPS.y+clockFPS.h+0.005, w=0.155, h=0.09}
-    local comCounter = {x=clockFPS.x-0.06/screenAspect-0.005, y=resBars.h, w=0.06/screenAspect, h=0.06}
-
-    local consoleLeft = stateMenu.x+stateMenu.w+0.05
-    local consoleRight = resBars.x
-    local console = {x=consoleLeft, y=0, w=max(0,consoleRight-consoleLeft), h=0.15}
-    local chonsole = {x=consoleLeft, y=console.h, w=console.w, h=nil}
-    
-    UIcoords = {
-        minimap=minimap, sInfo=sInfo, 
-        buildMenu=buildMenu, buildGrid=buildGrid,
-        facBarButton=facBarButton,
-        stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
-        orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
-        resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
-        console=console, chonsole=chonsole,
-    }
-end
-
 -------------------------------------
 -- new1 another WIP -- needs (WIP) horizontal build menu
 
-function New1()    
+function Corner()    
     local minimapW,minimapH = GetMinimapDimensions(0.12, 0.27, 0.12, 0.27)
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
     local sInfo = {x=0, y=1-minimapH, w=minimapH/screenAspect, h=minimapH}
@@ -300,48 +259,6 @@ function New1()
         console=console, chonsole=chonsole,
     }
 end
--------------------------------------
--- New2 another WIP -- needs (WIP) horizontal build menu
-
-function New2()    
-    local minimapW,minimapH = GetMinimapDimensions(0.12, 0.27, 0.12, 0.27)
-    local minimap = {x=0, y=0, w=minimapW, h=minimapH}
-
-    local sInfoH = 0.23
-    local sInfo = {x=0, y=max(minimapH,0.2), w=sInfoH/screenAspect, h=sInfoH}
-
-    local buildMenu = {x=0, y=1-minimapH, w=nil, h=minimapH} 
-    local buildGrid = {wantedRows=4, wantedCols=4, paddingRows=0, paddingCols=0, maxRows=4, maxCols=6}
-    
-    local facBarButton = {h=0.06}
-
-    local stateMenu = {x=sInfo.w, y=sInfo.y, w=0.06, h=sInfo.h}
-    local stateGrid = {rows=9, cols=1, orientation="top"}
-    
-    local orderMenuButton = {w=0.055/screenAspect, h=0.055}        
-    local orderMenu = {x=0, y=buildMenu.y-3*orderMenuButton.h, w=nil, h=nil}
-    local orderGrid = {rows=3, cols=8} -- it might override 
-    
-    local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
-    local clockFPS = {x=1-0.16, y=resBars.h+0.005, w=0.155, h=0.02}
-    local musicPlayer = {x=1-0.16, y=clockFPS.y+clockFPS.h+0.005, w=0.155, h=0.09}
-    local comCounter = {x=clockFPS.x-0.06/screenAspect-0.005, y=resBars.h, w=0.06/screenAspect, h=0.06}
-
-    local consoleLeft = minimapW+0.05
-    local consoleRight = resBars.x
-    local console = {x=consoleLeft, y=0, w=max(0,consoleRight-consoleLeft), h=0.15}
-    local chonsole = {x=consoleLeft, y=console.h, w=console.w, h=nil}
-    
-    UIcoords = {
-        minimap=minimap, sInfo=sInfo, 
-        buildMenu=buildMenu, buildGrid=buildGrid,
-        facBarButton=facBarButton,
-        stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
-        orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
-        resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
-        console=console, chonsole=chonsole,
-    }
-end
 
 
 -------------------------------------
@@ -353,11 +270,9 @@ function SetLayout(layout)
     options.layout = layout
     
     if layout=="classic" then Classic()
-    elseif layout=="classic2" then Classic2()
+    elseif layout=="hybrid" then Hybrid()
     elseif layout=="inverted" then Inverted()
-    elseif layout=="inverted2" then Inverted2()
-    elseif layout=="new1" then New1()
-    elseif layout=="new2" then New2()
+    elseif layout=="corner" then Corner()
     end
     
     WG.UIcoords = ApplyViewGeometry(UIcoords)

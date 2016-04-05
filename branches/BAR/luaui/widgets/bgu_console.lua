@@ -105,7 +105,6 @@ function widget:ViewResize(_,_)
     screenResized = true  
     
     fontSize = math.max(14, WG.RelativeFontSize(relFontSize))
-    Spring.Echo(fontSize)
     for _,child in ipairs(log.children) do
         child.font.size = fontSize --fixme
         child:Invalidate()

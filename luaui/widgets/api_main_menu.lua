@@ -7,7 +7,7 @@ function widget:GetInfo()
         author  = 'Funkencool, Bluestone',
         date    = '2013',
         license = 'GNU GPL v2',
-        layer   = -100, -- load after chili API stuff
+        layer   = -100, -- load after chili API & related stuff
         handler = true,
         enabled = true,
         api     = true,

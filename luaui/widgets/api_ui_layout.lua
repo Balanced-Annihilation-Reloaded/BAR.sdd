@@ -111,9 +111,8 @@ function Classic()
     
     local facBarButton = {h=0.06}
     
-    local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
-    local stateMenu = {x=sInfo.w, y=1-sInfo.h, w=stateMenuButton.w, h=sInfo.h}
-    local stateGrid = {orientation="bottom"}
+    local stateMenu = {x=sInfo.w, y=1-sInfo.h, w=0.06, h=sInfo.h}
+    local stateGrid = {rows=9, cols=1, orientation="bottom"}
     
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local orderMenu = {x=stateMenu.x+stateMenu.w, y=1-3*orderMenuButton.h, w=nil, h=nil}    
@@ -133,7 +132,7 @@ function Classic()
         minimap=minimap, sInfo=sInfo, 
         buildMenu=buildMenu, buildGrid=buildGrid,
         facBarButton=facBarButton,
-        stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
+        stateMenu=stateMenu, stateGrid=stateGrid,
         orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
         resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
         console=console, chonsole=chonsole,
@@ -151,9 +150,8 @@ function Classic2()
     
     local facBarButton = {h=0.06}
 
-    local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
-    local stateMenu = {x=sInfo.w, y=sInfo.y, w=stateMenuButton.w, h=sInfo.h}
-    local stateGrid = {orientation="bottom"}
+    local stateMenu = {x=sInfo.w, y=sInfo.y, w=0.06, h=sInfo.h}
+    local stateGrid = {rows=9, cols=1, orientation="bottom"}
     
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local orderMenu = {x=0.25, y=1-3*orderMenuButton.h, w=nil, h=nil}    
@@ -193,9 +191,8 @@ function Inverted()
     
     local facBarButton = {h=0.06}
 
-    local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
-    local stateMenu = {x=sInfo.w, y=0, w=stateMenuButton.w, h=sInfo.h}
-    local stateGrid = {orientation="top"}
+    local stateMenu = {x=sInfo.w, y=0, w=0.06, h=sInfo.h}
+    local stateGrid = {rows=9, cols=1, orientation="bottom"}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local orderMenu = {x=minimapW, y=1-3*orderMenuButton.h, w=nil, h=nil} 
@@ -235,9 +232,8 @@ function Inverted2()
     
     local facBarButton = {h=0.06}
 
-    local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
-    local stateMenu = {x=sInfo.w, y=0, w=stateMenuButton.w, h=sInfo.h}
-    local stateGrid = {orientation="top"}
+    local stateMenu = {x=sInfo.w, y=0, w=0.06, h=sInfo.h}
+    local stateGrid = {rows=9, cols=1, orientation="top"}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local orderMenu = {x=0, y=minimap.y-3*orderMenuButton.h, w=nil, h=nil}
@@ -277,9 +273,8 @@ function New1()
 
     local facBarButton = {h=0.06}
 
-    local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
-    local stateMenu = {x=0, y=1-2*sInfo.h, w=stateMenuButton.w, h=sInfo.h}
-    local stateGrid = {orientation="bottom"}
+    local stateMenu = {x=0, y=1-2*sInfo.h, w=0.06, h=sInfo.h}
+    local stateGrid = {rows=9, cols=1, orientation="bottom"}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local orderMenu = {x=stateMenu.w, y=1-sInfo.h-3*orderMenuButton.h, w=nil, h=nil}
@@ -320,9 +315,8 @@ function New2()
     
     local facBarButton = {h=0.06}
 
-    local stateMenuButton = {w=min(0.1,70/vsy), h=0.02}
-    local stateMenu = {x=sInfo.w, y=sInfo.y, w=stateMenuButton.w, h=sInfo.h}
-    local stateGrid = {orientation="top"}
+    local stateMenu = {x=sInfo.w, y=sInfo.y, w=0.06, h=sInfo.h}
+    local stateGrid = {rows=9, cols=1, orientation="top"}
     
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}        
     local orderMenu = {x=0, y=buildMenu.y-3*orderMenuButton.h, w=nil, h=nil}

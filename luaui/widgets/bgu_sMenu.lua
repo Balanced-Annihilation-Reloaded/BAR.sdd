@@ -31,6 +31,12 @@ local wantedPaddingRows
 local orderRows 
 local orderCols 
 
+local relSmallMenuFont, relLargeMenuFont = 14,18
+local smallMenuFont, largeMenuFont
+
+local relFontSize = 16
+local fontSize
+
 -- custom command IDs for LuaUIs CMD table
 local CMD_UNIT_SET_TARGET = 34923
 CMD.UNIT_SET_TARGET = CMD_UNIT_SET_TARGET
@@ -275,48 +281,7 @@ function CountTable(t)
 end
 
 ---------------------------------------------------------------
-local function cmdAction(obj, x, y, button, mods)
-    if obj.disabled then return end
-    if button~=1 and button~=3 then return false end 
-    
-    -- if we are called from the LOADED tab, select the unload command
-    -- TODO: implement new transporters and per unitDef unloading
-    if obj.parent.name=="grid_LOADED" then
-        local index = spGetCmdDescIndex(CMD.UNLOAD_UNITS)
-        if (index) then
-            local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
-            local left, right = (button == 1), (button == 3)
-            spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)   
-        end
-        return
-    end
-    
-    -- if we are called from any other tab
-    -- tell initial queue / set active command that we want to build this unit
-    if not gameStarted then 
-        if  WG.InitialQueue then 
-            WG.InitialQueue.SetSelDefID(-obj.cmdId)
-        end
-    else
-        local index = spGetCmdDescIndex(obj.cmdId)
-        if (index) then
-            local left, right = (button == 1), (button == 3)
-            local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
-            spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)
-        end  
-    end
-    return true
-end
-
-local function showGrid(num)
-    for i=1,#catNames do
-        if  i == num and grid[i].hidden then
-            grid[i]:Show()
-        elseif i ~= num and grid[i].visible then
-            grid[i]:Hide()
-        end
-    end
-end
+-- ui positions etc
 
 local function FinalizeOrderGrid()
     -- use more order rows if the order buttons won't fit into the screen width
@@ -350,6 +315,9 @@ local function FinalizeOrderGrid()
 end
 
 local function resizeUI()
+    -- fontSize
+    fontSize = WG.RelativeFontSize(relFontSize)
+    
     -- build grid dimensions
     wantedBuildRows = WG.UIcoords.buildGrid.wantedRows 
     wantedBuildCols = WG.UIcoords.buildGrid.wantedCols 
@@ -368,7 +336,35 @@ local function resizeUI()
     local bh = WG.UIcoords.buildMenu.h
     local bw = bh * buildCols / buildRows -- better to keep consistent layout & not use small buttons when possible
     buildMenu:SetPos(bx,by,bw,bh) 
-    menuTabs:SetPos(bx+bw,by+20)
+    
+    -- menu tabs (pinned to build menu)
+    local vsx,_ = Spring.GetViewGeometry()
+    smallMenuFont = WG.RelativeFontSize(relSmallMenuFont)
+    largeMenuFont = WG.RelativeFontSize(relLargeMenuFont)
+    smallMenuWidth = 0.07*vsx
+    largeMenuWidth = 0.09*vsx    
+    menuTabs:SetPos(bx+bw, by+bh/10, largeMenuWidth, bh) 
+    makeMenuTabs() --lazy, fixme
+   
+    -- build menu buttons
+    for _,button in pairs(unitButtons) do
+        local q = button.children[1].children[1]
+        q.font.size = fontSize
+        q:Invalidate()
+        local hotkey = button.children[1].children[2]
+        hotkey.font.size = fontSize
+        hotkey:Invalidate()
+    end    
+    
+    -- state grid dimension
+    stateMenu.rows = WG.UIcoords.stateGrid.rows
+    stateMenu.columns = WG.UIcoords.stateGrid.cols
+    
+    -- state menu text
+    for _,button in pairs(stateButtons) do
+        button.font.size = fontSize
+        button:Invalidate()
+    end
     
     -- state menu position
     local sx = WG.UIcoords.stateMenu.x
@@ -396,37 +392,55 @@ local function resizeUI()
         orderGrid[i].columns = orderCols
         orderGrid[i]:SetPos(0, (i-1)*oh/#orderMenuLayout, ow, oh/#orderMenuLayout)
     end
+    
+    -- order buttons
+    for _,button in pairs(orderButtons) do
+        local hotkey = button.children[1].children[1]
+        if hotkey then
+            hotkey.font.size = fontSize
+            hotkey:Invalidate()
+        end
+    end
+end
+
+local function showGrid(num)
+    for i=1,#catNames do
+        if  i == num and grid[i].hidden then
+            grid[i]:Show()
+        elseif i ~= num and grid[i].visible then
+            grid[i]:Hide()
+        end
+    end
 end
 
 local function selectTab(self)
     if not self then return end 
+    
     local choice = self.tabNum
     showGrid(choice)
-    
-    local highLight = menuTab[menuTabs.choice] 
-    if highLight then
-        highLight.font.color = darkenedMenuTabColor
-        highLight.font.size  = 14
-        highLight.width = 100
-        highLight:Invalidate()
-    end
-    
-    local old = menuTab[choice] 
+    selectedTab = choice 
+    resizeUI()        
+        
+    local old = menuTab[menuTabs.prevChoice] 
     if old then
         old.font.color = menuTabColor
-        old.width = 120
-        old.font.size  = 18
+        old.font.size  = smallMenuFont
+        old.width = smallMenuWidth
         old:Invalidate()
+    end
+
+    local highLight = menuTab[choice] 
+    if highLight then
+        highLight.font.color = darkenedMenuTabColor
+        highLight.font.size  = largeMenuFont
+        highLight.width = largeMenuWidth
+        highLight:Invalidate()
     end
 
     menuTabs.choice = choice
     if choice ~= buildMenuCat or (choice==buildMenuCat and (#grid[1].children>0 or #grid[1].children>0)) then
         menuTabs.prevChoice = choice 
     end
-
-    selectedTab = choice
-    
-    resizeUI()    
 end
 
 local function scrollMenus(_,_,_,_,value)
@@ -446,7 +460,7 @@ local function scrollMenus(_,_,_,_,value)
 end
 
 ---------------------------------------------------------------
----------------------------------------------------------------
+-- context hotkeys
 
 function ForceUpdateHotkeys()
     local hotkeys = WG.buildingHotkeys
@@ -460,8 +474,44 @@ end
 
 
 ---------------------------------------------------------------
----------------------------------------------------------------
+-- give an order 
 
+local function cmdAction(obj, x, y, button, mods)
+    if obj.disabled then return end
+    if button~=1 and button~=3 then return false end 
+    
+    -- if we are called from the LOADED tab, select the unload command
+    -- TODO: implement new transporters and per unitDef unloading
+    if obj.parent.name=="grid_LOADED" then
+        local index = spGetCmdDescIndex(CMD.UNLOAD_UNITS)
+        if (index) then
+            local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
+            local left, right = (button == 1), (button == 3)
+            spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)   
+        end
+        return
+    end
+    
+    -- if we are called from any other tab
+    -- tell initial queue / set active command that we want to build this unit
+    if not gameStarted then 
+        if  WG.InitialQueue then 
+            WG.InitialQueue.SetSelDefID(-obj.cmdId)
+        end
+    else
+        local index = spGetCmdDescIndex(obj.cmdId)
+        if (index) then
+            local left, right = (button == 1), (button == 3)
+            local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
+            spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)
+        end  
+    end
+    return true
+end
+
+
+---------------------------------------------------------------
+-- active cmds
 
 -- Loads the build queue
 local function parseBuildQueue()
@@ -574,7 +624,7 @@ local function addState(cmd)
             borderColor = {1,1,1,0.1},
             backgroundColor = buttonColour,
             font      = {
-                size  = 16,
+                size  = fontSize,
             },
         }
         return
@@ -593,13 +643,12 @@ local function addState(cmd)
 			cmdAName  = cmd.action,
 			padding   = {0,0,0,0},
 			margin    = {0,0,0,0},
-            minheight = 22,
 			OnMouseUp = {cmdAction},
 			borderColor = {1,1,1,0.1},
 			backgroundColor = buttonColour,
 			font      = {
 				color = paramColours[caption] or white,
-				size  = 16,
+				size  = fontSize,
 			},
 		}
 		stateButtons[name] = button
@@ -621,13 +670,12 @@ local function addDummyState(cmd)
             --tooltip   = cmd.tooltip, 
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
-            minheight = 22,
             OnMouseUp = {},
             borderColor = {1,1,1,0.1},
             backgroundColor = buttonColour,
             font      = {
                 color = grey,
-                size  = 16,
+                size  = fontSize,
             },
         }
         stateButtons[name] = button
@@ -642,7 +690,6 @@ local function paddingState()
     return Chili.Control:New{
         padding   = {0,0,0,0},
         margin    = {0,0,0,0},
-        minheight = 22,
         OnMouseUp = {},
     }
 end
@@ -666,7 +713,7 @@ local function addOrderButton(item)
 			OnMouseUp = {cmdAction},
 			borderColor = {1,1,1,0.1},
 			backgroundColor = buttonColour,
-			Children  = {
+			children  = {
 				Chili.Image:New{
 					parent  = button,
 					x       = 5,
@@ -681,6 +728,7 @@ local function addOrderButton(item)
 							right  = 2,
 							y = 1,
                             font = {
+                                size = fontSize,
                                 outline          = true,
                                 autoOutlineColor = true,
                                 outlineWidth     = 5,
@@ -710,7 +758,10 @@ local function addOrderButton(item)
             num = num + (n or 0)
             queued = queued + (q or 0)
         end
-        button.children[1]:GetChildByName("stockpile_label"):SetCaption(num.."/"..queued)
+        local stockPileLbl = button.children[1]:GetChildByName("stockpile_label")
+        stockPileLbl:SetCaption(num.."/"..queued)
+        stockPileLbl.font.size = fontSize
+        stockPileLbl:Invalidate()
     end
 	button.borderColor = (cmd.id==activeSelCmdID) and button.focusColor or {1,1,1,0.1}
     
@@ -999,29 +1050,29 @@ local function ChooseTab()
 end
 
 --------------------------------------------------------------
---------------------------------------------------------------
+-- menu tabs
 
--- Creates a tab for each menu Panel with a command
-local function makeMenuTabs()
+function makeMenuTabs()
+    -- create a tab for each menu Panel with a command
     menuTabs:ClearChildren()
     menuTab = {}
     local tabCount = 0
     for i = 1, #catNames do
         if grid[i].active then
-            tabCount = tabCount + 1
             menuTab[i] = Chili.Button:New{
                 tabNum  = i,
                 tooltip = 'You can scroll through the different categories with your mouse wheel!',
                 parent  = menuTabs,
-                width   = 100,
-                y       = (tabCount - 1) * 200 / max(3,#catNames) + 1, -- panel to fit into is 200 high
-                height  = 200/max(3,#catNames)-1,
+                width   = smallMenuWidth,
+                x       = 0,
+                y       = tabCount*smallMenuFont*3.5, 
+                height  = smallMenuFont*3.5,
                 caption = catNames[i],
                 OnClick = {selectTab},
                 backgroundColor = buttonColour,
                 OnMouseWheel = {scrollMenus},
                 font    = {
-                    size             = 14,
+                    size             = smallMenuFont,
                     color            = darkenedMenuTabColor,
                     outline          = true,
                     autoOutlineColor = true,
@@ -1029,9 +1080,11 @@ local function makeMenuTabs()
                     outlineWeight    = 5,        
                 },
             }
+            tabCount = tabCount + 1
         end
     end
 end
+
 ---------------------------
 local function loadPanels()
     -- loads/reloads the build/order/state menus
@@ -1092,7 +1145,9 @@ local function loadPanels()
     -- choose active menu cat
     makeMenuTabs()
     menuTabs.choice = ChooseTab()
-    if menuTabs.choice and buildMenu.active and menuTab[menuTabs.choice] then selectTab(menuTab[menuTabs.choice]) end
+    if menuTabs.choice and buildMenu.active and menuTab[menuTabs.choice] then 
+        selectTab(menuTab[menuTabs.choice]) 
+    end
 end
 
 local function loadDummyPanels(unitDefID)
@@ -1115,11 +1170,14 @@ local function loadDummyPanels(unitDefID)
     SetGridDimensions()   
     makeMenuTabs()
     menuTabs.choice = ChooseTab()
-    if menuTabs.choice and buildMenu.active then selectTab(menuTab[menuTabs.choice]) end
+    if menuTabs.choice and buildMenu.active then 
+        selectTab(menuTab[menuTabs.choice]) 
+    end
 end
 
 ---------------------------
---
+-- cache of unit buttons
+
 local airFacs = { --unitDefs can't tell us this
     [UnitDefNames.armap.id] = true,
     [UnitDefNames.armaap.id] = true,
@@ -1155,9 +1213,10 @@ local function CreateUnitButton(name, unitDef)
                 children = {
                     Chili.Label:New{ -- # in build queue
                         caption = 'queue_' .. name,
-                        right   = 10,
-                        y       = 10,
+                        right   = '7%',
+                        y       = '7%',
                         font = {
+                            size             = fontSize,
                             outline          = true,
                             autoOutlineColor = true,
                             outlineWidth     = 5,
@@ -1167,9 +1226,10 @@ local function CreateUnitButton(name, unitDef)
                     Chili.Label:New{
                         name = 'hotkey_' .. name,
                         caption = '',
-                        right   = 10,
-                        bottom = 10,
+                        right   = '7%',
+                        bottom = '5%',
                         font = {
+                            size             = fontSize,
                             outline          = true,
                             autoOutlineColor = true,
                             outlineWidth     = 5,
@@ -1195,13 +1255,13 @@ local function CreateUnitButton(name, unitDef)
         [3] = {image="plane.png",    used = (unitDef.isAirUnit or unitDef.isAirBase or airFacs[unitDef.id] or (unitDef.weapons[1] and unitDef.weapons[1].onlyTargets.vtol and not unitDef.weapons[1].onlyTargets.all))},
     }
     
-    local y = 10
+    local y = 7 -- %
     for _,icon in ipairs(extraIcons) do
         if icon.used then
             Chili.Image:New{
                 parent = unitButtons[unitDefID].children[1].children[3],
-                x = 10, bottom = y,
-                height = 15, width = 15,
+                x = '10%', bottom = y .. '%',
+                height = '15%', width = '15%', keepAspect = true,
                 file   = imageDir..icon.image,
             }
             y = y + 16        
@@ -1256,8 +1316,6 @@ function widget:Initialize()
         parent  = screen0,
         choice  = 1,
         prevChoice = 1,
-        height  = 200,
-        width   = 120,
         padding = {0,0,0,0},
         margin  = {0,0,0,0},
     }
@@ -1285,7 +1343,7 @@ function widget:Initialize()
         name    = "state grid",
         parent  = screen0,
         columns = 1,
-        rows    = 9,
+        rows    = 1,
         orientation = 'vertical',
         padding = {0,0,0,0},
     }

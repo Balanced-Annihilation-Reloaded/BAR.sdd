@@ -33,7 +33,8 @@ local cfg = {
     hideChat = true,
     msgCap   = 50,
 }
-local fontSize = 16
+local relFontSize = 17
+local fontSize
 ------------
 
 -- Chili elements --
@@ -52,6 +53,7 @@ local startTime = endTime --time of last message (or last time at which we check
 local myID = Spring.GetMyPlayerID()
 local myAllyID = Spring.GetMyAllyTeamID()
 local gameOver = false --is the game over?
+local chonsoleVisible = false
 ---------------------
 
 -- Text Colour Config --
@@ -84,14 +86,15 @@ end
 
 local function hideChat()
     -- hide the chat, unless the mouse is hovering over the chat window
-    if msgWindow.visible and cfg.hideChat and not mouseIsOverChat() then
+    if msgWindow.visible and cfg.hideChat and not mouseIsOverChat() and not chonsoleVisible then
         msgWindow:Hide()
+        msgWindow:SetScrollPos(_,10000) -- bottom
     end
 end
 
 local screenResized = true
 local hackResize = true
-function widget:ViewResize(viewSizeX, viewSizeY)
+function widget:ViewResize(_,_)
     local x = WG.UIcoords.console.x
     local y = WG.UIcoords.console.y
     local w = WG.UIcoords.console.w
@@ -100,6 +103,14 @@ function widget:ViewResize(viewSizeX, viewSizeY)
     window:SetPos(x,1,w,h)
     hackResize = spGetDrawFrame()+1
     screenResized = true  
+    
+    fontSize = math.max(14, WG.RelativeFontSize(relFontSize))
+    Spring.Echo(fontSize)
+    for _,child in ipairs(log.children) do
+        child.font.size = fontSize --fixme
+        child:Invalidate()
+    end
+    log:Invalidate()
 end
 
 local function loadWindow()
@@ -143,9 +154,7 @@ local function loadWindow()
         itemPadding = {3,0,3,2},
         itemMargin  = {3,0,3,2},
         preserveChildrenOrder = true,
-    }
-    
-    widget:ViewResize(screen.width, screen.height)
+    }    
 end
 
 local function loadOptions()
@@ -188,13 +197,18 @@ local function getInline(r,g,b)
     end
 end
 
+function SetChatMode(v)
+    chonsoleVisible = v 
+    showChat()
+end
+
 function widget:Initialize()
     Chili  = WG.Chili
     screen = Chili.Screen0
     buttonColour = WG.buttonColour
     panelColour = WG.panelColour
     sliderColour = WG.sliderColour    
-    Menu   = WG.MainMenu
+    Menu = WG.MainMenu
     
     if Menu then 
         loadOptions() 
@@ -202,8 +216,14 @@ function widget:Initialize()
     
     loadWindow()
     
+    widget:ViewResize()
+    
     -- disable engine console
     spSendCommands('console 0')    
+    
+    -- expose to chonsole
+    WG.Console = {}
+    WG.Console.SetChatMode = SetChatMode 
 end
 
 

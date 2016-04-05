@@ -325,6 +325,9 @@ function widget:KeyPress(key, ...)
                 currentContext = { display = i18n("say_context", {default="Say:"}), name = "say", persist = true }
             end
 			ebConsole:Show()
+            if WG.Console then
+                WG.Console.SetChatMode(true)
+            end
 		end
 		screen0:FocusControl(ebConsole)
 		if currentContext == nil or not currentContext.persist then
@@ -542,6 +545,9 @@ function HideConsole()
 	currentSubSuggestion = 0
 	lblContext:Hide()
 	HideSuggestions()
+    if WG.Console then
+        WG.Console.SetChatMode(false)
+    end
 end
 
 function string.starts(String,Start)

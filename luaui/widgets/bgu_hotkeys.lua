@@ -167,43 +167,9 @@ local contextHotkeys = {} -- equal to waterHotkeys or landHotkeys, according to 
 local prevInWater
 
 
-function Cost(uDef)
-    return 60*uDef.metalCost + uDef.energyCost
-end
-
 function MustBeBuiltInWater(uDID)
     -- must be built in water (we only care about immobile units)
     return UnitDefs[uDID].maxWaterDepth>0
-end
-
-function WaterOnly(unitDef)
-    -- from sMenu
-    local water = (unitDef.minWaterDepth>0) or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
-    return water
-end
-
-function BuildComparator(item1, item2)
-    -- from sMenu
-    -- determines the order of uDIDs in the build menu
-    local uDef1 = UnitDefs[item1.uDID]
-    local uDef2 = UnitDefs[item2.uDID]
-    
-    -- cons at top
-    local con1 = uDef1.isBuilder
-    local con2 = uDef2.isBuilder
-    if (con1 and not con2) then return true end
-    if (con2 and not con1) then return false end
-
-    -- water at bottom
-    local water1 = WaterOnly(uDef1)
-    local water2 = WaterOnly(uDef2)
-    if (water1 and not water2) then return false end
-    if (water2 and not water1) then return true end
-    
-    -- then by cost
-    local cost1 = Cost(uDef1)
-    local cost2 = Cost(uDef2)
-    return (cost1<cost2)
 end
 
 function ConstructUnitOrder(Filter)
@@ -216,7 +182,7 @@ function ConstructUnitOrder(Filter)
             t[#t+1] = {uDID=uDID}
         end
     end
-    table.sort(t, BuildComparator)
+    table.sort(t, WG.BuildOrderComparator)
     local t2 = {}
     for k,v in ipairs(t) do
         t2[k] = v.uDID

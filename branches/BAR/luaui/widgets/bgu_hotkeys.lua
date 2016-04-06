@@ -178,8 +178,7 @@ end
 
 function WaterOnly(unitDef)
     -- from sMenu
-    local water = (unitDef.minWaterDepth and unitDef.minWaterDepth>0) 
-            or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
+    local water = (unitDef.minWaterDepth>0) or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
     return water
 end
 

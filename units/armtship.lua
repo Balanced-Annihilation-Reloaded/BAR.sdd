@@ -21,7 +21,7 @@ return {
 		loadingradius = 250,
 		maxdamage = 11010,
 		maxvelocity = 3.34,
-		minwaterdepth = 0,
+		minwaterdepth = 1,
 		movementclass = "DBOAT6",
 		name = "Hulk",
 		nochasecategory = "ALL",

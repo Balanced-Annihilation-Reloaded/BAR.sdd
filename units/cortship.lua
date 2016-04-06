@@ -24,7 +24,7 @@ return {
 		loadingradius = 250,
 		maxdamage = 11420,
 		maxvelocity = 3.22,
-		minwaterdepth = 0,
+		minwaterdepth = 1,
 		movementclass = "DBOAT6",
 		name = "Envoy",
 		nochasecategory = "ALL",

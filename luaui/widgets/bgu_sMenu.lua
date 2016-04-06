@@ -515,8 +515,7 @@ function Cost(uDef)
 end
 
 function WaterOnly(unitDef)
-    local water = (unitDef.minWaterDepth and unitDef.minWaterDepth>0) 
-            or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
+    local water = (unitDef.minWaterDepth>0) or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
     return water
 end
 

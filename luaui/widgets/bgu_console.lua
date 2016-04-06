@@ -88,7 +88,7 @@ local function hideChat()
     -- hide the chat, unless the mouse is hovering over the chat window
     if msgWindow.visible and cfg.hideChat and not mouseIsOverChat() and not chonsoleVisible then
         msgWindow:Hide()
-        msgWindow:SetScrollPos(_,10000) -- bottom
+        msgWindow.scrollPosY = msgWindow.clampY
     end
 end
 
@@ -127,8 +127,6 @@ local function loadWindow()
     -- chat box
     msgWindow = Chili.ScrollPanel:New{
         verticalSmartScroll = true,
-        scrollPosX  = 0,
-        scrollPosY  = 0,        
         parent      = window,
         x           = 0,
         y           = 0,

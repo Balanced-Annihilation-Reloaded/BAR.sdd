@@ -103,8 +103,8 @@ function Classic()
     local sInfoH = 0.23
     local sInfo = {x=0, y=1-sInfoH, w=sInfoH/screenAspect, h=sInfoH}
     
-    local buildMenu = {x=0, y=max(minimapH,0.2), w=nil, h=1-max(minimapH,0.2)-sInfo.h} 
-    local buildGrid = {wantedRows=4, wantedCols=3, paddingRows=3, paddingCols=1, maxRows=6, maxCols=5}
+    local buildMenu = {x=0, y=max(minimapH,0.2), w=0.2, h=1-max(minimapH,0.2)-sInfo.h} 
+    local buildGrid = {wantedRows=4, wantedCols=3, maxRows=6, maxCols=5, maxGUICols=4}
     
     local facBarButton = {h=0.06}
     
@@ -139,16 +139,16 @@ end
 function Hybrid()
     local minimapW,minimapH = GetMinimapDimensions(0.12, 0.27, 0.12, 0.27)
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
-    local sInfoH = 0.23
+    local sInfoH = 0.2
     local sInfo = {x=0, y=max(minimapH,0.2), w=sInfoH/screenAspect, h=sInfoH}
     
-    local buildMenu = {x=0, y=sInfo.y+sInfo.h, w=nil, h=1-max(minimapH,0.2)-sInfo.h} 
-    local buildGrid = {wantedRows=4, wantedCols=3, paddingRows=3, paddingCols=1, maxRows=6, maxCols=5}
-    
-    local facBarButton = {h=0.06}
-
     local stateMenu = {x=sInfo.w, y=sInfo.y, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, orientation="bottom"}
+
+    local buildMenu = {x=0, y=sInfo.y+sInfo.h, w=stateMenu.x+stateMenu.w, h=1-max(minimapH,0.2)-sInfo.h} 
+    local buildGrid = {wantedRows=4, wantedCols=3, maxRows=6, maxCols=5, maxGUICols=4}
+    
+    local facBarButton = {h=0.06}
     
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local orderMenu = {x=0.25, y=1-3*orderMenuButton.h, w=nil, h=nil}    
@@ -183,13 +183,13 @@ function Inverted()
     local minimap = {x=0, y=1-minimapH, w=minimapW, h=minimapH}
     local sInfo = {x=0, y=0, w=0.2/screenAspect, h=0.2}
     
-    local buildMenu = {x=0, y=0.2, w=nil, h=0.5} 
-    local buildGrid = {wantedRows=4, wantedCols=3, paddingRows=3, paddingCols=1, maxRows=6, maxCols=5}
-    
-    local facBarButton = {h=0.06}
-
     local stateMenu = {x=sInfo.w, y=0, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, orientation="bottom"}
+
+    local buildMenu = {x=0, y=0.2, w=stateMenu.x+stateMenu.w, h=0.5} 
+    local buildGrid = {wantedRows=4, wantedCols=3, maxRows=6, maxCols=5, maxGUICols=4}
+    
+    local facBarButton = {h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}    
     local orderMenu = {x=minimapW, y=1-3*orderMenuButton.h, w=nil, h=nil} 
@@ -224,8 +224,8 @@ function Corner()
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
     local sInfo = {x=0, y=1-minimapH, w=minimapH/screenAspect, h=minimapH}
         
-    local buildMenu = {x=sInfo.w, y=1-minimapH, w=nil, h=minimapH} 
-    local buildGrid = {wantedRows=3, wantedCols=3, paddingRows=0, paddingCols=0, maxRows=3, maxCols=7}
+    local buildMenu = {x=sInfo.w, y=1-minimapH, w=0.2, h=minimapH} 
+    local buildGrid = {wantedRows=3, wantedCols=3, maxRows=3, maxCols=7, maxGUICols=6}
 
     local facBarButton = {h=0.06}
 

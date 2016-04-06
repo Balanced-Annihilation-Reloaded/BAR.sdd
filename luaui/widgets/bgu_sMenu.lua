@@ -321,20 +321,18 @@ local function resizeUI()
     -- build grid dimensions
     wantedBuildRows = WG.UIcoords.buildGrid.wantedRows 
     wantedBuildCols = WG.UIcoords.buildGrid.wantedCols 
-    paddingRows     = WG.UIcoords.buildGrid.paddingRows 
-    paddingCols     = WG.UIcoords.buildGrid.paddingCols
     maxBuildRows    = WG.UIcoords.buildGrid.maxRows 
     maxBuildCols    = WG.UIcoords.buildGrid.maxCols
+    maxBuildGUICols = WG.UIcoords.buildGrid.maxGUICols
 
     local i = selectedTab
-    local buildCols = (i) and math.max(wantedBuildCols+paddingCols, math.min(maxBuildCols, grid[i].columns)) or 1
-    local buildRows = (i) and math.max(wantedBuildRows+paddingRows, math.min(maxBuildRows, grid[i].rows)) or 1
+    local buildGUICols = (i) and math.min(maxBuildGUICols, grid[i].columns) or 1
     
     -- build grid position
     local bx = WG.UIcoords.buildMenu.x
     local by = WG.UIcoords.buildMenu.y
     local bh = WG.UIcoords.buildMenu.h
-    local bw = bh * buildCols / buildRows -- better to keep consistent layout & not use small buttons when possible
+    local bw = WG.UIcoords.buildMenu.w * (buildGUICols / wantedBuildCols) -- better to keep consistent layout & not use small buttons when possible
     buildMenu:SetPos(bx,by,bw,bh) 
     
     -- menu tabs (pinned to build menu)

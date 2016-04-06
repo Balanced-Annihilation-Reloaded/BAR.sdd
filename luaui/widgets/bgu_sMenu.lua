@@ -507,6 +507,42 @@ local function cmdAction(obj, x, y, button, mods)
     return true
 end
 
+---------------------------------------------------------------
+-- sorting build menu
+
+function Cost(uDef)
+    return 60*uDef.metalCost + uDef.energyCost
+end
+
+function WaterOnly(unitDef)
+    local water = (unitDef.minWaterDepth and unitDef.minWaterDepth>0) 
+            or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
+    return water
+end
+
+function BuildComparator(item1, item2)
+    -- from sMenu
+    -- determines the order of uDIDs in the build menu
+    local uDef1 = UnitDefs[item1.uDID]
+    local uDef2 = UnitDefs[item2.uDID]
+    
+    -- cons at top
+    local con1 = uDef1.isBuilder
+    local con2 = uDef2.isBuilder
+    if (con1 and not con2) then return true end
+    if (con2 and not con1) then return false end
+
+    -- water at bottom
+    local water1 = WaterOnly(uDef1)
+    local water2 = WaterOnly(uDef2)
+    if (water1 and not water2) then return false end
+    if (water2 and not water1) then return true end
+    
+    -- then by cost
+    local cost1= Cost(uDef1)
+    local cost2= Cost(uDef2)
+    return (cost1<cost2)
+end
 
 ---------------------------------------------------------------
 -- active cmds
@@ -855,24 +891,12 @@ local function AddInSequence(items, t, Add, dummyAdd)
     end    
 end 
 
-local function AddInSortedOrder(items, Add, Score)
-    -- add items in order of score, from lowest to highest
-    local t = {}
-    for _,v in pairs(items) do
-        t[#t+1] = {item=v, score=Score(v)}
+local function AddInSortedOrder(items, Add, Comparator)
+    -- add items in order of comparator
+    table.sort(items, Comparator)
+    for _,item in ipairs(items) do
+        Add(item)
     end
-    local function Comparator(i,j)
-        return i.score<j.score
-    end
-    table.sort(t,Comparator)
-    for _,v in ipairs(t) do
-        Add(v.item)
-    end
-end
-
-function Cost(item)
-    local uDID = item.uDID
-    return 60*UnitDefs[uDID].metalCost + UnitDefs[uDID].energyCost
 end
 
 local function parseCmds()
@@ -957,7 +981,7 @@ local function parseCmds()
     
     -- Add the units, in order of lowest cost
     if #units>0 then
-        AddInSortedOrder(units, addBuild, Cost)
+        AddInSortedOrder(units, addBuild, BuildComparator)
     end
 end
 
@@ -984,7 +1008,7 @@ local function parseTransported()
     end
     
     if #units>0 then
-        AddInSortedOrder(units, addBuild, Cost)
+        AddInSortedOrder(units, addBuild, BuildComparator)
     end
 end
 
@@ -1007,7 +1031,7 @@ local function parseUnitDefCmds(uDID)
     end
 
     if #units>0 then
-        AddInSortedOrder(units, addBuild, Cost)
+        AddInSortedOrder(units, addBuild, BuildComparator)
     end
 end
 
@@ -1185,6 +1209,19 @@ local airFacs = { --unitDefs can't tell us this
     [UnitDefNames.corplat.id] = true,
 }
 
+function IsWater(unitDef)
+    local water = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25) 
+            or (unitDef.minWaterDepth and unitDef.minWaterDepth>0) 
+            or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
+    return water
+end
+
+function IsAir(unitDef)
+    local air = unitDef.isAirUnit or unitDef.isAirBase or airFacs[unitDef.id] 
+            or (unitDef.weapons[1] and unitDef.weapons[1].onlyTargets.vtol and not unitDef.weapons[1].onlyTargets.all)
+    return air
+end
+
 local function CreateUnitButton(name, unitDef)  
     -- make the button for this unit
     local unitDefID = unitDef.id
@@ -1247,10 +1284,8 @@ local function CreateUnitButton(name, unitDef)
  
     local extraIcons = {
         [1] = {image="constr.png",   used = unitDef.isBuilder},
-        [2] = {image="raindrop.png", used = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25) 
-                                             or (unitDef.minWaterDepth and unitDef.minWaterDepth>0) 
-                                             or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")},
-        [3] = {image="plane.png",    used = (unitDef.isAirUnit or unitDef.isAirBase or airFacs[unitDef.id] or (unitDef.weapons[1] and unitDef.weapons[1].onlyTargets.vtol and not unitDef.weapons[1].onlyTargets.all))},
+        [2] = {image="raindrop.png", used = IsWater(unitDef)},
+        [3] = {image="plane.png",    used = IsAir(unitDef)},
     }
     
     local y = 7 -- %

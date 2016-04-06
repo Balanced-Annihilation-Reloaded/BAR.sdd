@@ -167,8 +167,8 @@ local contextHotkeys = {} -- equal to waterHotkeys or landHotkeys, according to 
 local prevInWater
 
 
-function Cost(uDID)
-    return 60*UnitDefs[uDID].metalCost + UnitDefs[uDID].energyCost
+function Cost(uDef)
+    return 60*uDef.metalCost + uDef.energyCost
 end
 
 function MustBeBuiltInWater(uDID)
@@ -176,19 +176,48 @@ function MustBeBuiltInWater(uDID)
     return UnitDefs[uDID].maxWaterDepth>0
 end
 
-function ConstructUnitOrder(Score)
-    -- construct a table of uDIDs with non-nil score, in increasing order of score
+function WaterOnly(unitDef)
+    -- from sMenu
+    local water = (unitDef.minWaterDepth and unitDef.minWaterDepth>0) 
+            or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
+    return water
+end
+
+function BuildComparator(item1, item2)
+    -- from sMenu
+    -- determines the order of uDIDs in the build menu
+    local uDef1 = UnitDefs[item1.uDID]
+    local uDef2 = UnitDefs[item2.uDID]
+    
+    -- cons at top
+    local con1 = uDef1.isBuilder
+    local con2 = uDef2.isBuilder
+    if (con1 and not con2) then return true end
+    if (con2 and not con1) then return false end
+
+    -- water at bottom
+    local water1 = WaterOnly(uDef1)
+    local water2 = WaterOnly(uDef2)
+    if (water1 and not water2) then return false end
+    if (water2 and not water1) then return true end
+    
+    -- then by cost
+    local cost1 = Cost(uDef1)
+    local cost2 = Cost(uDef2)
+    return (cost1<cost2)
+end
+
+function ConstructUnitOrder(Filter)
+    -- construct ordered table of uDIDs matching this filter
+    -- extra packaging so as sMenu code can be used here
     local t = {}
-    for uDID,uDef in pairs(UnitDefs) do
-        local score = Score(uDID)
-        if score then
-            t[#t+1] = {uDID=uDID,score=score}
+    for uDID,_ in pairs(UnitDefs) do
+        local accept = Filter(uDID)
+        if accept then
+            t[#t+1] = {uDID=uDID}
         end
     end
-    local function Comparator (i,j)
-        return (i.score<j.score)
-    end
-    table.sort(t,Comparator)
+    table.sort(t, BuildComparator)
     local t2 = {}
     for k,v in ipairs(t) do
         t2[k] = v.uDID
@@ -250,27 +279,26 @@ function widget:Initialize()
     end
     
     -- setup Z (metal extractors)
-    local function Z_Score (uDID)
+    local function Z_Filter (uDID)
         if not UnitDefs[uDID].isExtractor then return end
-        return Cost(uDID)
+        return true
     end
-    Z_units = ConstructUnitOrder(Z_Score)
-    --Spring.Echo("Z TABLE")
-    --PrintArrayTable(Z_units)
+    Z_units = ConstructUnitOrder(Z_Filter)
+    Spring.Echo("Z TABLE")
         
     -- setup X (energy producers)
-    local function X_Score (uDID)
+    local function X_Filter (uDID)
         if not UnitDefs[uDID].isBuilding then return end
         if UnitDefs[uDID].isBuilder then return end
         if UnitDefs[uDID].energyMake<20 and (UnitDefs[uDID].tidalGenerator==0) and (UnitDefs[uDID].windGenerator==0) then return end
-        return Cost(uDID)
+        return true
     end
-    X_units = ConstructUnitOrder(X_Score)
+    X_units = ConstructUnitOrder(X_Filter)
     --Spring.Echo("X TABLE")
     --PrintArrayTable(X_units)
     
     -- setup C (static defence and radar/sonar)
-    local function C_Score (uDID)
+    local function C_Filter (uDID)
         if not UnitDefs[uDID].isBuilding then return end
         if UnitDefs[uDID].isFactory then return end
         if UnitDefs[uDID].isExtractor then return end
@@ -287,25 +315,25 @@ function widget:Initialize()
             end        
         end
         if not nonAAweapon then return end
-        return Cost(uDID)    
+        return true    
     end
-    C_units = ConstructUnitOrder(C_Score)
+    C_units = ConstructUnitOrder(C_Filter)
     --Spring.Echo("C TABLE")
     --PrintArrayTable(C_units)
     
     -- setup V (nanos & labs)
-    local function V_Score (uDID)
-        if UnitDefs[uDID].name=="cornanotc" or UnitDefs[uDID].name=="cornanotc" then return Cost(uDID) end
+    local function V_Filter (uDID)
+        if UnitDefs[uDID].name=="cornanotc" or UnitDefs[uDID].name=="cornanotc" then return true end
         if not UnitDefs[uDID].isFactory then return end
         if not UnitDefs[uDID].buildOptions or #UnitDefs[uDID].buildOptions==0 then return end
-        return Cost(uDID)    
+        return true    
     end
-    V_units = ConstructUnitOrder(V_Score)
+    V_units = ConstructUnitOrder(V_Filter)
     --Spring.Echo("V TABLE")
     --PrintArrayTable(V_units)  
     
     -- setup B (anti-air)
-    local function B_Score (uDID)
+    local function B_Filter (uDID)
         if not UnitDefs[uDID].isBuilding then return end
         if UnitDefs[uDID].isFactory then return end
         if UnitDefs[uDID].isExtractor then return end
@@ -317,9 +345,9 @@ function widget:Initialize()
             local onlyTargets = weapon.onlyTargets
             if onlyTargets['vtol']==nil or onlyTargets['vtol']==false then return end        
         end
-        return Cost(uDID)    
+        return true 
     end
-    B_units = ConstructUnitOrder(B_Score)
+    B_units = ConstructUnitOrder(B_Filter)
     --Spring.Echo("B TABLE")
     --PrintArrayTable(B_units)  
     

@@ -259,6 +259,49 @@ end
 
 
 -------------------------------------
+-- other position related functionality
+
+function RelativeFontSize(i)
+    -- set font sizes relative to vsy=1000
+    local size = i*vsy/1000
+    size = floor(size/2+0.5)*2
+    return size
+end
+
+function Cost(uDef)
+    return 60*uDef.metalCost + uDef.energyCost
+end
+
+function WaterOnly(unitDef)
+    local water = (unitDef.minWaterDepth>0) or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
+    return water
+end
+
+function BuildOrderComparator(item1, item2)
+    -- from sMenu
+    -- determines the order of uDIDs in the build menu
+    local uDef1 = UnitDefs[item1.uDID]
+    local uDef2 = UnitDefs[item2.uDID]
+    
+    -- cons at top
+    local con1 = uDef1.isBuilder
+    local con2 = uDef2.isBuilder
+    if (con1 and not con2) then return true end
+    if (con2 and not con1) then return false end
+
+    -- water at bottom
+    local water1 = WaterOnly(uDef1)
+    local water2 = WaterOnly(uDef2)
+    if (water1 and not water2) then return false end
+    if (water2 and not water1) then return true end
+    
+    -- then by cost
+    local cost1= Cost(uDef1)
+    local cost2= Cost(uDef2)
+    return (cost1<cost2)
+end
+
+-------------------------------------
 -- callins etc
 
 function SetLayout(layout)
@@ -295,17 +338,11 @@ function widget:Initialize()
     WG.UIcoords.SetLayout = SetLayout
     
     WG.RelativeFontSize = RelativeFontSize
+    WG.BuildOrderComparator = BuildOrderComparator -- used by both hotkeys and sMenu
     
     SetLayout()
     
     initialized = true
-end
-
-function RelativeFontSize(i)
-    -- set font sizes relative to vsy=1000
-    local size = i*vsy/1000
-    size = floor(size/2+0.5)*2
-    return size
 end
 
 function widget:ViewResize(x, y)

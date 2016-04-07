@@ -22,14 +22,14 @@ local loadedMenuCat = 5
 local selectedTab
 
 local wantedBuildCols --min
-local wantedBuildRows 
-local maxBuildCols 
-local maxBuildRows 
+local wantedBuildRows
+local maxBuildCols
+local maxBuildRows
 local wantedPaddingCols  -- determines how the shape of the unit buttons vary as their number/grid changes, see resizeUI
-local wantedPaddingRows 
+local wantedPaddingRows
 
-local orderRows 
-local orderCols 
+local orderRows
+local orderCols
 
 local relSmallMenuFont, relLargeMenuFont = 14,18
 local smallMenuFont, largeMenuFont
@@ -62,11 +62,11 @@ local CMD_PASSIVE = 34571
 CMD.PASSIVE = CMD_PASSIVE
 CMD[CMD_PASSIVE] = 'PASSIVE'
 
-local CMD_UPGRADEMEX = 31244 
+local CMD_UPGRADEMEX = 31244
 CMD.UPGRADEMEX = CMD_UPGRADEMEX
 CMD[CMD_UPGRADEMEX] = 'UPGRADEMEX'
 
-local CMD_AUTOMEX = 31143 
+local CMD_AUTOMEX = 31143
 CMD.AUTOMEX = CMD_AUTOMEX
 CMD[CMD_AUTOMEX] = 'AUTOMEX'
 
@@ -97,7 +97,7 @@ local orderColours = {
     [CMD.DEATHWAIT]    = {0.80, 0.80, 0.80 ,1.0},
     [CMD.SQUADWAIT]    = {0.80, 0.80, 0.80 ,1.0},
     [CMD.GATHERWAIT]   = {0.80, 0.80, 0.80 ,1.0},
-    [CMD.SELFD]        = {1.00, 1.00, 0.00, 1.0},  
+    [CMD.SELFD]        = {1.00, 1.00, 0.00, 1.0},
     -- custom
     [CMD.UNIT_SET_TARGET]    = {1.00, 0.65, 0.10, 1.0},
     [CMD.UNIT_CANCEL_TARGET] = {0.40, 0.00, 0.00, 1.0},
@@ -118,7 +118,7 @@ local ignoreCMDs = {
     gatherwait     = '',
 }
 
--- orders menu layout, left->right with top line first 
+-- orders menu layout, left->right with top line first
 local defaultOrderMenuLayout = {
     [1] = {
     },
@@ -152,7 +152,7 @@ local topStates = {
     [3] = "repeat",
 }
 
-local buttonColour, panelColour, sliderColour 
+local buttonColour, panelColour, sliderColour
 
 -- state colours
 local white = {1,1,1,1}
@@ -219,7 +219,7 @@ local Hotkey = {
 -- Chili vars --
 local Chili
 local panH, panW, winW, winH, winX, winB, tabH, minMapH, minMapW
-local screen0, buildMenu, stateMenu, orderMenu, menuTabs 
+local screen0, buildMenu, stateMenu, orderMenu, menuTabs
 local menuTab = {}
 local grid = {}
 local orderGrid = {}
@@ -272,7 +272,7 @@ local function getInline(r,g,b)
     end
 end
 
-function CountTable(t)
+local function CountTable(t)
     local n = 0
     for _,_ in pairs(t) do
         n = n + 1
@@ -294,7 +294,7 @@ local function FinalizeOrderGrid()
         availableButtonsPerRow = math.floor(availableButtonsPerRow/8)*8 -- round down to the nearest 8
         availableButtonsPerRow = math.max(availableButtonsPerRow, 1) -- in case user has the worlds smallest screen
         local neededRows = math.ceil(24 / availableButtonsPerRow)
-        
+
         orderRows = math.max(orderRows, neededRows)
         orderCols = availableButtonsPerRow
     end
@@ -303,10 +303,10 @@ local function FinalizeOrderGrid()
     -- merge downwards, collect in bottom row
     orderMenuLayout = {}
     local rowOffset = #defaultOrderMenuLayout - orderRows
-    for i=1,#defaultOrderMenuLayout do        
+    for i=1,#defaultOrderMenuLayout do
         orderMenuLayout[i] = {}
     end
-    for i=1,#defaultOrderMenuLayout do        
+    for i=1,#defaultOrderMenuLayout do
         for j=1,#defaultOrderMenuLayout[i] do
             local row = math.min(#orderMenuLayout, i+rowOffset)
             table.insert(orderMenuLayout[row], defaultOrderMenuLayout[i][j])
@@ -314,36 +314,37 @@ local function FinalizeOrderGrid()
     end
 end
 
+
 local function resizeUI()
     -- fontSize
     fontSize = WG.RelativeFontSize(relFontSize)
-    
+
     -- build grid dimensions
-    wantedBuildRows = WG.UIcoords.buildGrid.wantedRows 
-    wantedBuildCols = WG.UIcoords.buildGrid.wantedCols 
-    maxBuildRows    = WG.UIcoords.buildGrid.maxRows 
+    wantedBuildRows = WG.UIcoords.buildGrid.wantedRows
+    wantedBuildCols = WG.UIcoords.buildGrid.wantedCols
+    maxBuildRows    = WG.UIcoords.buildGrid.maxRows
     maxBuildCols    = WG.UIcoords.buildGrid.maxCols
     maxBuildGUICols = WG.UIcoords.buildGrid.maxGUICols
 
     local i = selectedTab
     local buildGUICols = (i) and math.min(maxBuildGUICols, grid[i].columns) or 1
-    
+
     -- build grid position
     local bx = WG.UIcoords.buildMenu.x
     local by = WG.UIcoords.buildMenu.y
     local bh = WG.UIcoords.buildMenu.h
     local bw = WG.UIcoords.buildMenu.w * (buildGUICols / wantedBuildCols) -- better to keep consistent layout & not use small buttons when possible
-    buildMenu:SetPos(bx,by,bw,bh) 
-    
+    buildMenu:SetPos(bx,by,bw,bh)
+
     -- menu tabs (pinned to build menu)
     local vsx,_ = Spring.GetViewGeometry()
     smallMenuFont = WG.RelativeFontSize(relSmallMenuFont)
     largeMenuFont = WG.RelativeFontSize(relLargeMenuFont)
     smallMenuWidth = 0.07*vsx
-    largeMenuWidth = 0.09*vsx    
-    menuTabs:SetPos(bx+bw, by+bh/10, largeMenuWidth, bh) 
+    largeMenuWidth = 0.09*vsx
+    menuTabs:SetPos(bx+bw, by+bh/10, largeMenuWidth, bh)
     makeMenuTabs() --lazy, fixme
-   
+
     -- build menu buttons
     for _,button in pairs(unitButtons) do
         local q = button.children[1].children[1]
@@ -352,45 +353,61 @@ local function resizeUI()
         local hotkey = button.children[1].children[2]
         hotkey.font.size = fontSize
         hotkey:Invalidate()
-    end    
-    
+    end
+
     -- state grid dimension
     stateMenu.rows = WG.UIcoords.stateGrid.rows
     stateMenu.columns = WG.UIcoords.stateGrid.cols
-    
+
     -- state menu text
     for _,button in pairs(stateButtons) do
         button.font.size = fontSize
         button:Invalidate()
     end
-    
+
     -- state menu position
     local sx = WG.UIcoords.stateMenu.x
     local sy = WG.UIcoords.stateMenu.y
     local sw = WG.UIcoords.stateMenu.w
     local sh = WG.UIcoords.stateMenu.h
-    stateMenu:SetPos(sx,sy,sw,sh)    
-    
+    stateMenu:SetPos(sx,sy,sw,sh)
+
     -- order grid dimensions
-    orderRows = WG.UIcoords.orderGrid.rows 
-    orderCols = WG.UIcoords.orderGrid.cols   
+    orderRows = WG.UIcoords.orderGrid.rows
+    orderCols = WG.UIcoords.orderGrid.cols
     FinalizeOrderGrid()
     if orderRows>#orderMenuLayout then
         Spring.Echo("ERROR: max order rows is " .. #orderMenuLayout)
     end
 
+    local align = WG.UIcoords.orderMenu.align
+    local verticalGrids = align == "left" or align == "right"
+    local flipGrids = align == "left" or align == "top"
+
     -- order menu position
     local ox = WG.UIcoords.orderMenu.x
     local oy = WG.UIcoords.orderMenu.y
-    local ow = WG.UIcoords.orderMenuButton.w * orderCols
-    local oh = WG.UIcoords.orderMenuButton.h * #orderMenuLayout
-    orderMenu:SetPos(ox,oy,ow,oh)        
-    
-    for i=1,#orderMenuLayout do 
-        orderGrid[i].columns = orderCols
-        orderGrid[i]:SetPos(0, (i-1)*oh/#orderMenuLayout, ow, oh/#orderMenuLayout)
+    local ow = verticalGrids and WG.UIcoords.orderMenuButton.w * #orderMenuLayout or WG.UIcoords.orderMenuButton.w * orderCols
+    local oh = verticalGrids and WG.UIcoords.orderMenuButton.h * orderCols or WG.UIcoords.orderMenuButton.h * #orderMenuLayout
+    orderMenu:SetPos(ox,oy,ow,oh)
+
+    if verticalGrids then
+        orderMenu:SetOrientation("horizontal")
     end
-    
+
+    orderMenu:ClearChildren()
+    local start, finish, step = flipGrids and #orderMenuLayout or 1, flipGrids and 1 or #orderMenuLayout, flipGrids and -1 or 1
+    for i=start, finish, step do
+        orderGrid[i].columns = verticalGrids and 1 or orderCols
+        orderGrid[i].rows = verticalGrids and orderCols or 1
+        local x = 0
+        local y = 0
+        local w = WG.UIcoords.orderMenuButton.w
+        local h = WG.UIcoords.orderMenuButton.h
+        orderGrid[i]:SetPos(x,y,w,h)
+        orderMenu:AddChild(orderGrid[i])
+    end
+
     -- order buttons
     for _,button in pairs(orderButtons) do
         local hotkey = button.children[1].children[1]
@@ -412,14 +429,14 @@ local function showGrid(num)
 end
 
 local function selectTab(self)
-    if not self then return end 
-    
+    if not self then return end
+
     local choice = self.tabNum
     showGrid(choice)
-    selectedTab = choice 
-    resizeUI()        
-        
-    local old = menuTab[menuTabs.prevChoice] 
+    selectedTab = choice
+    resizeUI()
+
+    local old = menuTab[menuTabs.prevChoice]
     if old then
         old.font.color = menuTabColor
         old.font.size  = smallMenuFont
@@ -427,7 +444,7 @@ local function selectTab(self)
         old:Invalidate()
     end
 
-    local highLight = menuTab[choice] 
+    local highLight = menuTab[choice]
     if highLight then
         highLight.font.color = darkenedMenuTabColor
         highLight.font.size  = largeMenuFont
@@ -437,7 +454,7 @@ local function selectTab(self)
 
     menuTabs.choice = choice
     if choice ~= buildMenuCat or (choice==buildMenuCat and (#grid[1].children>0 or #grid[1].children>0)) then
-        menuTabs.prevChoice = choice 
+        menuTabs.prevChoice = choice
     end
 end
 
@@ -460,7 +477,7 @@ end
 ---------------------------------------------------------------
 -- context hotkeys
 
-function ForceUpdateHotkeys()
+local function ForceUpdateHotkeys()
     local hotkeys = WG.buildingHotkeys
     for uDID,key in pairs(hotkeys) do
         local button = unitButtons[uDID]
@@ -472,12 +489,12 @@ end
 
 
 ---------------------------------------------------------------
--- give an order 
+-- give an order
 
 local function cmdAction(obj, x, y, button, mods)
     if obj.disabled then return end
-    if button~=1 and button~=3 then return false end 
-    
+    if button~=1 and button~=3 then return false end
+
     -- if we are called from the LOADED tab, select the unload command
     -- TODO: implement new transporters and per unitDef unloading
     if obj.parent.name=="grid_LOADED" then
@@ -485,15 +502,15 @@ local function cmdAction(obj, x, y, button, mods)
         if (index) then
             local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
             local left, right = (button == 1), (button == 3)
-            spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)   
+            spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)
         end
         return
     end
-    
+
     -- if we are called from any other tab
     -- tell initial queue / set active command that we want to build this unit
-    if not gameStarted then 
-        if  WG.InitialQueue then 
+    if not gameStarted then
+        if  WG.InitialQueue then
             WG.InitialQueue.SetSelDefID(-obj.cmdId)
         end
     else
@@ -502,7 +519,7 @@ local function cmdAction(obj, x, y, button, mods)
             local left, right = (button == 1), (button == 3)
             local alt, ctrl, meta, shift = mods.alt, mods.ctrl, mods.meta, mods.shift
             spSetActiveCommand(index, button, left, right, alt, ctrl, meta, shift)
-        end  
+        end
     end
     return true
 end
@@ -518,7 +535,7 @@ local function parseBuildQueue()
     for i=1, #unitIDs do
         local list = Spring.GetRealBuildQueue(unitIDs[i]) or {}
         for i=1, #list do
-            for defID, count in pairs(list[i]) do 
+            for defID, count in pairs(list[i]) do
                 queue[defID] = queue[defID] and (queue[defID] + count) or count
             end
         end
@@ -542,7 +559,7 @@ local function addBuild(item)
     local name = item.name
     local category = item.category
     local disabled = item.disabled
-    
+
     -- avoid adding too many
     if #grid[category].children>maxBuildCols*maxBuildRows-1 then return end
     if #grid[category].children==maxBuildCols*maxBuildRows-1 then
@@ -560,7 +577,7 @@ local function addBuild(item)
         }
         return
     end
-    
+
     -- prepare the button
     local button = unitButtons[uDID]
     local image = button.children[1]
@@ -572,8 +589,8 @@ local function addBuild(item)
     local caption = item.count or ''
     queue:SetCaption(caption)
     local key = WG.buildingHotkeys[uDID] or ''
-    hotkey:SetCaption(key)    
-        
+    hotkey:SetCaption(key)
+
     if disabled then
         -- building this unit is disabled
         button.focusColor[4] = 0
@@ -587,11 +604,11 @@ local function addBuild(item)
         else
             overlay.color = teamColor
             image.color = {1,1,1,1}
-            button.borderColor = {1,1,1,0.1}        
+            button.borderColor = {1,1,1,0.1}
         end
     end
     button.disabled = disabled
-        
+
     -- add this button, no duplicates
     if not grid[category]:GetChildByName(button.name) then
         grid[category]:AddChild(button)
@@ -601,20 +618,20 @@ end
 local function addState(cmd)
     local caption = cmd.params[cmd.params[1] + 2]
     local name = cmd.action .. " " .. caption
-    
+
     -- avoid adding too many
     if #stateMenu.children==stateMenu.rows*stateMenu.columns then
         local lastChild = stateMenu.children[#stateMenu.children]
         if lastChild.name == "full_state" then
             return
         end
-        
+
         stateMenu:RemoveChild(lastChild)
         button = Chili.Button:New{
             name   = "full_state",
             parent = stateMenu,
             caption   = "(full)",
-            --tooltip   = cmd.tooltip, 
+            --tooltip   = cmd.tooltip,
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
             minheight = 22,
@@ -628,44 +645,44 @@ local function addState(cmd)
         return
     end
 
-    
-    -- create the button if it does not already exist
-	local button
-	if stateButtons[name]==nil then 
-		button = Chili.Button:New{
-            name      = name,
-			caption   = caption,
-			cmdName   = cmd.name,
-			tooltip   = cmd.tooltip,
-			cmdId     = cmd.id,
-			cmdAName  = cmd.action,
-			padding   = {0,0,0,0},
-			margin    = {0,0,0,0},
-			OnMouseUp = {cmdAction},
-			borderColor = {1,1,1,0.1},
-			backgroundColor = buttonColour,
-			font      = {
-				color = paramColours[caption] or white,
-				size  = fontSize,
-			},
-		}
-		stateButtons[name] = button
-	else
-        -- use existing button
-		button = stateButtons[name]
-	end
 
-	stateMenu:AddChild(button)
+    -- create the button if it does not already exist
+    local button
+    if stateButtons[name]==nil then
+        button = Chili.Button:New{
+            name      = name,
+            caption   = caption,
+            cmdName   = cmd.name,
+            tooltip   = cmd.tooltip,
+            cmdId     = cmd.id,
+            cmdAName  = cmd.action,
+            padding   = {0,0,0,0},
+            margin    = {0,0,0,0},
+            OnMouseUp = {cmdAction},
+            borderColor = {1,1,1,0.1},
+            backgroundColor = buttonColour,
+            font      = {
+                color = paramColours[caption] or white,
+                size  = fontSize,
+            },
+        }
+        stateButtons[name] = button
+    else
+        -- use existing button
+        button = stateButtons[name]
+    end
+
+    stateMenu:AddChild(button)
 end
 
 local function addDummyState(cmd)
     local name = cmd.action .. "_dummy"
     -- create the button if it does not already exists
-    local button 
+    local button
     if not stateButtons[name] then
         button = Chili.Button:New{
             caption   = cmd.action,
-            --tooltip   = cmd.tooltip, 
+            --tooltip   = cmd.tooltip,
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
             OnMouseUp = {},
@@ -680,7 +697,7 @@ local function addDummyState(cmd)
     else
         button = stateButtons[name]
     end
-    
+
     stateMenu:AddChild(button)
 end
 
@@ -692,39 +709,39 @@ local function paddingState()
     }
 end
 
-local function addOrderButton(item)  
+local function addOrderButton(item)
     -- create the button if it does not already exist
-	local button 
+    local button
     local cmd = item.cmd
     local cat = item.category
     local name = cmd.action
-	if orderButtons[name] == nil then 
-		button = Chili.Button:New{
-			name      = cmd.action,
+    if orderButtons[name] == nil then
+        button = Chili.Button:New{
+            name      = cmd.action,
             caption   = '',
-			cmdName   = cmd.name,
-			tooltip   = cmd.tooltip,
-			cmdId     = cmd.id,
-			cmdAName  = cmd.action,
-			padding   = {0,0,0,0},
-			margin    = {0,0,0,0},
-			OnMouseUp = {cmdAction},
-			borderColor = {1,1,1,0.1},
-			backgroundColor = buttonColour,
-			children  = {
-				Chili.Image:New{
-					parent  = button,
-					x       = 5,
-					bottom  = 5,
-					y       = 5,
-					right   = 5,
-					color   = orderColours[cmd.id] or {1,1,1,1},
-					file    = imageDir..'Commands/'..cmd.action..'.png',
-					children = {
-						Chili.Label:New{
-							caption = Hotkey[name] or "",
-							right  = 2,
-							y = 1,
+            cmdName   = cmd.name,
+            tooltip   = cmd.tooltip,
+            cmdId     = cmd.id,
+            cmdAName  = cmd.action,
+            padding   = {0,0,0,0},
+            margin    = {0,0,0,0},
+            OnMouseUp = {cmdAction},
+            borderColor = {1,1,1,0.1},
+            backgroundColor = buttonColour,
+            children  = {
+                Chili.Image:New{
+                    parent  = button,
+                    x       = 5,
+                    bottom  = 5,
+                    y       = 5,
+                    right   = 5,
+                    color   = orderColours[cmd.id] or {1,1,1,1},
+                    file    = imageDir..'Commands/'..cmd.action..'.png',
+                    children = {
+                        Chili.Label:New{
+                            caption = Hotkey[name] or "",
+                            right  = 2,
+                            y = 1,
                             font = {
                                 size = fontSize,
                                 outline          = true,
@@ -732,22 +749,22 @@ local function addOrderButton(item)
                                 outlineWidth     = 5,
                                 outlineWeight    = 3,
                             }
-						},
-					}
-				}
-			}
-		}
-	    if cmd.id==CMD.STOCKPILE then
+                        },
+                    }
+                }
+            }
+        }
+        if cmd.id==CMD.STOCKPILE then
             local stockpile_q = Chili.Label:New{name="stockpile_label",right=0,bottom=0,caption="", font={size=14,shadow=false,outline=true,autooutlinecolor=true,outlineWidth=4,outlineWeight=6}}
             button.children[1]:AddChild(stockpile_q)
-		end
-		orderButtons[name] = button
-	else
+        end
+        orderButtons[name] = button
+    else
         -- use existing button
-		button = orderButtons[name]
-	end
-    
-    -- prepare the button for display 
+        button = orderButtons[name]
+    end
+
+    -- prepare the button for display
     if cmd.id==CMD.STOCKPILE then
         local units = Spring.GetSelectedUnits()
         local num, queued = 0, 0
@@ -761,13 +778,24 @@ local function addOrderButton(item)
         stockPileLbl.font.size = fontSize
         stockPileLbl:Invalidate()
     end
-	button.borderColor = (cmd.id==activeSelCmdID) and button.focusColor or {1,1,1,0.1}
-    
-	orderGrid[cat]:AddChild(button)
+    button.borderColor = (cmd.id==activeSelCmdID) and button.focusColor or {1,1,1,0.1}
+
+    orderGrid[cat]:AddChild(button)
+end
+
+local function getOrderCat(action)
+    for i=1,#orderMenuLayout do
+        for j=1,#orderMenuLayout[i] do
+            if orderMenuLayout[i][j]==action then
+                return i
+            end
+        end
+    end
+    return 1 + #orderMenuLayout - orderRows -- top non-empty row
 end
 
 local function addDummyOrder(item)
-    local button 
+    local button
     local action = item.action
     local cat = getOrderCat(action)
     local name = action .. "_dummy"
@@ -779,7 +807,7 @@ local function addDummyOrder(item)
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
             OnMouseUp = {},
-			backgroundColor = buttonColour,
+            backgroundColor = buttonColour,
             Children  = {
                 Chili.Image:New{
                     parent  = button,
@@ -796,46 +824,35 @@ local function addDummyOrder(item)
     else
         button = orderButtons[name]
     end
-    
-    orderGrid[cat]:AddChild(button) 
+
+    orderGrid[cat]:AddChild(button)
 end
 
-function getBuildCat(ud)
+local function getBuildCat(ud)
     if ud.isFactory or (ud.isBuilder and ud.speed==0) then
         menuCat = 4
     elseif (ud.speed > 0 and ud.canMove) then
         -- Units
         menuCat = 3
-    elseif ud.isBuilding and (ud.energyMake>=20 
-                           or ud.isExtractor 
-                           or ud.tidalGenerator>0 
-                           or ud.windGenerator>0 
+    elseif ud.isBuilding and (ud.energyMake>=20
+                           or ud.isExtractor
+                           or ud.tidalGenerator>0
+                           or ud.windGenerator>0
                            or Spring.GetGameRulesParam(ud.name .. "_mm_capacity")
                            or ud.energyStorage>=3000
                            or ud.metalStorage>=1000)then
         -- Economy
         menuCat = 1
     else
-        -- Battle 
+        -- Battle
         menuCat = 2
     end
 
     return menuCat
 end
 
-function getOrderCat(action)
-    for i=1,#orderMenuLayout do
-        for j=1,#orderMenuLayout[i] do
-            if orderMenuLayout[i][j]==action then
-                return i
-            end
-        end
-    end
-    return 1 + #orderMenuLayout - orderRows -- top non-empty row
-end
-
 local function AddInSequence(items, t, Add, dummyAdd)
-    -- add any items in the array table t, in order, first 
+    -- add any items in the array table t, in order, first
     -- if we can't find something from t, add a dummy instead
     for _,k in ipairs(t) do
         if items[k] then
@@ -848,12 +865,12 @@ local function AddInSequence(items, t, Add, dummyAdd)
             dummyAdd(dummy_item)
         end
     end
-    
+
     -- add the rest
     for _,item in pairs(items) do
         Add(item)
-    end    
-end 
+    end
+end
 
 local function AddInSortedOrder(items, Add, Comparator)
     -- add items in order of comparator
@@ -863,6 +880,7 @@ local function AddInSortedOrder(items, Add, Comparator)
     end
 end
 
+
 local function parseCmds()
     local queue = parseBuildQueue()
     local cmdList = spGetActiveCmdDescs()
@@ -870,16 +888,16 @@ local function parseCmds()
     local units = {}
     local orders = {}
     local states = {}
-    
+
     -- Parses through each cmd and gives it its own button
     for i = 1, #cmdList do
         local cmd = cmdList[i]
         if cmd.name ~= '' and not (ignoreCMDs[cmd.name] or ignoreCMDs[cmd.action]) then
-            -- Is it a unit and if so what kind?            
+            -- Is it a unit and if so what kind?
             local menuCat
             if UnitDefNames[cmd.name] then
                 local ud = UnitDefNames[cmd.name]
-                menuCat = getBuildCat(ud)    
+                menuCat = getBuildCat(ud)
             end
 
             if menuCat and #grid[menuCat].children<=maxBuildRows*maxBuildCols then
@@ -888,7 +906,7 @@ local function parseCmds()
                 units[#units+1] = {name=cmd.name, uDID=-cmd.id, disabled=cmd.disabled, category=menuCat, count=(queue[-cmd.id] or cmd.params[1])} -- cmd.params[1] helps only in godmode
             elseif #cmd.params > 1 then
                 states[cmd.action] = cmd
-            elseif cmd.id > 0 then 
+            elseif cmd.id > 0 then
                 local cat = getOrderCat(cmd.action)
                 orderMenu.active = true
                 orderGrid[cat].active = true
@@ -897,7 +915,7 @@ local function parseCmds()
             end
         end
     end
-    
+
     -- Include stop command
     if orderMenu.active then
         local cmd = {action='stop', id=CMD.STOP, tooltip="Stop: Clears the command queue"}
@@ -905,13 +923,13 @@ local function parseCmds()
         orders[cat] = orders[cat] or {}
         orders[cat][cmd.action] = {action=cmd.action, cmd=cmd, category=cat}
     end
-    
+
     if orderGrid[1].active or orderGrid[2].active or orderGrid[3].active then
         orderGrid[1].active = true
         orderGrid[2].active = true
         orderGrid[3].active = true
     end
-    
+
     -- Add the states in the wanted order
     if #cmdList>0 then
         if WG.UIcoords.stateGrid.orientation=="bottom" then
@@ -925,14 +943,14 @@ local function parseCmds()
                         break
                     end
                 end
-                if not alwaysPresent then nPadding = nPadding - 1 end           
+                if not alwaysPresent then nPadding = nPadding - 1 end
             end
             for i=1,nPadding do
                 stateMenu:AddChild(paddingState())
             end
         end
-        
-        AddInSequence(states, topStates, addState, addDummyState)        
+
+        AddInSequence(states, topStates, addState, addDummyState)
     end
 
     -- Add the orders, for each order category
@@ -942,7 +960,7 @@ local function parseCmds()
             AddInSequence(orders[i], orderMenuLayout[i], addOrderButton, addDummyOrder)
         end
     end
-    
+
     -- Add the units, in order of lowest cost
     if #units>0 then
         AddInSortedOrder(units, addBuild, WG.BuildOrderComparator)
@@ -956,21 +974,21 @@ local function parseTransported()
         local unitID = sUnits[i] --is a transporter
         local transported = spGetUnitIsTransporting(unitID)
         for j=1,#transported do
-            local tID = transported[j] 
+            local tID = transported[j]
             local tDID = spGetUnitDefID(tID)
-            tUnitDefIDs[tDID] = (tUnitDefIDs[tDID] or 0) +1 
+            tUnitDefIDs[tDID] = (tUnitDefIDs[tDID] or 0) +1
         end
-    end    
-    
+    end
+
     -- add to grid
     local units = {}
     for uDID,count in pairs(tUnitDefIDs) do
         local name = UnitDefs[uDID].name
-        units[#units+1] = {name=name, uDID=uDID, disabled=false, category=loadedMenuCat, count=count} 
+        units[#units+1] = {name=name, uDID=uDID, disabled=false, category=loadedMenuCat, count=count}
         grid[loadedMenuCat].active = true
         buildMenu.active = true
     end
-    
+
     if #units>0 then
         AddInSortedOrder(units, addBuild, WG.BuildOrderComparator)
     end
@@ -980,18 +998,18 @@ local function parseUnitDefCmds(uDID)
     -- load the build menu for the given unitDefID
     -- don't load the state/cmd menus
     local queue = parseInitialBuildQueue()
-    
+
     local units = {}
     buildMenu.active = true
     orderMenu.active = false
-    
+
     local buildDefIDs = UnitDefs[uDID].buildOptions
-    
+
     for _,bDID in pairs(buildDefIDs) do
         local ud = UnitDefs[bDID]
         local menuCat = getBuildCat(ud)
         grid[menuCat].active = true
-        units[#units+1] = {name=ud.name, uDID=bDID, disabled=false, category=menuCat, count=queue[bDID]} 
+        units[#units+1] = {name=ud.name, uDID=bDID, disabled=false, category=menuCat, count=queue[bDID]}
     end
 
     if #units>0 then
@@ -999,11 +1017,11 @@ local function parseUnitDefCmds(uDID)
     end
 end
 
-function SetGridDimensions()
+local function SetGridDimensions()
     for i=1,#catNames do
         -- work out what size grid to use for build menu
         -- start from wanted; then add a new row, then new col, in turn, if needed
-        local n = #grid[i].children 
+        local n = #grid[i].children
         local buildCols = wantedBuildCols
         local buildRows = wantedBuildRows
         local included = buildRows * buildCols
@@ -1014,10 +1032,10 @@ function SetGridDimensions()
             buildRows =  math.min(buildRows + 1, maxBuildRows)
             included = buildRows * buildCols
             if included >= n then break end
-            
+
             buildCols = math.min(buildCols + 1, maxBuildCols)
             included = buildRows * buildCols
-            if included >= n then break end            
+            if included >= n then break end
         end
         grid[i].columns = buildCols
         grid[i].rows = buildRows
@@ -1051,7 +1069,7 @@ function makeMenuTabs()
                 parent  = menuTabs,
                 width   = smallMenuWidth,
                 x       = 0,
-                y       = tabCount*smallMenuFont*3.5, 
+                y       = tabCount*smallMenuFont*3.5,
                 height  = smallMenuFont*3.5,
                 caption = catNames[i],
                 OnClick = {selectTab},
@@ -1063,7 +1081,7 @@ function makeMenuTabs()
                     outline          = true,
                     autoOutlineColor = true,
                     outlineWidth     = 4,
-                    outlineWeight    = 5,        
+                    outlineWeight    = 5,
                 },
             }
             tabCount = tabCount + 1
@@ -1074,7 +1092,7 @@ end
 ---------------------------
 local function loadPanels()
     -- loads/reloads the build/order/state menus
-    
+
     -- check for change in selected units
     local newUnit = false
     local units = spGetSelectedUnits()
@@ -1098,10 +1116,10 @@ local function loadPanels()
                 notTransport = true
                 break
             end
-        end    
+        end
         onlyTransportSelected = not notTransport
     end
-    
+
     -- states and order buttons are removed and re-added on each refresh
     -- this is needed for state buttons (e.g. changing cloak state also changes fire state, because of a widget), and a different is used for *each* possible fire state
     -- it isn't needed for order buttons but wth
@@ -1127,12 +1145,12 @@ local function loadPanels()
         parseTransported()
     end
     SetGridDimensions()
-    
+
     -- choose active menu cat
     makeMenuTabs()
     menuTabs.choice = ChooseTab()
-    if menuTabs.choice and buildMenu.active and menuTab[menuTabs.choice] then 
-        selectTab(menuTab[menuTabs.choice]) 
+    if menuTabs.choice and buildMenu.active and menuTab[menuTabs.choice] then
+        selectTab(menuTab[menuTabs.choice])
     end
 end
 
@@ -1143,7 +1161,7 @@ local function loadDummyPanels(unitDefID)
         orderGrid[i]:ClearChildren()
         orderGrid[i].active = false
     end
-    
+
     stateMenu:ClearChildren()
 
     menuTabs.choice = 1
@@ -1153,11 +1171,11 @@ local function loadDummyPanels(unitDefID)
     end
 
     parseUnitDefCmds(unitDefID)
-    SetGridDimensions()   
+    SetGridDimensions()
     makeMenuTabs()
     menuTabs.choice = ChooseTab()
-    if menuTabs.choice and buildMenu.active then 
-        selectTab(menuTab[menuTabs.choice]) 
+    if menuTabs.choice and buildMenu.active then
+        selectTab(menuTab[menuTabs.choice])
     end
 end
 
@@ -1174,19 +1192,19 @@ local airFacs = { --unitDefs can't tell us this
 }
 
 function IsWater(unitDef)
-    local water = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25) 
-            or (unitDef.minWaterDepth and unitDef.minWaterDepth>0) 
+    local water = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25)
+            or (unitDef.minWaterDepth and unitDef.minWaterDepth>0)
             or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
     return water
 end
 
 function IsAir(unitDef)
-    local air = unitDef.isAirUnit or unitDef.isAirBase or airFacs[unitDef.id] 
+    local air = unitDef.isAirUnit or unitDef.isAirBase or airFacs[unitDef.id]
             or (unitDef.weapons[1] and unitDef.weapons[1].onlyTargets.vtol and not unitDef.weapons[1].onlyTargets.all)
     return air
 end
 
-local function CreateUnitButton(name, unitDef)  
+local function CreateUnitButton(name, unitDef)
     -- make the button for this unit
     local unitDefID = unitDef.id
     unitButtons[unitDefID] = Chili.Button:New{
@@ -1200,7 +1218,7 @@ local function CreateUnitButton(name, unitDef)
         margin    = {0,0,0,0},
         OnMouseUp = {cmdAction},
         OnMouseOver = {function(self) WG.sMenu.mouseOverUnitDefID = self.unitDefID end},
-        OnMouseOut   = {function() WG.sMenu.mouseOverUnitDefID = nil end}, 
+        OnMouseOut   = {function() WG.sMenu.mouseOverUnitDefID = nil end},
         OnMouseWheel = {scrollMenus},
         backgroundColor = buttonColour,
         children  = {
@@ -1245,13 +1263,13 @@ local function CreateUnitButton(name, unitDef)
             }
         }
     }
- 
+
     local extraIcons = {
         [1] = {image="constr.png",   used = unitDef.isBuilder},
         [2] = {image="raindrop.png", used = IsWater(unitDef)},
         [3] = {image="plane.png",    used = IsAir(unitDef)},
     }
-    
+
     local y = 7 -- %
     for _,icon in ipairs(extraIcons) do
         if icon.used then
@@ -1261,8 +1279,8 @@ local function CreateUnitButton(name, unitDef)
                 height = '15%', width = '15%', keepAspect = true,
                 file   = imageDir..icon.image,
             }
-            y = y + 16        
-        end    
+            y = y + 16
+        end
     end
 end
 
@@ -1272,7 +1290,7 @@ local function LayoutHandler(xIcons, yIcons, cmdCount, commands)
     widgetHandler.commands   = commands
     widgetHandler.commands.n = cmdCount
     widgetHandler:CommandsChanged()
-    
+
     return "", xIcons, yIcons, {}, {}, {}, {}, {}, {}, {}, {[1337]=9001}
 end
 ---------------------------
@@ -1291,17 +1309,17 @@ function widget:Initialize()
     widgetHandler:ConfigLayoutHandler(LayoutHandler)
     Spring.ForceLayoutUpdate()
     spSendCommands({'tooltip 0'})
-    
+
     if Spring.GetGameFrame()>0 then gameStarted = true end
 
-    WG.sMenu = {}    
+    WG.sMenu = {}
     WG.sMenu.ForceUpdate = function() updateRequired='ForceUpdate' end
     WG.sMenu.ForceUpdateHotkeys = ForceUpdateHotkeys
-    
+
     Chili = WG.Chili
     buttonColour = WG.buttonColour
     screen0 = Chili.Screen0
-    
+
     buildMenu = Chili.Control:New{
         parent       = screen0,
         name         = 'build menu',
@@ -1316,15 +1334,15 @@ function widget:Initialize()
         padding = {0,0,0,0},
         margin  = {0,0,0,0},
     }
-    
+
     orderMenu = Chili.StackPanel:New{
         name = "order menu",
         parent = screen0,
         padding = {0,0,0,0},
         margin  = {0,0,0,0},
     }
-    
-    for i=1,#defaultOrderMenuLayout do 
+
+    for i=1,#defaultOrderMenuLayout do
         orderGrid[i]  = Chili.Grid:New{
             name    = "order grid " .. i,
             parent  = orderMenu,
@@ -1335,7 +1353,7 @@ function widget:Initialize()
             margin  = {0,0,0,0},
         }
     end
-    
+
     stateMenu = Chili.Grid:New{
         name    = "state grid",
         parent  = screen0,
@@ -1370,12 +1388,12 @@ function widget:Initialize()
     WG.sMenu.ForceSelect = ForceSelect
 end
 
---------------------------- 
+---------------------------
 function widget:ViewResize()
     resizeUI()
     updateRequired = 'ViewResize'
 end
---------------------------- 
+---------------------------
 local selectedUnits = {}
 function widget:CommandsChanged()
     -- see if selected units changed, cause an update if so
@@ -1423,13 +1441,13 @@ function widget:UnitUnloaded(unitID, unitDefID, unitTeam, transportID, transport
         updateRequired = 'UnitUnloaded'
     end
 end
-function GameFrame()
+function widget:GameFrame()
     -- track the current active command
     -- has to be GameFrame because CommandsChanged isn't called when an active build command changes
     local _,cmdID,_ = Spring.GetActiveCommand()
     if cmdID and cmdID<0 then
         local uDID = -cmdID -- looking to build a unit of this uDID
-        if activeSelCmdID or activeSelUDID~=uDID then 
+        if activeSelCmdID or activeSelUDID~=uDID then
             updateRequired = 'GameFrame: looking to build a unit of this uDID'
             activeSelUDID = uDID
             activeSelCmdID = nil
@@ -1437,31 +1455,31 @@ function GameFrame()
         end
     elseif cmdID then
         -- looking to give this cmdID
-        if activeSelUDID or activeSelCmdID~=cmdID then 
+        if activeSelUDID or activeSelCmdID~=cmdID then
             updateRequired = 'GameFrame: looking to give this cmdID'
             activeSelUDID = nil
             activeSelCmdID = cmdID
         end
     else
         -- no active commands
-        if activeSelUDID or activeSelCmdID then 
+        if activeSelUDID or activeSelCmdID then
             updateRequired = 'GameFrame: no active commands'
             activeSelUDID = nil
             activeSelCmdID = nil
         end
     end
 end
---------------------------- 
+---------------------------
 -- handle InitialQueue, if enabled
 local startUnitDefID
 local function InitialQueue()
-    if gameStarted or not WG.InitialQueue or spGetSpectatingState() then 
-        return false 
+    if gameStarted or not WG.InitialQueue or spGetSpectatingState() then
+        return false
     end
-    
+
     -- check if we just changed faction
     local uDID = WG.startUnit or Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'startUnit')
-    if uDID==startUnitDefID and ( updateRequired == '' )then return true end 
+    if uDID==startUnitDefID and ( updateRequired == '' )then return true end
     if not uDID then return false end
 
     -- now act as though unitDefID is selected for building
@@ -1469,33 +1487,33 @@ local function InitialQueue()
     sUnits[1] = uDID
     local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
     teamColor = {r,g,b,0.8}
-    
+
     if WG.HideFacBar then WG.HideFacBar() end
     buildMenu.active = false
     orderMenu.active = false
-    
+
     loadDummyPanels(startUnitDefID)
     updateRequired = ''
     return true
 end
---------------------------- 
+---------------------------
 -- If update is required this Loads the panel and queue for the new unit or hides them if none exists
 --  There is an offset to prevent the panel disappearing right after a command has changed (for fast clicking)
 function widget:Update()
     if InitialQueue() then return end
-    
+
     if updateRequired then
-		--Spring.Echo("sMenu updateRequired reason:", updateRequired)
+        --Spring.Echo("sMenu updateRequired reason:", updateRequired)
         local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
         teamColor = {r,g,b,0.9}
         updateRequired = nil
-        
+
         orderMenu.active = false -- if order cmd is found during parse this will become true
         buildMenu.active = false -- if build cmd is found during parse this will become true
-        -- every unit has states 
+        -- every unit has states
 
         loadPanels()
-        
+
         if not buildMenu.active and buildMenu.visible then
             buildMenu:Hide()
             if WG.FacBar then WG.FacBar.Show() end
@@ -1522,12 +1540,12 @@ function widget:Shutdown()
     -- Let Chili know we're done with these
     buildMenu:Dispose()
     menuTabs:Dispose()
-    
+
     WG.sMenu = nil
-    
+
     -- Bring back stock Order Menu
     widgetHandler:ConfigLayoutHandler(nil)
     Spring.ForceLayoutUpdate()
-    
+
     spSendCommands({'tooltip 1'})
 end

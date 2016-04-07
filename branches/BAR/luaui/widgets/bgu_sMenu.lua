@@ -393,6 +393,8 @@ local function resizeUI()
 
     if verticalGrids then
         orderMenu:SetOrientation("horizontal")
+    else
+        orderMenu:SetOrientation("vertical")    
     end
 
     orderMenu:ClearChildren()
@@ -400,10 +402,6 @@ local function resizeUI()
     for i=start, finish, step do
         orderGrid[i].columns = verticalGrids and 1 or orderCols
         orderGrid[i].rows = verticalGrids and orderCols or 1
-        local x = 0
-        local y = 0
-        local w = WG.UIcoords.orderMenuButton.w
-        local h = WG.UIcoords.orderMenuButton.h
         orderGrid[i]:SetPos(x,y,w,h)
         orderMenu:AddChild(orderGrid[i])
     end

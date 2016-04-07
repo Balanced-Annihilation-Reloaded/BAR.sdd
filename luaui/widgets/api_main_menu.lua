@@ -32,7 +32,7 @@ local amNewbie = (Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'isNewbie') == 
 local Settings = {}
 local DefaultSettings = {}
 
- local fullyLoaded = false -- set to true at the end of widget:Initialize
+local fullyLoaded = false -- set to true at the end of widget:Initialize
 
 local whiteStr = '\255\255\255\255'
 local greenStr = '\255\1\255\1'
@@ -1089,7 +1089,7 @@ local function CreateInterfaceTab()
                     Chili.TextBox:New{x='0%',width='40%',text="Layout:"},
                     Chili.ComboBox:New{x='40%',width='60%',
                         items    = {"hybrid", "classic", "inverted", "corner", "spacious"},
-                        selected = (WG.UIcoords.layout=="hybrid" and 1) or (WG.UIcoords.layout=="classic" and 2) or (WG.UIcoords.layout=="inverted" and 3) or (WG.UIcoords.layout=="corner" and 4),
+                        selected = (WG.UIcoords.layout=="hybrid" and 1) or (WG.UIcoords.layout=="classic" and 2) or (WG.UIcoords.layout=="inverted" and 3) or (WG.UIcoords.layout=="corner" and 4) or (WG.UIcoords.layout=="spacious" and 5),
                         OnSelect = {
                             function(self,sel)
                                 local layout = self.items[sel]

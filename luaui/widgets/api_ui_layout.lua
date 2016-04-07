@@ -104,13 +104,14 @@ local function Classic()
     local sInfoH = 0.23
     local sInfo = {x=0, y=1-sInfoH, w=sInfoH/screenAspect, h=sInfoH}
 
-    local buildMenu = {x=0, y=max(minimapH,0.2), w=0.2, h=1-max(minimapH,0.2)-sInfo.h}
+    local stateMenu = {x=sInfo.w, y=1-sInfo.h, w=0.06, h=sInfo.h}
+    local stateGrid = {rows=9, cols=1, orientation="bottom"}
+
+    local buildMenu = {x=0, y=max(minimapH,0.2), w=stateMenu.x+stateMenu.w, h=1-max(minimapH,0.2)-sInfo.h} 
     local buildGrid = {wantedRows=4, wantedCols=3, maxRows=6, maxCols=5, maxGUICols=4}
 
     local facBarButton = {h=0.06}
 
-    local stateMenu = {x=sInfo.w, y=1-sInfo.h, w=0.06, h=sInfo.h}
-    local stateGrid = {rows=9, cols=1, orientation="bottom"}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
     local orderMenu = {x=stateMenu.x+stateMenu.w, y=1-3*orderMenuButton.h, w=nil, h=nil}
@@ -223,12 +224,12 @@ end
 local function Corner()
     local minimapW,minimapH = GetMinimapDimensions(0.12, 0.27, 0.12, 0.27)
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
-    local sInfo = {x=0, y=1-minimapH, w=minimapH/screenAspect, h=minimapH}
+    local sInfo = {x=0, y=1-0.2, w=0.2/screenAspect, h=0.2}
 
-    local buildMenu = {x=sInfo.w, y=1-minimapH, w=0.2, h=minimapH}
-    local buildGrid = {wantedRows=3, wantedCols=3, maxRows=3, maxCols=7, maxGUICols=6}
+    local buildMenu = {x=sInfo.w, y=1-sInfo.h, w=0.2, h=sInfo.h} 
+    local buildGrid = {wantedRows=2, wantedCols=3, maxRows=2, maxCols=12, maxGUICols=8}
 
-    local facBarButton = {h=0.06}
+    local facBarButton = {h=0.06} --todo: decouple and move to LHS
 
     local stateMenu = {x=0, y=1-2*sInfo.h, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, orientation="bottom"}
@@ -280,7 +281,7 @@ local function Spacious()
 
 
     local buildMenu = {x=sInfo.x + sInfo.w, y=1-0.2, w=0.3, h=0.2}
-    local buildGrid = {wantedRows=2, wantedCols=4, maxRows=2, maxCols=18, maxGUICols=6}
+    local buildGrid = {wantedRows=2, wantedCols=4, maxRows=2, maxCols=13, maxGUICols=6}
 
     local facBarButton = {h=0.06}
 

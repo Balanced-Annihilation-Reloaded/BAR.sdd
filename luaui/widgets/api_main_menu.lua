@@ -32,7 +32,7 @@ local amNewbie = (Spring.GetTeamRulesParam(Spring.GetMyTeamID(), 'isNewbie') == 
 local Settings = {}
 local DefaultSettings = {}
 
- local fullyLoaded = false -- set to true at the end of widget:Initialize 
+ local fullyLoaded = false -- set to true at the end of widget:Initialize
 
 local whiteStr = '\255\255\255\255'
 local greenStr = '\255\1\255\1'
@@ -45,7 +45,7 @@ local greyStr = '\255\150\150\150'
 ------------------------------------
 -- Settings
 
-local MinimalGraphicsSettings = { 
+local MinimalGraphicsSettings = {
     -- springsettings, graphics tab
     comboboxes = {
         ['Water']            = 0,
@@ -74,7 +74,7 @@ local MinimalGraphicsSettings = {
     },
 }
 
-local DefaultSettings = { 
+local DefaultSettings = {
     -- springsettings, graphics tab
     comboboxes = {
         ['Water']            = 1,
@@ -101,7 +101,7 @@ local DefaultSettings = {
         ['MapBorder']        = false,
         ['VSync']            = true,
     },
-    
+
     -- non-springsettings, interface tab
     interface = {
         ['cursorName']         = 'bar',
@@ -147,9 +147,9 @@ local MaximalGraphicsSettings = {
 
 function FetchDefaultSetting(name)
     for cat, settingsTable in pairs(DefaultSettings) do
-        if settingsTable[name]~=nil then return 
-            settingsTable[name], cat 
-        end 
+        if settingsTable[name]~=nil then return
+            settingsTable[name], cat
+        end
     end
 end
 
@@ -159,7 +159,7 @@ function FetchSpringSetting(name, settingName)
     local settingName = settingName or name -- toggle name differs from springsettings.cfg name
     local default,cat = FetchDefaultSetting(name)
     if cat=='checkboxes' then
-        if Settings[name]==nil then 
+        if Settings[name]==nil then
             -- bool, but springsettings contains an int
             Settings[name] = (Spring.GetConfigInt(name, default and 1 or 0) > 0)
         end
@@ -168,13 +168,13 @@ function FetchSpringSetting(name, settingName)
             -- number
             Settings[name] = Spring.GetConfigInt(name, default)
         end
-    end    
+    end
 end
 
 function FetchSetting(name)
     local default = FetchDefaultSetting(name)
-    if Settings[name]== nil then 
-        Settings[name] = default 
+    if Settings[name]== nil then
+        Settings[name] = default
     end
 end
 
@@ -191,7 +191,7 @@ function InitSettings()
             end
         end
     end
-    
+
     -- force if necessary
     ApplyForcedSettings()
 end
@@ -199,13 +199,13 @@ end
 
 local waterConvert_ID = {[0]=1,[1]=2,[2]=3,[3]=4,[4]=5} -- setting value -> listID (ugh)
 local shadowConvert_ID = {[0]=1,[1]=2,[2]=3}
-local shadowMapSizeConvert_ID = {[2048]=1,[4096]=2,[8192]=3} 
-        
+local shadowMapSizeConvert_ID = {[2048]=1,[4096]=2,[8192]=3}
+
 function ApplyGraphicsSettings(WantedSettings)
     -- apply our default springsettings (==graphics) and *only* those, via selecting them in our chili controls
     local EngineSettingsMulti = tabs['Graphics']:GetChildByName('Settings'):GetChildByName('EngineSettingsMulti')
     local EngineSettingsCheckBoxes = tabs['Graphics']:GetChildByName('Settings'):GetObjectByName('EngineSettingsCheckBoxes')
-    
+
     for setting,value in pairs(WantedSettings.comboboxes) do
         Settings[setting] = value
         if setting=='Water' then
@@ -216,12 +216,12 @@ function ApplyGraphicsSettings(WantedSettings)
             EngineSettingsMulti:GetObjectByName(setting):Select(shadowMapSizeConvert_ID[value])
         end
     end
-    
+
     for setting,value in pairs(WantedSettings.sliders) do
         Settings[setting] = value
         EngineSettingsMulti:GetObjectByName(setting):SetValue(value)
     end
-    
+
     for setting,value in pairs(WantedSettings.checkboxes) do
         Settings[setting] = value
         local checkbox = EngineSettingsCheckBoxes:GetObjectByName(setting)
@@ -246,7 +246,7 @@ function ApplyForcedSettings()
 end
 
 ----------------------------
--- load cursors 
+-- load cursors
 function SetCursor(cursorSet)
     local cursorNames = {
         'cursornormal','cursorareaattack','cursorattack','cursorattack',
@@ -260,10 +260,10 @@ function SetCursor(cursorSet)
     }
     for i=1, #cursorNames do
         local topLeft = (cursorNames[i] == 'cursornormal')
-        if cursorSet == 'bar' then 
+        if cursorSet == 'bar' then
             Spring.ReplaceMouseCursor(cursorNames[i], cursorNames[i], topLeft)
-        else 
-            Spring.ReplaceMouseCursor(cursorNames[i], cursorSet..'/'..cursorNames[i], topLeft) 
+        else
+            Spring.ReplaceMouseCursor(cursorNames[i], cursorSet..'/'..cursorNames[i], topLeft)
         end
     end
 end
@@ -273,7 +273,7 @@ end
 
 local wFilterString = ""
 local widgetList = {}
-local updateWidgetListPos = false -- we track the widget selector posn by the name of the first visible control -> if we want to position after a redraw, chili needs a frame to sort out its y coords 
+local updateWidgetListPos = false -- we track the widget selector posn by the name of the first visible control -> if we want to position after a redraw, chili needs a frame to sort out its y coords
 local widgetOptions = {} -- hold the chili controls for widgets custom options
 
 local wCategories = {
@@ -281,7 +281,7 @@ local wCategories = {
     ['cmd']       = {label = 'Commands',    list = {}, pos = 2,}, -- relates to (more general cases of) giving commands to units
     ['gui']       = {label = 'GUI',         list = {}, pos = 3,}, -- relates to providing information interactively
     ['inf']       = {label = 'Information', list = {}, pos = 4,}, -- relates to providing information passively
-    ['snd']       = {label = 'Sound',       list = {}, pos = 5,}, 
+    ['snd']       = {label = 'Sound',       list = {}, pos = 5,},
     ['camera']    = {label = 'Camera',      list = {}, pos = 6,},
     ['map']       = {label = 'Map',         list = {}, pos = 7,},
     ['bgu']       = {label = 'BAR GUI',     list = {}, pos = 8, adv = true},
@@ -318,14 +318,14 @@ local function sortWidgetList()
     -- give each widget a cat, and put into its cat.list
     for name,wData in pairs(widgetHandler.knownWidgets) do
         groupWidget(name,wData)
-    end 
-    
+    end
+
     -- sort each cat.list
     local ascendingName = function(a,b) return a.name<b.name end
     for _,cat in pairs(wCategories) do
         table.sort(cat.list, ascendingName)
     end
-    
+
     -- get order of categories
     inv_widgetCat_pos = {}
     num_widgetCat = 0
@@ -338,9 +338,9 @@ local function sortWidgetList()
 end
 
 ----------------------------
--- widget list vertical alignment on re-draws 
+-- widget list vertical alignment on re-draws
 
-function GetTopVisibleControlOfWidgetList()    
+function GetTopVisibleControlOfWidgetList()
     -- get the name of the control which is topmost within the visible part of the widget selector scrollstack *and* is a widget checkbox
     -- BUT we need to alignNames instead of names, to forget about the font colour part of control name (there is one cached widgetControl for each font colour!)
     local widgetList = tabs['Interface']:GetChildByName('widgetList')
@@ -349,7 +349,7 @@ function GetTopVisibleControlOfWidgetList()
     local scrollY = widgetList.scrollPosY
     local name
     for _,child in ipairs(stack.children) do
-        if child.y>=scrollY and child.alignName then 
+        if child.y>=scrollY and child.alignName then
             name = child.alignName
             break
         end
@@ -363,11 +363,11 @@ function SetTopVisibleControlOfWidgetList(name)
     -- we have to avoid the case where all ys are zero; chili doesn't update the ys immediately
     local widgetList = tabs['Interface']:GetChildByName('widgetList')
     local stack = widgetList.children[1]
-    local scrollPosY, alignName 
+    local scrollPosY, alignName
     local success
     for _,child in ipairs(stack.children) do
         success = success or (child.y>0)
-        if name==child.alignName then 
+        if name==child.alignName then
             scrollPosY = child.y
             alignName = child.alignName
             break
@@ -384,7 +384,7 @@ function ToggleExpandWidgetOptions(name)
 end
 
 ----------------------------
--- widget filter (search) 
+-- widget filter (search)
 local function SetWidgetFilter()
     local editbox = tabs['Interface']:GetObjectByName('widgetFilter')
     wFilterString = editbox.text or ""
@@ -425,7 +425,7 @@ local function WidgetFilter(name,desc,author)
     return false
 end
 
-function GetWidgetControl(name, fontColour, enabled, active, fromZip, showDescs, desc)   
+function GetWidgetControl(name, fontColour, enabled, active, fromZip, showDescs, desc)
     local controlName = name  .. "_control" .. "_" .. fontColour
     local alignName = name  .. "_control"
     if not widgetControls[controlName] then
@@ -435,7 +435,7 @@ function GetWidgetControl(name, fontColour, enabled, active, fromZip, showDescs,
         local redFont    = {color = {1,0,0,1}, outlineColor = {1,0,0,0.2}}
         local widgetControl = Chili.Control:New{
             name      = controlName,
-            alignName = alignName, -- used for preserving v pos (from users point of view) on redraws 
+            alignName = alignName, -- used for preserving v pos (from users point of view) on redraws
             useForVAlign = true,
             width = '100%',
             x = '0%',
@@ -468,14 +468,14 @@ function GetWidgetControl(name, fontColour, enabled, active, fromZip, showDescs,
         end
         widgetControls[controlName] = widgetControl
     end
-    
+
     local widgetOptions = widgetControls[controlName].children[2]
     if widgetOptions then
-        widgetOptions:SetCaption(Settings['expandedWidgetOptions'][name] and "-" or "+")    
+        widgetOptions:SetCaption(Settings['expandedWidgetOptions'][name] and "-" or "+")
     end
-    
+
     widgetControls[controlName].y = 0 -- we need to forget the *cached* y coord because the system for preserving v align needs the proper y coord and chili won't update immediately
-    
+
     return widgetControls[controlName]
 end
 
@@ -486,7 +486,7 @@ function GetWidgetAuthorControl(name, author)
         local widgetAuthorControl = Chili.TextBox:New{
             name      = controlName,
             width     = '85%',
-            x         = '9%',                
+            x         = '9%',
             text      = lilacStr .. "Author: " .. author,
             tooltip   = nil,
             padding   = {0,0,0,3},
@@ -499,11 +499,11 @@ end
 function GetWidgetDescsControl(name, desc)
     local controlName = name .. "_desc"
     if not widgetDescsControls[controlName] then
-            -- create if its not in our cache        
+            -- create if its not in our cache
         local widgetDescsControl = Chili.TextBox:New{
             name      = controlName,
             width     = '85%',
-            x         = '9%',                
+            x         = '9%',
             text      = desc,
             tooltip   = nil,
             padding   = {0,0,0,3},
@@ -520,19 +520,19 @@ function makeWidgetList(layoutChange)
     local showDescs = Settings.showWidgetDescs
     local showAuthors = Settings.showWidgetAuthors
     local showAdv = Settings.advSelectorMode
-    
+
     -- construct and sort the widget list, if needed
     sortWidgetList()
     if not sortedWidgetList then return end
 
     -- remove previous children
-    local widgetList = tabs['Interface']:GetChildByName('widgetList') --scrollPanel 
+    local widgetList = tabs['Interface']:GetChildByName('widgetList') --scrollPanel
     local stack = widgetList.children[1] --stackPanel
     if layoutChange and #stack.children>0 then
         Settings["widgetScroll"] = GetTopVisibleControlOfWidgetList()
     end
     stack:ClearChildren()
-        
+
     -- add new children
     -- Outer loop adds cat labels
     for i=1, num_widgetCat do
@@ -552,10 +552,10 @@ function makeWidgetList(layoutChange)
                 local author = list[b].wData.author or "Unknown"
                 local desc = list[b].wData.desc or "No Description"
                 local fromZip = list[b].wData.fromZip and "" or greyStr .. " (user)"
-                
-                if WidgetFilter(name, desc, author) then 
+
+                if WidgetFilter(name, desc, author) then
                     local widgetFontColour = (active and "green") or (enabled and "orange") or "red"
-                    local widgetControl = GetWidgetControl(name, widgetFontColour, enabled, active, fromZip, showDescs, desc)           
+                    local widgetControl = GetWidgetControl(name, widgetFontColour, enabled, active, fromZip, showDescs, desc)
                     stack:AddChild(widgetControl)
 
                     if showAuthors then
@@ -566,28 +566,28 @@ function makeWidgetList(layoutChange)
                         local widgetDescsControl = GetWidgetDescsControl(name, desc)
                         stack:AddChild(widgetDescsControl)
                     end
-                    
+
                     if Settings['expandedWidgetOptions'][name] and widgetOptions[name] then
-                        if active and enabled then 
+                        if active and enabled then
                             stack:AddChild(widgetOptions[name])
                         end
                     end
                 end
             end
         end
-    end    
+    end
     stack:AddChild(Chili.Line:New{width="50%",name="cat_bottomline"})
-    
-    if layoutChange then 
+
+    if layoutChange then
         updateWidgetListPos = true
-    end    
+    end
 end
 
 local function AddWidgetOption(obj)
-    if not obj.name or not obj.children then 
+    if not obj.name or not obj.children then
         return
     end
-    
+
     widgetOptions[obj.name] = nil
     local panel = Chili.StackPanel:New{ -- will hold the widgets options
         name        = obj.name,
@@ -599,9 +599,9 @@ local function AddWidgetOption(obj)
         padding     = {0,0,0,0},
         itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},
-        preserverChildrenOrder = true    
-    }     
-        
+        preserverChildrenOrder = true
+    }
+
     for i = 1, #obj.children do
         panel:AddChild(obj.children[i]) -- chili controls created by widget
         -- if the widget is unloaded, these will disappear, but the title will still remain (and no options showing)
@@ -627,7 +627,7 @@ local function ShowHide(tab)
     local oTab = Settings.tabSelected
 
     Chili.Screen0.currentTooltip = nil
-    
+
     if tab then
         menuTabs:Select(tab)
     else
@@ -640,7 +640,7 @@ local function ShowHide(tab)
     elseif mainMenu.hidden then
         mainMenu:Show()
     end
-    
+
     CheckSpec()
 end
 
@@ -648,7 +648,7 @@ local function sTab(_,tabName)
     -- handles selection of tabs
     if not tabs[tabName] then return end
     if Settings.tabSelected then mainMenu:RemoveChild(tabs[Settings.tabSelected]) end
-    
+
     mainMenu:AddChild(tabs[tabName])
     Settings.tabSelected = tabName
 end
@@ -656,7 +656,7 @@ end
 ----------------------------
 -- control templates
 local function addStack(obj)
-    -- Creates a stack panel 
+    -- Creates a stack panel
     local stack
         stack = Chili.StackPanel:New{
             name        = obj.name or 'Stack',
@@ -716,7 +716,7 @@ local checkBox = function(obj)
         spSendCommands(self.name .. " " .. value)
         Spring.SetConfigInt(self.name, value)
     end
-    
+
     local checkBox = Chili.Checkbox:New{
         name      = obj.name,
         caption   = obj.title or obj.name,
@@ -745,12 +745,12 @@ local slider = function(obj)
     }
 
     local function OnChange(self, value)
-        local name = self.name        
+        local name = self.name
         Settings[name] = value
         if name=="UnitLodDist" then
             spSendCommands('distdraw ' .. value)
         elseif name=="UnitIconDist" then
-            spSendCommands('disticon ' .. value)            
+            spSendCommands('disticon ' .. value)
         else
             spSendCommands(name..' '..value)
         end
@@ -810,13 +810,13 @@ local comboBox = function(obj)
         local value   = self.options[listID]
         local name = self.name
         Settings[name] = value
-        
+
         if name=="ShadowMapSize" then
             spSendCommands('shadows ' .. Settings['Shadows'] .. ' ' .. value) -- special case :(
         else
             spSendCommands(name..' '..value)
         end
-        
+
         Spring.SetConfigInt(name, value)
     end
 
@@ -887,7 +887,7 @@ local function loadMainMenu()
         itemPadding  = {1,0,1,0},
         OnChange     = {sTab}
     }
-            
+
     mainMenu:Hide()
 end
 
@@ -908,15 +908,15 @@ end
 -----------------------------
 -- native TABS
 
-local function CreateGeneralTab()    
+local function CreateGeneralTab()
     local changeLog, introText, hotkeyInfo
-    
+
     local function ParseChangelog(changelog)
         -- parse the changelog and add a small amount of colour
-        -- TODO once we have a changelog!        
+        -- TODO once we have a changelog!
         return changelog
     end
-    
+
     local function InfoTextBox(obj)
         obj.size = obj.size or 20
         local Box = Chili.Control:New{width = '100%', y = obj.y*25, x = 0, height = obj.size +5, padding = {0,0,0,0},
@@ -927,34 +927,34 @@ local function CreateGeneralTab()
         }
         return Box
     end
-    
+
     local function InfoLineBox(y, text1, size)
         if not size then size = 20 end
         return Chili.LayoutPanel:New{width = 300, y = y*25, x = '10%', height = size+5, autosize = false, autoresizeitems = false, padding = {0,0,0,0}, itemPadding = {0,0,0,0}, itemMargin  = {0,0,0,0}, children = {
                 Chili.TextBox:New{right='95%',text=" "..text1,font={size=size,color={0.8,0.8,1,1}},padding = {0,0,0,0}},
-            }        
+            }
         }
     end
-    
+
     local function ResignMe(self)
         spSendCommands{'Spectator'}
         if self.visible then self:Hide() end
     end
 
-    local hotkeyInfoBox = Chili.TextBox:New{width='100%',text=HotkeyInfo.General,padding={0,5,0,0}} 
+    local hotkeyInfoBox = Chili.TextBox:New{width='100%',text=HotkeyInfo.General,padding={0,5,0,0}}
 
     local function SetHotkeyTab(_, tabName)
         hotkeyInfoBox:SetText(HotkeyInfo[tabName])
     end
-    
-    local hotkeyInfo = Chili.Control:New{x = 0, y = 20, bottom = 0, width = '100%', 
+
+    local hotkeyInfo = Chili.Control:New{x = 0, y = 20, bottom = 0, width = '100%',
         children = {
             Chili.TabBar:New{x = 0, y = 0,    width = '100%', height = 20, minItemWidth = 70, selected = 'General', itemPadding = {1,0,1,0}, OnChange = {SetHotkeyTab},
                 children = {
                     Chili.TabBarItem:New{caption='General'},
                     Chili.TabBarItem:New{caption='Selecting Units', width=120,},
                     Chili.TabBarItem:New{caption='Giving Orders', width=110,},
-                    Chili.TabBarItem:New{caption='Build Orders', width=100,},                
+                    Chili.TabBarItem:New{caption='Build Orders', width=100,},
                 }
             },
             Chili.ScrollPanel:New{y = 20, width = '100%', bottom = 0, children = {hotkeyInfoBox}}
@@ -983,7 +983,7 @@ local function CreateGeneralTab()
             Chili.Button:New{caption = 'Controls & Hotkeys', iPanel = hotkeyInfo, height = '7%', width = '28%', right = '1%', y = '16%', OnMouseUp = {SetInfoChild}},
 
             Chili.Button:New{caption = 'Changelog', iPanel = changeLog, height = '7%', width = '28%', right = '1%', y = '37%', OnMouseUp = {SetInfoChild}},
-            
+
             Chili.Button:New{caption = 'Resign and Spectate', name = "ResignButton", height = '9%', width = '28%', right = '1%', y = '72%', OnMouseUp = {ResignMe}},
             Chili.Button:New{caption = 'Exit To Desktop',height = '9%',width = '28%',right = '1%', y = '82%',
                 OnMouseUp = {function() spSendCommands{'quitforce'} end }},
@@ -1000,13 +1000,13 @@ local function CreateInterfaceTab()
     screenResText = Chili.TextBox:New{x=0,y=19, text="Resolution: "..vsx ..' x '..vsy, width='100%'}
     fullScreenCheckbox = Chili.Checkbox:New{caption='Fullscreen',x=0,y=0,width='100%',textalign='left',boxalign='right',checked=(Spring.GetConfigInt('Fullscreen')>0),
         OnChange = {
-            function(self) 
+            function(self)
                 local value = (self.checked==false and 1) or 0
                 spSendCommands('fullscreen ' .. value)
                 Spring.SetConfigInt('Fullscreen',value)
-            end} 
+            end}
     }
-    
+
     --[[
     local function GetCameraMode()
         local cs = Spring.GetCameraState()
@@ -1016,18 +1016,18 @@ local function CreateInterfaceTab()
     local selToCamShortName = {[1]='ta',[2]='spring',[3]='fps',[4]='rot',[5]='free'}
     cameraStateComboBox = Chili.ComboBox:New{x='40%',y=32,width='60%',
         items    = {"overhead", "spring", "fps", "rotatable", "free"},
-        selected = camModeToSelected[GetCameraMode()], 
+        selected = camModeToSelected[GetCameraMode()],
         OnSelect = {
             function(self,sel)
                 Spring.SendCommands('view'..selToCamShortName[sel])
             end
         }
     }]]
-                    
+
     tabs.Interface = Chili.Control:New{x = 0, y = 20, bottom = 20, width = '100%',
         children = {
             addScrollStack{name='widgetList',x='40%',width='60%',smoothScrollTime=0.25,verticalSmartScroll=true},
-            
+
             Chili.Label:New{caption='-- Widget Filter --',x='2%',width='35%',align = 'center',y=0},
             Chili.EditBox:New{name='widgetFilter',x=0,y=23,width = '27%',text=' Enter search term...',OnMouseDown = {function(obj) obj:SetText('') end}},
             Chili.Button:New{x='27%',y=22,height=22,width='13%',caption='Search',OnMouseUp={SetWidgetFilter}},
@@ -1045,7 +1045,7 @@ local function CreateInterfaceTab()
                     Chili.Button:New{x='6%',y=52,height=22,width='90%',caption='Clear Search',OnMouseUp={ClearWidgetFilter}},
                 },
             },
-            
+
             Chili.Line:New{width='40%',y=123},
 
             Chili.Label:New{caption='-- Widget Display --',x='2%',width='35%',align = 'center',y=136},
@@ -1053,16 +1053,16 @@ local function CreateInterfaceTab()
                 children = {
                     Chili.Checkbox:New{caption='Show Descriptions',x=0,y=0,width='100%',textalign='left',boxalign='right',checked=Settings.showWidgetDescs ,
                         OnChange = {
-                            function() 
+                            function()
                                 Settings.showWidgetDescs = not Settings.showWidgetDescs
-                                makeWidgetList(true) 
-                            end} 
+                                makeWidgetList(true)
+                            end}
                     },
                     Chili.Checkbox:New{caption='Show Authors',x=0,y=17,width='100%',textalign='left',boxalign='right',checked=Settings.showWidgetAuthors,
                         OnChange = {
-                            function() 
+                            function()
                                 Settings.showWidgetAuthors = not Settings.showWidgetAuthors
-                                makeWidgetList(true) 
+                                makeWidgetList(true)
                             end} --todo
                     },
                     Chili.Checkbox:New{caption='Allow User Widgets',x=0,y=34,width='100%',textalign='left',boxalign='right',checked=widgetHandler.allowUserWidgets,
@@ -1070,17 +1070,17 @@ local function CreateInterfaceTab()
                     },
                     Chili.Checkbox:New{caption='Advanced Mode',x=0,y=51,width='100%',textalign='left',boxalign='right',checked=Settings.advSelectorMode,
                         OnChange = {
-                            function() 
+                            function()
                                 Settings.advSelectorMode = not Settings.advSelectorMode
-                                if fullyLoaded then 
-                                    makeWidgetList(true) 
-                                end 
+                                if fullyLoaded then
+                                    makeWidgetList(true)
+                                end
                             end
                         }
                     }
-                }            
+                }
             },
-            
+
             Chili.Line:New{width='40%',y=233},
 
             Chili.Label:New{caption='-- Skin Settings --',x='2%',width='35%',align = 'center',y=247},
@@ -1088,7 +1088,7 @@ local function CreateInterfaceTab()
                 children = {
                     Chili.TextBox:New{x='0%',width='40%',text="Layout:"},
                     Chili.ComboBox:New{x='40%',width='60%',
-                        items    = {"hybrid", "classic", "inverted","corner"},
+                        items    = {"hybrid", "classic", "inverted", "corner", "spacious"},
                         selected = (WG.UIcoords.layout=="hybrid" and 1) or (WG.UIcoords.layout=="classic" and 2) or (WG.UIcoords.layout=="inverted" and 3) or (WG.UIcoords.layout=="corner" and 4),
                         OnSelect = {
                             function(self,sel)
@@ -1122,7 +1122,7 @@ local function CreateInterfaceTab()
                         OnSelect = {
                             function(self,sel)
                                 local alpha = self.items[sel]
-                                WG.SetSkinAlphaMode(self.items[sel])  
+                                WG.SetSkinAlphaMode(self.items[sel])
                                 if fullyLoaded then
                                     WG.ExposeNewSkinColours() -- causes luaui reload -> don't do this in initialise
                                 end
@@ -1136,32 +1136,32 @@ local function CreateInterfaceTab()
                         selected = (Settings["Cursor"]=="dynamic" and 1) or (Settings["Cursor"]=="static" and 2),
                         OnSelect = {
                             function(self,sel)
-                                if sel==1 then SetCursor("bar") 
+                                if sel==1 then SetCursor("bar")
                                 elseif sel==2 then SetCursor("static")
                                 end
                             end
                             }
                         },
-                    }, 
-                            
-            },    
+                    },
+
+            },
 
             Chili.Line:New{width='40%',y=346},
-            
+
             Chili.Label:New{caption='-- Screen Settings --',x='2%',width='35%',align = 'center',y=360},
             Chili.Control:New{x='2%', y=385, width='35%',autoSize=true,padding={0,0,0,0},
                 children = {
                     fullScreenCheckbox,
                     screenResText,
-                },  
+                },
             },
 
             Chili.Button:New{x='5%',bottom='5%',width='30%',height=30,caption="Reset Settings",
-                OnClick ={function() Spring.SendCommands("luaui reset") end},            
+                OnClick ={function() Spring.SendCommands("luaui reset") end},
             }
         }
     }
-    
+
     updateWidgetListPos = true
 end
 
@@ -1172,13 +1172,13 @@ local function CreateGraphicsTab()
             Chili.TextBox:New{x='65%',y='75%',width='25%',height='10%',text="(*) Requires restart."},
             Chili.ScrollPanel:New{name='Settings', x=0, y=0, width='100%', height='80%', children = {
                     addStack{x = 0, y = '3%', name = 'EngineSettingsMulti', children = {
-                            comboBox{y=0,title='Water',name='Water', 
+                            comboBox{y=0,title='Water',name='Water',
                                 labels={'Basic','Reflective','Dynamic','Refractive','Bump-Mapped'},
                                 options={0,1,2,3,4},},
                             comboBox{y=40,title='Shadows',name='Shadows',
                                 labels={'Off','On','Units Only'},
                                 options={0,1,2},},
-                            comboBox{y=40,title='Shadow Resolution',name='ShadowMapSize', 
+                            comboBox{y=40,title='Shadow Resolution',name='ShadowMapSize',
                                 labels={'Low','Medium','High'},
                                 options={2048,4096,8192},},
                             slider{name='UnitLodDist',title='Unit Draw Distance', max = 1000, step = 1},
@@ -1189,9 +1189,9 @@ local function CreateGraphicsTab()
                         }
                     },
                     addStack{x = '50%', y = '3%', name = 'EngineSettingsCheckBoxes', children = {
-                            checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},                    
+                            checkBox{title = 'Advanced Map Shading', name = 'AdvMapShading', tooltip = "Toggle advanced map shading mode"},
                             checkBox{title = 'Advanced Model Shading', name = 'AdvModelShading', tooltip = "Toggle advanced model shading mode"},
-                            checkBox{title = 'Extra Model Shading', name = 'luarules normalmapping', tooltip = "Toggle BARs extra model shaders"}, 
+                            checkBox{title = 'Extra Model Shading', name = 'luarules normalmapping', tooltip = "Toggle BARs extra model shaders"},
                             checkBox{title = 'Deferred Map Shading*', name = 'AllowDeferredMapRendering', tooltip = "Toggle deferred model shading mode (requires advanced map shading)"},
                             checkBox{title = 'Deferred Model Shading*', name = 'AllowDeferredModelRendering', tooltip = "Toggle deferred model shading mode (requires advanced model shading)"},
                             checkBox{title = 'Draw Engine Trees', name = '3DTrees', tooltip = "Enable/Disable rendering of engine trees"},
@@ -1199,19 +1199,19 @@ local function CreateGraphicsTab()
                             checkBox{title = 'Dynamic Sky', name = 'DynamicSky', tooltip = "Enable/Disable dynamic-sky rendering"},
                             --checkBox{title = 'Dynamic Sun', name = 'DynamicSun', tooltip = "Enable/Disable dynamic-sun rendering"}, -- forced
                             checkBox{title = 'Show Map Marks', name = 'MapMarks', tooltip = "Enables/Disables rendering of map drawings/marks"},
-                            checkBox{title = 'Show Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"}, 
-                            checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},      
-                        }                    
+                            checkBox{title = 'Show Map Border', name = 'MapBorder', tooltip = "Set or toggle map border rendering"},
+                            checkBox{title = 'Vertical Sync', name = 'VSync', tooltip = "Enables/Disables V-sync"},
+                        }
                     }
                 },
             },
-            
+
             Chili.Button:New{name="Minimal",x='2.5%',width='30%',y='85%',height='10%',caption='Minimal Settings',OnMouseUp={ApplyMinimalGraphicsSettings}},
             Chili.Button:New{name="Defaults",x='35%',width='30%',y='85%',height='10%',caption='Default Settings',OnMouseUp={ApplyDefaultGraphicsSettings}},
             Chili.Button:New{name="Maximal",x='68.5%',width='30%',y='85%',height='10%',caption='Maximal Settings',OnMouseUp={ApplyMaximalGraphicsSettings}},
         }
     }
-    
+
     --TODO: OnSelect for this tab that reloads options from the springsettings values (in case they have been changed elsewhere by e.g. other widgets whilst ingame)
 end
 
@@ -1245,7 +1245,7 @@ local function globalize()
 
     Menu.AddTab = AddTab -- for adding new tabs e.g. the end-graph widget
     --  usage is Menu.AddControl('nameOfTab', controlToBeAdded)
-    
+
     Menu.AddWidgetOption  = AddWidgetOption -- for registering options of widgets (note: ideally, widgets are responsible for save/load of their own options)
     --[[
         -- Example usage for AddWidgetOption(obj)
@@ -1255,9 +1255,9 @@ local function globalize()
                 Chili.Checkbox:New{caption='An Option', x='0%', width='100%', checked=<initial value from widget>, OnChange={function() <effect of changing option in widget>; end}},
                 Chili.Checkbox:New{caption='Another Option', x='0%', width='100%', checked=<initial value from widget>, OnChange={function() <effect of changing option in widget>; end}},
             }
-        }                
+        }
     ]]
-    
+
     WG.MainMenu = Menu
 end
 
@@ -1269,7 +1269,7 @@ local makeVisibleAtStartup
 
 function widget:Initialize()
     Chili = WG.Chili
-    
+
     InitSettings()
     SetCursor(Settings['cursorName'])
 
@@ -1278,21 +1278,21 @@ function widget:Initialize()
     CreateGraphicsTab()
     CreateInterfaceTab()
     CreateCreditsTab()
-        
+
     globalize()
-    
+
     makeWidgetList(true)
-    
+
     if Settings.visibleAtShutdown or amNewbie then
         makeVisibleAtStartup = true -- -> widget:Update
     end
-    
+
     -- our hotkeys
     local toggleMenu      = function() if mainMenu.visible then ShowHide() else ShowHide('General') end end
     local toggleInterface = function() ShowHide('Interface') end
     local toggleGraphics  = function() ShowHide('Graphics') end
     local toggleIntro     = function() ShowHide('General'); SetInfoChild(tabs.General:GetChildByName("Introduction Button")) end --small hack
-    
+
     spSendCommands('unbindkeyset f11')
     spSendCommands('unbindkeyset Any+i gameinfo')
     spSendCommands('unbind S+esc quitmenu','unbind esc quitmessage')
@@ -1305,9 +1305,9 @@ function widget:Initialize()
     spSendCommands('bind f10 toggleGraphics')
     spSendCommands('bind f11 toggleInterface')
     spSendCommands('bind i toggleIntro')
-    
+
     spSendCommands('unbindkeyset f7') -- pointless dynamic sky binding
-    
+
     fullyLoaded = true
 end
 
@@ -1323,17 +1323,17 @@ end
 
 local tabWait
 function widget:Update()
-    -- show if was present at shutdown 
+    -- show if was present at shutdown
     -- note: we have to wait two update cycles, because we need tabs that come from external widgets to have been registered (before we can select/show them)
     -- and Chili sometimes takes its time...
     if tabWait==2 then
-        if amNewbie then 
-            ShowHide('General') 
-        elseif Settings['visibleAtShutdown'] then 
-            menuTabs:Select(Settings.tabSelected or 'General') 
+        if amNewbie then
+            ShowHide('General')
+        elseif Settings['visibleAtShutdown'] then
+            menuTabs:Select(Settings.tabSelected or 'General')
             ShowHide()
         end
-        
+
         tabWait = nil
         makeVisibleAtStartup = nil
     end
@@ -1346,17 +1346,17 @@ function widget:Update()
         widgetHandler.knownChanged = false -- important note: widgetHandler.knownChanged=true was added by us to the widgetHandler, when a widget crashes (selector.lua polls each Drawframe)
         makeWidgetList()
     end
-    
+
     -- update the widget list pos is we need to
     if updateWidgetListPos then
-        if Settings["widgetScroll"] then 
+        if Settings["widgetScroll"] then
             local success = SetTopVisibleControlOfWidgetList(Settings["widgetScroll"])
             if success then -- we have to wait for chili to actually set up the y coords and it sometimes takes its time...
                 updateWidgetListPos = nil
             end
         else
-            updateWidgetListPos = nil        
-        end    
+            updateWidgetListPos = nil
+        end
     end
 end
 
@@ -1373,7 +1373,7 @@ end
 
 
 -----------------------------
--- config data 
+-- config data
 
 function widget:GetConfigData()
     if fullyLoaded then
@@ -1383,7 +1383,7 @@ function widget:GetConfigData()
             Settings.visibleAtShutdown = nil
         end
     end
-    
+
     return Settings
 end
 

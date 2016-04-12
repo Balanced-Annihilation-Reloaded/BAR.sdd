@@ -32,7 +32,6 @@ function gadget:GameFrame(n)
     queenTime = (Spring.GetGameRulesParam("queenTime") or 0)
     queenAnger = 1 - math.ceil((((Spring.GetGameSeconds()-gracePeriod+queenAnger)/(queenTime-gracePeriod))*100) -0.5) / 100
     Spring.SetTeamColor(chickenTeamID, 1,queenAnger,queenAnger)
-    Spring.Echo(1,queenAnger,queenAnger)
   end
 end
 

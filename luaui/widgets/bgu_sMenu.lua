@@ -227,10 +227,10 @@ local orderGrid = {}
 local buttonColour
 
 local unitButtons = {} -- all cached
-local orderButtons = {} -- created on demand
-local stateButtons = {} -- created on demand
+local orderButtons = {} -- all cached
+local stateButtons = {} -- all cached
 
-local darkenedMenuTabColor = {1,1,1,1}
+local darkenedMenuTabColor = {1.0, 0.7, 0.1, 0.8}
 local menuTabColor = {1,1,1,1}
 
 ----------------
@@ -285,8 +285,8 @@ end
 
 local function FinalizeOrderGrid()
     -- use more order rows if the order buttons won't fit into the screen width
-    -- we allow for up to 21 order buttons in up to 3 rows, with all non-fixed buttons going into the top row
-    -- the (max) number of buttons per row is always a multiple of 7
+    -- we allow for up to 24 order buttons in up to 3 rows, with all non-fixed buttons going into the top row
+    -- the (max) number of buttons per row is always a multiple of 8
     if WG.PlayerList and WG.PlayerList.width then
         local vsx,_ = Spring.GetViewGeometry()
         local availableWidth = vsx - WG.PlayerList.width - WG.UIcoords.orderMenu.x -- player list is in BR corner
@@ -326,6 +326,11 @@ local function resizeUI()
     maxBuildCols    = WG.UIcoords.buildGrid.maxCols
     maxBuildGUICols = WG.UIcoords.buildGrid.maxGUICols
 
+    local buildMenuOrientation = WG.UIcoords.buildGrid.orientation
+    for i=1,#catNames do
+        grid[i].orientation = buildMenuOrientation
+    end
+
     local i = selectedTab
     local buildGUICols = (i) and math.min(maxBuildGUICols, grid[i].columns) or 1
 
@@ -335,7 +340,7 @@ local function resizeUI()
     local bh = WG.UIcoords.buildMenu.h
     local bw = WG.UIcoords.buildMenu.w * (buildGUICols / wantedBuildCols) -- better to keep consistent layout & not use small buttons when possible
     buildMenu:SetPos(bx,by,bw,bh)
-
+    
     -- menu tabs (pinned to build menu)
     local vsx,_ = Spring.GetViewGeometry()
     smallMenuFont = WG.RelativeFontSize(relSmallMenuFont)
@@ -381,28 +386,27 @@ local function resizeUI()
     end
 
     local align = WG.UIcoords.orderMenu.align
-    local verticalGrids = align == "left" or align == "right"
-    local flipGrids = align == "left" or align == "top"
+    local verticalOrderGrids = align == "left" or align == "right"
+    local flipOrderGrids = align == "left" or align == "top"
 
     -- order menu position
     local ox = WG.UIcoords.orderMenu.x
     local oy = WG.UIcoords.orderMenu.y
-    local ow = verticalGrids and WG.UIcoords.orderMenuButton.w * #orderMenuLayout or WG.UIcoords.orderMenuButton.w * orderCols
-    local oh = verticalGrids and WG.UIcoords.orderMenuButton.h * orderCols or WG.UIcoords.orderMenuButton.h * #orderMenuLayout
+    local ow = verticalOrderGrids and WG.UIcoords.orderMenuButton.w * #orderMenuLayout or WG.UIcoords.orderMenuButton.w * orderCols
+    local oh = verticalOrderGrids and WG.UIcoords.orderMenuButton.h * orderCols or WG.UIcoords.orderMenuButton.h * #orderMenuLayout
     orderMenu:SetPos(ox,oy,ow,oh)
 
-    if verticalGrids then
+    if verticalOrderGrids then
         orderMenu:SetOrientation("horizontal")
     else
         orderMenu:SetOrientation("vertical")    
     end
 
     orderMenu:ClearChildren()
-    local start, finish, step = flipGrids and #orderMenuLayout or 1, flipGrids and 1 or #orderMenuLayout, flipGrids and -1 or 1
+    local start, finish, step = flipOrderGrids and #orderMenuLayout or 1, flipOrderGrids and 1 or #orderMenuLayout, flipOrderGrids and -1 or 1
     for i=start, finish, step do
-        orderGrid[i].columns = verticalGrids and 1 or orderCols
-        orderGrid[i].rows = verticalGrids and orderCols or 1
-        orderGrid[i]:SetPos(x,y,w,h)
+        orderGrid[i].columns = verticalOrderGrids and 1 or orderCols
+        orderGrid[i].rows = verticalOrderGrids and orderCols or 1
         orderMenu:AddChild(orderGrid[i])
     end
 
@@ -437,16 +441,16 @@ local function selectTab(self)
     local old = menuTab[menuTabs.prevChoice]
     if old then
         old.font.color = menuTabColor
-        old.font.size  = smallMenuFont
-        old.width = smallMenuWidth
+        --old.font.size  = smallMenuFont
+        --old.width = smallMenuWidth
         old:Invalidate()
     end
 
     local highLight = menuTab[choice]
     if highLight then
         highLight.font.color = darkenedMenuTabColor
-        highLight.font.size  = largeMenuFont
-        highLight.width = largeMenuWidth
+        --highLight.font.size  = largeMenuFont
+        --highLight.width = largeMenuWidth
         highLight:Invalidate()
     end
 
@@ -930,7 +934,7 @@ local function parseCmds()
 
     -- Add the states in the wanted order
     if #cmdList>0 then
-        if WG.UIcoords.stateGrid.orientation=="bottom" then
+        if WG.UIcoords.stateGrid.align=="bottom" then
             -- pad out to make it as though we added bottom-up
             local nPadding = 6
             for action,smd in pairs(states) do
@@ -1075,7 +1079,7 @@ function makeMenuTabs()
                 OnMouseWheel = {scrollMenus},
                 font    = {
                     size             = smallMenuFont,
-                    color            = darkenedMenuTabColor,
+                    color            = menuTabColor,
                     outline          = true,
                     autoOutlineColor = true,
                     outlineWidth     = 4,

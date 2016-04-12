@@ -31,6 +31,9 @@ local wantedPaddingRows
 local orderRows
 local orderCols
 
+local hideFacBarOnBuild
+local hideFacBarOnOrder
+
 local relSmallMenuFont, relLargeMenuFont = 14,18
 local smallMenuFont, largeMenuFont
 
@@ -326,6 +329,10 @@ local function resizeUI()
     maxBuildCols    = WG.UIcoords.buildGrid.maxCols
     maxBuildGUICols = WG.UIcoords.buildGrid.maxGUICols
 
+	-- when to show/hide the facBar (default is to hide on build and show on order)
+	hideFacBarOnBuild = WG.UIcoords.buildMenu.hideFacBar == nil or WG.UIcoords.buildMenu.hideFacBar
+	hideFacBarOnOrder = WG.UIcoords.orderMenu.hideFacBar ~= nil or WG.UIcoords.orderMenu.hideFacBar
+
     local buildMenuOrientation = WG.UIcoords.buildGrid.orientation
     for i=1,#catNames do
         grid[i].orientation = buildMenuOrientation
@@ -340,7 +347,7 @@ local function resizeUI()
     local bh = WG.UIcoords.buildMenu.h
     local bw = WG.UIcoords.buildMenu.w * (buildGUICols / wantedBuildCols) -- better to keep consistent layout & not use small buttons when possible
     buildMenu:SetPos(bx,by,bw,bh)
-    
+
     -- menu tabs (pinned to build menu)
     local vsx,_ = Spring.GetViewGeometry()
     smallMenuFont = WG.RelativeFontSize(relSmallMenuFont)
@@ -399,7 +406,7 @@ local function resizeUI()
     if verticalOrderGrids then
         orderMenu:SetOrientation("horizontal")
     else
-        orderMenu:SetOrientation("vertical")    
+        orderMenu:SetOrientation("vertical")
     end
 
     orderMenu:ClearChildren()
@@ -1490,7 +1497,7 @@ local function InitialQueue()
     local r,g,b = Spring.GetTeamColor(Spring.GetMyTeamID())
     teamColor = {r,g,b,0.8}
 
-    if WG.HideFacBar then WG.HideFacBar() end
+    if WG.FacBar then WG.FacBar.Hide() end
     buildMenu.active = false
     orderMenu.active = false
 
@@ -1518,11 +1525,14 @@ function widget:Update()
 
         if not buildMenu.active and buildMenu.visible then
             buildMenu:Hide()
-            if WG.FacBar then WG.FacBar.Show() end
         elseif buildMenu.active and buildMenu.hidden then
             buildMenu:Show()
-            if WG.FacBar then WG.FacBar.Hide() end
         end
+		if (hideFacBarOnBuild and buildMenu.active) or (hideFacBarOnOrder and orderMenu.active) then
+			WG.FacBar.Hide()
+		else
+			WG.FacBar.Show()
+		end
     end
 end
 

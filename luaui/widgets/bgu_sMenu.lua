@@ -331,7 +331,7 @@ local function resizeUI()
 
     -- when to show/hide the facBar (default is to hide on build and show on order)
     hideFacBarOnBuild = WG.UIcoords.buildMenu.hideFacBar == nil or WG.UIcoords.buildMenu.hideFacBar
-    hideFacBarOnOrder = WG.UIcoords.orderMenu.hideFacBar ~= nil or WG.UIcoords.orderMenu.hideFacBar
+    hideFacBarOnOrder = WG.UIcoords.orderMenu.hideFacBar ~= nil and WG.UIcoords.orderMenu.hideFacBar
 
     local buildMenuOrientation = WG.UIcoords.buildGrid.orientation
     for i=1,#catNames do

@@ -107,10 +107,10 @@ local function Classic()
     local stateMenu = {x=sInfo.w, y=1-sInfo.h, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="bottom"}
 
-    local buildMenu = {x=0, y=max(minimapH,0.2), w=stateMenu.x+stateMenu.w, h=1-max(minimapH,0.2)-sInfo.h} 
+    local buildMenu = {x=0, y=max(minimapH,0.2), w=stateMenu.x+stateMenu.w, h=1-max(minimapH,0.2)-sInfo.h}
     local buildGrid = {wantedRows=4, wantedCols=3, maxRows=7, maxCols=5, maxGUICols=4, orientation="horizontal"}
 
-    local facBar = {x=0, y=max(minimapH,0.2), w=nil, h=1-max(minimapH,0.2)-sInfo.h} 
+    local facBar = {x=0, y=max(minimapH,0.2), w=nil, h=1-max(minimapH,0.2)-sInfo.h}
     local facBarButton = {h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
@@ -228,14 +228,14 @@ local function Corner()
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
     local sInfo = {x=0, y=1-0.2, w=0.2/screenAspect, h=0.2}
 
-    local buildMenu = {x=sInfo.w, y=1-sInfo.h, w=0.2, h=sInfo.h} 
+    local buildMenu = {x=sInfo.w, y=1-sInfo.h, w=0.2, h=sInfo.h, hideFacBar = false}
     local buildGrid = {wantedRows=2, wantedCols=4, maxRows=2, maxCols=12, maxGUICols=7, orientation="vertical"}
 
     local stateMenu = {x=0, y=1-2*sInfo.h, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="bottom"}
 
     local facBar = {x=0, y=minimap.h, w=nil, h=1-minimap.h-stateMenu.h-sInfo.h}
-    local facBarButton = {h=0.06} 
+    local facBarButton = {h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
     local orderMenu = {x=stateMenu.w, y=1-sInfo.h-3*orderMenuButton.h, w=nil, h=nil, align="bottom"}
@@ -272,7 +272,7 @@ local function Spacious()
     local comCounter = {x=clockFPS.x-0.06/screenAspect-0.005, y=resBars.h, w=0.06/screenAspect, h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
-    local orderMenu = {x=0, y=minimapH, w=nil, h=nil, align="left"}
+    local orderMenu = {x=0, y=minimapH, w=nil, h=nil, align="left", hideFacBar = true}
     local orderGrid = {rows=3, cols=8} -- it might override
 
     local sInfo = {x=0, y=1-0.2, w=0.2/screenAspect, h=0.2}
@@ -281,7 +281,7 @@ local function Spacious()
     local stateMenu = {x=orderGrid.rows * orderMenuButton.w, y=minimapH, w=stateMenuW, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="top"}
 
-    local buildMenu = {x=sInfo.x + sInfo.w, y=1-0.2, w=0.3, h=0.2}
+    local buildMenu = {x=sInfo.x + sInfo.w, y=1-0.2, w=0.3, h=0.2, hideFacBar = false}
     local buildGrid = {wantedRows=2, wantedCols=4, maxRows=2, maxCols=12, maxGUICols=7, orientation="vertical"}
 
     local facBar = {x=0, y=minimap.h, w=nil, h=1-minimap.h-sInfo.h}

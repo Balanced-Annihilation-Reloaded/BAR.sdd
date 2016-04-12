@@ -45,7 +45,7 @@ local panelTexture    = ":n:"..LUAUI_DIRNAME.."Images/chicken_panel.tga"
 
 local viewSizeX, viewSizeY = 0,0
 local w               = 300
-local h               = 210
+local h               = 210  
 local x1              = 0
 local y1              = 0
 local panelMarginX    = 30
@@ -416,11 +416,33 @@ end
 
 
 function widget:ViewResize(vsx, vsy)
-  x1 = math.floor(x1 - viewSizeX)
-  y1 = math.floor(y1 - viewSizeY)
+  --fixme: does not scale with view size
+  r = 1-math.min(1,math.max(0,(x1+w)/viewSizeX))
+  b = 1-math.min(1,math.max(0,(y1+h)/viewSizeY))
+  
   viewSizeX, viewSizeY = vsx, vsy
-  x1 = viewSizeX + x1
-  y1 = viewSizeY + y1
+  
+  x1 = (1-r)*viewSizeX - w
+  y1 = (1-b)*viewSizeY - h
+  
+  updatePos(x1,y1)
+end
+
+function widget:GetConfigData()
+  local vsx,vsy = Spring.GetViewGeometry()
+  local data = {
+	  r = 1-math.min(1,math.max(0,(x1+w/2)/viewSizeX)),
+	  b = 1-math.min(1,math.max(0,(y1+h/2)/viewSizeY)),
+  }
+  return data
+end
+
+function widget:SetConfigData(data)
+  if data then
+    local vsx,vsy = Spring.GetViewGeometry()
+    x1 = (1-data.r-w/2)*vsx
+	y1 = (1-data.b-h/2)*vsy
+  end	
 end
 
 

@@ -329,9 +329,9 @@ local function resizeUI()
     maxBuildCols    = WG.UIcoords.buildGrid.maxCols
     maxBuildGUICols = WG.UIcoords.buildGrid.maxGUICols
 
-	-- when to show/hide the facBar (default is to hide on build and show on order)
-	hideFacBarOnBuild = WG.UIcoords.buildMenu.hideFacBar == nil or WG.UIcoords.buildMenu.hideFacBar
-	hideFacBarOnOrder = WG.UIcoords.orderMenu.hideFacBar ~= nil or WG.UIcoords.orderMenu.hideFacBar
+    -- when to show/hide the facBar (default is to hide on build and show on order)
+    hideFacBarOnBuild = WG.UIcoords.buildMenu.hideFacBar == nil or WG.UIcoords.buildMenu.hideFacBar
+    hideFacBarOnOrder = WG.UIcoords.orderMenu.hideFacBar ~= nil or WG.UIcoords.orderMenu.hideFacBar
 
     local buildMenuOrientation = WG.UIcoords.buildGrid.orientation
     for i=1,#catNames do
@@ -1528,11 +1528,11 @@ function widget:Update()
         elseif buildMenu.active and buildMenu.hidden then
             buildMenu:Show()
         end
-		if (hideFacBarOnBuild and buildMenu.active) or (hideFacBarOnOrder and orderMenu.active) then
-			WG.FacBar.Hide()
-		else
-			WG.FacBar.Show()
-		end
+        if (hideFacBarOnBuild and buildMenu.active) or (hideFacBarOnOrder and orderMenu.active) then
+            WG.FacBar.Hide()
+        else
+            WG.FacBar.Show()
+        end
     end
 end
 

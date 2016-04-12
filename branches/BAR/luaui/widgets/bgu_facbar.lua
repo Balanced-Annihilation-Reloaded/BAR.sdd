@@ -630,9 +630,9 @@ function widget:Initialize()
 end
 
 function ResizeUI()
-    local x = WG.UIcoords.buildMenu.x
-    local y = WG.UIcoords.buildMenu.y
-    local h = WG.UIcoords.buildMenu.h
+    local x = WG.UIcoords.facBar.x
+    local y = WG.UIcoords.facBar.y
+    local h = WG.UIcoords.facBar.h
     window_facbar:SetPos(x,y,_,h)
 
     fontSize = WG.RelativeFontSize(15)

@@ -34,11 +34,17 @@ local orderCols
 local hideFacBarOnBuild
 local hideFacBarOnOrder
 
-local relSmallMenuFont, relLargeMenuFont = 14,18
-local smallMenuFont, largeMenuFont
+local relMenuFont = 14
+local menuFont
 
 local relFontSize = 16
 local fontSize
+
+local options = {
+    showOrderTooltips = true,
+    showStateTooltips = true,
+    showBuildTooltips = true,
+}
 
 -- custom command IDs for LuaUIs CMD table
 local CMD_UNIT_SET_TARGET = 34923
@@ -350,11 +356,9 @@ local function resizeUI()
 
     -- menu tabs (pinned to build menu)
     local vsx,_ = Spring.GetViewGeometry()
-    smallMenuFont = WG.RelativeFontSize(relSmallMenuFont)
-    largeMenuFont = WG.RelativeFontSize(relLargeMenuFont)
-    smallMenuWidth = 0.07*vsx
-    largeMenuWidth = 0.09*vsx
-    menuTabs:SetPos(bx+bw, by+bh/10, largeMenuWidth, bh)
+    menuFont = WG.RelativeFontSize(relMenuFont)
+    menuWidth = 0.07*vsx
+    menuTabs:SetPos(bx+bw, by, menuWidth, bh)
     makeMenuTabs() --lazy, fixme
 
     -- build menu buttons
@@ -448,16 +452,12 @@ local function selectTab(self)
     local old = menuTab[menuTabs.prevChoice]
     if old then
         old.font.color = menuTabColor
-        --old.font.size  = smallMenuFont
-        --old.width = smallMenuWidth
         old:Invalidate()
     end
 
     local highLight = menuTab[choice]
     if highLight then
         highLight.font.color = darkenedMenuTabColor
-        --highLight.font.size  = largeMenuFont
-        --highLight.width = largeMenuWidth
         highLight:Invalidate()
     end
 
@@ -640,7 +640,6 @@ local function addState(cmd)
             name   = "full_state",
             parent = stateMenu,
             caption   = "(full)",
-            --tooltip   = cmd.tooltip,
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
             minheight = 22,
@@ -662,7 +661,8 @@ local function addState(cmd)
             name      = name,
             caption   = caption,
             cmdName   = cmd.name,
-            tooltip   = cmd.tooltip,
+            _tooltip   = cmd.tooltip,
+            tooltip = options.showStateTooltips and cmd.tooltip,
             cmdId     = cmd.id,
             cmdAName  = cmd.action,
             padding   = {0,0,0,0},
@@ -691,7 +691,6 @@ local function addDummyState(cmd)
     if not stateButtons[name] then
         button = Chili.Button:New{
             caption   = cmd.action,
-            --tooltip   = cmd.tooltip,
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
             OnMouseUp = {},
@@ -729,7 +728,8 @@ local function addOrderButton(item)
             name      = cmd.action,
             caption   = '',
             cmdName   = cmd.name,
-            tooltip   = cmd.tooltip,
+            _tooltip   = cmd.tooltip,
+            tooltip = options.showOrderTooltips and cmd.tooltip,
             cmdId     = cmd.id,
             cmdAName  = cmd.action,
             padding   = {0,0,0,0},
@@ -1076,16 +1076,16 @@ function makeMenuTabs()
                 tabNum  = i,
                 tooltip = 'You can scroll through the different categories with your mouse wheel!',
                 parent  = menuTabs,
-                width   = smallMenuWidth,
+                width   = menuWidth,
                 x       = 0,
-                y       = tabCount*smallMenuFont*3.5,
-                height  = smallMenuFont*3.5,
+                y       = tabCount*menuFont*3.5,
+                height  = menuFont*3.5,
                 caption = catNames[i],
                 OnClick = {selectTab},
                 backgroundColor = buttonColour,
                 OnMouseWheel = {scrollMenus},
                 font    = {
-                    size             = smallMenuFont,
+                    size             = menuFont,
                     color            = menuTabColor,
                     outline          = true,
                     autoOutlineColor = true,
@@ -1216,11 +1216,15 @@ end
 local function CreateUnitButton(name, unitDef)
     -- make the button for this unit
     local unitDefID = unitDef.id
+    local description = unitDef.tooltip~="" and "\n"..unitDef.tooltip or ""
+    local tooltip = unitDef.humanName .. description
+    
     unitButtons[unitDefID] = Chili.Button:New{
         name      = "button_" .. name,
         cmdId     = -unitDefID,
         unitDefID = unitDefID,
-        tooltip   = nil,
+        _tooltip   = tooltip,
+        tooltip = options.showBuildTooltips and tooltip,
         caption   = '',
         disabled  = false,
         padding   = {0,0,0,0},
@@ -1387,6 +1391,9 @@ function widget:Initialize()
     end
 
     resizeUI()
+    
+    -- options
+    AddMenuOptions()
 
     -- Create a cache of buttons stored in the unit array
     for name, unitDef in pairs(UnitDefNames) do
@@ -1547,7 +1554,52 @@ function widget:GameStart()
 end
 
 ---------------------------
+-- options
+
+function AddMenuOptions()
+    local Menu = WG.MainMenu
+
+    Menu.AddWidgetOption{
+        title = "Selection Menu",
+        name = widget:GetInfo().name,
+        children = {
+            Chili.Checkbox:New{caption='Show build menu tooltips',x='5%',width='95%',
+                    checked=options.showBuildTooltips, OnChange={function() options.showBuildTooltips = not options.showBuildTooltips; SetTooltips(); end}},
+            Chili.Checkbox:New{caption='Show state menu tooltips',x='5%',width='95%',
+                    checked=options.showStateTooltips, OnChange={function() options.showStateTooltips = not options.showStateTooltips; SetTooltips(); end}},
+            Chili.Checkbox:New{caption='Show order menu tooltips',x='5%',width='95%',
+                    checked=options.showOrderTooltips, OnChange={function() options.showOrderTooltips = not options.showOrderTooltips; SetTooltips(); end}},
+        }
+    }
+end
+
+function SetTooltips()
+    for _,button in pairs(unitButtons) do        
+        button.tooltip = options.showBuildTooltips and button._tooltip
+    end
+    for _,button in pairs(stateButtons) do        
+        button.tooltip = options.showBuildTooltips and button._tooltip
+    end
+    for _,button in pairs(orderButtons) do        
+        button.tooltip = options.showBuildTooltips and button._tooltip
+    end
+    
+end
+    
+---------------------------
 --
+
+
+function widget:GetConfigData()
+    return options
+end
+
+function widget:SetConfigData(data)
+    if data then
+        options = data
+    end
+end
+
 function widget:Shutdown()
     -- Let Chili know we're done with these
     buildMenu:Dispose()

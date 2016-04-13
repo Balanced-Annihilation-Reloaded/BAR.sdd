@@ -1365,12 +1365,7 @@ end
 
 function widget:GamePreload()
     if WG.isMission then
-        -- change the options in a way that won't be saved
-        options.ready_faction = false
-        options.ranks = false
-        options.flags = false
-        options.ts = false
-        OptionChange()
+    
     end
 end
 

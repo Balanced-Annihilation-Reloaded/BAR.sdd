@@ -103,6 +103,8 @@ local function Classic()
 
     local sInfoH = 0.2
     local sInfo = {x=0, y=1-sInfoH, w=sInfoH/screenAspect, h=sInfoH}
+    
+    local factionChange = {x=sInfo.w, y=1-0.08, w=0.17, h=0.08}
 
     local stateMenu = {x=sInfo.w, y=1-sInfo.h, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="bottom"}
@@ -130,7 +132,7 @@ local function Classic()
     UIcoords = {
         minimap=minimap, sInfo=sInfo,
         buildMenu=buildMenu, buildGrid=buildGrid,
-        facBar=facBar, facBarButton=facBarButton,
+        facBar=facBar, facBarButton=facBarButton, factionChange=factionChange,
         stateMenu=stateMenu, stateGrid=stateGrid,
         orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
         resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
@@ -149,6 +151,8 @@ local function Hybrid()
 
     local buildMenu = {x=0, y=sInfo.y+sInfo.h, w=stateMenu.x+stateMenu.w, h=1-max(minimapH,0.2)-sInfo.h}
     local buildGrid = {wantedRows=4, wantedCols=3, maxRows=7, maxCols=5, maxGUICols=4, orientation="horizontal"}
+
+    local factionChange = {x=buildMenu.w, y=1-0.08, w=0.17, h=0.08}
 
     local facBar = {x=0, y=sInfo.y+sInfo.h, w=nil, h=1-max(minimapH,0.2)-sInfo.h}
     local facBarButton = {h=0.06}
@@ -170,7 +174,7 @@ local function Hybrid()
     UIcoords = {
         minimap=minimap, sInfo=sInfo,
         buildMenu=buildMenu, buildGrid=buildGrid,
-        facBar=facBar, facBarButton=facBarButton,
+        facBar=facBar, facBarButton=facBarButton, factionChange=factionChange,
         stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
         orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
         resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
@@ -185,6 +189,8 @@ local function Inverted()
     local minimapW,minimapH = GetMinimapDimensions(0.12, 0.28, 0.12, 0.28)
     local minimap = {x=0, y=1-minimapH, w=minimapW, h=minimapH}
     local sInfo = {x=0, y=0, w=0.2/screenAspect, h=0.2}
+
+    local factionChange = {x=minimap.w, y=1-0.08, w=0.17, h=0.08}
 
     local stateMenu = {x=sInfo.w, y=0, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="bottom"}
@@ -212,7 +218,7 @@ local function Inverted()
     UIcoords = {
         minimap=minimap, sInfo=sInfo,
         buildMenu=buildMenu, buildGrid=buildGrid,
-        facBar=facBar, facBarButton=facBarButton,
+        facBar=facBar, facBarButton=facBarButton, factionChange=factionChange,
         stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
         orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
         resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
@@ -228,8 +234,8 @@ local function Corner()
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
     local sInfo = {x=0, y=1-0.2, w=0.2/screenAspect, h=0.2}
 
-    local buildMenu = {x=sInfo.w, y=1-sInfo.h, w=0.2, h=sInfo.h, hideFacBar = false}
-    local buildGrid = {wantedRows=2, wantedCols=4, maxRows=2, maxCols=12, maxGUICols=7, orientation="vertical"}
+    local buildMenu = {x=sInfo.w, y=1-sInfo.h, w=0.1, h=sInfo.h} 
+    local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=12, maxGUICols=9, orientation="vertical"}
 
     local stateMenu = {x=0, y=1-2*sInfo.h, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="bottom"}
@@ -240,6 +246,8 @@ local function Corner()
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
     local orderMenu = {x=stateMenu.w, y=1-sInfo.h-3*orderMenuButton.h, w=nil, h=nil, align="bottom"}
     local orderGrid = {rows=3, cols=8} -- it might override
+
+    local factionChange = {x=sInfo.w, y=1-buildMenu.h-0.08, w=0.17, h=0.08}
 
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
     local clockFPS = {x=1-0.16, y=resBars.h+0.005, w=0.155, h=0.02}
@@ -254,7 +262,7 @@ local function Corner()
     UIcoords = {
         minimap=minimap, sInfo=sInfo,
         buildMenu=buildMenu, buildGrid=buildGrid,
-        facBar=facBar, facBarButton=facBarButton,
+        facBar=facBar, facBarButton=facBarButton, factionChange=factionChange,
         stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
         orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
         resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
@@ -281,8 +289,10 @@ local function Spacious()
     local stateMenu = {x=orderGrid.rows * orderMenuButton.w, y=minimapH, w=stateMenuW, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="top"}
 
-    local buildMenu = {x=sInfo.x + sInfo.w, y=1-0.2, w=0.3, h=0.2, hideFacBar = false}
-    local buildGrid = {wantedRows=2, wantedCols=4, maxRows=2, maxCols=12, maxGUICols=7, orientation="vertical"}
+    local buildMenu = {x=sInfo.x + sInfo.w, y=1-0.2, w=0.15, h=0.2}
+    local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=12, maxGUICols=9, orientation="vertical"}
+
+    local factionChange = {x=sInfo.w, y=1-buildMenu.h-0.08, w=0.17, h=0.08}
 
     local facBar = {x=0, y=minimap.h, w=nil, h=1-minimap.h-sInfo.h}
     local facBarButton = {h=0.06}
@@ -295,7 +305,7 @@ local function Spacious()
     UIcoords = {
         minimap=minimap, sInfo=sInfo,
         buildMenu=buildMenu, buildGrid=buildGrid,
-        facBar=facBar, facBarButton=facBarButton,
+        facBar=facBar, facBarButton=facBarButton, factionChange=factionChange,
         stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
         orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
         resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,

@@ -56,10 +56,10 @@ local Chili, control, arm_button, core_button
 
 function ResizeUI()
     local vsx,vsy = Spring.GetViewGeometry()
-    local w = vsx*0.2
-    local h = vsx*0.06
-    local x = WG.UIcoords.orderMenu.x
-    local y = vsy-h    
+    local x = WG.UIcoords.factionChange.x
+    local y = WG.UIcoords.factionChange.y    
+    local w = WG.UIcoords.factionChange.w 
+    local h = WG.UIcoords.factionChange.h
     control:SetPos(x,y,w,h)
 end
 

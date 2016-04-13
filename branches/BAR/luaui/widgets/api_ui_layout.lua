@@ -103,7 +103,7 @@ local function Classic()
 
     local sInfoH = 0.2
     local sInfo = {x=0, y=1-sInfoH, w=sInfoH/screenAspect, h=sInfoH}
-    
+
     local factionChange = {x=sInfo.w, y=1-0.08, w=0.17, h=0.08}
 
     local stateMenu = {x=sInfo.w, y=1-sInfo.h, w=0.06, h=sInfo.h}
@@ -234,7 +234,7 @@ local function Corner()
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
     local sInfo = {x=0, y=1-0.2, w=0.2/screenAspect, h=0.2}
 
-    local buildMenu = {x=sInfo.w, y=1-sInfo.h, w=0.1, h=sInfo.h} 
+    local buildMenu = {x=sInfo.w, y=1-sInfo.h, w=0.1, h=sInfo.h, hideFacBar = false}
     local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=12, maxGUICols=9, orientation="vertical"}
 
     local stateMenu = {x=0, y=1-2*sInfo.h, w=0.06, h=sInfo.h}
@@ -289,7 +289,7 @@ local function Spacious()
     local stateMenu = {x=orderGrid.rows * orderMenuButton.w, y=minimapH, w=stateMenuW, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="top"}
 
-    local buildMenu = {x=sInfo.x + sInfo.w, y=1-0.2, w=0.15, h=0.2}
+    local buildMenu = {x=sInfo.x + sInfo.w, y=1-0.2, w=0.15, h=0.2, hideFacBar = false}
     local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=12, maxGUICols=9, orientation="vertical"}
 
     local factionChange = {x=sInfo.w, y=1-buildMenu.h-0.08, w=0.17, h=0.08}

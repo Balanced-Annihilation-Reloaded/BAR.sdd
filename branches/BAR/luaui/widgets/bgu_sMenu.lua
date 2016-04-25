@@ -580,24 +580,6 @@ local function addBuild(item)
     local category = item.category
     local disabled = item.disabled
 
-    -- avoid adding too many
-    if #grid[category].children>maxBuildCols*maxBuildRows-1 then return end
-    if #grid[category].children==maxBuildCols*maxBuildRows-1 then
-        Chili.Button:New{
-            x = 5,
-            parent = grid[category],
-            caption = "(full)",
-            padding   = {0,0,0,0},
-            margin    = {0,0,0,0},
-            borderColor = {1,1,1,0.1},
-            backgroundColor = buttonColour,
-            font = {
-                size = 16
-            }
-        }
-        return
-    end
-
     -- prepare the button
     local button = unitButtons[uDID]
     local image = button.children[1]
@@ -618,7 +600,7 @@ local function addBuild(item)
         image.color = {0.4,0.4,0.4,0.7}
     else
         button.focusColor[4] = 0.5
-        if uDID==activeSelUDID then
+		if uDID==activeSelUDID then
             button.borderColor = button.focusColor
             selectTab(menuTab[category])
         else
@@ -629,7 +611,26 @@ local function addBuild(item)
     end
     button.disabled = disabled
 
+    -- avoid adding too many buttons
+    if #grid[category].children>maxBuildCols*maxBuildRows-1 then return end
+    if #grid[category].children==maxBuildCols*maxBuildRows-1 then
+        Chili.Button:New{
+            x = 5,
+            parent = grid[category],
+            caption = "(full)",
+            padding   = {0,0,0,0},
+            margin    = {0,0,0,0},
+            borderColor = {1,1,1,0.1},
+            backgroundColor = buttonColour,
+            font = {
+                size = 16
+            }
+        }
+        return
+    end
+
     -- add this button, no duplicates
+	-- note: build buttons are only orphaned when the unit selection changes
     if not grid[category]:GetChildByName(button.name) then
         grid[category]:AddChild(button)
     end
@@ -1171,7 +1172,7 @@ local function loadPanels()
     end
 
     -- states and order buttons are removed and re-added on each refresh
-    -- this is needed for state buttons (e.g. changing cloak state also changes fire state, because of a widget), and a different is used for *each* possible fire state
+    -- this is needed for state buttons (e.g. changing cloak state also changes fire state, because of a widget), and a different button is used for *each* possible fire state
     -- it isn't needed for order buttons but wth
     for i=1,#orderMenuLayout do
         orderGrid[i]:ClearChildren()

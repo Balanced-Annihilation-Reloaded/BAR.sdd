@@ -292,7 +292,7 @@ local function Spacious()
     local buildMenu = {x=sInfo.x + sInfo.w, y=1-sInfo.h, w=0.15, h=sInfo.h, menuTabs="top", hideFacBar=false}
     local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=12, maxGUICols=9, orientation="vertical"}
 
-    local factionChange = {x=sInfo.w, y=1-buildMenu.h-0.08, w=0.17, h=0.08}
+    local factionChange = {x=0, y=sInfo.y-0.08, w=sInfo.w, h=0.08}
 
     local facBar = {x=0, y=minimap.h, w=nil, h=1-minimap.h-sInfo.h}
     local facBarButton = {h=0.06}

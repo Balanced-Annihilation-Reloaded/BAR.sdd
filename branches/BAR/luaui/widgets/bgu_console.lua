@@ -341,6 +341,12 @@ local function processLine(line)
             name = name .. " added point"
             if player.spec then 
                 textColor = color.spec
+			else
+                if player.allyID == myAllyID then
+                    textColor = color.ally
+                else
+                    textColor = color.oAlly
+                end
             end
         end
         
@@ -393,7 +399,7 @@ function NewConsoleLine(text)
             outline          = true,
             autoOutlineColor = true,
             outlineWidth     = 4,
-            outlineWeight    = 3,
+            outlineWeight    = 4,
             size             = fontSize,
         },
     }

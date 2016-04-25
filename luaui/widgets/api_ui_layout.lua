@@ -23,11 +23,11 @@ local initialized
 local screenAspect
 
 local layouts = {
-    "hybrid",
+    "spacious",
     "classic",
     "inverted",
+    "hybrid",
     "corner",
-    "spacious",
 }
 local options = {
     layout = "spacious" -- default
@@ -235,7 +235,7 @@ local function Corner()
     local sInfo = {x=0, y=1-0.2, w=0.2/screenAspect, h=0.2}
 
     local buildMenu = {x=sInfo.w, y=1-sInfo.h, w=0.1, h=sInfo.h, menuTabs="right", hideFacBar=false} 
-    local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=12, maxGUICols=9, orientation="vertical"}
+    local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=14, maxGUICols=9, orientation="vertical"}
 
     local stateMenu = {x=0, y=1-2*sInfo.h, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="bottom"}
@@ -290,7 +290,7 @@ local function Spacious()
     local stateGrid = {rows=9, cols=1, align="top"}
 
     local buildMenu = {x=sInfo.x + sInfo.w, y=1-sInfo.h, w=0.15, h=sInfo.h, menuTabs="top", hideFacBar=false}
-    local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=12, maxGUICols=9, orientation="vertical"}
+    local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=14, maxGUICols=9, orientation="vertical"}
 
     local factionChange = {x=0, y=sInfo.y-0.08, w=sInfo.w, h=0.08}
 

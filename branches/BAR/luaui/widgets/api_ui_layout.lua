@@ -30,7 +30,7 @@ local layouts = {
     "spacious",
 }
 local options = {
-    layout = "hybrid" -- default
+    layout = "spacious" -- default
 }
 
 -- ui element positions (& related menu button sizes)
@@ -109,14 +109,14 @@ local function Classic()
     local stateMenu = {x=sInfo.w, y=1-sInfo.h, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="bottom"}
 
-    local buildMenu = {x=0, y=max(minimapH,0.2), w=stateMenu.x+stateMenu.w, h=1-max(minimapH,0.2)-sInfo.h}
+    local buildMenu = {x=0, y=max(minimapH,0.2), w=stateMenu.x+stateMenu.w, h=1-max(minimapH,0.2)-sInfo.h, menuTabs="internal", hideFacBar=true}
     local buildGrid = {wantedRows=4, wantedCols=3, maxRows=7, maxCols=5, maxGUICols=4, orientation="horizontal"}
 
     local facBar = {x=0, y=max(minimapH,0.2), w=nil, h=1-max(minimapH,0.2)-sInfo.h}
     local facBarButton = {h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
-    local orderMenu = {x=stateMenu.x+stateMenu.w, y=1-3*orderMenuButton.h, w=nil, h=nil, align="bottom"}
+    local orderMenu = {x=stateMenu.x+stateMenu.w, y=1-3*orderMenuButton.h, w=nil, h=nil, align="bottom", hideFacBar=false}
     local orderGrid = {rows=1, cols=24} -- it might override
 
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
@@ -146,10 +146,10 @@ local function Hybrid()
     local sInfoH = 0.2
     local sInfo = {x=0, y=max(minimapH,0.2), w=sInfoH/screenAspect, h=sInfoH}
 
-    local stateMenu = {x=sInfo.w, y=sInfo.y, w=0.06, h=sInfo.h}
+    local stateMenu = {x=sInfo.w, y=sInfo.y, w=0.06, h=sInfo.h, menuTabs="internal"}
     local stateGrid = {rows=9, cols=1, align="bottom"}
 
-    local buildMenu = {x=0, y=sInfo.y+sInfo.h, w=stateMenu.x+stateMenu.w, h=1-max(minimapH,0.2)-sInfo.h}
+    local buildMenu = {x=0, y=sInfo.y+sInfo.h, w=stateMenu.x+stateMenu.w, h=1-max(minimapH,0.2)-sInfo.h, menuTabs="internal", hideFacBar=true}
     local buildGrid = {wantedRows=4, wantedCols=3, maxRows=7, maxCols=5, maxGUICols=4, orientation="horizontal"}
 
     local factionChange = {x=buildMenu.w, y=1-0.08, w=0.17, h=0.08}
@@ -158,7 +158,7 @@ local function Hybrid()
     local facBarButton = {h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
-    local orderMenu = {x=0.25, y=1-3*orderMenuButton.h, w=nil, h=nil, align="bottom"}
+    local orderMenu = {x=0.25, y=1-3*orderMenuButton.h, w=nil, h=nil, align="bottom", hideFacBar=false}
     local orderGrid = {rows=1, cols=21} -- it might override
 
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
@@ -195,14 +195,14 @@ local function Inverted()
     local stateMenu = {x=sInfo.w, y=0, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="bottom"}
 
-    local buildMenu = {x=0, y=sInfo.h, w=stateMenu.x+stateMenu.w, h=0.5}
+    local buildMenu = {x=0, y=sInfo.h, w=stateMenu.x+stateMenu.w, h=0.5, menuTabs="internal", hideFacBar=true}
     local buildGrid = {wantedRows=4, wantedCols=3, maxRows=7, maxCols=5, maxGUICols=4, orientation="horizontal"}
 
     local facBar = {x=0, y=sInfo.h, w=nil, h=0.5}
     local facBarButton = {h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
-    local orderMenu = {x=minimapW, y=1-3*orderMenuButton.h, w=nil, h=nil, align="bottom"}
+    local orderMenu = {x=minimapW, y=1-3*orderMenuButton.h, w=nil, h=nil, align="bottom", hideFacBar=false}
     local orderGrid = {rows=1, cols=21} -- it might override
 
     local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
@@ -234,7 +234,7 @@ local function Corner()
     local minimap = {x=0, y=0, w=minimapW, h=minimapH}
     local sInfo = {x=0, y=1-0.2, w=0.2/screenAspect, h=0.2}
 
-    local buildMenu = {x=sInfo.w, y=1-sInfo.h, w=0.1, h=sInfo.h, hideFacBar = false}
+    local buildMenu = {x=sInfo.w, y=1-sInfo.h, w=0.1, h=sInfo.h, menuTabs="right", hideFacBar=false} 
     local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=12, maxGUICols=9, orientation="vertical"}
 
     local stateMenu = {x=0, y=1-2*sInfo.h, w=0.06, h=sInfo.h}
@@ -244,7 +244,7 @@ local function Corner()
     local facBarButton = {h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
-    local orderMenu = {x=stateMenu.w, y=1-sInfo.h-3*orderMenuButton.h, w=nil, h=nil, align="bottom"}
+    local orderMenu = {x=stateMenu.w, y=1-sInfo.h-3*orderMenuButton.h, w=nil, h=nil, align="bottom", hideFacBar=true}
     local orderGrid = {rows=3, cols=8} -- it might override
 
     local factionChange = {x=sInfo.w, y=1-buildMenu.h-0.08, w=0.17, h=0.08}
@@ -280,16 +280,16 @@ local function Spacious()
     local comCounter = {x=clockFPS.x-0.06/screenAspect-0.005, y=resBars.h, w=0.06/screenAspect, h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
-    local orderMenu = {x=0, y=minimapH, w=nil, h=nil, align="left", hideFacBar = true}
+    local orderMenu = {x=0, y=minimapH, w=nil, h=nil, align="left", hideFacBar=true}
     local orderGrid = {rows=3, cols=8} -- it might override
 
-    local sInfo = {x=0, y=1-0.2, w=0.2/screenAspect, h=0.2}
+    local sInfo = {x=0, y=1-0.18, w=0.18/screenAspect, h=0.18}
 
-    local stateMenuW = math.min(minimapW - orderGrid.rows * orderMenuButton.w, 0.06)
-    local stateMenu = {x=orderGrid.rows * orderMenuButton.w, y=minimapH, w=stateMenuW, h=sInfo.h}
+    local stateMenuW = 0.06 --math.max(minimapW - orderGrid.rows * orderMenuButton.w, 0.06)
+    local stateMenu = {x=orderGrid.rows * orderMenuButton.w, y=minimapH, w=stateMenuW, h=0.2}
     local stateGrid = {rows=9, cols=1, align="top"}
 
-    local buildMenu = {x=sInfo.x + sInfo.w, y=1-0.2, w=0.15, h=0.2, hideFacBar = false}
+    local buildMenu = {x=sInfo.x + sInfo.w, y=1-sInfo.h, w=0.15, h=sInfo.h, menuTabs="top", hideFacBar=false}
     local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=12, maxGUICols=9, orientation="vertical"}
 
     local factionChange = {x=sInfo.w, y=1-buildMenu.h-0.08, w=0.17, h=0.08}
@@ -386,6 +386,14 @@ local function SetLayout(layout)
             end
         end
     end
+	
+	WG.UIcoords.layouts = layouts
+	for i,lo in pairs(layouts) do
+		if lo==layout then
+			WG.UIcoords.layoutID = i
+			break
+		end
+	end			
 end
 
 function widget:Initialize()

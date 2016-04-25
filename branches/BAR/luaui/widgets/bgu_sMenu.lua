@@ -16,9 +16,8 @@ end
 local imageDir = 'luaui/images/buildIcons/'
 
 -- menu categories & dimensions --
-local catNames = {'ECONOMY', 'BATTLE', 'UNITS', 'FACTORY', 'LOADED'} -- order matters
-local buildMenuCat = 4
-local loadedMenuCat = 5
+local catNames = {'ECONOMY', 'BATTLE', 'FACTORY', 'LOADED'} -- order matters
+local loadedMenuCat = 4
 local selectedTab
 
 local wantedBuildCols --min
@@ -132,12 +131,12 @@ local defaultOrderMenuLayout = {
     [1] = {
     },
     [2] = {
-        [1] = "loadunits",
-        [2] = "unloadunits",
-        [3] = "repair",
-        [4] = "reclaim",
-        [5] = "resurrect",
-        [6] = "restore",
+        [1] = "repair",
+        [2] = "reclaim",
+        [3] = "resurrect",
+        [4] = "restore",
+        [5] = "loadunits",
+        [6] = "unloadunits",
         [7] = "settarget",
         [8] = "canceltarget",
     },
@@ -306,6 +305,8 @@ local function FinalizeOrderGrid()
 
         orderRows = math.max(orderRows, neededRows)
         orderCols = availableButtonsPerRow
+	else
+		Spring.Echo("ERROR: no WG.PlayerList")
     end
 
     -- now set the order menu layout to match the number of rows we actually use
@@ -325,8 +326,11 @@ end
 
 
 local function resizeUI()
+    local vsx,vsy = Spring.GetViewGeometry()
+
     -- fontSize
-    fontSize = WG.RelativeFontSize(relFontSize)
+    fontSize = WG.RelativeFontSize(relFontSize) -- labels on buttons
+    menuFont = WG.RelativeFontSize(relMenuFont)
 
     -- build grid dimensions
     wantedBuildRows = WG.UIcoords.buildGrid.wantedRows
@@ -335,9 +339,9 @@ local function resizeUI()
     maxBuildCols    = WG.UIcoords.buildGrid.maxCols
     maxBuildGUICols = WG.UIcoords.buildGrid.maxGUICols
 
-    -- when to show/hide the facBar (default is to hide on build and show on order)
-    hideFacBarOnBuild = WG.UIcoords.buildMenu.hideFacBar == nil or WG.UIcoords.buildMenu.hideFacBar
-    hideFacBarOnOrder = WG.UIcoords.orderMenu.hideFacBar ~= nil and WG.UIcoords.orderMenu.hideFacBar
+    -- when to show/hide the facBar 
+    hideFacBarOnBuild = WG.UIcoords.buildMenu.hideFacBar
+    hideFacBarOnOrder = WG.UIcoords.orderMenu.hideFacBar
 
     local buildMenuOrientation = WG.UIcoords.buildGrid.orientation
     for i=1,#catNames do
@@ -347,19 +351,28 @@ local function resizeUI()
     local i = selectedTab
     local buildGUICols = (i) and math.min(maxBuildGUICols, grid[i].columns) or 1
 
-    -- build grid position
+	-- build grid position
+	local internalTabOffset = (WG.UIcoords.buildMenu.menuTabs=="internal" and menuFont*3.5 or 0)
     local bx = WG.UIcoords.buildMenu.x
-    local by = WG.UIcoords.buildMenu.y
-    local bh = WG.UIcoords.buildMenu.h
+    local by = WG.UIcoords.buildMenu.y + internalTabOffset
+    local bh = WG.UIcoords.buildMenu.h - internalTabOffset
     local bw = WG.UIcoords.buildMenu.w * (buildGUICols / wantedBuildCols) -- better to keep consistent layout & not use small buttons when possible
+	if bx+bw>vsx-WG.PlayerList.width then 
+		bw = vsx - bx - WG.PlayerList.width -- fixme: player list does not scale with viewsize
+	end
     buildMenu:SetPos(bx,by,bw,bh)
 
     -- menu tabs (pinned to build menu)
-    local vsx,_ = Spring.GetViewGeometry()
-    menuFont = WG.RelativeFontSize(relMenuFont)
-    menuWidth = 0.07*vsx
-    menuTabs:SetPos(bx+bw, by, menuWidth, bh)
-    makeMenuTabs() --lazy, fixme
+	local tw = 0.07*vsx
+	local th = menuFont*3.5
+	if WG.UIcoords.buildMenu.menuTabs=="right" then
+		menuTabs:SetPos(bx+bw, by, tw, bh)
+	elseif WG.UIcoords.buildMenu.menuTabs=="top" then
+		menuTabs:SetPos(bx, by-th, 3*tw, th)
+	elseif WG.UIcoords.buildMenu.menuTabs=="internal" then
+		menuTabs:SetPos(bx, WG.UIcoords.buildMenu.y, WG.UIcoords.buildMenu.w, internalTabOffset)
+	end	
+    makeMenuTabs() 
 
     -- build menu buttons
     for _,button in pairs(unitButtons) do
@@ -462,9 +475,7 @@ local function selectTab(self)
     end
 
     menuTabs.choice = choice
-    if choice ~= buildMenuCat or (choice==buildMenuCat and (#grid[1].children>0 or #grid[1].children>0)) then
-        menuTabs.prevChoice = choice
-    end
+	menuTabs.prevChoice = choice
 end
 
 local function scrollMenus(_,_,_,_,value)
@@ -838,8 +849,10 @@ local function addDummyOrder(item)
 end
 
 local function getBuildCat(ud)
-    if ud.isFactory or (ud.isBuilder and ud.speed==0) then
-        menuCat = 4
+    local menuCat
+	if ud.isFactory or (ud.isBuilder and ud.speed==0) then
+        -- Factories & Nanos
+		menuCat = 3
     elseif (ud.speed > 0 and ud.canMove) then
         -- Units
         menuCat = 3
@@ -1068,18 +1081,39 @@ end
 function makeMenuTabs()
     -- create a tab for each menu Panel with a command
     menuTabs:ClearChildren()
-    menuTab = {}
+	local vsx,vsy = Spring.GetViewGeometry()
     local tabCount = 0
+    for i = 1, #catNames do
+        if grid[i].active then
+			tabCount = tabCount + 1
+		end
+	end
+	local tw,th
+	if WG.UIcoords.buildMenu.menuTabs=="right" then
+		tw = menuTabs.width 
+		th = menuFont*3.5
+	elseif WG.UIcoords.buildMenu.menuTabs=="top" then
+		tw = vsx*0.07
+		th = menuFont*3.5
+	elseif WG.UIcoords.buildMenu.menuTabs=="internal" then
+		tw = menuTabs.width / tabCount
+		th = menuTabs.height
+	end
+	local tx,ty = 0,0
+	
+	
+	menuTab = {}
+    local tab = 0
     for i = 1, #catNames do
         if grid[i].active then
             menuTab[i] = Chili.Button:New{
                 tabNum  = i,
                 tooltip = 'You can scroll through the different categories with your mouse wheel!',
                 parent  = menuTabs,
-                width   = menuWidth,
-                x       = 0,
-                y       = tabCount*menuFont*3.5,
-                height  = menuFont*3.5,
+                x       = tx,
+                y       = ty,
+                width   = tw,
+                height  = th,
                 caption = catNames[i],
                 OnClick = {selectTab},
                 backgroundColor = buttonColour,
@@ -1093,7 +1127,14 @@ function makeMenuTabs()
                     outlineWeight    = 5,
                 },
             }
-            tabCount = tabCount + 1
+            tab = tab + 1
+			if WG.UIcoords.buildMenu.menuTabs=="right" then
+				ty = ty + th
+			elseif WG.UIcoords.buildMenu.menuTabs=="top" then
+				tx = tx + tw
+			elseif WG.UIcoords.buildMenu.menuTabs=="internal" then
+				tx = tx + tw
+			end
         end
     end
 end

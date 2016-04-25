@@ -441,7 +441,7 @@ local function showUnitInfo()
     unitResText = Chili.TextBox:New{
         parent = unitPictureOverlay,
         x        = '5%',
-        y        = '65%',
+        y        = '62%',
         text     =  '',
         autoHeight = false,
         font     = {size=fontSize},

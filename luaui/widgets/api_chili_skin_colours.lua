@@ -22,8 +22,8 @@ if spec then tr=0.8;tg=0.8;tb=0.8; end
 
 local tcol = {tr,tg,tb}
 local bw = 0.5*(min(tr, min(tg,tb)) + max(tr,max(tg,tb)))
-bw = min(0.9, max(0.7, bw))
-local teamColourSaturation = 0.5
+bw = min(0.05, max(0.15, bw))
+local teamColourSaturation = 0.1
 local teamColour = {} -- desaturated
 for i=1,3 do
 	teamColour[i] = (1-teamColourSaturation)*bw + teamColourSaturation*tcol[i]

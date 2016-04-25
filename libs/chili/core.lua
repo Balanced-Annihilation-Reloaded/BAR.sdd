@@ -19,6 +19,7 @@ local includes = {
   "controls/window.lua",
   "controls/label.lua",
   "controls/button.lua",
+  "controls/bguButton.lua",
   "controls/textbox.lua",
   "controls/checkbox.lua",
   "controls/trackbar.lua",

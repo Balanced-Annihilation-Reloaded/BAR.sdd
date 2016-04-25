@@ -47,6 +47,19 @@ skin.button = {
   DrawControl = DrawButton,
 }
 
+skin.bgubutton = {
+  TileImageBK = ":cl:tech_button_bk_bgu.png",
+  TileImageFG = ":cl:tech_button_fg.png",
+  tiles = {22, 22, 22, 22}, --// tile widths: left,top,right,bottom
+  padding = {10, 10, 10, 10},
+
+  backgroundColor = {1, 1, 1, 0.7},
+  borderColor = {1,1,1,0},
+
+  DrawControl = DrawButton,
+}
+
+
 skin.combobox = {
 	TileImageBK = ":cl:combobox_ctrl.png",
 	TileImageFG = ":cl:combobox_ctrl_fg.png",

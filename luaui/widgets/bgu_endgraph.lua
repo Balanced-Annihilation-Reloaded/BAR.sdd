@@ -450,7 +450,7 @@ function loadWindow()
     }
 
     for a=1, #statName do
-        button[a] = Chili.Button:New{
+        button[a] = Chili.bguButton:New{
             parent  = graphSelect,
             name    = statName[a][1],
             caption = statName[a][2],

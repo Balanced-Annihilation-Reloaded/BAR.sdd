@@ -23,14 +23,14 @@ local initialized
 local screenAspect
 
 local layouts = {
-    "spacious",
     "classic",
     "inverted",
     "hybrid",
+    "spacious",
     "corner",
 }
 local options = {
-    layout = "spacious" -- default
+    layout = "classic" -- default
 }
 
 -- ui element positions (& related menu button sizes)

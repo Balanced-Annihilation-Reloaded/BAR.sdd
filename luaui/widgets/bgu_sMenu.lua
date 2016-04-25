@@ -352,7 +352,7 @@ local function resizeUI()
     local buildGUICols = (i) and math.min(maxBuildGUICols, grid[i].columns) or 1
 
 	-- build grid position
-	local internalTabOffset = (WG.UIcoords.buildMenu.menuTabs=="internal" and menuFont*3.5 or 0)
+	local internalTabOffset = (WG.UIcoords.buildMenu.menuTabs=="internal" and menuFont*3 or 0)
     local bx = WG.UIcoords.buildMenu.x
     local by = WG.UIcoords.buildMenu.y + internalTabOffset
     local bh = WG.UIcoords.buildMenu.h - internalTabOffset
@@ -364,7 +364,7 @@ local function resizeUI()
 
     -- menu tabs (pinned to build menu)
 	local tw = 0.07*vsx
-	local th = menuFont*3.5
+	local th = menuFont*3
 	if WG.UIcoords.buildMenu.menuTabs=="right" then
 		menuTabs:SetPos(bx+bw, by, tw, bh)
 	elseif WG.UIcoords.buildMenu.menuTabs=="top" then
@@ -614,7 +614,7 @@ local function addBuild(item)
     -- avoid adding too many buttons
     if #grid[category].children>maxBuildCols*maxBuildRows-1 then return end
     if #grid[category].children==maxBuildCols*maxBuildRows-1 then
-        Chili.Button:New{
+        Chili.bguButton:New{
             x = 5,
             parent = grid[category],
             caption = "(full)",
@@ -648,13 +648,12 @@ local function addState(cmd)
         end
 
         stateMenu:RemoveChild(lastChild)
-        button = Chili.Button:New{
+        button = Chili.bguButton:New{
             name   = "full_state",
             parent = stateMenu,
             caption   = "(full)",
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
-            minheight = 22,
             OnMouseUp = {},
             borderColor = {1,1,1,0.1},
             backgroundColor = buttonColour,
@@ -669,7 +668,7 @@ local function addState(cmd)
     -- create the button if it does not already exist
     local button
     if stateButtons[name]==nil then
-        button = Chili.Button:New{
+        button = Chili.bguButton:New{
             name      = name,
             caption   = caption,
             cmdName   = cmd.name,
@@ -701,7 +700,7 @@ local function addDummyState(cmd)
     -- create the button if it does not already exists
     local button
     if not stateButtons[name] then
-        button = Chili.Button:New{
+        button = Chili.bguButton:New{
             caption   = cmd.action,
             padding   = {0,0,0,0},
             margin    = {0,0,0,0},
@@ -736,7 +735,7 @@ local function addOrderButton(item)
     local cat = item.category
     local name = cmd.action
     if orderButtons[name] == nil then
-        button = Chili.Button:New{
+        button = Chili.bguButton:New{
             name      = cmd.action,
             caption   = '',
             cmdName   = cmd.name,
@@ -821,7 +820,7 @@ local function addDummyOrder(item)
     local cat = getOrderCat(action)
     local name = action .. "_dummy"
     if orderButtons[name] == nil then
-        button = Chili.Button:New{
+        button = Chili.bguButton:New{
             name      = name,
             caption   = '',
             --tooltip   = cmd.tooltip .. getInline(orderColours[cmd.action]) .. HotkeyString(cmd.action),
@@ -1092,10 +1091,10 @@ function makeMenuTabs()
 	local tw,th
 	if WG.UIcoords.buildMenu.menuTabs=="right" then
 		tw = menuTabs.width 
-		th = menuFont*3.5
+		th = menuFont*3
 	elseif WG.UIcoords.buildMenu.menuTabs=="top" then
 		tw = vsx*0.07
-		th = menuFont*3.5
+		th = menuFont*3
 	elseif WG.UIcoords.buildMenu.menuTabs=="internal" then
 		tw = menuTabs.width / tabCount
 		th = menuTabs.height
@@ -1107,7 +1106,7 @@ function makeMenuTabs()
     local tab = 0
     for i = 1, #catNames do
         if grid[i].active then
-            menuTab[i] = Chili.Button:New{
+            menuTab[i] = Chili.bguButton:New{
                 tabNum  = i,
                 tooltip = 'You can scroll through the different categories with your mouse wheel!',
                 parent  = menuTabs,
@@ -1261,7 +1260,7 @@ local function CreateUnitButton(name, unitDef)
     local description = unitDef.tooltip~="" and "\n"..unitDef.tooltip or ""
     local tooltip = unitDef.humanName .. description
     
-    unitButtons[unitDefID] = Chili.Button:New{
+    unitButtons[unitDefID] = Chili.bguButton:New{
         name      = "button_" .. name,
         cmdId     = -unitDefID,
         unitDefID = unitDefID,

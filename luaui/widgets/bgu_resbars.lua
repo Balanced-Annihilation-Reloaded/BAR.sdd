@@ -111,7 +111,7 @@ local function ResizeUI()
 end
 
 local function initWindow()
-    resourceWindow = Chili.Button:New{
+    resourceWindow = Chili.bguButton:New{
         parent    = Chili.Screen0,
         padding   = {0,0,0,0},
         borderColor = buttonColour,
@@ -208,7 +208,7 @@ local function makeBar(res, barY, top)
 end
 
 local function makeconversionWindow()
-    conversionWindow = Chili.Button:New{
+    conversionWindow = Chili.bguButton:New{
         parent = Chili.Screen0,
         padding = {0,0,0,0},
         borderColor = buttonColour,

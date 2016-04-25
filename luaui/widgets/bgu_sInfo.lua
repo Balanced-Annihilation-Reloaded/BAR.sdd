@@ -205,15 +205,15 @@ local function addUnitGroup(name,texture,overlay,unitIDs, teamColor)
     if count == 1 then count = '' end
     local unitCount = Chili.Label:New{
         caption = count,
-        y       = 0,
-        right   = 0,
+        y       = 5,
+        right   = 5,
     }
     
     healthBars[#healthBars + 1] = Chili.Progressbar:New{
         name    = "healthbar " .. #healthBars,
         unitIDs = unitIDs,
         value   = 0,
-        bottom  = '5%',
+        bottom  = 4,
         x       = 0,
         width   = '100%',
         height  = '10%',
@@ -1159,7 +1159,7 @@ function widget:Initialize()
 
     screen = Chili.Screen0
     
-    unitWindow = Chili.Button:New{ -- parent for all the single unit info stuffs (including focus)
+    unitWindow = Chili.bguButton:New{ -- parent for all the single unit info stuffs (including focus)
         parent  = screen,
         tooltip = "Click to show/hide detailed unit stats",
         padding = {6,6,6,6},
@@ -1169,7 +1169,7 @@ function widget:Initialize()
         OnClick = {TogglePreferredUnitInfo},
     }
     
-    unitGridWindow = Chili.Button:New{ -- parent for unit grid display, children are regenerated on each change
+    unitGridWindow = Chili.bguButton:New{ -- parent for unit grid display, children are regenerated on each change
         parent  = screen,
         padding = {6,6,6,6},
         borderColor = buttonColour,
@@ -1190,7 +1190,7 @@ function widget:Initialize()
         margin  = {0,0,0,0},
     }    
     
-    groundWindow = Chili.Button:New{ -- parent for ground info, children are permanent
+    groundWindow = Chili.bguButton:New{ -- parent for ground info, children are permanent
         name    = "ground window",
         parent  = screen,
         padding = {6,6,6,6},

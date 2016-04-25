@@ -13,8 +13,23 @@ function widget:GetInfo()
 	}
 end
 
+local min = math.min
+local max = math.max
+
 local tr,tg,tb = Spring.GetTeamColor(Spring.GetMyTeamID())
-local teamColour = {tr,tg,tb,1}
+local spec = Spring.GetSpectatingState()
+if spec then tr=0.8;tg=0.8;tb=0.8; end
+
+local tcol = {tr,tg,tb}
+local bw = 0.5*(min(tr, min(tg,tb)) + max(tr,max(tg,tb)))
+bw = min(0.9, max(0.7, bw))
+local teamColourSaturation = 0.5
+local teamColour = {} -- desaturated
+for i=1,3 do
+	teamColour[i] = (1-teamColourSaturation)*bw + teamColourSaturation*tcol[i]
+end
+teamColour[4] = 1
+
 local initialized
 
 
@@ -41,6 +56,8 @@ local colourBank = {
     lilac = {0.8,0.65,0.8,1},
     tomato = {1,0.4,0.3,1},
     turqoise = {0.2,0.84,0.8,1}, 
+	
+	focusOrange = {1.0, 0.7, 0.1, 0.8},
 }
 
 local alphas = {

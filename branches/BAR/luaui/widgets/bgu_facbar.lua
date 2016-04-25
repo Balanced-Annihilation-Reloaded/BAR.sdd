@@ -57,7 +57,7 @@ local spIsUnitSelected     = Spring.IsUnitSelected
 
 local function CreateFacButton(unitID, unitDefID) --fixme, facsPos need to be uniq, but if facs are destroyed it won't be pos in facs anymore!
     -- add the button for this factory
-    local facButton = Chili.Button:New{
+    local facButton = Chili.bguButton:New{
             caption = "",
             unitDefID = unitDefID,
             width = options.buttonSize*1.2,
@@ -154,7 +154,7 @@ local function CreateBuildButton(unitDefID, facID)
     local ud = UnitDefs[unitDefID]
   
     return
-        Chili.Button:New{
+        Chili.bguButton:New{
             name = "unitbutton_"..facID.."_"..unitDefID,
             unitDefID = unitDefID,
             x=0,

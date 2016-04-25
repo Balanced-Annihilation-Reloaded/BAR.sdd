@@ -89,7 +89,7 @@ function widget:Initialize()
         itemMargin  = {0,0,0,0},
     }
 
-    arm_button = Chili.Button:New{
+    arm_button = Chili.bguButton:New{
         parent = control,
         height = '100%',
         width  = '50%',
@@ -99,7 +99,7 @@ function widget:Initialize()
         children = { Chili.Image:New{width='100%', height='100%', file='LuaUI/Images/ARM.png'} }
     }
 
-    core_button = Chili.Button:New{
+    core_button = Chili.bguButton:New{
         parent = control,
         x      = '50%',
         height = '100%',

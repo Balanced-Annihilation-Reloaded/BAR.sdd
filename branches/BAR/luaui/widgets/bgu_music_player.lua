@@ -206,7 +206,7 @@ local function createUI()
         extra_sliders:ToggleVisibility()
     end
     
-    vol_button = Chili.Button:New{
+    vol_button = Chili.bguButton:New{
         caption = 'Vol',
         x       = 0,
         width   = '18%',
@@ -250,7 +250,7 @@ local function createUI()
         file   = 'luaUI/Images/pausesong.png'
     }
     
-    playButton = Chili.Button:New{
+    playButton = Chili.bguButton:New{
         paused   = false,
         right    = '15%', 
         bottom   = '47%',
@@ -280,7 +280,7 @@ local function createUI()
     }
     playIcon:Hide()
     
-    skipButton = Chili.Button:New{
+    skipButton = Chili.bguButton:New{
         right    = 0, 
         bottom   = '47%',
         width    = '15%', 

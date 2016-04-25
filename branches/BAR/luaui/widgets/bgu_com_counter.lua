@@ -96,7 +96,7 @@ function widget:Initialize()
         },
     }
     
-    button = Chili.Button:New{
+    button = Chili.bguButton:New{
         x = 0,
         y = 0,
         width = '100%',

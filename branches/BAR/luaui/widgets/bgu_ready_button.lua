@@ -53,7 +53,7 @@ function widget:Initialize()
     
     button_text = amSpec and offerSubText or readyText
     
-    button = Chili.Button:New{
+    button = Chili.bguButton:New{
         name = 'button',
         parent = Chili.Screen0,
         right = 300,

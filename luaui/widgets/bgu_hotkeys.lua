@@ -249,7 +249,8 @@ function widget:Initialize()
         return true
     end
     Z_units = ConstructUnitOrder(Z_Filter)
-    Spring.Echo("Z TABLE")
+    --Spring.Echo("Z TABLE")
+    --PrintArrayTable(Z_units)
         
     -- setup X (energy producers)
     local function X_Filter (uDID)

@@ -752,17 +752,17 @@ local function addOrderButton(item)
             children  = {
                 Chili.Image:New{
                     parent  = button,
-                    x       = 5,
-                    bottom  = 5,
-                    y       = 5,
-                    right   = 5,
+                    x       = '15%',
+                    bottom  = '15%',
+                    y       = '15%',
+                    right   = '15%',
                     color   = orderColours[cmd.id] or {1,1,1,1},
                     file    = imageDir..'Commands/'..cmd.action..'.png',
                     children = {
                         Chili.Label:New{
                             caption = Hotkey[name] or "",
-                            right  = 2,
-                            y = 1,
+                            right  = 0,
+                            y = 0,
                             font = {
                                 size = fontSize,
                                 outline          = true,
@@ -832,10 +832,10 @@ local function addDummyOrder(item)
             Children  = {
                 Chili.Image:New{
                     parent  = button,
-                    x       = 5,
-                    bottom  = 5,
-                    y       = 5,
-                    right   = 5,
+                    x       = '15%',
+                    bottom  = '15%',
+                    y       = '15%',
+                    right   = '15%',
                     color   = grey,
                     file    = imageDir..'Commands/'..action..'.png',
                 }
@@ -1052,11 +1052,11 @@ local function SetGridDimensions()
             Spring.Echo("sMenu error: can't fit icons into build menu") -- should never happen; addBuild prevents it
         end
         while (included < n) do
-            buildRows =  math.min(buildRows + 1, maxBuildRows)
+            buildCols = math.min(buildCols + 1, maxBuildCols)
             included = buildRows * buildCols
             if included >= n then break end
-
-            buildCols = math.min(buildCols + 1, maxBuildCols)
+			
+            buildRows =  math.min(buildRows + 1, maxBuildRows)
             included = buildRows * buildCols
             if included >= n then break end
         end

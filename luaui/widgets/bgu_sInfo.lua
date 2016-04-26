@@ -1273,11 +1273,13 @@ function widget:Update()
     if newMouseOverUnitID ~= mouseOverUnitID then
         mouseOverUnitID = newMouseOverUnitID 
         mouseOverUnitDefID = mouseOverUnitID and spGetUnitDefID(mouseOverUnitID) or nil
+        if not mouseOverUnitDefID then mouseOverUnitID=nil end -- if the unitID is not a valid unit, Spring won't give the defID
         focusChange = true
     end
     if newMouseOverFeatureID ~= mouseOverFeatureID then
         mouseOverFeatureID = newMouseOverFeatureID
         mouseOverFeatureDefID = mouseOverFeatureID and spGetFeatureDefID(mouseOverFeatureID) or nil
+        if not mouseOverFeatureDefID then mouseOverFeatureID=nil end
         focusChange = true
     end
     if focusChange then

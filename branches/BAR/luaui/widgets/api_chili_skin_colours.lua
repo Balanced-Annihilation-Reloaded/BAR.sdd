@@ -89,7 +89,7 @@ local alphas = {
         sliderColour = 0.6,
     },
     high = {
-        buttonColour = 0.7,
+        buttonColour = 0.8,
         panelColour = 0.8,
         sliderColour = 0.85,
     },

@@ -16,26 +16,30 @@ end
 local min = math.min
 local max = math.max
 
-local tr,tg,tb = Spring.GetTeamColor(Spring.GetMyTeamID())
 local spec = Spring.GetSpectatingState()
 if spec then tr=0.8;tg=0.8;tb=0.8; end
 
-local tcol = {tr,tg,tb}
-local bw = 0.5*(min(tr, min(tg,tb)) + max(tr,max(tg,tb)))
-bw = min(0.05, max(0.15, bw))
-local teamColourSaturation = 0.1
-local teamColour = {} -- desaturated
-for i=1,3 do
-	teamColour[i] = (1-teamColourSaturation)*bw + teamColourSaturation*tcol[i]
+function GetTableIdx(t, val)
+    for k,v in pairs(t) do
+        if (v==val) then return k end
+    end
+    return nil
 end
-teamColour[4] = 1
 
+    
 local initialized
 
-
 local options = { --defaults
-    mode = "black", --"white, ""black", "team"
-    alpha = "high", --"low", "med", "high", "max"
+    mode = "black", 
+    alpha = "high", 
+    tint = "weak", 
+}
+
+local optionLists = {
+    mode = {"black", "white"},
+    alpha = {"low", "med", "high", "max"},
+    tint = {"none", "weak", "strong"},
+    selected = {},
 }
 
 local colourBank = {
@@ -60,6 +64,19 @@ local colourBank = {
 	focusOrange = {1.0, 0.7, 0.1, 0.8},
 }
 
+local modes = {
+    black = {
+        buttonColour = colourBank.black,
+        panelColour = colourBank.black,
+        sliderColour = colourBank.white,    
+    },
+    white = {
+        buttonColour = colourBank.white,
+        panelColour = colourBank.white,
+        sliderColour = colourBank.white,
+    },
+}
+
 local alphas = {
     low = {
         buttonColour = 0.15,
@@ -80,27 +97,26 @@ local alphas = {
         buttonColour = 1,
         panelColour = 1,
         sliderColour = 1,
-    }
-}
-
-local modes = {
-    white = {
-        buttonColour = colourBank.white,
-        panelColour = colourBank.white,
-        sliderColour = colourBank.white,
-    },
-    black = {
-        buttonColour = colourBank.black,
-        panelColour = colourBank.black,
-        sliderColour = colourBank.white,    
-    },
-    team = {
-        buttonColour = teamColour,
-        panelColour = teamColour,
-        sliderColour = teamColour,        
     },
 }
 
+local tints = {
+    none = {
+        buttonColour = 0,
+        panelColour = 0,
+        sliderColour = 0,
+    },
+    weak = {
+        buttonColour = 0.05,
+        panelColour = 0.05,
+        sliderColour = 0.05,
+    },
+    strong = {
+        buttonColour = 0.12,
+        panelColour = 0.12,
+        sliderColour = 0.12,
+    },
+}
 
 local colours = {
     buttonColour = {1,1,1,1}, -- for buttons
@@ -108,30 +124,50 @@ local colours = {
     sliderColour = {1,1,1,1}, -- for sliders *and* buttons that are inside panels and windows
 }
 
-function SetSkinColourMode(mode)
-    options.mode = mode
-    for material,c in pairs(modes[options.mode]) do
-        colours[material] = {c[1],c[2],c[3],1} 
+function SetSkinColours(mode, tint, alpha)
+    if mode then 
+        options.mode = mode
     end
+    if tint then 
+        options.tint = tint 
+    end
+    if alpha then 
+        options.alpha = alpha
+    end
+    optionLists.selected.mode = GetTableIdx(optionLists.mode, options.mode)
+    optionLists.selected.tint = GetTableIdx(optionLists.tint, options.tint)
+    optionLists.selected.alpha = GetTableIdx(optionLists.alpha, options.alpha)
 end
 
-function SetSkinAlphaMode(alpha)
-    options.alpha = alpha
-    for material,a in pairs(alphas[options.alpha]) do
-        colours[material][4] = a 
+function BlendColours(material)
+    -- blend in alpha and team colour
+    local baseColour = modes[options.mode][material]
+    local tr,tg,tb = Spring.GetTeamColor(Spring.GetMyTeamID())
+    local tcol = {tr,tg,tb}
+    local teamColourSaturation = tints[options.tint][material]
+    local col = {} 
+    for i=1,3 do
+        col[i] = (1-teamColourSaturation)*baseColour[i] + teamColourSaturation*tcol[i]
     end
+    col[4] = alphas[options.alpha][material]
+    return col
 end
 
 function ExposeColours() --internal
+    -- calculate the colours based on current options & expose to WG
+    SetSkinColours()
+    for material,_ in pairs(modes[options.mode]) do
+        colours[material] = BlendColours(material) 
+    end
+    
     WG.buttonColour = colours.buttonColour
     WG.panelColour = colours.panelColour
     WG.sliderColour = colours.sliderColour
 end
 
 function ExposeNewSkinColours()
+    -- expose colours & reload widgets that use them
     if initialized then
-        SetSkinColourMode(options.mode)
-        SetSkinAlphaMode(options.alpha)
         ExposeColours()
         
         for name,wData in pairs(widgetHandler.knownWidgets) do
@@ -144,13 +180,14 @@ function ExposeNewSkinColours()
     end
 end
 
-function GetSkinColourMode()
-    return options.mode
+function GetSkinColours()
+    return options.mode, options.tint, options.alpha
 end
 
-function GetSkinAlphaMode()
-    return options.alpha
+function GetSkinOptionLists()
+    return optionLists
 end
+
 
 function widget:SetConfigData(data)
     if data then
@@ -159,24 +196,20 @@ function widget:SetConfigData(data)
 end
 
 function widget:Initialize()
-    SetSkinColourMode(options.mode)
-    SetSkinAlphaMode(options.alpha)
     ExposeColours()
- 
-    WG.GetSkinColourMode = GetSkinColourMode 
-    WG.GetSkinAlphaMode = GetSkinAlphaMode 
-    WG.SetSkinColourMode = SetSkinColourMode
-    WG.SetSkinAlphaMode = SetSkinAlphaMode 
+    
+    WG.SetSkinColours = SetSkinColours 
+    WG.GetSkinColours = GetSkinColours
+    WG.GetSkinOptionLists = GetSkinOptionLists
     WG.ExposeNewSkinColours = ExposeNewSkinColours
     
     initialized = true
 end
 
 function widget:Shutdown()
-    WG.GetSkinColourMode = nil
-    WG.GetSkinAlphaMode = nil  
-    WG.SetSkinColourMode = nil 
-    WG.SetSkinAlphaMode = nil  
+    WG.SetSkinColours = nil 
+    WG.GetSkinColours = nil  
+    WG.GetSkinOptionLists = nil
     WG.ExposeNewSkinColours = nil
 end
 

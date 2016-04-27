@@ -112,7 +112,7 @@ local DefaultSettings = {
         ['showWidgetAuthors']  = false,
         ['advSelectorMode']    = false,
         ['expandedWidgetOptions'] = {},
-        ['mainMenuSize'] = {x=350,y=200,width=800,height=550},
+        ['mainMenuSize'] = {x=350,y=200,width=800,height=575},
     },
 }
 
@@ -851,8 +851,8 @@ local function loadMainMenu()
 
     -- Detects and fixes menu being off-screen
     local vsx,vsy = Spring.GetViewGeometry()
-    if vsx < sizeData.x+sizeData.width-100 or sizeData.x < 100 then sizeData.x = 400 end
-    if vsy < sizeData.y+sizeData.height-100 or sizeData.y < 100 then sizeData.height = 500 end
+    if vsx < sizeData.x+sizeData.width-100 or sizeData.x < 100 then sizeData.x = 350 end
+    if vsy < sizeData.y+sizeData.height-100 or sizeData.y < 100 then sizeData.y = 200 end
 
     mainMenu = Chili.Window:New{
         parent    = Chili.Screen0,
@@ -1100,38 +1100,53 @@ local function CreateInterfaceTab()
                             end
                             }
                         },
-                    Chili.TextBox:New{y=17, x='0%',width='40%',text="Colour mode:"},
+                    Chili.TextBox:New{y=17, x='0%',width='40%',text="Base colour:"},
                     Chili.ComboBox:New{y=17, x='40%',width='60%',
-                        items    = {"black", "white", "team"},
-                        selected = (WG.GetSkinColourMode()=="black" and 1) or (WG.GetSkinColourMode()=="white" and 2) or (WG.GetSkinColourMode()=="team" and 3),
+                        items    = WG.GetSkinOptionLists().mode,
+                        selected = WG.GetSkinOptionLists().selected.mode,
                         OnSelect = {
                             function(self,sel)
                                 local mode = self.items[sel]
-                                WG.SetSkinColourMode(mode)
+                                WG.SetSkinColours(mode,_,_)
                                 if fullyLoaded then
-                                    WG.ExposeNewSkinColours() -- causes luaui reload -> don't do this in initialise
+                                    WG.ExposeNewSkinColours() -- causes widgets to reload -> don't do this in initialise
                                 end
-                                Spring.Echo("Set skin colour to " .. WG.GetSkinColourMode())
+                                Spring.Echo("Set skin-colour base to " .. select(1, WG.GetSkinColours()))
                             end
                             }
                         },
-                    Chili.TextBox:New{y=34, x='0%',width='40%',text="Alpha:"},
+                    Chili.TextBox:New{y=34, x='0%',width='40%',text="Team tint:"},
                     Chili.ComboBox:New{y=34, x='40%',width='60%',
-                        items    = {"low", "med", "high", "max"},
-                        selected = (WG.GetSkinAlphaMode()=="low" and 1) or (WG.GetSkinAlphaMode()=="med" and 2) or (WG.GetSkinAlphaMode()=="high" and 3) or (WG.GetSkinAlphaMode()=="max" and 4),
+                        items    = WG.GetSkinOptionLists().tint,
+                        selected = WG.GetSkinOptionLists().selected.tint,
+                        OnSelect = {
+                            function(self,sel)
+                                local tint = self.items[sel]
+                                WG.SetSkinColours(_,tint,_)
+                                if fullyLoaded then
+                                    WG.ExposeNewSkinColours() -- causes widgets to reload -> don't do this in initialise
+                                end
+                                Spring.Echo("Set skin-colour tint to " .. select(2, WG.GetSkinColours()))
+                            end
+                            }
+                        },
+                    Chili.TextBox:New{y=51, x='0%',width='40%',text="Alpha:"},
+                    Chili.ComboBox:New{y=51, x='40%',width='60%',
+                        items    = WG.GetSkinOptionLists().alpha,
+                        selected = WG.GetSkinOptionLists().selected.alpha,
                         OnSelect = {
                             function(self,sel)
                                 local alpha = self.items[sel]
-                                WG.SetSkinAlphaMode(self.items[sel])
+                                WG.SetSkinColours(_,_,alpha)
                                 if fullyLoaded then
                                     WG.ExposeNewSkinColours() -- causes luaui reload -> don't do this in initialise
                                 end
-                                Spring.Echo("Set skin alpha to " .. WG.GetSkinAlphaMode())
+                                Spring.Echo("Set skin alpha to " .. select(3, WG.GetSkinColours()))
                             end
                             }
                         },
-                    Chili.TextBox:New{y=51, x='0%',width='40%',text="Cursor:"},
-                    Chili.ComboBox:New{y=51, x='40%',width='60%',
+                    Chili.TextBox:New{y=68, x='0%',width='40%',text="Cursor:"},
+                    Chili.ComboBox:New{y=68, x='40%',width='60%',
                         items    = {"dynamic", "static"},
                         selected = (Settings["Cursor"]=="dynamic" and 1) or (Settings["Cursor"]=="static" and 2),
                         OnSelect = {
@@ -1146,10 +1161,10 @@ local function CreateInterfaceTab()
 
             },
 
-            Chili.Line:New{width='40%',y=346},
+            Chili.Line:New{width='40%',y=363},
 
-            Chili.Label:New{caption='-- Screen Settings --',x='2%',width='35%',align = 'center',y=360},
-            Chili.Control:New{x='2%', y=385, width='35%',autoSize=true,padding={0,0,0,0},
+            Chili.Label:New{caption='-- Screen Settings --',x='2%',width='35%',align = 'center',y=377},
+            Chili.Control:New{x='2%', y=402, width='35%',autoSize=true,padding={0,0,0,0},
                 children = {
                     fullScreenCheckbox,
                     screenResText,

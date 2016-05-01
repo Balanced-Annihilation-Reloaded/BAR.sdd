@@ -18,7 +18,7 @@ end
 local Chili, container, stackPanel
 local playerListByTeam = {}
 
-local initialText = "Welcome to the BAR Beta Release!\n\nPlease choose a game mode or mission from the menu on the left, or press esc to close this menu.\n\nOr, if you are new to BAR, press 'h' for help."
+local initialText = "Welcome to the BAR Beta Release!\n\nPlease choose a game mode or mission from the menu on the left, or press esc to close this menu.\n\nOr, if you are new to BAR, press 'i' for an introduction."
 
 local selectedBorderColor = {1,127/255,0,0.45}
 local normalBorderColor = {1,1,1,0.1}

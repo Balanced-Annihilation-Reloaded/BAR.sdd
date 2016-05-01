@@ -234,6 +234,27 @@ local function CreateBuildButton(unitDefID, facID)
     
 end
 
+local function CreateFullButton(facID)
+
+    return
+        Chili.bguButton:New{
+            name = "unitbutton_"..facID.."_fullButton",
+            x=0,
+            caption="...",
+            width = options.buttonSize,
+            height = options.buttonSize,
+            padding = {0, 0, 0, 0},
+            margin = {0, 0, 0, 0},
+            backgroundColor = queueColor,
+            OnClick = {
+                function(_,_,_,button)
+                    Spring.SelectUnitArray({facID})
+                end
+            },
+        }
+        
+end
+
 -------------------------------------------------------------------------------
 -- bookkeeping
 
@@ -263,6 +284,7 @@ function AddFactory(unitID, unitDefID)
     facInfo.facButton = facButton -- the facs own button
     facInfo.qStack    = qStack -- currently displayed build buttons
     facInfo.qStore    = {} -- all build buttons, indexed by unitDefID
+    facInfo.fullButton = CreateFullButton(unitID)
     
     local buildOptions = UnitDefs[unitDefID].buildOptions
     for j,buildDefID in ipairs(buildOptions) do
@@ -341,9 +363,12 @@ function UpdateFacBuildCounts(facInfo)
     local unitID = facInfo.unitID
     local buildQueue = spGetFullBuildQueue(unitID)
     
+    -- process q
     local buildCounts = {}
+    local buildOrder = {}
     for i=1,#buildQueue do
         local unitDefIDb, count = next(buildQueue[i], nil)
+        if buildCounts[unitDefIDb]==nil and count>0 then buildOrder[#buildOrder+1] = unitDefIDb end
         buildCounts[unitDefIDb] = (buildCounts[unitDefIDb] or 0) + count    
     end
     
@@ -351,17 +376,29 @@ function UpdateFacBuildCounts(facInfo)
     local qStore = facInfo.qStore
     local buildOptions = facInfo.buildOptions
 
+    -- update buttons
     for i=1,#buildOptions do
         local unitDefIDb = buildOptions[i]
         local count = buildCounts[unitDefIDb] or 0
         local qButton = qStore[unitDefIDb]
         local qCount = qButton:GetChildByName('count')
         qCount:SetCaption(count)
-        if count>0 and not qStack:GetChildByName(qButton.name) then
-            qStack:AddChild(qButton)
-        elseif count==0 and qStack:GetChildByName(qButton.name) then
-            qStack:RemoveChild(qButton)
+    end
+    
+    -- re-add buttons
+    local n = 0
+    qStack:ClearChildren()
+    for i=1,#buildOrder do
+        n = n + 1
+        if n>options.maxVisibleBuilds then
+            qStack:RemoveChild(qStack.children[#qStack.children])
+            qStack:AddChild(facInfo.fullButton)
+            return
         end
+        
+        local unitDefIDb = buildOrder[i]
+        local qButton = qStore[unitDefIDb]
+        qStack:AddChild(qButton)
     end
 end   
 
@@ -610,7 +647,6 @@ function widget:Initialize()
     }
     window_facbar = Chili.Window:New{
         padding = {3,3,0,0,},
-        width  = '50%',
         parent = Chili.Screen0,
         draggable = false,
         resizable = false,
@@ -632,18 +668,18 @@ end
 function ResizeUI()
     local x = WG.UIcoords.facBar.x
     local y = WG.UIcoords.facBar.y
+    local w = WG.UIcoords.facBar.w
     local h = WG.UIcoords.facBar.h
-    window_facbar:SetPos(x,y,_,h)
+    window_facbar:SetPos(x,y,w,h)
 
     fontSize = WG.RelativeFontSize(15)
     label_main.font.size = fontSize
     label_main:Invalidate()
     
     local vsx,_ = Spring.GetViewGeometry()
-    local w = 0.4*vsx
     options.buttonSize = WG.UIcoords.facBarButton.h
     options.maxFacs = math.floor((h*0.96-3)/options.buttonSize) -- padding + label + fac buttons
-    options.maxVisibleBuilds = math.floor((w-options.buttonSize*1.2)/options.buttonSize) -- fac button + q -- fixme: unimplemented!
+    options.maxVisibleBuilds = math.floor((w-options.buttonSize*1.2)/options.buttonSize) -- fac button + q 
     
     RecreateFacs(true) -- we have to recreate since stack panels don't handle their children changing size
 end

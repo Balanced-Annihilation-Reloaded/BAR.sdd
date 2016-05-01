@@ -21,6 +21,12 @@ local minW = 0.12
 local glConfigMiniMap = gl.ConfigMiniMap
 local glDrawMiniMap   = gl.DrawMiniMap
 local glGetViewSizes  = gl.GetViewSizes
+local glPushMatrix    = gl.PushMatrix
+local glPopMatrix     = gl.PopMatrix
+local glRotate        = gl.Rotate
+local glTranslate     = gl.Translate
+
+local spGetCameratState = Spring.GetCameraState
 
 local buttonColour, panelColour, sliderColour 
 
@@ -45,10 +51,6 @@ local function MakeMinimapWindow(screenW, screenH)
     }
     
     minimap:SetPos(x,y,w,h)    
-end
-
-function widget:ViewResize(vsx, vsy)
-    MakeMinimapWindow(vsx, vsy)
 end
 
 function widget:Initialize()
@@ -78,6 +80,11 @@ function widget:Shutdown()
     WG.MiniMap = nil
 end 
 
+function widget:Update()
+    local camState = spGetCameratState()
+    flipped = (camState.flipped==1)    
+end
+
 function widget:DrawScreen() 
     
     if minimap.hidden then
@@ -90,7 +97,23 @@ function widget:DrawScreen()
     local cx,cy,cw,ch = Chili.unpack4(minimap.clientArea)
     cx,cy = minimap:LocalToScreen(cx,cy)
     
-    glConfigMiniMap(cx,vsy-ch-cy,cw+1,ch+1)        
-    glDrawMiniMap()
+    local mx = cx
+    local my = vsy - ch - cy
+    local mw = cw + 1
+    local mh = ch + 1
+
+    if not flipped then
+        glConfigMiniMap(mx,my,mw,mh) 
+        glDrawMiniMap()    
+    else 
+        glPushMatrix()
+        glTranslate(mx+mw,my+mh,0)
+        glRotate(180, 0,0,1)
+        glTranslate(1,1,0)
+        glConfigMiniMap(0,0,mw,mh) -- negative x and y vals are silently ignored :/
+        glDrawMiniMap()
+        glPopMatrix()    
+    end
+
 end 
 

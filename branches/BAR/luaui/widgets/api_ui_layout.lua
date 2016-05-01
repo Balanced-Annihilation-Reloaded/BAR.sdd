@@ -112,7 +112,7 @@ local function Classic()
     local buildMenu = {x=0, y=max(minimapH,0.2), w=stateMenu.x+stateMenu.w, h=1-max(minimapH,0.2)-sInfo.h, menuTabs="internal", hideFacBar=true}
     local buildGrid = {wantedRows=4, wantedCols=3, maxRows=7, maxCols=5, maxGUICols=4, orientation="horizontal"}
 
-    local facBar = {x=0, y=max(minimapH,0.2), w=nil, h=1-max(minimapH,0.2)-sInfo.h}
+    local facBar = {x=0, y=max(minimapH,0.2), w=0.25, h=1-max(minimapH,0.2)-sInfo.h}
     local facBarButton = {h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
@@ -154,7 +154,7 @@ local function Hybrid()
 
     local factionChange = {x=buildMenu.w, y=1-0.08, w=0.17, h=0.08}
 
-    local facBar = {x=0, y=sInfo.y+sInfo.h, w=nil, h=1-max(minimapH,0.2)-sInfo.h}
+    local facBar = {x=0, y=sInfo.y+sInfo.h, w=0.25, h=1-max(minimapH,0.2)-sInfo.h}
     local facBarButton = {h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
@@ -198,7 +198,7 @@ local function Inverted()
     local buildMenu = {x=0, y=sInfo.h, w=stateMenu.x+stateMenu.w, h=0.5, menuTabs="internal", hideFacBar=true}
     local buildGrid = {wantedRows=4, wantedCols=3, maxRows=7, maxCols=5, maxGUICols=4, orientation="horizontal"}
 
-    local facBar = {x=0, y=sInfo.h, w=nil, h=0.5}
+    local facBar = {x=0, y=sInfo.h, w=0.25, h=0.5}
     local facBarButton = {h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
@@ -240,7 +240,7 @@ local function Corner()
     local stateMenu = {x=0, y=1-2*sInfo.h, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="bottom"}
 
-    local facBar = {x=0, y=minimap.h, w=nil, h=1-minimap.h-stateMenu.h-sInfo.h}
+    local facBar = {x=0, y=minimap.h, w=0.25, h=1-minimap.h-stateMenu.h-sInfo.h}
     local facBarButton = {h=0.06}
 
     local orderMenuButton = {w=0.055/screenAspect, h=0.055}
@@ -290,11 +290,11 @@ local function Spacious()
     local stateGrid = {rows=9, cols=1, align="top"}
 
     local buildMenu = {x=sInfo.x + sInfo.w, y=1-sInfo.h, w=0.15, h=sInfo.h, menuTabs="top", hideFacBar=false}
-    local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=14, maxGUICols=9, orientation="vertical"}
+    local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=18, maxGUICols=9, orientation="vertical"}
 
     local factionChange = {x=0, y=sInfo.y-0.08, w=sInfo.w, h=0.08}
 
-    local facBar = {x=0, y=minimap.h, w=nil, h=1-minimap.h-sInfo.h}
+    local facBar = {x=0, y=minimap.h, w=0.25, h=1-minimap.h-sInfo.h}
     local facBarButton = {h=0.06}
 
     local consoleLeft = minimapW+0.05

@@ -1662,10 +1662,10 @@ end
 --  Misc call-ins
 --
 
-function gadgetHandler:Explosion(weaponID, px, py, pz, ownerID)
+function gadgetHandler:Explosion(weaponID, px, py, pz, ownerID, proID)
   local noGfx = false
   for _,g in r_ipairs(self.ExplosionList) do
-    noGfx = noGfx or g:Explosion(weaponID, px, py, pz, ownerID)
+    noGfx = noGfx or g:Explosion(weaponID, px, py, pz, ownerID, proID)
   end
   return noGfx
 end

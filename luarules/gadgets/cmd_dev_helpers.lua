@@ -19,7 +19,7 @@ function LoadMissiles()
     if not Spring.IsCheatingEnabled() then return end
 
     for _,unitID in pairs(Spring.GetAllUnits()) do
-        Spring.SetUnitStockpile(unitID, select(2,Spring.GetUnitStockpile(unitID)) or 0) --no effect if the unit can't stockpile
+        Spring.SetUnitStockpile(unitID, math.max(5, select(2,Spring.GetUnitStockpile(unitID)))) --no effect if the unit can't stockpile
     end
 
 end

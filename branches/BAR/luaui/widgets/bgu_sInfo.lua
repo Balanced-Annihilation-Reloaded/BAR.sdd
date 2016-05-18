@@ -809,7 +809,7 @@ local function showFocusInfo()
         focusCostText = Chili.TextBox:New{
             parent = focusPictureOverlay,
             x        = '5%',
-            bottom   = '12%',
+            bottom   = '14%',
             text     =  "Cost: " .. mColour .. unitDef.metalCost .. " " .. eColour .. unitDef.energyCost,
             font   = {size=fontSize},
         }

@@ -27,7 +27,6 @@ local layouts = {
     "inverted",
     "hybrid",
     "spacious",
-    "corner",
 }
 local options = {
     layout = "classic" -- default
@@ -227,48 +226,7 @@ local function Inverted()
 end
 
 -------------------------------------
--- new1 another WIP -- needs (WIP) horizontal build menu
-
-local function Corner()
-    local minimapW,minimapH = GetMinimapDimensions(0.12, 0.27, 0.12, 0.27)
-    local minimap = {x=0, y=0, w=minimapW, h=minimapH}
-    local sInfo = {x=0, y=1-0.2, w=0.2/screenAspect, h=0.2}
-
-    local buildMenu = {x=sInfo.w, y=1-sInfo.h, w=0.1, h=sInfo.h, menuTabs="right", hideFacBar=false} 
-    local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=14, maxGUICols=9, orientation="vertical"}
-
-    local stateMenu = {x=0, y=1-2*sInfo.h, w=0.06, h=sInfo.h}
-    local stateGrid = {rows=9, cols=1, align="bottom"}
-
-    local facBar = {x=0, y=minimap.h, w=0.25, h=1-minimap.h-stateMenu.h-sInfo.h}
-    local facBarButton = {h=0.06}
-
-    local orderMenuButton = {w=0.055/screenAspect, h=0.055}
-    local orderMenu = {x=stateMenu.w, y=1-sInfo.h-3*orderMenuButton.h, w=nil, h=nil, align="bottom", hideFacBar=true}
-    local orderGrid = {rows=3, cols=8} -- it might override
-
-    local factionChange = {x=sInfo.w, y=1-buildMenu.h-0.08, w=0.17, h=0.08}
-
-    local resBars = {x=1-0.3, y=0, w=0.3, h=0.09}
-    local clockFPS = {x=1-0.16, y=resBars.h+0.005, w=0.155, h=0.02}
-    local musicPlayer = {x=1-0.16, y=clockFPS.y+clockFPS.h+0.005, w=0.155, h=0.09}
-    local comCounter = {x=clockFPS.x-0.06/screenAspect-0.005, y=resBars.h, w=0.06/screenAspect, h=0.06}
-
-    local consoleLeft = minimapW+0.05
-    local consoleRight = resBars.x
-    local console = {x=consoleLeft, y=0, w=max(0,consoleRight-consoleLeft), h=0.15}
-    local chonsole = {x=consoleLeft, y=console.h, w=console.w, h=nil}
-
-    UIcoords = {
-        minimap=minimap, sInfo=sInfo,
-        buildMenu=buildMenu, buildGrid=buildGrid,
-        facBar=facBar, facBarButton=facBarButton, factionChange=factionChange,
-        stateMenu=stateMenu, stateMenuButton=stateMenuButton, stateGrid=stateGrid,
-        orderMenu=orderMenu, orderMenuButton=orderMenuButton, orderGrid=orderGrid,
-        resBars=resBars, clockFPS=clockFPS, comCounter=comCounter, musicPlayer=musicPlayer,
-        console=console, chonsole=chonsole,
-    }
-end
+-- spacious
 
 local function Spacious()
     local minimapW,minimapH = GetMinimapDimensions(0.12, 0.27, 0.12, 0.27)
@@ -289,8 +247,8 @@ local function Spacious()
     local stateMenu = {x=orderGrid.rows * orderMenuButton.w, y=minimapH, w=stateMenuW, h=0.2}
     local stateGrid = {rows=9, cols=1, align="top"}
 
-    local buildMenu = {x=sInfo.x + sInfo.w, y=1-sInfo.h, w=0.15, h=sInfo.h, menuTabs="top", hideFacBar=false}
-    local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=18, maxGUICols=9, orientation="vertical"}
+    local buildMenu = {x=sInfo.x + sInfo.w, y=1-sInfo.h, w=0.13, h=sInfo.h, menuTabs="top", hideFacBar=false}
+    local buildGrid = {wantedRows=2, wantedCols=2, maxRows=2, maxCols=18, maxGUICols=12, orientation="vertical"}
 
     local factionChange = {x=0, y=sInfo.y-0.08, w=sInfo.w, h=0.08}
 
@@ -368,7 +326,6 @@ local function SetLayout(layout)
     if layout=="classic" then Classic()
     elseif layout=="hybrid" then Hybrid()
     elseif layout=="inverted" then Inverted()
-    elseif layout=="corner" then Corner()
     elseif layout=="spacious" then Spacious()
     else Classic() --default if options are broken
     end

@@ -55,6 +55,7 @@ skin.bgubutton = {
 
   backgroundColor = {1, 1, 1, 0.7},
   borderColor = {1,1,1,0},
+  focusColor = {1.0, 0.7, 0.1, 0.5},
 
   DrawControl = DrawButton,
 }

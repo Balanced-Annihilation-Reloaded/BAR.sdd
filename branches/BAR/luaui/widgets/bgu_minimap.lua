@@ -30,7 +30,7 @@ local spGetCameratState = Spring.GetCameraState
 
 local buttonColour, panelColour, sliderColour 
 
-local function MakeMinimapWindow(screenW, screenH)
+local function MakeMinimapWindow()
     
     if (minimap) then
         minimap:Dispose()
@@ -66,10 +66,12 @@ function widget:Initialize()
     
     Chili = WG.Chili
     
-    local vsx,vsy = Spring.GetViewGeometry()
-    MakeMinimapWindow(vsx, vsy)
-    
+    MakeMinimapWindow()    
     gl.SlaveMiniMap(true)
+end
+
+function widget:ViewResize()
+    MakeMinimapWindow()
 end
 
 function widget:Shutdown()

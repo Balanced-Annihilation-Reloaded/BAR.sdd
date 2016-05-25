@@ -413,7 +413,7 @@ function widget:PlayerChanged()
     if spec then
         resourceWindow.focusColor = buttonColour
     else
-        resourceWindow.focusColor = {1.0, 0.7, 0.1, 0.8} -- todo, get from skin
+        resourceWindow.focusColor = {1.0, 0.7, 0.1, 0.5} -- todo, get from skin
     end
 end
 

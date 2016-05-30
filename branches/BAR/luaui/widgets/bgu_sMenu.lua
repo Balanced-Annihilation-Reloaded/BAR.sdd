@@ -295,19 +295,21 @@ local function FinalizeOrderGrid()
     -- use more order rows if the order buttons won't fit into the screen width
     -- we allow for up to 24 order buttons in up to 3 rows, with all non-fixed buttons going into the top row
     -- the (max) number of buttons per row is always a multiple of 8
+    local vsx,_ = Spring.GetViewGeometry()
+    local availableWidth 
     if WG.PlayerList and WG.PlayerList.width then
-        local vsx,_ = Spring.GetViewGeometry()
-        local availableWidth = vsx - WG.PlayerList.width - WG.UIcoords.orderMenu.x -- player list is in BR corner
-        local availableButtonsPerRow = math.floor(availableWidth / WG.UIcoords.orderMenuButton.w)
-        availableButtonsPerRow = math.floor(availableButtonsPerRow/8)*8 -- round down to the nearest 8
-        availableButtonsPerRow = math.max(availableButtonsPerRow, 1) -- in case user has the worlds smallest screen
-        local neededRows = math.ceil(24 / availableButtonsPerRow)
-
-        orderRows = math.max(orderRows, neededRows)
-        orderCols = availableButtonsPerRow
+        availableWidth = vsx - WG.PlayerList.width - WG.UIcoords.orderMenu.x -- player list is in BR corner
 	else
-		Spring.Echo("ERROR: no WG.PlayerList")
+        availableWidth = vsx - WG.UIcoords.orderMenu.x 
     end
+
+    local availableButtonsPerRow = math.floor(availableWidth / WG.UIcoords.orderMenuButton.w)
+    availableButtonsPerRow = math.floor(availableButtonsPerRow/8)*8 -- round down to the nearest 8
+    availableButtonsPerRow = math.max(availableButtonsPerRow, 1) -- in case user has the worlds smallest screen
+    local neededRows = math.ceil(24 / availableButtonsPerRow)
+
+    orderRows = math.max(orderRows, neededRows)
+    orderCols = availableButtonsPerRow
 
     -- now set the order menu layout to match the number of rows we actually use
     -- merge downwards, collect in bottom row
@@ -357,9 +359,9 @@ local function resizeUI()
     local by = WG.UIcoords.buildMenu.y + internalTabOffset
     local bh = WG.UIcoords.buildMenu.h - internalTabOffset
     local bw = WG.UIcoords.buildMenu.w * (buildGUICols / wantedBuildCols) -- better to keep consistent layout & not use small buttons when possible
-	if bx+bw>vsx-WG.PlayerList.width then 
-		bw = vsx - bx - WG.PlayerList.width -- fixme: player list does not scale with viewsize
-	end
+	if WG.PlayerList.width and bx+bw>vsx-WG.PlayerList.width then 
+		bw = vsx - bx - WG.PlayerList.width 
+    end
     buildMenu:SetPos(bx,by,bw,bh)
 
     -- menu tabs (pinned to build menu)

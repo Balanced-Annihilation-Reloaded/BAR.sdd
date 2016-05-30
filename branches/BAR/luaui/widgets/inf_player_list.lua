@@ -220,8 +220,15 @@ function ShareRes()
     local tID = players[iPanelpID].tID
     Spring.ShareResources(tID,'energy',e)
     Spring.ShareResources(tID,'metal',m)
-    
+       
     iPanel:Hide()
+end
+
+function SetShareResTooltip()
+    -- when hovering the share res button
+    local e = shareE_slider.value
+    local m = shareM_slider.value
+    shareres_button.tooltip = "Share " .. e .. "E, " .. m .. "M"
 end
 
 local takeInfo
@@ -281,9 +288,10 @@ function iPanel()
         width = '100%',
         caption = 'share res',
         right = 0,
-        onclick = {ShareRes},
         borderColor = buttonColour,
         backgroundColor = buttonColour,
+        onmouseover = {SetShareResTooltip},
+        onclick = {ShareRes},
     }
     
     shareE_text = Chili.TextBox:New{
@@ -345,7 +353,7 @@ function iPanel()
         min = 0,
         max = 2500,
         step = 250,
-        value = 1000,
+        value = 500,
     }
 
     shareM_slider_panel = Chili.LayoutPanel:New{

@@ -284,7 +284,7 @@ local wCategories = {
     ['snd']       = {label = 'Sound',       list = {}, pos = 5,},
     ['camera']    = {label = 'Camera',      list = {}, pos = 6,},
     ['map']       = {label = 'Map',         list = {}, pos = 7,},
-    ['bgu']       = {label = 'BAR GUI',     list = {}, pos = 8,},
+    ['bgu']       = {label = 'BAR GUI',     list = {}, pos = 8, adv = true},
     ['gfx']       = {label = 'GFX',         list = {}, pos = 9, adv = true},
     ['dbg']       = {label = 'Debugging',   list = {}, pos = 10, adv = true},
     ['api']       = {label = 'API \255\255\200\200(Here be dragons!)', list = {}, pos = 11, adv = true},

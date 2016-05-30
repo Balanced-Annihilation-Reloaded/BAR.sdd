@@ -74,7 +74,7 @@ local upgradeMexCmdDesc = {
   name    = ' Upgrade \n      Mex', 
   cursor  = 'upgmex', 
   action  = 'upgrademex', 
-  tooltip = 'Upgrade Mex', 
+  tooltip = 'Upgrade Mex: Replace T1 meteal extractors with T2 metal extractors', 
   hidden  = false, 
   params  = {} 
 } 

@@ -194,7 +194,7 @@ local function Inverted()
     local stateMenu = {x=sInfo.w, y=0, w=0.06, h=sInfo.h}
     local stateGrid = {rows=9, cols=1, align="bottom"}
 
-    local buildMenu = {x=0, y=sInfo.h, w=stateMenu.x+stateMenu.w, h=0.5, menuTabs="internal", hideFacBar=true}
+    local buildMenu = {x=0, y=sInfo.h, w=stateMenu.x+stateMenu.w, h=1-sInfo.h-minimapH, menuTabs="internal", hideFacBar=true}
     local buildGrid = {wantedRows=4, wantedCols=3, maxRows=7, maxCols=5, maxGUICols=4, orientation="horizontal"}
 
     local facBar = {x=0, y=sInfo.h, w=0.25, h=0.5}

@@ -24,7 +24,7 @@ return {
 		maxdamage = 4900,
 		maxslope = 12,
 		maxvelocity = 2.616,
-		maxwaterdepth = 100,
+		maxwaterdepth = 25,
 		movementclass = "HTANK3",
 		name = "Reaper",
 		nochasecategory = "VTOL",

@@ -79,13 +79,15 @@ local resources = {
 
 -- Options
 local options = {
-    ready_faction = true,
-    ranks = true,
-    flags = true,
-    ts = true,
-    resBars = true,
-    resText = true,
     headerRes = true,
+
+    flags = true,
+    ranks = false,
+    ready_faction = true,
+
+    resText = false,
+    resBars = true,
+    ts = true,
 }
 local width = {
     flag = 15,
@@ -1659,7 +1661,7 @@ function Header(text)
         },
     }
     
-    local r = (offset.ts or offset.ping) + resWidth 
+    local r = (offset.ts or offset.ping) + resWidth - 10
     for _,res in ipairs(resources) do
         Chili.TextBox:New{
             parent = panel,

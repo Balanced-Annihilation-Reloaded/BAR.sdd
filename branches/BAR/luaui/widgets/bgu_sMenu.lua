@@ -1243,10 +1243,14 @@ local airFacs = { --unitDefs can't tell us this
     [UnitDefNames.corplat.id] = true,
 }
 
-function IsWater(unitDef)
-    local water = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25)
-            or (unitDef.minWaterDepth and unitDef.minWaterDepth>0)
+function IsAmphib(unitDef)
+    local amph = (unitDef.maxWaterDepth and unitDef.maxWaterDepth>25)
             or string.find(unitDef.moveDef and unitDef.moveDef.name or "", "hover")
+    return amph
+end
+
+function IsWater(unitDef)
+    local water = (unitDef.minWaterDepth and unitDef.minWaterDepth>0)
     return water
 end
 
@@ -1323,7 +1327,8 @@ local function CreateUnitButton(name, unitDef)
     local extraIcons = {
         [1] = {image="constr.png",   used = unitDef.isBuilder},
         [2] = {image="raindrop.png", used = IsWater(unitDef)},
-        [3] = {image="plane.png",    used = IsAir(unitDef)},
+        [3] = {image="raindrop_amphib.png", used = IsAmphib(unitDef) and not IsWater(unitDef)},
+        [4] = {image="plane.png",    used = IsAir(unitDef)},
     }
 
     local y = 7 -- %

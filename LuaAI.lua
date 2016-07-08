@@ -40,6 +40,10 @@ return {
     name = 'Chicken: Survival',
     desc = 'Never-ending chickens'
   },
+  {
+    name = 'ShardLua',
+    desc = 'Shard by AF for Spring Lua',
+  },
 }
 
 

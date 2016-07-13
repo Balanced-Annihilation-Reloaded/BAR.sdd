@@ -41,8 +41,8 @@ return {
     desc = 'Never-ending chickens'
   },
   {
-    name = 'ShardLua',
-    desc = 'Shard by AF for Spring Lua',
+    name = 'BABAR 1 for ShardSpringLua 1',
+    desc = 'Shard by AF on Spring Lua with BA/BAR configuration',
   },
 }
 

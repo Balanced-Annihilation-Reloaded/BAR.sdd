@@ -7,6 +7,13 @@
 -- basically, DONT TOUCH this! 
 --------------------------------------------------------------------------------
 
+-- see alldefs.lua for documentation
+-- load the games _Post functions for defs, and find out if saving to custom params is wanted
+VFS.Include("gamedata/alldefs_post.lua")
+-- load functionality for saving to custom params
+VFS.Include("gamedata/post_save_to_customparams.lua")
+
+
 local function isbool(x)   return (type(x) == 'boolean') end
 local function istable(x)  return (type(x) == 'table')   end
 local function isnumber(x) return (type(x) == 'number')  end
@@ -41,6 +48,8 @@ local function ExtractWeaponDefs(udName, ud)
       local fullName = udName .. '_' .. wdName
       WeaponDefs[fullName] = wd
         
+      WeaponDef_Post(fullName, wd)
+
       if SaveDefsToCustomParams then
         MarkDefOmittedInCustomParams("WeaponDefs", fullName, wd)
       end
@@ -82,12 +91,6 @@ local function ExtractWeaponDefs(udName, ud)
 end
 
 --------------------------------------------------------------------------------
-
--- see alldefs.lua for documentation
--- load the games _Post functions for defs, and find out if saving to custom params is wanted
-VFS.Include("gamedata/alldefs_post.lua")
--- load functionality for saving to custom params
-VFS.Include("gamedata/post_save_to_customparams.lua")
 
 
 -- handle standalone weapondefs

@@ -68,8 +68,8 @@ effectUnitDefs = {
     {class='AirJet',options={color={0.7,0.4,0.1}, width=7, length=30, piece="thrust", onActive=true}},
   },
   [UnitDefNames["armkam"].id] = {
-    {class='AirJet',options={color={0.7,0.4,0.1}, width=4, length=47, piece="thrusta", onActive=true}},
-    {class='AirJet',options={color={0.7,0.4,0.1}, width=4, length=47, piece="thrustb", onActive=true}},
+    {class='AirJet',options={color={0.7,0.4,0.1}, width=4, length=47, piece="thrusta", onActive=true, emitVector = {0,1,0}}},
+    {class='AirJet',options={color={0.7,0.4,0.1}, width=4, length=47, piece="thrustb", onActive=true, emitVector = {0,1,0}}},
   },
   [UnitDefNames["armthund"].id] = {
     {class='AirJet',options={color={0.7,0.4,0.1}, width=2, length=47, piece="thrust1", onActive=true}},

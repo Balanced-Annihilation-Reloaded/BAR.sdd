@@ -16,7 +16,7 @@ end
 
 -- don't forget to update it!
 local minMajorEngineVersion = 103
-local minMinorEngineVersion = -1
+local minMinorEngineVersion = 297
 local maxEngineVersion = 104 
 -- no real need for a max minor version
 
@@ -32,7 +32,7 @@ local red = "\255\255\1\1"
 function Warning()
     local reportedMajorVersion, reportedMinorVersion
     local devEngine
-    Spring.Echo(Game.version)
+    --Spring.Echo(Game.version)
     if string.find(Game.version,".",1,true) then 
         local n = string.find(Game.version,".",1,true)
         reportedMajorVersion = string.sub(Game.version,1,n-1)   
@@ -45,7 +45,7 @@ function Warning()
         reportedMajorVersion = string.sub(Game.version,1,n)  
         devEngine = false
     end
-    Spring.Echo(reportedMajorVersion, reportedMinorVersion, devEngine)
+    --Spring.Echo(reportedMajorVersion, reportedMinorVersion, devEngine)
     
     if not reportedMajorVersion then return end
     if devEngine and not reportedMinorVersion then return end

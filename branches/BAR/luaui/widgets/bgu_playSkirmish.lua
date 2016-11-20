@@ -387,7 +387,7 @@ local function createUI()
     
     for _, archive in pairs(VFS.GetAllArchives()) do
     	local info = VFS.GetArchiveInfo(archive)
-    	if info.modtype == 3 then AddMap(info) end
+    	if info and info.modtype == 3 then AddMap(info) end
     end
     ----------------------
     

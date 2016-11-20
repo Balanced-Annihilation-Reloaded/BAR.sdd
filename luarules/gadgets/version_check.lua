@@ -15,9 +15,9 @@ if (gadgetHandler:IsSyncedCode()) then
 end
 
 -- don't forget to update it!
-local minMajorEngineVersion = 101 
-local minMinorEngineVersion = 201
-local maxEngineVersion = 102 
+local minMajorEngineVersion = 103
+local minMinorEngineVersion = nil 
+local maxEngineVersion = 104 
 -- no real need for a max minor version
 
 local wantedEngineVersions = ""
@@ -41,9 +41,10 @@ function Warning()
         devEngine = true
     else 
         local n = string.len(Game.version)
-        reportedMajorVersion = string.sub(Game.version,1,n-1)  
+        reportedMajorVersion = string.sub(Game.version,1,n)  
         devEngine = false
     end
+    --Spring.Echo(Game.version, reportedMajorVersion, reportedMinorVersion, devEngine)
     
     if not reportedMajorVersion then return end
     if devEngine and not reportedMinorVersion then return end

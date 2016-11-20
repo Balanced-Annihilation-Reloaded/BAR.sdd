@@ -5,64 +5,27 @@
 
 piece  base, cover1, cover2;
 
-static-var  Static_Var_1, mmState, Active;
+static-var  mmState, Active;
 
 activatescr()
 {
-	if( TRUE )
-	{
-		turn cover1 to z-axis <60> speed <60>;
-		turn cover2 to z-axis <-60> speed <60>;
-		sleep 1000;
-	}
-	sleep 774;
-	return (0);
-	// Build by COBBLER Ver4.0 Copyright @1998 DIGITAL CONCEPT SOFTWARE (MANU@inext.fr) / http://www.annihilationcenter.com/DCS/  
+	turn cover1 to z-axis <60> speed <60>;
+	turn cover2 to z-axis <-60> speed <60>;
+	sleep 1000;
 }
 
 deactivatescr()
 {
-	if( TRUE )
-	{
-		turn cover1 to z-axis <0> speed <60>;
-		turn cover2 to z-axis <0> speed <60>;
-		sleep 1000;
-	}
-	sleep 774;
-	return (0);
+	turn cover1 to z-axis <0> speed <60>;
+	turn cover2 to z-axis <0> speed <60>;
+	sleep 1000;
 }
 
-SmokeUnit(healthpercent, sleeptime, smoketype)
-{
-	while( get BUILD_PERCENT_LEFT )
-	{
-		sleep 400;
-	}
-	while( TRUE )
-	{
-		healthpercent = get HEALTH;
-		if( healthpercent < 66 )
-		{
-			smoketype = 256 | 2;
-			if( Rand( 1, 66 ) < healthpercent )
-			{
-				smoketype = 256 | 1;
-			}
-			emit-sfx smoketype from base;
-		}
-		sleeptime = healthpercent * 50;
-		if( sleeptime < 200 )
-		{
-			sleeptime = 200;
-		}
-		sleep sleeptime;
-	}
-}
 
 Go()
 {
 	call-script activatescr();
-	set ARMORED to 0;
+	set ARMORED to 0; //Not needed as MM in BAR have no damage modifyer tag set
 }
 
 Stop()
@@ -71,18 +34,8 @@ Stop()
 	call-script deactivatescr();
 }
 
-MMStatus(State)
-{
-	Active = State;
-	//get PRINT(Active);
-}
-
 ImAMetalMaker()
 {
-	while( get BUILD_PERCENT_LEFT )
-	{
-		sleep 150;
-	}
 	mmState = -1;
 	while( TRUE )
 	{
@@ -104,33 +57,43 @@ ImAMetalMaker()
 	}
 }
 
+SmokeUnit(healthpercent, sleeptime, smoketype)
+{
+	while( get BUILD_PERCENT_LEFT )
+	{
+		sleep 400;
+	}
+	start-script ImAMetalMaker();
+	while( TRUE )
+	{
+		healthpercent = get HEALTH;
+		if( healthpercent < 66 )
+		{
+			smoketype = 256 | 2;
+			if( Rand( 1, 66 ) < healthpercent )
+			{
+				smoketype = 256 | 1;
+			}
+			emit-sfx smoketype from base;
+		}
+		sleeptime = healthpercent * 50;
+		if( sleeptime < 200 )
+		{
+			sleeptime = 200;
+		}
+		sleep sleeptime;
+	}
+}
+
+MMStatus(State)
+{
+	Active = State;
+	//get PRINT(Active);
+}
+
 Create()
 {
 	start-script SmokeUnit();
-	Static_Var_1 = 0;
-	while( get BUILD_PERCENT_LEFT )
-	{
-		sleep 1000;
-	}
-	set ARMORED to 1;
-	start-script ImAMetalMaker();
-}
-
-HitByWeapon(anglex, anglez)  //Can be removed does nothing at all only visualy they will look closed (MM are controled by gadget and still producing metal)
-{
-	if( get ACTIVATION )
-	{
-		Static_Var_1 = 1;
-	}
-	if( Static_Var_1 )
-	{
-		signal 2;
-		set-signal-mask 2;
-		set ACTIVATION to 0;
-		sleep 8000;
-		Static_Var_1 = 0;
-		set ACTIVATION to 100;
-	}
 }
 
 SweetSpot(piecenum)

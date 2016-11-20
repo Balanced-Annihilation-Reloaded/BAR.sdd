@@ -7,28 +7,12 @@
 
 piece  base, fan, tank1, tank2;
 
-static-var  Static_Var_1, mmState, Active;
+static-var  mmState, Active;
 
 
 activatescr()
 {
-	spin fan around y-axis speed <300.000000> accelerate <10>;
-	
-	//set-signal-mask SIG_ANIM;
-	while (TRUE)
-	{
-	
-		move tank1 to y-axis [1.800000] speed [5.000000];
-		move tank2 to y-axis [-2.300000] speed [5.000000];
-
-		sleep 1000;
-		
-		move tank1 to y-axis [0.000000] speed [5.000000];
-		move tank2 to y-axis [0.000000] speed [5.000000];
-		sleep 1000;
-	
-	}
-	
+	spin fan around y-axis speed <300.000000> accelerate <10>;		
 }
 
 deactivatescr()
@@ -39,12 +23,68 @@ deactivatescr()
 	sleep 30;
 }
 
+Go()
+{
+	call-script activatescr();
+	set ARMORED to 0;  //Not needed as MM in BAR have no damage modifyer tag set
+}
+
+Stop()
+{
+	set ARMORED to 1;
+	call-script deactivatescr();
+}
+
+MovementControl()
+{
+	while (TRUE)
+	{
+		while (mmState == 1)
+		{
+			move tank1 to y-axis [1.800000] speed [5.000000];
+			move tank2 to y-axis [-2.300000] speed [5.000000];
+
+			sleep 1000;
+		
+			move tank1 to y-axis [0.000000] speed [5.000000];
+			move tank2 to y-axis [0.000000] speed [5.000000];
+			sleep 1000;
+			}
+			sleep 100;
+	}	
+}
+
+ImAMetalMaker()
+{
+	mmState = -1;
+	while( TRUE )
+	{
+		if (Active == 1)
+		{
+			if (mmState != 1) {
+				call-script Go();
+				mmState = 1;
+			}
+		}
+		else
+		{
+			if (mmState != 0) {
+				call-script Stop();
+				mmState = 0;
+			}
+		}
+		sleep 1000;
+	}
+}
+
 SmokeUnit(healthpercent, sleeptime, smoketype)
 {
 	while( get BUILD_PERCENT_LEFT )
 	{
 		sleep 400;
 	}
+	start-script MovementControl();
+	start-script ImAMetalMaker();
 	while( TRUE )
 	{
 		healthpercent = get HEALTH;
@@ -66,85 +106,15 @@ SmokeUnit(healthpercent, sleeptime, smoketype)
 	}
 }
 
-Go()
-{
-	if( Static_Var_1 )
-	{
-		set ACTIVATION to 0;
-		return (0);
-	}
-	//signal SIG_ANIM;
-	call-script activatescr();
-	set ARMORED to 0;
-}
-
-Stop()
-{
-	set ARMORED to 1;
-	//signal SIG_ANIM;
-	call-script deactivatescr();
-}
-
 MMStatus(State)
 {
 	Active = State;
 	//get PRINT(Active);
 }
 
-ImAMetalMaker()
-{
-	while( get BUILD_PERCENT_LEFT )
-	{
-		sleep 150;
-	}
-	mmState = -1;
-	while( TRUE )
-	{
-		if( Active == 1 )
-		{
-			if( mmState != 1 )
-			{
-				call-script Go();
-				mmState = 1;
-			}
-		}
-		else if( mmState != 0 )
-		{
-			call-script Stop();
-			mmState = 0;
-		}
-		sleep 1000;
-	}
-}
-
 Create()
 {
-	spin fan around y-axis speed <30.000000> accelerate <3.000000>;
-	call-script ImAMetalMaker();
 	start-script SmokeUnit();
-	Static_Var_1 = 0;
-	while( get BUILD_PERCENT_LEFT )
-	{
-		sleep 1000;
-	}
-	set ARMORED to 1;
-}
-
-HitByWeapon(anglex, anglez)
-{
-	if( get ACTIVATION )
-	{
-		Static_Var_1 = 1;
-	}
-	if( Static_Var_1 )
-	{
-		signal 2;
-		set-signal-mask 2;
-		set ACTIVATION to 0;
-		sleep 8000;
-		Static_Var_1 = 0;
-		set ACTIVATION to 100;
-	}
 }
 
 SweetSpot(piecenum)

@@ -1,9 +1,9 @@
 -- WIP heavily based on LEDs music player and music players before that
 function widget:GetInfo()
     return {
-        name    = 'Music Player',
-        desc    = 'Plays music according to the in-game action',
-        author  = 'Funkencool',
+        name    = 'Music & Volume Control',
+        desc    = 'Adds a tab to the main menu that controls volume and plays music',
+        author  = 'Funkencool, Bluestone',
         date    = 'Sep 2013',
         license = 'GNU GPL v2',
         layer   = 0,
@@ -35,8 +35,8 @@ local musicVolume     = Spring.GetConfigInt('snd_volmusic')
 local battleVolume = Spring.GetConfigInt('snd_volbattle')
 local masterVolume    = Spring.GetConfigInt('snd_volmaster')
 
-local notePic  = "LuaUI/Images/musical_note.png"
-local tankPic  = "LuaUI/Images/small_tank.png"
+local notePic  = "LuaUI/Images/music/musical_note.png"
+local tankPic  = "LuaUI/Images/music/tank_icon.png"
 
 local buttonColour, panelColour, sliderColour 
 
@@ -87,16 +87,27 @@ local function loadOptions()
         padding  = {5,5,5,5},
     }
     
+    local trackListScroll = Chili.ScrollPanel:New{
+        --parent    = control,
+        x         = 0,
+        y         = '0%',
+        height    = '100%',
+        width     = '100%',
+        --borderColor = {0,0,0,0},
+        --backgroundColor = {0,0,0,0}
+    }
+
     local trackList = Chili.StackPanel:New{
+        parent      = control,
         x           = 0,
         y           = 0,
         width       = '100%',
-        resizeItems = false,
-        autosize    = true,
+        height      = '100%',
         padding     = {0,0,0,0},
         itemPadding = {0,0,0,0},
         itemMargin  = {0,0,0,0},
-        preserverChildrenOrder = true
+        preserverChildrenOrder = true,
+        resizeItems = false,
     }
     
     local toggleTrack = function(self)
@@ -114,7 +125,7 @@ local function loadOptions()
     end 
     
     for trackType, list in pairs(tracks) do
-        Chili.Label:New{x='0%',fontsize=18,height=25,parent=trackList,caption=typeTitle[trackType]}
+        Chili.Label:New{x='0%',fontsize=18,parent=trackList,caption=typeTitle[trackType]}
         for trackName,_ in pairs(list) do
             local green  = {color = {0.5,1,0,1}, outlineColor = {0.5,1,0,0.2}}
             local red    = {color = {1,0,0,1}, outlineColor = {1,0,0,0.2}}
@@ -122,7 +133,7 @@ local function loadOptions()
             Chili.Checkbox:New{
                 caption   = title,
                 parent    = trackList,
-                --height    = 20,
+                height    = 20,
                 width     = '80%',
                 x         = '10%',
                 textalign = 'left',
@@ -134,20 +145,11 @@ local function loadOptions()
         end
     end
     
-    trackList:AddChild(Chili.TextBox:New{width='100%',text= "\n\n\n" .. "\255\200\200\240" .. music_credits .. "\n\n"})
-
-    Chili.ScrollPanel:New{
-        parent    = control,
-        x         = 0,
-        y         = 0,
-        right     = 0,
-        bottom    = 0,
-        children  = {trackList},
-        borderColor = {0,0,0,0},
-        backgroundColor = {0,0,0,0}
-    }
+    --trackList:AddChild(Chili.TextBox:New{width='100%',text= "\n\n\n" .. "\255\200\200\240" .. music_credits .. "\n\n"})
+        
+    trackList:Invalidate()
     
-    Menu.AddTab('Music',control)
+    Menu.AddTab('Sound',control)
         
 end
 
@@ -238,7 +240,7 @@ local function createUI()
         y      = '40%', 
         right  = '30%', 
         bottom = '20%',
-        file   = 'luaUI/Images/playsong.png',
+        file   = 'luaUI/Images/music/play.png',
     }
     
     pauseIcon = Chili.Image:New{
@@ -247,7 +249,7 @@ local function createUI()
         y      = '40%', 
         right  = '30%', 
         bottom = '20%',
-        file   = 'luaUI/Images/pausesong.png'
+        file   = 'luaUI/Images/music/pause.png'
     }
     
     playButton = Chili.bguButton:New{
@@ -297,7 +299,7 @@ local function createUI()
                 y      = '40%', 
                 right  = '30%', 
                 bottom = '20%',
-                file   = 'luaUI/Images/nextsong.png',
+                file   = 'luaUI/Images/music/next.png',
             }
         },
     }

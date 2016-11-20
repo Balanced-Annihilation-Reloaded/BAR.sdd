@@ -12,7 +12,7 @@
 -------------------------------------------------------------------------------------
 
 if (SendToUnsynced) then
-	return
+	return ""
 end
 
 local unitRendering = {

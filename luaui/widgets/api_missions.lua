@@ -178,16 +178,16 @@ function CreateMissionGUI()
 
     window = Chili.Window:New{
         parent = Chili.Screen0,
-        right  = 450+50,
+        x  = WG.UIcoords.console.x,
         y      = 0,
-        width  = 525,
+        width  = WG.UIcoords.console.w,
         minHeight = 25,
         autosize = true,
     }
     
     mission_name_window = Chili.Panel:New{
         parent = window,
-        width = 525,
+        width = '100%',
         autosize = false,
         height = 35,
         padding     = {0,0,0,0},
@@ -248,30 +248,31 @@ function CreateMissionGUI()
     showhide_button = Chili.Button:New{
         parent = mission_name_window,
         y = 0,
-        right = 0,
+        right = 5,
         height = 33,
         width = 70,
-        caption = grey .. "hide",
+        caption = "hide",
         onclick = {ShowHide},
     }
 
-    --[[
-    -- TODO
     mission_menu_button = Chili.Button:New{
-        parent = mission_nam_window;
+        parent = mission_name_window;
         y = 0;
-        right = 70,
+        right = 75,
         height = 33,
-        width = 50,
-        caption = grey .. "menu",
+        width = 150,
+        caption = "missions menu",
         onclick = {function() WG.MainMenu.ShowHide("Beta Release") end},   
     }
-    ]]
 
     WG.NewMissionObjective = NewMissionObjective -- make it callable by the mission
     
 end
 
+function widget:ViewResize()
+    window:Dispose()
+    CreateMissionGUI()
+end
 
 
 

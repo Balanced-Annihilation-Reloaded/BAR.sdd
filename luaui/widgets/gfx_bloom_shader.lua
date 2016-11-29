@@ -102,7 +102,7 @@ end
 
 local function RemoveMe(msg)
 	Spring.Echo(msg)
-	widgetHandler:RemoveWidget()
+	widgetHandler:RemoveWidget() -- TODO: fixme, not passing self makes WH error
 end
 
 local function MakeBloomShaders() 

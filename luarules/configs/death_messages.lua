@@ -1,4 +1,29 @@
--- license: BAR only.
+--[[
+  ----------------------------------------------------------------------------
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * As long as you retain this notice you can do whatever you want with this stuff.
+ * If we meet some day, and you think this stuff is worth it,
+ * you can buy me a beer in return.   [Fx]Bluestone
+ * ----------------------------------------------------------------------------
+--]]
+ 
+--[[
+  ----------------------------------------------------------------------------
+ * "THE BEER-WARE LICENSE" (Revision 42):
+ * As long as you retain this notice you can do whatever you want with this stuff.
+ * If we meet some day, and you think this stuff is worth it,
+ * you can buy me a beer in return.   [Fx]Bluestone
+ * ----------------------------------------------------------------------------
+--]]
+
+--[[
+  ----------------------------------------------------------------------------
+ * This file was licensed as BEER-WARE, and then immediately sub-licensed as BEER-WARE
+ * This means you would buy me TWO beers  
+ * I accept horses if beers are not available in your country
+ * ----------------------------------------------------------------------------
+--]]
+
 
 allyTeamDeathMessages = {
 	--ated
@@ -853,6 +878,24 @@ teamDeathMessages = {
 	"XX was totally annihilated",
 	"XX smacked the pony",
 	"XX jumped two hundred feet into the air and scattered itself across the surrounding countryside",
+	"XX went through a glass darkly",
+	"Could XX stop getting shot?",
+	"I can dig it, he can dig it, she can dig it, we can dig it, they can dig it, you can dig it, oh let's dig it. Can you dig it, XX?",
+	"XX is living in its own private Idaho",
+	"XX fell into a burning ring of fire",
+	"XX was generally looked upon as a cancerous growth attached to Spring",
+	"XX has been a poorly maintained pile of junk for many, many years",
+	"XX went down down down and the flames went higher",
+	"XX went to the great gig in the sky",
+	"XX was born with a plastic spoon in its mouth",
+	"All lies and jest, still, XX hears what it wants to hear and disregards the rest",
+	"XX didn't stop believing",
+	"Should old XX should be forgot and never bought to mind?",
+	"XX was born to run",
+	"XX is singing in the rain",
+	"XX imagined all the people",
+	"XX don't need no education",
+	
 	
 	
 

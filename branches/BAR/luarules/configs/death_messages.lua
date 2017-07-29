@@ -21,9 +21,15 @@
  * This file was licensed as BEER-WARE, and then immediately sub-licensed as BEER-WARE
  * This means you would buy me TWO beers  
  * I accept horses if beers are not available in your country
+ * You also have to retain this notice
  * ----------------------------------------------------------------------------
 --]]
 
+--[[
+ * ----------------------------------------------------------------------------
+ * And this one
+ * ----------------------------------------------------------------------------
+--]]
 
 allyTeamDeathMessages = {
 	--ated

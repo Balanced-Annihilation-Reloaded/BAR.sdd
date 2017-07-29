@@ -39,7 +39,7 @@ return {
 		terraformspeed = 300,
 		turninplaceanglelimit = 360,
 		turnrate = 148,
-		workertime = 60,
+		workertime = 110,
 		buildoptions = {
 			[1] = "armap",
 			[2] = "armaap",
@@ -52,8 +52,8 @@ return {
 			[9] = "armuwadves",
 			[10] = "armuwadvms",
 			[11] = "armfflak",
-			[12] = "armatl",
-			[13] = "armason",
+			--[12] = "armatl",
+			[12] = "armason",
 		},
 		customparams = {
 			faction = "arm",

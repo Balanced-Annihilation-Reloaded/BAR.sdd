@@ -10,7 +10,7 @@ return {
 		canmove = true,
 		category = "KBOT MOBILE WEAPON ALL NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "CORPSE",
-		description = "Crawling Bomb",
+		description = "Amphibious Crawling Bomb",
 		energymake = 0.1,
 		energyuse = 0.1,
 		explodeas = "CRAWL_BLASTSML",
@@ -45,7 +45,7 @@ return {
 			corpse = {
 				blocking = true,
 				category = "corpses",
-				damage = 148,
+				damage = 300,
 				description = "Invader Wreckage",
 				featuredead = "HEAP",
 				footprintx = 1,
@@ -64,7 +64,7 @@ return {
 			heap = {
 				blocking = false,
 				category = "heaps",
-				damage = 148,
+				damage = 200,
 				description = "Invader Heap",
 				footprintx = 1,
 				footprintz = 1,

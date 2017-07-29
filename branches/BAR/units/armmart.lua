@@ -54,7 +54,7 @@ return {
 				collisionvolumeoffsets = "5.28918457031 -0.420549987793 0.245765686035",
 				collisionvolumescales = "50.2839050293 32.1819000244 44.5333404541",
 				collisionvolumetype = "Box",
-				damage = 360,
+				damage = 500,
 				description = "Luger Wreckage",
 				energy = 0,
 				featuredead = "HEAP",
@@ -75,7 +75,7 @@ return {
 			heap = {
 				blocking = false,
 				category = "heaps",
-				damage = 180,
+				damage = 400,
 				description = "Luger Heap",
 				energy = 0,
 				featurereclamate = "SMUDGE01",
@@ -141,7 +141,7 @@ return {
 				weaponvelocity = 355.28159,
 				damage = {
 					bombers = 15,
-					default = 165,
+					default = 181,
 					fighters = 15,
 					subs = 5,
 					vtol = 15,

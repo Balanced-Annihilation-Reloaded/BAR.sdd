@@ -1,6 +1,7 @@
 return {
 	armspid = {
 		acceleration = 0.18,
+		autoheal = 0,
 		brakerate = 0.564,
 		buildcostenergy = 3381,
 		buildcostmetal = 177,
@@ -17,8 +18,8 @@ return {
 		footprintz = 3,
 		idleautoheal = 5,
 		idletime = 600,
-		maxdamage = 825,
-		maxvelocity = 2.65,
+		maxdamage = 850,
+		maxvelocity = 2.385,
 		maxwaterdepth = 16,
 		movementclass = "TKBOT2",
 		mygravity = 10000,
@@ -44,7 +45,7 @@ return {
 				collisionvolumeoffsets = "0.0926513671875 -4.24316406278e-06 -0.909057617188",
 				collisionvolumescales = "31.362487793 12.4340515137 31.2150268555",
 				collisionvolumetype = "Box",
-				damage = 450,
+				damage = 600,
 				description = "Spider Wreckage",
 				energy = 0,
 				featuredead = "HEAP",
@@ -65,7 +66,7 @@ return {
 			heap = {
 				blocking = false,
 				category = "heaps",
-				damage = 225,
+				damage = 400,
 				description = "Spider Heap",
 				energy = 0,
 				featurereclamate = "SMUDGE01",
@@ -109,6 +110,7 @@ return {
 			spider = {
 				areaofeffect = 8,
 				avoidfeature = false,
+				collidefriendly = false,
 				beamtime = 0.1,
 				corethickness = 0.2,
 				craterareaofeffect = 0,
@@ -124,7 +126,7 @@ return {
 				noselfdamage = true,
 				paralyzer = true,
 				paralyzetime = 9,
-				range = 220,
+				range = 280,
 				reloadtime = 1.75,
 				rgbcolor = "1 1 0",
 				soundhitdry = "",

@@ -1,7 +1,7 @@
 return {
 	corgarp = {
-		acceleration = 0.011,
-		brakerate = 0.033,
+		acceleration = 0.0243,
+		brakerate = 0.063,
 		buildcostenergy = 2604,
 		buildcostmetal = 220,
 		buildpic = "CORGARP.DDS",
@@ -18,7 +18,7 @@ return {
 		idleautoheal = 5,
 		idletime = 1800,
 		leavetracks = true,
-		maxdamage = 1219,
+		maxdamage = 1279,
 		maxslope = 12,
 		maxvelocity = 2.1,
 		maxwaterdepth = 200,

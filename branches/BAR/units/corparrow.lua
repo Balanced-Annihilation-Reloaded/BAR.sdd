@@ -73,7 +73,7 @@ return {
 			heap = {
 				blocking = false,
 				category = "heaps",
-				damage = 1710,
+				damage = 3000,
 				description = "Poison Arrow Heap",
 				energy = 0,
 				featurereclamate = "SMUDGE01",

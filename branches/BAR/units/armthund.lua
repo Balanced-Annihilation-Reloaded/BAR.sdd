@@ -22,7 +22,7 @@ return {
 		idletime = 1800,
 		maxdamage = 560,
 		maxslope = 10,
-		maxvelocity = 8.4,
+		maxvelocity = 8.15,
 		maxwaterdepth = 0,
 		name = "Thunder",
 		noautofire = true,

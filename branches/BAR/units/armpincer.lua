@@ -18,7 +18,7 @@ return {
 		idleautoheal = 5,
 		idletime = 1800,
 		leavetracks = true,
-		maxdamage = 1148,
+		maxdamage = 1205,
 		maxslope = 15,
 		maxvelocity = 2.25,
 		maxwaterdepth = 125,
@@ -42,6 +42,7 @@ return {
 			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
+			paralyzemultiplier = 0.125,
 		},
 		featuredefs = {
 			dead = {

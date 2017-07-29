@@ -61,10 +61,29 @@ end
 
 function gadget:UnitDestroyed(unitID, unitDefID, teamID, attackerID, attackerDefID, attackerTeam)
     if not COMMANDER[unitDefID] then return end
+    --Spring.Echo("UD", unitID, unitDefID and UnitDefs[unitDefID].name or "nil", teamID, attackerID, attackerDefID and UnitDefs[attackerDefID].name or "nil", attackerTeam)
     
     local x,y,z = Spring.GetUnitBasePosition(unitID)
     Spring.SpawnCEG(teamCEG[teamID], x,y,z, 0,0,0, 0, 0) --spawn CEG, cause no damage
 end
+
+
+--[[
+function gadget:Explosion(weaponDefID, px, py, pz, attackerID, proID)
+    Spring.Echo("EXP", weaponDefID, px, py, pz, attackerID, proID)
+end
+
+function gadget:GameFrame(n)
+    if n%(2*30)~=0 then return end
+    
+    Spring.Echo("moo")
+    local units = Spring.GetAllUnits()
+    for _,unitID in pairs(units) do
+        Spring.DestroyUnit(unitID, false, true)    
+    end
+end
+]]
+
 
 
 

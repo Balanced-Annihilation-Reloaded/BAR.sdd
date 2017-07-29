@@ -73,7 +73,7 @@ return {
 			heap = {
 				blocking = false,
 				category = "heaps",
-				damage = 949,
+				damage = 1500,
 				description = "Diplomat Heap",
 				energy = 0,
 				featurereclamate = "SMUDGE01",

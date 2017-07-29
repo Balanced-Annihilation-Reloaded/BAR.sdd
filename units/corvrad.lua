@@ -75,7 +75,7 @@ return {
 			heap = {
 				blocking = false,
 				category = "heaps",
-				damage = 273,
+				damage = 450,
 				description = "Informer Heap",
 				energy = 0,
 				featurereclamate = "SMUDGE01",

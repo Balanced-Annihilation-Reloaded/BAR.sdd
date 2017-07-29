@@ -23,6 +23,7 @@ return {
 		idletime = 1800,
 		istargetingupgrade = true,
 		maxdamage = 1451,
+		maxslope = 10,
 		minwaterdepth = 30,
 		name = "Floating Targeting Facility",
 		objectname = "ARMFATF.s3o",

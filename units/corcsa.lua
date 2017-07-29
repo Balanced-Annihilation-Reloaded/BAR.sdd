@@ -53,8 +53,8 @@ return {
 			[9] = "coruwadves",
 			[10] = "coruwadvms",
 			[11] = "corenaa",
-			[12] = "coratl",
-			[13] = "corason",
+			--[12] = "coratl",
+			[12] = "corason",
 		},
 		customparams = {
 			faction = "core",

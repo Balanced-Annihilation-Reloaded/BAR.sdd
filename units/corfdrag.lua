@@ -12,6 +12,7 @@ return {
 		canrepeat = false,
 		category = "ALL NOTLAND NOTSUB NOWEAPON NOTSHIP NOTAIR NOTHOVER SURFACE",
 		corpse = "FLOATINGTEETH_CORE",
+		crushresistance = 250,
 		description = "Floating Wall",
 		footprintx = 2,
 		footprintz = 2,

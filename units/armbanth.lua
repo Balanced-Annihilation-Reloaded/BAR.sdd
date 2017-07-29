@@ -40,7 +40,7 @@ return {
 			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
-			paralyzemultiplier = 0.5,
+			paralyzemultiplier = 1.3,
 		},
 		featuredefs = {
 			dead = {

@@ -23,7 +23,7 @@ return {
 		idletime = 1800,
 		maxdamage = 240,
 		maxslope = 10,
-		maxvelocity = 8.25,
+		maxvelocity = 7.25,
 		maxwaterdepth = 0,
 		name = "Atlas",
 		objectname = "ARMATLAS.s3o",
@@ -40,6 +40,7 @@ return {
 			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
+			paralyzemultiplier = 0.025,
 		},
 		sounds = {
 			canceldestruct = "cancel2",

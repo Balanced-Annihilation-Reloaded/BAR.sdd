@@ -53,7 +53,7 @@ return {
 				collisionvolumeoffsets = "-2.2791595459 -0.365720275879 -0.110244750977",
 				collisionvolumescales = "41.4731445313 24.6765594482 38.8007202148",
 				collisionvolumetype = "Box",
-				damage = 336,
+				damage = 450,
 				description = "Pillager Wreckage",
 				energy = 0,
 				featuredead = "HEAP",
@@ -74,7 +74,7 @@ return {
 			heap = {
 				blocking = false,
 				category = "heaps",
-				damage = 168,
+				damage = 350,
 				description = "Pillager Heap",
 				energy = 0,
 				featurereclamate = "SMUDGE01",
@@ -140,7 +140,7 @@ return {
 				weaponvelocity = 349.5354,
 				damage = {
 					bombers = 17,
-					default = 190,
+					default = 209,
 					fighters = 17,
 					subs = 5,
 					vtol = 17,

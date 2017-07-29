@@ -35,6 +35,7 @@ return {
 			faction = "arm",
 			normalmaps = "yes",
 			normaltex = "unittextures/Arm_normals.dds",
+			paralyzemultiplier = 0.125,
 		},
 		featuredefs = {
 			dead = {
@@ -43,7 +44,7 @@ return {
 				collisionvolumeoffsets = "0.13973236084 -4.67773437585e-06 -1.37111663818",
 				collisionvolumescales = "47.3038787842 18.2459106445 47.0814971924",
 				collisionvolumetype = "Box",
-				damage = 630,
+				damage = 800,
 				description = "Recluse Wreckage",
 				energy = 0,
 				featuredead = "HEAP",
@@ -64,7 +65,7 @@ return {
 			heap = {
 				blocking = false,
 				category = "heaps",
-				damage = 315,
+				damage = 500,
 				description = "Recluse Heap",
 				energy = 0,
 				featurereclamate = "SMUDGE01",
@@ -113,7 +114,8 @@ return {
 			adv_rocket = {
 				areaofeffect = 72,
 				avoidfeature = false,
-				burst = 3,
+				collidefriendly = false,
+				burst = 4,
 				burstrate = 0.3,
 				craterareaofeffect = 72,
 				craterboost = 0,
@@ -144,8 +146,7 @@ return {
 				weaponacceleration = 80,
 				weapontimer = 6,
 				weapontype = "MissileLauncher",
-				weaponvelocity = 395,
-				wobble = 5400,
+				weaponvelocity = 395,				
 				damage = {
 					default = 120,
 					subs = 5,

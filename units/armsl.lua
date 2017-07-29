@@ -40,6 +40,7 @@ return {
 			faction = "core",
 			normalmaps = "yes",
 			normaltex = "unittextures/Core_normal.dds",
+			paralyzemultiplier = 0.025,
 		},
 		sounds = {
 			canceldestruct = "cancel2",

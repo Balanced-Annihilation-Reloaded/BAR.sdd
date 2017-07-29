@@ -13,7 +13,7 @@ return {
 		cancapture = true,
 		canmanualfire = true,
 		canmove = true,
-		capturespeed = 900,
+		capturespeed = 1800,
 		category = "ALL WEAPON COMMANDER NOTSUB NOTSHIP NOTAIR NOTHOVER SURFACE",
 		cloakcost = 100,
 		cloakcostmoving = 1000,
@@ -52,7 +52,7 @@ return {
 		selfdestructcountdown = 5,
 		showplayername = true,
 		sightdistance = 450,
-		sonardistance = 300,
+		sonardistance = 450,
 		terraformspeed = 1500,
 		turninplaceanglelimit = 140,
 		turninplacespeedlimit = 0.825,
@@ -184,6 +184,11 @@ return {
 				craterareaofeffect = 0,
 				craterboost = 0,
 				cratermult = 0,
+				--waterbounce = true, -- weapon will stick to the surface
+				groundbounce = true,
+				bounceRebound = 0, --stick the explosion to ground with 0 vertical component
+				waterweapon = true, --dgun can pass trough water
+				firesubmersed = false, -- but not _fire_ underwater
 				energypershot = 500,
 				explosiongenerator = "custom:DGUNTRACE",
 				firestarter = 100,
